@@ -1,7 +1,7 @@
 <project name="PentahoMetaData" default="default" basedir=".">
 
 	  <description>
-	      Pentaho Metadata build file
+	      Pentaho Metadata build file.
 	    </description>
 
 	  <tstamp prefix="start"/>
