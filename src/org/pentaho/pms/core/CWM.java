@@ -78,6 +78,7 @@ import org.pentaho.pms.cwm.pentaho.meta.relational.CwmCatalog;
 import org.pentaho.pms.cwm.pentaho.meta.relational.CwmColumn;
 import org.pentaho.pms.cwm.pentaho.meta.relational.CwmTable;
 import org.pentaho.pms.cwm.pentaho.meta.relational.RelationalPackage;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.util.Const;
 
 import be.ibridge.kettle.core.LogWriter;
@@ -97,115 +98,115 @@ public class CWM
 {
     public static final LogWriter log = LogWriter.getInstance();
 
-    public static final String CWM = "CWM-Model-M3";
+    public static final String CWM = "CWM-Model-M3"; //$NON-NLS-1$
     
-    public static final String PENTAHO         = "Pentaho";
-    public static final String META            = "Meta";
+    public static final String PENTAHO         = "Pentaho"; //$NON-NLS-1$
+    public static final String META            = "Meta"; //$NON-NLS-1$
     
     /* 
      * Extra TABLE information, added through tag-value pairs 
      */
 
     /** The target table (physical table on a database connection (catalog) */
-    public static final String TAG_TABLE_TARGET_TABLE    = "TABLE_TARGET_TABLE";
+    public static final String TAG_TABLE_TARGET_TABLE    = "TABLE_TARGET_TABLE"; //$NON-NLS-1$
     
     /** The target table database name, connection on which this table resides, references the catalog name */
-    public static final String TAG_TABLE_TARGET_DATABASE = "TABLE_TARGET_DATABASE_NAME";
+    public static final String TAG_TABLE_TARGET_DATABASE = "TABLE_TARGET_DATABASE_NAME"; //$NON-NLS-1$
 
     /** Tag to allow us to see if the table is drawn on the canvas or not (Y/N=not stored) */
-    public static final String TAG_TABLE_IS_DRAWN = "TABLE_IS_DRAWN";
+    public static final String TAG_TABLE_IS_DRAWN = "TABLE_IS_DRAWN"; //$NON-NLS-1$
 
     /** tag to store value of the type of table : Other, Dimension, Fact, ... */
-    public static final String TAG_TABLE_TYPE = "TABLE_TYPE";
+    public static final String TAG_TABLE_TYPE = "TABLE_TYPE"; //$NON-NLS-1$
 
     /** tag to store value of the relative size of table (Integer value) */
-    public static final String TAG_TABLE_SIZE = "TABLE_SIZE";
+    public static final String TAG_TABLE_SIZE = "TABLE_SIZE"; //$NON-NLS-1$
 
     /* 
      * Extra COLUMN information, added through tag-value pairs 
      */
 
     /** The formula that physically describes a table column, usually this is the fieldname, but can also be an SQL calculation, count(*) etc. */
-    public static final String TAG_COLUMN_FORMULA        = "COLUMN_FORMULA";
+    public static final String TAG_COLUMN_FORMULA        = "COLUMN_FORMULA"; //$NON-NLS-1$
 
     /** Stored the aggregation type */
-    public static final String TAG_COLUMN_AGGREGATION_TYPE = "TAG_COLUMN_AGGREGATION_TYPE";
+    public static final String TAG_COLUMN_AGGREGATION_TYPE = "TAG_COLUMN_AGGREGATION_TYPE"; //$NON-NLS-1$
 
     /** tag to store value of the type of column field we're dealing with: Dimension, Fact, Key, ... */
-    public static final String TAG_COLUMN_FIELD_TYPE = "COLUMN_FIELD_TYPE";
+    public static final String TAG_COLUMN_FIELD_TYPE = "COLUMN_FIELD_TYPE"; //$NON-NLS-1$
 
     /** tag to store value of the hidden flag of a column */
-    public static final String TAG_COLUMN_IS_HIDDEN = "COLUMN_IS_HIDDEN";
+    public static final String TAG_COLUMN_IS_HIDDEN = "COLUMN_IS_HIDDEN"; //$NON-NLS-1$
 
     /** tag to store value of the exact flag of a column */
-    public static final String TAG_COLUMN_IS_EXACT = "COLUMN_IS_EXACT";
+    public static final String TAG_COLUMN_IS_EXACT = "COLUMN_IS_EXACT"; //$NON-NLS-1$
     
     /* 
      * Extra DATABASE information, added through tag-value pairs 
      */
 
-    public static final String TAG_DATABASE_SERVER           = "DATABASE_SERVER";
-    public static final String TAG_DATABASE_TYPE             = "DATABASE_TYPE";
-    public static final String TAG_DATABASE_ACCESS           = "DATABASE_ACCESS";
-    public static final String TAG_DATABASE_DATABASE         = "DATABASE_DATABASE";
-    public static final String TAG_DATABASE_PORT             = "DATABASE_PORT";
-    public static final String TAG_DATABASE_USERNAME         = "DATABASE_USERNAME";
-    public static final String TAG_DATABASE_PASSWORD         = "DATABASE_PASSWORD";
-    public static final String TAG_DATABASE_SERVERNAME       = "DATABASE_SERVERNAME";
-    public static final String TAG_DATABASE_DATA_TABLESPACE  = "DATABASE_DATA_TABLESPACE";
-    public static final String TAG_DATABASE_INDEX_TABLESPACE = "DATABASE_INDEX_TABLESPACE";
-    public static final String TAG_DATABASE_ATTRIBUTE_PREFIX = "DATABASE_ATTRIBUTE_PREFIX_";
+    public static final String TAG_DATABASE_SERVER           = "DATABASE_SERVER"; //$NON-NLS-1$
+    public static final String TAG_DATABASE_TYPE             = "DATABASE_TYPE";  //$NON-NLS-1$
+    public static final String TAG_DATABASE_ACCESS           = "DATABASE_ACCESS"; //$NON-NLS-1$
+    public static final String TAG_DATABASE_DATABASE         = "DATABASE_DATABASE"; //$NON-NLS-1$
+    public static final String TAG_DATABASE_PORT             = "DATABASE_PORT"; //$NON-NLS-1$ 
+    public static final String TAG_DATABASE_USERNAME         = "DATABASE_USERNAME"; //$NON-NLS-1$
+    public static final String TAG_DATABASE_PASSWORD         = "DATABASE_PASSWORD"; //$NON-NLS-1$
+    public static final String TAG_DATABASE_SERVERNAME       = "DATABASE_SERVERNAME"; //$NON-NLS-1$
+    public static final String TAG_DATABASE_DATA_TABLESPACE  = "DATABASE_DATA_TABLESPACE"; //$NON-NLS-1$
+    public static final String TAG_DATABASE_INDEX_TABLESPACE = "DATABASE_INDEX_TABLESPACE"; //$NON-NLS-1$
+    public static final String TAG_DATABASE_ATTRIBUTE_PREFIX = "DATABASE_ATTRIBUTE_PREFIX_"; //$NON-NLS-1$
     
     /** calculated for use by other Pentaho Tools */
-    public static final String TAG_DATABASE_JDBC_URL         = "DATABASE_JDBC_URL";
+    public static final String TAG_DATABASE_JDBC_URL         = "DATABASE_JDBC_URL"; //$NON-NLS-1$
 
     /* 
      * Extra general GUI information, added through tag-value pairs 
      */
     
     /** The tag for the X-position of a GUI model element */
-    private static final String TAG_POSITION_X = "TAG_POSITION_X";
+    private static final String TAG_POSITION_X = "TAG_POSITION_X"; //$NON-NLS-1$
     
     /** The tag for the Y-position of a GUI model element */
-    private static final String TAG_POSITION_Y = "TAG_POSITION_Y";
+    private static final String TAG_POSITION_Y = "TAG_POSITION_Y"; //$NON-NLS-1$
 
     /** The tag for the width of a GUI model element */
-    private static final String TAG_POSITION_WIDTH = "TAG_POSITION_WIDTH";
+    private static final String TAG_POSITION_WIDTH = "TAG_POSITION_WIDTH"; //$NON-NLS-1$
     
     /** The tag for the height of a GUI model element */
-    private static final String TAG_POSITION_HEIGHT = "TAG_POSITION_HEIGHT";
+    private static final String TAG_POSITION_HEIGHT = "TAG_POSITION_HEIGHT"; //$NON-NLS-1$
 
     /* 
      * Extra RELATIONSHIP information, added through tag-value pairs 
      */
 
     /** tag to indicate the parent table name of the relationship */ 
-    public static final String TAG_RELATIONSHIP_TABLENAME_PARENT = "RELATIONSHIP_TABLENAME_PARENT";
+    public static final String TAG_RELATIONSHIP_TABLENAME_PARENT = "RELATIONSHIP_TABLENAME_PARENT"; //$NON-NLS-1$
 
     /** tag to indicate the child table name of the relationship */ 
-    public static final String TAG_RELATIONSHIP_TABLENAME_CHILD = "RELATIONSHIP_TABLENAME_CHILD";
+    public static final String TAG_RELATIONSHIP_TABLENAME_CHILD = "RELATIONSHIP_TABLENAME_CHILD"; //$NON-NLS-1$
 
     /** tag to indicate the fieldname in the parent table of the relationship */ 
-    public static final String TAG_RELATIONSHIP_FIELDNAME_PARENT = "RELATIONSHIP_FIELDNAME_PARENT";
+    public static final String TAG_RELATIONSHIP_FIELDNAME_PARENT = "RELATIONSHIP_FIELDNAME_PARENT"; //$NON-NLS-1$
 
     /** tag to indicate the fieldname in the child table of the relationship */ 
-    public static final String TAG_RELATIONSHIP_FIELDNAME_CHILD = "RELATIONSHIP_FIELDNAME_CHILD";
+    public static final String TAG_RELATIONSHIP_FIELDNAME_CHILD = "RELATIONSHIP_FIELDNAME_CHILD"; //$NON-NLS-1$
 
     /** tag to indicate the complex join expression in the relationship */
-    public static final String TAG_RELATIONSHIP_COMPLEX_JOIN = "RELATIONSHIP_COMPLEX_JOIN";
+    public static final String TAG_RELATIONSHIP_COMPLEX_JOIN = "RELATIONSHIP_COMPLEX_JOIN"; //$NON-NLS-1$
 
-    /** tag to store value to indicate wheter the relationship is complex (Y/N=not stored) */
-    public static final String TAG_RELATIONSHIP_IS_COMPLEX = "RELATIONSHIP_IS_COMPLEX";
+    /** tag to store value to indicate wheter the relationship is complex (Y/N=not stored) */ 
+    public static final String TAG_RELATIONSHIP_IS_COMPLEX = "RELATIONSHIP_IS_COMPLEX"; //$NON-NLS-1$
 
     /** tag to store value of the relationship type, for example 1:1, 1:N, N:N, 0:N, etc. */
-    public static final String TAG_RELATIONSHIP_TYPE = "RELATIONSHIP_TYPE";
+    public static final String TAG_RELATIONSHIP_TYPE = "RELATIONSHIP_TYPE"; //$NON-NLS-1$
 
     /* 
      * Extra DOCUMENT information, added through tag-value pairs 
      */
 
     /** Tag to locate the value of the content of the document */
-    public static final String TAG_DOCUMENT_CONTENT = "DOCUMENT_CONTENT";
+    public static final String TAG_DOCUMENT_CONTENT = "DOCUMENT_CONTENT"; //$NON-NLS-1$
 
 
     /*
@@ -213,111 +214,111 @@ public class CWM
      */
     
     /** business column tag to identify the physical column name (id) */
-    public static final String TAG_BUSINESS_TABLE_PHYSICAL_TABLE_NAME = "BUSINESS_TABLE_PHYSICAL_TABLE_NAME";
+    public static final String TAG_BUSINESS_TABLE_PHYSICAL_TABLE_NAME = "BUSINESS_TABLE_PHYSICAL_TABLE_NAME"; //$NON-NLS-1$
 
     /*
      * Extra Business Column information, physical table name, column name, etc.
      */
     
     /** business column tag to identify the physical column name (id) */
-    public static final String TAG_BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME = "BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME";
+    public static final String TAG_BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME = "BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME"; //$NON-NLS-1$
 
     /** business column tag to identify the name of the business table */
-    public static final String TAG_BUSINESS_COLUMN_BUSINESS_TABLE = "BUSINESS_COLUMN_BUSINESS_TABLE";
+    public static final String TAG_BUSINESS_COLUMN_BUSINESS_TABLE = "BUSINESS_COLUMN_BUSINESS_TABLE"; //$NON-NLS-1$
     
     /*
      * Extra Business Category information, tied to the extent.
      */
     /** tag to indicate that this extent is one at the root */
-    public static final String TAG_BUSINESS_CATEGORY_ROOT     = "BUSINESS_CATEGORY_ROOT";
+    public static final String TAG_BUSINESS_CATEGORY_ROOT     = "BUSINESS_CATEGORY_ROOT"; //$NON-NLS-1$
 
     /** The business category type value can either be Category or Column */
-    public static final String TAG_BUSINESS_CATEGORY_TYPE     = "BUSINESS_CATEGORY_TYPE";
-    public static final String VALUE_BUSINESS_TYPE_CATEGORY = "Category";
-    public static final String VALUE_BUSINESS_TYPE_COLUMN   = "Column";
+    public static final String TAG_BUSINESS_CATEGORY_TYPE     = "BUSINESS_CATEGORY_TYPE"; //$NON-NLS-1$
+    public static final String VALUE_BUSINESS_TYPE_CATEGORY = "Category"; //$NON-NLS-1$
+    public static final String VALUE_BUSINESS_TYPE_COLUMN   = "Column"; //$NON-NLS-1$
 
     /*
      * Extra Concept information tags.
      */
     /** tag to indicate that the value stored in the tagged value is the name of the parent of the concept */
-    public static final String TAG_CONCEPT_PARENT_NAME = "CONCEPT_PARENT_NAME";
+    public static final String TAG_CONCEPT_PARENT_NAME = "CONCEPT_PARENT_NAME"; //$NON-NLS-1$
 
     /*
      * Extra Locale information tags.
      */
     /** The description of a locale */
-    public static final String TAG_LOCALE_DESCRIPTION = "LOCALE_DESCRIPTION";
+    public static final String TAG_LOCALE_DESCRIPTION = "LOCALE_DESCRIPTION"; //$NON-NLS-1$
     /** The order of fallback of a locale */
-    public static final String TAG_LOCALE_ORDER       = "LOCALE_ORDER";
+    public static final String TAG_LOCALE_ORDER       = "LOCALE_ORDER"; //$NON-NLS-1$
     /** boolean : is the locale the default yes or no : Y/N */
-    public static final String TAG_LOCALE_IS_ACTIVE  = "LOCALE_IS_DEFAULT";
+    public static final String TAG_LOCALE_IS_ACTIVE  = "LOCALE_IS_DEFAULT"; //$NON-NLS-1$
 
     /* 
      * Other constants... 
      */
 
     /** The language of the notepad descriptions: PENTAHO_MODEL */
-    public static final String LANGUAGE_PENTAHO_MODEL = "PENTAHO_MODEL";
+    public static final String LANGUAGE_PENTAHO_MODEL = "PENTAHO_MODEL"; //$NON-NLS-1$
 
     /** The type of a description... */
-    public static final String DESCRIPTION_TYPE_NOTEPAD = "NOTEPAD";
+    public static final String DESCRIPTION_TYPE_NOTEPAD = "NOTEPAD"; //$NON-NLS-1$
 
     /** The security service parameter */
-    public static final String EVENT_SECURITY_SERVICE = "SECURITY_SERVICE";
+    public static final String EVENT_SECURITY_SERVICE = "SECURITY_SERVICE"; //$NON-NLS-1$
 
     /** The tag for the security service base URL */
-    public static final String TAG_SECURITY_SERVICE_URL = "SECURITY_SERVICE_URL";
+    public static final String TAG_SECURITY_SERVICE_URL = "SECURITY_SERVICE_URL"; //$NON-NLS-1$
 
     /** The tag for the security details service name */
-    public static final String TAG_SECURITY_DETAILS_NAME = "SECURITY_DETAILS_NAME";
+    public static final String TAG_SECURITY_DETAILS_NAME = "SECURITY_DETAILS_NAME"; //$NON-NLS-1$
 
     /** The tag for the security detail service name */
-    public static final String TAG_SECURITY_DETAIL_NAME = "SECURITY_DETAIL_NAME";
+    public static final String TAG_SECURITY_DETAIL_NAME = "SECURITY_DETAIL_NAME"; //$NON-NLS-1$
 
     /** The tag for the security detail service type (all, users, roles, acls) */
-    public static final String TAG_SECURITY_DETAIL_TYPE = "SECURITY_DETAIL_TYPE";
+    public static final String TAG_SECURITY_DETAIL_TYPE = "SECURITY_DETAIL_TYPE"; //$NON-NLS-1$
 
     /** The tag for the security service username */
-    public static final String TAG_SECURITY_USERNAME = "SECURITY_USERNAME";
+    public static final String TAG_SECURITY_USERNAME = "SECURITY_USERNAME"; //$NON-NLS-1$
 
     /** The tag for the security service password */
-    public static final String TAG_SECURITY_PASSWORD = "SECURITY_PASSWORD";
+    public static final String TAG_SECURITY_PASSWORD = "SECURITY_PASSWORD"; //$NON-NLS-1$
 
     /** The tag for the security service proxy hostname */
-    public static final String TAG_SECURITY_PROXY_HOST = "SECURITY_PROXY_HOST";
+    public static final String TAG_SECURITY_PROXY_HOST = "SECURITY_PROXY_HOST"; //$NON-NLS-1$
 
     /** The tag for the security service proxy port */
-    public static final String TAG_SECURITY_PROXY_PORT = "SECURITY_PROXY_PORT";
+    public static final String TAG_SECURITY_PROXY_PORT = "SECURITY_PROXY_PORT"; //$NON-NLS-1$
 
     /** The tag for the security service non proxy hostnames */
-    public static final String TAG_SECURITY_NON_PROXY_HOSTS = "SECURITY_NON_PROXY_HOSTS";
+    public static final String TAG_SECURITY_NON_PROXY_HOSTS = "SECURITY_NON_PROXY_HOSTS"; //$NON-NLS-1$
 
     /** The tag for the security service filename */
-    public static final String TAG_SECURITY_FILENAME = "SECURITY_FILENAME";
+    public static final String TAG_SECURITY_FILENAME = "SECURITY_FILENAME"; //$NON-NLS-1$
 
     /** The tag for the security service generated URL (derived information!)*/
-    public static final String TAG_SECURITY_URL = "SECURITY_URL";
+    public static final String TAG_SECURITY_URL = "SECURITY_URL"; //$NON-NLS-1$
 
     /** The tag to link the hierarchy to a business table by saving the table's ID */
-    public static final String TAG_HIERARCHY_BUSINESS_TABLE = "HIERARCHY_BUSINESS_TABLE";
+    public static final String TAG_HIERARCHY_BUSINESS_TABLE = "HIERARCHY_BUSINESS_TABLE"; //$NON-NLS-1$
 
     /** The tag to link the hierarchy to the column that defines the primary key */
-    public static final String TAG_HIERARCHY_PRIMARY_KEY = "HIERARCHY_PRIMARY_KEY";
+    public static final String TAG_HIERARCHY_PRIMARY_KEY = "HIERARCHY_PRIMARY_KEY"; //$NON-NLS-1$
 
     /** The tag to save "Having all" flag of a hierarchy */
-    public static final String TAG_HIERARCHY_HAVING_ALL = "HIERARCHY_HAVING_ALL";
+    public static final String TAG_HIERARCHY_HAVING_ALL = "HIERARCHY_HAVING_ALL"; //$NON-NLS-1$
 
     /** The tag to save "Unique members" flag of a hierarchy level (CwmLevel) */
-    public static final String TAG_HIERARCHY_LEVEL_UNIQUE_MEMBERS = "HIERARCHY_LEVEL_UNIQUE_MEMBERS";
+    public static final String TAG_HIERARCHY_LEVEL_UNIQUE_MEMBERS = "HIERARCHY_LEVEL_UNIQUE_MEMBERS"; //$NON-NLS-1$
 
     /** The tag to save the Id of the reference business column for a hierarchy level (CwmLevel) */
-    public static final String TAG_HIERARCHY_LEVEL_REFERENCE_COLUMN = "HIERARCHY_LEVEL_REFERENCE_COLUMN";
+    public static final String TAG_HIERARCHY_LEVEL_REFERENCE_COLUMN = "HIERARCHY_LEVEL_REFERENCE_COLUMN"; //$NON-NLS-1$
 
     /** The tag to save the business table ID for the cube */
-    public static final String TAG_CUBE_BUSINESS_TABLE = "CUBE_BUSINESS_TABLE";
+    public static final String TAG_CUBE_BUSINESS_TABLE = "CUBE_BUSINESS_TABLE"; //$NON-NLS-1$
 
     /** The tag to save the business column ID for a cube measure */
-    public static final String TAG_MEASURE_BUSINESS_COLUMN = "MEASURE_BUSINESS_COLUMN";
+    public static final String TAG_MEASURE_BUSINESS_COLUMN = "MEASURE_BUSINESS_COLUMN"; //$NON-NLS-1$
 
 
     
@@ -359,7 +360,7 @@ public class CWM
             // If the storeage factory class is BTree, we have to reverse the order on many object collections...
             // The JDBC stuff doesn't seem to suffer from that problem.
             // 
-            String storageFactoryClassName = System.getProperty("org.netbeans.mdr.storagemodel.StorageFactoryClassName", "");
+            String storageFactoryClassName = System.getProperty("org.netbeans.mdr.storagemodel.StorageFactoryClassName", "");  //$NON-NLS-1$ //$NON-NLS-2$
             if (BtreeFactory.class.getName().equals(storageFactoryClassName))
             {
                 reversingOrder = true;
@@ -373,9 +374,9 @@ public class CWM
             if( cwmPackageM3==null && autoCreate )
             {
                 cwmPackageM3 = repository.createExtent(CWM);
-                BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream("cwm/PentahoCWM.xml"));
+                BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream("cwm/PentahoCWM.xml")); //$NON-NLS-1$
                 XMIReaderFactory.getDefault().createXMIReader().read(inputStream, null, cwmPackageM3);
-                log.logBasic("CWM", "Loaded CWM model into the default repository");
+                log.logBasic(Messages.getString("CWM.INFO_TITLE"), Messages.getString("CWM.INFO_LOADED_CWM_MODEL")); //$NON-NLS-1$ //$NON-NLS-2$
             }
 
             /*
@@ -392,9 +393,9 @@ public class CWM
             if( pentahoPackage == null ) {
             		if( autoCreate ){
 	                pentahoPackage  = (PentahoPackage) repository.createExtent(modelName, getModelPackage(PENTAHO) );
-	                log.logBasic("CWM", "Instantiated Pentaho (top level) package");
+	                log.logBasic(Messages.getString("CWM.INFO_TITLE"), Messages.getString("CWM.INFO_INSTANCED_TOP_PACKAGE")); //$NON-NLS-1$ //$NON-NLS-2$
 	            } else {
-	            		throw new CWMException( "Model Not Found: "+modelName );
+	            		throw new CWMException( Messages.getErrorString("CWM.ERROR_0004_MODEL_NOT_FOUND", modelName) ); //$NON-NLS-1$
 	            }
             }
                         
@@ -418,7 +419,7 @@ public class CWM
         }
         catch(Throwable e)
         {
-            throw new RuntimeException("Unable to initialize the Pentaho Metadata System", e);
+            throw new RuntimeException(Messages.getErrorString("CWM.ERROR_0001_CANT_INITIALIZE_PMS"), e); //$NON-NLS-1$
         }
     }
     
@@ -441,13 +442,13 @@ public class CWM
         try
         {
             Properties properties = new Properties();
-            properties.load(new FileInputStream("jdbc/repository.properties"));
+            properties.load(new FileInputStream("jdbc/repository.properties")); //$NON-NLS-1$
             return getRepository( properties, null );
             
         }
         catch(Exception e)
         {
-            throw new CWMException("Error getting a handle on the repository", e);
+            throw new CWMException(Messages.getErrorString("CWM.ERROR_0002_CANT_ACCESS_REPOSITORY"), e); //$NON-NLS-1$
         }
     }
 
@@ -463,7 +464,7 @@ public class CWM
             
             systemProperties.putAll(properties);
             
-            String storageFactoryClassName = System.getProperty("org.netbeans.mdr.storagemodel.StorageFactoryClassName", "");
+            String storageFactoryClassName = System.getProperty("org.netbeans.mdr.storagemodel.StorageFactoryClassName", ""); //$NON-NLS-1$ //$NON-NLS-2$
     
             try
             {
@@ -475,19 +476,19 @@ public class CWM
                     cwmPackageM3 = repository.createExtent(CWM);
                     BufferedInputStream inputStream = new BufferedInputStream( xmiInputStream );
                     XMIReaderFactory.getDefault().createXMIReader().read(inputStream, null, cwmPackageM3);
-                    log.logBasic("CWM", "Loaded CWM model into the default repository");
+                    log.logBasic(Messages.getString("CWM.INFO_TITLE"), Messages.getString("CWM.INFO_LOADED_MODEL_TO_REPOSITORY")); //$NON-NLS-1$ //$NON-NLS-2$
                 }
 
                 return repository;
             }
             catch(Exception e)
             {
-                throw new CWMException("Unable to get repository implementation for class ["+storageFactoryClassName+"]", e);
+                throw new CWMException(Messages.getErrorString("CWM.ERROR_0003_UNABLE_TO_ACCESS_CLASS", storageFactoryClassName), e); //$NON-NLS-1$
             }
         }
         catch(Exception e)
         {
-            throw new CWMException("Error getting a handle on the repository", e);
+            throw new CWMException(Messages.getErrorString("CWM.ERROR_0002_CANT_ACCESS_REPOSITORY"), e); //$NON-NLS-1$
         }
     }
 
@@ -531,7 +532,7 @@ public class CWM
         
         for (int i = 0; i < ext.length; i++)
         {
-            if (!ext[i].equals("MOF") && !ext[i].equals(CWM)) modelNames.add(ext[i]);
+            if (!ext[i].equals("MOF") && !ext[i].equals(CWM)) modelNames.add(ext[i]); //$NON-NLS-1$
                 
         }
         
@@ -932,7 +933,7 @@ public class CWM
         if (table!=null)
         {
             table.refDelete();
-            log.logBasic("CWM", "removed table "+tableName); // Not working
+            log.logBasic(Messages.getString("CWM.INFO_TITLE"), Messages.getString("CWM.INFO_REMOVED_TABLE", tableName)); // Not working //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
     
@@ -1140,7 +1141,7 @@ public class CWM
             {
                 // Only elements with a root tag set to Y
                 String isRoot = findFirstTaggedValue(cwmExtent.getTaggedValue(), TAG_BUSINESS_CATEGORY_ROOT);
-                if (isRoot.equalsIgnoreCase("Y"))
+                if (isRoot.equalsIgnoreCase("Y")) //$NON-NLS-1$
                 {
                     extents.add(cwmExtent);
                 }
@@ -1303,7 +1304,7 @@ public class CWM
         XMIWriterFactory factory = XMIWriterFactory.getDefault();
         XMIWriter writer = factory.createXMIWriter();
         writer.getConfiguration().setEncoding(Const.XML_ENCODING);
-        writer.write(new FileOutputStream(filename), getPentahoPackage(), "1.2");
+        writer.write(new FileOutputStream(filename), getPentahoPackage(), "1.2"); //$NON-NLS-1$
     }
     
     public String getXMI() throws IOException
@@ -1312,7 +1313,7 @@ public class CWM
         XMIWriter writer = factory.createXMIWriter();
         writer.getConfiguration().setEncoding(Const.XML_ENCODING);
         ByteArrayOutputStream stream = new ByteArrayOutputStream(250000); // start with 250k
-        writer.write(stream, getPentahoPackage(), "1.2");
+        writer.write(stream, getPentahoPackage(), "1.2"); //$NON-NLS-1$
         stream.close();
         
         return stream.toString();
