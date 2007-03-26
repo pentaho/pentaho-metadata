@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.concept.Concept;
 import org.pentaho.pms.schema.concept.ConceptInterface;
@@ -69,8 +70,8 @@ import be.ibridge.kettle.trans.step.BaseStepDialog;
  */
 public class MetaEditorConcepts extends Composite implements DialogGetDataInterface
 {
-    public static final String STRING_CONCEPTS = "Concepts";
-    private static final String STRING_CONCEPTS_TREE = "ConceptsTree"; 
+    public static final String STRING_CONCEPTS = Messages.getString("MetaEditorConcepts.USER_CONCEPTS"); //$NON-NLS-1$
+    private static final String STRING_CONCEPTS_TREE = "ConceptsTree";  //$NON-NLS-1$
 
     private Props props;
 	private Shell shell;
@@ -219,7 +220,7 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
 
         Label wlActive = new Label(compConcept, SWT.RIGHT);
         props.setLook(wlActive);
-        wlActive.setText("The name of the active concept ");
+        wlActive.setText(Messages.getString("MetaEditorConcepts.USER_ACTIVE_CONCEPT_NAME")); //$NON-NLS-1$
         FormData fdlActive = new FormData();
         fdlActive.left  = new FormAttachment(0,0);
         fdlActive.right = new FormAttachment(middle, 0);
@@ -238,7 +239,7 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
 
         Label wlName = new Label(compConcept, SWT.RIGHT);
         props.setLook(wlName);
-        wlName.setText("The new name of the concept ");
+        wlName.setText(Messages.getString("MetaEditorConcepts.USER_NEW_CONCEPT_NAME")); //$NON-NLS-1$
         FormData fdlName = new FormData();
         fdlName.left  = new FormAttachment(0,0);
         fdlName.right = new FormAttachment(middle, 0);
@@ -250,7 +251,7 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
         //
         wbParent = new Button(compConcept, SWT.PUSH);
         props.setLook(wbParent);
-        wbParent.setText("Go to parent");
+        wbParent.setText(Messages.getString("MetaEditorConcepts.USER_GO_TO_PARENT")); //$NON-NLS-1$
         FormData fdbParent = new FormData();
         fdbParent.right = new FormAttachment(100, 0);
         fdbParent.top   = new FormAttachment(wName, margin);
@@ -259,7 +260,7 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
         
         Label wlParent = new Label(compConcept, SWT.RIGHT);
         props.setLook(wlParent);
-        wlParent.setText("Parent concept ");
+        wlParent.setText(Messages.getString("MetaEditorConcepts.USER_PARENT_CONCEPT")); //$NON-NLS-1$
         FormData fdlParent = new FormData();
         fdlParent.left  = new FormAttachment(0,0);
         fdlParent.right = new FormAttachment(middle, 0);
@@ -281,7 +282,7 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
         //
         Label wlPProps = new Label(compConcept, SWT.LEFT);
         props.setLook(wlPProps);
-        wlPProps.setText("The parent properties:");
+        wlPProps.setText(Messages.getString("MetaEditorConcepts.USER_PARENT_PROPERTIES")); //$NON-NLS-1$
         FormData fdlPProps = new FormData();
         fdlPProps.left  = new FormAttachment(0,0);
         fdlPProps.top   = new FormAttachment(wbParent, margin);
@@ -289,9 +290,9 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
 
         ColumnInfo[] colPProps = new ColumnInfo[]
           {
-            new ColumnInfo("Property ID",           ColumnInfo.COLUMN_TYPE_TEXT, false, true),
-            new ColumnInfo("Property type",         ColumnInfo.COLUMN_TYPE_TEXT, false, true),
-            new ColumnInfo("Value",                 ColumnInfo.COLUMN_TYPE_TEXT, false, true),
+            new ColumnInfo(Messages.getString("MetaEditorConcepts.USER_PROPERTY_ID"),           ColumnInfo.COLUMN_TYPE_TEXT, false, true), //$NON-NLS-1$
+            new ColumnInfo(Messages.getString("MetaEditorConcepts.USER_PROPERTY_TYPE"),         ColumnInfo.COLUMN_TYPE_TEXT, false, true), //$NON-NLS-1$
+            new ColumnInfo(Messages.getString("MetaEditorConcepts.USER_VALUE"),                 ColumnInfo.COLUMN_TYPE_TEXT, false, true), //$NON-NLS-1$
           };
         wPProps=new TableView(compConcept, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI, colPProps, 1, true, null, props );
         FormData fdPProps = new FormData();
@@ -305,15 +306,15 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
 
         // Now add some buttons all at the bottom
         wNew = new Button(compConcept, SWT.PUSH);
-        wNew.setText("&Create new concept");
+        wNew.setText(Messages.getString("MetaEditorConcepts.USER_CREATE_NEW_CONCEPT")); //$NON-NLS-1$
         wApply = new Button(compConcept, SWT.PUSH);
-        wApply.setText("&Apply changes");
+        wApply.setText(Messages.getString("MetaEditorConcepts.USER_APPLY_CHANGES")); //$NON-NLS-1$
         wRevert= new Button(compConcept, SWT.PUSH);
-        wRevert.setText("&Revert changes");
+        wRevert.setText(Messages.getString("MetaEditorConcepts.USER_REVERT_CHANGES")); //$NON-NLS-1$
         wDelete= new Button(compConcept, SWT.PUSH);
-        wDelete.setText("&Delete concept");
+        wDelete.setText(Messages.getString("MetaEditorConcepts.USER_DELETE_CONCEPT")); //$NON-NLS-1$
         wReplace= new Button(compConcept, SWT.PUSH);
-        wReplace.setText("&Replace parents");
+        wReplace.setText(Messages.getString("MetaEditorConcepts.USER_REPLACE_PARENTS")); //$NON-NLS-1$
         
         BaseStepDialog.positionBottomButtons(compConcept, new Button[] { wNew, wApply, wRevert, wDelete, wReplace }, margin, null );
 
@@ -327,7 +328,7 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
         //
         Label wlProps = new Label(compConcept, SWT.LEFT);
         props.setLook(wlProps);
-        wlProps.setText("The concept properties:");
+        wlProps.setText(Messages.getString("MetaEditorConcepts.USER_CONCEPT_PROPERTIES")); //$NON-NLS-1$
         FormData fdlProps = new FormData();
         fdlProps.left  = new FormAttachment(0,0);
         fdlProps.top   = new FormAttachment(wPProps, margin);
@@ -335,7 +336,7 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
 
         newProp = new Button(compConcept, SWT.PUSH);
         props.setLook(newProp);
-        newProp.setText("Add new property");
+        newProp.setText(Messages.getString("MetaEditorConcepts.USER_ADD_NEW_PROPERTY")); //$NON-NLS-1$
         FormData fdNewProp = new FormData();
         fdNewProp.left = new FormAttachment(0, 0);
         fdNewProp.top   = new FormAttachment(wlProps, 30+margin);
@@ -343,7 +344,7 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
         
         delProp = new Button(compConcept, SWT.PUSH);
         props.setLook(delProp);
-        delProp.setText("Delete selected properties");
+        delProp.setText(Messages.getString("MetaEditorConcepts.USER_DELETE_SELECTED_PROPERTIES")); //$NON-NLS-1$
         FormData fdDelProp = new FormData();
         fdDelProp.left = new FormAttachment(0, 0);
         fdDelProp.top   = new FormAttachment(newProp, margin);
@@ -351,7 +352,7 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
 
         editProp = new Button(compConcept, SWT.PUSH);
         props.setLook(editProp);
-        editProp.setText("Edit selected properties");
+        editProp.setText(Messages.getString("MetaEditorConcepts.USER_EDIT_SELECTED_PROPERTIES")); //$NON-NLS-1$
         FormData fdEditProp = new FormData();
         fdEditProp.left = new FormAttachment(0, 0);
         fdEditProp.top   = new FormAttachment(delProp, margin);
@@ -359,9 +360,9 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
 
         colProps = new ColumnInfo[]
           {
-            new ColumnInfo("Property ID", ColumnInfo.COLUMN_TYPE_CCOMBO, DefaultPropertyID.getDefaultPropertyIDs(), true),
-            new ColumnInfo("Property type", ColumnInfo.COLUMN_TYPE_CCOMBO, ConceptPropertyType.getTypeDescriptions(), true),
-            new ColumnInfo("Value (double click to edit)", ColumnInfo.COLUMN_TYPE_TEXT,   false, true),
+            new ColumnInfo(Messages.getString("MetaEditorConcepts.USER_PROPERTY_ID"), ColumnInfo.COLUMN_TYPE_CCOMBO, DefaultPropertyID.getDefaultPropertyIDs(), true), //$NON-NLS-1$
+            new ColumnInfo(Messages.getString("MetaEditorConcepts.USER_PROPERTY_TYPE"), ColumnInfo.COLUMN_TYPE_CCOMBO, ConceptPropertyType.getTypeDescriptions(), true), //$NON-NLS-1$
+            new ColumnInfo(Messages.getString("MetaEditorConcepts.USER_VALUE_DOUBLE_CLICK"), ColumnInfo.COLUMN_TYPE_TEXT,   false, true), //$NON-NLS-1$
           };
 
         SelectionAdapter selID = new SelectionAdapter()
@@ -389,7 +390,7 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
                 }
             };
         colProps[0].setSelectionAdapter(selID);
-        colProps[0].setToolTip("Select from a list of default proposed property IDs."+Const.CR+"The corresponding type will be automatically selected and shown in the next column");
+        colProps[0].setToolTip(Messages.getString("MetaEditorConcepts.USER_SELECT_DEFAULT_PROPERTY_IDS")); //$NON-NLS-1$ 
 
         wProps=new TableView(compConcept, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI, colProps, 1, true, null, props ); // a read-only table
         FormData fdProps = new FormData();
@@ -448,8 +449,8 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
             if (list.size()>0)
             {
                 MessageBox mb = new MessageBox(shell, SWT.YES | SWT.NO | SWT.ICON_WARNING);
-                mb.setMessage("Concept ["+activeConcept.getName()+"] is being used in "+(list.size())+" model elements.\nAre you sure you want to delete this concept?");
-                mb.setText("Warning");
+                mb.setMessage(Messages.getString("MetaEditorConcepts.USER_DELETE_CONCEPT_CONFIRM",activeConcept.getName(), Integer.toString(list.size()))); //$NON-NLS-1$ 
+                mb.setText(Messages.getString("MetaEditorConcepts.USER_TITLE_WARNING")); //$NON-NLS-1$
                 answer = mb.open();
             }
             if (answer==SWT.YES)
@@ -485,7 +486,8 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
             {
                 String[] names = schemaMeta.getConceptNames();
                 
-                EnterSelectionDialog dialog = new EnterSelectionDialog(shell, names, "Replace parent concepts", "This will replace parent concept ["+activeConcept.getName()+"] in all model elements with another concept\nPlease select the concept to replace it with.");
+                EnterSelectionDialog dialog = new EnterSelectionDialog(shell, names, Messages.getString("MetaEditorConcepts.USER_REPLACE_PARENT_CONCEPTS"), //$NON-NLS-1$   
+                    Messages.getString("MetaEditorConcepts.USER_REPLACE_PARENT_CONCEPT", activeConcept.getName())); //$NON-NLS-1$ 
                 String conceptName = dialog.open();
                 if (conceptName!=null)
                 {
@@ -688,8 +690,8 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
        // Clear it all first...
        wPProps.clearAll(false);
        wProps.clearAll(false);
-       wName.setText("");
-       wParent.setText("");
+       wName.setText(""); //$NON-NLS-1$
+       wParent.setText(""); //$NON-NLS-1$
         
        // Then fill 'er back up
        //
@@ -809,7 +811,7 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
         // if (path.length==1 && itemText.equals(STRING_CONCEPTS))
         {
             MenuItem miNew = new MenuItem(menu, SWT.NONE);
-            miNew.setText("Create new concept");
+            miNew.setText(Messages.getString("MetaEditorConcepts.USER_CREATE_NEW_CONCEPT_TEXT")); //$NON-NLS-1$
             miNew.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent event) { newConcept(); } } );
         }
         
@@ -818,7 +820,7 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
 
 	public String toString()
 	{
-		return "MetaEditorConcepts";
+		return "MetaEditorConcepts"; //$NON-NLS-1$
 	}
 
     /**
@@ -844,7 +846,7 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
         
         if (concept!=null)
         {
-            log.logDetailed(toString(), "Setting active concept to ["+concept.getName()+"]");
+            log.logDetailed(toString(), Messages.getString("MetaEditorConcepts.USER_SET_ACTIVE_CONCEPT", concept.getName())); //$NON-NLS-1$ 
             
             changesConcept = (ConceptInterface) concept.clone();
             changesConcept.clearChanged();
@@ -869,7 +871,7 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
         }
         
         // Ask a name...
-        EnterStringDialog dialog = new EnterStringDialog(shell, "", "New concept", "Enter a name for this concept");
+        EnterStringDialog dialog = new EnterStringDialog(shell, "", Messages.getString("MetaEditorConcepts.USER_TITLE_NEW_CONCEPT"), Messages.getString("MetaEditorConcepts.USER_ENTER_NEW_CONCEPT_NAME")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         String conceptName = dialog.open();
         if (conceptName!=null)
         {
@@ -877,8 +879,8 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
             if (metaEditor.getSchemaMeta().findConcept(conceptName)!=null)
             {
                 MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
-                mb.setMessage("A concept with name ["+conceptName+"] already exists in this model.  Please choose a different name.");
-                mb.setText("Error");
+                mb.setMessage(Messages.getString("MetaEditorConcepts.USER_ERROR_CONCEPT_ALREADY_EXISTS", conceptName)); //$NON-NLS-1$ 
+                mb.setText(Messages.getString("MetaEditorConcepts.USER_TITLE_ERROR")); //$NON-NLS-1$
                 mb.open();
                 return;
             }
@@ -896,7 +898,7 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
             }
             catch(ObjectAlreadyExistsException e)
             {
-                new ErrorDialog(shell, "Error", "A concept with id '"+concept.getName()+"' already exists", e);
+                new ErrorDialog(shell, Messages.getString("MetaEditorConcepts.USER_TITLE_ERROR"), Messages.getString("MetaEditorConcepts.USER_ERROR_CONCEPT_ID_EXISTS", concept.getName()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
             }
             
             // refresh the tree on the left too.
@@ -915,8 +917,8 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
         if (changesConcept.hasChanged())
         {
             MessageBox mb = new MessageBox(shell, SWT.YES | SWT.NO | SWT.CANCEL | SWT.ICON_WARNING);
-            mb.setMessage("Do you want to apply your changes first?");
-            mb.setText("Warning");
+            mb.setMessage(Messages.getString("MetaEditorConcepts.USER_CONFIRM_CHANGES")); //$NON-NLS-1$
+            mb.setText(Messages.getString("MetaEditorConcepts.USER_TITLE_WARNING")); //$NON-NLS-1$
             int answer = mb.open();
             if (answer==SWT.YES)
             {
@@ -959,8 +961,8 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
                     if (schemaMeta.findConcept(newName)!=null)
                     {
                         MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
-                        mb.setMessage("Please specify a different name for the concept.  ["+newName+"] is already used in this model.");
-                        mb.setText("Error");
+                        mb.setMessage(Messages.getString("MetaEditorConcepts.USER_SPECIFY_DIFFERENT_CONCEPT_NAME", newName)); //$NON-NLS-1$ 
+                        mb.setText(Messages.getString("MetaEditorConcepts.USER_TITLE_ERROR")); //$NON-NLS-1$
                         mb.open();
                         return;
                     }
@@ -1001,8 +1003,8 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
             else
             {
                 MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
-                mb.setMessage("Please specify a name for the concept.");
-                mb.setText("Error");
+                mb.setMessage(Messages.getString("MetaEditorConcepts.USER_SPECIFY_NAME_FOR_CONCEPT")); //$NON-NLS-1$
+                mb.setText(Messages.getString("MetaEditorConcepts.USER_TITLE_ERROR")); //$NON-NLS-1$
                 mb.open();
                 return;
             }

@@ -38,6 +38,7 @@ import java.util.Locale;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.TreeItem;
+import org.pentaho.pms.messages.Messages;
 
 import be.ibridge.kettle.core.database.DatabaseMeta;
 import be.ibridge.kettle.core.exception.KettleException;
@@ -57,22 +58,22 @@ public class Const
 	/**
 	 *  Version number
 	 */
-	public static final String VERSION = "0.7.1";
+	public static final String VERSION = "0.7.1"; //$NON-NLS-1$
 
 	/**
 	 * What's the file systems file separator on this operating system?
 	 */
-	public static final String FILE_SEPARATOR = System.getProperty("file.separator");
+	public static final String FILE_SEPARATOR = System.getProperty("file.separator"); //$NON-NLS-1$
 
 	/**
 	 * CR: operating systems specific Cariage Return
 	 */
-	public static final String CR = System.getProperty("line.separator");
+	public static final String CR = System.getProperty("line.separator"); //$NON-NLS-1$
 
 	/**
 	 * The Java runtime version
 	 */
-	public static final String JAVA_VERSION = System.getProperty("java.vm.version");
+	public static final String JAVA_VERSION = System.getProperty("java.vm.version"); //$NON-NLS-1$
 
 	/**
 	 * The margin between the different dialog components & widgets
@@ -137,7 +138,7 @@ public class Const
 	/**
 	 * Default font name for the fixed width font
 	 */
-	public static final String FONT_FIXED_NAME = "Courier";
+	public static final String FONT_FIXED_NAME = "Courier"; //$NON-NLS-1$
 
 	/**
 	 * Default font size for the fixed width font
@@ -227,22 +228,22 @@ public class Const
 	/**
 	 * Path to the users home directory
 	 */
-	public static final String USER_HOME_DIRECTORY = Const.isEmpty(System.getProperty("PENTAHO_META_HOME"))?System.getProperty("user.home"):System.getProperty("PENTAHO_META");
+	public static final String USER_HOME_DIRECTORY = Const.isEmpty(System.getProperty("PENTAHO_META_HOME"))?System.getProperty("user.home"):System.getProperty("PENTAHO_META"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	/**
 	 * The base name of the Pentaho metadata editor logfile
 	 */
-	public static final String META_EDITOR_LOG_FILE = "pentaho-meta";
+	public static final String META_EDITOR_LOG_FILE = "pentaho-meta"; //$NON-NLS-1$
 
 	/**
 	 * Default we store our information in Unicode UTF-8 character set.
 	 */
-	public static final String XML_ENCODING = "UTF-8";
+	public static final String XML_ENCODING = "UTF-8"; //$NON-NLS-1$
 
     /**
      * The directory / path to load images from
      */
-    public static final String IMAGE_DIRECTORY = "/org/pentaho/pms/images/";
+    public static final String IMAGE_DIRECTORY = "/org/pentaho/pms/images/"; //$NON-NLS-1$
 
     
     /**
@@ -251,7 +252,7 @@ public class Const
      */
     public static final String getBaseDirectory()
     {
-        return USER_HOME_DIRECTORY + FILE_SEPARATOR + ".pentaho-meta";
+        return USER_HOME_DIRECTORY + FILE_SEPARATOR + ".pentaho-meta"; //$NON-NLS-1$
     }
     
 
@@ -260,7 +261,7 @@ public class Const
      */
     public static final String getPropertiesFile()
     {
-        return Const.getBaseDirectory()+Const.FILE_SEPARATOR+".pme-rc";    
+        return Const.getBaseDirectory()+Const.FILE_SEPARATOR+".pme-rc";     //$NON-NLS-1$
     }
 
     /**
@@ -268,7 +269,7 @@ public class Const
      */
     public static String getQueryFile()
     {
-        return Const.getBaseDirectory()+Const.FILE_SEPARATOR+".query";
+        return Const.getBaseDirectory()+Const.FILE_SEPARATOR+".query"; //$NON-NLS-1$
     }
     
 
@@ -288,7 +289,7 @@ public class Const
             catch(Exception e)
             {
                 // serious problem, serious measures...
-                throw new RuntimeException("Unable to create directory ["+dir.toString()+"]");
+                throw new RuntimeException(Messages.getString("Const.ERROR_0001_CANT_CREATE_DIRECTORY")+dir.toString()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
     }
@@ -377,7 +378,7 @@ public class Const
 	 */
 	public static final Date toDate(String str, Date def)
 	{
-		SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS", Locale.US);
+		SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss.SSS", Locale.US); //$NON-NLS-1$
 		try
 		{
 			return df.parse(str);
@@ -442,7 +443,7 @@ public class Const
 			max--;
 
 		if (max < min)
-			return "";
+			return ""; //$NON-NLS-1$
 
 		return str.substring(min, max + 1);
 	}
@@ -581,7 +582,7 @@ public class Const
 	 */
 	public static final String getOS()
 	{
-		return System.getProperty("os.name");
+		return System.getProperty("os.name"); //$NON-NLS-1$
 	}
 
 	/** 
@@ -589,7 +590,7 @@ public class Const
 	 */
 	public static final boolean isWindows()
 	{
-		return getOS().startsWith("Windows");
+		return getOS().startsWith("Windows"); //$NON-NLS-1$
 	}
     
     /**
@@ -598,7 +599,7 @@ public class Const
      */
     public static final boolean isOSX()
     {
-        return getOS().toLowerCase().startsWith("mac os x");
+        return getOS().toLowerCase().startsWith("mac os x"); //$NON-NLS-1$
     }
 
     /**
@@ -607,7 +608,7 @@ public class Const
      */
     public static final String getHostname()
     {
-        String lastHostname = "localhost";
+        String lastHostname = "localhost"; //$NON-NLS-1$
         try
         {
             Enumeration en = NetworkInterface.getNetworkInterfaces();
@@ -625,7 +626,7 @@ public class Const
                     //System.out.println("  hostname         : "+in.getHostName());
                     //System.out.println("  Cann.hostname    : "+in.getCanonicalHostName());
                     //System.out.println("  ip string        : "+in.toString());
-                    if (!lastHostname.equalsIgnoreCase("localhost") && !(lastHostname.indexOf(":")>=0) )
+                    if (!lastHostname.equalsIgnoreCase("localhost") && !(lastHostname.indexOf(":")>=0) ) //$NON-NLS-1$ //$NON-NLS-2$
                     {
                         return lastHostname;
                     }
@@ -655,7 +656,7 @@ public class Const
 				while (ip.hasMoreElements())
 				{
 					InetAddress in = (InetAddress) ip.nextElement();
-					if (!in.isLoopbackAddress() && in.toString().indexOf(":") < 0)
+					if (!in.isLoopbackAddress() && in.toString().indexOf(":") < 0) //$NON-NLS-1$
 					{
 						return in.getHostAddress();
 					}
@@ -666,7 +667,7 @@ public class Const
 
 		}
 
-		return "127.0.0.1";
+		return "127.0.0.1"; //$NON-NLS-1$
 	}
 
 	/**
@@ -676,21 +677,21 @@ public class Const
 	public static final String getMACAddress()
 	{
 		String ip = getIPAddress();
-		String mac = "none";
+		String mac = "none"; //$NON-NLS-1$
 		String os = getOS();
-		String s = "";
+		String s = ""; //$NON-NLS-1$
 
 		//System.out.println("os = "+os+", ip="+ip);
 
-		if (os.equalsIgnoreCase("Windows NT") || os.equalsIgnoreCase("Windows 2000") || os.equalsIgnoreCase("Windows XP")
-				|| os.equalsIgnoreCase("Windows 95") || os.equalsIgnoreCase("Windows 98") || os.equalsIgnoreCase("Windows Me")
-				|| os.startsWith("Windows"))
+		if (os.equalsIgnoreCase("Windows NT") || os.equalsIgnoreCase("Windows 2000") || os.equalsIgnoreCase("Windows XP") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				|| os.equalsIgnoreCase("Windows 95") || os.equalsIgnoreCase("Windows 98") || os.equalsIgnoreCase("Windows Me") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				|| os.startsWith("Windows")) //$NON-NLS-1$
 		{
 			try
 			{
 				// System.out.println("EXEC> nbtstat -a "+ip);
 
-				Process p = Runtime.getRuntime().exec("nbtstat -a " + ip);
+				Process p = Runtime.getRuntime().exec("nbtstat -a " + ip); //$NON-NLS-1$
 
 				// read the standard output of the command
 				BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -700,9 +701,9 @@ public class Const
 					while ((s = stdInput.readLine()) != null)
 					{
 						// System.out.println("NBTSTAT> "+s);
-						if (s.indexOf("MAC") >= 0)
+						if (s.indexOf("MAC") >= 0) //$NON-NLS-1$
 						{
-							int idx = s.indexOf("=");
+							int idx = s.indexOf("="); //$NON-NLS-1$
 							mac = s.substring(idx + 2);
 						}
 					}
@@ -712,11 +713,11 @@ public class Const
 			{
 
 			}
-		} else if (os.equalsIgnoreCase("Linux"))
+		} else if (os.equalsIgnoreCase("Linux")) //$NON-NLS-1$
 		{
 			try
 			{
-				Process p = Runtime.getRuntime().exec("/sbin/ifconfig -a");
+				Process p = Runtime.getRuntime().exec("/sbin/ifconfig -a"); //$NON-NLS-1$
 
 				// read the standard output of the command
 				BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -725,7 +726,7 @@ public class Const
 				{
 					while ((s = stdInput.readLine()) != null)
 					{
-						int idx = s.indexOf("HWaddr");
+						int idx = s.indexOf("HWaddr"); //$NON-NLS-1$
 						if (idx >= 0)
 						{
 							mac = s.substring(idx + 7);
@@ -737,11 +738,11 @@ public class Const
 			{
 
 			}
-		} else if (os.equalsIgnoreCase("Solaris"))
+		} else if (os.equalsIgnoreCase("Solaris")) //$NON-NLS-1$
 		{
 			try
 			{
-				Process p = Runtime.getRuntime().exec("/usr/sbin/ifconfig -a");
+				Process p = Runtime.getRuntime().exec("/usr/sbin/ifconfig -a"); //$NON-NLS-1$
 
 				// read the standard output of the command
 				BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -750,7 +751,7 @@ public class Const
 				{
 					while ((s = stdInput.readLine()) != null)
 					{
-						int idx = s.indexOf("ether");
+						int idx = s.indexOf("ether"); //$NON-NLS-1$
 						if (idx >= 0)
 						{
 							mac = s.substring(idx + 6);
@@ -762,11 +763,11 @@ public class Const
 			{
 
 			}
-		} else if (os.equalsIgnoreCase("HP-UX"))
+		} else if (os.equalsIgnoreCase("HP-UX")) //$NON-NLS-1$
 		{
 			try
 			{
-				Process p = Runtime.getRuntime().exec("/usr/sbin/lanscan -a");
+				Process p = Runtime.getRuntime().exec("/usr/sbin/lanscan -a"); //$NON-NLS-1$
 
 				// read the standard output of the command
 				BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -775,9 +776,9 @@ public class Const
 				{
 					while ((s = stdInput.readLine()) != null)
 					{
-						if (s.indexOf("MAC") >= 0)
+						if (s.indexOf("MAC") >= 0) //$NON-NLS-1$
 						{
-							int idx = s.indexOf("0x");
+							int idx = s.indexOf("0x"); //$NON-NLS-1$
 							mac = s.substring(idx + 2);
 						}
 					}
@@ -890,7 +891,7 @@ public class Const
 		if (path == null)
 			return null;
 
-		String retval = "";
+		String retval = ""; //$NON-NLS-1$
 
 		for (int i = from; i < path.length; i++)
 		{
@@ -1075,8 +1076,8 @@ public class Const
 	 */
 	public static final String getCommandlineOption(List args, String option)
 	{
-		String optionStart[] = new String[] { "-", "/" };
-		String optionDelim[] = new String[] { "=", ":" };
+		String optionStart[] = new String[] { "-", "/" }; //$NON-NLS-1$ //$NON-NLS-2$
+		String optionDelim[] = new String[] { "=", ":" }; //$NON-NLS-1$ //$NON-NLS-2$
 
 		for (int s = 0; s < optionStart.length; s++)
 		{
@@ -1149,11 +1150,11 @@ public class Const
 			return null;
 		StringBuffer str = new StringBuffer(string);
 
-		int idx = str.indexOf("%%");
+		int idx = str.indexOf("%%"); //$NON-NLS-1$
 		while (idx >= 0)
 		{
 			//OK, so we found a marker, look for the next one...
-			int to = str.indexOf("%%", idx + 2);
+			int to = str.indexOf("%%", idx + 2); //$NON-NLS-1$
 			if (to >= 0)
 			{
 				// OK, we found the other marker also...
@@ -1183,7 +1184,7 @@ public class Const
 			}
 
 			// Look for the next variable to replace...
-			idx = str.indexOf("%%", to + 1);
+			idx = str.indexOf("%%", to + 1); //$NON-NLS-1$
 		}
 
 		return str.toString();
@@ -1307,7 +1308,7 @@ public class Const
 			{
 				// OK, we found a separator, the string to add to the list
 				// is [from, i[
-				list.add(NVL(string.substring(from, i), ""));
+				list.add(NVL(string.substring(from, i), "")); //$NON-NLS-1$
 				from = i + sepLen;
 			}
 		}
@@ -1316,7 +1317,7 @@ public class Const
 		// In our example that would be "d"...
 		if (from + sepLen <= string.length())
 		{
-			list.add(NVL(string.substring(from, string.length()), ""));
+			list.add(NVL(string.substring(from, string.length()), "")); //$NON-NLS-1$
 		}
 
 		return (String[]) list.toArray(new String[list.size()]);
@@ -1355,7 +1356,7 @@ public class Const
 			{
 				// OK, we found a separator, the string to add to the list
 				// is [from, i[
-				list.add(NVL(string.substring(from, i), ""));
+				list.add(NVL(string.substring(from, i), "")); //$NON-NLS-1$
 				from = i + 1;
 			}
 		}
@@ -1364,7 +1365,7 @@ public class Const
 		// In our example that would be "d"...
 		if (from + 1 <= string.length())
 		{
-			list.add(NVL(string.substring(from, string.length()), ""));
+			list.add(NVL(string.substring(from, string.length()), "")); //$NON-NLS-1$
 		}
 
 		return (String[]) list.toArray(new String[list.size()]);
@@ -1450,7 +1451,7 @@ public class Const
 
 		String[] sorted = sortStrings(strings);
 		List result = new ArrayList();
-		String previous = "";
+		String previous = ""; //$NON-NLS-1$
 		for (int i = 0; i < sorted.length; i++)
 		{
 			if (!sorted[i].equalsIgnoreCase(previous))
@@ -1512,7 +1513,7 @@ public class Const
         }
         catch (Exception e)
         {
-            throw new KettleException("Unexpected error during classloader creation", e);
+            throw new KettleException(Messages.getString("Const.ERROR_0002_UNEXPECTED_CLASSLOADER_CREATION"), e); //$NON-NLS-1$
         }
     }
     
@@ -1574,23 +1575,23 @@ public class Const
      */
     public static final String toID(String name)
     {
-        name = Const.replace(name, " ", "_");
-        name = Const.replace(name, ".", "_");
-        name = Const.replace(name, ",", "_");
-        name = Const.replace(name, ":", "_");
-        name = Const.replace(name, "(", "_");
-        name = Const.replace(name, ")", "_");
-        name = Const.replace(name, "{", "_");
-        name = Const.replace(name, "}", "_");
-        name = Const.replace(name, "[", "_");
-        name = Const.replace(name, "]", "_");
-        name = Const.replace(name, "*", "_TIMES_");
-        name = Const.replace(name, "/", "_DIVIDED_BY_");
-        name = Const.replace(name, "+", "_PLUS_");
-        name = Const.replace(name, "-", "_MINUS_");
-        name = Const.replace(name, "____", "_");
-        name = Const.replace(name, "___", "_");
-        name = Const.replace(name, "__", "_");
+        name = Const.replace(name, " ", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+        name = Const.replace(name, ".", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+        name = Const.replace(name, ",", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+        name = Const.replace(name, Messages.getString("Const.68"), "_"); //$NON-NLS-1$ //$NON-NLS-2$
+        name = Const.replace(name, "(", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+        name = Const.replace(name, ")", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+        name = Const.replace(name, "{", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+        name = Const.replace(name, "}", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+        name = Const.replace(name, "[", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+        name = Const.replace(name, "]", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+        name = Const.replace(name, "*", "_TIMES_"); //$NON-NLS-1$ //$NON-NLS-2$
+        name = Const.replace(name, "/", "_DIVIDED_BY_"); //$NON-NLS-1$ //$NON-NLS-2$
+        name = Const.replace(name, "+", "_PLUS_"); //$NON-NLS-1$ //$NON-NLS-2$
+        name = Const.replace(name, "-", "_MINUS_"); //$NON-NLS-1$ //$NON-NLS-2$
+        name = Const.replace(name, "____", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+        name = Const.replace(name, "___", "_"); //$NON-NLS-1$ //$NON-NLS-2$
+        name = Const.replace(name, "__", "_"); //$NON-NLS-1$ //$NON-NLS-2$
 
         return name;
     }
@@ -1603,7 +1604,7 @@ public class Const
      */
     public static String fromID(String id)
     {
-       id = Const.replace(id, "_", " ");
+       id = Const.replace(id, "_", " "); //$NON-NLS-1$ //$NON-NLS-2$
        id = Const.initCap(id);
        
        return id;

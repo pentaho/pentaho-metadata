@@ -160,7 +160,7 @@ public class QueryDialog extends Dialog
         wSQL=new Button(shell, SWT.PUSH);
         wSQL.setText(Messages.getString("QueryDialog.USER_SQL")); //$NON-NLS-1$
         wTrans=new Button(shell, SWT.PUSH);
-        wTrans.setText("  &Transformation  ");
+        wTrans.setText(Messages.getString("QueryDialog.USER_TRANSFORMATION")); //$NON-NLS-1$
         wCancel=new Button(shell, SWT.PUSH);
         wCancel.setText(Messages.getString("QueryDialog.USER_CANCEL")); //$NON-NLS-1$
         
@@ -1023,13 +1023,13 @@ public class QueryDialog extends Dialog
                 StringBuffer logBuffer = new StringBuffer();
                 java.util.List list = mqlQuery.getRowsUsingTransformation(true, logBuffer);
 
-                PreviewRowsDialog prd =new PreviewRowsDialog(shell, SWT.NONE, "Query", list, logBuffer.toString());
+                PreviewRowsDialog prd =new PreviewRowsDialog(shell, SWT.NONE, Messages.getString("QueryDialog.USER_QUERY"), list, logBuffer.toString()); //$NON-NLS-1$
                 prd.open();
 
             }
             catch(KettleException e)
             {
-                new ErrorDialog(shell, "Error", "Error executing query: ", e);
+                new ErrorDialog(shell, Messages.getString("QueryDialog.USER_TITLE_ERROR"), Messages.getString("QueryDialog.USER_ERROR_EXECUTE_QUERY"), e); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
     }
