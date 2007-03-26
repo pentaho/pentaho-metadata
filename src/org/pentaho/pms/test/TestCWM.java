@@ -33,11 +33,11 @@ import be.ibridge.kettle.core.value.Value;
  */
 public class TestCWM
 {
-    public static final String MODEL = "SomeModel";  // The model name
+    public static final String DOMAIN = "SomeDomain";  // The domain name
     
     private static final String TEST_TABLE_NAME = "PentahoTable1";
     
-    private static CWM cwm = CWM.getInstance(MODEL);
+    private static CWM cwm = CWM.getInstance(DOMAIN);
 
     /**
      * @param args
@@ -50,11 +50,11 @@ public class TestCWM
         //testCWM.removeTable();
         //testCWM.readBack();
         
-        String[] modelNames = CWM.getModelNames();
-        for (int i=0;i<modelNames.length;i++)
+        String[] domainNames = CWM.getDomainNames();
+        for (int i=0;i<domainNames.length;i++)
         {
-            System.out.println("Package #"+(i+1)+" found : "+modelNames[i]);
-            cwm.removePackage(modelNames[i]);
+            System.out.println("Package #"+(i+1)+" found : "+domainNames[i]);
+            cwm.removePackage(domainNames[i]);
         }
         
         CWM.quitAndSync();
@@ -108,9 +108,9 @@ public class TestCWM
         }
         
         // Try to create a package here...
-        CwmPackage p = cwm.createPackage(MODEL+" package");
+        CwmPackage p = cwm.createPackage(DOMAIN+" package");
         p.getImportedElement().add(table);
-        cwm.setDescription(p, cwm.createDescription("This is a package description for ["+MODEL+"]") );
+        cwm.setDescription(p, cwm.createDescription("This is a package description for ["+DOMAIN+"]") );
         
         cwm.endTransaction();
         
@@ -152,7 +152,7 @@ public class TestCWM
                 System.out.println();
             }
             
-            CwmPackage p = cwm.getPackage(MODEL);
+            CwmPackage p = cwm.getPackage(DOMAIN);
             if (p!=null)
             {
                 System.out.println("Package found ! --> "+p.getName());

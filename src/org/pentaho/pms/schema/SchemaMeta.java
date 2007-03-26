@@ -62,7 +62,7 @@ import be.ibridge.kettle.core.list.UniqueList;
 public class SchemaMeta
 {
 	private   String            name;
-	public    String            modelName;
+	public    String            domainName;
     
 	public    UniqueList        databases;
 	private   UniqueList        tables;
@@ -101,14 +101,14 @@ public class SchemaMeta
 	public void addDefaults()
     {
         Concept baseConcept = new Concept(Settings.getConceptNameBase());
-        baseConcept.addProperty(new ConceptPropertyFont(DefaultPropertyID.FONT.getId(), new FontSettings("Verdana", 10, false, false)));
+        baseConcept.addProperty(new ConceptPropertyFont(DefaultPropertyID.FONT.getId(), new FontSettings("Verdana", 10, false, false))); //$NON-NLS-1$
         baseConcept.addProperty(new ConceptPropertyAlignment(DefaultPropertyID.ALIGNMENT.getId(), AlignmentSettings.LEFT));
 
         Concept numberConcept = new Concept(Settings.getConceptNameNumber(), baseConcept);
-        numberConcept.addProperty(new ConceptPropertyString(DefaultPropertyID.MASK.getId(), "###,##0.00"));
+        numberConcept.addProperty(new ConceptPropertyString(DefaultPropertyID.MASK.getId(), "###,##0.00")); //$NON-NLS-1$
         
         Concept idConcept = new Concept(Settings.getConceptNameID(), numberConcept);
-        idConcept.addProperty(new ConceptPropertyString(DefaultPropertyID.MASK.getId(), "0"));
+        idConcept.addProperty(new ConceptPropertyString(DefaultPropertyID.MASK.getId(), "0")); //$NON-NLS-1$
 
         Concept skConcept = new Concept(Settings.getConceptNameSK(), idConcept);
         skConcept.addProperty(new ConceptPropertyBoolean(DefaultPropertyID.HIDDEN.getId(), true));
@@ -290,13 +290,13 @@ public class SchemaMeta
         securityReference.getSecurityService().setChanged(false);
     }
     
-	public DatabaseMeta findDatabase(String name)
+	public DatabaseMeta findDatabase(String dbName)
 	{
 		int i;
 		for (i=0;i<nrDatabases();i++)
 		{
 			DatabaseMeta ci = getDatabase(i); 
-			if (ci.getName().equalsIgnoreCase(name))
+			if (ci.getName().equalsIgnoreCase(dbName))
 			{
 				return ci; 
 			}
@@ -341,20 +341,20 @@ public class SchemaMeta
     /**
      * Find a physical table name in a certain locale.  If nothing was found, search the table on ID.
      * @param locale the locale to search in
-     * @param name the name to look for
+     * @param nameToFind the name to look for
      * @return the physical table or null if nothing was found.
      */
-    public PhysicalTable findPhysicalTable(String locale, String name)
+    public PhysicalTable findPhysicalTable(String locale, String nameToFind)
     {
         for (int i=0;i<nrTables();i++)
         {
             PhysicalTable physicalTable = getTable(i); 
-            if (name.equalsIgnoreCase( physicalTable.getConcept().getName(locale) ) )
+            if (nameToFind.equalsIgnoreCase( physicalTable.getConcept().getName(locale) ) )
             {
                 return physicalTable; 
             }
         }
-        return findPhysicalTable(name);
+        return findPhysicalTable(nameToFind);
     }
 	
 	public int indexOfDatabase(Object ci)
@@ -385,18 +385,18 @@ public class SchemaMeta
     
     /**
      * Search a view based on the localized name or if that is not found, the ID
-     * @param name The name (or ID) to search for
+     * @param nameToFind The name (or ID) to search for
      * @param locale The locale in which we want to search
      * @return The business view or null if nothing could be found. 
      */
-	public BusinessView findView(String locale, String name)
+	public BusinessView findView(String locale, String nameToFind)
 	{
 		for (int i=0;i<nrViews();i++)
 		{
 			BusinessView view = getView(i);
             
             String locName = view.getConcept().getName(locale); 
-			if ( (locName!=null && locName.equals(name)) || view.getId().equals(name))
+			if ( (locName!=null && locName.equals(nameToFind)) || view.getId().equals(nameToFind))
 			{
 				return view; 
 			}
@@ -438,13 +438,13 @@ public class SchemaMeta
 
     public PhysicalTable[] getTablesOnDatabase(DatabaseMeta databaseMeta)
     {
-        List tables = new ArrayList();
+        List allTables = new ArrayList();
         for (int i=0;i<nrTables();i++)
         {
             PhysicalTable table = getTable(i);
-            if (table.getDatabaseMeta().equals(databaseMeta)) tables.add(table);
+            if (table.getDatabaseMeta().equals(databaseMeta)) allTables.add(table);
         }
-        return (PhysicalTable[]) tables.toArray(new PhysicalTable[tables.size()]);
+        return (PhysicalTable[]) allTables.toArray(new PhysicalTable[allTables.size()]);
     }
 
     /**
@@ -556,14 +556,14 @@ public class SchemaMeta
      */
     public String[] getUsedLocale()
     {
-        Map locales = new Hashtable();
+        Map allLocales = new Hashtable();
         for (int i=0;i<nrViews();i++)
         {
             String[] usedLocale = getView(i).getConcept().getUsedLocale(); 
-            for (int j=0;j<usedLocale.length;j++) locales.put(usedLocale[i], ""); 
+            for (int j=0;j<usedLocale.length;j++) allLocales.put(usedLocale[i], "");  //$NON-NLS-1$
         }
         
-        Set keySet = locales.keySet(); 
+        Set keySet = allLocales.keySet(); 
         return (String[])keySet.toArray(new String[keySet.size()]);
     }
 
@@ -631,19 +631,19 @@ public class SchemaMeta
     }
 
     /**
-     * @return the modelName
+     * @return the domainName
      */
-    public String getModelName()
+    public String getDomainName()
     {
-        return modelName;
+        return domainName;
     }
 
     /**
-     * @param modelName the modelName to set
+     * @param domainName the domainName to set
      */
-    public void setModelName(String modelName)
+    public void setDomainName(String domainName)
     {
-        this.modelName = modelName;
+        this.domainName = domainName;
     }
 
     /**

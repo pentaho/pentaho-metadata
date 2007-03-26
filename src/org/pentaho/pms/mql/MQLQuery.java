@@ -51,13 +51,12 @@ import be.ibridge.kettle.trans.Trans;
 import be.ibridge.kettle.trans.TransMeta;
 import be.ibridge.kettle.trans.step.RowListener;
 import be.ibridge.kettle.trans.step.StepInterface;
-
 public class MQLQuery {
 
-	public static int MODEL_TYPE_RELATIONAL = 1;
-	public static int MODEL_TYPE_OLAP = 2; // NOT SUPPORTED YET
+	public static int DOMAIN_TYPE_RELATIONAL = 1;
+	public static int DOMAIN_TYPE_OLAP = 2; // NOT SUPPORTED YET
 
-	private int modelType = MODEL_TYPE_RELATIONAL;
+	private int domainType = DOMAIN_TYPE_RELATIONAL;
 	private List selections = new ArrayList();
 	private List constraints = new ArrayList();
     private List order = new ArrayList();
@@ -266,19 +265,19 @@ public class MQLQuery {
 	        		return false;
 	    		}
 	    	
-    			// insert the model information
+    			// insert the domain information
             	Element typeElement = doc.createElement( "model_type" );
-            	typeElement.appendChild( doc.createTextNode( (modelType == MODEL_TYPE_RELATIONAL) ? "relational" : "olap" ) );
+            	typeElement.appendChild( doc.createTextNode( (domainType == DOMAIN_TYPE_RELATIONAL) ? "relational" : "olap" ) );
             	mqlElement.appendChild( typeElement );
         	
-    			// insert the model information
-            	String data = schemaMeta.getModelName();
+    			// insert the domain information
+            	String data = schemaMeta.getDomainName();
             	if( data != null ) {
 	            	Element modelIdElement = doc.createElement( "model_id" );
 	            	modelIdElement.appendChild( doc.createTextNode( data ) );
 	            	mqlElement.appendChild( modelIdElement );
             	} else {
-            		System.err.println( "model id is null" );
+            		System.err.println( "domain id is null" );
 	        		return false;
             	}
         	
@@ -429,18 +428,18 @@ public class MQLQuery {
             db = dbf.newDocumentBuilder();
             doc = db.parse(new InputSource(new java.io.StringReader(XML)));
 
-            // get the model type
+            // get the domain type
             String modelTypeStr = getElementText( doc, "model_type" );
             if( "relational".equals( modelTypeStr ) ) {
-            		modelType = MODEL_TYPE_RELATIONAL;
+            		domainType = DOMAIN_TYPE_RELATIONAL;
             }
             else if( "olap".equals( modelTypeStr ) ) {
-            		modelType = MODEL_TYPE_OLAP;
+            		domainType = DOMAIN_TYPE_OLAP;
             } else {
             		// need to throw an error
             }
 
-            // get the model id
+            // get the domain id
             String modelId = getElementText( doc, "model_id" );
             CWM cwm = CWM.getInstance(modelId);
             // CwmSchemaFactoryInterface cwmSchemaFactory = Settings.getCwmSchemaFactory();

@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.pentaho.pms.editor.MetaEditor;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.mql.MQLQuery;
 import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
@@ -73,8 +74,8 @@ import be.ibridge.kettle.trans.step.BaseStepDialog;
  */
 public class QueryDialog extends Dialog
 {
-    private static final String STRING_ASCENDING = "Ascending";
-    private static final String STRING_DESCENDING = "Descending";
+    private static final String STRING_ASCENDING = Messages.getString("QueryDialog.USER_ASCENDING"); //$NON-NLS-1$
+    private static final String STRING_DESCENDING = Messages.getString("QueryDialog.USER_DESCENDING"); //$NON-NLS-1$
     
     private static final String STRING_CATEGORIES_TREE = MetaEditor.STRING_CATEGORIES_TREE;
     private static final String STRING_CATEGORIES      = MetaEditor.STRING_CATEGORIES;
@@ -119,10 +120,10 @@ public class QueryDialog extends Dialog
         this.schemaMeta = schemaMeta;
         this.query = query;
         
-        // If the model is not the same as the previous: clear the previous query.
+        // If the domain is not the same as the previous: clear the previous query.
         // Just as a precaution.
         //
-        if (query!=null && query.getSchemaMeta()!=null && query.getSchemaMeta().getModelName()!=null && !query.getSchemaMeta().getModelName().equals(schemaMeta.getModelName()))
+        if (query!=null && query.getSchemaMeta()!=null && query.getSchemaMeta().getDomainName()!=null && !query.getSchemaMeta().getDomainName().equals(schemaMeta.getDomainName()))
         {
             query=null;
         }
@@ -146,7 +147,7 @@ public class QueryDialog extends Dialog
         formLayout.marginHeight = Const.FORM_MARGIN;
         shell.setLayout(formLayout);
         
-        shell.setText("Query editor");
+        shell.setText(Messages.getString("QueryDialog.USER_QUERY_EDITOR")); //$NON-NLS-1$
         
         addMenu();
         
@@ -155,19 +156,19 @@ public class QueryDialog extends Dialog
         
         // The buttons...
         wOK=new Button(shell, SWT.PUSH);
-        wOK.setText("  &OK  ");
+        wOK.setText(Messages.getString("QueryDialog.USER_OK")); //$NON-NLS-1$
         wSQL=new Button(shell, SWT.PUSH);
-        wSQL.setText("  &SQL  ");
+        wSQL.setText(Messages.getString("QueryDialog.USER_SQL")); //$NON-NLS-1$
         wTrans=new Button(shell, SWT.PUSH);
         wTrans.setText("  &Transformation  ");
         wCancel=new Button(shell, SWT.PUSH);
-        wCancel.setText("  &Cancel  ");
+        wCancel.setText(Messages.getString("QueryDialog.USER_CANCEL")); //$NON-NLS-1$
         
         BaseStepDialog.positionBottomButtons(shell, new Button[] { wOK, wSQL, wTrans, wCancel }, Const.MARGIN, null);
 
         // Add a label for the business view
         Label wlViews = new Label(shell, SWT.LEFT);
-        wlViews.setText("Select the business view :");
+        wlViews.setText(Messages.getString("QueryDialog.USER_SELECT_BUSINESS_MODEL")); //$NON-NLS-1$
         props.setLook(wlViews);
         FormData fdlViews = new FormData();
         fdlViews.left = new FormAttachment(0,0);
@@ -189,7 +190,7 @@ public class QueryDialog extends Dialog
         
         // Add a label for the tree
         Label wlCat = new Label(shell, SWT.LEFT);
-        wlCat.setText("The categories and columns:");
+        wlCat.setText(Messages.getString("QueryDialog.USER_CATEGORIES_AND_COLUMNS")); //$NON-NLS-1$
         props.setLook(wlCat);
         FormData fdlCat = new FormData();
         fdlCat.left = new FormAttachment(0,0);
@@ -213,8 +214,8 @@ public class QueryDialog extends Dialog
         
         // the add column button
         wAddColumn = new Button(shell, SWT.PUSH);
-        wAddColumn.setText("Add");
-        wAddColumn.setToolTipText("Add columns to the selection");
+        wAddColumn.setText(Messages.getString("QueryDialog.USER_ADD")); //$NON-NLS-1$
+        wAddColumn.setToolTipText(Messages.getString("QueryDialog.USER_ADD_COLUMNS_TO_SELECTION")); //$NON-NLS-1$
         props.setLook(wAddColumn);
         FormData fdAddColumn = new FormData();
         fdAddColumn.left   = new FormAttachment(wCat , 2*margin);
@@ -224,8 +225,8 @@ public class QueryDialog extends Dialog
         
         // The delete column button
         wDelColumn = new Button(shell, SWT.PUSH);
-        wDelColumn.setText("Del");
-        wDelColumn.setToolTipText("Remove columns from the selection");
+        wDelColumn.setText(Messages.getString("QueryDialog.USER_DEL")); //$NON-NLS-1$
+        wDelColumn.setToolTipText(Messages.getString("QueryDialog.USER_DELETE_COLUMNS_FROM_SELECTION")); //$NON-NLS-1$
         props.setLook(wDelColumn);
         FormData fdDelColumn = new FormData();
         fdDelColumn.left   = new FormAttachment(wCat , 2*margin);
@@ -235,8 +236,8 @@ public class QueryDialog extends Dialog
 
         // Move column up button
         wUpColumn = new Button(shell, SWT.PUSH);
-        wUpColumn.setText("Up");
-        wUpColumn.setToolTipText("Move columns up");
+        wUpColumn.setText(Messages.getString("QueryDialog.USER_UP")); //$NON-NLS-1$
+        wUpColumn.setToolTipText(Messages.getString("QueryDialog.USER_MOVE_COLUMNS_UP")); //$NON-NLS-1$
         props.setLook(wUpColumn);
         FormData fdUpColumn = new FormData();
         fdUpColumn.left   = new FormAttachment(wCat , 2*margin);
@@ -246,8 +247,8 @@ public class QueryDialog extends Dialog
 
         // Move column up button
         wDownColumn = new Button(shell, SWT.PUSH);
-        wDownColumn.setText("Down");
-        wDownColumn.setToolTipText("Move columns down");
+        wDownColumn.setText(Messages.getString("QueryDialog.USER_DOWN")); //$NON-NLS-1$
+        wDownColumn.setToolTipText(Messages.getString("QueryDialog.USER_MOVE_COLUMNS_DOWN")); //$NON-NLS-1$
         props.setLook(wDownColumn);
         FormData fdDownColumn = new FormData();
         fdDownColumn.left   = new FormAttachment(wCat , 2*margin);
@@ -257,7 +258,7 @@ public class QueryDialog extends Dialog
 
         // Add a label for the selected columns
         Label wlColumns = new Label(shell, SWT.LEFT);
-        wlColumns.setText("The selected columns:");
+        wlColumns.setText(Messages.getString("QueryDialog.USER_SELECTED_COLUMNS")); //$NON-NLS-1$
         props.setLook(wlColumns);
         FormData fdlColumns = new FormData();
         fdlColumns.left = new FormAttachment(wDownColumn, 2*margin);
@@ -267,8 +268,8 @@ public class QueryDialog extends Dialog
         // Then we add a grid with the selected columns
         ColumnInfo[] columnFields =new ColumnInfo[]
           {
-            new ColumnInfo("Table",     ColumnInfo.COLUMN_TYPE_TEXT, false, true),
-            new ColumnInfo("Column",    ColumnInfo.COLUMN_TYPE_TEXT, false, true),
+            new ColumnInfo(Messages.getString("QueryDialog.USER_TABLE"),     ColumnInfo.COLUMN_TYPE_TEXT, false, true), //$NON-NLS-1$
+            new ColumnInfo(Messages.getString("QueryDialog.USER_COLUMN"),    ColumnInfo.COLUMN_TYPE_TEXT, false, true), //$NON-NLS-1$
           };
                           
         wColumns=new TableView(shell, 
@@ -294,8 +295,8 @@ public class QueryDialog extends Dialog
         
         // the add order button
         wAddOrder = new Button(shell, SWT.PUSH);
-        wAddOrder.setText("Add");
-        wAddOrder.setToolTipText("Add column order");
+        wAddOrder.setText(Messages.getString("QueryDialog.USER_ADD")); //$NON-NLS-1$
+        wAddOrder.setToolTipText(Messages.getString("QueryDialog.USER_ADD_COLUMN_ORDER")); //$NON-NLS-1$
         props.setLook(wAddOrder);
         FormData fdAddOrder = new FormData();
         fdAddOrder.left   = new FormAttachment(wColumns , 2*margin);
@@ -305,8 +306,8 @@ public class QueryDialog extends Dialog
         
         // The delete column button
         wDelOrder = new Button(shell, SWT.PUSH);
-        wDelOrder.setText("Del");
-        wDelOrder.setToolTipText("Remove columns order");
+        wDelOrder.setText(Messages.getString("QueryDialog.USER_DEL")); //$NON-NLS-1$
+        wDelOrder.setToolTipText(Messages.getString("QueryDialog.USER_REMOVE_COLUMN_ORDER")); //$NON-NLS-1$
         props.setLook(wDelOrder);
         FormData fdDelOrder = new FormData();
         fdDelOrder.left   = new FormAttachment(wColumns , 2*margin);
@@ -322,8 +323,8 @@ public class QueryDialog extends Dialog
         // the add order button
         // The delete column button
         wDescending = new Button(shell, SWT.PUSH);
-        wDescending.setText("DESC");
-        wDescending.setToolTipText("Sort descending");
+        wDescending.setText(Messages.getString("QueryDialog.USER_DESC")); //$NON-NLS-1$
+        wDescending.setToolTipText(Messages.getString("QueryDialog.USER_SORT_DESCENDING")); //$NON-NLS-1$
         props.setLook(wDescending);
         FormData fdDescending = new FormData();
         fdDescending.right = new FormAttachment(100, 0);
@@ -332,8 +333,8 @@ public class QueryDialog extends Dialog
         wDescending.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent event) { setOrderAscending(false); }});
         
         wAscending = new Button(shell, SWT.PUSH);
-        wAscending.setText("ASC");
-        wAscending.setToolTipText("Sort ascending");
+        wAscending.setText(Messages.getString("QueryDialog.USER_ASC")); //$NON-NLS-1$
+        wAscending.setToolTipText(Messages.getString("QueryDialog.USER_SORT_ASCENDING")); //$NON-NLS-1$
         props.setLook(wAscending);
         FormData fdAscending = new FormData();
         fdAscending.left  = new FormAttachment(wDescending, 0, SWT.CENTER);
@@ -345,7 +346,7 @@ public class QueryDialog extends Dialog
         
         // Add a label for the order
         Label wlOrder = new Label(shell, SWT.LEFT);
-        wlOrder.setText("The order by clause:");
+        wlOrder.setText(Messages.getString("QueryDialog.USER_ORDER_BY_CLAUSE")); //$NON-NLS-1$
         props.setLook(wlOrder);
         FormData fdlOrder = new FormData();
         fdlOrder.left = new FormAttachment(wAddOrder, 2*margin);
@@ -354,9 +355,9 @@ public class QueryDialog extends Dialog
 
         ColumnInfo[] orderFields =new ColumnInfo[]
           {
-            new ColumnInfo("Table",     ColumnInfo.COLUMN_TYPE_TEXT, false, true),
-            new ColumnInfo("Column",    ColumnInfo.COLUMN_TYPE_TEXT, false, true),
-            new ColumnInfo("Ordering",  ColumnInfo.COLUMN_TYPE_CCOMBO, new String[] { "-", STRING_ASCENDING, STRING_DESCENDING }, true),
+            new ColumnInfo(Messages.getString("QueryDialog.USER_TABLE"),     ColumnInfo.COLUMN_TYPE_TEXT, false, true), //$NON-NLS-1$
+            new ColumnInfo(Messages.getString("QueryDialog.USER_COLUMN"),    ColumnInfo.COLUMN_TYPE_TEXT, false, true), //$NON-NLS-1$
+            new ColumnInfo(Messages.getString("QueryDialog.USER_ORDERING"),  ColumnInfo.COLUMN_TYPE_CCOMBO, new String[] { "-", STRING_ASCENDING, STRING_DESCENDING }, true), //$NON-NLS-1$ //$NON-NLS-2$
           };
                           
         wOrder=new TableView(shell, 
@@ -380,8 +381,8 @@ public class QueryDialog extends Dialog
         
         // the add condition button
         wAddCondition = new Button(shell, SWT.PUSH);
-        wAddCondition.setText("Add");
-        wAddCondition.setToolTipText("Add columns to the conditions");
+        wAddCondition.setText(Messages.getString("QueryDialog.USER_ADD")); //$NON-NLS-1$
+        wAddCondition.setToolTipText(Messages.getString("QueryDialog.USER_ADD_COLUMNS_TO_CONDITIONS")); //$NON-NLS-1$
         props.setLook(wAddCondition);
         FormData fdAddCondition = new FormData();
         fdAddCondition.left   = new FormAttachment(wCat, 2*margin);
@@ -391,8 +392,8 @@ public class QueryDialog extends Dialog
         
         // The delete column button
         wDelCondition = new Button(shell, SWT.PUSH);
-        wDelCondition.setText("Del");
-        wDelCondition.setToolTipText("Remove columns from the conditions");
+        wDelCondition.setText(Messages.getString("QueryDialog.USER_DEL")); //$NON-NLS-1$
+        wDelCondition.setToolTipText(Messages.getString("QueryDialog.USER_REMOVE_COLUMNS_FROM_CONDITIONS")); //$NON-NLS-1$
         props.setLook(wDelCondition);
         FormData fdDelCondition = new FormData();
         fdDelCondition.left   = new FormAttachment(wCat , 2*margin);
@@ -404,7 +405,7 @@ public class QueryDialog extends Dialog
         
         // Add a label too
         Label wlConditions = new Label(shell, SWT.LEFT);
-        wlConditions.setText("The conditions: ");
+        wlConditions.setText(Messages.getString("QueryDialog.USER_CONDITIONS")); //$NON-NLS-1$
         props.setLook(wlConditions);
         FormData fdlConditions = new FormData();
         fdlConditions.left = new FormAttachment(wDownColumn, 2*margin);
@@ -413,9 +414,9 @@ public class QueryDialog extends Dialog
 
         ColumnInfo[] conditionFields =new ColumnInfo[]
           {
-            new ColumnInfo("Operator",        ColumnInfo.COLUMN_TYPE_TEXT, false, false),
-            new ColumnInfo("Column",          ColumnInfo.COLUMN_TYPE_TEXT, false, true),
-            new ColumnInfo("Condition",       ColumnInfo.COLUMN_TYPE_TEXT, false, false),
+            new ColumnInfo(Messages.getString("QueryDialog.USER_OPERATOR"),        ColumnInfo.COLUMN_TYPE_TEXT, false, false), //$NON-NLS-1$
+            new ColumnInfo(Messages.getString("QueryDialog.USER_COLUMN"),          ColumnInfo.COLUMN_TYPE_TEXT, false, true), //$NON-NLS-1$
+            new ColumnInfo(Messages.getString("QueryDialog.USER_CONDITION"),       ColumnInfo.COLUMN_TYPE_TEXT, false, false), //$NON-NLS-1$
           };
                           
         wConditions=new TableView(shell, 
@@ -436,7 +437,7 @@ public class QueryDialog extends Dialog
         
         // Finally, add a comments zone, for now a title
         wlComments = new Label(shell, SWT.LEFT);
-        wlComments.setText("Pentaho Metadata Query Editor");
+        wlComments.setText(Messages.getString("QueryDialog.USER_METADATA_QUERY_EDITOR")); //$NON-NLS-1$
         props.setLook(wlComments);
         wlComments.setFont(GUIResource.getInstance().getFontLarge());
         FormData fdlComments = new FormData();
@@ -474,17 +475,17 @@ public class QueryDialog extends Dialog
         shell.setMenuBar(mBar);
         
         // main File menu...
-        MenuItem mFile = new MenuItem(mBar, SWT.CASCADE); mFile.setText("&File");
+        MenuItem mFile = new MenuItem(mBar, SWT.CASCADE); mFile.setText(Messages.getString("QueryDialog.USER_FILE")); //$NON-NLS-1$
         Menu msFile = new Menu(shell, SWT.DROP_DOWN);
         mFile.setMenu(msFile);
         
-        MenuItem miFileNew = new MenuItem(msFile, SWT.CASCADE); miFileNew.setText("&New");
-        MenuItem miFileOpen = new MenuItem(msFile, SWT.CASCADE); miFileOpen.setText("&Open");
-        MenuItem miFileSave = new MenuItem(msFile, SWT.CASCADE); miFileSave.setText("&Save");
+        MenuItem miFileNew = new MenuItem(msFile, SWT.CASCADE); miFileNew.setText(Messages.getString("QueryDialog.USER_NEW")); //$NON-NLS-1$
+        MenuItem miFileOpen = new MenuItem(msFile, SWT.CASCADE); miFileOpen.setText(Messages.getString("QueryDialog.USER_OPEN")); //$NON-NLS-1$
+        MenuItem miFileSave = new MenuItem(msFile, SWT.CASCADE); miFileSave.setText(Messages.getString("QueryDialog.USER_SAVE")); //$NON-NLS-1$
         new MenuItem(msFile, SWT.SEPARATOR);
-        MenuItem miFileSQL = new MenuItem(msFile, SWT.CASCADE); miFileSQL.setText("S&QL");
+        MenuItem miFileSQL = new MenuItem(msFile, SWT.CASCADE); miFileSQL.setText(Messages.getString("QueryDialog.USER_S_QL")); //$NON-NLS-1$
         new MenuItem(msFile, SWT.SEPARATOR);
-        MenuItem miFileQuit = new MenuItem(msFile, SWT.CASCADE); miFileQuit.setText("&Quit");
+        MenuItem miFileQuit = new MenuItem(msFile, SWT.CASCADE); miFileQuit.setText(Messages.getString("QueryDialog.USER_QUIT")); //$NON-NLS-1$
         
         Listener lsFileNew  = new Listener() { public void handleEvent(Event e) { newFile();  } };
         Listener lsFileOpen = new Listener() { public void handleEvent(Event e) { openFile(); } };
@@ -515,8 +516,8 @@ public class QueryDialog extends Dialog
     private void openFile()
     {
         FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
-        fileDialog.setFilterExtensions(new String[] { "*.mql", "*.xml", "*.*" } );
-        fileDialog.setFilterNames(new String[] { "MQL queries", "XML files", "All files" } );
+        fileDialog.setFilterExtensions(new String[] { "*.mql", "*.xml", "*.*" } ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        fileDialog.setFilterNames(new String[] { Messages.getString("QueryDialog.USER_MQL_QUERIES"), Messages.getString("QueryDialog.USER_XML_FILES"), Messages.getString("QueryDialog.USER_ALL_FILES") } ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         String filename = fileDialog.open();
         if (filename!=null) 
         {
@@ -527,7 +528,7 @@ public class QueryDialog extends Dialog
             }
             catch(Exception e)
             {
-                new ErrorDialog(shell, "Error loading Metadata Query", "There was an error loading the metadata query!", e);
+                new ErrorDialog(shell, Messages.getString("QueryDialog.USER_TITLE_ERROR_LOADING_QUERY"), Messages.getString("QueryDialog.USER_ERROR_LOADING_QUERY"), e); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
     }
@@ -535,8 +536,8 @@ public class QueryDialog extends Dialog
     private void saveFile()
     {
         FileDialog fileDialog = new FileDialog(shell, SWT.SAVE);
-        fileDialog.setFilterExtensions(new String[] { "*.mql", "*.xml", "*.*" } );
-        fileDialog.setFilterNames(new String[] { "MQL queries", "XML files", "All files" } );
+        fileDialog.setFilterExtensions(new String[] { "*.mql", "*.xml", "*.*" } ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        fileDialog.setFilterNames(new String[] { Messages.getString("QueryDialog.USER_MQL_QUERIES"), Messages.getString("QueryDialog.USER_XML_FILES"), Messages.getString("QueryDialog.USER_ALL_FILES") } ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         String filename = fileDialog.open();
         if (filename!=null) 
         {
@@ -550,12 +551,12 @@ public class QueryDialog extends Dialog
                 }
                 else
                 {
-                    throw new Exception("No business view was selected, nothing to save.");
+                    throw new Exception(Messages.getString("QueryDialog.ERROR_0001_NO_MODEL_SELECTED")); //$NON-NLS-1$
                 }
             }
             catch(Exception e)
             {
-                new ErrorDialog(shell, "Error loading Metadata Query", "There was an error loading the metadata query!", e);
+                new ErrorDialog(shell, Messages.getString("QueryDialog.USER_TITLE_ERROR_LOADING_QUERY"), Messages.getString("QueryDialog.USER_ERROR_LOADING_QUERY"), e); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
     }
@@ -586,7 +587,7 @@ public class QueryDialog extends Dialog
             
             if (businessColumn!=null)
             {
-                WhereCondition whereCondition = new WhereCondition(null, businessColumn, "");
+                WhereCondition whereCondition = new WhereCondition(null, businessColumn, ""); //$NON-NLS-1$
                 conditions.add(whereCondition);
                 indices.add(new Integer(conditions.size()-1));
             }
@@ -838,7 +839,7 @@ public class QueryDialog extends Dialog
             
             tableItem.setText(1, businessColumn.getBusinessTable().getDisplayName(locale));
             tableItem.setText(2, businessColumn.getDisplayName(locale));
-            tableItem.setText(3, "-");
+            tableItem.setText(3, "-"); //$NON-NLS-1$
         }
         wColumns.removeEmptyRows();
         wColumns.setRowNums();
@@ -854,9 +855,9 @@ public class QueryDialog extends Dialog
             WhereCondition whereCondition = (WhereCondition) conditions.get(i);
             TableItem tableItem = new TableItem(wConditions.table, SWT.NONE);
             
-            tableItem.setText(1, Const.NVL(whereCondition.getOperator(), ""));
+            tableItem.setText(1, Const.NVL(whereCondition.getOperator(), "")); //$NON-NLS-1$
             tableItem.setText(2, whereCondition.getField().getDisplayName(locale));
-            tableItem.setText(3, Const.NVL(whereCondition.getCondition(), ""));
+            tableItem.setText(3, Const.NVL(whereCondition.getCondition(), "")); //$NON-NLS-1$
         }
         wConditions.removeEmptyRows();
         wConditions.setRowNums();
@@ -994,7 +995,7 @@ public class QueryDialog extends Dialog
                 String sql = mqlQuery.getQuery( true );
                 if (sql!=null)
                 {
-                    EnterTextDialog showSQL = new EnterTextDialog(shell, "The generated SQL", "Here is the generated SQL", sql, true);
+                    EnterTextDialog showSQL = new EnterTextDialog(shell, Messages.getString("QueryDialog.USER_TITLE_GENERATED_SQL"), Messages.getString("QueryDialog.USER_GENERATED_SQL"), sql, true); //$NON-NLS-1$ //$NON-NLS-2$
                     sql = showSQL.open();
                     if (!Const.isEmpty(sql))
                     {
@@ -1007,7 +1008,7 @@ public class QueryDialog extends Dialog
         }
         catch(Throwable e)
         {
-            new ErrorDialog(shell, "Error", "There was an error during query generation", new Exception(e));
+            new ErrorDialog(shell, Messages.getString("QueryDialog.USER_TITLE_ERROR"), Messages.getString("QueryDialog.USER_ERROR_QUERY_GENERATION"), new Exception(e)); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
     
@@ -1040,16 +1041,16 @@ public class QueryDialog extends Dialog
         java.util.List rows = null;
         try
         {
-            String path = "";
+            String path = ""; //$NON-NLS-1$
             try {
-                File file = new File( "simple-jndi" );
+                File file = new File( "simple-jndi" ); //$NON-NLS-1$
                 path= file.getCanonicalPath();
             } catch (Exception e) {
                 e.printStackTrace();
             }
             
             System.setProperty("java.naming.factory.initial", "org.osjava.sj.SimpleContextFactory"); //$NON-NLS-1$ //$NON-NLS-2$
-            System.setProperty("org.osjava.sj.root", path ); //$NON-NLS-1$ //$NON-NLS-2$
+            System.setProperty("org.osjava.sj.root", path ); //$NON-NLS-1$
             System.setProperty("org.osjava.sj.delimiter", "/"); //$NON-NLS-1$ //$NON-NLS-2$
             database = new Database(databaseMeta);
             database.connect();
@@ -1057,7 +1058,7 @@ public class QueryDialog extends Dialog
         }
         catch(Exception e)
         {
-            new ErrorDialog(shell, "Error executing query", "There was an error executing the query", e);
+            new ErrorDialog(shell, Messages.getString("QueryDialog.USER_TITLE_ERROR_EXECUTING_QUERY"), Messages.getString("QueryDialog.USER_ERROR_EXECUTING_QUERY"), e); //$NON-NLS-1$ //$NON-NLS-2$
         }
         finally
         {
@@ -1067,7 +1068,7 @@ public class QueryDialog extends Dialog
         // Show the rows in a dialog.
         if (rows!=null)
         {
-            PreviewRowsDialog previewRowsDialog = new PreviewRowsDialog(shell, SWT.NONE, "The first 5000 rows from the generated query", rows);
+            PreviewRowsDialog previewRowsDialog = new PreviewRowsDialog(shell, SWT.NONE, Messages.getString("QueryDialog.USER_FIRST_5000_ROWS"), rows); //$NON-NLS-1$
             previewRowsDialog.open();
         }    
     }

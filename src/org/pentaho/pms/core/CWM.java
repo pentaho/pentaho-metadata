@@ -322,9 +322,9 @@ public class CWM
 
 
     
-    private static Hashtable models = new Hashtable();
+    private static Hashtable domains = new Hashtable();
     
-    private String modelName;
+    private String domainName;
     
     private static MDRepository        repository;
     
@@ -350,9 +350,9 @@ public class CWM
     /**
      * @param args
      */
-    private CWM(String modelName, boolean autoCreate)
+    private CWM(String domainName, boolean autoCreate)
     {
-        this.modelName = modelName;
+        this.domainName = domainName;
         try
         {
             repository = getRepositoryInstance();
@@ -380,9 +380,9 @@ public class CWM
             }
 
             /*
-             * Create an extent for the model if that extent doesn't exist yet.
+             * Create an extent for the domain if that extent doesn't exist yet.
              */
-            RefPackage refPackage = repository.getExtent(modelName);
+            RefPackage refPackage = repository.getExtent(domainName);
             
             try {
             		pentahoPackage = (PentahoPackage) refPackage;
@@ -392,10 +392,10 @@ public class CWM
             
             if( pentahoPackage == null ) {
             		if( autoCreate ){
-	                pentahoPackage  = (PentahoPackage) repository.createExtent(modelName, getModelPackage(PENTAHO) );
+	                pentahoPackage  = (PentahoPackage) repository.createExtent(domainName, getModelPackage(PENTAHO) );
 	                log.logBasic(Messages.getString("CWM.INFO_TITLE"), Messages.getString("CWM.INFO_INSTANCED_TOP_PACKAGE")); //$NON-NLS-1$ //$NON-NLS-2$
 	            } else {
-	            		throw new CWMException( Messages.getErrorString("CWM.ERROR_0004_MODEL_NOT_FOUND", modelName) ); //$NON-NLS-1$
+	            		throw new CWMException( Messages.getErrorString("CWM.ERROR_0004_DOMAIN_NOT_FOUND", domainName) ); //$NON-NLS-1$
 	            }
             }
                         
@@ -468,18 +468,18 @@ public class CWM
     
             try
             {
-                MDRepository repository = new NBMDRepositoryImpl();
+                MDRepository mdRepository = new NBMDRepositoryImpl();
 
-                RefPackage cwmPackageM3 = repository.getExtent(CWM);
+                RefPackage cwmPackageM3 = mdRepository.getExtent(CWM);
                 if (cwmPackageM3==null && xmiInputStream != null )
                 {
-                    cwmPackageM3 = repository.createExtent(CWM);
+                    cwmPackageM3 = mdRepository.createExtent(CWM);
                     BufferedInputStream inputStream = new BufferedInputStream( xmiInputStream );
                     XMIReaderFactory.getDefault().createXMIReader().read(inputStream, null, cwmPackageM3);
-                    log.logBasic(Messages.getString("CWM.INFO_TITLE"), Messages.getString("CWM.INFO_LOADED_MODEL_TO_REPOSITORY")); //$NON-NLS-1$ //$NON-NLS-2$
+                    log.logBasic(Messages.getString("CWM.INFO_TITLE"), Messages.getString("CWM.INFO_LOADED_CWM_MODEL")); //$NON-NLS-1$ //$NON-NLS-2$
                 }
 
-                return repository;
+                return mdRepository;
             }
             catch(Exception e)
             {
@@ -492,64 +492,64 @@ public class CWM
         }
     }
 
-    public synchronized static final CWM getInstance(String modelName ) {
-    		return getInstance( modelName, true );
+    public synchronized static final CWM getInstance(String domainName ) {
+    		return getInstance( domainName, true );
     }
 
-    public synchronized static final CWM getInstance(String modelName, boolean autoCreate ) 
+    public synchronized static final CWM getInstance(String domainName, boolean autoCreate ) 
     {
-        // Do we have the model yet?
-        CWM cwm = (CWM) models.get(modelName);
+        // Do we have the domain yet?
+        CWM cwm = (CWM) domains.get(domainName);
         if (cwm!=null) return cwm;
         
-        cwm = new CWM(modelName, autoCreate);
-        models.put(modelName, cwm);
+        cwm = new CWM(domainName, autoCreate);
+        domains.put(domainName, cwm);
         
         return cwm;
     }
 
     /**
-     * See if the model already exists
-     * @param modelName The model to check for
-     * @return true if the model with the given name exists in the MDR repository
+     * See if the domain already exists
+     * @param domainName The domain to check for
+     * @return true if the domain with the given name exists in the MDR repository
      */
-    public static final boolean exists(String modelName) throws CWMException
+    public static final boolean exists(String domainName) throws CWMException
     {
-        // Do we have the model yet?
+        // Do we have the domain yet?
         // Simply look up the extent name, if it exists...
-        return getRepositoryInstance().getExtent(modelName) != null;
+        return getRepositoryInstance().getExtent(domainName) != null;
     }
 
     
     
     /**
-     * @return a list of top level models
+     * @return a list of top level domains
      */
-    public static final String[] getModelNames() throws CWMException
+    public static final String[] getDomainNames() throws CWMException
     {
         String ext[] = getRepositoryInstance().getExtentNames();
-        ArrayList modelNames = new ArrayList();
+        ArrayList domainNames = new ArrayList();
         
         for (int i = 0; i < ext.length; i++)
         {
-            if (!ext[i].equals("MOF") && !ext[i].equals(CWM)) modelNames.add(ext[i]); //$NON-NLS-1$
+            if (!ext[i].equals("MOF") && !ext[i].equals(CWM)) domainNames.add(ext[i]); //$NON-NLS-1$
                 
         }
         
-        return Const.sortStrings( (String[])modelNames.toArray(new String[modelNames.size()]) );
+        return Const.sortStrings( (String[])domainNames.toArray(new String[domainNames.size()]) );
     }
     
     /**
-     * Remove the model by removing the extent.
+     * Remove the domain by removing the extent.
      * 
-     * @param name the model to remove.
+     * @param name the domain to remove.
      */
-    public synchronized void removeModel() throws CWMException
+    public synchronized void removeDomain() throws CWMException
     {
         repository.beginTrans(true); 
         repository.endTrans(false); // just to make sure, this forces a commit on the database
         
-        RefPackage refPackage = repository.getExtent(modelName);
+        RefPackage refPackage = repository.getExtent(domainName);
         if (refPackage!=null)
         {
             // Delete the root package...
@@ -581,12 +581,12 @@ public class CWM
     }
     
     /**
-     * Remove the model from the models in memory to cause the model to be re-loaded the next time around.
+     * Remove the domain from the domains in memory to cause the domain to be re-loaded the next time around.
      */
     public synchronized void removeFromList()
     {
         // repository.shutdown();
-        models.remove(modelName); // removing it from the list causes it to be re-opened next time around. 
+        domains.remove(domainName); // removing it from the list causes it to be re-opened next time around. 
     }
     
     public synchronized static final void quitAndSync() throws CWMException
@@ -685,7 +685,7 @@ public class CWM
     }
 
     /**
-     * Create a key-value pair that can be attached to a model element (table, column, model, etc)
+     * Create a key-value pair that can be attached to a model element (table, column, domain(model), etc)
      * 
      * @param key
      * @param value
@@ -1208,19 +1208,19 @@ public class CWM
     }
 
     /**
-     * @return the modelName
+     * @return the domainName
      */
-    public String getModelName()
+    public String getDomainName()
     {
-        return modelName;
+        return domainName;
     }
 
     /**
-     * @param modelName the modelName to set
+     * @param domainName the domainName to set
      */
-    public void setModelName(String modelName)
+    public void setDomainName(String domainName)
     {
-        this.modelName = modelName;
+        this.domainName = domainName;
     }
     
     public static final CwmTaggedValue[] findTaggedValues(Collection pairs, String tag)

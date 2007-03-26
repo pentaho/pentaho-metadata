@@ -46,16 +46,16 @@ public class SchemaSaveProgressDialog
         public CWM cwm;
     }
 	private Shell shell;
-	private String modelName;
+	private String domainName;
 	private SchemaMeta schemaMeta;
 	
 	/**
 	 * Creates a new dialog that will handle the wait while saving a transformation...
 	 */
-	public SchemaSaveProgressDialog(Shell shell, String modelName, SchemaMeta schemaMeta)
+	public SchemaSaveProgressDialog(Shell shell, String domainName, SchemaMeta schemaMeta)
 	{
 		this.shell = shell;
-		this.modelName = modelName;
+		this.domainName = domainName;
 		this.schemaMeta = schemaMeta;
 	}
 	
@@ -78,26 +78,26 @@ public class SchemaSaveProgressDialog
                     monitor.beginTask("Storing the metadata into the CWM model", size);
                 }
 
-                monitor.subTask("Getting old model instance from the repository");
-                container.cwm = CWM.getInstance(modelName);
+                monitor.subTask("Getting old domain instance from the repository");
+                container.cwm = CWM.getInstance(domainName);
                 monitor.worked(10);
                 
                 // First delete this one...
-                monitor.subTask("Removing old model from the repository");
+                monitor.subTask("Removing old domain from the repository");
                 try
                 {
-                    container.cwm.removeModel();
+                    container.cwm.removeDomain();
                 }
                 catch(Exception e)
                 {
-                    LogWriter.getInstance().logError(MetaEditor.APPLICATION_NAME, "Error removing model:"+e.toString());
+                    LogWriter.getInstance().logError(MetaEditor.APPLICATION_NAME, "Error removing domain:"+e.toString());
                     LogWriter.getInstance().logError(MetaEditor.APPLICATION_NAME, Const.getStackTracker(e));
                 }
                 monitor.worked(10);
                 
                 // then re-create it
-                monitor.subTask("Create new model instance");
-                container.cwm = CWM.getInstance(modelName);
+                monitor.subTask("Create new domain instance");
+                container.cwm = CWM.getInstance(domainName);
                 monitor.worked(10);
 
                 CwmSchemaFactoryInterface cwmSchemaFactory = Settings.getCwmSchemaFactory();

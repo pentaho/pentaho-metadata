@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.mql.MQLQuery;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessColumnString;
@@ -50,7 +51,7 @@ public class MakeSelectionDemo
     {
         // Initialisation stuff for SWT and Kettle, ignore it for Web-based reporting.
         //
-        CWM.getModelNames();
+        CWM.getDomainNames();
         Display display = new Display();
         Shell shell = new Shell(display);
         // Make the directory?
@@ -67,7 +68,7 @@ public class MakeSelectionDemo
         }
         catch(IOException e)
         {
-            System.out.println("Unable to load previous query file from file ["+Const.getQueryFile()+"] : "+e.toString());
+            System.out.println(Messages.getString("MakeSelectionDemo.ERROR_0001_CANT_LOAD_PREVIOUS_QUERY", Const.getQueryFile(), e.toString())); //$NON-NLS-1$
         }
         
         previousQuery = executeDemo(shell, props, previousQuery, true);
@@ -80,7 +81,7 @@ public class MakeSelectionDemo
             }
             catch(IOException e)
             {
-                System.out.println("Unable to save query to file ["+Const.getQueryFile()+"] : "+e.toString());
+                System.out.println(Messages.getString("MakeSelectionDemo.ERROR_0002_CANT_SAVE_QUERY", Const.getQueryFile(),e.toString())); //$NON-NLS-1$ 
             }
         }
     }
@@ -95,28 +96,28 @@ public class MakeSelectionDemo
         MQLQuery previous = previousQuery;
         previousQuery = null;
 
-        // What models do we have in the repository?
-        String[] models = CWM.getModelNames();
+        // What domains do we have in the repository?
+        String[] domains = CWM.getDomainNames();
 
-        // Let the user select which model to use.
-        String modelName = null;
-        if( models != null && models.length == 1 ) {
-        		modelName = models[0];
+        // Let the user select which domain to use.
+        String domainName = null;
+        if( domains != null && domains.length == 1 ) {
+        		domainName = domains[0];
         } else {
-            EnterSelectionDialog modelSelectionDialog = new EnterSelectionDialog(shell, models, "Select a model", "Select a model");
+            EnterSelectionDialog modelSelectionDialog = new EnterSelectionDialog(shell, domains, Messages.getString("MakeSelectionDemo.USER_SELECT_DOMAIN"), Messages.getString("MakeSelectionDemo.USER_SELECT_DOMAIN")); //$NON-NLS-1$ //$NON-NLS-2$
             if (previous!=null) {
-                // What was the previous model name?
-                String previousModel = previous.getSchemaMeta().getModelName();
-                int idx = Const.indexOfString(previousModel, models);
+                // What was the previous domain name?
+                String previousDomain = previous.getSchemaMeta().getDomainName();
+                int idx = Const.indexOfString(previousDomain, domains);
                 if (idx>=0) modelSelectionDialog.setSelectedNrs(new int[] { idx }); // Select this
             }
             
-            modelName = modelSelectionDialog.open();
+            domainName = modelSelectionDialog.open();
         }
-        if (modelName!=null)
+        if (domainName!=null)
         {
-            // Select/pre-load the model from the meta-data repository
-            CWM cwm = CWM.getInstance(modelName);
+            // Select/pre-load the domain from the meta-data repository
+            CWM cwm = CWM.getInstance(domainName);
             
             // Load it all into memory because the CWM is waaaay to complex to deal with directly ;-)
             // If you are interested in the gory details, look at the CwmSchemaFactory class.
@@ -128,12 +129,12 @@ public class MakeSelectionDemo
             //String[] usedLocale = schemaMeta.getUsedLocale();
             
             // Select a locale...
-            String[] locales = new String[] { "en_US" };
+            String[] locales = new String[] { "en_US" }; //$NON-NLS-1$
             String selectedLocale = null;
             if( locales != null && locales.length == 1 ) {
             		selectedLocale = locales[0];
             } else {
-            		EnterSelectionDialog localeSelectionDialog = new EnterSelectionDialog(shell, locales, "Select locale", "Select the locale to use");
+            		EnterSelectionDialog localeSelectionDialog = new EnterSelectionDialog(shell, locales, Messages.getString("MakeSelectionDemo.USER_SELECT_LOCALE"), Messages.getString("MakeSelectionDemo.USER_SELECT_LOCALE_TO_USE")); //$NON-NLS-1$ //$NON-NLS-2$
             		selectedLocale = localeSelectionDialog.open();            	
             }
             
@@ -153,7 +154,7 @@ public class MakeSelectionDemo
             if( businessViewNames != null && businessViewNames.length == 1 ) {
             		viewName = businessViewNames[0];
             } else {
-                EnterSelectionDialog viewSelectionDialog = new EnterSelectionDialog(shell, businessViewNames, "Select a business view", "Select a business view");
+                EnterSelectionDialog viewSelectionDialog = new EnterSelectionDialog(shell, businessViewNames, Messages.getString("MakeSelectionDemo.USER_SELECT_BUSINESS_MODEL"), Messages.getString("MakeSelectionDemo.USER_SELECT_BUSINESS_MODEL")); //$NON-NLS-1$ //$NON-NLS-2$
                 if (previous!=null)
                 {
                     // What was the previous business view?
@@ -170,17 +171,17 @@ public class MakeSelectionDemo
             {
                 BusinessView businessView = schemaMeta.findView(viewName); // This is the business view that was selected.
                 
-                System.out.println("Found view named: "+businessView);
-                System.out.println("Contains "+businessView.getRootCategory().nrBusinessCategories()+" categories.");
-                System.out.println("Has "+businessView.nrBusinessTables()+" business tables.");
-                System.out.println("Describes "+businessView.nrRelationships()+" relationships.");
+                System.out.println(Messages.getString("MakeSelectionDemo.INFO_FOUND_BUSINESS_MODEL", businessView.toString())); //$NON-NLS-1$
+                System.out.println(Messages.getString("MakeSelectionDemo.INFO_FOUND_CATEGORIES", Integer.toString(businessView.getRootCategory().nrBusinessCategories()))); //$NON-NLS-1$ 
+                System.out.println(Messages.getString("MakeSelectionDemo.INFO_HAS_BUSINESS_TABLES", Integer.toString(businessView.nrBusinessTables()))); //$NON-NLS-1$ 
+                System.out.println(Messages.getString("MakeSelectionDemo.INFO_DESCRIBES_RELATIONSHIPS", Integer.toString(businessView.nrRelationships()))); //$NON-NLS-1$ 
                 
                 // Show the "flat" view of categories
                 List strings = businessView.getFlatCategoriesView(schemaMeta.getActiveLocale());
                 String[] flatView = BusinessColumnString.getFlatRepresentations(strings);
                 
                 // Select the columns
-                EnterSelectionDialog columnSelectionDialog = new EnterSelectionDialog(shell, flatView, "Select the columns", "Select a couple of columns to put on the report");
+                EnterSelectionDialog columnSelectionDialog = new EnterSelectionDialog(shell, flatView, Messages.getString("MakeSelectionDemo.USER_TITLE_SELECT_COLUMNS"), Messages.getString("MakeSelectionDemo.USER_SELECT_COLUMNS")); //$NON-NLS-1$ //$NON-NLS-2$
                 if (previous!=null)
                 {
                     // What was the previous selection?
@@ -235,7 +236,7 @@ public class MakeSelectionDemo
                         query.setOrder( Arrays.asList(orderBy) );
                     }
                     
-                    String text = "";
+                    StringBuffer text = new StringBuffer(); 
                     
                     // here is a sample constraint ('where' clause)
 //                    query.addConstraint( "CUSTOMERS", "Customer #", "<", "120" );
@@ -274,21 +275,15 @@ public class MakeSelectionDemo
                     // We might need that to launch the transformation.
                     //
                     DatabaseMeta databaseMeta = selection[0].getPhysicalColumn().getTable().getDatabaseMeta();
-                    text+= "-- Name:    "+databaseMeta.getName()+Const.CR;
+
+                    text.append(Messages.getString("MakeSelectionDemo.USER_NAME", databaseMeta.getName())).append(Const.CR); //name //$NON-NLS-1$
+                    text.append(Messages.getString("MakeSelectionDemo.USER_URL", databaseMeta.getURL())).append(Const.CR);   //url //$NON-NLS-1$
+                    text.append(Messages.getString("MakeSelectionDemo.USER_DRIVER", databaseMeta.getDriverClass())).append(Const.CR);   //JDBC driver classname //$NON-NLS-1$
+                    text.append("-- ").append(Const.CR);   //$NON-NLS-1$
+                    text.append("-------------------------------------------------------------------------- ").append(Const.CR); //$NON-NLS-1$   
+                    text.append(Const.CR).append(sql);   
                     
-                    // URL?
-                    String url = databaseMeta.getURL();
-                    text += "-- URL:    "+url+Const.CR;
-                    
-                    // JDBC Driver class name?
-                    String className = databaseMeta.getDriverClass();
-                    text+= "-- Driver: "+className+Const.CR;
-                    text+= "-- "+Const.CR;
-                    text+= "-------------------------------------------------------------------------- "+Const.CR;
-                    text+= Const.CR;
-                    text+= sql;
-                    
-                    EnterTextDialog showSQL = new EnterTextDialog(shell, "The generated SQL", "Here is the generated SQL", text, true);
+                    EnterTextDialog showSQL = new EnterTextDialog(shell, Messages.getString("MakeSelectionDemo.USER_TITLE_GENERATED_SQL"), Messages.getString("MakeSelectionDemo.USER_GENERATED_SQL"), text.toString(), true); //$NON-NLS-1$ //$NON-NLS-2$
                     showSQL.setReadOnly();
                     showSQL.open();
                     
@@ -299,16 +294,16 @@ public class MakeSelectionDemo
                         List rows = null;
                         try
                         {
-                            String path = "";
+                            String path = ""; //$NON-NLS-1$
                             try {
-                                File file = new File( "simple-jndi" );
+                                File file = new File( "simple-jndi" ); //$NON-NLS-1$
                                 path= file.getCanonicalPath();
                             } catch (Exception e) {
                             	e.printStackTrace();
                             }
                             
                             System.setProperty("java.naming.factory.initial", "org.osjava.sj.SimpleContextFactory"); //$NON-NLS-1$ //$NON-NLS-2$
-                            System.setProperty("org.osjava.sj.root", path ); //$NON-NLS-1$ //$NON-NLS-2$
+                            System.setProperty("org.osjava.sj.root", path ); //$NON-NLS-1$ 
                             System.setProperty("org.osjava.sj.delimiter", "/"); //$NON-NLS-1$ //$NON-NLS-2$
                             database = new Database(databaseMeta);
                             database.connect();
@@ -316,7 +311,7 @@ public class MakeSelectionDemo
                         }
                         catch(Exception e)
                         {
-                            new ErrorDialog(shell, "Error executing query", "There was an error executing the query", e);
+                            new ErrorDialog(shell, Messages.getString("MakeSelectionDemo.USER_TITLE_ERROR_EXECUTING_QUERY"), Messages.getString("MakeSelectionDemo.USER_ERROR_EXECUTING_QUERY"), e); //$NON-NLS-1$ //$NON-NLS-2$
                         }
                         finally
                         {
@@ -326,7 +321,7 @@ public class MakeSelectionDemo
                         // Show the rows in a dialog.
                         if (rows!=null)
                         {
-                            PreviewRowsDialog previewRowsDialog = new PreviewRowsDialog(shell, SWT.NONE, "The first 1000 rows from the generated query", rows);
+                            PreviewRowsDialog previewRowsDialog = new PreviewRowsDialog(shell, SWT.NONE, Messages.getString("MakeSelectionDemo.USER_FIRST_1000_ROWS"), rows); //$NON-NLS-1$
                             previewRowsDialog.open();
                         }
                     }

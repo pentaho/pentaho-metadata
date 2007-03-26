@@ -238,7 +238,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         schemaMeta.setSecurityReference(securityReference);
         
         // Set a sane default on the model name
-        schemaMeta.setModelName( cwm.getModelName() );
+        schemaMeta.setDomainName( cwm.getDomainName() );
         
         // Read all the database connections...
         //
