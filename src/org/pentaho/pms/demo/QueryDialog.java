@@ -57,6 +57,7 @@ import be.ibridge.kettle.core.database.DatabaseMeta;
 import be.ibridge.kettle.core.dialog.EnterTextDialog;
 import be.ibridge.kettle.core.dialog.ErrorDialog;
 import be.ibridge.kettle.core.dialog.PreviewRowsDialog;
+import be.ibridge.kettle.core.exception.KettleException;
 import be.ibridge.kettle.core.widget.TableView;
 import be.ibridge.kettle.core.widget.TreeMemory;
 import be.ibridge.kettle.trans.step.BaseStepDialog;
@@ -78,8 +79,7 @@ public class QueryDialog extends Dialog
     private static final String STRING_CATEGORIES_TREE = MetaEditor.STRING_CATEGORIES_TREE;
     private static final String STRING_CATEGORIES      = MetaEditor.STRING_CATEGORIES;
 
-    private Button wOK, wSQL, wCancel;
-    private Listener lsOK, lsSQL, lsCancel;
+    private Button wOK, wSQL, wTrans, wCancel;
 
     private Shell  shell;
     private ModifyListener lsMod;
@@ -158,10 +158,12 @@ public class QueryDialog extends Dialog
         wOK.setText("  &OK  ");
         wSQL=new Button(shell, SWT.PUSH);
         wSQL.setText("  &SQL  ");
+        wTrans=new Button(shell, SWT.PUSH);
+        wTrans.setText("  &Transformation  ");
         wCancel=new Button(shell, SWT.PUSH);
         wCancel.setText("  &Cancel  ");
         
-        BaseStepDialog.positionBottomButtons(shell, new Button[] { wOK, wSQL, wCancel }, Const.MARGIN, null);
+        BaseStepDialog.positionBottomButtons(shell, new Button[] { wOK, wSQL, wTrans, wCancel }, Const.MARGIN, null);
 
         // Add a label for the business view
         Label wlViews = new Label(shell, SWT.LEFT);
@@ -442,17 +444,12 @@ public class QueryDialog extends Dialog
         fdlComments.top  = new FormAttachment(wlViews, margin);
         wlComments.setLayoutData(fdlComments);
 
-        // Wrap it up ...
+        // Add listeners to the buttons
         //
-        
-        // Add listeners
-        lsCancel   = new Listener() { public void handleEvent(Event e) { cancel(); } };
-        lsSQL      = new Listener() { public void handleEvent(Event e) { showSQL(); } };
-        lsOK       = new Listener() { public void handleEvent(Event e) { ok();     } };
-        
-        wOK.addListener    (SWT.Selection, lsOK     );
-        wSQL.addListener   (SWT.Selection, lsSQL    );
-        wCancel.addListener(SWT.Selection, lsCancel );
+        wOK.addListener    (SWT.Selection, new Listener() { public void handleEvent(Event e) { cancel(); } });
+        wSQL.addListener   (SWT.Selection, new Listener() { public void handleEvent(Event e) { showSQL(); } });
+        wTrans.addListener (SWT.Selection, new Listener() { public void handleEvent(Event e) { showTrans(); } });
+        wCancel.addListener(SWT.Selection, new Listener() { public void handleEvent(Event e) { ok();     } });
         
         // Detect [X] or ALT-F4 or something that kills this window...
         shell.addShellListener( new ShellAdapter() { public void shellClosed(ShellEvent e) { cancel(); } } );
@@ -1011,6 +1008,28 @@ public class QueryDialog extends Dialog
         catch(Throwable e)
         {
             new ErrorDialog(shell, "Error", "There was an error during query generation", new Exception(e));
+        }
+    }
+    
+    
+    public void showTrans()
+    {
+        MQLQuery mqlQuery = getQuery();
+        if (mqlQuery!=null)
+        {
+            try
+            {
+                StringBuffer logBuffer = new StringBuffer();
+                java.util.List list = mqlQuery.getRowsUsingTransformation(true, logBuffer);
+
+                PreviewRowsDialog prd =new PreviewRowsDialog(shell, SWT.NONE, "Query", list, logBuffer.toString());
+                prd.open();
+
+            }
+            catch(KettleException e)
+            {
+                new ErrorDialog(shell, "Error", "Error executing query: ", e);
+            }
         }
     }
 

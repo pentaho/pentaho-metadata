@@ -38,6 +38,9 @@ import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
 import be.ibridge.kettle.core.list.UniqueArrayList;
 import be.ibridge.kettle.core.list.UniqueList;
 import be.ibridge.kettle.spoon.UndoInterface;
+import be.ibridge.kettle.trans.TransMeta;
+import be.ibridge.kettle.trans.TransPreviewFactory;
+import be.ibridge.kettle.trans.step.tableinput.TableInputMeta;
 
 public class BusinessView extends ConceptUtilityBase implements ChangedFlagInterface, Cloneable, ConceptUtilityInterface, UndoInterface
 {
@@ -1060,6 +1063,30 @@ public class BusinessView extends ConceptUtilityBase implements ChangedFlagInter
 
         return sql;
     }
+    
+    public TransMeta getTransformationMeta(BusinessColumn selectedColumns[], 
+            WhereCondition conditions[], 
+            OrderBy[] orderBy, 
+            String locale,
+            boolean useDisplayNames)
+    {
+        if (selectedColumns==null || selectedColumns.length==0) return null;
+        
+        DatabaseMeta databaseMeta = selectedColumns[0].getBusinessTable().getPhysicalTable().getDatabaseMeta();
+        String sql = getSQL(selectedColumns, conditions, orderBy, locale, useDisplayNames);
+        
+        TableInputMeta tableInputMeta = new TableInputMeta();
+        tableInputMeta.setDatabaseMeta(databaseMeta);
+        tableInputMeta.setSQL(sql);
+        
+        TransMeta transMeta = TransPreviewFactory.generatePreviewTransformation(tableInputMeta, "Query");
+        transMeta.addDatabase(databaseMeta);
+        
+        transMeta.setName("Query generated from view "+getName(locale));
+        
+        return transMeta;
+    }
+    
 
     public BusinessTable[] getTablesInvolved(BusinessColumn fields[], WhereCondition conditions[])
     {

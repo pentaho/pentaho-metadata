@@ -133,6 +133,8 @@ import be.ibridge.kettle.core.list.UniqueArrayList;
 import be.ibridge.kettle.core.util.EnvUtil;
 import be.ibridge.kettle.core.value.Value;
 import be.ibridge.kettle.core.widget.TreeMemory;
+import be.ibridge.kettle.job.JobEntryLoader;
+import be.ibridge.kettle.trans.StepLoader;
 
 /**
  * Class to edit the metadata model (Schema Metadata), load/store into the MDR/CWM model
@@ -3894,6 +3896,10 @@ public class MetaEditor
             Const.checkPentahoMetadataDirectory();
             Props.init(display, Const.getPropertiesFile()); // things to remember...
         }
+        
+        // Init steps, jobentries, plugins...
+        StepLoader.getInstance().read();
+        JobEntryLoader.getInstance().read();
 
         Splash splash = new Splash(display);
 

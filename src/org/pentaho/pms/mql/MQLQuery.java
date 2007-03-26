@@ -42,7 +42,15 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import be.ibridge.kettle.core.LogWriter;
+import be.ibridge.kettle.core.Row;
 import be.ibridge.kettle.core.database.DatabaseMeta;
+import be.ibridge.kettle.core.exception.KettleException;
+import be.ibridge.kettle.core.logging.Log4jStringAppender;
+import be.ibridge.kettle.trans.Trans;
+import be.ibridge.kettle.trans.TransMeta;
+import be.ibridge.kettle.trans.step.RowListener;
+import be.ibridge.kettle.trans.step.StepInterface;
 
 public class MQLQuery {
 
@@ -155,6 +163,53 @@ public class MQLQuery {
 		return view.getSQL(selection, conditions, orderBy, locale, useDisplayNames);
 	}
 
+    public TransMeta getTransformation( boolean useDisplayNames ) {
+        if( view == null || selections.size() == 0 ) {
+            return null;
+        }
+        BusinessColumn selection[] = (BusinessColumn[])selections.toArray(new BusinessColumn[selections.size()]);
+        WhereCondition conditions[] = (WhereCondition[])constraints.toArray(new WhereCondition[constraints.size()]);
+        OrderBy orderBy[] = (OrderBy[]) order.toArray(new OrderBy[order.size()]);
+        
+        return view.getTransformationMeta(selection, conditions, orderBy, locale, useDisplayNames);
+    }
+    
+    public List getRowsUsingTransformation( boolean useDisplayNames, StringBuffer logBuffer ) throws KettleException
+    {
+        final List list = new ArrayList();
+        TransMeta transMeta = getTransformation(useDisplayNames);
+        LogWriter log = LogWriter.getInstance();
+        Log4jStringAppender stringAppender = LogWriter.createStringAppender();
+        stringAppender.setBuffer(logBuffer);
+        
+        log.addAppender(stringAppender);
+        Trans trans = new Trans(log, transMeta);
+        trans.prepareExecution(null);
+        for (int i=0;i<transMeta.getStep(0).getCopies();i++)
+        {
+            StepInterface stepInterface = trans.getStepInterface(transMeta.getStep(0).getName(), i);
+            stepInterface.addRowListener(
+                new RowListener()
+                {
+                    public void rowWrittenEvent(Row row) 
+                    { 
+                        list.add(row); // later: clone to be safe 
+                    }  
+                    public void rowReadEvent(Row row) { }
+                    public void errorRowWrittenEvent(Row row) { }
+                }
+            );
+        }
+        trans.startThreads();
+        trans.waitUntilFinished();
+        log.removeAppender(stringAppender);
+        
+        if (trans.getErrors()>0) throw new KettleException("Error during query execution using a transformation:"+Const.CR+Const.CR+stringAppender.getBuffer().toString());
+        
+        return list;
+        
+    }
+    
 	public String getXML() {
 		
         try {
