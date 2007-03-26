@@ -66,16 +66,16 @@ public class SchemaMeta
     
 	public    UniqueList        databases;
 	private   UniqueList        tables;
-	private   UniqueList        views;
+	private   UniqueList        businessModels;
     private   UniqueList        concepts;
     
     private   Locales           locales;
     private   SecurityReference securityReference;
     private   DefaultProperties defaultProperties;
     
-    private   BusinessView   activeView;
+    private   BusinessModel   activeModel;
     
-	private boolean   changed, changedDatabases, changedTables, changedViews, changedConcepts;
+	private boolean   changed, changedDatabases, changedTables, changedBusinessModels, changedConcepts;
     
 	public SchemaMeta()
 	{
@@ -86,14 +86,14 @@ public class SchemaMeta
 	{
 		databases=new UniqueArrayList();
 		tables = new UniqueArrayList();
-        views = new UniqueArrayList();
+        businessModels = new UniqueArrayList();
 		concepts = new UniqueArrayList();
         locales = new Locales();
         securityReference = new SecurityReference();
         
         defaultProperties = new DefaultProperties();
         
-        activeView = null;
+        activeModel = null;
         
         clearChanged();
 	}
@@ -147,10 +147,10 @@ public class SchemaMeta
 		tables.add(ti);
 		changedTables = true;
 	}
-	public void addView(BusinessView view) throws ObjectAlreadyExistsException
+	public void addModel(BusinessModel businessModel) throws ObjectAlreadyExistsException
 	{
-		views.add(view);
-		changedViews = true;
+		businessModels.add(businessModel);
+		changedBusinessModels = true;
 	}
 	public void addDatabase(int p, DatabaseMeta databaseMeta) throws ObjectAlreadyExistsException
 	{
@@ -162,10 +162,10 @@ public class SchemaMeta
 		tables.add(p, ti);
 		changedTables = true;
 	}
-	public void addView(int p, BusinessView view) throws ObjectAlreadyExistsException
+	public void addModel(int p, BusinessModel businessModel) throws ObjectAlreadyExistsException
 	{
-		views.add(p, view);
-		changedViews = true;
+		businessModels.add(p, businessModel);
+		changedBusinessModels = true;
 	}
 	public void setChanged()
 	{
@@ -185,9 +185,9 @@ public class SchemaMeta
 	{
 		return (PhysicalTable)tables.get(i);
 	}
-	public BusinessView getView(int i)
+	public BusinessModel getModel(int i)
 	{
-		return (BusinessView)views.get(i);
+		return (BusinessModel)businessModels.get(i);
 	}
 	
 	public void removeDatabaseMeta(int i)
@@ -203,18 +203,18 @@ public class SchemaMeta
 		tables.remove(i);
 		changedTables = true;
 	}
-	public void removeView(int i)
+	public void removeBusinessModel(int i)
 	{
-		if (i<0 || i>=views.size()) return;
+		if (i<0 || i>=businessModels.size()) return;
 
-		views.remove(i);
-		changedViews = true;
+		businessModels.remove(i);
+		changedBusinessModels = true;
 	}
     
 
 	public int nrDatabases()     { return databases.size();     }
 	public int nrTables()        { return tables.size();        }
-	public int nrViews()         { return views.size(); }
+	public int nrBusinessModels()         { return businessModels.size(); }
 
 	public boolean haveDatabasesChanged()
 	{
@@ -240,14 +240,14 @@ public class SchemaMeta
 		return false;
 	}
 
-	public boolean haveViewsChanged()
+	public boolean haveBusinessModelsChanged()
 	{
-		for (int i=0;i<nrViews();i++)
+		for (int i=0;i<nrBusinessModels();i++)
 		{
-			BusinessView view = getView(i);
-			if (view.hasChanged()) return true;
+			BusinessModel businessModel = getModel(i);
+			if (businessModel.hasChanged()) return true;
 		}
-		return changedViews;
+		return changedBusinessModels;
 	}
     
     public boolean haveConceptsChanged()
@@ -266,7 +266,7 @@ public class SchemaMeta
 	{
 		if (haveDatabasesChanged())       return true;
 		if (haveTablesChanged())          return true;
-		if (haveViewsChanged())           return true;
+		if (haveBusinessModelsChanged())           return true;
         if (haveConceptsChanged())        return true;
         if (locales.hasChanged())         return true;
         if (securityReference.getSecurityService().hasChanged()) return true;
@@ -279,12 +279,12 @@ public class SchemaMeta
         changed              = false;
         changedDatabases     = false;
         changedTables        = false;
-        changedViews         = false;
+        changedBusinessModels         = false;
         changedConcepts      = false;
         
         for (int i=0;i<nrDatabases();i++) getDatabase(i).setChanged(false);
         for (int i=0;i<nrTables();i++)    getTable(i).clearChanged();
-        for (int i=0;i<nrViews();i++)     getView(i).clearChanged();
+        for (int i=0;i<nrBusinessModels();i++)     getModel(i).clearChanged();
         for (int i=0;i<nrConcepts();i++)  getConcept(i).clearChanged();
         locales.clearChanged();
         securityReference.getSecurityService().setChanged(false);
@@ -365,40 +365,40 @@ public class SchemaMeta
 	{
 		return tables.indexOf(ti);
 	}
-	public int indexOfView(Object view)
+	public int indexOfBusinessModel(Object model)
 	{
-		return views.indexOf(view);
+		return businessModels.indexOf(model);
 	}
 	
-    public BusinessView findView(String id)
+    public BusinessModel findModel(String id)
     {
-        for (int i=0;i<nrViews();i++)
+        for (int i=0;i<nrBusinessModels();i++)
         {
-            BusinessView view = getView(i);
-            if (view.getId().equals(id))
+            BusinessModel businessModel = getModel(i);
+            if (businessModel.getId().equals(id))
             {
-                return view; 
+                return businessModel; 
             }
         }
         return null;
     }
     
     /**
-     * Search a view based on the localized name or if that is not found, the ID
+     * Search a business model based on the localized name or if that is not found, the ID
      * @param nameToFind The name (or ID) to search for
      * @param locale The locale in which we want to search
-     * @return The business view or null if nothing could be found. 
+     * @return The business model or null if nothing could be found. 
      */
-	public BusinessView findView(String locale, String nameToFind)
+	public BusinessModel findModel(String locale, String nameToFind)
 	{
-		for (int i=0;i<nrViews();i++)
+		for (int i=0;i<nrBusinessModels();i++)
 		{
-			BusinessView view = getView(i);
+			BusinessModel businessModel = getModel(i);
             
-            String locName = view.getConcept().getName(locale); 
-			if ( (locName!=null && locName.equals(nameToFind)) || view.getId().equals(nameToFind))
+            String locName = businessModel.getConcept().getName(locale); 
+			if ( (locName!=null && locName.equals(nameToFind)) || businessModel.getId().equals(nameToFind))
 			{
-				return view; 
+				return businessModel; 
 			}
 		}
 		return null;
@@ -448,42 +448,42 @@ public class SchemaMeta
     }
 
     /**
-     * @return the activeView
+     * @return the activeModel
      */
-    public BusinessView getActiveView()
+    public BusinessModel getActiveModel()
     {
-        return activeView;
+        return activeModel;
     }
 
     /**
-     * @param activeView the activeView to set
+     * @param activeModel the activeModel to set
      */
-    public void setActiveView(BusinessView activeView)
+    public void setActiveModel(BusinessModel activeModel)
     {
-        this.activeView = activeView;
+        this.activeModel = activeModel;
     }
 
-    public UniqueList getViews()
+    public UniqueList getBusinessModels()
     {
-        return views;
+        return businessModels;
     }
     
-    public String[] getViewIDs()
+    public String[] getBusinessModelIDs()
     {
-        String[] ids = new String[views.size()];
-        for (int i=0;i<views.size();i++)
+        String[] ids = new String[businessModels.size()];
+        for (int i=0;i<businessModels.size();i++)
         {
-            ids[i] = ((BusinessView)views.get(i)).getId();
+            ids[i] = ((BusinessModel)businessModels.get(i)).getId();
         }
         return ids;
     }
 
-    public String[] getViewNames(String locale)
+    public String[] getBusinessModelNames(String locale)
     {
-        String[] names = new String[views.size()];
-        for (int i=0;i<views.size();i++)
+        String[] names = new String[businessModels.size()];
+        for (int i=0;i<businessModels.size();i++)
         {
-            names[i] = ((BusinessView)views.get(i)).getDisplayName(locale);
+            names[i] = ((BusinessModel)businessModels.get(i)).getDisplayName(locale);
         }
         return names;
     }
@@ -557,9 +557,9 @@ public class SchemaMeta
     public String[] getUsedLocale()
     {
         Map allLocales = new Hashtable();
-        for (int i=0;i<nrViews();i++)
+        for (int i=0;i<nrBusinessModels();i++)
         {
-            String[] usedLocale = getView(i).getConcept().getUsedLocale(); 
+            String[] usedLocale = getModel(i).getConcept().getUsedLocale(); 
             for (int j=0;j<usedLocale.length;j++) allLocales.put(usedLocale[i], "");  //$NON-NLS-1$
         }
         
@@ -672,15 +672,15 @@ public class SchemaMeta
         // The physical tables
         for (int i=0;i<nrTables();i++) list.add(getTable(i));
         
-        // The business views
-        for (int v=0;v<nrViews();v++)
+        // The business businessModels
+        for (int v=0;v<nrBusinessModels();v++)
         {
-            BusinessView view = getView(v);
-            list.add(view);
+            BusinessModel businessModel = getModel(v);
+            list.add(businessModel);
             // Business tables
-            for (int t=0;t<view.nrBusinessTables();t++)
+            for (int t=0;t<businessModel.nrBusinessTables();t++)
             {
-                BusinessTable table = view.getBusinessTable(t);
+                BusinessTable table = businessModel.getBusinessTable(t);
                 list.add(table);
                 for (int c=0;c<table.nrBusinessColumns();c++)
                 {
@@ -689,9 +689,9 @@ public class SchemaMeta
                 }
             }
             // Business categories: todo: make it recursive too.
-            for (int c=0;c<view.getRootCategory().nrBusinessCategories();c++)
+            for (int c=0;c<businessModel.getRootCategory().nrBusinessCategories();c++)
             {
-                list.add(view.getRootCategory().getBusinessCategory(c));
+                list.add(businessModel.getRootCategory().getBusinessCategory(c));
             }
         }
         

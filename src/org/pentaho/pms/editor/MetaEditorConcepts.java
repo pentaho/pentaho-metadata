@@ -139,7 +139,7 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
 
     private void addTree()
     {
-        // Main: the top left tree containing connections, physical tables, business views, etc.
+        // Main: the top left tree containing connections, physical tables, business models, etc.
         //
         Composite compMain = new Composite(sashform, SWT.NONE);
         FormLayout formLayout = new FormLayout();
@@ -167,9 +167,9 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
         SelectionAdapter lsEditMainSel = new SelectionAdapter() { public void widgetSelected(SelectionEvent e) { setMenu(e); } };
         wTree.addSelectionListener(lsEditMainSel);
 
-        // Normal selection: left click to select business view
-        SelectionListener lsSelView = new SelectionAdapter() { public void widgetSelected(SelectionEvent e) { setActiveContext(e); } };
-        wTree.addSelectionListener(lsSelView);
+        // Normal selection: left click to select business model
+        SelectionListener lsSelModel = new SelectionAdapter() { public void widgetSelected(SelectionEvent e) { setActiveContext(e); } };
+        wTree.addSelectionListener(lsSelModel);
         
         // A key gets pressed...
         KeyAdapter lsKey = new KeyAdapter() { public void keyPressed(KeyEvent event) { keyPressedInTree(event); } };

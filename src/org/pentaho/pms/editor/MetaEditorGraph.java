@@ -63,7 +63,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Shell;
 import org.pentaho.pms.schema.BusinessTable;
-import org.pentaho.pms.schema.BusinessView;
+import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.RelationshipMeta;
 import org.pentaho.pms.schema.concept.ConceptInterface;
@@ -180,8 +180,8 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 		{
 			public void mouseDoubleClick(MouseEvent e)
 			{
-                BusinessView activeView = metaEditor.getSchemaMeta().getActiveView(); 
-                if (activeView==null) return;
+                BusinessModel activeModel = metaEditor.getSchemaMeta().getActiveModel(); 
+                if (activeModel==null) return;
 
 				selected_items = null;
 				selected_icon = null;
@@ -192,10 +192,10 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 
 				Point real = screen2real(e.x, e.y);
 
-				BusinessTable businessTable = activeView.getTable(real.x, real.y, iconsize);
+				BusinessTable businessTable = activeModel.getTable(real.x, real.y, iconsize);
 				if (businessTable != null)
 				{
-					if (e.button==1) editBusinessTable(activeView, businessTable); else editDescription(businessTable.getConcept());
+					if (e.button==1) editBusinessTable(activeModel, businessTable); else editDescription(businessTable.getConcept());
 				}
 				else
 				{
@@ -207,7 +207,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 					}
 					else
 					{
-						NotePadMeta ni = activeView.getNote(real.x, real.y);
+						NotePadMeta ni = activeModel.getNote(real.x, real.y);
 						if (ni != null)
 						{
 							selected_note = null;
@@ -219,8 +219,8 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 
 			public void mouseDown(MouseEvent e)
 			{
-                BusinessView activeView = metaEditor.getSchemaMeta().getActiveView(); 
-                if (activeView==null) return;
+                BusinessModel activeModel = metaEditor.getSchemaMeta().getActiveModel(); 
+                if (activeModel==null) return;
 
 				last_button = e.button;
 
@@ -239,15 +239,15 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 				setMenu(real.x, real.y);
 
 				// Did we click on a step?
-				BusinessTable ti = activeView.getTable(real.x, real.y, iconsize);
+				BusinessTable ti = activeModel.getTable(real.x, real.y, iconsize);
 				if (ti != null)
 				{
-					selected_items = activeView.getSelectedTables();
+					selected_items = activeModel.getSelectedTables();
 					selected_icon = ti;
 					// make sure this is correct!!!
 					// When an icon is moved that is not selected, it gets selected too late.
 					// It is not captured here, but in the mouseMoveListener...
-					prev_locations = activeView.getSelectedLocations();
+					prev_locations = activeModel.getSelectedLocations();
 
 					Point p = ti.getLocation();
 					iconoffset = new Point(real.x - p.x, real.y - p.y);
@@ -255,7 +255,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 				else
 				{
 					// Dit we hit a note?
-					NotePadMeta ni = activeView.getNote(real.x, real.y);
+					NotePadMeta ni = activeModel.getNote(real.x, real.y);
 					if (ni != null && last_button == 1)
 					{
 						selected_note = ni;
@@ -273,8 +273,8 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 
 			public void mouseUp(MouseEvent e)
 			{
-                BusinessView activeView = metaEditor.getSchemaMeta().getActiveView(); 
-                if (activeView==null) return;
+                BusinessModel activeModel = metaEditor.getSchemaMeta().getActiveModel(); 
+                if (activeModel==null) return;
 
 				if (iconoffset == null) iconoffset = new Point(0, 0);
 				Point real = screen2real(e.x, e.y);
@@ -283,9 +283,9 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 				//
 				if (candidate != null)
 				{
-					if (activeView.findRelationship(candidate.getTableFrom().getId(), candidate.getTableTo().getId()) == null)
+					if (activeModel.findRelationship(candidate.getTableFrom().getId(), candidate.getTableTo().getId()) == null)
 					{
-                        activeView.addRelationship(candidate);
+                        activeModel.addRelationship(candidate);
 						metaEditor.refreshTree();
 					}
 					candidate = null;
@@ -300,8 +300,8 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 					selrect.width = real.x - selrect.x;
 					selrect.height = real.y - selrect.y;
 
-                    activeView.unselectAll();
-                    activeView.selectInRect(selrect);
+                    activeModel.unselectAll();
+                    activeModel.selectInRect(selrect);
 					selrect = null;
 					redraw();
 				}
@@ -321,7 +321,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 							else
 							{
 								// Otherwise, select only the icon clicked on!
-                                activeView.unselectAll();
+                                activeModel.unselectAll();
 								selected_icon.setSelected(true);
 							}
 						}
@@ -356,8 +356,8 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 		{
 			public void mouseMove(MouseEvent e)
 			{
-                BusinessView activeView = metaEditor.getSchemaMeta().getActiveView(); 
-                if (activeView==null) return;
+                BusinessModel activeModel = metaEditor.getSchemaMeta().getActiveModel(); 
+                if (activeModel==null) return;
                 
 				if (iconoffset == null) iconoffset = new Point(0, 0);
 				Point real = screen2real(e.x, e.y);
@@ -370,7 +370,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 				// selected and move only the one icon
 				if (selected_icon != null && !selected_icon.isSelected())
 				{
-                    activeView.unselectAll();
+                    activeModel.unselectAll();
 					selected_icon.setSelected(true);
 					selected_items = new BusinessTable[] { selected_icon };
 					prev_locations = new Point[] { selected_icon.getLocation()};
@@ -409,7 +409,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 					// The middle button perhaps?
 					else if (last_button == 2)
 					{
-						BusinessTable businessTable = activeView.getTable(real.x, real.y, iconsize);
+						BusinessTable businessTable = activeModel.getTable(real.x, real.y, iconsize);
 						if (businessTable != null && !selected_icon.equals(businessTable))
 						{
 							if (candidate == null)
@@ -494,7 +494,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable
                     // 
                     // Drag physical table onto metaEditorGraph:
                     //  0) Look up the referenced Physical Table name, if it exists continue
-                    //  1) If there is an active business view use that one, if not ask name, create one, edit it
+                    //  1) If there is an active business model use that one, if not ask name, create one, edit it
                     //  2) Create the business table based on the physical table, edit
                     //  3) Place the business table on the selected coordinates.
                     //
@@ -503,10 +503,10 @@ public class MetaEditorGraph extends Canvas implements Redrawable
                             PhysicalTable physicalTable = metaEditor.getSchemaMeta().findPhysicalTable(container.getData());  // 0)
                             if (physicalTable!=null)
                             {
-                                BusinessView businessView = metaEditor.getSchemaMeta().getActiveView();
-                                if (businessView==null) businessView = metaEditor.newBusinessView();  // 1)
+                                BusinessModel businessModel = metaEditor.getSchemaMeta().getActiveModel();
+                                if (businessModel==null) businessModel = metaEditor.newBusinessModel();  // 1)
                                 
-                                if (businessView!=null)
+                                if (businessModel!=null)
                                 {
                                     BusinessTable businessTable = metaEditor.newBusinessTable(physicalTable);  // 2)
                                     if (businessTable!=null)
@@ -550,17 +550,17 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 		{
 			public void keyPressed(KeyEvent e)
 			{
-                BusinessView activeView = metaEditor.getSchemaMeta().getActiveView();
-                if (activeView==null) return;
+                BusinessModel activeModel = metaEditor.getSchemaMeta().getActiveModel();
+                if (activeModel==null) return;
                 
 				if ((int) e.character == 1) // CTRL-A
 				{
-                    activeView.selectAll();
+                    activeModel.selectAll();
 					redraw();
 				}
 				if (e.keyCode == SWT.ESC)
 				{
-                    activeView.unselectAll();
+                    activeModel.unselectAll();
 					redraw();
 				}
                 
@@ -646,12 +646,12 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 	// return the Relationship if so, otherwise: null
 	private RelationshipMeta findRelationship(int x, int y)
 	{
-        BusinessView activeView = metaEditor.getSchemaMeta().getActiveView();
-        if (activeView==null) return null; // no active business view
+        BusinessModel activeModel = metaEditor.getSchemaMeta().getActiveModel();
+        if (activeModel==null) return null; // no active business model
         
-        for (int i = 0; i < activeView.nrRelationships(); i++)
+        for (int i = 0; i < activeModel.nrRelationships(); i++)
 		{
-			RelationshipMeta ri = activeView.getRelationship(i);
+			RelationshipMeta ri = activeModel.getRelationship(i);
 			BusinessTable fs  = ri.getTableFrom();
 			BusinessTable ts  = ri.getTableTo();
 
@@ -692,20 +692,20 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 
 	private void setMenu(int x, int y)
 	{
-        final BusinessView activeView = metaEditor.getSchemaMeta().getActiveView();
-        if (activeView==null) return;
+        final BusinessModel activeModel = metaEditor.getSchemaMeta().getActiveModel();
+        if (activeModel==null) return;
         final String activeLocale = metaEditor.getSchemaMeta().getActiveLocale();
         
         // final String activeLocale = metaEditor.getSchemaMeta().getActiveLocale();
         
-		final BusinessTable bTable = activeView.getTable(x, y, iconsize);
+		final BusinessTable bTable = activeModel.getTable(x, y, iconsize);
 		if (bTable != null) // We clicked on a Step!
 		{
 			Menu mPop = new Menu((Control) this);
 			MenuItem miNewHop = null;
 			MenuItem miHideStep = null;
 
-			int sels = activeView.nrSelected();
+			int sels = activeModel.nrSelected();
 			if (sels == 2)
 			{
 				miNewHop = new MenuItem(mPop, SWT.CASCADE);
@@ -811,7 +811,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 					}
 				});
 			}
-			if (bTable.isDrawn() && !activeView.isTableUsedInRelationships(bTable.getPhysicalTable().getId()))
+			if (bTable.isDrawn() && !activeModel.isTableUsedInRelationships(bTable.getPhysicalTable().getId()))
 			{
 				miHideStep = new MenuItem(mPop, SWT.CASCADE);
 				miHideStep.setText("Hide step");
@@ -819,9 +819,9 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 				{
 					public void widgetSelected(SelectionEvent e)
 					{
-						for (int i = 0; i < activeView.nrSelected(); i++)
+						for (int i = 0; i < activeModel.nrSelected(); i++)
 						{
-							BusinessTable businessTable = activeView.getSelected(i);
+							BusinessTable businessTable = activeModel.getSelected(i);
 							if (businessTable.isDrawn() && businessTable.isSelected())
 							{
 								businessTable.hide();
@@ -840,7 +840,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 				public void widgetSelected(SelectionEvent e)
 				{
 					selected_items = null;
-					editBusinessTable(activeView, bTable);
+					editBusinessTable(activeModel, bTable);
 				}
 			});            
 			miEditDesc.addSelectionListener(new SelectionAdapter()
@@ -864,15 +864,15 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 			{
 				public void widgetSelected(SelectionEvent e)
 				{
-					if (activeView.nrSelected() <= 1)
+					if (activeModel.nrSelected() <= 1)
 					{
 						metaEditor.dupePhysicalTable(bTable.getPhysicalTable());
 					}
 					else
 					{
-						for (int i = 0; i < activeView.nrBusinessTables(); i++)
+						for (int i = 0; i < activeModel.nrBusinessTables(); i++)
 						{
-							BusinessTable businessTable = activeView.getBusinessTable(i);
+							BusinessTable businessTable = activeModel.getBusinessTable(i);
 							if (businessTable.isSelected())
 							{
 								metaEditor.dupePhysicalTable(businessTable.getPhysicalTable());
@@ -886,7 +886,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 			{
 				public void widgetSelected(SelectionEvent e)
 				{
-					int nrsels = activeView.nrSelected();
+					int nrsels = activeModel.nrSelected();
 					if (nrsels == 0)
 					{
 						metaEditor.delPhysicalTable(bTable.getId());
@@ -898,9 +898,9 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 						MessageBox mb = new MessageBox(shell, SWT.YES | SWT.NO | SWT.ICON_WARNING);
 						mb.setText("WARNING!");
 						String message = "Do you want to delete the " + nrsels + " following tables?"+Const.CR;
-						for (int i = activeView.nrBusinessTables() - 1; i >= 0; i--)
+						for (int i = activeModel.nrBusinessTables() - 1; i >= 0; i--)
 						{
-							BusinessTable tableinfo = activeView.getBusinessTable(i);
+							BusinessTable tableinfo = activeModel.getBusinessTable(i);
 							if (tableinfo.isSelected() || bTable.equals(tableinfo))
 							{
 								message += "  --> " + tableinfo.getId() + Const.CR;
@@ -911,9 +911,9 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 						int result = mb.open();
 						if (result == SWT.YES)
 						{
-							for (int i = activeView.nrBusinessTables() - 1; i >= 0; i--)
+							for (int i = activeModel.nrBusinessTables() - 1; i >= 0; i--)
 							{
-								BusinessTable tableinfo = activeView.getBusinessTable(i);
+								BusinessTable tableinfo = activeModel.getBusinessTable(i);
 								if (tableinfo.isSelected() || bTable.equals(tableinfo))
 								{
 									metaEditor.delBusinessTable(tableinfo.getId());
@@ -931,7 +931,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 			final RelationshipMeta relationshipMeta = findRelationship(x, y);
 			if (relationshipMeta != null) // We clicked on a relationship!
 			{
-                final BusinessView view = metaEditor.getSchemaMeta().getActiveView(); // not null because we found a relationship
+                final BusinessModel model = metaEditor.getSchemaMeta().getActiveModel(); // not null because we found a relationship
                 
 				Menu mPop = new Menu((Control) this);
 				MenuItem miEditHop = new MenuItem(mPop, SWT.CASCADE); miEditHop.setText("Edit relationship");
@@ -950,8 +950,8 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 					public void widgetSelected(SelectionEvent e)
 					{
 						selrect = null;
-						int idx = view.indexOfRelationship(relationshipMeta);
-                        view.removeRelationship(idx);
+						int idx = model.indexOfRelationship(relationshipMeta);
+                        model.removeRelationship(idx);
 						metaEditor.refreshTree();
 						metaEditor.refreshGraph();
 					}
@@ -961,7 +961,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 			else
 			{
 				// Clicked on the background: maybe we hit a note?
-				final NotePadMeta ni = activeView.getNote(x, y);
+				final NotePadMeta ni = activeModel.getNote(x, y);
 				if (ni != null)
 				{
 					// Delete note
@@ -986,10 +986,10 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 						public void widgetSelected(SelectionEvent e)
 						{
 							selrect = null;
-							int idx = activeView.indexOfNote(ni);
+							int idx = activeModel.indexOfNote(ni);
 							if (idx >= 0)
 							{
-                                activeView.removeNote(idx);
+                                activeModel.removeNote(idx);
 								redraw();
 							}
 						}
@@ -1016,7 +1016,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 							if (n != null)
 							{
 								NotePadMeta npi = new NotePadMeta(n, lastclick.x, lastclick.y, Const.NOTE_MIN_SIZE, Const.NOTE_MIN_SIZE);
-                                activeView.addNote(npi);
+                                activeModel.addNote(npi);
 								redraw();
 							}
 						}
@@ -1030,11 +1030,11 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 
 	private void setToolTip(int x, int y)
 	{
-        BusinessView activeView = metaEditor.getSchemaMeta().getActiveView();
-        if (activeView==null) return;
+        BusinessModel activeModel = metaEditor.getSchemaMeta().getActiveModel();
+        if (activeModel==null) return;
         String activeLocale = metaEditor.getSchemaMeta().getActiveLocale();
         
-		final BusinessTable businessTable = activeView.getTable(x, y, iconsize);
+		final BusinessTable businessTable = activeModel.getTable(x, y, iconsize);
 		if (businessTable != null) // We clicked on a Step!
 		{
             ConceptInterface concept = businessTable.getConcept();
@@ -1121,24 +1121,24 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 
 	public void drawSchema(GC gc)
 	{
-        BusinessView activeView = metaEditor.getSchemaMeta().getActiveView();
+        BusinessModel activeModel = metaEditor.getSchemaMeta().getActiveModel();
         String activeLocale = metaEditor.getSchemaMeta().getActiveLocale();
             
         if (props.isAntiAliasingEnabled()) gc.setAntialias(SWT.ON);
 
         gc.setBackground(GUIResource.getInstance().getColorBackground());
 
-        // Draw the active business view.  If there is none, don't draw anything except the drop rectangles ;-)
-        if (activeView!=null)
+        // Draw the active business model.  If there is none, don't draw anything except the drop rectangles ;-)
+        if (activeModel!=null)
         {
-            // display the name/description of the business view 
+            // display the name/description of the business model 
             //
-            String title = activeView.getDisplayName(activeLocale);
+            String title = activeModel.getDisplayName(activeLocale);
             gc.setFont(GUIResource.getInstance().getFontLarge());
             org.eclipse.swt.graphics.Point point = gc.textExtent(title);
             gc.drawText(title, 10, 10);
             gc.setFont(GUIResource.getInstance().getFontMedium());
-            String description = activeView.getConcept().getDescription(activeLocale);
+            String description = activeModel.getConcept().getDescription(activeLocale);
             if (description!=null)
             {
                 gc.drawText(description, 10, 10+point.y);
@@ -1154,7 +1154,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable
             // Back to our regular show...
             
     		Point area = getArea();
-    		Point max  = activeView.getMaximum();
+    		Point max  = activeModel.getMaximum();
     		Point thumb = getThumb(area, max);
     		offset = getOffset(thumb, area);
     
@@ -1162,15 +1162,15 @@ public class MetaEditorGraph extends Canvas implements Redrawable
     		vert.setThumb(thumb.y);
     
     		// First the notes
-    		for (int i = 0; i < activeView.nrNotes(); i++)
+    		for (int i = 0; i < activeModel.nrNotes(); i++)
     		{
-    			NotePadMeta ni = activeView.getNote(i);
+    			NotePadMeta ni = activeModel.getNote(i);
     			drawNote(gc, ni);
     		}
             
-    		for (int i = 0; i < activeView.nrRelationships(); i++)
+    		for (int i = 0; i < activeModel.nrRelationships(); i++)
     		{
-    			RelationshipMeta hi = activeView.getRelationship(i);
+    			RelationshipMeta hi = activeModel.getRelationship(i);
     			drawRelationship(gc, hi);
     		}
     
@@ -1179,9 +1179,9 @@ public class MetaEditorGraph extends Canvas implements Redrawable
     			drawRelationship(gc, candidate, true);
     		}
     
-            for (int i = 0; i < activeView.nrBusinessTables() ; i++)
+            for (int i = 0; i < activeModel.nrBusinessTables() ; i++)
     		{
-    			BusinessTable si = activeView.getBusinessTable(i);
+    			BusinessTable si = activeModel.getBusinessTable(i);
     			drawBusinessTable(gc, si);
     		}
     
@@ -1189,18 +1189,18 @@ public class MetaEditorGraph extends Canvas implements Redrawable
         }
         else
         {
-            // Set the name of the business view
+            // Set the name of the business model
             //
             int h = (int)GUIResource.getInstance().getFontLarge().getFontData()[0].height;
             
             gc.setFont(GUIResource.getInstance().getFontLarge());
-            int nrViews = metaEditor.getSchemaMeta().nrViews();
+            int nrModels = metaEditor.getSchemaMeta().nrBusinessModels();
             String message1, message2;
-            switch(nrViews)
+            switch(nrModels)
             {
-            case 0:  message1 = "There are no business views defined."; message2="Create one first to start drawing on it."; break;
-            case 1:  message1 = "There is one business view defined."; message2="Select it in the tree to show it over here."; break;
-            default: message1 = "There are "+nrViews+" business views available."; message2="Select one of them in the tree to view."; break;
+            case 0:  message1 = "There are no business models defined."; message2="Create one first to start drawing on it."; break;
+            case 1:  message1 = "There is one business model defined."; message2="Select it in the tree to show it over here."; break;
+            default: message1 = "There are "+nrModels+" business models available."; message2="Select one of them in the tree to view."; break;
             }
             gc.drawText(message1, 10,  10, true);
             gc.drawText(message2, 10, 20+h, true);
@@ -1379,9 +1379,9 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 	{
 		Point area = getArea();
 		Point max = new Point(0,0);
-        if (metaEditor.getSchemaMeta().getActiveView()!=null) 
+        if (metaEditor.getSchemaMeta().getActiveModel()!=null) 
         {
-            max = metaEditor.getSchemaMeta().getActiveView().getMaximum();
+            max = metaEditor.getSchemaMeta().getActiveModel().getMaximum();
         }
 		Point thumb = getThumb(area, max);
 		Point offset = getOffset(thumb, area);
@@ -1408,7 +1408,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 		return n < 0 ? -1 : (n > 0 ? 1 : 1);
 	}
 
-	private void editBusinessTable(BusinessView activeView, BusinessTable businessTable)
+	private void editBusinessTable(BusinessModel activeModel, BusinessTable businessTable)
 	{
 		metaEditor.editBusinessTable(businessTable);
 	}
@@ -1439,10 +1439,10 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 
 	private void newRelationship()
 	{
-        if (metaEditor.getSchemaMeta().getActiveView()==null) return;
+        if (metaEditor.getSchemaMeta().getActiveModel()==null) return;
         
-		BusinessTable from = metaEditor.getSchemaMeta().getActiveView().getSelectedTables()[0];
-        BusinessTable to   = metaEditor.getSchemaMeta().getActiveView().getSelectedTables()[1];
+		BusinessTable from = metaEditor.getSchemaMeta().getActiveModel().getSelectedTables()[0];
+        BusinessTable to   = metaEditor.getSchemaMeta().getActiveModel().getSelectedTables()[1];
 		metaEditor.newRelationship(from, to);
 	}
 
@@ -1721,21 +1721,21 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 	}
     
     /**
-     * Note: we know that we have an active business view here so it's safe to use this BusinessView.$
+     * Note: we know that we have an active business model here so it's safe to use this BusinessModel.$
      * 
      * @return a new SnapAllignDistribute object
      */
     private SnapAllignDistribute createSnapAllignDistribute()
     {
-        BusinessView activeView = metaEditor.getSchemaMeta().getActiveView();
+        BusinessModel activeModel = metaEditor.getSchemaMeta().getActiveModel();
         
         List elements;
         int[] indices;
         
-        if (activeView!=null)
+        if (activeModel!=null)
         {
-            elements = activeView.getSelectedDrawnBusinessTableList();
-            indices = activeView.getBusinessTableIndexes((BusinessTable[])elements.toArray(new BusinessTable[elements.size()]));
+            elements = activeModel.getSelectedDrawnBusinessTableList();
+            indices = activeModel.getBusinessTableIndexes((BusinessTable[])elements.toArray(new BusinessTable[elements.size()]));
         }
         else
         {
@@ -1743,7 +1743,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable
             indices = new int[] {};
         }
 
-        return new SnapAllignDistribute(activeView, elements, indices, null, this);
+        return new SnapAllignDistribute(activeModel, elements, indices, null, this);
     }
 
     private void snaptogrid(int size)

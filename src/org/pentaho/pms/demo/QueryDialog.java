@@ -43,7 +43,7 @@ import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.mql.MQLQuery;
 import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
-import org.pentaho.pms.schema.BusinessView;
+import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.OrderBy;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.WhereCondition;
@@ -66,8 +66,8 @@ import be.ibridge.kettle.trans.step.BaseStepDialog;
 /**
  * The pentaho metadata query editor
  * 
- * TODO: capture view change and show warning that all previous selections will be erased.
- *       Perhaps we can save a query per view too.
+ * TODO: capture model change and show warning that all previous selections will be erased.
+ *       Perhaps we can save a query per model too.
  * 
  * @author Matt
  *
@@ -91,7 +91,7 @@ public class QueryDialog extends Dialog
     private SchemaMeta schemaMeta;
     private String locale;
 
-    private List wViews;
+    private List wModels;
     private Tree wCat;
     private Button wAddColumn;
     private Button wDelColumn;
@@ -166,25 +166,25 @@ public class QueryDialog extends Dialog
         
         BaseStepDialog.positionBottomButtons(shell, new Button[] { wOK, wSQL, wTrans, wCancel }, Const.MARGIN, null);
 
-        // Add a label for the business view
-        Label wlViews = new Label(shell, SWT.LEFT);
-        wlViews.setText(Messages.getString("QueryDialog.USER_SELECT_BUSINESS_MODEL")); //$NON-NLS-1$
-        props.setLook(wlViews);
-        FormData fdlViews = new FormData();
-        fdlViews.left = new FormAttachment(0,0);
-        fdlViews.top  = new FormAttachment(0,0);
-        wlViews.setLayoutData(fdlViews);
+        // Add a label for the business model
+        Label wlModels = new Label(shell, SWT.LEFT);
+        wlModels.setText(Messages.getString("QueryDialog.USER_SELECT_BUSINESS_MODEL")); //$NON-NLS-1$
+        props.setLook(wlModels);
+        FormData fdlModels = new FormData();
+        fdlModels.left = new FormAttachment(0,0);
+        fdlModels.top  = new FormAttachment(0,0);
+        wlModels.setLayoutData(fdlModels);
         
-        // Add a List for the business views
-        wViews = new List(shell, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-        props.setLook(wViews);
-        FormData fdViews = new FormData();
-        fdViews.left   = new FormAttachment(0 , 0);
-        fdViews.right  = new FormAttachment(middle, 0);
-        fdViews.top    = new FormAttachment(wlViews, margin);
-        fdViews.bottom = new FormAttachment(wlViews, 70);
-        wViews.setLayoutData(fdViews);
-        addListenersToViews();
+        // Add a List for the business models
+        wModels = new List(shell, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+        props.setLook(wModels);
+        FormData fdModels = new FormData();
+        fdModels.left   = new FormAttachment(0 , 0);
+        fdModels.right  = new FormAttachment(middle, 0);
+        fdModels.top    = new FormAttachment(wlModels, margin);
+        fdModels.bottom = new FormAttachment(wlModels, 70);
+        wModels.setLayoutData(fdModels);
+        addListenersToModels();
         
         // Below those 2, we show the categories tree
         
@@ -194,7 +194,7 @@ public class QueryDialog extends Dialog
         props.setLook(wlCat);
         FormData fdlCat = new FormData();
         fdlCat.left = new FormAttachment(0,0);
-        fdlCat.top  = new FormAttachment(wViews, 2*margin);
+        fdlCat.top  = new FormAttachment(wModels, 2*margin);
         wlCat.setLayoutData(fdlCat);
         
         // Add the categories tree itself
@@ -442,7 +442,7 @@ public class QueryDialog extends Dialog
         wlComments.setFont(GUIResource.getInstance().getFontLarge());
         FormData fdlComments = new FormData();
         fdlComments.left = new FormAttachment(wDownColumn, 2*margin);
-        fdlComments.top  = new FormAttachment(wlViews, margin);
+        fdlComments.top  = new FormAttachment(wlModels, margin);
         wlComments.setLayoutData(fdlComments);
 
         // Add listeners to the buttons
@@ -543,7 +543,7 @@ public class QueryDialog extends Dialog
         {
             try
             {
-                if (getView()!=null)
+                if (getModel()!=null)
                 {
                     query = getQuery();
                     
@@ -580,9 +580,9 @@ public class QueryDialog extends Dialog
             
             String[] path = Const.getTreeStrings(treeItem, 1);
             
-            BusinessView activeView = getView();
+            BusinessModel activeModel = getModel();
             
-            BusinessCategory businessCategory = activeView.findBusinessCategory(path, locale);
+            BusinessCategory businessCategory = activeModel.findBusinessCategory(path, locale);
             BusinessColumn businessColumn =  businessCategory.findBusinessColumn(treeItem.getText(), false, locale);
             
             if (businessColumn!=null)
@@ -768,13 +768,13 @@ public class QueryDialog extends Dialog
         wOrder.setFocus();
     }
 
-    private void addListenersToViews()
+    private void addListenersToModels()
     {
-        wViews.addSelectionListener(new SelectionAdapter()
+        wModels.addSelectionListener(new SelectionAdapter()
             {
                 public void widgetSelected(SelectionEvent event)
                 {
-                    // If you select another view: change the categories tree
+                    // If you select another model: change the categories tree
                     updateCategories();
                 }
             }
@@ -806,9 +806,9 @@ public class QueryDialog extends Dialog
             
             String[] path = Const.getTreeStrings(treeItem, 1);
             
-            BusinessView activeView = getView();
+            BusinessModel activeModel = getModel();
             
-            BusinessCategory businessCategory = activeView.findBusinessCategory(path, locale);
+            BusinessCategory businessCategory = activeModel.findBusinessCategory(path, locale);
             BusinessColumn businessColumn =  businessCategory.findBusinessColumn(treeItem.getText(), false, locale);
             
             if (businessColumn!=null && columns.indexOf(businessColumn)<0)
@@ -885,17 +885,17 @@ public class QueryDialog extends Dialog
     }
 
 
-    private void updateViewList()
+    private void updateModelList()
     {
-        wViews.removeAll();
-        wViews.setItems( schemaMeta.getViewNames(locale) );
+        wModels.removeAll();
+        wModels.setItems( schemaMeta.getBusinessModelNames(locale) );
     }
     
-    private BusinessView getView()
+    private BusinessModel getModel()
     {
-        if (wViews.getSelectionCount()==1)
+        if (wModels.getSelectionCount()==1)
         {
-            return schemaMeta.findView(locale, wViews.getSelection()[0]);
+            return schemaMeta.findModel(locale, wModels.getSelection()[0]);
         }
         return null;
     }
@@ -907,10 +907,10 @@ public class QueryDialog extends Dialog
         tiCategories = new TreeItem(wCat, SWT.NONE); 
         tiCategories.setText(STRING_CATEGORIES);
         
-        BusinessView activeView = getView(); 
-        if (activeView!=null)
+        BusinessModel activeModel = getModel(); 
+        if (activeModel!=null)
         {
-            MetaEditor.addTreeCategories(tiCategories, activeView.getRootCategory(), locale, false);
+            MetaEditor.addTreeCategories(tiCategories, activeModel.getRootCategory(), locale, false);
         }
         TreeMemory.setExpandedFromMemory(wCat, STRING_CATEGORIES_TREE);
     }
@@ -931,13 +931,13 @@ public class QueryDialog extends Dialog
     {
         if (schemaMeta!=null)
         {
-            updateViewList();
+            updateModelList();
         }
         
-        if (query!=null && wViews!= null && query.getView()!=null && query.getView().getDisplayName(locale)!=null)
+        if (query!=null && wModels!= null && query.getModel()!=null && query.getModel().getDisplayName(locale)!=null)
         {
-            int idx = wViews.indexOf( query.getView().getDisplayName(locale) );
-            if (idx>=0 && idx<wViews.getItemCount()) wViews.select(idx);
+            int idx = wModels.indexOf( query.getModel().getDisplayName(locale) );
+            if (idx>=0 && idx<wModels.getItemCount()) wModels.select(idx);
             
             clearSelection();
             for (int i=0;i<query.getOrder().size();i++) orders.add(query.getOrder().get(i));
@@ -954,7 +954,7 @@ public class QueryDialog extends Dialog
 
     private MQLQuery getQuery()
     {
-        MQLQuery mqlQuery = new MQLQuery(schemaMeta, getView(), locale);
+        MQLQuery mqlQuery = new MQLQuery(schemaMeta, getModel(), locale);
 
         // Get the conditions and operators.
         for (int i=0;i<conditions.size();i++)
@@ -973,7 +973,7 @@ public class QueryDialog extends Dialog
 
     private void ok()
     { 
-        if (getView()!=null)
+        if (getModel()!=null)
         {
             query = getQuery();
         }

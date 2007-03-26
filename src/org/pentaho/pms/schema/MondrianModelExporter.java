@@ -28,17 +28,17 @@ import be.ibridge.kettle.core.XMLHandler;
 
 public class MondrianModelExporter
 {
-    private BusinessView businessView;
+    private BusinessModel businessModel;
 
     private String       locale;
 
     /**
-     * @param businessView
+     * @param businessModel
      */
-    public MondrianModelExporter(BusinessView businessView, String locale)
+    public MondrianModelExporter(BusinessModel businessModel, String locale)
     {
         super();
-        this.businessView = businessView;
+        this.businessModel = businessModel;
         this.locale = locale;
     }
 
@@ -48,11 +48,11 @@ public class MondrianModelExporter
 
         xml.append("<Schema ");
         xml.append("name=\"");
-        XMLHandler.appendReplacedChars(xml, businessView.getDisplayName(locale));
+        XMLHandler.appendReplacedChars(xml, businessModel.getDisplayName(locale));
         xml.append("\">");
         xml.append(Const.CR);
         
-        List olapDimensions = businessView.getOlapDimensions();
+        List olapDimensions = businessModel.getOlapDimensions();
         for (int d=0;d<olapDimensions.size();d++)
         {
             OlapDimension olapDimension = (OlapDimension) olapDimensions.get(d);
@@ -163,7 +163,7 @@ public class MondrianModelExporter
         
         // Now do the cubes too...
         
-        List olapCubes = businessView.getOlapCubes();
+        List olapCubes = businessModel.getOlapCubes();
         for (int c=0;c<olapCubes.size();c++)
         {
             OlapCube olapCube = (OlapCube) olapCubes.get(c);
@@ -202,7 +202,7 @@ public class MondrianModelExporter
                 // To know the foreign key, look up the relationship between the cube table and the dimension table...
                 BusinessTable dimTable = usage.getOlapDimension().findBusinessTable();
                 BusinessTable cubeTable = olapCube.getBusinessTable();
-                RelationshipMeta relationshipMeta = businessView.findRelationshipUsing(dimTable, cubeTable);
+                RelationshipMeta relationshipMeta = businessModel.findRelationshipUsing(dimTable, cubeTable);
 
                 if (relationshipMeta!=null)
                 {
@@ -285,18 +285,18 @@ public class MondrianModelExporter
     }
 
     /**
-     * @return the businessView
+     * @return the businessModel
      */
-    public BusinessView getBusinessView()
+    public BusinessModel getBusinessModel()
     {
-        return businessView;
+        return businessModel;
     }
 
     /**
-     * @param businessView the businessView to set
+     * @param businessModel the businessModel to set
      */
-    public void setBusinessView(BusinessView businessView)
+    public void setBusinessModel(BusinessModel businessModel)
     {
-        this.businessView = businessView;
+        this.businessModel = businessModel;
     }
 }

@@ -33,7 +33,7 @@ import org.pentaho.pms.locale.Locales;
 import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessTable;
-import org.pentaho.pms.schema.BusinessView;
+import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.security.SecurityReference;
 import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.GUIResource;
@@ -67,7 +67,7 @@ public class BusinessCategoriesDialog extends Dialog
 	
     private Props props;
 
-    private BusinessView  businessView;
+    private BusinessModel  businessModel;
 
     private Locales locales;
 
@@ -89,10 +89,10 @@ public class BusinessCategoriesDialog extends Dialog
 
     private SecurityReference securityReference;
 
-	public BusinessCategoriesDialog(Shell parent, BusinessView businessView, Locales locales, SecurityReference securityReference)
+	public BusinessCategoriesDialog(Shell parent, BusinessModel businessModel, Locales locales, SecurityReference securityReference)
 	{
 		super(parent, SWT.NONE);
-		this.businessView = businessView;
+		this.businessModel = businessModel;
         this.locales = locales;
         this.securityReference = securityReference;
         
@@ -252,19 +252,19 @@ public class BusinessCategoriesDialog extends Dialog
         if (items!=null && items.length>0)
         {
             path = Const.getTreeStrings(items[0]);
-            parentCategory = businessView.findBusinessCategory(path, activeLocale);
+            parentCategory = businessModel.findBusinessCategory(path, activeLocale);
         }
         else
         {
             path = new String[] { MetaEditor.STRING_CATEGORIES };
-            parentCategory = businessView.getRootCategory();
+            parentCategory = businessModel.getRootCategory();
         }
         
         if (!parentCategory.isRootCategory()) return; // Block for now, until Ad-hoc & MDR follow
         
-        for (int i=0;i<businessView.nrBusinessTables();i++)
+        for (int i=0;i<businessModel.nrBusinessTables();i++)
         {
-            BusinessTable businessTable = businessView.getBusinessTable(i);
+            BusinessTable businessTable = businessModel.getBusinessTable(i);
 
             addBusinessTable(parentCategory, businessTable, path);
         }
@@ -279,7 +279,7 @@ public class BusinessCategoriesDialog extends Dialog
         String id = Settings.getBusinessCategoryIDPrefix()+businessTable.getTargetTable();
         int catNr = 1;
         String newId = id;
-        while (businessView.getRootCategory().findBusinessCategory(newId)!=null)
+        while (businessModel.getRootCategory().findBusinessCategory(newId)!=null)
         {
             catNr++;
             newId = id+"_"+catNr;
@@ -293,7 +293,7 @@ public class BusinessCategoriesDialog extends Dialog
         // The name is the same as the table...
         String categoryName = businessTable.getDisplayName(activeLocale);
         catNr = 1;
-        while (businessView.getRootCategory().findBusinessCategory(activeLocale, categoryName)!=null)
+        while (businessModel.getRootCategory().findBusinessCategory(activeLocale, categoryName)!=null)
         {
             catNr++;
             categoryName = businessTable.getDisplayName(activeLocale)+" "+catNr;
@@ -307,7 +307,7 @@ public class BusinessCategoriesDialog extends Dialog
             businessCategory.addBusinessColumn(businessTable.getBusinessColumn(c));
         }
         
-        // Add the category to the business view or category
+        // Add the category to the business model or category
         //
         try
         {
@@ -333,12 +333,12 @@ public class BusinessCategoriesDialog extends Dialog
         if (target!=null && target.length>0)
         {
             path = Const.getTreeStrings(target[0], 1);
-            parentCategory = businessView.findBusinessCategory(path, activeLocale);
+            parentCategory = businessModel.findBusinessCategory(path, activeLocale);
         }
         else
         {
             path = new String[] { };
-            parentCategory = businessView.getRootCategory();
+            parentCategory = businessModel.getRootCategory();
         }
     
         // OK, now loop over the selected items
@@ -348,7 +348,7 @@ public class BusinessCategoriesDialog extends Dialog
             String[] sourcePath = Const.getTreeStrings(source[i], 2);
             BusinessTable businessTable = null;
             BusinessColumn businessColumn = null;
-            if (sourcePath.length>0) businessTable = businessView.findBusinessTable(activeLocale, sourcePath[0]);
+            if (sourcePath.length>0) businessTable = businessModel.findBusinessTable(activeLocale, sourcePath[0]);
             if (sourcePath.length>1 && businessTable!=null) businessColumn = businessTable.findBusinessColumn(activeLocale, sourcePath[1]);
             
             if (businessColumn!=null)
@@ -376,7 +376,7 @@ public class BusinessCategoriesDialog extends Dialog
             path = Const.getTreeStrings(treeItem);
             if (path.length>1)
             {
-                BusinessCategory businessCategory = businessView.findBusinessCategory(path, activeLocale);
+                BusinessCategory businessCategory = businessModel.findBusinessCategory(path, activeLocale);
                 BusinessColumn businessColumn = null;
                 if (businessCategory!=null) businessColumn = businessCategory.findBusinessColumn(treeItem.getText(), activeLocale);
                 
@@ -393,11 +393,11 @@ public class BusinessCategoriesDialog extends Dialog
                         // Find the parentCategory
                         String parentPath[] = new String[path.length-1];
                         for (int i=0;i<path.length-1;i++) parentPath[i] = path[i];
-                        parentCategory = businessView.findBusinessCategory(parentPath, activeLocale);
+                        parentCategory = businessModel.findBusinessCategory(parentPath, activeLocale);
                     }
                     else
                     {
-                        parentCategory = businessView.getRootCategory();
+                        parentCategory = businessModel.getRootCategory();
                     }
                     
                     if (!businessCategory.equals(parentCategory))
@@ -414,7 +414,7 @@ public class BusinessCategoriesDialog extends Dialog
 
     protected void delAll()
     {
-        businessView.getRootCategory().getBusinessCategories().clear();
+        businessModel.getRootCategory().getBusinessCategories().clear();
         refreshCategories();
     }
 
@@ -428,12 +428,12 @@ public class BusinessCategoriesDialog extends Dialog
         if (target!=null && target.length>0)
         {
             path = Const.getTreeStrings(target[0]);
-            parentCategory = businessView.findBusinessCategory(path, activeLocale);
+            parentCategory = businessModel.findBusinessCategory(path, activeLocale);
         }
         else
         {
             path = new String[] { MetaEditor.STRING_CATEGORIES };
-            parentCategory = businessView.getRootCategory();
+            parentCategory = businessModel.getRootCategory();
         }
 
         if (!parentCategory.isRootCategory()) return; // Block for now, until Ad-hoc & MDR follow
@@ -490,7 +490,7 @@ public class BusinessCategoriesDialog extends Dialog
         treeItem.setText(MetaEditor.STRING_CATEGORIES);
         TreeMemory.getInstance().storeExpanded(MetaEditor.STRING_CATEGORIES_TREE, new String[] { MetaEditor.STRING_CATEGORIES }, true);
         
-        MetaEditor.addTreeCategories(treeItem, businessView.getRootCategory(), activeLocale, true);
+        MetaEditor.addTreeCategories(treeItem, businessModel.getRootCategory(), activeLocale, true);
 
         TreeMemory.setExpandedFromMemory(wCategories, MetaEditor.STRING_CATEGORIES_TREE);
     }
@@ -499,20 +499,20 @@ public class BusinessCategoriesDialog extends Dialog
     {
         wTables.removeAll();
         
-        TreeItem viewItem = new TreeItem(wTables, SWT.NONE);
-        String viewName = businessView.getDisplayName(activeLocale);
-        viewItem.setText(0, viewName);
-        viewItem.setForeground(GUIResource.getInstance().getColorBlack());
-        TreeMemory.getInstance().storeExpanded(STRING_TABLES_TREE, new String[] { viewName }, true);
+        TreeItem modelItem = new TreeItem(wTables, SWT.NONE);
+        String modelName = businessModel.getDisplayName(activeLocale);
+        modelItem.setText(0, modelName);
+        modelItem.setForeground(GUIResource.getInstance().getColorBlack());
+        TreeMemory.getInstance().storeExpanded(STRING_TABLES_TREE, new String[] { modelName }, true);
         
-        TreeItem tableParent = new TreeItem(viewItem, SWT.NONE);
+        TreeItem tableParent = new TreeItem(modelItem, SWT.NONE);
         tableParent.setText(MetaEditor.STRING_BUSINESS_TABLES);
         tableParent.setForeground(GUIResource.getInstance().getColorBlack());
-        TreeMemory.getInstance().storeExpanded(STRING_TABLES_TREE, new String[] { viewName, MetaEditor.STRING_BUSINESS_TABLES }, true);
+        TreeMemory.getInstance().storeExpanded(STRING_TABLES_TREE, new String[] { modelName, MetaEditor.STRING_BUSINESS_TABLES }, true);
         
-        for (int t=0;t<businessView.nrBusinessTables();t++)
+        for (int t=0;t<businessModel.nrBusinessTables();t++)
         {
-            BusinessTable businessTable = businessView.getBusinessTable(t);
+            BusinessTable businessTable = businessModel.getBusinessTable(t);
             
             TreeItem tableItem = new TreeItem(tableParent, SWT.NONE);
             tableItem.setText(0, businessTable.getDisplayName(activeLocale));

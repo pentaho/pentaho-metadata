@@ -184,7 +184,7 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
             all.putAll(parentInterface.getPropertyInterfaces());
         }
         
-        // The security settings from the security parent: Business table inherits from Business view, business column from business table
+        // The security settings from the security parent: Business table inherits from Business model, business column from business table
         //
         if (securityParentInterface!=null) // Only take over the security information, nothing else
         {

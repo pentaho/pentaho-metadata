@@ -12,18 +12,18 @@
 */
 package org.pentaho.pms.test;
 
-import org.pentaho.pms.schema.BusinessView;
+import org.pentaho.pms.schema.BusinessModel;
 
 public class TestBV
 {
     public static void main(String[] args)
     {
-        // Top level object: BusinessView
-        //      this contains one or more localized business view metadata sets.
+        // Top level object: BusinessModel
+        //      this contains one or more localized business model metadata sets.
         //
-        BusinessView view = new BusinessView();
-        view.getConcept().setName("en_US", "Customer information");
-        view.getConcept().setDescription("en_US", "This is the customer information Business View");
+        BusinessModel businessModel = new BusinessModel();
+        businessModel.getConcept().setName("en_US", "Customer information");
+        businessModel.getConcept().setDescription("en_US", "This is the customer information Business Model");
         
         // Add one or more business Tables to this...
         /*

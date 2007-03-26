@@ -563,7 +563,7 @@ public class ConceptDefaultsDialog extends Dialog
             }
             if (security!=null)
             {
-                overwrite.setToolTipText("Override the property from the inherited security concept. (parent category, business view, model)");
+                overwrite.setToolTipText("Override the property from the inherited security concept. (parent category, business model)");
             }
             FormData fdCheckBox = new FormData();
             fdCheckBox.right  = new FormAttachment(MIDDLE, 0);

@@ -31,7 +31,7 @@ import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessTable;
-import org.pentaho.pms.schema.BusinessView;
+import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.OrderBy;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.WhereCondition;
@@ -61,14 +61,14 @@ public class MQLQuery {
 	private List constraints = new ArrayList();
     private List order = new ArrayList();
     
-	private BusinessView view;
+	private BusinessModel model;
 	private String locale;
 	private SchemaMeta schemaMeta;
   private CwmSchemaFactoryInterface cwmSchemaFactory;
 	
-	public MQLQuery( SchemaMeta schemaMeta, BusinessView view, String locale ) {
+	public MQLQuery( SchemaMeta schemaMeta, BusinessModel model, String locale ) {
 		this.schemaMeta = schemaMeta;
-		this.view = view;
+		this.model = model;
 		this.locale = locale;
 	}
 	
@@ -116,7 +116,7 @@ public class MQLQuery {
 	}
 	
     public void addConstraint( String operator, String columnId, String condition) {
-    		BusinessColumn businessColumn = view.findBusinessColumn( columnId );
+    		BusinessColumn businessColumn = model.findBusinessColumn( columnId );
         addConstraint( operator, businessColumn, condition );
     }
 	
@@ -131,7 +131,7 @@ public class MQLQuery {
 	}
 	
     public void addOrderBy( String tableId, String columnId, boolean ascending) {
-        BusinessTable businessTable = view.findBusinessTable( tableId );
+        BusinessTable businessTable = model.findBusinessTable( tableId );
         if (businessTable == null) {
             // TODO need to raise an error here, the table does not exist
             return;
@@ -152,25 +152,25 @@ public class MQLQuery {
 	}
 	
 	public String getQuery( boolean useDisplayNames ) {
-		if( view == null || selections.size() == 0 ) {
+		if( model == null || selections.size() == 0 ) {
 			return null;
 		}
 		BusinessColumn selection[] = (BusinessColumn[])selections.toArray(new BusinessColumn[selections.size()]);
 		WhereCondition conditions[] = (WhereCondition[])constraints.toArray(new WhereCondition[constraints.size()]);
         OrderBy orderBy[] = (OrderBy[]) order.toArray(new OrderBy[order.size()]);
         
-		return view.getSQL(selection, conditions, orderBy, locale, useDisplayNames);
+		return model.getSQL(selection, conditions, orderBy, locale, useDisplayNames);
 	}
 
     public TransMeta getTransformation( boolean useDisplayNames ) {
-        if( view == null || selections.size() == 0 ) {
+        if( model == null || selections.size() == 0 ) {
             return null;
         }
         BusinessColumn selection[] = (BusinessColumn[])selections.toArray(new BusinessColumn[selections.size()]);
         WhereCondition conditions[] = (WhereCondition[])constraints.toArray(new WhereCondition[constraints.size()]);
         OrderBy orderBy[] = (OrderBy[]) order.toArray(new OrderBy[order.size()]);
         
-        return view.getTransformationMeta(selection, conditions, orderBy, locale, useDisplayNames);
+        return model.getTransformationMeta(selection, conditions, orderBy, locale, useDisplayNames);
     }
     
     public List getRowsUsingTransformation( boolean useDisplayNames, StringBuffer logBuffer ) throws KettleException
@@ -260,8 +260,8 @@ public class MQLQuery {
 	        		return false;
 	    		}
 	    	
-	    		if( view == null ) {
-	        		System.err.println( "business view is null" );
+	    		if( model == null ) {
+	        		System.err.println( "business model is null" );
 	        		return false;
 	    		}
 	    	
@@ -281,24 +281,24 @@ public class MQLQuery {
 	        		return false;
             	}
         	
-            	// insert the view information
-            	data = view.getId();
+            	// insert the model information
+            	data = model.getId();
             	if( data != null ) {
                 	Element viewIdElement = doc.createElement( "view_id" );
                 	viewIdElement.appendChild( doc.createTextNode( data ) );
                 	mqlElement.appendChild( viewIdElement );
             	} else {
-            		System.err.println( "view id is null" );
+            		System.err.println( "model id is null" );
 	        		return false;
             	}
             
-            	data = view.getDisplayName( locale );
+            	data = model.getDisplayName( locale );
             	if( data != null ) {
                 	Element viewNameElement = doc.createElement( "view_name" );
                 	viewNameElement.appendChild( doc.createTextNode( data ) );
                 	mqlElement.appendChild( viewNameElement );
             	} else {
-            		System.err.println( "view name is null" );
+            		System.err.println( "model name is null" );
 	        		return false;
             	}
             
@@ -448,9 +448,9 @@ public class MQLQuery {
             // get the Business View id
             String viewId = getElementText( doc, "view_id" );
             System.out.println( viewId );  
-            view = schemaMeta.findView(viewId); // This is the business view that was selected.
+            model = schemaMeta.findModel(viewId); // This is the business model that was selected.
 
-            	if( view == null ) {
+            	if( model == null ) {
             		// TODO log this
             		return;
             	}
@@ -488,7 +488,7 @@ public class MQLQuery {
 	private void addBusinessColumnFromXmlNode( Node node ) {
 		NodeList nodes = node.getChildNodes();
 		String columnId = nodes.item(1).getFirstChild().getNodeValue();
-        BusinessColumn businessColumn = view.findBusinessColumn( columnId );
+        BusinessColumn businessColumn = model.findBusinessColumn( columnId );
         if (businessColumn == null) {
             // TODO: throw some exception in the future.
             return;
@@ -599,19 +599,19 @@ public class MQLQuery {
     }
 
     /**
-     * @return the view
+     * @return the model
      */
-    public BusinessView getView()
+    public BusinessModel getModel()
     {
-        return view;
+        return model;
     }
 
     /**
-     * @param view the view to set
+     * @param model the model to set
      */
-    public void setView(BusinessView view)
+    public void setModel(BusinessModel model)
     {
-        this.view = view;
+        this.model = model;
     }
 
     /**

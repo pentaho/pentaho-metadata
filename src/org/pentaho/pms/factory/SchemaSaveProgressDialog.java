@@ -73,7 +73,7 @@ public class SchemaSaveProgressDialog
                     size+=schemaMeta.nrDatabases();
                     size+=schemaMeta.nrConcepts();
                     size+=schemaMeta.nrTables();
-                    schemaMeta.nrViews();
+                    schemaMeta.nrBusinessModels();
                     
                     monitor.beginTask("Storing the metadata into the CWM model", size);
                 }

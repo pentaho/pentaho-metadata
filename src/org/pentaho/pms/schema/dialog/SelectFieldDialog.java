@@ -554,7 +554,7 @@ public class SelectFieldDialog extends Dialog
 				String tablename = str[i].substring(0, idx);
 				String fieldname = str[i].substring(idx+3);
 				
-				BusinessTable tab = schema.getActiveView().findBusinessTable(tablename);
+				BusinessTable tab = schema.getActiveModel().findBusinessTable(tablename);
 				if (tab!=null)
 				{
 					fields[i] = tab.findBusinessColumn(fieldname);

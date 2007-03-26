@@ -33,7 +33,7 @@ import org.pentaho.pms.locale.LocaleInterface;
 import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessTable;
-import org.pentaho.pms.schema.BusinessView;
+import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.PhysicalColumn;
 import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.RelationshipMeta;
@@ -186,21 +186,21 @@ public interface CwmSchemaFactoryInterface {
   */
 
   /**
-   * This method stores a business view in a CwmSchema.
+   * This method stores a business model in a CwmSchema.
    * The schema then in turn contains a number of 
    * @param cwm The model to store in
-   * @param businessView The business view to store into the selected CWM model.
+   * @param businessModel The business model to store into the selected CWM model.
    */
-  public void storeBusinessView(CWM cwm, BusinessView businessView);
+  public void storeBusinessModel(CWM cwm, BusinessModel businessModel);
 
   /**
-   * Load a business view from a CWM model by loading it from the supplied CwmSchema and using the SchemaMeta object for reference.
+   * Load a business model from a CWM model by loading it from the supplied CwmSchema and using the SchemaMeta object for reference.
    * @param cwm
    * @param cwmSchema
    * @param schemaMeta
-   * @return a newly created Business View
+   * @return a newly created Business Model
    */
-  public BusinessView getBusinessView(CWM cwm, CwmSchema cwmSchema, SchemaMeta schemaMeta);
+  public BusinessModel getBusinessModel(CWM cwm, CwmSchema cwmSchema, SchemaMeta schemaMeta);
 
   /*
    ____            _                    _____     _     _
@@ -227,7 +227,7 @@ public interface CwmSchemaFactoryInterface {
    * @param schemaMeta
    * @return a newly created BusinessTable
    */
-  public BusinessTable getBusinessTable(CWM cwm, CwmDimension cwmDimension, SchemaMeta schemaMeta, BusinessView businessView);
+  public BusinessTable getBusinessTable(CWM cwm, CwmDimension cwmDimension, SchemaMeta schemaMeta, BusinessModel businessModel);
 
   /*
    ____            _                      ____      _
@@ -280,13 +280,13 @@ public interface CwmSchemaFactoryInterface {
   public void storeRelationshipMeta(CWM cwm, RelationshipMeta relationshipMeta, CwmSchema cwmSchema);
 
   /**
-   * Create a new RelationshipMeta object from a CWM model by looking at the CwmKeyRelationship and the BusinessView
+   * Create a new RelationshipMeta object from a CWM model by looking at the CwmKeyRelationship and the BusinessModel
    * @param cwm
    * @param relationship
-   * @param businessView
+   * @param businessModel
    * @return a newly created RelationshipMeta object
    */
-  public RelationshipMeta getRelationshipMeta(CWM cwm, CwmKeyRelationship relationship, BusinessView businessView);
+  public RelationshipMeta getRelationshipMeta(CWM cwm, CwmKeyRelationship relationship, BusinessModel businessModel);
 
   /*
    _   _       _       ____           _ __  __      _
@@ -334,11 +334,11 @@ public interface CwmSchemaFactoryInterface {
   /**
    * @param cwm The model
    * @param cwmExtent The extent to construct the category from
-   * @param businessView The business view to reference.
+   * @param businessModel The business model to reference.
    * @return A new business category
    */
   public BusinessCategory getBusinessCategory(CWM cwm, CwmExtent cwmExtent, 
-      BusinessView businessView, 
+      BusinessModel businessModel, 
       SchemaMeta schemaMeta);
   
   /*
@@ -424,9 +424,9 @@ public interface CwmSchemaFactoryInterface {
   public void storeOlapDimension(CWM cwm, org.pentaho.pms.cwm.pentaho.meta.olap.CwmSchema cwmOlapSchema, OlapDimension olapDimension);
   public void storeOlapHierachy(CWM cwm, OlapHierarchy olapHierarchy, org.pentaho.pms.cwm.pentaho.meta.olap.CwmDimension cwmOlapDimension);
   public void storeOlapHierarchyLevel(CWM cwm, OlapHierarchyLevel level, CwmLevelBasedHierarchy cwmLevelBasedHierarchy, org.pentaho.pms.cwm.pentaho.meta.olap.CwmDimension cwmOlapDimension);
-  public OlapDimension getOlapDimension(CWM cwm, org.pentaho.pms.cwm.pentaho.meta.olap.CwmDimension cwmOlapDimension, BusinessView businessView);
-  public OlapHierarchy getOlapHierarchy(CWM cwm, CwmLevelBasedHierarchy cwmHierarchy, OlapDimension olapDimension, BusinessView businessView);
-  public OlapHierarchyLevel getOlapHierarchyLevel(CWM cwm, OlapHierarchy olapHierarchy, CwmHierarchyLevelAssociation association, BusinessView businessView);
+  public OlapDimension getOlapDimension(CWM cwm, org.pentaho.pms.cwm.pentaho.meta.olap.CwmDimension cwmOlapDimension, BusinessModel businessModel);
+  public OlapHierarchy getOlapHierarchy(CWM cwm, CwmLevelBasedHierarchy cwmHierarchy, OlapDimension olapDimension, BusinessModel businessModel);
+  public OlapHierarchyLevel getOlapHierarchyLevel(CWM cwm, OlapHierarchy olapHierarchy, CwmHierarchyLevelAssociation association, BusinessModel businessModel);
 
   
   

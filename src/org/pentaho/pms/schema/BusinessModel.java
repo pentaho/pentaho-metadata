@@ -42,7 +42,7 @@ import be.ibridge.kettle.trans.TransMeta;
 import be.ibridge.kettle.trans.TransPreviewFactory;
 import be.ibridge.kettle.trans.step.tableinput.TableInputMeta;
 
-public class BusinessView extends ConceptUtilityBase implements ChangedFlagInterface, Cloneable, ConceptUtilityInterface, UndoInterface
+public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInterface, Cloneable, ConceptUtilityInterface, UndoInterface
 {
     /**
      * This private class is used to sort the business tables in terms of the number of neighbours they have. We use
@@ -81,7 +81,7 @@ public class BusinessView extends ConceptUtilityBase implements ChangedFlagInter
 
     private BusinessCategory rootCategory;
 
-    public BusinessView()
+    public BusinessModel()
     {
         super();
         this.businessTables = new UniqueArrayList();
@@ -97,7 +97,7 @@ public class BusinessView extends ConceptUtilityBase implements ChangedFlagInter
         setSecurity(new Security()); // empty by default so that all columns "see" this property.
     }
 
-    public BusinessView(String id)
+    public BusinessModel(String id)
     {
         this();
         try
@@ -115,7 +115,7 @@ public class BusinessView extends ConceptUtilityBase implements ChangedFlagInter
      */
     public String getModelElementDescription()
     {
-        return "business view";
+        return "business model";
     }
 
     /**
@@ -130,9 +130,9 @@ public class BusinessView extends ConceptUtilityBase implements ChangedFlagInter
     {
         try
         {
-            BusinessView businessView = (BusinessView) super.clone();
-            businessView.setConcept((ConceptInterface) getConcept().clone());
-            return businessView;
+            BusinessModel businessModel = (BusinessModel) super.clone();
+            businessModel.setConcept((ConceptInterface) getConcept().clone());
+            return businessModel;
         }
         catch (CloneNotSupportedException e) // Why would this ever happen anyway???
         {
@@ -227,7 +227,7 @@ public class BusinessView extends ConceptUtilityBase implements ChangedFlagInter
     public void addBusinessTable(BusinessTable businessTable) throws ObjectAlreadyExistsException
     {
         businessTables.add(businessTable);
-        // businessTable.getConcept().setSecurityParentInterface(getConcept()); // set the security parent to the view,
+        // businessTable.getConcept().setSecurityParentInterface(getConcept()); // set the security parent to the model,
         // not the physical table
         setChanged();
     }
@@ -235,7 +235,7 @@ public class BusinessView extends ConceptUtilityBase implements ChangedFlagInter
     public void addBusinessTable(int p, BusinessTable businessTable) throws ObjectAlreadyExistsException
     {
         businessTables.add(p, businessTable);
-        // businessTable.getConcept().setSecurityParentInterface(getConcept()); // set the security parent to the view,
+        // businessTable.getConcept().setSecurityParentInterface(getConcept()); // set the security parent to the model,
         // not the physical table
         setChanged();
     }
@@ -500,10 +500,10 @@ public class BusinessView extends ConceptUtilityBase implements ChangedFlagInter
     }
 
     /**
-     * Is the physical table with the specified id used in a relationship in this business view?
+     * Is the physical table with the specified id used in a relationship in this business model?
      * 
      * @param id The physical table id to look out for
-     * @return true if the physical table with the specified id is used in this business view in one or more
+     * @return true if the physical table with the specified id is used in this business model in one or more
      * relationships. False if this is not the case.
      */
     public boolean isTableUsedInRelationships(String id)
@@ -514,20 +514,20 @@ public class BusinessView extends ConceptUtilityBase implements ChangedFlagInter
         return false;
     }
 
-    public ArrayList getViewTables()
+    public ArrayList getModelTables()
     {
-        ArrayList viewTables = new ArrayList();
+        ArrayList modelTables = new ArrayList();
 
         for (int x = 0; x < nrRelationships(); x++)
         {
             RelationshipMeta hi = getRelationship(x);
             BusinessTable si = hi.getTableFrom(); // FROM
-            int idx = viewTables.indexOf(si);
-            if (idx < 0) viewTables.add(si);
+            int idx = modelTables.indexOf(si);
+            if (idx < 0) modelTables.add(si);
 
             si = hi.getTableTo(); // TO
-            idx = viewTables.indexOf(si);
-            if (idx < 0) viewTables.add(si);
+            idx = modelTables.indexOf(si);
+            if (idx < 0) modelTables.add(si);
         }
 
         // Also, add the tables that need to be painted, but are not part of a relationship
@@ -536,11 +536,11 @@ public class BusinessView extends ConceptUtilityBase implements ChangedFlagInter
             BusinessTable table = getBusinessTable(x);
             if (table.isDrawn() && !isTableUsedInRelationships(table.getPhysicalTable().getId()))
             {
-                viewTables.add(table);
+                modelTables.add(table);
             }
         }
 
-        return viewTables;
+        return modelTables;
     }
 
     public int countRelationshipsUsing(BusinessTable one)
@@ -1082,7 +1082,7 @@ public class BusinessView extends ConceptUtilityBase implements ChangedFlagInter
         TransMeta transMeta = TransPreviewFactory.generatePreviewTransformation(tableInputMeta, "Query");
         transMeta.addDatabase(databaseMeta);
         
-        transMeta.setName("Query generated from view "+getName(locale));
+        transMeta.setName("Query generated from model "+getName(locale));
         
         return transMeta;
     }
@@ -1400,7 +1400,7 @@ public class BusinessView extends ConceptUtilityBase implements ChangedFlagInter
     }
 
     /**
-     * This method deletes all objects in the business view that reference the given physical table
+     * This method deletes all objects in the business model that reference the given physical table
      * 
      * @param physicalTable The physical table to which all references have to be deleted.
      */
@@ -1508,7 +1508,7 @@ public class BusinessView extends ConceptUtilityBase implements ChangedFlagInter
      * Finds a column using the id
      * 
      * @param columnId the id of the column to look for
-     * @return a business column in this view with the specified id or null if nothing was found.
+     * @return a business column in this model with the specified id or null if nothing was found.
      */
     public BusinessColumn findBusinessColumn(String columnId)
     {
@@ -1526,7 +1526,7 @@ public class BusinessView extends ConceptUtilityBase implements ChangedFlagInter
      * 
      * @param locale the locale to search for
      * @param name the displayed name of the column to look for or the ID of the column if no localized name was found
-     * @return a business column in this view with the specified id or null if nothing was found.
+     * @return a business column in this model with the specified id or null if nothing was found.
      */
     public BusinessColumn findBusinessColumn(String locale, String name)
     {
@@ -1720,7 +1720,7 @@ public class BusinessView extends ConceptUtilityBase implements ChangedFlagInter
      *          the table to calculate the number of neighbours for
      * @param selectedTables
      *          the list of selected business tables
-     * @return The number of neighbours in a list of selected tables using the relationships defined in this business view
+     * @return The number of neighbours in a list of selected tables using the relationships defined in this business model
      */
     public int getNrNeighbours(BusinessTable businessTable, List selectedTables)
     {

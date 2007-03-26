@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessTable;
-import org.pentaho.pms.schema.BusinessView;
+import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.concept.dialog.DialogGetDataInterface;
 import org.pentaho.pms.schema.olap.OlapCube;
@@ -81,7 +81,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
     private Menu menu;
     private MetaEditor metaEditor;
     
-    private Label viewLabel;
+    private Label modelLabel;
     private Composite compDynamic;
     private int middle;
     private int margin;
@@ -112,15 +112,15 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         genModel.setLayoutData(fdGenModel);
         genModel.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent e) { metaEditor.getMondrianModel(); } });
         
-        // Show the active business view...
-        viewLabel = new Label(this, SWT.LEFT);
-        viewLabel.setFont(GUIResource.getInstance().getFontLarge());
-        props.setLook(viewLabel);
-        FormData fdViewLabel = new FormData();
-        fdViewLabel.left  = new FormAttachment(0,0);
-        fdViewLabel.top   = new FormAttachment(0,0);
-        fdViewLabel.right = new FormAttachment(genModel, -Const.MARGIN);
-        viewLabel.setLayoutData(fdViewLabel);
+        // Show the active business model...
+        modelLabel = new Label(this, SWT.LEFT);
+        modelLabel.setFont(GUIResource.getInstance().getFontLarge());
+        props.setLook(modelLabel);
+        FormData fdModelLabel = new FormData();
+        fdModelLabel.left  = new FormAttachment(0,0);
+        fdModelLabel.top   = new FormAttachment(0,0);
+        fdModelLabel.right = new FormAttachment(genModel, -Const.MARGIN);
+        modelLabel.setLayoutData(fdModelLabel);
         
         // First create the sash-form to create our tree on the left
         //
@@ -141,7 +141,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         FormData fdSashForm = new FormData();
         fdSashForm.left   = new FormAttachment(0, 0);
         fdSashForm.right  = new FormAttachment(100, 0);
-        fdSashForm.top    = new FormAttachment(viewLabel, margin);
+        fdSashForm.top    = new FormAttachment(modelLabel, margin);
         fdSashForm.bottom = new FormAttachment(100, 0);
         sashform.setLayoutData(fdSashForm);
         
@@ -156,7 +156,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
 
     private void addTree()
     {
-        // Main: the top left tree containing connections, physical tables, business views, etc.
+        // Main: the top left tree containing connections, physical tables, business models, etc.
         //
         Composite compMain = new Composite(sashform, SWT.NONE);
         FormLayout formLayout = new FormLayout();
@@ -185,9 +185,9 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         SelectionAdapter lsEditMainSel = new SelectionAdapter() { public void widgetSelected(SelectionEvent e) { setMenu(e); } };
         wTree.addSelectionListener(lsEditMainSel);
 
-        // Normal selection: left click to select business view
-        SelectionListener lsSelView = new SelectionAdapter() { public void widgetSelected(SelectionEvent e) { showDynamicComposite(); } };
-        wTree.addSelectionListener(lsSelView);
+        // Normal selection: left click to select business model
+        SelectionListener lsSelModel = new SelectionAdapter() { public void widgetSelected(SelectionEvent e) { showDynamicComposite(); } };
+        wTree.addSelectionListener(lsSelModel);
                 
         // Add tree memories to the trees.
         TreeMemory.addTreeListener(wTree, STRING_OLAP_TREE);
@@ -223,12 +223,12 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         Control[] children = compDynamic.getChildren();
         for (int i=0;i<children.length;i++) children[i].dispose();
 
-        BusinessView activeView = metaEditor.getSchemaMeta().getActiveView();
+        BusinessModel activeModel = metaEditor.getSchemaMeta().getActiveModel();
         String locale = metaEditor.getSchemaMeta().getActiveLocale();
         
-        if (activeView!=null)
+        if (activeModel!=null)
         {
-            Object selectedObject = getSelectedObject(activeView, locale);
+            Object selectedObject = getSelectedObject(activeModel, locale);
             if (selectedObject!=null)
             {
                 if (selectedObject instanceof OlapDimension)      showDimension((OlapDimension)selectedObject, locale);
@@ -688,8 +688,8 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
     protected void newCubeDimension(OlapCube cube, String locale)
     {
         // Pick one from the available dimensions...
-        BusinessView activeView = metaEditor.getSchemaMeta().getActiveView();
-        List dimensions = activeView.getOlapDimensions();
+        BusinessModel activeModel = metaEditor.getSchemaMeta().getActiveModel();
+        List dimensions = activeModel.getOlapDimensions();
         List usages = cube.getOlapDimensionUsages();
         
         // Get a list of unused shared/public olap dimensions
@@ -883,8 +883,8 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
             dimension.setName(dimensionName);
             dimension.setChanged();
             
-            // Add it to the business view
-            metaEditor.getSchemaMeta().getActiveView().getOlapDimensions().add(dimension);
+            // Add it to the business model
+            metaEditor.getSchemaMeta().getActiveModel().getOlapDimensions().add(dimension);
             String path[] = new String[] { STRING_DIMENSIONS };
             TreeMemory.getInstance().storeExpanded(STRING_OLAP_TREE, path, true);
             path = new String[] { STRING_DIMENSIONS, dimensionName };
@@ -896,24 +896,24 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
     
     protected void removeDimension(OlapDimension dimension)
     {
-        BusinessView activeView = metaEditor.getSchemaMeta().getActiveView();
-        int index = activeView.getOlapDimensions().indexOf(dimension);
+        BusinessModel activeModel = metaEditor.getSchemaMeta().getActiveModel();
+        int index = activeModel.getOlapDimensions().indexOf(dimension);
         if (index>=0)
         {
-            activeView.getOlapDimensions().remove(index);
-            activeView.setChanged();
+            activeModel.getOlapDimensions().remove(index);
+            activeModel.setChanged();
         }
         refreshScreen();
     }
 
     protected void removeCube(OlapCube olapCube)
     {
-        BusinessView activeView = metaEditor.getSchemaMeta().getActiveView();
-        int index = activeView.getOlapCubes().indexOf(olapCube);
+        BusinessModel activeModel = metaEditor.getSchemaMeta().getActiveModel();
+        int index = activeModel.getOlapCubes().indexOf(olapCube);
         if (index>=0)
         {
-            activeView.getOlapCubes().remove(index);
-            activeView.setChanged();
+            activeModel.getOlapCubes().remove(index);
+            activeModel.setChanged();
         }
         refreshScreen();
     }
@@ -926,15 +926,15 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         {
             // Pick one from the available tables...
             //
-            BusinessView activeView = metaEditor.getSchemaMeta().getActiveView();
+            BusinessModel activeModel = metaEditor.getSchemaMeta().getActiveModel();
             
-            String tableNames[] = activeView.getBusinessTableNames(locale);
+            String tableNames[] = activeModel.getBusinessTableNames(locale);
             EnterSelectionDialog dialog = new EnterSelectionDialog(shell, tableNames, "New Hierarchy", "Select the table to create the hierarchy for");
             String tableName = dialog.open();
             if (tableName!=null)
             {
                 // Ask about the primary key for this hierarchy...
-                BusinessTable businessTable = activeView.findBusinessTable(locale, tableName);
+                BusinessTable businessTable = activeModel.findBusinessTable(locale, tableName);
                 String columnNames[] = businessTable.getColumnNames(locale);
     
                 EnterSelectionDialog keyDialog = new EnterSelectionDialog(shell, columnNames, "Select primary key", "Select the primary key column for this hierarchy:");
@@ -1077,10 +1077,10 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
     protected void newCube()
     {
         // Pick one from the available tables...
-        BusinessView activeView = metaEditor.getSchemaMeta().getActiveView();
+        BusinessModel activeModel = metaEditor.getSchemaMeta().getActiveModel();
         String locale = metaEditor.getSchemaMeta().getActiveLocale();
         
-        String tableNames[] = activeView.getBusinessTableNames(locale);
+        String tableNames[] = activeModel.getBusinessTableNames(locale);
         EnterSelectionDialog dialog = new EnterSelectionDialog(shell, tableNames, "New cube", "Select the base table to create the cube from");
         String cubeName = dialog.open();
         if (cubeName!=null)
@@ -1089,11 +1089,11 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
             cube.setName(cubeName);
             
             // Set the table-name too
-            cube.setBusinessTable(activeView.findBusinessTable(locale, cubeName));
+            cube.setBusinessTable(activeModel.findBusinessTable(locale, cubeName));
             cube.setChanged();
             
-            // Add it to the business view
-            metaEditor.getSchemaMeta().getActiveView().getOlapCubes().add(cube);
+            // Add it to the business model
+            metaEditor.getSchemaMeta().getActiveModel().getOlapCubes().add(cube);
             String path[] = new String[] { STRING_CUBES };
             TreeMemory.getInstance().storeExpanded(STRING_OLAP_TREE, path, true);
             path = new String[] { STRING_CUBES, cubeName };
@@ -1145,27 +1145,27 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         tiCubes.removeAll();
         
         SchemaMeta schemaMeta = metaEditor.getSchemaMeta();
-        BusinessView activeView = schemaMeta.getActiveView();
+        BusinessModel activeModel = schemaMeta.getActiveModel();
         String locale = schemaMeta.getActiveLocale();
-        if (activeView!=null)
+        if (activeModel!=null)
         {
-            viewLabel.setText("Active view: "+activeView.getDisplayName(locale));
+            modelLabel.setText("Active model: "+activeModel.getDisplayName(locale));
             
             // refresh the tree on the left...
-            refreshTree(activeView, locale);
+            refreshTree(activeModel, locale);
         }
         else
         {
-            viewLabel.setText("No view selected.");
+            modelLabel.setText("No model selected.");
         }
         
         metaEditor.setShellText(); // changed flag.
         showDynamicComposite();
     }
 
-    private void refreshTree(BusinessView activeView, String locale)
+    private void refreshTree(BusinessModel activeModel, String locale)
     {
-        List dimensions = activeView.getOlapDimensions();
+        List dimensions = activeModel.getOlapDimensions();
         for (int d=0;d<dimensions.size();d++)
         {
             OlapDimension dimension = (OlapDimension) dimensions.get(d);
@@ -1201,7 +1201,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
             }
         }
         
-        List cubes = activeView.getOlapCubes();
+        List cubes = activeModel.getOlapCubes();
         for (int c=0;c<cubes.size();c++)
         {
             OlapCube cube = (OlapCube) cubes.get(c);
@@ -1213,7 +1213,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         TreeMemory.setExpandedFromMemory(wTree, STRING_OLAP_TREE);
     }
     
-    public Object getSelectedObject(BusinessView activeView, String locale)
+    public Object getSelectedObject(BusinessModel activeModel, String locale)
     {
         if (wTree.getSelectionCount()==1)
         {
@@ -1227,7 +1227,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
                 OlapHierarchyLevel level  = null;
                 // BusinessColumn     column  = null;  Perhaps later we can show column information too.
                 
-                if (path.length>1) dimension = activeView.findOlapDimension(path[1]);
+                if (path.length>1) dimension = activeModel.findOlapDimension(path[1]);
                 if (path.length>2 && dimension!=null) hierarchy = dimension.findOlapHierarchy(path[2]);
                 if (path.length>3 && hierarchy!=null) level = hierarchy.findOlapHierarchyLevel(path[3]);
                 // if (path.length>4 && level!=null) column = level.findBusinessColumn(path[4], locale);
@@ -1246,7 +1246,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
                 OlapCube           cube = null;
                 OlapMeasure        measure = null;
                 
-                if (path.length>1) cube = activeView.findOlapCube(path[1]);
+                if (path.length>1) cube = activeModel.findOlapCube(path[1]);
                 if (path.length>2 && cube!=null) measure = cube.findOlapMeasure(path[2]);
                 
                 switch(path.length)

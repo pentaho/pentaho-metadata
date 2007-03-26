@@ -52,7 +52,7 @@ import org.pentaho.pms.locale.Locales;
 import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessTable;
-import org.pentaho.pms.schema.BusinessView;
+import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.PhysicalColumn;
 import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.RelationshipMeta;
@@ -179,13 +179,13 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                 if (monitor!=null) monitor.worked(1);
             }
     
-            // Save the business views...
+            // Save the business models...
             //
-            if (monitor!=null) monitor.subTask("Storing the business views");
-            for (int i=0;i<schemaMeta.nrViews();i++)
+            if (monitor!=null) monitor.subTask("Storing the business models");
+            for (int i=0;i<schemaMeta.nrBusinessModels();i++)
             {
-                BusinessView businessView = schemaMeta.getView(i);
-                storeBusinessView(cwm, businessView);
+                BusinessModel businessModel = schemaMeta.getModel(i);
+                storeBusinessModel(cwm, businessModel);
                 if (monitor!=null) monitor.worked(1);
             }
             
@@ -319,19 +319,19 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
             }
         }
         
-        // load all the business views
+        // load all the business models
         //
         CwmSchema[] cwmSchemas = cwm.getSchemas();
         for (int i=0;i<cwmSchemas.length;i++)
         {
             CwmSchema cwmSchema = cwmSchemas[i];
             
-            BusinessView businessView = getBusinessView(cwm, cwmSchema, schemaMeta);
-            if (hasAccess(CwmSchemaFactoryInterface.ACCESS_TYPE_READ, businessView)) 
+            BusinessModel businessModel = getBusinessModel(cwm, cwmSchema, schemaMeta);
+            if (hasAccess(CwmSchemaFactoryInterface.ACCESS_TYPE_READ, businessModel)) 
             {
                 try
                 {
-                    schemaMeta.addView(businessView);
+                    schemaMeta.addModel(businessModel);
                 }
                 catch(ObjectAlreadyExistsException e)
                 {
@@ -358,16 +358,16 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         //
         schemaMeta.clearChanged();
         
-        // Select the active business view if there is only one
-        if (schemaMeta.nrViews()==1)
+        // Select the active business model if there is only one
+        if (schemaMeta.nrBusinessModels()==1)
         {
-            schemaMeta.setActiveView(schemaMeta.getView(0));
+            schemaMeta.setActiveModel(schemaMeta.getModel(0));
         }
         
         if (cwm.isReversingOrder())
         {
             Collections.reverse(schemaMeta.getTables().getList());
-            Collections.reverse(schemaMeta.getViews().getList());
+            Collections.reverse(schemaMeta.getBusinessModels().getList());
             Collections.reverse(schemaMeta.getConcepts().getList());
         }
 
@@ -700,67 +700,67 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
     */
 
     /**
-     * This method stores a business view in a CwmSchema.
+     * This method stores a business model in a CwmSchema.
      * The schema then in turn contains a number of 
      * @param cwm The model to store in
-     * @param businessView The business view to store into the selected CWM model.
+     * @param businessModel The business model to store into the selected CWM model.
      */
-    public void storeBusinessView(CWM cwm, BusinessView businessView)
+    public void storeBusinessModel(CWM cwm, BusinessModel businessModel)
     {
       if (!hasAccess(CwmSchemaFactoryInterface.ACCESS_TYPE_SCHEMA_ADMIN, null)) {
         throw new CwmSchemaFactoryException("Schema Admin Access is Denied");
       }
-        CwmSchema cwmSchema = cwm.createSchema(businessView.getId());
+        CwmSchema cwmSchema = cwm.createSchema(businessModel.getId());
         
         // Store the concept properties
-        storeConceptProperties(cwm, cwmSchema, businessView.getConcept());
+        storeConceptProperties(cwm, cwmSchema, businessModel.getConcept());
         
         // Store the business tables...
         //
-        for (int i=0;i<businessView.nrBusinessTables();i++)
+        for (int i=0;i<businessModel.nrBusinessTables();i++)
         {
-            BusinessTable businessTable = businessView.getBusinessTable(i);
+            BusinessTable businessTable = businessModel.getBusinessTable(i);
             storeBusinessTable(cwm, cwmSchema, businessTable);
         }
         
         // Store the notes...
         //
-        for (int i=0;i<businessView.nrNotes();i++)
+        for (int i=0;i<businessModel.nrNotes();i++)
         {
-            NotePadMeta notePadMeta = businessView.getNote(i);
+            NotePadMeta notePadMeta = businessModel.getNote(i);
             storeNotePadMeta(cwm, cwmSchema, notePadMeta);
         }
         
         // Store the relationships...
-        for (int i=0;i<businessView.nrRelationships();i++)
+        for (int i=0;i<businessModel.nrRelationships();i++)
         {
-            RelationshipMeta relationshipMeta = businessView.getRelationship(i);
+            RelationshipMeta relationshipMeta = businessModel.getRelationship(i);
             storeRelationshipMeta(cwm, relationshipMeta, cwmSchema);
         }
         
         // Also store the categories...
         // --> Store in reverse order, MDR has it backward :-)
-        for (int i=businessView.getRootCategory().nrBusinessCategories()-1;i>=0;i--)
+        for (int i=businessModel.getRootCategory().nrBusinessCategories()-1;i>=0;i--)
         {
-            BusinessCategory businessCategory = businessView.getRootCategory().getBusinessCategory(i);
+            BusinessCategory businessCategory = businessModel.getRootCategory().getBusinessCategory(i);
             storeBusinessCategory(cwm, businessCategory, null, cwmSchema);
         }
         // Save the olap information
         //
         // Create a CWM Schema first for this...
-        org.pentaho.pms.cwm.pentaho.meta.olap.CwmSchema cwmOlapSchema = cwm.createOlapSchema(businessView.getId());
+        org.pentaho.pms.cwm.pentaho.meta.olap.CwmSchema cwmOlapSchema = cwm.createOlapSchema(businessModel.getId());
         
         // Put the OLAP stuff in there.
         //
         // The dimensions
-        List dimensions = businessView.getOlapDimensions();
+        List dimensions = businessModel.getOlapDimensions();
         for (int i=0;i<dimensions.size();i++)
         {
             OlapDimension dimension = (OlapDimension) dimensions.get(i);
             storeOlapDimension(cwm, cwmOlapSchema, dimension);
         }
         // And the cubes
-        List cubes = businessView.getOlapCubes();
+        List cubes = businessModel.getOlapCubes();
         for (int i=0;i<cubes.size();i++)
         {
             OlapCube cube = (OlapCube) cubes.get(i);
@@ -769,34 +769,34 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
     }
 
     /**
-     * Load a business view from a CWM model by loading it from the supplied CwmSchema and using the SchemaMeta object for reference.
+     * Load a business model from a CWM model by loading it from the supplied CwmSchema and using the SchemaMeta object for reference.
      * @param cwm
      * @param cwmSchema
      * @param schemaMeta
-     * @return a newly created Business View
+     * @return a newly created Business Model
      */
-    public BusinessView getBusinessView(CWM cwm, CwmSchema cwmSchema, SchemaMeta schemaMeta)
+    public BusinessModel getBusinessModel(CWM cwm, CwmSchema cwmSchema, SchemaMeta schemaMeta)
     {
         // The name?
-        BusinessView businessView = new BusinessView(cwmSchema.getName());
-        businessView.addIDChangedListener(ConceptUtilityBase.createIDChangedListener(schemaMeta.getViews()));
+        BusinessModel businessModel = new BusinessModel(cwmSchema.getName());
+        businessModel.addIDChangedListener(ConceptUtilityBase.createIDChangedListener(schemaMeta.getBusinessModels()));
 
         // load the concept properties
-        getConceptProperties(cwm, cwmSchema, businessView.getConcept(), schemaMeta);
+        getConceptProperties(cwm, cwmSchema, businessModel.getConcept(), schemaMeta);
 
-        // Load the business tables into this business view..
+        // Load the business tables into this business model..
         //
         CwmDimension[] CwmDimensions = cwm.getDimensions(cwmSchema);
         for (int i = 0; i < CwmDimensions.length; i++)
         {
             CwmDimension cwmDimension = CwmDimensions[i];
-            BusinessTable businessTable = getBusinessTable(cwm, cwmDimension, schemaMeta, businessView);
+            BusinessTable businessTable = getBusinessTable(cwm, cwmDimension, schemaMeta, businessModel);
             
             if (hasAccess(CwmSchemaFactoryInterface.ACCESS_TYPE_READ,businessTable)) 
             {
                 try
                 {
-                    businessView.addBusinessTable(businessTable);
+                    businessModel.addBusinessTable(businessTable);
                 }
                 catch(ObjectAlreadyExistsException e)
                 {
@@ -815,7 +815,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
             if ( CWM.DESCRIPTION_TYPE_NOTEPAD.equals(cwmDescription.getType()) )
             {
                 NotePadMeta notePadMeta = getNotePadMeta(cwm, cwmDescription);
-                businessView.addNote(notePadMeta);
+                businessModel.addNote(notePadMeta);
             }
         }
         
@@ -824,8 +824,8 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         for (int i=0;i<cwmKeyRelationships.length;i++)
         {
             CwmKeyRelationship cwmKeyRelationship = cwmKeyRelationships[i];
-            RelationshipMeta relationshipMeta = getRelationshipMeta(cwm, cwmKeyRelationship, businessView);
-            businessView.addRelationship(relationshipMeta);
+            RelationshipMeta relationshipMeta = getRelationshipMeta(cwm, cwmKeyRelationship, businessModel);
+            businessModel.addRelationship(relationshipMeta);
         }
         
         // Load the categories...
@@ -833,12 +833,12 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         for (int i=0;i<cwmExtents.length;i++)
         {
             CwmExtent cwmExtent = cwmExtents[i];
-            BusinessCategory businessCategory = getBusinessCategory(cwm, cwmExtent, businessView, schemaMeta);
+            BusinessCategory businessCategory = getBusinessCategory(cwm, cwmExtent, businessModel, schemaMeta);
             if (hasAccess(CwmSchemaFactoryInterface.ACCESS_TYPE_READ,businessCategory)) 
             {
                 try
                 {
-                    businessView.getRootCategory().addBusinessCategory(businessCategory);
+                    businessModel.getRootCategory().addBusinessCategory(businessCategory);
                 }
                 catch(ObjectAlreadyExistsException e)
                 {
@@ -849,7 +849,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         }
         
         // Load the OLAP information too
-        org.pentaho.pms.cwm.pentaho.meta.olap.CwmSchema cwmOlapSchema = cwm.findOlapSchema(cwmSchema.getName()); // same name as business view
+        org.pentaho.pms.cwm.pentaho.meta.olap.CwmSchema cwmOlapSchema = cwm.findOlapSchema(cwmSchema.getName()); // same name as business model
         
         if (cwmOlapSchema!=null)
         {
@@ -858,25 +858,25 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
             for (Iterator iter = cwmOlapDimensions.iterator(); iter.hasNext();)
             {
                 org.pentaho.pms.cwm.pentaho.meta.olap.CwmDimension cwmOlapDimension = (org.pentaho.pms.cwm.pentaho.meta.olap.CwmDimension) iter.next();
-                OlapDimension olapDimension = getOlapDimension(cwm, cwmOlapDimension, businessView);
-                businessView.getOlapDimensions().add(0, olapDimension); // Inverse the load (MDR does it backward)
+                OlapDimension olapDimension = getOlapDimension(cwm, cwmOlapDimension, businessModel);
+                businessModel.getOlapDimensions().add(0, olapDimension); // Inverse the load (MDR does it backward)
             }
             
             Collection cwmOlapCubes = cwmOlapSchema.getCube();
             for (Iterator iter = cwmOlapCubes.iterator(); iter.hasNext();)
             {
                 CwmCube cwmCube = (CwmCube) iter.next();
-                OlapCube olapCube = getOlapCube(cwm, cwmCube, businessView);
-                businessView.getOlapCubes().add(olapCube);
+                OlapCube olapCube = getOlapCube(cwm, cwmCube, businessModel);
+                businessModel.getOlapCubes().add(olapCube);
             }
         }
         
         if (cwm.isReversingOrder())
         {
-            Collections.reverse(businessView.getBusinessTables().getList());
+            Collections.reverse(businessModel.getBusinessTables().getList());
         }
 
-        return businessView;
+        return businessModel;
     }
 
     /*
@@ -932,16 +932,16 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
      * @param schemaMeta
      * @return a newly created BusinessTable
      */
-    public BusinessTable getBusinessTable(CWM cwm, CwmDimension cwmDimension, SchemaMeta schemaMeta, BusinessView businessView)
+    public BusinessTable getBusinessTable(CWM cwm, CwmDimension cwmDimension, SchemaMeta schemaMeta, BusinessModel businessModel)
     {
         BusinessTable businessTable = new BusinessTable(cwmDimension.getName());
-        businessTable.addIDChangedListener(ConceptUtilityBase.createIDChangedListener(businessView.getBusinessTables()));
+        businessTable.addIDChangedListener(ConceptUtilityBase.createIDChangedListener(businessModel.getBusinessTables()));
         
         // load the properties...
         getConceptProperties(cwm, cwmDimension, businessTable.getConcept(), schemaMeta);
 
         // Set the security parent to inherit from
-        businessTable.getConcept().setSecurityParentInterface(businessView.getConcept());
+        businessTable.getConcept().setSecurityParentInterface(businessModel.getConcept());
         
         // The physical table...
         //
@@ -1128,13 +1128,13 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
     }
 
     /**
-     * Create a new RelationshipMeta object from a CWM model by looking at the CwmKeyRelationship and the BusinessView
+     * Create a new RelationshipMeta object from a CWM model by looking at the CwmKeyRelationship and the BusinessModel
      * @param cwm
      * @param relationship
-     * @param businessView
+     * @param businessModel
      * @return a newly created RelationshipMeta object
      */
-    public RelationshipMeta getRelationshipMeta(CWM cwm, CwmKeyRelationship relationship, BusinessView businessView)
+    public RelationshipMeta getRelationshipMeta(CWM cwm, CwmKeyRelationship relationship, BusinessModel businessModel)
     {
         RelationshipMeta relationshipMeta = new RelationshipMeta();
         
@@ -1145,8 +1145,8 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         String childTable =  CWM.findFirstTaggedValue(relationship.getTaggedValue(), CWM.TAG_RELATIONSHIP_TABLENAME_CHILD);
         
         // The business tables that link...
-        relationshipMeta.setTableFrom(businessView.findBusinessTable(parentTable));
-        relationshipMeta.setTableTo(businessView.findBusinessTable(childTable));
+        relationshipMeta.setTableFrom(businessModel.findBusinessTable(parentTable));
+        relationshipMeta.setTableTo(businessModel.findBusinessTable(childTable));
         
         // Complex join?
         //
@@ -1297,13 +1297,13 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
     /**
      * @param cwm The model
      * @param cwmExtent The extent to construct the category from
-     * @param businessView The business view to reference.
+     * @param businessModel The business model to reference.
      * @return A new business category
      */
-    public BusinessCategory getBusinessCategory(CWM cwm, CwmExtent cwmExtent, BusinessView businessView, SchemaMeta schemaMeta)
+    public BusinessCategory getBusinessCategory(CWM cwm, CwmExtent cwmExtent, BusinessModel businessModel, SchemaMeta schemaMeta)
     {
         BusinessCategory businessCategory = new BusinessCategory(cwmExtent.getName());
-        businessCategory.addIDChangedListener(ConceptUtilityBase.createIDChangedListener(businessView.getRootCategory().getBusinessCategories()));
+        businessCategory.addIDChangedListener(ConceptUtilityBase.createIDChangedListener(businessModel.getRootCategory().getBusinessCategories()));
 
         // Get the concept properties too
         ConceptInterface concept = new Concept();
@@ -1311,7 +1311,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         businessCategory.setConcept(concept);
         
         // Set the security parent for the business category too...
-        businessCategory.getConcept().setSecurityParentInterface(businessView.getConcept());
+        businessCategory.getConcept().setSecurityParentInterface(businessModel.getConcept());
         
         // Now get the business columns
         Collection elements = cwmExtent.getOwnedElement();
@@ -1322,7 +1322,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
             if (type.equals(CWM.VALUE_BUSINESS_TYPE_COLUMN))
             {
                 CwmAttribute cwmAttribute = (CwmAttribute) element;
-                BusinessColumn businessColumn = businessView.findBusinessColumn(cwmAttribute.getName());
+                BusinessColumn businessColumn = businessModel.findBusinessColumn(cwmAttribute.getName());
                 if (businessColumn!=null) {
                   if (hasAccess(CwmSchemaFactoryInterface.ACCESS_TYPE_READ, businessColumn)) {
                       businessCategory.addBusinessColumn(businessColumn);
@@ -1333,7 +1333,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
             if (type.equals(CWM.VALUE_BUSINESS_TYPE_CATEGORY))
             {
                 CwmExtent childCwmExtent = (CwmExtent) element;
-                BusinessCategory childBusinessCategory = getBusinessCategory(cwm, childCwmExtent, businessView, schemaMeta);
+                BusinessCategory childBusinessCategory = getBusinessCategory(cwm, childCwmExtent, businessModel, schemaMeta);
 
                 if (hasAccess(CwmSchemaFactoryInterface.ACCESS_TYPE_READ, childBusinessCategory)) 
                 {
@@ -1999,12 +1999,12 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
     }
     
     
-    private OlapCube getOlapCube(CWM cwm, CwmCube cwmCube, BusinessView businessView)
+    private OlapCube getOlapCube(CWM cwm, CwmCube cwmCube, BusinessModel businessModel)
     {
         OlapCube olapCube = new OlapCube();
         olapCube.setName(cwmCube.getName());
         
-        olapCube.setBusinessTable( businessView.findBusinessTable( cwm.getFirstTaggedValue( cwmCube, CWM.TAG_CUBE_BUSINESS_TABLE ) ) );
+        olapCube.setBusinessTable( businessModel.findBusinessTable( cwm.getFirstTaggedValue( cwmCube, CWM.TAG_CUBE_BUSINESS_TABLE ) ) );
         
         Collection associations = cwmCube.getCubeDimensionAssociation();
         for (Iterator iter = associations.iterator(); iter.hasNext();)
@@ -2014,7 +2014,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
             org.pentaho.pms.cwm.pentaho.meta.olap.CwmDimension cwmOlapDimension = association.getDimension();
             
             OlapDimension olapDimension = null;
-            List olapDimensions = businessView.getOlapDimensions();
+            List olapDimensions = businessModel.getOlapDimensions();
             for (Iterator iterator = olapDimensions.iterator(); iterator.hasNext() && olapDimension==null;)
             {
                 OlapDimension lookup = (OlapDimension) iterator.next();
@@ -2035,7 +2035,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
             OlapMeasure olapMeasure = new OlapMeasure();
             
             olapMeasure.setName(cwmMeasure.getName());
-            BusinessColumn businessColumn = businessView.findBusinessColumn( cwm.getFirstTaggedValue( cwmMeasure, CWM.TAG_MEASURE_BUSINESS_COLUMN) );
+            BusinessColumn businessColumn = businessModel.findBusinessColumn( cwm.getFirstTaggedValue( cwmMeasure, CWM.TAG_MEASURE_BUSINESS_COLUMN) );
             olapMeasure.setBusinessColumn( businessColumn );
 
             olapCube.getOlapMeasures().add(olapMeasure);
@@ -2070,7 +2070,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
     }
 
 
-    public OlapDimension getOlapDimension(CWM cwm, org.pentaho.pms.cwm.pentaho.meta.olap.CwmDimension cwmOlapDimension, BusinessView businessView)
+    public OlapDimension getOlapDimension(CWM cwm, org.pentaho.pms.cwm.pentaho.meta.olap.CwmDimension cwmOlapDimension, BusinessModel businessModel)
     {
         OlapDimension olapDimension = new OlapDimension();
         olapDimension.setName(cwmOlapDimension.getName());
@@ -2081,7 +2081,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         for (Iterator iter = cwmHierarchies.iterator(); iter.hasNext();)
         {
             CwmLevelBasedHierarchy cwmHierarchy = (CwmLevelBasedHierarchy) iter.next();
-            OlapHierarchy olapHierarchy = getOlapHierarchy(cwm, cwmHierarchy, olapDimension, businessView);
+            OlapHierarchy olapHierarchy = getOlapHierarchy(cwm, cwmHierarchy, olapDimension, businessModel);
             olapDimension.getHierarchies().add(olapHierarchy);
         }
         
@@ -2117,13 +2117,13 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         cwmOlapDimension.getHierarchy().add(cwmHierarchy);
     }
 
-    public OlapHierarchy getOlapHierarchy(CWM cwm, CwmLevelBasedHierarchy cwmHierarchy, OlapDimension olapDimension, BusinessView businessView)
+    public OlapHierarchy getOlapHierarchy(CWM cwm, CwmLevelBasedHierarchy cwmHierarchy, OlapDimension olapDimension, BusinessModel businessModel)
     {
         OlapHierarchy olapHierarchy = new OlapHierarchy(olapDimension);
         olapHierarchy.setName(cwmHierarchy.getName());
         
-        olapHierarchy.setBusinessTable( businessView.findBusinessTable( cwm.getFirstTaggedValue( cwmHierarchy, CWM.TAG_HIERARCHY_BUSINESS_TABLE ) ) );
-        olapHierarchy.setPrimaryKey( businessView.findBusinessColumn( cwm.getFirstTaggedValue( cwmHierarchy, CWM.TAG_HIERARCHY_PRIMARY_KEY ) ) );
+        olapHierarchy.setBusinessTable( businessModel.findBusinessTable( cwm.getFirstTaggedValue( cwmHierarchy, CWM.TAG_HIERARCHY_BUSINESS_TABLE ) ) );
+        olapHierarchy.setPrimaryKey( businessModel.findBusinessColumn( cwm.getFirstTaggedValue( cwmHierarchy, CWM.TAG_HIERARCHY_PRIMARY_KEY ) ) );
         olapHierarchy.setHavingAll( "Y".equalsIgnoreCase( cwm.getFirstTaggedValue( cwmHierarchy, CWM.TAG_HIERARCHY_HAVING_ALL ) ) );
         
         // Where are the levels?
@@ -2131,7 +2131,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         for (Iterator iter = associations.iterator(); iter.hasNext();)
         {
             CwmHierarchyLevelAssociation association = (CwmHierarchyLevelAssociation) iter.next();
-            OlapHierarchyLevel olapLevel = getOlapHierarchyLevel(cwm, olapHierarchy, association, businessView);
+            OlapHierarchyLevel olapLevel = getOlapHierarchyLevel(cwm, olapHierarchy, association, businessModel);
             olapHierarchy.getHierarchyLevels().add(olapLevel);
         }
         
@@ -2178,7 +2178,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         }
     }
 
-    public OlapHierarchyLevel getOlapHierarchyLevel(CWM cwm, OlapHierarchy olapHierarchy, CwmHierarchyLevelAssociation association, BusinessView businessView)
+    public OlapHierarchyLevel getOlapHierarchyLevel(CWM cwm, OlapHierarchy olapHierarchy, CwmHierarchyLevelAssociation association, BusinessModel businessModel)
     {
         OlapHierarchyLevel olapLevel = new OlapHierarchyLevel(olapHierarchy);
         olapLevel.setName(association.getName());
@@ -2188,14 +2188,14 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         // Unique members flag
         olapLevel.setHavingUniqueMembers( "Y".equalsIgnoreCase( cwm.getFirstTaggedValue(cwmLevel, CWM.TAG_HIERARCHY_LEVEL_UNIQUE_MEMBERS) ) );
         // The reference column (business column ID)
-        olapLevel.setReferenceColumn( businessView.findBusinessColumn( cwm.getFirstTaggedValue(cwmLevel, CWM.TAG_HIERARCHY_LEVEL_REFERENCE_COLUMN ) ) );
+        olapLevel.setReferenceColumn( businessModel.findBusinessColumn( cwm.getFirstTaggedValue(cwmLevel, CWM.TAG_HIERARCHY_LEVEL_REFERENCE_COLUMN ) ) );
         
         // The extra columns...
         Collection ownedElements = cwmLevel.getOwnedElement();
         for (Iterator iter = ownedElements.iterator(); iter.hasNext();)
         {
             CwmDimensionedObject cwmDimensionedObject = (CwmDimensionedObject) iter.next();
-            BusinessColumn column = businessView.findBusinessColumn(cwmDimensionedObject.getName());
+            BusinessColumn column = businessModel.findBusinessColumn(cwmDimensionedObject.getName());
             olapLevel.getBusinessColumns().add(column);
         }
         

@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.pentaho.pms.locale.Locales;
-import org.pentaho.pms.schema.BusinessView;
+import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.dialog.ConceptDefaultsDialog;
 import org.pentaho.pms.schema.security.SecurityReference;
@@ -51,12 +51,12 @@ import be.ibridge.kettle.trans.step.BaseStepDialog;
 
 
 /***
- * Represents a business view
+ * Represents a business model
  * 
  * @since 30-aug-2006
  *
  */
-public class BusinessViewDialog extends Dialog
+public class BusinessModelDialog extends Dialog
 {
     private LogWriter    log;
 
@@ -72,8 +72,8 @@ public class BusinessViewDialog extends Dialog
     private SelectionAdapter lsDef;
     private Props props;
 
-    private BusinessView businessView;
-    private String           viewId;
+    private BusinessModel businessModel;
+    private String           modelId;
     
     private Map widgetInterfaces;
 
@@ -85,20 +85,20 @@ public class BusinessViewDialog extends Dialog
 
     private ConceptInterface conceptInterface;
 
-    private BusinessView originalView;
+    private BusinessModel originalModel;
 
-    public BusinessViewDialog(Shell parent, BusinessView businessView, Locales locales, SecurityReference securityReference)
+    public BusinessModelDialog(Shell parent, BusinessModel businessModel, Locales locales, SecurityReference securityReference)
     {
         super(parent, SWT.NONE);
-        this.originalView = businessView;
-        this.businessView = (BusinessView) businessView.clone();
+        this.originalModel = businessModel;
+        this.businessModel = (BusinessModel) businessModel.clone();
         this.locales = locales;
         this.securityReference = securityReference;
         
         log=LogWriter.getInstance();
         props=Props.getInstance();
         
-        conceptInterface = businessView.getConcept();
+        conceptInterface = businessModel.getConcept();
 
         widgetInterfaces = new Hashtable();
     }
@@ -117,7 +117,7 @@ public class BusinessViewDialog extends Dialog
         {
             public void modifyText(ModifyEvent e) 
             {
-                businessView.setChanged();
+                businessModel.setChanged();
             }
         };
 
@@ -126,7 +126,7 @@ public class BusinessViewDialog extends Dialog
         formLayout.marginHeight = Const.FORM_MARGIN;
 
         shell.setLayout(formLayout);
-        shell.setText("Business view Properties");
+        shell.setText("Business Model Properties");
         
         int middle = props.getMiddlePct();
         int margin = Const.MARGIN;
@@ -167,7 +167,7 @@ public class BusinessViewDialog extends Dialog
         propertiesComposite.setLayout(new FormLayout());
         props.setLook(propertiesComposite);
         
-        ConceptDefaultsDialog.getControls(propertiesComposite, businessView, "Business view properties", conceptInterface, widgetInterfaces, locales, securityReference);
+        ConceptDefaultsDialog.getControls(propertiesComposite, businessModel, "Business Model properties", conceptInterface, widgetInterfaces, locales, securityReference);
         
         FormData fdRight = new FormData();
         fdRight.top    = new FormAttachment(0, 0);
@@ -207,7 +207,7 @@ public class BusinessViewDialog extends Dialog
         {
                 if (!display.readAndDispatch()) display.sleep();
         }
-        return viewId;
+        return modelId;
     }
 
     public void dispose()
@@ -221,20 +221,20 @@ public class BusinessViewDialog extends Dialog
      */ 
     public void getData()
     {
-        if (businessView.getId()!=null) wName.setText(businessView.getId());
+        if (businessModel.getId()!=null) wName.setText(businessModel.getId());
  
         wName.selectAll();
     }
     
     private void cancel()
     {
-        viewId=null;
+        modelId=null;
         dispose();
     }
 
     protected void refreshConceptProperties()
     {
-        ConceptDefaultsDialog.getControls(propertiesComposite, "Business view properties", conceptInterface, widgetInterfaces, locales, securityReference);
+        ConceptDefaultsDialog.getControls(propertiesComposite, "Business Model properties", conceptInterface, widgetInterfaces, locales, securityReference);
         propertiesComposite.layout(true, true);
     }
 
@@ -242,27 +242,27 @@ public class BusinessViewDialog extends Dialog
     {
         try
         {
-            originalView.setId(wName.getText());
+            originalModel.setId(wName.getText());
         }
         catch (ObjectAlreadyExistsException e)
         {
-            new ErrorDialog(shell, "Error", "A business view with ID '"+wName.getText()+"' already exists.", e);
+            new ErrorDialog(shell, "Error", "A business Model with ID '"+wName.getText()+"' already exists.", e);
             return;
         }
 
         // Clear the properties
-        businessView.getConcept().clearChildProperties();
+        businessModel.getConcept().clearChildProperties();
 
         // Get the widget values back...
         ConceptDefaultsDialog.setPropertyValues(shell, widgetInterfaces);
 
         // Copy these to the business table concept
-        businessView.getConcept().getChildPropertyInterfaces().putAll(conceptInterface.getChildPropertyInterfaces());
+        businessModel.getConcept().getChildPropertyInterfaces().putAll(conceptInterface.getChildPropertyInterfaces());
 
         // The concept stuff: just overwrite it, there are no references from/to these...
-        originalView.setConcept(businessView.getConcept());
+        originalModel.setConcept(businessModel.getConcept());
         
-        viewId = wName.getText();
+        modelId = wName.getText();
         dispose();
     }
 }

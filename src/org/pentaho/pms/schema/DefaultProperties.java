@@ -128,8 +128,8 @@ public class DefaultProperties extends ChangedFlag implements ChangedFlagInterfa
         propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.SECURITY));
         setDefaultProperties(subject, propertyTypes);
 
-        // The business views
-        subject = BusinessView.class;
+        // The business models
+        subject = BusinessModel.class;
         propertyTypes = new ArrayList();
         propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.NAME));
         propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.DESCRIPTION));

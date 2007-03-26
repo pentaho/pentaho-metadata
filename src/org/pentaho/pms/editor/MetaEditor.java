@@ -77,7 +77,7 @@ import org.pentaho.pms.mql.MQLQuery;
 import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessTable;
-import org.pentaho.pms.schema.BusinessView;
+import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.PhysicalColumn;
 import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.RelationshipMeta;
@@ -96,7 +96,7 @@ import org.pentaho.pms.schema.concept.types.tabletype.TableTypeSettings;
 import org.pentaho.pms.schema.dialog.BusinessCategoriesDialog;
 import org.pentaho.pms.schema.dialog.BusinessCategoryDialog;
 import org.pentaho.pms.schema.dialog.BusinessTableDialog;
-import org.pentaho.pms.schema.dialog.BusinessViewDialog;
+import org.pentaho.pms.schema.dialog.BusinessModelDialog;
 import org.pentaho.pms.schema.dialog.PhysicalTableDialog;
 import org.pentaho.pms.schema.dialog.RelationshipDialog;
 import org.pentaho.pms.schema.security.SecurityReference;
@@ -202,7 +202,7 @@ public class MetaEditor
 
     public static final String        STRING_CONNECTIONS     = Messages.getString("MetaEditor.USER_CONNECTIONS"); //$NON-NLS-1$
 
-    public static final String        STRING_BUSINESS_VIEWS  = Messages.getString("MetaEditor.USER_BUSINESS_MODELS"); //$NON-NLS-1$
+    public static final String        STRING_BUSINESS_MODELS  = Messages.getString("MetaEditor.USER_BUSINESS_MODELS"); //$NON-NLS-1$
 
     public static final String        STRING_BUSINESS_TABLES = Messages.getString("MetaEditor.USER_BUSINESS_TABLES"); //$NON-NLS-1$
 
@@ -218,7 +218,7 @@ public class MetaEditor
 
     private Tree                      mainTree;
 
-    private TreeItem                  tiConnections, tiViews;
+    private TreeItem                  tiConnections, tiBusinessModels;
 
     private Tree                      catTree;
 
@@ -291,14 +291,14 @@ public class MetaEditor
                 boolean control = (e.stateMask & SWT.CONTROL) != 0;
                 boolean alt = (e.stateMask & SWT.ALT) != 0;
 
-                BusinessView activeView = schemaMeta.getActiveView();
+                BusinessModel activeModel = schemaMeta.getActiveModel();
 
                 // ESC --> Unselect All steps
                 if (e.keyCode == SWT.ESC)
                 {
-                    if (activeView != null)
+                    if (activeModel != null)
                     {
-                        activeView.unselectAll();
+                        activeModel.unselectAll();
                         refreshGraph();
                     }
                     metaEditorGraph.control = false;
@@ -322,9 +322,9 @@ public class MetaEditor
                 // CTRL-A --> Select All steps
                 if ( e.character == 1 && control && !alt)
                 {
-                    if (activeView != null)
+                    if (activeModel != null)
                     {
-                        activeView.selectAll();
+                        activeModel.selectAll();
                         refreshGraph();
                     }
                     metaEditorGraph.control = false;
@@ -921,7 +921,7 @@ public class MetaEditor
         SashForm leftsplit = new SashForm(sashform, SWT.VERTICAL);
         leftsplit.setLayout(new FillLayout());
 
-        // Main: the top left tree containing connections, physical tables, business views, etc.
+        // Main: the top left tree containing connections, physical tables, business models, etc.
         //
         Composite compMain = new Composite(leftsplit, SWT.NONE);
         compMain.setLayout(new FillLayout());
@@ -976,19 +976,19 @@ public class MetaEditor
         };
         mainTree.addSelectionListener(lsEditMainSel);
 
-        // Normal selection: left click to select business view
-        SelectionListener lsSelView = new SelectionAdapter()
+        // Normal selection: left click to select business model
+        SelectionListener lsSelBusinessModel = new SelectionAdapter()
         {
             public void widgetSelected(SelectionEvent e)
             {
-                setActiveBusinessView(e);
+                setActiveBusinessModel(e);
             }
         };
-        mainTree.addSelectionListener(lsSelView);
+        mainTree.addSelectionListener(lsSelBusinessModel);
 
-        tiViews = new TreeItem(mainTree, SWT.NONE);
-        tiViews.setText(STRING_BUSINESS_VIEWS);
-        tiViews.setExpanded(true);
+        tiBusinessModels = new TreeItem(mainTree, SWT.NONE);
+        tiBusinessModels.setText(STRING_BUSINESS_MODELS);
+        tiBusinessModels.setExpanded(true);
 
         // Left bottom tree containing categories and selectable business columns.
         //
@@ -1002,10 +1002,10 @@ public class MetaEditor
         {
             public void widgetSelected(SelectionEvent arg0)
             {
-                BusinessView activeView = schemaMeta.getActiveView();
-                if (activeView != null)
+                BusinessModel activeModel = schemaMeta.getActiveModel();
+                if (activeModel != null)
                 {
-                    BusinessCategoriesDialog dialog = new BusinessCategoriesDialog(shell, activeView, schemaMeta.getLocales(), schemaMeta
+                    BusinessCategoriesDialog dialog = new BusinessCategoriesDialog(shell, activeModel, schemaMeta.getLocales(), schemaMeta
                             .getSecurityReference());
                     dialog.open();
                     refreshCategoriesTree();
@@ -1068,8 +1068,8 @@ public class MetaEditor
         TreeMemory.addTreeListener(mainTree, STRING_MAIN_TREE);
         TreeMemory.addTreeListener(catTree, STRING_CATEGORIES_TREE);
 
-        // Set the Views item expanded by default...
-        TreeMemory.getInstance().storeExpanded(STRING_MAIN_TREE, Const.getTreeStrings(tiViews), true);
+        // Set the business models item expanded by default...
+        TreeMemory.getInstance().storeExpanded(STRING_MAIN_TREE, Const.getTreeStrings(tiBusinessModels), true);
 
         // Keyboard shortcuts!
         mainTree.addKeyListener(defKeys);
@@ -1082,8 +1082,8 @@ public class MetaEditor
         {
             public void keyPressed(KeyEvent e)
             {
-                final BusinessView activeView = schemaMeta.getActiveView();
-                if (activeView == null) return;
+                final BusinessModel activeModel = schemaMeta.getActiveModel();
+                if (activeModel == null) return;
                 final String activeLocale = schemaMeta.getActiveLocale();
 
                 TreeItem[] selection = catTree.getSelection();
@@ -1094,7 +1094,7 @@ public class MetaEditor
                 final String[] path = Const.getTreeStrings(treeItem, 1);
                 final boolean isLowestLevel = treeItem.getItemCount() == 0; // no children
 
-                final BusinessCategory businessCategory = activeView.findBusinessCategory(path, activeLocale);
+                final BusinessCategory businessCategory = activeModel.findBusinessCategory(path, activeLocale);
                 final BusinessCategory parentCategory;
 
                 if (path.length > 1)
@@ -1102,11 +1102,11 @@ public class MetaEditor
                     String[] parentPath = new String[path.length - 1];
                     for (int i = 0; i < parentPath.length; i++)
                         parentPath[i] = path[i];
-                    parentCategory = activeView.findBusinessCategory(parentPath, activeLocale);
+                    parentCategory = activeModel.findBusinessCategory(parentPath, activeLocale);
                 }
                 else
                 {
-                    parentCategory = activeView.getRootCategory();
+                    parentCategory = activeModel.getRootCategory();
                 }
 
                 if (path.length == 0)
@@ -1209,11 +1209,11 @@ public class MetaEditor
 
             public void drop(DropTargetEvent event)
             {
-                BusinessView activeView = schemaMeta.getActiveView();
+                BusinessModel activeModel = schemaMeta.getActiveModel();
                 String activeLocale = schemaMeta.getActiveLocale();
 
                 // no data to copy, indicate failure in event.detail
-                if (event.data == null || activeView == null)
+                if (event.data == null || activeModel == null)
                 {
                     event.detail = DND.DROP_NONE;
                     return;
@@ -1228,7 +1228,7 @@ public class MetaEditor
 
                     // OK, So which BusinessCategory is this?
                     // If the category is null, we are talking about the root
-                    BusinessCategory parentCategory = activeView.findBusinessCategory(path, activeLocale);
+                    BusinessCategory parentCategory = activeModel.findBusinessCategory(path, activeLocale);
 
                     // We expect a Drag and Drop container... (encased in XML & Base64)
                     // 
@@ -1253,7 +1253,7 @@ public class MetaEditor
                     //
                     case DragAndDropContainer.TYPE_BUSINESS_TABLE:
                     {
-                        BusinessTable businessTable = activeView.findBusinessTable(container.getData()); // search by
+                        BusinessTable businessTable = activeModel.findBusinessTable(container.getData()); // search by
                                                                                                             // ID!
                         if (businessTable != null)
                         {
@@ -1265,7 +1265,7 @@ public class MetaEditor
                             String id = Settings.getBusinessCategoryIDPrefix() + businessTable.getTargetTable();
                             int catNr = 1;
                             String newId = id;
-                            while (activeView.getRootCategory().findBusinessCategory(newId) != null)
+                            while (activeModel.getRootCategory().findBusinessCategory(newId) != null)
                             {
                                 catNr++;
                                 newId = id + "_" + catNr; //$NON-NLS-1$
@@ -1276,7 +1276,7 @@ public class MetaEditor
                             // The name is the same as the table...
                             String categoryName = businessTable.getDisplayName(activeLocale);
                             catNr = 1;
-                            while (activeView.getRootCategory().findBusinessCategory(activeLocale, categoryName) != null)
+                            while (activeModel.getRootCategory().findBusinessCategory(activeLocale, categoryName) != null)
                             {
                                 catNr++;
                                 categoryName = businessTable.getDisplayName(activeLocale) + " " + catNr; //$NON-NLS-1$
@@ -1290,7 +1290,7 @@ public class MetaEditor
                                 businessCategory.addBusinessColumn(businessTable.getBusinessColumn(i));
                             }
 
-                            // Add the category to the business view or category
+                            // Add the category to the business model or category
                             //
                             parentCategory.addBusinessCategory(businessCategory);
 
@@ -1306,10 +1306,10 @@ public class MetaEditor
                     case DragAndDropContainer.TYPE_BUSINESS_COLUMN:
                     {
                         String columnID = container.getData();
-                        BusinessColumn businessColumn = activeView.findBusinessColumn(columnID);
+                        BusinessColumn businessColumn = activeModel.findBusinessColumn(columnID);
                         if (businessColumn != null)
                         {
-                            BusinessColumn existing = activeView.getRootCategory().findBusinessColumn(columnID); // search
+                            BusinessColumn existing = activeModel.getRootCategory().findBusinessColumn(columnID); // search
                                                                                                                     // by
                                                                                                                     // ID
                             if (existing != null && businessColumn.equals(existing))
@@ -1354,27 +1354,27 @@ public class MetaEditor
 
     }
 
-    public void setActiveBusinessView(SelectionEvent e)
+    public void setActiveBusinessModel(SelectionEvent e)
     {
         TreeItem treeItem = (TreeItem) e.item;
         if (treeItem != null)
         {
             String[] path = Const.getTreeStrings(treeItem);
-            if (path.length >= 2 && path[0].equals(STRING_BUSINESS_VIEWS)) // Did we select a business view name or
+            if (path.length >= 2 && path[0].equals(STRING_BUSINESS_MODELS)) // Did we select a business model name or
                                                                             // below?
             {
-                String businessViewName = path[1];
-                setActiveBusinessView(businessViewName);
+                String businessModelName = path[1];
+                setActiveBusinessModel(businessModelName);
             }
         }
     }
 
-    public void setActiveBusinessView(String businessViewName)
+    public void setActiveBusinessModel(String businessModelName)
     {
-        BusinessView businessView = schemaMeta.findView(schemaMeta.getActiveLocale(), businessViewName);
-        if (businessView != null)
+        BusinessModel businessModel = schemaMeta.findModel(schemaMeta.getActiveLocale(), businessModelName);
+        if (businessModel != null)
         {
-            schemaMeta.setActiveView(businessView);
+            schemaMeta.setActiveModel(businessModel);
             refreshGraph();
             refreshCategoriesTree();
             if (metaEditorOlap != null) metaEditorOlap.refreshScreen();
@@ -1439,25 +1439,25 @@ public class MetaEditor
                         }
                         else
                         {
-                            if (ts[0].equalsIgnoreCase(STRING_BUSINESS_VIEWS))
+                            if (ts[0].equalsIgnoreCase(STRING_BUSINESS_MODELS))
                             {
-                                BusinessView businessView = null;
+                                BusinessModel businessModel = null;
                                 BusinessTable businessTable = null;
                                 BusinessColumn businessColumn = null;
-                                if (ts.length > 1) businessView = schemaMeta.findView(schemaMeta.getActiveLocale(), ts[1]);
-                                if (ts.length > 3 && businessView != null)
-                                    businessTable = businessView.findBusinessTable(schemaMeta.getActiveLocale(), ts[3]);
+                                if (ts.length > 1) businessModel = schemaMeta.findModel(schemaMeta.getActiveLocale(), ts[1]);
+                                if (ts.length > 3 && businessModel != null)
+                                    businessTable = businessModel.findBusinessTable(schemaMeta.getActiveLocale(), ts[3]);
                                 if (ts.length > 4 && businessTable != null)
                                     businessColumn = businessTable.findBusinessColumn(schemaMeta.getActiveLocale(), ts[4]);
 
                                 switch (ts.length)
                                 {
-                                case 1: // parent of business views tree
+                                case 1: // parent of business models tree
                                     break;
-                                case 2: // Name of the business view
+                                case 2: // Name of the business model
                                     type = DragAndDropContainer.TYPE_BUSINESS_VIEW;
-                                    if (businessView != null) data = businessView.getId(); // the ID of the business
-                                                                                            // view
+                                    if (businessModel != null) data = businessModel.getId(); // the ID of the business
+                                                                                            // model
                                     break;
                                 case 3: // Business tables "title"
                                     break;
@@ -1688,11 +1688,11 @@ public class MetaEditor
             }
         }
         else
-            if (path[0].equals(STRING_BUSINESS_VIEWS))
+            if (path[0].equals(STRING_BUSINESS_MODELS))
             {
                 switch (path.length)
                 {
-                case 1: // Business Views
+                case 1: // Business models
                 {
                     MenuItem miNew = new MenuItem(mainMenu, SWT.PUSH);
                     miNew.setText(Messages.getString("MetaEditor.USER_NEW_TEXT")); //$NON-NLS-1$
@@ -1700,12 +1700,12 @@ public class MetaEditor
                     {
                         public void handleEvent(Event evt)
                         {
-                            newBusinessView();
+                            newBusinessModel();
                         }
                     });
                 }
                     break;
-                case 2: // Business View name
+                case 2: // Business model name
                 {
                     MenuItem miNew = new MenuItem(mainMenu, SWT.PUSH);
                     miNew.setText(Messages.getString("MetaEditor.USER_NEW_TEXT")); //$NON-NLS-1$
@@ -1713,7 +1713,7 @@ public class MetaEditor
                     {
                         public void handleEvent(Event evt)
                         {
-                            newBusinessView();
+                            newBusinessModel();
                         }
                     });
                     MenuItem miEdit = new MenuItem(mainMenu, SWT.PUSH);
@@ -1722,7 +1722,7 @@ public class MetaEditor
                     {
                         public void handleEvent(Event evt)
                         {
-                            editBusinessView(path[1]);
+                            editBusinessModel(path[1]);
                         }
                     });
                     MenuItem miDelete = new MenuItem(mainMenu, SWT.PUSH);
@@ -1731,7 +1731,7 @@ public class MetaEditor
                     {
                         public void handleEvent(Event evt)
                         {
-                            deleteBusinessView(path[1]);
+                            deleteBusinessModel(path[1]);
                         }
                     });
                 }
@@ -1879,8 +1879,8 @@ public class MetaEditor
      */
     private void setMenuCategories(SelectionEvent e)
     {
-        BusinessView activeView = schemaMeta.getActiveView();
-        if (activeView == null) return; // perhaps give some feedback why nothing is happening?
+        BusinessModel activeModel = schemaMeta.getActiveModel();
+        if (activeModel == null) return; // perhaps give some feedback why nothing is happening?
         String activeLocale = schemaMeta.getActiveLocale();
 
         final int nrSelected = catTree.getSelectionCount();
@@ -1903,7 +1903,7 @@ public class MetaEditor
         final String[] path = Const.getTreeStrings(treeItem, 1);
         final boolean isLowestLevel = treeItem.getItemCount() == 0; // no children
 
-        final BusinessCategory businessCategory = activeView.findBusinessCategory(path, activeLocale);
+        final BusinessCategory businessCategory = activeModel.findBusinessCategory(path, activeLocale);
         final BusinessCategory parentCategory;
 
         if (path.length > 0)
@@ -1911,11 +1911,11 @@ public class MetaEditor
             String[] parentPath = new String[path.length - 1];
             for (int i = 0; i < parentPath.length; i++)
                 parentPath[i] = path[i];
-            parentCategory = activeView.findBusinessCategory(parentPath, activeLocale);
+            parentCategory = activeModel.findBusinessCategory(parentPath, activeLocale);
         }
         else
         {
-            parentCategory = activeView.getRootCategory();
+            parentCategory = activeModel.getRootCategory();
         }
 
         // The top level Categories tree item
@@ -1929,7 +1929,7 @@ public class MetaEditor
                 final BusinessColumn businessColumn = businessCategory.findBusinessColumn(itemText, false, activeLocale);
                 if (businessColumn != null)
                 {
-                    setMenuCategoriesBusinessColumn(catMenu, businessCategory, businessColumn, activeView, nrSelected);
+                    setMenuCategoriesBusinessColumn(catMenu, businessCategory, businessColumn, activeModel, nrSelected);
                 }
                 else
                 // it's a category without selected columns in it.
@@ -2050,11 +2050,11 @@ public class MetaEditor
     }
 
     private void setMenuCategoriesBusinessColumn(Menu menu, final BusinessCategory businessCategory, final BusinessColumn businessColumn,
-            final BusinessView activeView, int nrSelected)
+            final BusinessModel activeModel, int nrSelected)
     {
         // Edit the business column by going to the business table editor
         //
-        final BusinessTable businessTable = activeView.findBusinessTable(businessColumn);
+        final BusinessTable businessTable = activeModel.findBusinessTable(businessColumn);
         if (businessTable != null)
         {
             if (nrSelected == 1)
@@ -2112,8 +2112,8 @@ public class MetaEditor
 
     protected void setCategoriesParentConcepts()
     {
-        BusinessView activeView = schemaMeta.getActiveView();
-        if (activeView == null) return; // perhaps give some feedback why nothing is happening?
+        BusinessModel activeModel = schemaMeta.getActiveModel();
+        if (activeModel == null) return; // perhaps give some feedback why nothing is happening?
         String activeLocale = schemaMeta.getActiveLocale();
 
         String[] concepts = schemaMeta.getConceptNames();
@@ -2134,7 +2134,7 @@ public class MetaEditor
                 String[] path = Const.getTreeStrings(treeItem);
                 boolean isLowestLevel = treeItem.getItemCount() == 0; // no children
 
-                BusinessCategory businessCategory = activeView.findBusinessCategory(path, activeLocale);
+                BusinessCategory businessCategory = activeModel.findBusinessCategory(path, activeLocale);
                 if (businessCategory != null)
                 {
                     if (isLowestLevel)
@@ -2286,9 +2286,9 @@ public class MetaEditor
 
     public BusinessTable newBusinessTable(PhysicalTable physicalTable)
     {
-        BusinessView activeView = schemaMeta.getActiveView();
+        BusinessModel activeModel = schemaMeta.getActiveModel();
         String activeLocale = schemaMeta.getActiveLocale();
-        if (activeView == null) return null;
+        if (activeModel == null) return null;
 
         // Ask a name for the business table.
         //
@@ -2313,7 +2313,7 @@ public class MetaEditor
         businessTable.getConcept().setName(activeLocale, tableName);
         
         // Add a unique ID enforcer...
-        businessTable.addIDChangedListener(ConceptUtilityBase.createIDChangedListener(activeView.getBusinessTables()));
+        businessTable.addIDChangedListener(ConceptUtilityBase.createIDChangedListener(activeModel.getBusinessTables()));
 
         // Add columns to this if we have a physical table to import from...
         //
@@ -2352,7 +2352,7 @@ public class MetaEditor
             {
                 try
                 {
-                    activeView.addBusinessTable(businessTable);
+                    activeModel.addBusinessTable(businessTable);
                     refreshAll();
                     return businessTable;
                 }
@@ -2371,23 +2371,23 @@ public class MetaEditor
 
     public void delBusinessTable(String businessTableID)
     {
-        BusinessView activeView = schemaMeta.getActiveView();
-        if (activeView == null) return;
+        BusinessModel activeModel = schemaMeta.getActiveModel();
+        if (activeModel == null) return;
         String activeLocale = schemaMeta.getActiveLocale();
 
-        BusinessTable businessTable = activeView.findBusinessTable(activeLocale, businessTableID);
+        BusinessTable businessTable = activeModel.findBusinessTable(activeLocale, businessTableID);
         if (businessTable != null)
         {
             // First delete the relationships it uses.
-            RelationshipMeta[] relationships = activeView.findRelationshipsUsing(businessTable);
+            RelationshipMeta[] relationships = activeModel.findRelationshipsUsing(businessTable);
             for (int i = 0; i < relationships.length; i++)
             {
-                int idx = activeView.indexOfRelationship(relationships[i]);
-                if (idx >= 0) activeView.removeRelationship(idx);
+                int idx = activeModel.indexOfRelationship(relationships[i]);
+                if (idx >= 0) activeModel.removeRelationship(idx);
             }
 
-            int idx = activeView.indexOfBusinessTable(businessTable);
-            activeView.removeBusinessTable(idx);
+            int idx = activeModel.indexOfBusinessTable(businessTable);
+            activeModel.removeBusinessTable(idx);
             refreshAll();
         }
     }
@@ -2478,8 +2478,8 @@ public class MetaEditor
 
     public void newSelected()
     {
-        BusinessView activeView = schemaMeta.getActiveView();
-        if (activeView == null) return;
+        BusinessModel activeModel = schemaMeta.getActiveModel();
+        if (activeModel == null) return;
 
         log.logDebug(APPLICATION_NAME, Messages.getString("MetaEditor.DEBUG_NEW_SELECTED")); //$NON-NLS-1$
         // Determine what menu we selected from...
@@ -2545,15 +2545,15 @@ public class MetaEditor
                 }
             }
             else
-                if (path[0].equals(STRING_BUSINESS_VIEWS))
+                if (path[0].equals(STRING_BUSINESS_MODELS))
                 {
                     switch (path.length)
                     {
-                    case 1: // Double clicked on Business Views: create new one
-                        newBusinessView();
+                    case 1: // Double clicked on Business models: create new one
+                        newBusinessModel();
                         break;
-                    case 2: // Double clicked on a Business View name: edit
-                        editBusinessView(path[1]);
+                    case 2: // Double clicked on a Business Model name: edit
+                        editBusinessModel(path[1]);
                         break;
                     case 3: // Double clicked on the business table category : new table or relationship
                         if (path[2].equals(STRING_BUSINESS_TABLES))
@@ -2580,7 +2580,7 @@ public class MetaEditor
                     case 5: // Double clicked on a business column : edit table
                         if (path[2].equals(STRING_BUSINESS_TABLES))
                         {
-                            editBusinessColumn(path[1], path[3], path[4]); // view, table, column
+                            editBusinessColumn(path[1], path[3], path[4]); // model, table, column
                         }
                         break;
                     default:
@@ -2592,8 +2592,8 @@ public class MetaEditor
 
     public void doubleClickedCategories()
     {
-        BusinessView activeView = schemaMeta.getActiveView();
-        if (activeView == null) return;
+        BusinessModel activeModel = schemaMeta.getActiveModel();
+        if (activeModel == null) return;
         String activeLocale = schemaMeta.getActiveLocale();
 
         // Determine what tree-item we double clicked on...
@@ -2606,7 +2606,7 @@ public class MetaEditor
         final String[] path = Const.getTreeStrings(treeItem, 1);
         final boolean isLowestLevel = treeItem.getItemCount() == 0; // no children
 
-        final BusinessCategory businessCategory = activeView.findBusinessCategory(path, activeLocale);
+        final BusinessCategory businessCategory = activeModel.findBusinessCategory(path, activeLocale);
         final BusinessCategory parentCategory;
 
         if (path.length > 1)
@@ -2614,11 +2614,11 @@ public class MetaEditor
             String[] parentPath = new String[path.length - 1];
             for (int i = 0; i < parentPath.length; i++)
                 parentPath[i] = path[i];
-            parentCategory = activeView.findBusinessCategory(parentPath, activeLocale);
+            parentCategory = activeModel.findBusinessCategory(parentPath, activeLocale);
         }
         else
         {
-            parentCategory = activeView.getRootCategory();
+            parentCategory = activeModel.getRootCategory();
         }
 
         // The top level Categories tree item
@@ -2648,13 +2648,13 @@ public class MetaEditor
             }
     }
 
-    private void editBusinessColumn(String businessViewName, String businessTableName, String businessColumnName)
+    private void editBusinessColumn(String businessModelName, String businessTableName, String businessColumnName)
     {
         String locale = schemaMeta.getActiveLocale();
-        BusinessView view = schemaMeta.findView(locale, businessViewName);
-        if (view != null)
+        BusinessModel model = schemaMeta.findModel(locale, businessModelName);
+        if (model != null)
         {
-            BusinessTable table = view.findBusinessTable(locale, businessTableName);
+            BusinessTable table = model.findBusinessTable(locale, businessTableName);
             if (table != null)
             {
                 BusinessColumn column = table.findBusinessColumn(locale, businessColumnName);
@@ -2698,28 +2698,28 @@ public class MetaEditor
         }
     }
 
-    public BusinessView newBusinessView()
+    public BusinessModel newBusinessModel()
     {
-        int nr = schemaMeta.nrViews() + 1;
-        String id = Settings.getBusinessViewIDPrefix() + "view_" + nr; //$NON-NLS-1$
+        int nr = schemaMeta.nrBusinessModels() + 1;
+        String id = Settings.getBusinessModelIDPrefix() + "model_" + nr; //$NON-NLS-1$
         if (Settings.isAnIdUppercase()) id = id.toUpperCase();
-        BusinessView businessView = new BusinessView(id);
-        businessView.addIDChangedListener(ConceptUtilityBase.createIDChangedListener(schemaMeta.getViews()));
-        businessView.getConcept().setName(schemaMeta.getActiveLocale(), "View " + nr); //$NON-NLS-1$
+        BusinessModel businessModel = new BusinessModel(id);
+        businessModel.addIDChangedListener(ConceptUtilityBase.createIDChangedListener(schemaMeta.getBusinessModels()));
+        businessModel.getConcept().setName(schemaMeta.getActiveLocale(), "Model " + nr); //$NON-NLS-1$
 
         while (true)
         {
-            BusinessViewDialog dialog = new BusinessViewDialog(shell, businessView, schemaMeta.getLocales(), schemaMeta.getSecurityReference());
-            String viewName = dialog.open();
-            if (viewName != null)
+            BusinessModelDialog dialog = new BusinessModelDialog(shell, businessModel, schemaMeta.getLocales(), schemaMeta.getSecurityReference());
+            String modelName = dialog.open();
+            if (modelName != null)
             {
                 try
                 {
-                    schemaMeta.addView(businessView);
-                    schemaMeta.setActiveView(businessView);
+                    schemaMeta.addModel(businessModel);
+                    schemaMeta.setActiveModel(businessModel);
                     refreshAll();
     
-                    return businessView;
+                    return businessModel;
                 }
                 catch(ObjectAlreadyExistsException e)
                 {
@@ -2734,36 +2734,36 @@ public class MetaEditor
         return null;
     }
 
-    public void editBusinessView(String businessViewName)
+    public void editBusinessModel(String businessModelName)
     {
-        BusinessView businessView = schemaMeta.findView(schemaMeta.getActiveLocale(), businessViewName);
-        if (businessView != null)
+        BusinessModel businessModel = schemaMeta.findModel(schemaMeta.getActiveLocale(), businessModelName);
+        if (businessModel != null)
         {
-            BusinessViewDialog dialog = new BusinessViewDialog(shell, businessView, schemaMeta.getLocales(), schemaMeta.getSecurityReference());
-            String viewName = dialog.open();
-            if (viewName != null)
+            BusinessModelDialog dialog = new BusinessModelDialog(shell, businessModel, schemaMeta.getLocales(), schemaMeta.getSecurityReference());
+            String modelName = dialog.open();
+            if (modelName != null)
             {
                 refreshAll();
             }
         }
     }
 
-    public void deleteBusinessView(String businessViewName)
+    public void deleteBusinessModel(String businessModelName)
     {
-        BusinessView businessView = schemaMeta.findView(schemaMeta.getActiveLocale(), businessViewName);
-        if (businessView != null)
+        BusinessModel businessModel = schemaMeta.findModel(schemaMeta.getActiveLocale(), businessModelName);
+        if (businessModel != null)
         {
             MessageBox box = new MessageBox(shell, SWT.YES | SWT.NO | SWT.ICON_QUESTION);
             box.setText(Messages.getString("MetaEditor.USER_TITLE_WARNING")); //$NON-NLS-1$
-            box.setMessage(Messages.getString("MetaEditor.USER_DELETE_BUSINESS_MODEL",  businessView.getDisplayName(schemaMeta.getActiveLocale()))); //$NON-NLS-1$ 
+            box.setMessage(Messages.getString("MetaEditor.USER_DELETE_BUSINESS_MODEL",  businessModel.getDisplayName(schemaMeta.getActiveLocale()))); //$NON-NLS-1$ 
             int answer = box.open();
             if (answer == SWT.YES)
             {
-                int idx = schemaMeta.indexOfView(businessView);
+                int idx = schemaMeta.indexOfBusinessModel(businessModel);
                 if (idx >= 0)
                 {
-                    schemaMeta.removeView(idx);
-                    schemaMeta.setActiveView(null);
+                    schemaMeta.removeBusinessModel(idx);
+                    schemaMeta.setActiveModel(null);
                     refreshAll();
                 }
             }
@@ -2912,9 +2912,9 @@ public class MetaEditor
         {
             int pos = schemaMeta.indexOfTable(physicalTable);
             schemaMeta.removeTable(pos);
-            for (int i = schemaMeta.nrViews() - 1; i >= 0; i--)
+            for (int i = schemaMeta.nrBusinessModels() - 1; i >= 0; i--)
             {
-                BusinessView ri = schemaMeta.getView(i);
+                BusinessModel ri = schemaMeta.getModel(i);
                 ri.deletePhysicalTableReferences(physicalTable);
             }
             refreshTree();
@@ -2928,13 +2928,13 @@ public class MetaEditor
 
     public void editRelationship(String name)
     {
-        BusinessView activeView = schemaMeta.getActiveView();
-        if (activeView == null) return;
+        BusinessModel activeModel = schemaMeta.getActiveModel();
+        if (activeModel == null) return;
 
-        RelationshipMeta ri = activeView.findRelationship(name);
+        RelationshipMeta ri = activeModel.findRelationship(name);
         if (ri != null)
         {
-            RelationshipDialog rd = new RelationshipDialog(shell, SWT.NONE, log, ri, activeView);
+            RelationshipDialog rd = new RelationshipDialog(shell, SWT.NONE, log, ri, activeModel);
             if (rd.open() != null)
             {
                 String newname = ri.toString();
@@ -2950,15 +2950,15 @@ public class MetaEditor
 
     public void delRelationship(String name)
     {
-        BusinessView activeView = schemaMeta.getActiveView();
-        if (activeView == null) return;
+        BusinessModel activeModel = schemaMeta.getActiveModel();
+        if (activeModel == null) return;
 
-        for (int i = 0; i < activeView.nrRelationships(); i++)
+        for (int i = 0; i < activeModel.nrRelationships(); i++)
         {
-            RelationshipMeta meta = activeView.getRelationship(i);
+            RelationshipMeta meta = activeModel.getRelationship(i);
             if (meta.toString().equals(name))
             {
-                activeView.removeRelationship(i);
+                activeModel.removeRelationship(i);
                 refreshTree();
                 refreshGraph();
             }
@@ -2973,16 +2973,16 @@ public class MetaEditor
 
     public void newRelationship(BusinessTable from, BusinessTable to)
     {
-        BusinessView activeView = schemaMeta.getActiveView();
-        if (activeView == null) return;
+        BusinessModel activeModel = schemaMeta.getActiveModel();
+        if (activeModel == null) return;
 
         RelationshipMeta relationship = new RelationshipMeta();
         relationship.setTableFrom(from);
         relationship.setTableTo(to);
-        RelationshipDialog dialog = new RelationshipDialog(shell, SWT.NONE, log, relationship, schemaMeta.getActiveView());
+        RelationshipDialog dialog = new RelationshipDialog(shell, SWT.NONE, log, relationship, schemaMeta.getActiveModel());
         if (dialog.open() != null)
         {
-            activeView.addRelationship(relationship);
+            activeModel.addRelationship(relationship);
     
             refreshTree();
             refreshGraph();
@@ -3250,17 +3250,17 @@ public class MetaEditor
 
     public void editUnselectAll()
     {
-        if (schemaMeta.getActiveView() == null) return;
+        if (schemaMeta.getActiveModel() == null) return;
 
-        schemaMeta.getActiveView().unselectAll();
+        schemaMeta.getActiveModel().unselectAll();
         metaEditorGraph.redraw();
     }
 
     public void editSelectAll()
     {
-        if (schemaMeta.getActiveView() == null) return;
+        if (schemaMeta.getActiveModel() == null) return;
 
-        schemaMeta.getActiveView().selectAll();
+        schemaMeta.getActiveModel().selectAll();
         metaEditorGraph.redraw();
     }
 
@@ -3306,8 +3306,8 @@ public class MetaEditor
         // Remove all connections...
         tiConnections.removeAll();
 
-        // Remove all Views
-        tiViews.removeAll();
+        // Remove all Models
+        tiBusinessModels.removeAll();
 
         for (int d = 0; d < schemaMeta.nrDatabases(); d++)
         {
@@ -3347,30 +3347,30 @@ public class MetaEditor
             }
         }
 
-        // Refresh views...
-        for (int v = 0; v < schemaMeta.nrViews(); v++)
+        // Refresh models...
+        for (int v = 0; v < schemaMeta.nrBusinessModels(); v++)
         {
-            BusinessView businessView = schemaMeta.getView(v);
-            ConceptInterface viewConcept = businessView.getConcept();
+            BusinessModel businessModel = schemaMeta.getModel(v);
+            ConceptInterface modelConcept = businessModel.getConcept();
 
-            TreeItem viewItem = new TreeItem(tiViews, SWT.NONE);
-            viewItem.setText(0, businessView.getDisplayName(activeLocale));
-            if (viewConcept != null && viewConcept.findFirstParentConcept() != null)
+            TreeItem modelItem = new TreeItem(tiBusinessModels, SWT.NONE);
+            modelItem.setText(0, businessModel.getDisplayName(activeLocale));
+            if (modelConcept != null && modelConcept.findFirstParentConcept() != null)
             {
-                viewItem.setText(1, viewConcept.findFirstParentConcept().getName());
+                modelItem.setText(1, modelConcept.findFirstParentConcept().getName());
             }
 
-            viewItem.setForeground(GUIResource.getInstance().getColorBlack());
-            viewItem.setImage(GUIResource.getInstance().getImageBol());
+            modelItem.setForeground(GUIResource.getInstance().getColorBlack());
+            modelItem.setImage(GUIResource.getInstance().getImageBol());
 
-            TreeItem tableParent = new TreeItem(viewItem, SWT.NONE);
+            TreeItem tableParent = new TreeItem(modelItem, SWT.NONE);
             tableParent.setText(STRING_BUSINESS_TABLES);
             tableParent.setForeground(GUIResource.getInstance().getColorBlack());
             tableParent.setImage(GUIResource.getInstance().getImageBol());
 
-            for (int t = 0; t < businessView.nrBusinessTables(); t++)
+            for (int t = 0; t < businessModel.nrBusinessTables(); t++)
             {
-                BusinessTable businessTable = businessView.getBusinessTable(t);
+                BusinessTable businessTable = businessModel.getBusinessTable(t);
                 ConceptInterface tableConcept = businessTable.getConcept();
 
                 TreeItem tableItem = new TreeItem(tableParent, SWT.NONE);
@@ -3399,14 +3399,14 @@ public class MetaEditor
                 }
             }
 
-            TreeItem relationParent = new TreeItem(viewItem, SWT.NONE);
+            TreeItem relationParent = new TreeItem(modelItem, SWT.NONE);
             relationParent.setText(STRING_RELATIONSHIPS);
             relationParent.setForeground(GUIResource.getInstance().getColorBlack());
             relationParent.setImage(GUIResource.getInstance().getImageBol());
 
-            for (int r = 0; r < businessView.nrRelationships(); r++)
+            for (int r = 0; r < businessModel.nrRelationships(); r++)
             {
-                RelationshipMeta relationshipMeta = businessView.getRelationship(r);
+                RelationshipMeta relationshipMeta = businessModel.getRelationship(r);
 
                 TreeItem columnItem = new TreeItem(relationParent, SWT.NONE);
                 columnItem.setText(0, relationshipMeta.toString());
@@ -3428,11 +3428,11 @@ public class MetaEditor
     {
         tiCategories.removeAll();
 
-        BusinessView activeView = schemaMeta.getActiveView();
-        if (activeView != null)
+        BusinessModel activeModel = schemaMeta.getActiveModel();
+        if (activeModel != null)
         {
             String activeLocale = schemaMeta.getActiveLocale();
-            addTreeCategories(tiCategories, activeView.getRootCategory(), activeLocale, true);
+            addTreeCategories(tiCategories, activeModel.getRootCategory(), activeLocale, true);
         }
         TreeMemory.setExpandedFromMemory(catTree, STRING_CATEGORIES_TREE);
 
@@ -3489,7 +3489,7 @@ public class MetaEditor
     private void setTreeImages()
     {
         tiConnections.setImage(GUIResource.getInstance().getImageConnection());
-        tiViews.setImage(GUIResource.getInstance().getImageBol());
+        tiBusinessModels.setImage(GUIResource.getInstance().getImageBol());
     }
 
     public DatabaseMeta getConnection(String name)
@@ -3526,14 +3526,14 @@ public class MetaEditor
 
     private void printFile()
     {
-        BusinessView activeView = schemaMeta.getActiveView();
-        if (activeView == null) return;
+        BusinessModel activeModel = schemaMeta.getActiveModel();
+        if (activeModel == null) return;
 
         PrintSpool ps = new PrintSpool();
         Printer printer = ps.getPrinter(shell);
 
         // Create an image of the screen
-        Point max = activeView.getMaximum();
+        Point max = activeModel.getMaximum();
 
         // Image img_screen = new Image(trans, max.x, max.y);
         // img_screen.dispose();
@@ -3991,10 +3991,10 @@ public class MetaEditor
 
     public void editBusinessTable(String businessTableName)
     {
-        BusinessView activeView = schemaMeta.getActiveView();
-        if (activeView == null) return;
+        BusinessModel activeModel = schemaMeta.getActiveModel();
+        if (activeModel == null) return;
 
-        BusinessTable businessTable = activeView.findBusinessTable(schemaMeta.getActiveLocale(), businessTableName);
+        BusinessTable businessTable = activeModel.findBusinessTable(schemaMeta.getActiveLocale(), businessTableName);
         if (businessTable != null)
         {
             editBusinessTable(businessTable);
@@ -4093,14 +4093,14 @@ public class MetaEditor
 
     public void getMondrianModel()
     {
-        BusinessView activeView = schemaMeta.getActiveView();
+        BusinessModel activeModel = schemaMeta.getActiveModel();
         String locale = schemaMeta.getActiveLocale();
 
-        if (activeView != null)
+        if (activeModel != null)
         {
             try
             {
-                String xml = activeView.getMondrianModel(locale);
+                String xml = activeModel.getMondrianModel(locale);
 
                 EnterTextDialog dialog = new EnterTextDialog(shell, Messages.getString("MetaEditor.USER_TITLE_MONDRIAN_XML"), Messages.getString("MetaEditor.USER_MONDRIAN_XML"), xml); //$NON-NLS-1$ //$NON-NLS-2$
                 dialog.open();
@@ -4150,23 +4150,23 @@ public class MetaEditor
                 }
             }
             else
-                if (path[0].equals(STRING_BUSINESS_VIEWS))
+                if (path[0].equals(STRING_BUSINESS_MODELS))
                 {
                     switch (path.length)
                     {
-                    case 2: // Business View name
+                    case 2: // Business model name
                     {
-                        BusinessView view = schemaMeta.findView(locale, path[1]);
-                        if (view != null) list.add(view);
+                        BusinessModel model = schemaMeta.findModel(locale, path[1]);
+                        if (model != null) list.add(model);
                     }
                         break;
                     case 4: // Business Tables or Relationships
                         if (path[2].equals(STRING_BUSINESS_TABLES))
                         {
-                            BusinessView view = schemaMeta.findView(locale, path[1]);
-                            if (view != null)
+                            BusinessModel model = schemaMeta.findModel(locale, path[1]);
+                            if (model != null)
                             {
-                                BusinessTable table = view.findBusinessTable(locale, path[3]);
+                                BusinessTable table = model.findBusinessTable(locale, path[3]);
                                 if (table != null) list.add(table);
                             }
                         }
@@ -4174,10 +4174,10 @@ public class MetaEditor
                     case 5: // Business Column
                         if (path[2].equals(STRING_BUSINESS_TABLES))
                         {
-                            BusinessView view = schemaMeta.findView(locale, path[1]);
-                            if (view != null)
+                            BusinessModel model = schemaMeta.findModel(locale, path[1]);
+                            if (model != null)
                             {
-                                BusinessTable table = view.findBusinessTable(locale, path[3]);
+                                BusinessTable table = model.findBusinessTable(locale, path[3]);
                                 if (table != null)
                                 {
                                     BusinessColumn column = table.findBusinessColumn(locale, path[4]);
@@ -4200,9 +4200,9 @@ public class MetaEditor
     {
         List list = new ArrayList();
 
-        BusinessView activeView = schemaMeta.getActiveView();
+        BusinessModel activeModel = schemaMeta.getActiveModel();
         String locale = schemaMeta.getActiveLocale();
-        if (activeView == null) return new ConceptUtilityInterface[0];
+        if (activeModel == null) return new ConceptUtilityInterface[0];
 
         // The main tree
         TreeItem[] selection = catTree.getSelection();
@@ -4213,7 +4213,7 @@ public class MetaEditor
 
             if (path.length > 0)
             {
-                BusinessCategory category = activeView.findBusinessCategory(path, locale, true); // exact match
+                BusinessCategory category = activeModel.findBusinessCategory(path, locale, true); // exact match
                 if (category != null)
                 {
                     list.add(category);
@@ -4224,8 +4224,8 @@ public class MetaEditor
                     for (int x = 0; x < parentPath.length; x++)
                         parentPath[x] = path[x];
 
-                    BusinessCategory parentCategory = activeView.getRootCategory();
-                    if (parentPath.length > 0) activeView.findBusinessCategory(parentPath, locale, true);
+                    BusinessCategory parentCategory = activeModel.getRootCategory();
+                    if (parentPath.length > 0) activeModel.findBusinessCategory(parentPath, locale, true);
                     if (parentCategory != null)
                     {
                         // Now get the business column below that...

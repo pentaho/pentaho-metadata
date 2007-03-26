@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessColumnString;
-import org.pentaho.pms.schema.BusinessView;
+import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.WhereCondition;
 import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.GUIResource;
@@ -53,19 +53,19 @@ public class WhereConditionsDialog extends Dialog
     private Props props;
     // private String locale;
     private TableView wFields;
-    // private BusinessView businessView;
+    // private BusinessModel businessView;
     private WhereCondition[] whereConditions;
     private List businessColumnStrings;
     private String[] flatView;
 
-    public WhereConditionsDialog(Shell parent, BusinessView businessView, WhereCondition[] whereConditions, String locale)
+    public WhereConditionsDialog(Shell parent, BusinessModel businessModel, WhereCondition[] whereConditions, String locale)
     {
         super(parent, SWT.NONE);
         // this.businessView = businessView;
         this.whereConditions = whereConditions; 
         // this.locale = locale;
         
-        businessColumnStrings = businessView.getFlatCategoriesView(locale);
+        businessColumnStrings = businessModel.getFlatCategoriesView(locale);
         flatView = BusinessColumnString.getFlatRepresentations(businessColumnStrings);
 
         props = Props.getInstance();

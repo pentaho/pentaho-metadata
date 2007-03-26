@@ -54,7 +54,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessTable;
-import org.pentaho.pms.schema.BusinessView;
+import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.RelationshipMeta;
 import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.GUIResource;
@@ -107,7 +107,7 @@ public class RelationshipDialog extends Dialog
 
 	private RelationshipMeta relationshipMeta;
 	private Shell  shell;
-	private BusinessView businessView;
+	private BusinessModel businessModel;
 	
 	private BusinessTable fromtable, totable;
 		
@@ -115,11 +115,11 @@ public class RelationshipDialog extends Dialog
 	
 	private boolean changed, backupComplex;
 	
-	public RelationshipDialog(Shell parent, int style, LogWriter l, RelationshipMeta relationshipMeta, BusinessView businessView)
+	public RelationshipDialog(Shell parent, int style, LogWriter l, RelationshipMeta relationshipMeta, BusinessModel businessModel)
 	{
 		super(parent, style);
 		this.relationshipMeta=relationshipMeta;
-		this.businessView=businessView;
+		this.businessModel=businessModel;
 		
 		fromtable = relationshipMeta.getTableFrom();
 		totable   = relationshipMeta.getTableTo();
@@ -168,9 +168,9 @@ public class RelationshipDialog extends Dialog
 		wFrom.setText("Select the source table");
         props.setLook(wFrom);
 
-		for (int i=0;i<businessView.nrBusinessTables();i++)
+		for (int i=0;i<businessModel.nrBusinessTables();i++)
 		{
-			BusinessTable ti = businessView.getBusinessTable(i);
+			BusinessTable ti = businessModel.getBusinessTable(i);
 			wFrom.add(ti.getId());
 		}
 		wFrom.addModifyListener(lsMod);
@@ -179,7 +179,7 @@ public class RelationshipDialog extends Dialog
 				public void modifyText(ModifyEvent e)
 				{
 					// grab the new fromtable:
-					fromtable=businessView.findBusinessTable(wFrom.getText());
+					fromtable=businessModel.findBusinessTable(wFrom.getText());
 					refreshFromFields();
 				}
 			}
@@ -216,9 +216,9 @@ public class RelationshipDialog extends Dialog
 		wTo.setText("Select the destination table");
         props.setLook(wTo);
 
-		for (int i=0;i<businessView.nrBusinessTables();i++)
+		for (int i=0;i<businessModel.nrBusinessTables();i++)
 		{
-            BusinessTable ti = businessView.getBusinessTable(i);
+            BusinessTable ti = businessModel.getBusinessTable(i);
 			wTo.add(ti.getId());
 		} 
 		wTo.addModifyListener(lsMod);
@@ -227,7 +227,7 @@ public class RelationshipDialog extends Dialog
 				public void modifyText(ModifyEvent e)
 				{
 					// grab the new fromtable:
-					totable=businessView.findBusinessTable(wTo.getText());
+					totable=businessModel.findBusinessTable(wTo.getText());
 					refreshToFields();
 				}
 			}
@@ -464,10 +464,10 @@ public class RelationshipDialog extends Dialog
 	
 	private void ok()
 	{
-        BusinessTable tableFrom = businessView.findBusinessTable(wFrom.getText());
+        BusinessTable tableFrom = businessModel.findBusinessTable(wFrom.getText());
 		relationshipMeta.setTableFrom( tableFrom );
         
-        BusinessTable tableTo = businessView.findBusinessTable(wTo  .getText());
+        BusinessTable tableTo = businessModel.findBusinessTable(wTo  .getText());
 		relationshipMeta.setTableTo  ( tableTo );
 		
         if (tableFrom!=null)

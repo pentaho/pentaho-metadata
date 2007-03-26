@@ -27,7 +27,7 @@ import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.mql.MQLQuery;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessColumnString;
-import org.pentaho.pms.schema.BusinessView;
+import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.OrderBy;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.WhereCondition;
@@ -147,37 +147,37 @@ public class MakeSelectionDemo
 //            previousQuery = queryDialog.open();
             
             
-            // Now present the user with a choice of business views...
+            // Now present the user with a choice of business models...
             //
-            String[] businessViewNames = schemaMeta.getViewIDs();
-            String viewName = null;
-            if( businessViewNames != null && businessViewNames.length == 1 ) {
-            		viewName = businessViewNames[0];
+            String[] businessModelNames = schemaMeta.getBusinessModelIDs();
+            String modelName = null;
+            if( businessModelNames != null && businessModelNames.length == 1 ) {
+            		modelName = businessModelNames[0];
             } else {
-                EnterSelectionDialog viewSelectionDialog = new EnterSelectionDialog(shell, businessViewNames, Messages.getString("MakeSelectionDemo.USER_SELECT_BUSINESS_MODEL"), Messages.getString("MakeSelectionDemo.USER_SELECT_BUSINESS_MODEL")); //$NON-NLS-1$ //$NON-NLS-2$
+                EnterSelectionDialog modelSelectionDialog = new EnterSelectionDialog(shell, businessModelNames, Messages.getString("MakeSelectionDemo.USER_SELECT_BUSINESS_MODEL"), Messages.getString("MakeSelectionDemo.USER_SELECT_BUSINESS_MODEL")); //$NON-NLS-1$ //$NON-NLS-2$
                 if (previous!=null)
                 {
-                    // What was the previous business view?
-                    String previousViewName = previous.getView().getDisplayName(selectedLocale);
-                    int idx = Const.indexOfString(previousViewName, businessViewNames);
+                    // What was the previous business model?
+                    String previousModelName = previous.getModel().getDisplayName(selectedLocale);
+                    int idx = Const.indexOfString(previousModelName, businessModelNames);
                     if (idx>=0)
                     {
-                        viewSelectionDialog.setSelectedNrs(new int[] { idx } ); // Select it
+                        modelSelectionDialog.setSelectedNrs(new int[] { idx } ); // Select it
                     }
                 }
-                viewName = viewSelectionDialog.open();
+                modelName = modelSelectionDialog.open();
             }
-            if (viewName!=null)
+            if (modelName!=null)
             {
-                BusinessView businessView = schemaMeta.findView(viewName); // This is the business view that was selected.
+                BusinessModel businessModel = schemaMeta.findModel(modelName); // This is the business model that was selected.
                 
-                System.out.println(Messages.getString("MakeSelectionDemo.INFO_FOUND_BUSINESS_MODEL", businessView.toString())); //$NON-NLS-1$
-                System.out.println(Messages.getString("MakeSelectionDemo.INFO_FOUND_CATEGORIES", Integer.toString(businessView.getRootCategory().nrBusinessCategories()))); //$NON-NLS-1$ 
-                System.out.println(Messages.getString("MakeSelectionDemo.INFO_HAS_BUSINESS_TABLES", Integer.toString(businessView.nrBusinessTables()))); //$NON-NLS-1$ 
-                System.out.println(Messages.getString("MakeSelectionDemo.INFO_DESCRIBES_RELATIONSHIPS", Integer.toString(businessView.nrRelationships()))); //$NON-NLS-1$ 
+                System.out.println(Messages.getString("MakeSelectionDemo.INFO_FOUND_BUSINESS_MODEL", businessModel.toString())); //$NON-NLS-1$
+                System.out.println(Messages.getString("MakeSelectionDemo.INFO_FOUND_CATEGORIES", Integer.toString(businessModel.getRootCategory().nrBusinessCategories()))); //$NON-NLS-1$ 
+                System.out.println(Messages.getString("MakeSelectionDemo.INFO_HAS_BUSINESS_TABLES", Integer.toString(businessModel.nrBusinessTables()))); //$NON-NLS-1$ 
+                System.out.println(Messages.getString("MakeSelectionDemo.INFO_DESCRIBES_RELATIONSHIPS", Integer.toString(businessModel.nrRelationships()))); //$NON-NLS-1$ 
                 
                 // Show the "flat" view of categories
-                List strings = businessView.getFlatCategoriesView(schemaMeta.getActiveLocale());
+                List strings = businessModel.getFlatCategoriesView(schemaMeta.getActiveLocale());
                 String[] flatView = BusinessColumnString.getFlatRepresentations(strings);
                 
                 // Select the columns
@@ -205,7 +205,7 @@ public class MakeSelectionDemo
                 columnSelectionDialog.setFixed(true);
                 if (columnSelectionDialog.open()!=null)
                 {
-                	MQLQuery query = new MQLQuery( schemaMeta, businessView, selectedLocale );
+                	MQLQuery query = new MQLQuery( schemaMeta, businessModel, selectedLocale );
                     int[] indices = columnSelectionDialog.getSelectionIndeces();
                     List selectionList = new ArrayList();
                     for (int i=0;i<indices.length;i++)
@@ -244,7 +244,7 @@ public class MakeSelectionDemo
                     
                     WhereCondition[] conditions = new WhereCondition[] 
                         { 
-                            // new WhereCondition(null, businessView.findBusinessColumn("PC_MOVEMENTFACT_SPLIT_COUNT"), ">= 100") 
+                            // new WhereCondition(null, businessModel.findBusinessColumn("PC_MOVEMENTFACT_SPLIT_COUNT"), ">= 100") 
                         };
                     if (previous!=null)
                     {
@@ -252,7 +252,7 @@ public class MakeSelectionDemo
                         List constraints = previous.getConstraints();
                         conditions = (WhereCondition[]) constraints.toArray(new WhereCondition[constraints.size()]);
                     }
-                    WhereConditionsDialog conditionsDialog = new WhereConditionsDialog(shell, businessView, conditions, schemaMeta.getActiveLocale());
+                    WhereConditionsDialog conditionsDialog = new WhereConditionsDialog(shell, businessModel, conditions, schemaMeta.getActiveLocale());
                     conditions = conditionsDialog.open();
                     if (conditions!=null)
                     {

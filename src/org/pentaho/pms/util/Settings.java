@@ -18,7 +18,7 @@ import be.ibridge.kettle.core.Props;
 
 public class Settings
 {
-    private static final String BUSINESS_VIEW_ID_PREFIX      = "BUSINESS_VIEW_ID_PREFIX";
+    private static final String BUSINESS_MODEL_ID_PREFIX      = "BUSINESS_MODEL_ID_PREFIX";
     private static final String BUSINESS_CATEGORY_ID_PREFIX  = "BUSINESS_CATEGORY_ID_PREFIX";
     private static final String BUSINESS_TABLE_ID_PREFIX     = "BUSINESS_TABLE_ID_PREFIX";
     private static final String BUSINESS_COLUMN_ID_PREFIX    = "BUSINESS_COLUMN_ID_PREFIX";
@@ -31,14 +31,14 @@ public class Settings
     private static final String CONCEPT_NAME_ID = null;
     private static final String CONCEPT_NAME_SK = null;
     
-    public static final String getBusinessViewIDPrefix()
+    public static final String getBusinessModelIDPrefix()
     {
-        return Props.getInstance().getCustomParameter(BUSINESS_VIEW_ID_PREFIX, "bv_");
+        return Props.getInstance().getCustomParameter(BUSINESS_MODEL_ID_PREFIX, "bv_");
     }
     
-    public static final void setBusinessViewIDPrefix(String prefix)
+    public static final void setBusinessModelIDPrefix(String prefix)
     {
-        Props.getInstance().setCustomParameter(BUSINESS_VIEW_ID_PREFIX, prefix);
+        Props.getInstance().setCustomParameter(BUSINESS_MODEL_ID_PREFIX, prefix);
     }
     
     public static final String getBusinessTableIDPrefix()
