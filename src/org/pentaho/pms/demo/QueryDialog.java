@@ -113,6 +113,7 @@ public class QueryDialog extends Dialog
     private Button wUpColumn;
     private Button wDownColumn;
     private Label wlComments;
+    private Button wClear;
 
     public QueryDialog(Shell parent, SchemaMeta schemaMeta, MQLQuery query)
     {
@@ -163,8 +164,10 @@ public class QueryDialog extends Dialog
         wTrans.setText(Messages.getString("QueryDialog.USER_TRANSFORMATION")); //$NON-NLS-1$
         wCancel=new Button(shell, SWT.PUSH);
         wCancel.setText(Messages.getString("QueryDialog.USER_CANCEL")); //$NON-NLS-1$
+        wClear=new Button(shell, SWT.PUSH);
+        wClear.setText(Messages.getString("QueryDialog.USER_CLEAR")); //$NON-NLS-1$
         
-        BaseStepDialog.positionBottomButtons(shell, new Button[] { wOK, wSQL, wTrans, wCancel }, Const.MARGIN, null);
+        BaseStepDialog.positionBottomButtons(shell, new Button[] { wOK, wClear, wSQL, wTrans, wCancel }, Const.MARGIN, null);
 
         // Add a label for the business model
         Label wlModels = new Label(shell, SWT.LEFT);
@@ -174,7 +177,7 @@ public class QueryDialog extends Dialog
         fdlModels.left = new FormAttachment(0,0);
         fdlModels.top  = new FormAttachment(0,0);
         wlModels.setLayoutData(fdlModels);
-        
+      
         // Add a List for the business models
         wModels = new List(shell, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         props.setLook(wModels);
@@ -451,6 +454,7 @@ public class QueryDialog extends Dialog
         wSQL.addListener   (SWT.Selection, new Listener() { public void handleEvent(Event e) { showSQL(); } });
         wTrans.addListener (SWT.Selection, new Listener() { public void handleEvent(Event e) { showTrans(); } });
         wCancel.addListener(SWT.Selection, new Listener() { public void handleEvent(Event e) { ok();     } });
+        wClear.addListener (SWT.Selection, new Listener() { public void handleEvent(Event e) { clearQuery(); } });
         
         // Detect [X] or ALT-F4 or something that kills this window...
         shell.addShellListener( new ShellAdapter() { public void shellClosed(ShellEvent e) { cancel(); } } );
@@ -1071,5 +1075,16 @@ public class QueryDialog extends Dialog
             PreviewRowsDialog previewRowsDialog = new PreviewRowsDialog(shell, SWT.NONE, Messages.getString("QueryDialog.USER_FIRST_5000_ROWS"), rows); //$NON-NLS-1$
             previewRowsDialog.open();
         }    
+    }
+    
+    public void clearQuery()
+    {
+        columns.clear();
+        conditions.clear();
+        orders.clear();
+        
+        updateColumns();
+        updateConditions();
+        updateOrders();
     }
 }
