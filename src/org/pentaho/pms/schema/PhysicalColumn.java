@@ -32,6 +32,7 @@
  */
 
 package org.pentaho.pms.schema;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
@@ -73,7 +74,7 @@ public class PhysicalColumn extends ConceptUtilityBase implements ConceptUtility
      */
     public String getModelElementDescription()
     {
-        return "physical column";
+        return Messages.getString("PhysicalColumn.USER_DESCRIPTION"); //$NON-NLS-1$
     }
 
     protected Object clone()
@@ -112,7 +113,7 @@ public class PhysicalColumn extends ConceptUtilityBase implements ConceptUtility
 		else
 		{
 			PhysicalTable table = getTable();
-			retval=table.getId()+"."+getId();
+			retval=table.getId()+"."+getId(); //$NON-NLS-1$
 		}
 		
 		return retval;
@@ -129,7 +130,7 @@ public class PhysicalColumn extends ConceptUtilityBase implements ConceptUtility
 		{
 			if (!isExact())
 			{
-				retval = databaseMeta.quoteField(tableAlias)+"."+databaseMeta.quoteField(formula);
+				retval = databaseMeta.quoteField(tableAlias)+"."+databaseMeta.quoteField(formula); //$NON-NLS-1$
 			}
 			else
 			{
@@ -138,7 +139,7 @@ public class PhysicalColumn extends ConceptUtilityBase implements ConceptUtility
 		}
 		else
 		{
-			retval = "??";
+			retval = "??"; //$NON-NLS-1$
 		}
 		
 		return retval;
@@ -146,16 +147,16 @@ public class PhysicalColumn extends ConceptUtilityBase implements ConceptUtility
 
     public String getRenameAsColumn(DatabaseMeta dbinfo, int columnNr)
 	{
-		String retval="";
+		String retval=""; //$NON-NLS-1$
 		
 		if (hasAggregate() && !isExact())
 		{
-			retval+="F___"+columnNr; 
+			retval+="F___"+columnNr;  //$NON-NLS-1$
 		}
 		else
 		if (isExact())
 		{
-			retval+="E___"+columnNr;
+			retval+="E___"+columnNr; //$NON-NLS-1$
 		}
 		else
 		{
@@ -189,7 +190,7 @@ public class PhysicalColumn extends ConceptUtilityBase implements ConceptUtility
 	
 	public String toString()
 	{
-		return getId()==null?"NULL":getId();
+		return getId()==null?"NULL":getId(); //$NON-NLS-1$
 	}
 
     /**

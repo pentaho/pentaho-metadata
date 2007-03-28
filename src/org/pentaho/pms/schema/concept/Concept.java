@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 import org.pentaho.pms.schema.concept.types.localstring.ConceptPropertyLocalizedString;
 import org.pentaho.pms.schema.concept.types.localstring.LocalizedStringSettings;
@@ -94,7 +95,7 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
                 }
                 else
                 {
-                    System.out.println("No property found for id ["+ids[i]+"]");
+                    System.out.println(Messages.getString("Concept.ERROR_0001_NO_PROPERTY_FOUND", ids[i])); //$NON-NLS-1$ 
                 }
             }
             concept.setChanged(hasChanged());
@@ -117,7 +118,7 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
         {
             String id = propertyIDs[i];
             String value = getProperty(id).toString();
-            if (i>0) string.append(", ");
+            if (i>0) string.append(", "); //$NON-NLS-1$
             string.append(value);
         }
         
@@ -431,7 +432,7 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
                 // Yep, this is localized.
                 LocalizedStringSettings locString = (LocalizedStringSettings) property.getValue();
                 String[] locs = locString.getLocales();
-                for (int j=0;j<locs.length;j++) locales.put(locs[j], "");
+                for (int j=0;j<locs.length;j++) locales.put(locs[j], ""); //$NON-NLS-1$
             }
         }
         

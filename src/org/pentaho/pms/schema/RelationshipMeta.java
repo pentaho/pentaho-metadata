@@ -62,14 +62,14 @@ public class RelationshipMeta extends ChangedFlag implements Cloneable, XMLInter
 	
 	public final static String typeRelationshipDesc[] = 
 		{
-			"undefined", "1:N", "N:1", "1:1", "0:N", "N:0", "0:1", "1:0", "N:N"
+			"undefined", "1:N", "N:1", "1:1", "0:N", "N:0", "0:1", "1:0", "N:N" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
 		};
 	
     public RelationshipMeta()
     {
         type = TYPE_RELATIONSHIP_UNDEFINED;
         complex = false;
-        complex_join = "";
+        complex_join = ""; //$NON-NLS-1$
     }
     
 	public RelationshipMeta(BusinessTable table_from, BusinessTable table_to, BusinessColumn field_from, BusinessColumn field_to)
@@ -96,22 +96,22 @@ public class RelationshipMeta extends ChangedFlag implements Cloneable, XMLInter
 	{
 		try
 		{
-			String from = XMLHandler.getTagValue(relnode, "table_from");
+			String from = XMLHandler.getTagValue(relnode, "table_from"); //$NON-NLS-1$
 			table_from  = findTable(tables, from);
-			String to   = XMLHandler.getTagValue(relnode, "table_to");
+			String to   = XMLHandler.getTagValue(relnode, "table_to"); //$NON-NLS-1$
 			table_to = findTable(tables, to);
 					
             if (table_from!=null)
             {
-                field_from = table_from.findBusinessColumn( XMLHandler.getTagValue(relnode, "field_from") );
+                field_from = table_from.findBusinessColumn( XMLHandler.getTagValue(relnode, "field_from") ); //$NON-NLS-1$
             }
             if (table_to!=null)
             {
-                field_to   = table_to.findBusinessColumn( XMLHandler.getTagValue(relnode, "field_to") );
+                field_to   = table_to.findBusinessColumn( XMLHandler.getTagValue(relnode, "field_to") ); //$NON-NLS-1$
             }
-			type         = getType(XMLHandler.getTagValue(relnode, "type"));
-			complex      = "Y".equalsIgnoreCase(XMLHandler.getTagValue(relnode, "complex"));
-			complex_join = XMLHandler.getTagValue(relnode, "complex_join");
+			type         = getType(XMLHandler.getTagValue(relnode, "type")); //$NON-NLS-1$
+			complex      = "Y".equalsIgnoreCase(XMLHandler.getTagValue(relnode, "complex")); //$NON-NLS-1$ //$NON-NLS-2$
+			complex_join = XMLHandler.getTagValue(relnode, "complex_join"); //$NON-NLS-1$
 			
 			return true;
 		}
@@ -123,17 +123,17 @@ public class RelationshipMeta extends ChangedFlag implements Cloneable, XMLInter
 
 	public String getXML()
 	{
-		String retval="";
+		String retval=""; //$NON-NLS-1$
 		
-		retval+="      <relationship>"+Const.CR;
-		retval+="        "+XMLHandler.addTagValue("table_from",   table_from.getId());
-		retval+="        "+XMLHandler.addTagValue("table_to",     table_to.getId());
-		retval+="        "+XMLHandler.addTagValue("field_from",   field_from!=null?field_from.getId():"" );
-		retval+="        "+XMLHandler.addTagValue("field_to",     field_to!=null?field_to.getId():"" );
-		retval+="        "+XMLHandler.addTagValue("type",         getTypeDesc());
-		retval+="        "+XMLHandler.addTagValue("complex",      complex);
-		retval+="        "+XMLHandler.addTagValue("complex_join", complex_join);
-		retval+="        </relationship>"+Const.CR;
+		retval+="      <relationship>"+Const.CR; //$NON-NLS-1$
+		retval+="        "+XMLHandler.addTagValue("table_from",   table_from.getId()); //$NON-NLS-1$ //$NON-NLS-2$
+		retval+="        "+XMLHandler.addTagValue("table_to",     table_to.getId()); //$NON-NLS-1$ //$NON-NLS-2$
+		retval+="        "+XMLHandler.addTagValue("field_from",   field_from!=null?field_from.getId():"" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		retval+="        "+XMLHandler.addTagValue("field_to",     field_to!=null?field_to.getId():"" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		retval+="        "+XMLHandler.addTagValue("type",         getTypeDesc()); //$NON-NLS-1$ //$NON-NLS-2$
+		retval+="        "+XMLHandler.addTagValue("complex",      complex); //$NON-NLS-1$ //$NON-NLS-2$
+		retval+="        "+XMLHandler.addTagValue("complex_join", complex_join); //$NON-NLS-1$ //$NON-NLS-2$
+		retval+="        </relationship>"+Const.CR; //$NON-NLS-1$
 		
 		return retval;
 	}
@@ -313,20 +313,20 @@ public class RelationshipMeta extends ChangedFlag implements Cloneable, XMLInter
 	{
 		if (field_from!=null && field_to!=null)
 		{
-			return table_from.getId()+"."+field_from.getId()+ 
-                   " - "+
-				   table_to.getId()+"."+field_to.getId();
+			return table_from.getId()+"."+field_from.getId()+  //$NON-NLS-1$
+                   " - "+ //$NON-NLS-1$
+				   table_to.getId()+"."+field_to.getId(); //$NON-NLS-1$
 		}
 		else
 		{
             try
             {
-                return table_from.getId()+" - "+table_to.getId();
+                return table_from.getId()+" - "+table_to.getId(); //$NON-NLS-1$
             }
             catch(Exception e)
             {
                 System.out.println(Const.getStackTracker(e));
-                return "??????????";
+                return "??????????"; //$NON-NLS-1$
             }
 		}
 	}
@@ -347,7 +347,7 @@ public class RelationshipMeta extends ChangedFlag implements Cloneable, XMLInter
 	
 	public String getJoin(String locale)
 	{
-        String join="";
+        String join=""; //$NON-NLS-1$
 		
 		if (isComplex())
 		{
@@ -360,15 +360,15 @@ public class RelationshipMeta extends ChangedFlag implements Cloneable, XMLInter
             
             // Left side
             join  = databaseMeta.quoteField( field_from.getBusinessTable().getDisplayName(locale) );
-            join += ".";
+            join += "."; //$NON-NLS-1$
             join += databaseMeta.quoteField( field_from.getFormula() );
             
             // Equals
-            join += " = ";
+            join += " = "; //$NON-NLS-1$
             
             // Right side
             join += databaseMeta.quoteField( field_to.getBusinessTable().getDisplayName(locale) );
-            join += ".";
+            join += "."; //$NON-NLS-1$
             join += databaseMeta.quoteField( field_to.getFormula() );
 		}
 		

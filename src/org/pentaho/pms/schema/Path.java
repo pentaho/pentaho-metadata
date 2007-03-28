@@ -29,6 +29,8 @@ package org.pentaho.pms.schema;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
+import org.pentaho.pms.messages.Messages;
+
 /*
  * Created on 30-jan-04
  *
@@ -178,26 +180,26 @@ public class Path
 	
 	public String toString()
 	{
-		String path="";
+		String thisPath=Messages.getString("Path.0"); //$NON-NLS-1$
 		for (int i=0;i<size();i++)
 		{
             RelationshipMeta relationship = getRelationship(i);
-            if (i>0) path+=", ";
-            path+="["+relationship.getTableFrom().getId()+"-"+relationship.getTableTo().getId()+"]";
+            if (i>0) thisPath+=", "; //$NON-NLS-1$
+            thisPath+="["+relationship.getTableFrom().getId()+"-"+relationship.getTableTo().getId()+"]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
-		return path;
+		return thisPath;
 	}
 	
 	// Compare two paths: first on the number of tables used!!!
-	public int compare(Path path)
+	public int compare(Path thisPath)
 	{
-		int diff=size()-path.size();
+		int diff=size()-thisPath.size();
 		if (diff==0)
 		{
-			diff=nrTables()-path.nrTables();
+			diff=nrTables()-thisPath.nrTables();
 			if (diff==0)
 			{
-				diff=score() - path.score();
+				diff=score() - thisPath.score();
 			}
 		}
 		if (diff<0) return -1;
@@ -212,8 +214,8 @@ public class Path
 		for (int i=0;i<size();i++)
 		{
 			RelationshipMeta rel = getRelationship(i);
-			hash.put(rel.getTableFrom(), "OK");
-			hash.put(rel.getTableTo(), "OK");
+			hash.put(rel.getTableFrom(), "OK"); //$NON-NLS-1$
+			hash.put(rel.getTableTo(), "OK"); //$NON-NLS-1$
 		}
         return (BusinessTable[]) hash.keySet().toArray(new BusinessTable[hash.keySet().size()]);
 	}

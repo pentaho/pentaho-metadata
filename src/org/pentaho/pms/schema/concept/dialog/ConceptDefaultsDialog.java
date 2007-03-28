@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.pentaho.pms.locale.Locales;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.DefaultProperties;
 import org.pentaho.pms.schema.DefaultProperty;
 import org.pentaho.pms.schema.concept.ConceptInterface;
@@ -132,7 +133,7 @@ public class ConceptDefaultsDialog extends Dialog
 		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.MIN);
  		props.setLook(shell);
         
-        log.logDebug(this.getClass().getName(), "Opening dialog");
+        log.logDebug(this.getClass().getName(), Messages.getString("ConceptDefaultsDialog.DEBUG_OPENING_DIALOG")); //$NON-NLS-1$
 
 		FormLayout formLayout = new FormLayout ();
 		formLayout.marginWidth  = Const.FORM_MARGIN;
@@ -145,9 +146,9 @@ public class ConceptDefaultsDialog extends Dialog
 
         // Buttons at the bottom of the page...
         wOK=new Button(shell, SWT.PUSH);
-        wOK.setText(" &OK ");
+        wOK.setText(Messages.getString("ConceptDefaultsDialog.USER_OK")); //$NON-NLS-1$
         wCancel=new Button(shell, SWT.PUSH);
-        wCancel.setText(" &Cancel ");
+        wCancel.setText(Messages.getString("ConceptDefaultsDialog.USER_CANCEL")); //$NON-NLS-1$
         
         BaseStepDialog.positionBottomButtons(shell, new Button[] { wOK, wCancel }, margin, null);
 
@@ -155,7 +156,7 @@ public class ConceptDefaultsDialog extends Dialog
         composite.setLayout(new FormLayout());
         composite.setBackground(GUIResource.getInstance().getColorRed());
 
-        getControls(composite, "This is a sample message", subject, defaultProperties, concept, conceptPropertyInterfaces, locales, securityReference);
+        getControls(composite, Messages.getString("ConceptDefaultsDialog.USER_SAMPLE_MESSAGE"), subject, defaultProperties, concept, conceptPropertyInterfaces, locales, securityReference); //$NON-NLS-1$
         
         FormData fdComposite =new FormData();
         fdComposite.left   = new FormAttachment(0, 0);
@@ -263,7 +264,7 @@ public class ConceptDefaultsDialog extends Dialog
         String inherits = null;
         if (concept.findFirstParentConcept()!=null)
         {
-            inherits = "Parent concept is '"+concept.findFirstParentConcept().getName()+"'";
+            inherits = Messages.getString("ConceptDefaultsDialog.USER_PARENT_CONCEPT_IS", concept.findFirstParentConcept().getName()); //$NON-NLS-1$ 
         }
         
         if (concept.getInheritedInterface()!=null)
@@ -272,10 +273,10 @@ public class ConceptDefaultsDialog extends Dialog
             String name = inherited.getName(locales.getActiveLocale());
             if (name!=null)
             {
-                if (inherits!=null) inherits+=".   ";
-                else inherits="";
+                if (inherits!=null) inherits+=".   "; //$NON-NLS-1$
+                else inherits=""; //$NON-NLS-1$
                 
-                inherits+="Inherits from '"+name+"'";
+                inherits+=Messages.getString("ConceptDefaultsDialog.USER_INHERITS_FROM", name); //$NON-NLS-1$ 
             }
         }
         
@@ -309,7 +310,7 @@ public class ConceptDefaultsDialog extends Dialog
             // Delete a property
             wDelProperty = new Button(composite, SWT.PUSH);
             props.setLook(wDelProperty);
-            wDelProperty.setText("Delete property");
+            wDelProperty.setText(Messages.getString("ConceptDefaultsDialog.USER_DELETE_PROPERTY")); //$NON-NLS-1$
             wDelProperty.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent arg0) { delProperty(parentComposite, utilityInterface, message, subject, defaultProperties, concept, conceptPropertyInterfaces, locales, securityReference); } });
             FormData fdDelProperty = new FormData();
             fdDelProperty.right = new FormAttachment(props.getMiddlePct(), 0);
@@ -319,7 +320,7 @@ public class ConceptDefaultsDialog extends Dialog
             // Add a property
             wAddProperty = new Button(composite, SWT.PUSH);
             props.setLook(wAddProperty);
-            wAddProperty.setText("Add property");
+            wAddProperty.setText(Messages.getString("ConceptDefaultsDialog.USER_ADD_PROPERTY")); //$NON-NLS-1$
             wAddProperty.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent arg0) { addProperty(parentComposite, utilityInterface, message, subject, defaultProperties, concept, conceptPropertyInterfaces, locales, securityReference); } } );
             FormData fdAddProperty = new FormData();
             fdAddProperty.right = new FormAttachment(wDelProperty, -Const.MARGIN);
@@ -413,7 +414,7 @@ public class ConceptDefaultsDialog extends Dialog
                 else
                 {
                     // clarify by showing the type
-                    description+=" ("+property.getType().getDescription()+")";
+                    description+=" ("+property.getType().getDescription()+")"; //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 
                 lastControl = addControl(composite, concept, description, property, lastControl, conceptPropertyInterfaces, locales, securityReference);
@@ -552,18 +553,18 @@ public class ConceptDefaultsDialog extends Dialog
         {
             overwrite = new Button(composite, SWT.CHECK);
             props.setLook(overwrite);
-            overwrite.setText("override");
+            overwrite.setText(Messages.getString("ConceptDefaultsDialog.USER_TITLE_OVERRIDE")); //$NON-NLS-1$
             if (parent!=null)
             {
-                overwrite.setToolTipText("Override the property from the parent concept ["+parent.getName()+"]");
+                overwrite.setToolTipText(Messages.getString("ConceptDefaultsDialog.USER_OVERRIDE_PARENT_CONCEPT", parent.getName())); //$NON-NLS-1$ 
             }
             if (inherit!=null)
             {
-                overwrite.setToolTipText("Override the property from the inherited concept. (physical table/column)");
+                overwrite.setToolTipText(Messages.getString("ConceptDefaultsDialog.USER_OVERRIDE_FROM_INHERITED_CONCEPT")); //$NON-NLS-1$
             }
             if (security!=null)
             {
-                overwrite.setToolTipText("Override the property from the inherited security concept. (parent category, business model)");
+                overwrite.setToolTipText(Messages.getString("ConceptDefaultsDialog.USER_OVERRIDE_FROM_INHERITED_SECURITY")); //$NON-NLS-1$
             }
             FormData fdCheckBox = new FormData();
             fdCheckBox.right  = new FormAttachment(MIDDLE, 0);
@@ -687,7 +688,7 @@ public class ConceptDefaultsDialog extends Dialog
                     ConceptPropertyInterface property = widgetInterface.getValue();
                     if (property!=null) // otherwise the value is not set/changed
                     {
-                        System.out.println("Property ["+property.getId()+"] set to value ["+property.toString()+"]");
+                        System.out.println(Messages.getString("ConceptDefaultsDialog.USER_PROPERTY_SET_TO_VALUE", property.getId(), property.toString())); //$NON-NLS-1$ 
                         concept.addProperty(property);
                     }
                     else
@@ -713,12 +714,12 @@ public class ConceptDefaultsDialog extends Dialog
                 catch(Exception e)
                 {
                     allOK=false;
-                    new ErrorDialog(shell, "Error parsing value", "There was an error parsing a value on this dialog", e);
+                    new ErrorDialog(shell, Messages.getString("ConceptDefaultsDialog.TITLE_ERROR_PARSING_VALUE"), Messages.getString("ConceptDefaultsDialog.ERROR_0001_ERROR_PARSING_VALUE"), e); //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }
             else
             {
-                System.out.println("ERROR!! OK interface not found for ["+name+"]");
+                System.out.println(Messages.getString("ConceptDefaultsDialog.ERROR_0002_OK_INTERFACE_NOT_FOUND", name)); //$NON-NLS-1$ 
             }
         }
         

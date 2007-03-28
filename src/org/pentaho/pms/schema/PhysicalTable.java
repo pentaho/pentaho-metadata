@@ -26,6 +26,7 @@
  **********************************************************************/
  
 package org.pentaho.pms.schema;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
@@ -72,7 +73,7 @@ public class PhysicalTable extends ConceptUtilityBase implements Cloneable, Chan
      */
     public String getModelElementDescription()
     {
-        return "physical table";
+        return Messages.getString("PhysicalTable.USER_DESCRIPTION"); //$NON-NLS-1$
     }
 
 
@@ -224,7 +225,7 @@ public class PhysicalTable extends ConceptUtilityBase implements Cloneable, Chan
 	
 	public String toString()
 	{
-		if (databaseMeta!=null) return databaseMeta.getName()+"-->"+getId();
+		if (databaseMeta!=null) return databaseMeta.getName()+"-->"+getId(); //$NON-NLS-1$
 		return getId();
 	}
 	

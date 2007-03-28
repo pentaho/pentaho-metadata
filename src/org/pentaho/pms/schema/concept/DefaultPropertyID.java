@@ -12,6 +12,7 @@
 */
 package org.pentaho.pms.schema.concept;
 
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.schema.concept.types.aggregation.ConceptPropertyAggregation;
@@ -47,26 +48,26 @@ public class DefaultPropertyID
     
     public static final DefaultPropertyID defaults[] = new DefaultPropertyID[] 
          {
-            new DefaultPropertyID("name",              "Name", ConceptPropertyType.LOCALIZED_STRING, new ConceptPropertyLocalizedString("name", new LocalizedStringSettings())),
-            new DefaultPropertyID("description",       "Description", ConceptPropertyType.LOCALIZED_STRING, new ConceptPropertyLocalizedString("description", new LocalizedStringSettings())),
-            new DefaultPropertyID("comments",          "Comments", ConceptPropertyType.LOCALIZED_STRING, new ConceptPropertyLocalizedString("comments", new LocalizedStringSettings())),
-            new DefaultPropertyID("aggregation",       "Aggregation rule", ConceptPropertyType.AGGREGATION, new ConceptPropertyAggregation("aggregation", AggregationSettings.SUM)),
-            new DefaultPropertyID("formula",           "Formula", ConceptPropertyType.STRING, new ConceptPropertyString("formula", null)),
-            new DefaultPropertyID("hidden",            "Hidden for the user?", ConceptPropertyType.BOOLEAN, new ConceptPropertyBoolean("hidden", Boolean.FALSE)),
-            new DefaultPropertyID("exact",             "Is the formula exact?", ConceptPropertyType.BOOLEAN, new ConceptPropertyBoolean("exact", Boolean.FALSE)),
-            new DefaultPropertyID("datatype",          "Data type", ConceptPropertyType.DATATYPE, new ConceptPropertyDataType("datatype", DataTypeSettings.STRING)),
-            new DefaultPropertyID("mask",              "Mask for number or date", ConceptPropertyType.STRING, new ConceptPropertyString("mask", null)),
-            new DefaultPropertyID("foreground_color",  "Color of text", ConceptPropertyType.COLOR, new ConceptPropertyColor("foreground_color", ColorSettings.BLACK)),
-            new DefaultPropertyID("background_color",  "Color of background", ConceptPropertyType.COLOR, new ConceptPropertyColor("background_color", ColorSettings.WHITE)),
-            new DefaultPropertyID("font",              "Font", ConceptPropertyType.FONT, new ConceptPropertyFont("font", null)),
-            new DefaultPropertyID("fieldtype",         "Field type", ConceptPropertyType.FIELDTYPE, new ConceptPropertyFieldType("fieldtype", FieldTypeSettings.DIMENSION)),
-            new DefaultPropertyID("tabletype",         "Table type", ConceptPropertyType.TABLETYPE, new ConceptPropertyTableType("tabletype", TableTypeSettings.OTHER)),
-            new DefaultPropertyID("relative_size",     "Relative size", ConceptPropertyType.NUMBER, new ConceptPropertyNumber("relative_size", null)),
-            new DefaultPropertyID("target_table",      "Target table", ConceptPropertyType.STRING, new ConceptPropertyString("target_table", null)),
-            new DefaultPropertyID("target_schema",      "Target schema", ConceptPropertyType.STRING, new ConceptPropertyString("target_schema", null)),
-            new DefaultPropertyID("alignment",         "Text alignment", ConceptPropertyType.ALIGNMENT, new ConceptPropertyAlignment("alignment", AlignmentSettings.LEFT)),
-            new DefaultPropertyID("column_width",      "Column Width", ConceptPropertyType.COLUMN_WIDTH, new ConceptPropertyColumnWidth("column_width", ColumnWidth.PIXELS)),
-            new DefaultPropertyID("security",          "Security information", ConceptPropertyType.SECURITY, new ConceptPropertySecurity("security", new Security())),
+            new DefaultPropertyID("name",              Messages.getString("DefaultPropertyID.USER_NAME_DESC"), ConceptPropertyType.LOCALIZED_STRING, new ConceptPropertyLocalizedString("name", new LocalizedStringSettings())), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            new DefaultPropertyID("description",       Messages.getString("DefaultPropertyID.USER_DESCRIPTION_DESC"), ConceptPropertyType.LOCALIZED_STRING, new ConceptPropertyLocalizedString("description", new LocalizedStringSettings())), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            new DefaultPropertyID("comments",          Messages.getString("DefaultPropertyID.USER_COMMENTS_DESC"), ConceptPropertyType.LOCALIZED_STRING, new ConceptPropertyLocalizedString("comments", new LocalizedStringSettings())), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            new DefaultPropertyID("aggregation",       Messages.getString("DefaultPropertyID.USER_AGGREGATION_RULE_DESC"), ConceptPropertyType.AGGREGATION, new ConceptPropertyAggregation("aggregation", AggregationSettings.SUM)), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            new DefaultPropertyID("formula",           Messages.getString("DefaultPropertyID.USER_FORMULA_DESC"), ConceptPropertyType.STRING, new ConceptPropertyString("formula", null)), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            new DefaultPropertyID("hidden",            Messages.getString("DefaultPropertyID.USER_HIDDEN_DESC"), ConceptPropertyType.BOOLEAN, new ConceptPropertyBoolean("hidden", Boolean.FALSE)), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            new DefaultPropertyID("exact",             Messages.getString("DefaultPropertyID.USER_FORMULA_EXACT"), ConceptPropertyType.BOOLEAN, new ConceptPropertyBoolean("exact", Boolean.FALSE)), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            new DefaultPropertyID("datatype",          Messages.getString("DefaultPropertyID.USER_DATA_TYPE_DESC"), ConceptPropertyType.DATATYPE, new ConceptPropertyDataType("datatype", DataTypeSettings.STRING)), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            new DefaultPropertyID("mask",              Messages.getString("DefaultPropertyID.USER_MASK_DESC"), ConceptPropertyType.STRING, new ConceptPropertyString("mask", null)), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            new DefaultPropertyID("foreground_color",  Messages.getString("DefaultPropertyID.USER_FOREGROUND_COLOR_DESC"), ConceptPropertyType.COLOR, new ConceptPropertyColor("foreground_color", ColorSettings.BLACK)), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            new DefaultPropertyID("background_color",  Messages.getString("DefaultPropertyID.USER_BACKGROUND_COLOR_DESC"), ConceptPropertyType.COLOR, new ConceptPropertyColor("background_color", ColorSettings.WHITE)), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            new DefaultPropertyID("font",              Messages.getString("DefaultPropertyID.USER_FONT_DESC"), ConceptPropertyType.FONT, new ConceptPropertyFont("font", null)), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            new DefaultPropertyID("fieldtype",         Messages.getString("DefaultPropertyID.USER_FIELD_TYPE_DESC"), ConceptPropertyType.FIELDTYPE, new ConceptPropertyFieldType("fieldtype", FieldTypeSettings.DIMENSION)), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            new DefaultPropertyID("tabletype",         Messages.getString("DefaultPropertyID.USER_TABLE_TYPE_DESC"), ConceptPropertyType.TABLETYPE, new ConceptPropertyTableType("tabletype", TableTypeSettings.OTHER)), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            new DefaultPropertyID("relative_size",     Messages.getString("DefaultPropertyID.USER_RELATIVE_SIZE_DESC"), ConceptPropertyType.NUMBER, new ConceptPropertyNumber("relative_size", null)), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            new DefaultPropertyID("target_table",      Messages.getString("DefaultPropertyID.USER_TARGET_TABLE_DESC"), ConceptPropertyType.STRING, new ConceptPropertyString("target_table", null)), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            new DefaultPropertyID("target_schema",      Messages.getString("DefaultPropertyID.USER_TARGET_SCHEMA_DESC"), ConceptPropertyType.STRING, new ConceptPropertyString("target_schema", null)), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            new DefaultPropertyID("alignment",         Messages.getString("DefaultPropertyID.USER_TEXT_ALIGNMENT_DESC"), ConceptPropertyType.ALIGNMENT, new ConceptPropertyAlignment("alignment", AlignmentSettings.LEFT)), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            new DefaultPropertyID("column_width",      Messages.getString("DefaultPropertyID.USER_COLUMN_WIDTH_DESC"), ConceptPropertyType.COLUMN_WIDTH, new ConceptPropertyColumnWidth("column_width", ColumnWidth.PIXELS)), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            new DefaultPropertyID("security",          Messages.getString("DefaultPropertyID.USER_SECURITY_INFORMATION_DESC"), ConceptPropertyType.SECURITY, new ConceptPropertySecurity("security", new Security())), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
          };
     
     public static final DefaultPropertyID NAME            = defaults[ 0];

@@ -34,6 +34,7 @@
 package org.pentaho.pms.schema;
 import java.util.ArrayList;
 
+
 public class SelectionGroup
 {
 	private String         name; 
@@ -57,7 +58,7 @@ public class SelectionGroup
 	
 	public void clear()
 	{
-		name = "";
+		name = ""; //$NON-NLS-1$
 		parent = null;
 		selectionGroups = new ArrayList();
 		selectionFields = new ArrayList();

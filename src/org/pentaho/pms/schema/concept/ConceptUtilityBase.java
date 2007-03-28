@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.schema.concept.types.aggregation.ConceptPropertyAggregation;
 import org.pentaho.pms.schema.concept.types.bool.ConceptPropertyBoolean;
@@ -112,7 +113,7 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
             }
             catch(ObjectAlreadyExistsException e)
             {
-                throw new ObjectAlreadyExistsException("Object ID '"+id+"' already exists.", e);
+                throw new ObjectAlreadyExistsException(Messages.getString("ConceptUtilityBase.ERROR_0001_OBJECT_ID_EXISTS", id), e); //$NON-NLS-1$ 
             }
         }
         this.id = id;
@@ -430,7 +431,7 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
                         if (base.getId().equals(event.newID))
                         {
                             // This is a problem...
-                            throw new ObjectAlreadyExistsException("An object with ID '"+event.newID+"' already exists.");
+                            throw new ObjectAlreadyExistsException(Messages.getString("ConceptUtilityBase.ERROR_0001_OBJECT_ID_EXISTS", event.newID)); //$NON-NLS-1$ 
                         }
                     }
                 }

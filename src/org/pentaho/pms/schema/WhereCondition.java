@@ -32,6 +32,7 @@
  */
 
 package org.pentaho.pms.schema;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.util.Const;
@@ -42,8 +43,8 @@ public class WhereCondition extends ConceptUtilityBase implements ConceptUtility
 	private BusinessColumn field;  // customer_name
 	private String condition;      // = 'Casters'
 
-    public static final String[] operators = new String[] { "AND", "OR", "AND NOT", "OR NOT" };
-	public static final String[] comparators = new String[] { "=", "<>", "<", "<=", ">", ">=", "IS NULL", "IS NOT NULL", "IN", "NOT IN" };
+    public static final String[] operators = new String[] { "AND", "OR", "AND NOT", "OR NOT" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	public static final String[] comparators = new String[] { "=", "<>", "<", "<=", ">", ">=", "IS NULL", "IS NOT NULL", "IN", "NOT IN" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
 	
 	public WhereCondition(String operator, BusinessColumn field,  String condition)
 	{
@@ -62,26 +63,26 @@ public class WhereCondition extends ConceptUtilityBase implements ConceptUtility
      */
     public String getModelElementDescription()
     {
-        return "constraint";
+        return Messages.getString("WhereCondition.USER_DESCRIPTION"); //$NON-NLS-1$
     }
 
 	
 	public String getWhereClause(String locale, boolean useOperator)
 	{
-		String retval = "";
+		String retval = ""; //$NON-NLS-1$
 		if (field!=null && condition!=null)
 		{
             if (Const.isEmpty(operator) || !useOperator)
             {
-                retval+=Const.rightPad(" ", 9)+" ";
+                retval+=Const.rightPad(" ", 9)+" "; //$NON-NLS-1$ //$NON-NLS-2$
             }
             else
             {
-                retval+=Const.rightPad(operator, 9)+" ";
+                retval+=Const.rightPad(operator, 9)+" "; //$NON-NLS-1$
             }
             // The field : use the table alias, the business table actually. (including possible functions for having clause)
             retval += field.getFunctionTableAndColumnForSQL(locale);
-            retval += " ";
+            retval += " "; //$NON-NLS-1$
             
             // The condition: just put it in there for the time being...
             retval += condition;
@@ -91,7 +92,7 @@ public class WhereCondition extends ConceptUtilityBase implements ConceptUtility
 
 	public String toString()
 	{
-		return getWhereClause("en_US", true); // TODO: take whatever default there is on the system later on.
+		return getWhereClause("en_US", true); // TODO: take whatever default there is on the system later on. //$NON-NLS-1$
 	}
 	
 	public int hashCode()
