@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.GUIResource;
 
@@ -83,13 +84,13 @@ public class MetaEditorLog extends Composite
 		wText.setLayoutData(fdText);
 		
 		wRefresh = new Button(this, SWT.PUSH);
-		wRefresh.setText("&Refresh log");
+		wRefresh.setText(Messages.getString("MetaEditorLog.USER_REFRESH_LOG")); //$NON-NLS-1$
 
 		wClear = new Button(this, SWT.PUSH);
-		wClear.setText("&Clear log");
+		wClear.setText(Messages.getString("MetaEditorLog.USER_CLEAR_LOG")); //$NON-NLS-1$
 
 		wLog = new Button(this, SWT.PUSH);
-		wLog.setText("&Log settings");
+		wLog.setText(Messages.getString("MetaEditorLog.USER_LOG_SETTINGS")); //$NON-NLS-1$
 
 		fdRefresh  = new FormData(); 
 		fdClear    = new FormData(); 
@@ -115,7 +116,7 @@ public class MetaEditorLog extends Composite
 		}
 		catch(Exception e)
 		{
-			System.out.println("Couldn't create input-pipe connection to output-pipe!");
+			System.out.println(Messages.getString("MetaEditorLog.DEBUG_CANT_CREATE_CONNECTION")); //$NON-NLS-1$
 		}
 		
 		lsRefresh = new SelectionAdapter() 
@@ -209,7 +210,7 @@ public class MetaEditorLog extends Composite
 	
 	private void clearLog()
 	{
-		wText.setText("");
+		wText.setText(""); //$NON-NLS-1$
 	}
 	
 	private void setLog()

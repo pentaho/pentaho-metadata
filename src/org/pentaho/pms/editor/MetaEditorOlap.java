@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.BusinessModel;
@@ -63,10 +64,10 @@ import be.ibridge.kettle.core.widget.TreeMemory;
  */
 public class MetaEditorOlap extends Composite implements DialogGetDataInterface
 {
-    public static final String STRING_DIMENSIONS = "Dimensions";
-    public static final String STRING_CUBES      = "Cubes";
+    public static final String STRING_DIMENSIONS = Messages.getString("MetaEditorOlap.USER_DIMENSIONS"); //$NON-NLS-1$
+    public static final String STRING_CUBES      = Messages.getString("MetaEditorOlap.USER_CUBES"); //$NON-NLS-1$
 
-    private static final String STRING_OLAP_TREE = "DimensionsTree"; 
+    private static final String STRING_OLAP_TREE = "DimensionsTree";  //$NON-NLS-1$
 
     private Props props;
 	private Shell shell;
@@ -104,7 +105,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
 		setLayout(new FormLayout());
 
         Button genModel = new Button(this, SWT.PUSH);
-        genModel.setText("Generate Mondrian model");
+        genModel.setText(Messages.getString("MetaEditorOlap.USER_GENERATE_MONDRIAN_MODEL")); //$NON-NLS-1$
         props.setLook(genModel);
         FormData fdGenModel = new FormData();
         fdGenModel.top   = new FormAttachment(0,0);
@@ -250,7 +251,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
     private void showEmpty()
     {
         Button addDimension = new Button(compDynamic, SWT.PUSH);
-        addDimension.setText("Add a new public dimension");
+        addDimension.setText(Messages.getString("MetaEditorOlap.USER_ADD_NEW_PUBLIC_DIMENSION")); //$NON-NLS-1$
         addDimension.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent event) { newDimension(); } });
         FormData fdDimension = new FormData();
         fdDimension.left = new FormAttachment(0,0);
@@ -258,7 +259,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         addDimension.setLayoutData(fdDimension);
         
         Button addCube = new Button(compDynamic, SWT.PUSH);
-        addCube.setText("Add a new cube");
+        addCube.setText(Messages.getString("MetaEditorOlap.USER_ADD_NEW_CUBE")); //$NON-NLS-1$
         addCube.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent event) { newCube(); } });
         FormData fdCube = new FormData();
         fdCube.left = new FormAttachment(addDimension, Const.MARGIN*5);
@@ -269,11 +270,11 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
 
     private void showDimension(final OlapDimension dimension, final String locale)
     {
-        final LabelText name = new LabelText(compDynamic, "Dimension name", "Enter the dimension name");
+        final LabelText name = new LabelText(compDynamic, Messages.getString("MetaEditorOlap.USER_TITLE_DIMENSION_NAME"), Messages.getString("MetaEditorOlap.USER_ENTER_DIMENSION_NAME")); //$NON-NLS-1$ //$NON-NLS-2$
         name.setText(dimension.getName());
         
         Button apply = new Button(compDynamic, SWT.PUSH);
-        apply.setText("apply name change");
+        apply.setText(Messages.getString("MetaEditorOlap.USER_APPLY_NAME_CHANGE")); //$NON-NLS-1$
         apply.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent event) 
                 { 
                     dimension.setName(name.getText());
@@ -295,7 +296,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         name.setLayoutData(fdName);
 
         Button add = new Button(compDynamic, SWT.PUSH);
-        add.setText("Add a new hierarchy");
+        add.setText(Messages.getString("MetaEditorOlap.USER_ADD_NEW_HIERARCHY")); //$NON-NLS-1$
         add.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent event) { newHierarchy(dimension, locale); } });
         FormData fdAdd = new FormData();
         fdAdd.left = new FormAttachment(0,0);
@@ -303,7 +304,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         add.setLayoutData(fdAdd);
         
         Button remove = new Button(compDynamic, SWT.PUSH);
-        remove.setText("Remove this dimension");
+        remove.setText(Messages.getString("MetaEditorOlap.USER_REMOVE_DIMENSION")); //$NON-NLS-1$
         remove.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent event) { removeDimension(dimension); } });
         FormData fdRemove = new FormData();
         fdRemove.left = new FormAttachment(add, 2*margin);
@@ -317,7 +318,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         // The name of the hierarchy
         Label nameLabel = new Label(compDynamic, SWT.RIGHT);
         props.setLook(nameLabel);
-        nameLabel.setText("Hierarchy name");
+        nameLabel.setText(Messages.getString("MetaEditorOlap.USER_LABEL_HIERARCHY_NAME")); //$NON-NLS-1$
         FormData fdNameLabel = new FormData();
         fdNameLabel.left = new FormAttachment(0,0);
         fdNameLabel.right = new FormAttachment(middle, 0);
@@ -325,11 +326,11 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         nameLabel.setLayoutData(fdNameLabel);
         
         final Text name = new Text(compDynamic, SWT.LEFT | SWT.SINGLE | SWT.BORDER);
-        name.setToolTipText("Enter the hierarchy name");
+        name.setToolTipText(Messages.getString("MetaEditorOlap.USER_ENTER_HIERARCHY_NAME")); //$NON-NLS-1$
         name.setText(hierarchy.getName());
         
         Button apply = new Button(compDynamic, SWT.PUSH);
-        apply.setText("apply name change");
+        apply.setText(Messages.getString("MetaEditorOlap.USER_APPLY_NAME_CHANGE")); //$NON-NLS-1$
         apply.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent event) 
                 { 
                     hierarchy.setName(name.getText()); 
@@ -354,7 +355,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         // The name of the business table we link to
         Label tableLabel = new Label(compDynamic, SWT.RIGHT);
         props.setLook(tableLabel);
-        tableLabel.setText("Table name");
+        tableLabel.setText(Messages.getString("MetaEditorOlap.USER_TABLE_NAME")); //$NON-NLS-1$
         FormData fdTableLabel = new FormData();
         fdTableLabel.left = new FormAttachment(0,0);
         fdTableLabel.right = new FormAttachment(middle, 0);
@@ -363,10 +364,10 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
 
         final Text table = new Text(compDynamic, SWT.LEFT | SWT.SINGLE | SWT.BORDER);
         props.setLook(table);
-        table.setToolTipText("This is the selected business table name");
+        table.setToolTipText(Messages.getString("MetaEditorOlap.USER_SELECTED_BUSINESS_TABLE")); //$NON-NLS-1$
         table.setText(hierarchy.getName());
         BusinessTable businessTable = hierarchy.getBusinessTable();
-        if (businessTable!=null) table.setText(businessTable.getDisplayName(locale)+" : "+businessTable.getTargetTable());
+        if (businessTable!=null) table.setText(businessTable.getDisplayName(locale)+" : "+businessTable.getTargetTable()); //$NON-NLS-1$
         table. setEditable(false);
         FormData fdTable = new FormData();
         fdTable.left = new FormAttachment(middle, margin);
@@ -377,7 +378,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         // The name of the business column that is the primary key 
         Label keyLabel = new Label(compDynamic, SWT.RIGHT);
         props.setLook(keyLabel);
-        keyLabel.setText("Primary key column");
+        keyLabel.setText(Messages.getString("MetaEditorOlap.USER_PRIMARY_KEY_COLUMN")); //$NON-NLS-1$
         FormData fdKeyLabel = new FormData();
         fdKeyLabel.left = new FormAttachment(0,0);
         fdKeyLabel.right = new FormAttachment(middle, 0);
@@ -387,8 +388,8 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         final Text key = new Text(compDynamic, SWT.LEFT | SWT.SINGLE | SWT.BORDER);
         props.setLook(key);
         BusinessColumn primaryKey = hierarchy.getPrimaryKey();
-        key.setText(primaryKey.getDisplayName(locale)+" : "+primaryKey.getFunctionTableAndColumnForSQL(locale));
-        key.setToolTipText("This is the selected primary key column");
+        key.setText(primaryKey.getDisplayName(locale)+" : "+primaryKey.getFunctionTableAndColumnForSQL(locale)); //$NON-NLS-1$
+        key.setToolTipText(Messages.getString("MetaEditorOlap.USER_SELECTED_PRIMARY_KEY_COLUMN")); //$NON-NLS-1$
         key.setEditable(false);
         FormData fdKey = new FormData();
         fdKey.left = new FormAttachment(middle, margin);
@@ -398,7 +399,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         
         // The has all flag?
         Label allLabel = new Label(compDynamic, SWT.RIGHT);
-        allLabel.setText("Has all?");
+        allLabel.setText(Messages.getString("MetaEditorOlap.USER_HAS_ALL")); //$NON-NLS-1$
         props.setLook(allLabel);
         FormData fdAllLabel = new FormData();
         fdAllLabel.left = new FormAttachment(0,0);
@@ -418,7 +419,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         
         // Buttons at the bottom...
         Button add = new Button(compDynamic, SWT.PUSH);
-        add.setText("Add a new hierarchy level");
+        add.setText(Messages.getString("MetaEditorOlap.USER_ADD_NEW_HIERARCHY_LEVEL")); //$NON-NLS-1$
         add.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent event) { newLevel(hierarchy, locale); } });
         FormData fdAdd = new FormData();
         fdAdd.left = new FormAttachment(0,0);
@@ -426,7 +427,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         add.setLayoutData(fdAdd);
         
         Button remove = new Button(compDynamic, SWT.PUSH);
-        remove.setText("Remove this hierarchy");
+        remove.setText(Messages.getString("MetaEditorOlap.USER_REMOVE_HIERARCHY")); //$NON-NLS-1$
         remove.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent event) { removeHierarchy(hierarchy); } });
         FormData fdRemove = new FormData();
         fdRemove.left = new FormAttachment(add, 2*margin);
@@ -439,7 +440,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
     {
         Label nameLabel = new Label(compDynamic, SWT.RIGHT);
         props.setLook(nameLabel);
-        nameLabel.setText("Hierarchy level name");
+        nameLabel.setText(Messages.getString("MetaEditorOlap.USER_LABEL_HIERARCHY_LEVEL_NAME")); //$NON-NLS-1$
         FormData fdNameLabel = new FormData();
         fdNameLabel.left = new FormAttachment(0,0);
         fdNameLabel.right = new FormAttachment(middle, 0);
@@ -448,11 +449,11 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         
         final Text name = new Text(compDynamic, SWT.LEFT | SWT.SINGLE | SWT.BORDER);
         props.setLook(name);
-        name.setToolTipText("Enter the hierarchy level name");
+        name.setToolTipText(Messages.getString("MetaEditorOlap.USER_ENTER_HIERARCHY_LEVEL_NAME")); //$NON-NLS-1$
         name.setText(level.getName());
 
         Button apply = new Button(compDynamic, SWT.PUSH);
-        apply.setText("apply name change");
+        apply.setText(Messages.getString("MetaEditorOlap.USER_APPLY_NAME_CHANGE")); //$NON-NLS-1$
         apply.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent event) 
                 { 
                     level.setName(name.getText()); 
@@ -477,7 +478,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         // The name of the business column we link to
         Label refColumnLabel = new Label(compDynamic, SWT.RIGHT);
         props.setLook(refColumnLabel);
-        refColumnLabel.setText("Reference column name");
+        refColumnLabel.setText(Messages.getString("MetaEditorOlap.USER_LABEL_REFERENCE_COLUMN_NAME")); //$NON-NLS-1$
         FormData fdRefColumnLabel = new FormData();
         fdRefColumnLabel.left = new FormAttachment(0,0);
         fdRefColumnLabel.right = new FormAttachment(middle, 0);
@@ -487,9 +488,9 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         final Text refColumn = new Text(compDynamic, SWT.BORDER | SWT.LEFT | SWT.SINGLE);
         props.setLook(refColumn);
         BusinessColumn referenceColumn = level.getReferenceColumn(); 
-        refColumn.setText(referenceColumn.getDisplayName(locale)+" : "+referenceColumn.getFunctionTableAndColumnForSQL(locale));
+        refColumn.setText(referenceColumn.getDisplayName(locale)+" : "+referenceColumn.getFunctionTableAndColumnForSQL(locale)); //$NON-NLS-1$
         refColumn.setEditable(false);
-        refColumn.setToolTipText("This is the reference column name");
+        refColumn.setToolTipText(Messages.getString("MetaEditorOlap.USER_REFERENCE_COLUMN_NAME")); //$NON-NLS-1$
         FormData fdRefColumn = new FormData();
         fdRefColumn.left = new FormAttachment(middle, margin);
         fdRefColumn.right = new FormAttachment(apply, -margin);
@@ -498,7 +499,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         
         // The unique members flag
         Label uniqueLabel = new Label(compDynamic, SWT.RIGHT);
-        uniqueLabel.setText("Unique members?");
+        uniqueLabel.setText(Messages.getString("MetaEditorOlap.USER_CONFIRM_UNIQUE_MEMBERS")); //$NON-NLS-1$
         props.setLook(uniqueLabel);
         FormData fdUniqueLabel = new FormData();
         fdUniqueLabel.left = new FormAttachment(0,0);
@@ -518,7 +519,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
 
         // The list of columns
         Label columnsLabel = new Label(compDynamic, SWT.RIGHT);
-        columnsLabel.setText("List of columns: ");
+        columnsLabel.setText(Messages.getString("MetaEditorOlap.USER_LIST_OF_COLUMNS")); //$NON-NLS-1$
         props.setLook(columnsLabel);
         FormData fdColumnsLabel = new FormData();
         fdColumnsLabel.left = new FormAttachment(0,0);
@@ -545,7 +546,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         
         // Buttons at the bottom
         Button add = new Button(compDynamic, SWT.PUSH);
-        add.setText("Add business columns to this level");
+        add.setText(Messages.getString("MetaEditorOlap.USER_ADD_BUSINESS_COLUMNS")); //$NON-NLS-1$
         add.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent event) { addColumns(level, locale); } });
         FormData fdAdd = new FormData();
         fdAdd.left = new FormAttachment(0,0);
@@ -553,7 +554,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         add.setLayoutData(fdAdd);
 
         Button del = new Button(compDynamic, SWT.PUSH);
-        del.setText("remove business columns from this level");
+        del.setText(Messages.getString("MetaEditorOlap.USER_REMOVE_BUSINESS_COLUMNS")); //$NON-NLS-1$
         del.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent event) { delColumns(level, columns, locale); } });
         FormData fdDel = new FormData();
         fdDel.left = new FormAttachment(add, 2*margin);
@@ -561,7 +562,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         del.setLayoutData(fdDel);
 
         Button remove = new Button(compDynamic, SWT.PUSH);
-        remove.setText("Remove this hierarchy level");
+        remove.setText(Messages.getString("MetaEditorOlap.USER_REMOVE_HIERARCHY_LEVEL")); //$NON-NLS-1$
         remove.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent event) { removeLevel(level); } });
         FormData fdRemove = new FormData();
         fdRemove.left = new FormAttachment(del, 2*margin);
@@ -572,11 +573,11 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
 
     private void showCube(final OlapCube olapCube, final String locale)
     {
-        final LabelText name = new LabelText(compDynamic, "Cube name", "Enter the cube name");
+        final LabelText name = new LabelText(compDynamic, Messages.getString("MetaEditorOlap.USER_TITLE_CUBE_NAME"), Messages.getString("MetaEditorOlap.USER_ENTER_CUBE_NAME")); //$NON-NLS-1$ //$NON-NLS-2$
         name.setText(olapCube.getName());
 
         Button apply = new Button(compDynamic, SWT.PUSH);
-        apply.setText("apply name change");
+        apply.setText(Messages.getString("MetaEditorOlap.USER_APPLY_NAME_CHANGE")); //$NON-NLS-1$
         apply.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent event) 
                 { 
                     olapCube.setName(name.getText()); 
@@ -600,10 +601,10 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
 
 
         // The name of the business table we link to
-        final LabelText table = new LabelText(compDynamic, "Table name", "This is the selected business table name");
+        final LabelText table = new LabelText(compDynamic, Messages.getString("MetaEditorOlap.USER_TABLE_NAME"), Messages.getString("MetaEditorOlap.USER_SELECTED_BUSINESS_TABLE_NAME")); //$NON-NLS-1$ //$NON-NLS-2$
         props.setLook(table.getTextWidget());
         BusinessTable businessTable = olapCube.getBusinessTable();
-        table.setText(businessTable.getDisplayName(locale)+" : "+businessTable.getTargetTable());
+        table.setText(businessTable.getDisplayName(locale)+" : "+businessTable.getTargetTable()); //$NON-NLS-1$
         table.getTextWidget().setEditable(false);
         FormData fdTable = new FormData();
         fdTable.left = new FormAttachment(0,0);
@@ -612,28 +613,28 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         table.setLayoutData(fdTable);
 
         Button addDimension = new Button(compDynamic, SWT.PUSH);
-        addDimension.setText("Link dimensions");
+        addDimension.setText(Messages.getString("MetaEditorOlap.USER_LINK_DIMENSIONS")); //$NON-NLS-1$
         FormData fdAddDimension = new FormData();
         fdAddDimension.left = new FormAttachment(0,0);
         fdAddDimension.top  = new FormAttachment(table, 10*margin);
         addDimension.setLayoutData(fdAddDimension);
         
         Button removeDimension = new Button(compDynamic, SWT.PUSH);
-        removeDimension.setText("Remove dimensions");
+        removeDimension.setText(Messages.getString("MetaEditorOlap.USER_REMOVE_DIMENSIONS")); //$NON-NLS-1$
         FormData fdRemoveDimension = new FormData();
         fdRemoveDimension.left = new FormAttachment(addDimension, 2*margin);
         fdRemoveDimension.top  = new FormAttachment(table, 10*margin);
         removeDimension.setLayoutData(fdRemoveDimension);
 
         Button addMeasure = new Button(compDynamic, SWT.PUSH);
-        addMeasure.setText("Add measure");
+        addMeasure.setText(Messages.getString("MetaEditorOlap.USER_ADD_MEASURE")); //$NON-NLS-1$
         FormData fdAddMeasure = new FormData();
         fdAddMeasure.left = new FormAttachment(50,0);
         fdAddMeasure.top  = new FormAttachment(table, 10*margin);
         addMeasure.setLayoutData(fdAddMeasure);
         
         Button removeMeasure = new Button(compDynamic, SWT.PUSH);
-        removeMeasure.setText("Remove Measures");
+        removeMeasure.setText(Messages.getString("MetaEditorOlap.USER_REMOVE_MEASURES")); //$NON-NLS-1$
         FormData fdRemoveMeasure = new FormData();
         fdRemoveMeasure.left = new FormAttachment(addMeasure, 2*margin);
         fdRemoveMeasure.top  = new FormAttachment(table, 10*margin);
@@ -643,7 +644,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         //
         ColumnInfo[] dimensionColumns = new ColumnInfo[]
              {
-               new ColumnInfo("Dimension name",        ColumnInfo.COLUMN_TYPE_TEXT, false, true),
+               new ColumnInfo(Messages.getString("MetaEditorOlap.USER_DIMNENSION_NAME"),        ColumnInfo.COLUMN_TYPE_TEXT, false, true), //$NON-NLS-1$
              };
         final TableView dimensions = new TableView(compDynamic, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI, dimensionColumns, 1, true, null, props );
         FormData fdDimensions = new FormData();
@@ -655,9 +656,9 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         
         ColumnInfo[] measureColumns = new ColumnInfo[]
            {
-             new ColumnInfo("Measure name",         ColumnInfo.COLUMN_TYPE_TEXT, false, true),
-             new ColumnInfo("column name",          ColumnInfo.COLUMN_TYPE_TEXT, false, true),
-             new ColumnInfo("formula (column)",     ColumnInfo.COLUMN_TYPE_TEXT, false, true),
+             new ColumnInfo(Messages.getString("MetaEditorOlap.USER_MEASURE_NAME"),         ColumnInfo.COLUMN_TYPE_TEXT, false, true), //$NON-NLS-1$
+             new ColumnInfo(Messages.getString("MetaEditorOlap.USER_COLUMN_NAME"),          ColumnInfo.COLUMN_TYPE_TEXT, false, true), //$NON-NLS-1$
+             new ColumnInfo(Messages.getString("MetaEditorOlap.USER_FORMULA_COLUMN"),     ColumnInfo.COLUMN_TYPE_TEXT, false, true), //$NON-NLS-1$
            };
         final TableView measures = new TableView(compDynamic, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI, measureColumns, 1, true, null, props );
         FormData fdMeasures = new FormData();
@@ -668,7 +669,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         measures.setLayoutData(fdMeasures);
         
         Button removeCube = new Button(compDynamic, SWT.PUSH);
-        removeCube.setText("Remove this cube");
+        removeCube.setText(Messages.getString("MetaEditorOlap.USER_REMOVE_CUBE")); //$NON-NLS-1$
         FormData fdRemoveCube = new FormData();
         fdRemoveCube.left = new FormAttachment(0,0);
         fdRemoveCube.top  = new FormAttachment(dimensions, 10*margin);
@@ -725,7 +726,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         String dimensionNames[] = new String[unUsed.size()];
         for (int i=0;i<dimensionNames.length;i++) dimensionNames[i] = ((OlapDimension)unUsed.get(i)).getName();
         
-        EnterSelectionDialog dialog = new EnterSelectionDialog(shell, dimensionNames, "Select the dimension", "Select the dimension(s) to add to the cube:");
+        EnterSelectionDialog dialog = new EnterSelectionDialog(shell, dimensionNames, Messages.getString("MetaEditorOlap.USER_TITLE_SELECT_DIMENSION"), Messages.getString("MetaEditorOlap.USER_SELECT_DIMENSION")); //$NON-NLS-1$ //$NON-NLS-2$
         dialog.setMulti(true);
         if (dialog.open()!=null)
         {
@@ -769,7 +770,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
     protected void newCubeMeasure(OlapCube cube, String locale)
     {
         String columnNames[] = cube.getUnusedColumnNames(locale);
-        EnterSelectionDialog dialog = new EnterSelectionDialog(shell, columnNames, "Select measure", "Select the column(s) to add as a measure:");
+        EnterSelectionDialog dialog = new EnterSelectionDialog(shell, columnNames, Messages.getString("MetaEditorOlap.USER_SELECT_MEASURE"), Messages.getString("MetaEditorOlap.USER_SELECT_MEASURES_COLUMN")); //$NON-NLS-1$ //$NON-NLS-2$
         dialog.setMulti(true);
         if (dialog.open()!=null)
         {
@@ -866,7 +867,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         if (path.length==1 && itemText.equals(STRING_DIMENSIONS))
         {
             MenuItem miNew = new MenuItem(menu, SWT.NONE);
-            miNew.setText("New");
+            miNew.setText(Messages.getString("MetaEditorOlap.USER_NEW")); //$NON-NLS-1$
             miNew.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent event) { newDimension(); } } );
         }
         
@@ -875,7 +876,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
 
     protected void newDimension()
     {
-        EnterStringDialog dialog = new EnterStringDialog(shell, "", "New dimension", "Enter the name of the new dimension:");
+        EnterStringDialog dialog = new EnterStringDialog(shell, "", Messages.getString("MetaEditorOlap.USER_TITLE_NEW_DIMENSION"), Messages.getString("MetaEditorOlap.USER_NAME_NEW_DIMENSION")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         String dimensionName = dialog.open();
         if (dimensionName!=null)
         {
@@ -920,7 +921,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
 
     protected void newHierarchy(OlapDimension olapDimension, String locale)
     {
-        EnterStringDialog nameDialog = new EnterStringDialog(shell, "", "New hierarchy", "Enter the name of the new hierarchy");
+        EnterStringDialog nameDialog = new EnterStringDialog(shell, "", Messages.getString("MetaEditorOlap.USER_TITLE_NEW_HIERARCHY"), Messages.getString("MetaEditorOlap.USER_ENTER_NEW_HIERARCHY_NAME")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         String hierarchyName = nameDialog.open();
         if (hierarchyName!=null)
         {
@@ -929,7 +930,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
             BusinessModel activeModel = metaEditor.getSchemaMeta().getActiveModel();
             
             String tableNames[] = activeModel.getBusinessTableNames(locale);
-            EnterSelectionDialog dialog = new EnterSelectionDialog(shell, tableNames, "New Hierarchy", "Select the table to create the hierarchy for");
+            EnterSelectionDialog dialog = new EnterSelectionDialog(shell, tableNames, Messages.getString("MetaEditorOlap.USER_NEW_HIERARCHY"), Messages.getString("MetaEditorOlap.USER_SELECT_TABLE_FOR_HIERARCHY_CREATE")); //$NON-NLS-1$ //$NON-NLS-2$
             String tableName = dialog.open();
             if (tableName!=null)
             {
@@ -937,7 +938,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
                 BusinessTable businessTable = activeModel.findBusinessTable(locale, tableName);
                 String columnNames[] = businessTable.getColumnNames(locale);
     
-                EnterSelectionDialog keyDialog = new EnterSelectionDialog(shell, columnNames, "Select primary key", "Select the primary key column for this hierarchy:");
+                EnterSelectionDialog keyDialog = new EnterSelectionDialog(shell, columnNames, Messages.getString("MetaEditorOlap.TITLE_USER_SELECT_PRIMARY_KEY"), Messages.getString("MetaEditorOlap.USER_SELECT_PRIMARY_KEY")); //$NON-NLS-1$ //$NON-NLS-2$
                 String columnName = keyDialog.open();
                 if (columnName!=null)
                 {
@@ -978,7 +979,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
     protected void newLevel(OlapHierarchy olapHierarchy, String locale)
     {
         String columnNames[] = olapHierarchy.getUnusedColumnNames(locale);
-        EnterSelectionDialog dialog = new EnterSelectionDialog(shell, columnNames, "Select column", "Select the column to base this level on:");
+        EnterSelectionDialog dialog = new EnterSelectionDialog(shell, columnNames, Messages.getString("MetaEditorOlap.USER_TITLE_SELECT_COLUMN"), Messages.getString("MetaEditorOlap.USER_SELECT_COLUMN")); //$NON-NLS-1$ //$NON-NLS-2$
         String columnName = dialog.open();
         if (columnName!=null)
         {
@@ -1032,7 +1033,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         BusinessTable businessTable = hierarchy.getBusinessTable();
         String columnNames[] = hierarchy.getUnusedColumnNames(locale);
         
-        EnterSelectionDialog dialog = new EnterSelectionDialog(shell, columnNames, "New column", "Enter the name of the new column");
+        EnterSelectionDialog dialog = new EnterSelectionDialog(shell, columnNames, Messages.getString("MetaEditorOlap.USER_TITLE_NEW_COLUMN"), Messages.getString("MetaEditorOlap.USER_NEW_COLUMN_NAME")); //$NON-NLS-1$ //$NON-NLS-2$
         dialog.setMulti(true);
         if (dialog.open()!=null)
         {
@@ -1081,7 +1082,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         String locale = metaEditor.getSchemaMeta().getActiveLocale();
         
         String tableNames[] = activeModel.getBusinessTableNames(locale);
-        EnterSelectionDialog dialog = new EnterSelectionDialog(shell, tableNames, "New cube", "Select the base table to create the cube from");
+        EnterSelectionDialog dialog = new EnterSelectionDialog(shell, tableNames, Messages.getString("MetaEditorOlap.USER_NEW_CUBE"), Messages.getString("MetaEditorOlap.USER_SELECT_BASE_TABLE")); //$NON-NLS-1$ //$NON-NLS-2$
         String cubeName = dialog.open();
         if (cubeName!=null)
         {
@@ -1136,7 +1137,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
 
     public String toString()
 	{
-		return "MetaEditorOlap";
+		return "MetaEditorOlap"; //$NON-NLS-1$
 	}
     
     public void refreshScreen()
@@ -1149,14 +1150,14 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         String locale = schemaMeta.getActiveLocale();
         if (activeModel!=null)
         {
-            modelLabel.setText("Active model: "+activeModel.getDisplayName(locale));
+            modelLabel.setText(Messages.getString("MetaEditorOlap.USER_ACTIVE_MODEL", activeModel.getDisplayName(locale))); //$NON-NLS-1$
             
             // refresh the tree on the left...
             refreshTree(activeModel, locale);
         }
         else
         {
-            modelLabel.setText("No model selected.");
+            modelLabel.setText(Messages.getString("MetaEditorOlap.USER_NO_MODEL_SELECTED")); //$NON-NLS-1$
         }
         
         metaEditor.setShellText(); // changed flag.
