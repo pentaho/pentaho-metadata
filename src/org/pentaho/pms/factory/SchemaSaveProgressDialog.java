@@ -25,6 +25,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.editor.MetaEditor;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.Settings;
@@ -75,28 +76,28 @@ public class SchemaSaveProgressDialog
                     size+=schemaMeta.nrTables();
                     schemaMeta.nrBusinessModels();
                     
-                    monitor.beginTask("Storing the metadata into the CWM model", size);
+                    monitor.beginTask(Messages.getString("SchemaSaveProgressDialog.USER_STORING_METADATA_TO_CWM_MODEL"), size); //$NON-NLS-1$
                 }
 
-                monitor.subTask("Getting old domain instance from the repository");
+                monitor.subTask(Messages.getString("SchemaSaveProgressDialog.USER_GETTING_OLD_DOMAIN_INSTANCE_FROM_REPOSITORY")); //$NON-NLS-1$
                 container.cwm = CWM.getInstance(domainName);
                 monitor.worked(10);
                 
                 // First delete this one...
-                monitor.subTask("Removing old domain from the repository");
+                monitor.subTask(Messages.getString("SchemaSaveProgressDialog.USER_REMOVING_DOMAIN_INSTANCE_FROM_REPOSITORY")); //$NON-NLS-1$
                 try
                 {
                     container.cwm.removeDomain();
                 }
                 catch(Exception e)
                 {
-                    LogWriter.getInstance().logError(MetaEditor.APPLICATION_NAME, "Error removing domain:"+e.toString());
+                    LogWriter.getInstance().logError(MetaEditor.APPLICATION_NAME, Messages.getString("SchemaSaveProgressDialog.ERROR_0001_ERROR_REMOVING_DOMAIN", e.toString())); //$NON-NLS-1$
                     LogWriter.getInstance().logError(MetaEditor.APPLICATION_NAME, Const.getStackTracker(e));
                 }
                 monitor.worked(10);
                 
                 // then re-create it
-                monitor.subTask("Create new domain instance");
+                monitor.subTask(Messages.getString("SchemaSaveProgressDialog.USER_CREATE_NEW_DOMAIN_INSTANCE")); //$NON-NLS-1$
                 container.cwm = CWM.getInstance(domainName);
                 monitor.worked(10);
 
@@ -108,7 +109,7 @@ public class SchemaSaveProgressDialog
                 }
                 catch(Exception e)
                 {
-                    throw new InvocationTargetException(e, "Unable to save the schema to the repository.");
+                    throw new InvocationTargetException(e, Messages.getString("SchemaSaveProgressDialog.ERROR_0002_ERROR_SAVING_SCHEMA_TO_REPOSITORY")); //$NON-NLS-1$
                 }
 			}
 		};
@@ -120,12 +121,12 @@ public class SchemaSaveProgressDialog
 		}
 		catch (InvocationTargetException e)
 		{
-			new ErrorDialog(shell, "Error", "There was an error saving the schema", e);
+			new ErrorDialog(shell, Messages.getString("SchemaSaveProgressDialog.USER_TITLE_ERROR"), Messages.getString("SchemaSaveProgressDialog.USER_ERROR_SAVING_SCHEMA"), e); //$NON-NLS-1$ //$NON-NLS-2$
             container.cwm=null;
 		}
 		catch (InterruptedException e)
 		{
-            new ErrorDialog(shell, "Error", "There was an error saving the schema", e);
+            new ErrorDialog(shell, Messages.getString("SchemaSaveProgressDialog.USER_TITLE_ERROR"), Messages.getString("SchemaSaveProgressDialog.USER_ERROR_SAVING_SCHEMA"), e); //$NON-NLS-1$ //$NON-NLS-2$
             container.cwm=null;
 		}
 

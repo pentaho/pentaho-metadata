@@ -49,6 +49,7 @@ import org.pentaho.pms.cwm.pentaho.meta.relational.CwmTable;
 import org.pentaho.pms.locale.LocaleInterface;
 import org.pentaho.pms.locale.LocaleMeta;
 import org.pentaho.pms.locale.Locales;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessTable;
@@ -139,20 +140,20 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
     public void storeSchemaMeta(CWM cwm, SchemaMeta schemaMeta, IProgressMonitor monitor) throws Exception
     {
         if (!hasAccess(CwmSchemaFactoryInterface.ACCESS_TYPE_SCHEMA_ADMIN, null)) {
-          throw new CwmSchemaFactoryException("Schema Admin Access is Denied");
+          throw new CwmSchemaFactoryException(Messages.getString("CwmSchemaFactory.ERROR_0001_SCHEMA_ADMIN_ACCESS_DENIED")); //$NON-NLS-1$
         }
         try
         {
             cwm.beginTransaction();
             
             // Save the security service information
-            if (monitor!=null) monitor.subTask("Storing the security information");
+            if (monitor!=null) monitor.subTask(Messages.getString("CwmSchemaFactory.INFO_STORING_SECURITY_INFO")); //$NON-NLS-1$
             storeSecurityService(cwm, schemaMeta.getSecurityReference().getSecurityService());
             if (monitor!=null) monitor.worked(1);
             
             // Save the databases first...
             //
-            if (monitor!=null) monitor.subTask("Storing the databases");
+            if (monitor!=null) monitor.subTask(Messages.getString("CwmSchemaFactory.INFO_STORING_DATABASES")); //$NON-NLS-1$
             for (int i=0;i<schemaMeta.nrDatabases();i++)
             {
                 DatabaseMeta databaseMeta = schemaMeta.getDatabase(i);
@@ -162,7 +163,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
             
             // Save the concepts early as well...
             //
-            if (monitor!=null) monitor.subTask("Storing the concepts");
+            if (monitor!=null) monitor.subTask(Messages.getString("CwmSchemaFactory.INFO_STORING_CONCEPTS")); //$NON-NLS-1$
             for (int i=0;i<schemaMeta.nrConcepts();i++)
             {
                 ConceptInterface concept = schemaMeta.getConcept(i);
@@ -171,7 +172,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
             }
             
             // Now save the physical tables...
-            if (monitor!=null) monitor.subTask("Storing the physical tables");
+            if (monitor!=null) monitor.subTask(Messages.getString("CwmSchemaFactory.INFO_STORING_PHYSICAL_TABLES")); //$NON-NLS-1$
             for (int i=0;i<schemaMeta.nrTables();i++)
             {
                 PhysicalTable physicalTable = schemaMeta.getTable(i);
@@ -181,7 +182,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
     
             // Save the business models...
             //
-            if (monitor!=null) monitor.subTask("Storing the business models");
+            if (monitor!=null) monitor.subTask(Messages.getString("CwmSchemaFactory.INFO_STORING_BUSINESS_MODELS")); //$NON-NLS-1$
             for (int i=0;i<schemaMeta.nrBusinessModels();i++)
             {
                 BusinessModel businessModel = schemaMeta.getModel(i);
@@ -191,7 +192,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
             
             // Save the defined locales...
             //
-            if (monitor!=null) monitor.subTask("Storing the locales");
+            if (monitor!=null) monitor.subTask(Messages.getString("CwmSchemaFactory.INFO_STORING_LOCALES")); //$NON-NLS-1$
             Locales locales = schemaMeta.getLocales();
             for (int i=0;i<locales.nrLocales();i++)
             {
@@ -202,7 +203,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
     
             cwm.endTransaction();
     
-            if (monitor!=null) monitor.subTask("finished");
+            if (monitor!=null) monitor.subTask(Messages.getString("CwmSchemaFactory.INFO_FINISHED")); //$NON-NLS-1$
             if (monitor!=null) monitor.done();
         }
         catch(Exception e)
@@ -392,7 +393,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
     public void storeSecurityService(CWM cwm, SecurityService securityService)
     {
       if (!hasAccess(CwmSchemaFactoryInterface.ACCESS_TYPE_SCHEMA_ADMIN, null)) {
-        throw new CwmSchemaFactoryException("Schema Admin Access is Denied");
+        throw new CwmSchemaFactoryException(Messages.getString("CwmSchemaFactory.ERROR_0001_SCHEMA_ADMIN_ACCESS_DENIED")); //$NON-NLS-1$
       }
         CwmEvent cwmEvent = cwm.createEvent(CWM.EVENT_SECURITY_SERVICE);
         
@@ -459,7 +460,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
     public CwmTable storePhysicalTable(CWM cwm, PhysicalTable physicalTable)
     {
       if (!hasAccess(CwmSchemaFactoryInterface.ACCESS_TYPE_SCHEMA_ADMIN, null)) {
-        throw new CwmSchemaFactoryException("Schema Admin Access is Denied");
+        throw new CwmSchemaFactoryException(Messages.getString("CwmSchemaFactory.ERROR_0001_SCHEMA_ADMIN_ACCESS_DENIED")); //$NON-NLS-1$
       }
         CwmTable cwmTable = cwm.createTable(physicalTable.getId());
         
@@ -554,7 +555,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
     public void storePhysicalColumn(CWM cwm, CwmTable cwmTable, PhysicalColumn physicalColumn)
     {
       if (!hasAccess(CwmSchemaFactoryInterface.ACCESS_TYPE_SCHEMA_ADMIN, null)) {
-        throw new CwmSchemaFactoryException("Schema Admin Access is Denied");
+        throw new CwmSchemaFactoryException(Messages.getString("CwmSchemaFactory.ERROR_0001_SCHEMA_ADMIN_ACCESS_DENIED")); //$NON-NLS-1$
       }
         CwmColumn column = cwm.createColumn(physicalColumn.getId());
         
@@ -604,7 +605,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
     public void storeDatabaseMeta(CWM cwm, DatabaseMeta databaseMeta)
     {
       if (!hasAccess(CwmSchemaFactoryInterface.ACCESS_TYPE_SCHEMA_ADMIN, null)) {
-        throw new CwmSchemaFactoryException("Schema Admin Access is Denied");
+        throw new CwmSchemaFactoryException(Messages.getString("CwmSchemaFactory.ERROR_0001_SCHEMA_ADMIN_ACCESS_DENIED")); //$NON-NLS-1$
       }
         CwmCatalog catalog = cwm.createCatalog(databaseMeta.getName());
 
@@ -643,7 +644,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         }
         catch(KettleDatabaseException e) // Data to make a URL is not valid, incomplete, etc.
         {
-            cwm.addTaggedValue(catalog, CWM.TAG_DATABASE_JDBC_URL, "invalid data"); // we don't read this back, it's only for 3rd party use.
+            cwm.addTaggedValue(catalog, CWM.TAG_DATABASE_JDBC_URL, Messages.getString("CwmSchemaFactory.ERROR_0002_INVALID_DATA")); // we don't read this back, it's only for 3rd party use. //$NON-NLS-1$
         }
     }
     
@@ -708,7 +709,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
     public void storeBusinessModel(CWM cwm, BusinessModel businessModel)
     {
       if (!hasAccess(CwmSchemaFactoryInterface.ACCESS_TYPE_SCHEMA_ADMIN, null)) {
-        throw new CwmSchemaFactoryException("Schema Admin Access is Denied");
+        throw new CwmSchemaFactoryException(Messages.getString("CwmSchemaFactory.ERROR_0001_SCHEMA_ADMIN_ACCESS_DENIED")); //$NON-NLS-1$
       }
         CwmSchema cwmSchema = cwm.createSchema(businessModel.getId());
         
@@ -898,7 +899,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
     public void storeBusinessTable(CWM cwm, CwmSchema cwmSchema, BusinessTable businessTable)
     {
       if (!hasAccess(CwmSchemaFactoryInterface.ACCESS_TYPE_SCHEMA_ADMIN, null)) {
-        throw new CwmSchemaFactoryException("Schema Admin Access is Denied");
+        throw new CwmSchemaFactoryException(Messages.getString("CwmSchemaFactory.ERROR_0001_SCHEMA_ADMIN_ACCESS_DENIED")); //$NON-NLS-1$
       }
         CwmDimension cwmDimension = cwm.createDimension(cwmSchema, businessTable.getId());
         
@@ -911,7 +912,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         // Position
         cwm.setPosition(cwmDimension, businessTable.getLocation().x, businessTable.getLocation().y);
         // Drawn?
-        cwm.addTaggedValue(cwmDimension, CWM.TAG_TABLE_IS_DRAWN, businessTable.isDrawn()?"Y":"N");
+        cwm.addTaggedValue(cwmDimension, CWM.TAG_TABLE_IS_DRAWN, businessTable.isDrawn()?"Y":"N"); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Store the properties...
         storeConceptProperties(cwm, cwmDimension, businessTable.getConcept());
@@ -956,7 +957,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         int y = cwm.getPositionY(cwmDimension);
         businessTable.setLocation(x, y);
         // Drawn?
-        boolean drawn = "Y".equalsIgnoreCase( cwm.getFirstTaggedValue(cwmDimension, CWM.TAG_TABLE_IS_DRAWN) );
+        boolean drawn = "Y".equalsIgnoreCase( cwm.getFirstTaggedValue(cwmDimension, CWM.TAG_TABLE_IS_DRAWN) ); //$NON-NLS-1$
         businessTable.setDrawn(drawn);
         
         // The physical columns...
@@ -1004,7 +1005,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
     public void storeBusinessColumn(CWM cwm, CwmSchema cwmSchema, CwmDimension cwmDimension, BusinessColumn businessColumn)
     {
       if (!hasAccess(CwmSchemaFactoryInterface.ACCESS_TYPE_SCHEMA_ADMIN, null)) {
-        throw new CwmSchemaFactoryException("Schema Admin Access is Denied");
+        throw new CwmSchemaFactoryException(Messages.getString("CwmSchemaFactory.ERROR_0001_SCHEMA_ADMIN_ACCESS_DENIED")); //$NON-NLS-1$
       }
         CwmDimensionedObject cwmDimensionedObject = cwm.createDimensionedObject(businessColumn.getId());
         cwmDimensionedObject.setSchema(cwmSchema);
@@ -1078,7 +1079,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
     public void storeRelationshipMeta(CWM cwm, RelationshipMeta relationshipMeta, CwmSchema cwmSchema)
     {
       if (!hasAccess(CwmSchemaFactoryInterface.ACCESS_TYPE_SCHEMA_ADMIN, null)) {
-        throw new CwmSchemaFactoryException("Schema Admin Access is Denied");
+        throw new CwmSchemaFactoryException(Messages.getString("CwmSchemaFactory.ERROR_0001_SCHEMA_ADMIN_ACCESS_DENIED")); //$NON-NLS-1$
       }
         CwmKeyRelationship relationship = cwm.createRelationship();
         Collection pairs = relationship.getTaggedValue();
@@ -1098,7 +1099,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         // Complex join or between 2 fields?
         if (relationshipMeta.isComplex())
         {
-            pairs.add(cwm.createTaggedValue(CWM.TAG_RELATIONSHIP_IS_COMPLEX, "Y"));
+            pairs.add(cwm.createTaggedValue(CWM.TAG_RELATIONSHIP_IS_COMPLEX, "Y")); //$NON-NLS-1$
             
             if (!Const.isEmpty(relationshipMeta.getComplexJoin()))
             {
@@ -1150,7 +1151,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         
         // Complex join?
         //
-        boolean complex = "Y".equalsIgnoreCase(CWM.findFirstTaggedValue(relationship.getTaggedValue(), CWM.TAG_RELATIONSHIP_IS_COMPLEX));
+        boolean complex = "Y".equalsIgnoreCase(CWM.findFirstTaggedValue(relationship.getTaggedValue(), CWM.TAG_RELATIONSHIP_IS_COMPLEX)); //$NON-NLS-1$
         relationshipMeta.setComplex(complex);
         
         // Which fields?
@@ -1205,7 +1206,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
     public void storeNotePadMeta(CWM cwm, CwmSchema cwmSchema, NotePadMeta notePadMeta)
     {
       if (!hasAccess(CwmSchemaFactoryInterface.ACCESS_TYPE_SCHEMA_ADMIN, null)) {
-        throw new CwmSchemaFactoryException("Schema Admin Access is Denied");
+        throw new CwmSchemaFactoryException(Messages.getString("CwmSchemaFactory.ERROR_0001_SCHEMA_ADMIN_ACCESS_DENIED")); //$NON-NLS-1$
       }
         CwmDescription cwmDescription = cwm.createDescription(notePadMeta.getNote());
         cwmDescription.setType(CWM.DESCRIPTION_TYPE_NOTEPAD);
@@ -1255,13 +1256,13 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
     public CwmExtent storeBusinessCategory(CWM cwm, BusinessCategory businessCategory, CwmExtent parent, CwmSchema cwmSchema)
     {
       if (!hasAccess(CwmSchemaFactoryInterface.ACCESS_TYPE_SCHEMA_ADMIN, null)) {
-        throw new CwmSchemaFactoryException("Schema Admin Access is Denied");
+        throw new CwmSchemaFactoryException(Messages.getString("CwmSchemaFactory.ERROR_0001_SCHEMA_ADMIN_ACCESS_DENIED")); //$NON-NLS-1$
       }
         // We're storing these items into an extent (Instance package)
         CwmExtent cwmExtent = cwm.createExtent(businessCategory.getId());
         cwmExtent.setNamespace(cwmSchema);
         
-        String isRoot = (parent==null)?"Y":"N";
+        String isRoot = (parent==null)?"Y":"N"; //$NON-NLS-1$ //$NON-NLS-2$
 
         // Store a ROOT flag to know where to start later on.
         cwmExtent.getTaggedValue().add( cwm.createTaggedValue(CWM.TAG_BUSINESS_CATEGORY_ROOT, isRoot) );
@@ -1372,12 +1373,12 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
     public void storeLocale(CWM cwm, LocaleInterface locale)
     {
       if (!hasAccess(CwmSchemaFactoryInterface.ACCESS_TYPE_SCHEMA_ADMIN, null)) {
-        throw new CwmSchemaFactoryException("Schema Admin Access is Denied");
+        throw new CwmSchemaFactoryException(Messages.getString("CwmSchemaFactory.ERROR_0001_SCHEMA_ADMIN_ACCESS_DENIED")); //$NON-NLS-1$
       }
         CwmParameter cwmParameter = cwm.createParameter(locale.getCode());
         if (!Const.isEmpty(locale.getDescription())) cwm.addTaggedValue(cwmParameter, CWM.TAG_LOCALE_DESCRIPTION, locale.getDescription());
         cwm.addTaggedValue(cwmParameter, CWM.TAG_LOCALE_ORDER, Integer.toString(locale.getOrder()));
-        cwm.addTaggedValue(cwmParameter, CWM.TAG_LOCALE_IS_ACTIVE, locale.isActive()?"Y":"N");
+        cwm.addTaggedValue(cwmParameter, CWM.TAG_LOCALE_IS_ACTIVE, locale.isActive()?"Y":"N"); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     /**
@@ -1400,7 +1401,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         locale.setOrder(Const.toInt(strOrder, -1));
         
         // Active?
-        boolean active = "Y".equalsIgnoreCase( cwm.getFirstTaggedValue(cwmParameter, CWM.TAG_LOCALE_IS_ACTIVE));
+        boolean active = "Y".equalsIgnoreCase( cwm.getFirstTaggedValue(cwmParameter, CWM.TAG_LOCALE_IS_ACTIVE)); //$NON-NLS-1$
         locale.setActive(active);
         
         return locale;
@@ -1425,7 +1426,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
     public void storeModelConcept(CWM cwm, ConceptInterface concept)
     {
       if (!hasAccess(CwmSchemaFactoryInterface.ACCESS_TYPE_SCHEMA_ADMIN, null)) {
-        throw new CwmSchemaFactoryException("Schema Admin Access is Denied");
+        throw new CwmSchemaFactoryException(Messages.getString("CwmSchemaFactory.ERROR_0001_SCHEMA_ADMIN_ACCESS_DENIED")); //$NON-NLS-1$
       }
         CwmClass cwmClass = cwm.createClass(concept.getName());
         
@@ -1468,7 +1469,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
     public void storeConceptProperties(CWM cwm, CwmModelElement modelElement, ConceptInterface concept)
     {
       if (!hasAccess(CwmSchemaFactoryInterface.ACCESS_TYPE_SCHEMA_ADMIN, null)) {
-        throw new CwmSchemaFactoryException("Schema Admin Access is Denied");
+        throw new CwmSchemaFactoryException(Messages.getString("CwmSchemaFactory.ERROR_0001_SCHEMA_ADMIN_ACCESS_DENIED")); //$NON-NLS-1$
       }
         // Save the parent name of the concept...
         if (concept.getParentInterface()!=null)
@@ -1524,7 +1525,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                 {
                     Boolean value= (Boolean) property.getValue();
                     
-                    CwmDescription description = cwm.createDescription(value.booleanValue()?"Y":"N");
+                    CwmDescription description = cwm.createDescription(value.booleanValue()?"Y":"N"); //$NON-NLS-1$ //$NON-NLS-2$
                     description.setName(property.getId());
                     description.setType(property.getType().getCode());
                     cwm.setDescription(modelElement, description);
@@ -1536,8 +1537,8 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                 if (property.getType().equals(ConceptPropertyType.DATE))
                 {
                     Date value= (Date) property.getValue();
-                    DateFormat df = new SimpleDateFormat("yyyy/MM/dd'T'HH:mm:ss");
-                    String string = "";
+                    DateFormat df = new SimpleDateFormat("yyyy/MM/dd'T'HH:mm:ss"); //$NON-NLS-1$
+                    String string = ""; //$NON-NLS-1$
                     if (value!=null) string = df.format(value);
                     CwmDescription description = cwm.createDescription(string);
                     description.setName(property.getId());
@@ -1552,7 +1553,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                 {
                     TableTypeSettings value= (TableTypeSettings) property.getValue();
     
-                    String string = "";
+                    String string = ""; //$NON-NLS-1$
                     if (value!=null) string = value.getCode();
                     CwmDescription description = cwm.createDescription(string);
                     description.setName(property.getId());
@@ -1567,7 +1568,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                 {
                     FieldTypeSettings value= (FieldTypeSettings) property.getValue();
     
-                    String string = "";
+                    String string = ""; //$NON-NLS-1$
                     if (value!=null) string = value.getCode();
                     CwmDescription description = cwm.createDescription(string);
                     description.setName(property.getId());
@@ -1582,7 +1583,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                 {
                     AggregationSettings value= (AggregationSettings)property.getValue();
     
-                    String string = "";
+                    String string = ""; //$NON-NLS-1$
                     if (value!=null) string = value.getCode();
                     CwmDescription description = cwm.createDescription(string);
                     description.setName(property.getId());
@@ -1597,7 +1598,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                 {
                     BigDecimal value= (BigDecimal)property.getValue();
     
-                    String string = "";
+                    String string = ""; //$NON-NLS-1$
                     if (value!=null) string = value.toString();
                     
                     CwmDescription description = cwm.createDescription(string);
@@ -1613,7 +1614,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                 {
                     ColorSettings value= (ColorSettings)property.getValue();
     
-                    String string = "";
+                    String string = ""; //$NON-NLS-1$
                     if (value!=null)
                     {
                         string = value.toString();
@@ -1632,7 +1633,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                 {
                     DataTypeSettings value= (DataTypeSettings)property.getValue();
     
-                    String string = "";
+                    String string = ""; //$NON-NLS-1$
                     if (value!=null)
                     {
                         string = value.toString();
@@ -1651,7 +1652,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                 {
                     FontSettings value= (FontSettings)property.getValue();
     
-                    String string = "";
+                    String string = ""; //$NON-NLS-1$
                     if (value!=null)
                     {
                         string = value.toString();
@@ -1670,7 +1671,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                 {
                     URL value= (URL)property.getValue();
     
-                    String string = "";
+                    String string = ""; //$NON-NLS-1$
                     if (value!=null)
                     {
                         string = value.toString();
@@ -1689,7 +1690,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                 {
                     Security value= (Security)property.getValue();
     
-                    String string = "";
+                    String string = ""; //$NON-NLS-1$
                     if (value!=null)
                     {
                         string = value.toXML();
@@ -1766,7 +1767,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
             {
                 if (!Const.isEmpty(name) && !Const.isEmpty(value) )
                 {
-                    ConceptPropertyBoolean conceptPropertyBoolean = new ConceptPropertyBoolean(name, new Boolean("Y".equalsIgnoreCase(value)));
+                    ConceptPropertyBoolean conceptPropertyBoolean = new ConceptPropertyBoolean(name, new Boolean("Y".equalsIgnoreCase(value))); //$NON-NLS-1$
                     concept.addProperty(conceptPropertyBoolean);
                 }
             }
@@ -2104,7 +2105,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         
         cwm.addTaggedValue(cwmHierarchy, CWM.TAG_HIERARCHY_BUSINESS_TABLE, olapHierarchy.getBusinessTable().getId());
         cwm.addTaggedValue(cwmHierarchy, CWM.TAG_HIERARCHY_PRIMARY_KEY, olapHierarchy.getPrimaryKey().getId());
-        cwm.addTaggedValue(cwmHierarchy, CWM.TAG_HIERARCHY_HAVING_ALL, olapHierarchy.isHavingAll()?"Y":"N");
+        cwm.addTaggedValue(cwmHierarchy, CWM.TAG_HIERARCHY_HAVING_ALL, olapHierarchy.isHavingAll()?"Y":"N"); //$NON-NLS-1$ //$NON-NLS-2$
         
         // Save the levels of the hierarchy too
         List levels = olapHierarchy.getHierarchyLevels();
@@ -2124,7 +2125,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         
         olapHierarchy.setBusinessTable( businessModel.findBusinessTable( cwm.getFirstTaggedValue( cwmHierarchy, CWM.TAG_HIERARCHY_BUSINESS_TABLE ) ) );
         olapHierarchy.setPrimaryKey( businessModel.findBusinessColumn( cwm.getFirstTaggedValue( cwmHierarchy, CWM.TAG_HIERARCHY_PRIMARY_KEY ) ) );
-        olapHierarchy.setHavingAll( "Y".equalsIgnoreCase( cwm.getFirstTaggedValue( cwmHierarchy, CWM.TAG_HIERARCHY_HAVING_ALL ) ) );
+        olapHierarchy.setHavingAll( "Y".equalsIgnoreCase( cwm.getFirstTaggedValue( cwmHierarchy, CWM.TAG_HIERARCHY_HAVING_ALL ) ) ); //$NON-NLS-1$
         
         // Where are the levels?
         List associations = cwmHierarchy.getHierarchyLevelAssociation();
@@ -2162,7 +2163,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
 
         // Now also save the other attributes of the level... (excluding the columns)
         // Unique members flag
-        cwm.addTaggedValue(cwmLevel, CWM.TAG_HIERARCHY_LEVEL_UNIQUE_MEMBERS, level.isHavingUniqueMembers()?"Y":"N");
+        cwm.addTaggedValue(cwmLevel, CWM.TAG_HIERARCHY_LEVEL_UNIQUE_MEMBERS, level.isHavingUniqueMembers()?"Y":"N"); //$NON-NLS-1$ //$NON-NLS-2$
         // The reference column (business column ID)
         cwm.addTaggedValue(cwmLevel, CWM.TAG_HIERARCHY_LEVEL_REFERENCE_COLUMN, level.getReferenceColumn().getId());
         
@@ -2186,7 +2187,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         CwmLevel cwmLevel = association.getCurrentLevel();
         
         // Unique members flag
-        olapLevel.setHavingUniqueMembers( "Y".equalsIgnoreCase( cwm.getFirstTaggedValue(cwmLevel, CWM.TAG_HIERARCHY_LEVEL_UNIQUE_MEMBERS) ) );
+        olapLevel.setHavingUniqueMembers( "Y".equalsIgnoreCase( cwm.getFirstTaggedValue(cwmLevel, CWM.TAG_HIERARCHY_LEVEL_UNIQUE_MEMBERS) ) ); //$NON-NLS-1$
         // The reference column (business column ID)
         olapLevel.setReferenceColumn( businessModel.findBusinessColumn( cwm.getFirstTaggedValue(cwmLevel, CWM.TAG_HIERARCHY_LEVEL_REFERENCE_COLUMN ) ) );
         

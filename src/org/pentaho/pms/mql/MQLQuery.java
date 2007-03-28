@@ -29,6 +29,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.BusinessModel;
@@ -203,7 +204,7 @@ public class MQLQuery {
         trans.waitUntilFinished();
         log.removeAppender(stringAppender);
         
-        if (trans.getErrors()>0) throw new KettleException("Error during query execution using a transformation:"+Const.CR+Const.CR+stringAppender.getBuffer().toString());
+        if (trans.getErrors()>0) throw new KettleException(Messages.getString("MQLQuery.ERROR_0001_ERROR_TRANSFORMATION_QUERY_EXECUTE", Const.CR+Const.CR+stringAppender.getBuffer().toString())); //$NON-NLS-1$
         
         return list;
         
@@ -237,7 +238,7 @@ public class MQLQuery {
             dbf = DocumentBuilderFactory.newInstance();
             db = dbf.newDocumentBuilder();
             doc = db.newDocument();
-            Element mqlElement = doc.createElement( "mql" );
+            Element mqlElement = doc.createElement( "mql" ); //$NON-NLS-1$
             doc.appendChild( mqlElement );
 
             if( addToDocument( mqlElement, doc) ) {
@@ -256,54 +257,54 @@ public class MQLQuery {
         try {
 
 	    		if( schemaMeta == null ) {
-	        		System.err.println( "metadata schema is null" );
+	        		System.err.println( Messages.getString("MQLQuery.ERROR_0002_META_SCHEMA_NULL") ); //$NON-NLS-1$
 	        		return false;
 	    		}
 	    	
 	    		if( model == null ) {
-	        		System.err.println( "business model is null" );
+	        		System.err.println( Messages.getString("MQLQuery.ERROR_0003_BUSINESS_MODEL_NULL") ); //$NON-NLS-1$
 	        		return false;
 	    		}
 	    	
     			// insert the domain information
-            	Element typeElement = doc.createElement( "model_type" );
-            	typeElement.appendChild( doc.createTextNode( (domainType == DOMAIN_TYPE_RELATIONAL) ? "relational" : "olap" ) );
+            	Element typeElement = doc.createElement( "model_type" ); //$NON-NLS-1$
+            	typeElement.appendChild( doc.createTextNode( (domainType == DOMAIN_TYPE_RELATIONAL) ? "relational" : "olap" ) ); //$NON-NLS-1$ //$NON-NLS-2$
             	mqlElement.appendChild( typeElement );
         	
     			// insert the domain information
             	String data = schemaMeta.getDomainName();
             	if( data != null ) {
-	            	Element modelIdElement = doc.createElement( "model_id" );
+	            	Element modelIdElement = doc.createElement( "model_id" ); //$NON-NLS-1$
 	            	modelIdElement.appendChild( doc.createTextNode( data ) );
 	            	mqlElement.appendChild( modelIdElement );
             	} else {
-            		System.err.println( "domain id is null" );
+            		System.err.println( Messages.getString("MQLQuery.ERROR_0004_DOMAIN_ID_NULL") ); //$NON-NLS-1$
 	        		return false;
             	}
         	
             	// insert the model information
             	data = model.getId();
             	if( data != null ) {
-                	Element viewIdElement = doc.createElement( "view_id" );
+                	Element viewIdElement = doc.createElement( "view_id" ); //$NON-NLS-1$
                 	viewIdElement.appendChild( doc.createTextNode( data ) );
                 	mqlElement.appendChild( viewIdElement );
             	} else {
-            		System.err.println( "model id is null" );
+            		System.err.println( Messages.getString("MQLQuery.ERROR_0005_MODEL_ID_NULL") ); //$NON-NLS-1$
 	        		return false;
             	}
             
             	data = model.getDisplayName( locale );
             	if( data != null ) {
-                	Element viewNameElement = doc.createElement( "view_name" );
+                	Element viewNameElement = doc.createElement( "view_name" ); //$NON-NLS-1$
                 	viewNameElement.appendChild( doc.createTextNode( data ) );
                 	mqlElement.appendChild( viewNameElement );
             	} else {
-            		System.err.println( "model name is null" );
+            		System.err.println( Messages.getString("MQLQuery.ERROR_0006_MODEL_NAME_NULL") ); //$NON-NLS-1$
 	        		return false;
             	}
             
             	// insert the selections
-            	Element selectionsElement = doc.createElement( "selections" );
+            	Element selectionsElement = doc.createElement( "selections" ); //$NON-NLS-1$
             	mqlElement.appendChild( selectionsElement );
             	Iterator it = selections.iterator();
             	Element selectionElement;
@@ -311,13 +312,13 @@ public class MQLQuery {
             	while( it.hasNext() ) {
             		BusinessColumn column = (BusinessColumn) it.next();
             		if( column.getBusinessTable() != null ) {
-                		selectionElement = doc.createElement( "selection" );
+                		selectionElement = doc.createElement( "selection" ); //$NON-NLS-1$
                 		
-                		element = doc.createElement( "table" );
+                		element = doc.createElement( "table" ); //$NON-NLS-1$
                 		element.appendChild( doc.createTextNode( column.getBusinessTable().getId() ) );
                 		selectionElement.appendChild( element );
                 		
-                		element = doc.createElement( "column" );
+                		element = doc.createElement( "column" ); //$NON-NLS-1$
                 		element.appendChild( doc.createTextNode( column.getId() ) );
                 		selectionElement.appendChild( element );
                 		
@@ -325,27 +326,27 @@ public class MQLQuery {
             		}
             	}
             	// insert the contraints
-            	Element contraintsElement = doc.createElement( "constraints" );
+            	Element contraintsElement = doc.createElement( "constraints" ); //$NON-NLS-1$
             	mqlElement.appendChild( contraintsElement );
             	it = constraints.iterator();
             Element constraintElement;
             	while( it.hasNext() ) {
             		WhereCondition condition = (WhereCondition) it.next();
-            		constraintElement = doc.createElement( "constraint" );
+            		constraintElement = doc.createElement( "constraint" ); //$NON-NLS-1$
 
-            		element = doc.createElement( "operator" );
-            		element.appendChild( doc.createTextNode( condition.getOperator()==null?"":condition.getOperator() ) );
+            		element = doc.createElement( "operator" ); //$NON-NLS-1$
+            		element.appendChild( doc.createTextNode( condition.getOperator()==null?"":condition.getOperator() ) ); //$NON-NLS-1$
             		constraintElement.appendChild( element );
             		
-                    element = doc.createElement( "table_id" );
+                    element = doc.createElement( "table_id" ); //$NON-NLS-1$
                     element.appendChild( doc.createTextNode( condition.getField().getBusinessTable().getId() ) );
                     constraintElement.appendChild( element );
             		
-            		element = doc.createElement( "column_id" );
+            		element = doc.createElement( "column_id" ); //$NON-NLS-1$
             		element.appendChild( doc.createTextNode( condition.getField().getId() ) );
             		constraintElement.appendChild( element );
             		
-            		element = doc.createElement( "condition" );
+            		element = doc.createElement( "condition" ); //$NON-NLS-1$
             		element.appendChild( doc.createTextNode( condition.getCondition() ) );
             		constraintElement.appendChild( element );
             		
@@ -386,24 +387,24 @@ public class MQLQuery {
             		contraintsElement.appendChild( constraintElement );
             	}
             	// insert the contraints
-            	Element ordersElement = doc.createElement( "orders" );
+            	Element ordersElement = doc.createElement( "orders" ); //$NON-NLS-1$
             	mqlElement.appendChild( ordersElement );
             	it = order.iterator();
             Element orderElement;
             	while( it.hasNext() ) {
-            		OrderBy order = (OrderBy) it.next();
-            		orderElement = doc.createElement( "order" );
+            		OrderBy orderBy = (OrderBy) it.next();
+            		orderElement = doc.createElement( "order" ); //$NON-NLS-1$
 
-            		element = doc.createElement( "direction" );
-            		element.appendChild( doc.createTextNode( order.isAscending() ? "asc" : "desc" ) );
+            		element = doc.createElement( "direction" ); //$NON-NLS-1$
+            		element.appendChild( doc.createTextNode( orderBy.isAscending() ? "asc" : "desc" ) ); //$NON-NLS-1$ //$NON-NLS-2$
             		orderElement.appendChild( element );
             		
-                    element = doc.createElement( "table_id" );
-                    element.appendChild( doc.createTextNode( order.getBusinessColumn().getBusinessTable().getId() ) );
+                    element = doc.createElement( "table_id" ); //$NON-NLS-1$
+                    element.appendChild( doc.createTextNode( orderBy.getBusinessColumn().getBusinessTable().getId() ) );
                     orderElement.appendChild( element );
             		
-            		element = doc.createElement( "column_id" );
-            		element.appendChild( doc.createTextNode( order.getBusinessColumn().getId() ) );
+            		element = doc.createElement( "column_id" ); //$NON-NLS-1$
+            		element.appendChild( doc.createTextNode( orderBy.getBusinessColumn().getId() ) );
             		orderElement.appendChild( element );
             		
             		
@@ -429,24 +430,24 @@ public class MQLQuery {
             doc = db.parse(new InputSource(new java.io.StringReader(XML)));
 
             // get the domain type
-            String modelTypeStr = getElementText( doc, "model_type" );
-            if( "relational".equals( modelTypeStr ) ) {
+            String modelTypeStr = getElementText( doc, "model_type" ); //$NON-NLS-1$
+            if( "relational".equals( modelTypeStr ) ) { //$NON-NLS-1$
             		domainType = DOMAIN_TYPE_RELATIONAL;
             }
-            else if( "olap".equals( modelTypeStr ) ) {
+            else if( "olap".equals( modelTypeStr ) ) { //$NON-NLS-1$
             		domainType = DOMAIN_TYPE_OLAP;
             } else {
             		// need to throw an error
             }
 
             // get the domain id
-            String modelId = getElementText( doc, "model_id" );
+            String modelId = getElementText( doc, "model_id" ); //$NON-NLS-1$
             CWM cwm = CWM.getInstance(modelId);
             // CwmSchemaFactoryInterface cwmSchemaFactory = Settings.getCwmSchemaFactory();
             schemaMeta = cwmSchemaFactory.getSchemaMeta(cwm);
                         
             // get the Business View id
-            String viewId = getElementText( doc, "view_id" );
+            String viewId = getElementText( doc, "view_id" ); //$NON-NLS-1$
             System.out.println( viewId );  
             model = schemaMeta.findModel(viewId); // This is the business model that was selected.
 
@@ -456,7 +457,7 @@ public class MQLQuery {
             	}
             
             // process the selections
-            NodeList nodes = doc.getElementsByTagName( "selection" );
+            NodeList nodes = doc.getElementsByTagName( "selection" ); //$NON-NLS-1$
             Node selectionNode;
             for( int idx=0; idx<nodes.getLength(); idx++ ) {
             		selectionNode = nodes.item( idx );
@@ -464,7 +465,7 @@ public class MQLQuery {
             }
             
             // process the constraints
-            nodes = doc.getElementsByTagName( "constraint" );
+            nodes = doc.getElementsByTagName( "constraint" ); //$NON-NLS-1$
             Node constraintNode;
             for( int idx=0; idx<nodes.getLength(); idx++ ) {
             		constraintNode = nodes.item( idx );
@@ -472,7 +473,7 @@ public class MQLQuery {
             }
             
             // process the constraints
-            nodes = doc.getElementsByTagName( "order" );
+            nodes = doc.getElementsByTagName( "order" ); //$NON-NLS-1$
             Node orderNode;
             for( int idx=0; idx<nodes.getLength(); idx++ ) {
             		orderNode = nodes.item( idx );
@@ -500,7 +501,7 @@ public class MQLQuery {
 	
 	private void addOrderByFromXmlNode( Node node ) {
 		NodeList nodes = node.getChildNodes();
-		boolean ascending  = nodes.item(0).getFirstChild()!=null ? nodes.item(0).getFirstChild().getNodeValue().equals( "asc" ) : true;
+		boolean ascending  = nodes.item(0).getFirstChild()!=null ? nodes.item(0).getFirstChild().getNodeValue().equals( "asc" ) : true; //$NON-NLS-1$
         String table_id  = nodes.item(1).getFirstChild().getNodeValue();
 		String column_id = nodes.item(2).getFirstChild().getNodeValue();
         addOrderBy( table_id, column_id, ascending );

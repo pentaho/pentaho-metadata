@@ -16,11 +16,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.pentaho.pms.messages.Messages;
+
 import be.ibridge.kettle.core.ChangedFlag;
 
 public class Locales extends ChangedFlag
 {
-    public static final String EN_US = "en_US";
+    public static final String EN_US = "en_US"; //$NON-NLS-1$
     
     private   List           localeList;
     
@@ -34,7 +36,7 @@ public class Locales extends ChangedFlag
     
     public void setDefault()
     {
-        LocaleInterface locale = new LocaleMeta(EN_US, "English (American)", 1, true);
+        LocaleInterface locale = new LocaleMeta(EN_US, Messages.getString("Locales.USER_LOCALE_DESCRIPTION"), 1, true); //$NON-NLS-1$
         addLocale(locale);
     }
 
