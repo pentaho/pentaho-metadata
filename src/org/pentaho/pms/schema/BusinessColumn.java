@@ -12,6 +12,7 @@
 */
 package org.pentaho.pms.schema;
 
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
@@ -55,7 +56,7 @@ public class BusinessColumn extends ConceptUtilityBase implements ChangedFlagInt
      */
     public String getModelElementDescription()
     {
-        return "business column";
+        return Messages.getString("BusinessColumn.USER_DESCRIPTION"); //$NON-NLS-1$
     }
 
     
@@ -80,14 +81,14 @@ public class BusinessColumn extends ConceptUtilityBase implements ChangedFlagInt
     {
         String baseID = Const.toID( businessTable.getDisplayName(locale) );
         String namePart = Const.toID( Const.NVL(physicalColumn.getName(locale), physicalColumn.getFormula() ) );
-        String id = Settings.getBusinessColumnIDPrefix() + baseID+"_" + namePart;
+        String id = Settings.getBusinessColumnIDPrefix() + baseID+"_" + namePart; //$NON-NLS-1$
         if (Settings.isAnIdUppercase()) id = id.toUpperCase();
         return id;
     }
 
     public String toString()
     {
-        return businessTable.getId()+"."+getId();
+        return businessTable.getId()+"."+getId(); //$NON-NLS-1$
     }
 
     /**
@@ -156,14 +157,14 @@ public class BusinessColumn extends ConceptUtilityBase implements ChangedFlagInt
         }
         else
         {
-            String tableColumn = "";
+            String tableColumn = ""; //$NON-NLS-1$
             tableColumn += databaseMeta.quoteField( getBusinessTable().getDisplayName(locale) );
-            tableColumn += ".";
+            tableColumn += "."; //$NON-NLS-1$
             tableColumn += databaseMeta.quoteField( getFormula() );
             
             if (hasAggregate()) // For the having clause, for example: HAVING sum(turnover) > 100
             {
-                return getFunction(databaseMeta)+"("+tableColumn+")";
+                return getFunction(databaseMeta)+"("+tableColumn+")"; //$NON-NLS-1$ //$NON-NLS-2$
             }
             else
             {
@@ -174,7 +175,7 @@ public class BusinessColumn extends ConceptUtilityBase implements ChangedFlagInt
     
     public String getFunction(DatabaseMeta databaseMeta)
     {
-        String fn="";
+        String fn=""; //$NON-NLS-1$
         
         switch(getAggregationType().getType())
         {

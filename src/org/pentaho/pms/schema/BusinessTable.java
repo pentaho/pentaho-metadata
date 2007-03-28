@@ -12,6 +12,7 @@
 */
 package org.pentaho.pms.schema;
 
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
@@ -81,7 +82,7 @@ public class BusinessTable extends ConceptUtilityBase
      */
     public String getModelElementDescription()
     {
-        return "business table";
+        return Messages.getString("BusinessTable.USER_DESCRIPTION"); //$NON-NLS-1$
     }
 
     public Object clone()
@@ -172,28 +173,28 @@ public class BusinessTable extends ConceptUtilityBase
     
     public void readData(Node tablenode)
     {
-        String sxloc   = XMLHandler.getTagValue(tablenode, "xloc");
-        String syloc   = XMLHandler.getTagValue(tablenode, "yloc");
+        String sxloc   = XMLHandler.getTagValue(tablenode, "xloc"); //$NON-NLS-1$
+        String syloc   = XMLHandler.getTagValue(tablenode, "yloc"); //$NON-NLS-1$
 
         int x   = Const.toInt(sxloc, 0);
         int y   = Const.toInt(syloc, 0);
         location = new Point(x,y);
 
         
-        String sdrawn  = XMLHandler.getTagValue(tablenode, "draw_table");
-        drawn = "Y".equalsIgnoreCase(sdrawn);
+        String sdrawn  = XMLHandler.getTagValue(tablenode, "draw_table"); //$NON-NLS-1$
+        drawn = "Y".equalsIgnoreCase(sdrawn); //$NON-NLS-1$
     }
     
     public String getXML()
     {
-        String retval="<business-table>";
+        String retval="<business-table>"; //$NON-NLS-1$
         
-        retval+="      "+XMLHandler.addTagValue("xloc",   location.x);
-        retval+="      "+XMLHandler.addTagValue("yloc",   location.y);
+        retval+="      "+XMLHandler.addTagValue("xloc",   location.x); //$NON-NLS-1$ //$NON-NLS-2$
+        retval+="      "+XMLHandler.addTagValue("yloc",   location.y); //$NON-NLS-1$ //$NON-NLS-2$
 
-        retval+="      "+XMLHandler.addTagValue("draw_table", drawn);
+        retval+="      "+XMLHandler.addTagValue("draw_table", drawn); //$NON-NLS-1$ //$NON-NLS-2$
 
-        retval+="</business-table>";
+        retval+="</business-table>"; //$NON-NLS-1$
         
         return retval;
     }
@@ -371,12 +372,12 @@ public class BusinessTable extends ConceptUtilityBase
      */
     public String[] getColumnNames(String locale)
     {
-        String[] businessColumns = new String[nrBusinessColumns()];
+        String[] bColumns = new String[nrBusinessColumns()];
         for (int i=0;i<nrBusinessColumns();i++)
         {
-            businessColumns[i] = getBusinessColumn(i).getDisplayName(locale);
+            bColumns[i] = getBusinessColumn(i).getDisplayName(locale);
         }
         
-        return businessColumns;
+        return bColumns;
     }
 }

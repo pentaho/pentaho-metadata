@@ -119,6 +119,6 @@ public class DefaultProperty
     
     public String toString()
     {
-        return name+":"+description+":"+conceptPropertyType.getDescription()+":"+defaultValue.toString();
+        return name+":"+description+":"+conceptPropertyType.getDescription()+":"+defaultValue.toString();  //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$
     }
 }

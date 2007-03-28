@@ -28,6 +28,7 @@
 package org.pentaho.pms.schema;
 import java.util.ArrayList;
 
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.util.Const;
 import org.w3c.dom.Node;
 
@@ -59,7 +60,7 @@ public class JoinMeta extends ChangedFlag implements Cloneable, XMLInterface, Ch
 	
 	protected final static String type_relationship_desc[] = 
 		{
-			"undefined", "1:N", "N:1", "1:1", "0:N", "N:0", "0:1", "0:1"
+			"undefined", "1:N", "N:1", "1:1", "0:N", "N:0", "0:1", "0:1" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
 		};
 	
 	public JoinMeta(PhysicalTable table_from, PhysicalTable table_to, int fieldnr_from, int fieldnr_to)
@@ -80,15 +81,15 @@ public class JoinMeta extends ChangedFlag implements Cloneable, XMLInterface, Ch
 	{
 		try
 		{
-			String from = XMLHandler.getTagValue(joinnode, "table_from");
+			String from = XMLHandler.getTagValue(joinnode, "table_from"); //$NON-NLS-1$
 			table_from = findTable(tables, from);
-			String to   = XMLHandler.getTagValue(joinnode, "table_to");
+			String to   = XMLHandler.getTagValue(joinnode, "table_to"); //$NON-NLS-1$
 			table_to = findTable(tables, to);
 					
-			fieldnr_from = Const.toInt(XMLHandler.getTagValue(joinnode, "fieldnr_from"), -1);
-			fieldnr_to   = Const.toInt(XMLHandler.getTagValue(joinnode, "fieldnr_to"), -1);
-			type         = getType(XMLHandler.getTagValue(joinnode, "type"));
-			complex_join = XMLHandler.getTagValue(joinnode, "complex_join");
+			fieldnr_from = Const.toInt(XMLHandler.getTagValue(joinnode, "fieldnr_from"), -1); //$NON-NLS-1$
+			fieldnr_to   = Const.toInt(XMLHandler.getTagValue(joinnode, "fieldnr_to"), -1); //$NON-NLS-1$
+			type         = getType(XMLHandler.getTagValue(joinnode, "type")); //$NON-NLS-1$
+			complex_join = XMLHandler.getTagValue(joinnode, "complex_join"); //$NON-NLS-1$
 			
 			return true;
 		}
@@ -100,16 +101,16 @@ public class JoinMeta extends ChangedFlag implements Cloneable, XMLInterface, Ch
 
 	public String getXML()
 	{
-		String retval="";
+		String retval=""; //$NON-NLS-1$
 		
-		retval+="      <relationship>"+Const.CR;
-		retval+="        "+XMLHandler.addTagValue("table_from",   table_from.getId());
-		retval+="        "+XMLHandler.addTagValue("table_to",     table_to.getId());
-		retval+="        "+XMLHandler.addTagValue("fieldnr_from", fieldnr_from);
-		retval+="        "+XMLHandler.addTagValue("fieldnr_to",   fieldnr_to);
-		retval+="        "+XMLHandler.addTagValue("type",         getTypeDesc());
-		retval+="        "+XMLHandler.addTagValue("complex_join", complex_join);
-		retval+="        </relationship>"+Const.CR;
+		retval+="      <relationship>"+Const.CR; //$NON-NLS-1$
+		retval+="        "+XMLHandler.addTagValue("table_from",   table_from.getId()); //$NON-NLS-1$ //$NON-NLS-2$
+		retval+="        "+XMLHandler.addTagValue("table_to",     table_to.getId()); //$NON-NLS-1$ //$NON-NLS-2$
+		retval+="        "+XMLHandler.addTagValue("fieldnr_from", fieldnr_from); //$NON-NLS-1$ //$NON-NLS-2$
+		retval+="        "+XMLHandler.addTagValue("fieldnr_to",   fieldnr_to); //$NON-NLS-1$ //$NON-NLS-2$
+		retval+="        "+XMLHandler.addTagValue("type",         getTypeDesc()); //$NON-NLS-1$ //$NON-NLS-2$
+		retval+="        "+XMLHandler.addTagValue("complex_join", complex_join); //$NON-NLS-1$ //$NON-NLS-2$
+		retval+="        </relationship>"+Const.CR; //$NON-NLS-1$
 		
 		return retval;
 	}
@@ -265,13 +266,13 @@ public class JoinMeta extends ChangedFlag implements Cloneable, XMLInterface, Ch
 	{
 		if (fieldnr_from>=0 && fieldnr_to>=0)
 		{
-			return table_from.getId()+"."+table_from.getPhysicalColumn(fieldnr_from).getId()+ 
-                   " - "+
-				   table_to.getId()+"."+table_to.getPhysicalColumn(fieldnr_to).getId();
+			return table_from.getId()+"."+table_from.getPhysicalColumn(fieldnr_from).getId()+  //$NON-NLS-1$
+                   " - "+ //$NON-NLS-1$
+				   table_to.getId()+Messages.getString("JoinMeta.31")+table_to.getPhysicalColumn(fieldnr_to).getId(); //$NON-NLS-1$
 		}
 		else
 		{
-			return table_from.getId()+" - "+table_to.getId();
+			return table_from.getId()+" - "+table_to.getId(); //$NON-NLS-1$
 		}
 	}
 	
@@ -289,7 +290,7 @@ public class JoinMeta extends ChangedFlag implements Cloneable, XMLInterface, Ch
 	
 	public String getJoin()
 	{
-		String join="";
+		String join=""; //$NON-NLS-1$
 		
 		if (complex_join!=null)
 		{
@@ -300,7 +301,7 @@ public class JoinMeta extends ChangedFlag implements Cloneable, XMLInterface, Ch
 		{
 			PhysicalColumn frf = getFieldFrom();
 			PhysicalColumn tof = getFieldTo();
-			join=frf.getTableColumn()+" = "+tof.getTableColumn();
+			join=frf.getTableColumn()+" = "+tof.getTableColumn(); //$NON-NLS-1$
 		}
 		
 		return join;

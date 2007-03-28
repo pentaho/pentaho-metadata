@@ -14,6 +14,7 @@ package org.pentaho.pms.schema;
 
 import java.util.List;
 
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.schema.concept.types.datatype.DataTypeSettings;
 import org.pentaho.pms.schema.olap.OlapCube;
@@ -46,10 +47,10 @@ public class MondrianModelExporter
     {
         StringBuffer xml = new StringBuffer(10000);
 
-        xml.append("<Schema ");
-        xml.append("name=\"");
+        xml.append("<Schema "); //$NON-NLS-1$
+        xml.append("name=\""); //$NON-NLS-1$
         XMLHandler.appendReplacedChars(xml, businessModel.getDisplayName(locale));
-        xml.append("\">");
+        xml.append("\">"); //$NON-NLS-1$
         xml.append(Const.CR);
         
         List olapDimensions = businessModel.getOlapDimensions();
@@ -57,42 +58,42 @@ public class MondrianModelExporter
         {
             OlapDimension olapDimension = (OlapDimension) olapDimensions.get(d);
             
-            xml.append("  <Dimension");
+            xml.append("  <Dimension"); //$NON-NLS-1$
 
-            xml.append(" name=\"");
+            xml.append(" name=\""); //$NON-NLS-1$
             XMLHandler.appendReplacedChars(xml, olapDimension.getName());
-            xml.append("\"");
+            xml.append("\""); //$NON-NLS-1$
             
             if (olapDimension.isTimeDimension())
             {
-                xml.append(" type=\"");
-                XMLHandler.appendReplacedChars(xml, "TimeDimension");
-                xml.append("\"");
+                xml.append(" type=\""); //$NON-NLS-1$
+                XMLHandler.appendReplacedChars(xml, "TimeDimension"); //$NON-NLS-1$
+                xml.append("\""); //$NON-NLS-1$
             }
-            xml.append(">");
+            xml.append(">"); //$NON-NLS-1$
             xml.append(Const.CR);
             
             List olapHierarchies = olapDimension.getHierarchies();
             for (int h=0;h<olapHierarchies.size();h++)
             {
                 OlapHierarchy olapHierarchy = (OlapHierarchy) olapHierarchies.get(h);
-                xml.append("    <Hierarchy");
+                xml.append("    <Hierarchy"); //$NON-NLS-1$
 
-                xml.append(" hasAll=\"");
-                xml.append(olapHierarchy.isHavingAll()?"true":"false");
-                xml.append("\"");
+                xml.append(" hasAll=\""); //$NON-NLS-1$
+                xml.append(olapHierarchy.isHavingAll()?"true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
+                xml.append("\""); //$NON-NLS-1$
                 
-                xml.append(" primaryKey=\"");
+                xml.append(" primaryKey=\""); //$NON-NLS-1$
                 xml.append(olapHierarchy.getPrimaryKey().getFormula());
-                xml.append("\"");
-                xml.append(">");
+                xml.append("\""); //$NON-NLS-1$
+                xml.append(">"); //$NON-NLS-1$
                 xml.append(Const.CR);
                 
-                xml.append("      <Table");
-                xml.append(" name=\"");
+                xml.append("      <Table"); //$NON-NLS-1$
+                xml.append(" name=\""); //$NON-NLS-1$
                 XMLHandler.appendReplacedChars(xml, olapHierarchy.getBusinessTable().getTargetTable());
-                xml.append("\"");
-                xml.append("/>");
+                xml.append("\""); //$NON-NLS-1$
+                xml.append("/>"); //$NON-NLS-1$
                 xml.append(Const.CR);
 
                 List hierarchyLevels = olapHierarchy.getHierarchyLevels();
@@ -100,64 +101,64 @@ public class MondrianModelExporter
                 {
                     OlapHierarchyLevel olapHierarchyLevel = (OlapHierarchyLevel) hierarchyLevels.get(hl);
 
-                    xml.append("      <Level");
-                    xml.append(" name=\"");
+                    xml.append("      <Level"); //$NON-NLS-1$
+                    xml.append(" name=\""); //$NON-NLS-1$
                     XMLHandler.appendReplacedChars(xml, olapHierarchyLevel.getName());
-                    xml.append("\"");
+                    xml.append("\""); //$NON-NLS-1$
                     
-                    xml.append(" column=\"");
+                    xml.append(" column=\""); //$NON-NLS-1$
                     XMLHandler.appendReplacedChars(xml, olapHierarchyLevel.getReferenceColumn().getFormula());
-                    xml.append("\"");
+                    xml.append("\""); //$NON-NLS-1$
 
-                    xml.append(" uniqueMembers=\"");
-                    XMLHandler.appendReplacedChars(xml, olapHierarchyLevel.isHavingUniqueMembers()?"true":"false");
-                    xml.append("\"");
-                    xml.append(">");
+                    xml.append(" uniqueMembers=\""); //$NON-NLS-1$
+                    XMLHandler.appendReplacedChars(xml, olapHierarchyLevel.isHavingUniqueMembers()?"true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
+                    xml.append("\""); //$NON-NLS-1$
+                    xml.append(">"); //$NON-NLS-1$
                     xml.append(Const.CR);
                     
                     List businessColumns = olapHierarchyLevel.getBusinessColumns();
                     for (int i=0;i<businessColumns.size();i++)
                     {
                         BusinessColumn businessColumn = (BusinessColumn) businessColumns.get(i);
-                        xml.append("        <Property");
+                        xml.append("        <Property"); //$NON-NLS-1$
 
-                        xml.append(" name=\"");
+                        xml.append(" name=\""); //$NON-NLS-1$
                         XMLHandler.appendReplacedChars(xml, businessColumn.getDisplayName(locale));
-                        xml.append("\"");
+                        xml.append("\""); //$NON-NLS-1$
                         
-                        xml.append(" column=\"");
+                        xml.append(" column=\""); //$NON-NLS-1$
                         XMLHandler.appendReplacedChars(xml, businessColumn.getFormula());
-                        xml.append("\"");
+                        xml.append("\""); //$NON-NLS-1$
 
                         DataTypeSettings dataType = businessColumn.getDataType();
                         String typeDesc = null;
                         switch(dataType.getType())
                         {
-                        case DataTypeSettings.DATA_TYPE_STRING:  typeDesc = "String"; break;
-                        case DataTypeSettings.DATA_TYPE_NUMERIC: typeDesc = "Numeric"; break;
-                        case DataTypeSettings.DATA_TYPE_BOOLEAN: typeDesc = "Boolean"; break;
-                        case DataTypeSettings.DATA_TYPE_DATE:    typeDesc = "Date"; break;
+                        case DataTypeSettings.DATA_TYPE_STRING:  typeDesc = "String"; break; //$NON-NLS-1$
+                        case DataTypeSettings.DATA_TYPE_NUMERIC: typeDesc = "Numeric"; break; //$NON-NLS-1$
+                        case DataTypeSettings.DATA_TYPE_BOOLEAN: typeDesc = "Boolean"; break; //$NON-NLS-1$
+                        case DataTypeSettings.DATA_TYPE_DATE:    typeDesc = "Date"; break; //$NON-NLS-1$
                         }
                         
                         if (typeDesc!=null)
                         {
-                            xml.append(" type=\"");
+                            xml.append(" type=\""); //$NON-NLS-1$
                             XMLHandler.appendReplacedChars(xml, typeDesc);
-                            xml.append("\"");
+                            xml.append("\""); //$NON-NLS-1$
                         }
 
-                        xml.append("/>");
+                        xml.append("/>"); //$NON-NLS-1$
                         xml.append(Const.CR);
                     }
 
-                    xml.append("      </Level>").append(Const.CR);
+                    xml.append("      </Level>").append(Const.CR); //$NON-NLS-1$
 
                 }
 
-                xml.append("    </Hierarchy>").append(Const.CR);
+                xml.append("    </Hierarchy>").append(Const.CR); //$NON-NLS-1$
             }
             
-            xml.append("  </Dimension>").append(Const.CR);
+            xml.append("  </Dimension>").append(Const.CR); //$NON-NLS-1$
             
         }
         
@@ -168,19 +169,19 @@ public class MondrianModelExporter
         {
             OlapCube olapCube = (OlapCube) olapCubes.get(c);
             
-            xml.append("  <Cube");
+            xml.append("  <Cube"); //$NON-NLS-1$
             
-            xml.append(" name=\"");
+            xml.append(" name=\""); //$NON-NLS-1$
             XMLHandler.appendReplacedChars(xml, olapCube.getName());
-            xml.append("\"");
-            xml.append(">").append(Const.CR);
+            xml.append("\""); //$NON-NLS-1$
+            xml.append(">").append(Const.CR); //$NON-NLS-1$
 
-            xml.append("    <Table");
+            xml.append("    <Table"); //$NON-NLS-1$
             
-            xml.append(" name=\"");
+            xml.append(" name=\""); //$NON-NLS-1$
             XMLHandler.appendReplacedChars(xml, olapCube.getBusinessTable().getTargetTable());
-            xml.append("\"");
-            xml.append("/>").append(Const.CR);
+            xml.append("\""); //$NON-NLS-1$
+            xml.append("/>").append(Const.CR); //$NON-NLS-1$
 
             //  DIMENSION USAGE
             //
@@ -189,15 +190,15 @@ public class MondrianModelExporter
             {
                 OlapDimensionUsage usage = (OlapDimensionUsage) usages.get(u);
                 
-                xml.append("    <DimensionUsage");
+                xml.append("    <DimensionUsage"); //$NON-NLS-1$
                 
-                xml.append(" name=\"");
+                xml.append(" name=\""); //$NON-NLS-1$
                 XMLHandler.appendReplacedChars(xml, usage.getName());
-                xml.append("\"");
+                xml.append("\""); //$NON-NLS-1$
 
-                xml.append(" source=\"");
+                xml.append(" source=\""); //$NON-NLS-1$
                 XMLHandler.appendReplacedChars(xml, usage.getOlapDimension().getName());
-                xml.append("\"");
+                xml.append("\""); //$NON-NLS-1$
 
                 // To know the foreign key, look up the relationship between the cube table and the dimension table...
                 BusinessTable dimTable = usage.getOlapDimension().findBusinessTable();
@@ -216,15 +217,15 @@ public class MondrianModelExporter
                         keyColumn = relationshipMeta.getFieldFrom();
                     }
                     
-                    xml.append(" foreignKey=\"");
+                    xml.append(" foreignKey=\""); //$NON-NLS-1$
                     XMLHandler.appendReplacedChars(xml, keyColumn.getFormula());
-                    xml.append("\"");
+                    xml.append("\""); //$NON-NLS-1$
                 }
                 else
                 {
-                    throw new Exception("Can't create model!\nThere is no relationship between tables ["+dimTable.getDisplayName(locale)+"] and ["+cubeTable+"]");
+                    throw new Exception(Messages.getString("MondrianModelExporter.ERROR_0001_ERROR_NO_RELATIONSHIP", dimTable.getDisplayName(locale),cubeTable.toString())); //$NON-NLS-1$  
                 }
-                xml.append("/>").append(Const.CR);
+                xml.append("/>").append(Const.CR); //$NON-NLS-1$
             }
             
             // MEASURES
@@ -235,51 +236,51 @@ public class MondrianModelExporter
                 OlapMeasure measure = (OlapMeasure) measures.get(m);
                 BusinessColumn businessColumn = measure.getBusinessColumn();
                 
-                xml.append("    <Measure");
+                xml.append("    <Measure"); //$NON-NLS-1$
 
-                xml.append(" name=\"");
+                xml.append(" name=\""); //$NON-NLS-1$
                 XMLHandler.appendReplacedChars(xml, businessColumn.getDisplayName(locale));
-                xml.append("\"");   
+                xml.append("\"");    //$NON-NLS-1$
 
-                xml.append(" column=\"");
+                xml.append(" column=\""); //$NON-NLS-1$
                 XMLHandler.appendReplacedChars(xml, businessColumn.getFormula());
-                xml.append("\"");   
+                xml.append("\"");    //$NON-NLS-1$
 
                 AggregationSettings aggregationType = businessColumn.getAggregationType();
                 String typeDesc=null;
                 switch(aggregationType.getType())
                 {
-                case AggregationSettings.TYPE_AGGREGATION_NONE            : typeDesc="none"; break;
-                case AggregationSettings.TYPE_AGGREGATION_SUM             : typeDesc="sum"; break;
-                case AggregationSettings.TYPE_AGGREGATION_AVERAGE         : typeDesc="avg"; break;
-                case AggregationSettings.TYPE_AGGREGATION_COUNT           : typeDesc="count"; break;
-                case AggregationSettings.TYPE_AGGREGATION_COUNT_DISTINCT  : typeDesc="distinct count"; break;
-                case AggregationSettings.TYPE_AGGREGATION_MINIMUM         : typeDesc="min"; break;
-                case AggregationSettings.TYPE_AGGREGATION_MAXIMUM         : typeDesc="max"; break;
+                case AggregationSettings.TYPE_AGGREGATION_NONE            : typeDesc="none"; break; //$NON-NLS-1$
+                case AggregationSettings.TYPE_AGGREGATION_SUM             : typeDesc="sum"; break; //$NON-NLS-1$
+                case AggregationSettings.TYPE_AGGREGATION_AVERAGE         : typeDesc="avg"; break; //$NON-NLS-1$
+                case AggregationSettings.TYPE_AGGREGATION_COUNT           : typeDesc="count"; break; //$NON-NLS-1$
+                case AggregationSettings.TYPE_AGGREGATION_COUNT_DISTINCT  : typeDesc="distinct count"; break; //$NON-NLS-1$
+                case AggregationSettings.TYPE_AGGREGATION_MINIMUM         : typeDesc="min"; break; //$NON-NLS-1$
+                case AggregationSettings.TYPE_AGGREGATION_MAXIMUM         : typeDesc="max"; break; //$NON-NLS-1$
                 }
                 
                 if (typeDesc!=null)
                 {
-                    xml.append(" aggregator=\"");
+                    xml.append(" aggregator=\""); //$NON-NLS-1$
                     XMLHandler.appendReplacedChars(xml, typeDesc);
-                    xml.append("\"");
+                    xml.append("\""); //$NON-NLS-1$
                 }
                 
                 String formatString = businessColumn.getMask();
-                if (Const.isEmpty(formatString)) formatString = "Standard";
+                if (Const.isEmpty(formatString)) formatString = "Standard"; //$NON-NLS-1$
 
-                xml.append(" formatString=\"");
+                xml.append(" formatString=\""); //$NON-NLS-1$
                 XMLHandler.appendReplacedChars(xml, formatString);
-                xml.append("\"");
+                xml.append("\""); //$NON-NLS-1$
                 
-                xml.append("/>").append(Const.CR);
+                xml.append("/>").append(Const.CR); //$NON-NLS-1$
             }
             
-            xml.append("  </Cube>").append(Const.CR);
+            xml.append("  </Cube>").append(Const.CR); //$NON-NLS-1$
         }
 
 
-        xml.append("</Schema>");
+        xml.append("</Schema>"); //$NON-NLS-1$
 
         return xml.toString();
     }

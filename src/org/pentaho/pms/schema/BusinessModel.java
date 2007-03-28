@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.Vector;
 
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
@@ -115,7 +116,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
      */
     public String getModelElementDescription()
     {
-        return "business model";
+        return Messages.getString("BusinessModel.USER_DESCRIPTION"); //$NON-NLS-1$
     }
 
     /**
@@ -622,7 +623,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
         for (int p = 0; p < paths.size(); p++)
         {
             Path pth = (Path) paths.get(p);
-            System.out.println("   #" + p + " : " + pth + " (" + pth.score() + ")");
+            System.out.println("   #" + p + " : " + pth + " (" + pth.score() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         }
         return paths;
     }
@@ -784,7 +785,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
                 }
                 else
                 {
-                    paths.add((Path) path.clone());
+                    paths.add(path.clone());
                 }
 
                 path.removeRelationship(); // Undo this possibility
@@ -846,31 +847,31 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
     {
         String sql = null;
 
-        BusinessTable businessTables[] = path.getUsedTables();
+        BusinessTable usedBusinessTables[] = path.getUsedTables();
         if (path.size() == 0)
         {
             // just a selection from 1 table: pick any column...
             if (selectedColumns.length > 0) // Otherwise, why bother, right?
             {
-                businessTables = new BusinessTable[] { selectedColumns[0].getBusinessTable() };
+                usedBusinessTables = new BusinessTable[] { selectedColumns[0].getBusinessTable() };
             }
         }
 
-        if (businessTables.length > 0)
+        if (usedBusinessTables.length > 0)
         {
-            DatabaseMeta databaseMeta = businessTables[0].getPhysicalTable().getDatabaseMeta(); // just the first table
+            DatabaseMeta databaseMeta = usedBusinessTables[0].getPhysicalTable().getDatabaseMeta(); // just the first table
                                                                                                 // for now.
 
             // SELECT
             //
-            sql = "SELECT ";
+            sql = "SELECT "; //$NON-NLS-1$
 
             // 
             // Add the fields...
             // 
             boolean group = hasFactsInIt(selectedColumns);
 
-            if (!group) sql += "DISTINCT ";
+            if (!group) sql += "DISTINCT "; //$NON-NLS-1$
             sql += Const.CR;
 
             for (int i = 0; i < selectedColumns.length; i++)
@@ -878,11 +879,11 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
                 BusinessColumn businessColumn = selectedColumns[i];
 
                 if (i > 0)
-                    sql += "         ,";
+                    sql += "         ,"; //$NON-NLS-1$
                 else
-                    sql += "          ";
+                    sql += "          "; //$NON-NLS-1$
                 sql += businessColumn.getFunctionTableAndColumnForSQL(locale);
-                sql += " AS ";
+                sql += " AS "; //$NON-NLS-1$
                 if (useDisplayNames)
                 {
                     sql += databaseMeta.quoteField(businessColumn.getDisplayName(locale));
@@ -897,19 +898,19 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
             // FROM
             //
-            sql += "FROM " + Const.CR;
-            for (int i = 0; i < businessTables.length; i++)
+            sql += "FROM " + Const.CR; //$NON-NLS-1$
+            for (int i = 0; i < usedBusinessTables.length; i++)
             {
-                BusinessTable businessTable = businessTables[i];
+                BusinessTable businessTable = usedBusinessTables[i];
 
                 if (i > 0)
-                    sql += "         ,";
+                    sql += "         ,"; //$NON-NLS-1$
                 else
-                    sql += "          ";
+                    sql += "          "; //$NON-NLS-1$
                 String schemaName = null;
                 if (businessTable.getTargetSchema() != null) schemaName = databaseMeta.quoteField(businessTable.getTargetSchema());
                 String tableName = databaseMeta.quoteField(businessTable.getTargetTable());
-                sql += databaseMeta.getSchemaTableCombination(schemaName, tableName) + " "
+                sql += databaseMeta.getSchemaTableCombination(schemaName, tableName) + " " //$NON-NLS-1$
                         + databaseMeta.quoteField(businessTable.getDisplayName(locale));
                 sql += Const.CR;
             }
@@ -924,15 +925,15 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
                 {
                     if (!whereAdded)
                     {
-                        sql += "WHERE " + Const.CR;
+                        sql += "WHERE " + Const.CR; //$NON-NLS-1$
                         whereAdded = true;
                     }
                     RelationshipMeta relation = path.getRelationship(i);
 
                     if (nr > 0)
-                        sql += "      AND ";
+                        sql += "      AND "; //$NON-NLS-1$
                     else
-                        sql += "          ";
+                        sql += "          "; //$NON-NLS-1$
                     sql += relation.getJoin(locale);
                     sql += Const.CR;
                 }
@@ -954,25 +955,25 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
                     {
                         if (!whereAdded)
                         {
-                            sql += "WHERE " + Const.CR;
+                            sql += "WHERE " + Const.CR; //$NON-NLS-1$
                             whereAdded = true;
                             justOpened = true;
                         }
                         else
                             if (!bracketOpen)
                             {
-                                sql += "      AND ( " + Const.CR;
+                                sql += "      AND ( " + Const.CR; //$NON-NLS-1$
                                 bracketOpen = true;
                                 justOpened = true;
                             }
-                        sql += "             " + conditions[i].getWhereClause(locale, !justOpened);
+                        sql += "             " + conditions[i].getWhereClause(locale, !justOpened); //$NON-NLS-1$
                         sql += Const.CR;
                         justOpened = false;
                     }
                 }
                 if (bracketOpen)
                 {
-                    sql += "          )" + Const.CR;
+                    sql += "          )" + Const.CR; //$NON-NLS-1$
                 }
             }
 
@@ -990,14 +991,14 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
                     {
                         if (!groupByAdded)
                         {
-                            sql += "GROUP BY " + Const.CR;
+                            sql += "GROUP BY " + Const.CR; //$NON-NLS-1$
                             groupByAdded = true;
                         }
 
                         if (!first)
-                            sql += "         ,";
+                            sql += "         ,"; //$NON-NLS-1$
                         else
-                            sql += "          ";
+                            sql += "          "; //$NON-NLS-1$
                         first = false;
                         sql += businessColumn.getFunctionTableAndColumnForSQL(locale);
                         sql += Const.CR;
@@ -1017,17 +1018,17 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
                     if (!orderByAdded)
                     {
-                        sql += "ORDER BY " + Const.CR;
+                        sql += "ORDER BY " + Const.CR; //$NON-NLS-1$
                         orderByAdded = true;
                     }
 
                     if (!first)
-                        sql += "         ,";
+                        sql += "         ,"; //$NON-NLS-1$
                     else
-                        sql += "          ";
+                        sql += "          "; //$NON-NLS-1$
                     first = false;
                     sql += businessColumn.getFunctionTableAndColumnForSQL(locale);
-                    if (!orderBy[i].isAscending()) sql += " DESC";
+                    if (!orderBy[i].isAscending()) sql += " DESC"; //$NON-NLS-1$
                     sql += Const.CR;
                 }
             }
@@ -1047,7 +1048,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
                     {
                         if (!havingAdded)
                         {
-                            sql += "HAVING " + Const.CR;
+                            sql += "HAVING " + Const.CR; //$NON-NLS-1$
                             havingAdded = true;
                             justOpened = true;
                         }
@@ -1079,10 +1080,10 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
         tableInputMeta.setDatabaseMeta(databaseMeta);
         tableInputMeta.setSQL(sql);
         
-        TransMeta transMeta = TransPreviewFactory.generatePreviewTransformation(tableInputMeta, "Query");
+        TransMeta transMeta = TransPreviewFactory.generatePreviewTransformation(tableInputMeta, Messages.getString("BusinessModel.USER_TITLE_QUERY")); //$NON-NLS-1$
         transMeta.addDatabase(databaseMeta);
         
-        transMeta.setName("Query generated from model "+getName(locale));
+        transMeta.setName(Messages.getString("BusinessModel.USER_QUERY_GENERATED_FROM_MODEL", getName(locale))); //$NON-NLS-1$
         
         return transMeta;
     }
@@ -1095,12 +1096,12 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
         for (int i = 0; i < fields.length; i++)
         {
             BusinessTable businessTable = fields[i].getBusinessTable();
-            lookup.put(businessTable, "OK");
+            lookup.put(businessTable, "OK"); //$NON-NLS-1$
         }
         for (int i = 0; i < conditions.length; i++)
         {
             BusinessTable businessTable = conditions[i].getField().getBusinessTable();
-            lookup.put(businessTable, "OK");
+            lookup.put(businessTable, "OK"); //$NON-NLS-1$
         }
 
         Set keySet = lookup.keySet();
@@ -1128,7 +1129,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
             {
                 if (rel.isUsingTable(tabs[j]))
                 {
-                    lookup.put(rel, "OK");
+                    lookup.put(rel, "OK"); //$NON-NLS-1$
                 }
             }
         }
@@ -1412,10 +1413,10 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
             if (businessTable.getPhysicalTable().equals(physicalTable)) // This reference has to go
             {
                 // See if there are any relationships using this businesstable
-                RelationshipMeta[] relationships = findRelationshipsUsing(businessTable);
-                for (int r = 0; r < relationships.length; r++)
+                RelationshipMeta[] tableRelationships = findRelationshipsUsing(businessTable);
+                for (int r = 0; r < tableRelationships.length; r++)
                 {
-                    int idx = indexOfRelationship(relationships[r]);
+                    int idx = indexOfRelationship(tableRelationships[r]);
                     removeRelationship(idx);
                 }
                 // Then remove the business table
@@ -1560,7 +1561,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
         for (int i = 0; i < categoriesPath.size(); i++)
         {
             BusinessCategory businessCategory = (BusinessCategory) categoriesPath.get(i);
-            if (i > 0) pathString.append(" - ");
+            if (i > 0) pathString.append(" - "); //$NON-NLS-1$
             String categoryName = businessCategory.getDisplayName(locale);
             if (i + 1 == categoriesPath.size())
             {
@@ -1568,7 +1569,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
             }
             else
             {
-                pathString.append(Const.rightPad(" ", categoryName.length()));
+                pathString.append(Const.rightPad(" ", categoryName.length())); //$NON-NLS-1$
             }
         }
 
@@ -1593,7 +1594,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
             //
             if (!businessColumn.getPhysicalColumn().isHidden())
             {
-                String desc = Const.rightPad(" ", pathString.length()) + "  " + businessColumn.getDisplayName(locale);
+                String desc = Const.rightPad(" ", pathString.length()) + "  " + businessColumn.getDisplayName(locale); //$NON-NLS-1$ //$NON-NLS-2$
 
                 BusinessColumnString columnString = new BusinessColumnString(desc, strings.size(), businessColumn); // no column here!
                 strings.add(columnString);

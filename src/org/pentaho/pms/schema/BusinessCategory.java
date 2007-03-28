@@ -15,6 +15,7 @@ package org.pentaho.pms.schema;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
@@ -70,7 +71,7 @@ public class BusinessCategory extends ConceptUtilityBase implements ChangedFlagI
      */
     public String getModelElementDescription()
     {
-        return "business category";
+        return Messages.getString("BusinessCategory.USER_DESCRIPTION"); //$NON-NLS-1$
     }
     
     public Object clone() 
