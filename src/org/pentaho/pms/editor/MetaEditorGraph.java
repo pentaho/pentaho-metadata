@@ -55,13 +55,13 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Shell;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.PhysicalTable;
@@ -527,8 +527,8 @@ public class MetaEditorGraph extends Canvas implements Redrawable
                     default:
                         {
                             MessageBox mb = new MessageBox(shell, SWT.OK);
-                            mb.setMessage("Sorry, this item can't be placed onto the metaEditorGraph");
-                            mb.setText("Sorry");
+                            mb.setMessage(Messages.getString("MetaEditorGraph.USER_CANT_PLACE_ON_GRAPH")); //$NON-NLS-1$
+                            mb.setText(Messages.getString("MetaEditorGraph.USER_TITLE_ERROR")); //$NON-NLS-1$
                             mb.open();
                             return;
                         }
@@ -536,7 +536,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable
                 }
                 catch(Exception e)
                 {
-                    new ErrorDialog(shell, "Error in drag and drop", "There was an error dragging and dropping an object onto the metaEditorGraph", e);
+                    new ErrorDialog(shell, Messages.getString("MetaEditorGraph.USER_TITLE_DND_ERROR"), Messages.getString("MetaEditorGraph.USER_DND_ERROR"), e); //$NON-NLS-1$ //$NON-NLS-2$
                 }
 			}
 
@@ -553,7 +553,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable
                 BusinessModel activeModel = metaEditor.getSchemaMeta().getActiveModel();
                 if (activeModel==null) return;
                 
-				if ((int) e.character == 1) // CTRL-A
+				if ( e.character == 1) // CTRL-A
 				{
                     activeModel.selectAll();
 					redraw();
@@ -701,7 +701,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 		final BusinessTable bTable = activeModel.getTable(x, y, iconsize);
 		if (bTable != null) // We clicked on a Step!
 		{
-			Menu mPop = new Menu((Control) this);
+			Menu mPop = new Menu(this);
 			MenuItem miNewHop = null;
 			MenuItem miHideStep = null;
 
@@ -709,44 +709,44 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 			if (sels == 2)
 			{
 				miNewHop = new MenuItem(mPop, SWT.CASCADE);
-				miNewHop.setText("Add relationship");
+				miNewHop.setText(Messages.getString("MetaEditorGraph.USER_ADD_RELATIONSHIP")); //$NON-NLS-1$
 			}
 			MenuItem miEditBTable = new MenuItem(mPop, SWT.CASCADE);
-			miEditBTable.setText("Edit business table");
+			miEditBTable.setText(Messages.getString("MetaEditorGraph.USER_EDIT_BUSINESS_TABLE")); //$NON-NLS-1$
 			MenuItem miEditDesc = new MenuItem(mPop, SWT.CASCADE);
-			miEditDesc.setText("Edit business table description");
+			miEditDesc.setText(Messages.getString("MetaEditorGraph.USER_EDIT_BUSINESS_TABLE_DESC")); //$NON-NLS-1$
             MenuItem miEditPTable = new MenuItem(mPop, SWT.CASCADE);
-            miEditPTable.setText("Edit physical table "+bTable.getPhysicalTable().getDisplayName(activeLocale));
+            miEditPTable.setText(Messages.getString("MetaEditorGraph.USER_EDIT_PHYSICAL_TABLE", bTable.getPhysicalTable().getDisplayName(activeLocale))); //$NON-NLS-1$
 
 			MenuItem miDupeStep = new MenuItem(mPop, SWT.CASCADE);
-			miDupeStep.setText("Duplicate table");
+			miDupeStep.setText(Messages.getString("MetaEditorGraph.USER_DUPLICATE_TABLE")); //$NON-NLS-1$
 			MenuItem miDelStep = new MenuItem(mPop, SWT.CASCADE);
-			miDelStep.setText("Delete table");
+			miDelStep.setText(Messages.getString("MetaEditorGraph.USER_DELETE_TABLE")); //$NON-NLS-1$
 
 			// Allign & Distribute options...
 			if (sels > 1)
 			{
 				new MenuItem(mPop, SWT.SEPARATOR);
 				MenuItem miPopAD = new MenuItem(mPop, SWT.CASCADE);
-				miPopAD.setText("Allign / Distribute");
+				miPopAD.setText(Messages.getString("MetaEditorGraph.USER_ALIGN_DISTRIBUTE")); //$NON-NLS-1$
 
 				Menu mPopAD = new Menu(miPopAD);
 				MenuItem miPopALeft = new MenuItem(mPopAD, SWT.CASCADE);
-				miPopALeft.setText("Allign left");
+				miPopALeft.setText(Messages.getString("MetaEditorGraph.USER_ALIGN_LEFT")); //$NON-NLS-1$
 				MenuItem miPopARight = new MenuItem(mPopAD, SWT.CASCADE);
-				miPopARight.setText("Allign right");
+				miPopARight.setText(Messages.getString("MetaEditorGraph.USER_ALIGN_RIGHT")); //$NON-NLS-1$
 				MenuItem miPopATop = new MenuItem(mPopAD, SWT.CASCADE);
-				miPopATop.setText("Allign top");
+				miPopATop.setText(Messages.getString("MetaEditorGraph.USER_ALIGN_TOP")); //$NON-NLS-1$
 				MenuItem miPopABottom = new MenuItem(mPopAD, SWT.CASCADE);
-				miPopABottom.setText("Allign bottom");
+				miPopABottom.setText(Messages.getString("MetaEditorGraph.USER_ALIGN_BOTTOM")); //$NON-NLS-1$
 				new MenuItem(mPopAD, SWT.SEPARATOR);
 				MenuItem miPopDHoriz = new MenuItem(mPopAD, SWT.CASCADE);
-				miPopDHoriz.setText("Distribute horizontally");
+				miPopDHoriz.setText(Messages.getString("MetaEditorGraph.USER_DISTRIBUTE_HORIZ")); //$NON-NLS-1$
 				MenuItem miPopDVertic = new MenuItem(mPopAD, SWT.CASCADE);
-				miPopDVertic.setText("Distribute vertically");
+				miPopDVertic.setText(Messages.getString("MetaEditorGraph.USER_DISTRIBUTE_VERT")); //$NON-NLS-1$
 				new MenuItem(mPopAD, SWT.SEPARATOR);
 				MenuItem miPopSSnap = new MenuItem(mPopAD, SWT.CASCADE);
-				miPopSSnap.setText("Snap to grid (size " + Const.GRID_SIZE + ")");
+				miPopSSnap.setText(Messages.getString("MetaEditorGraph.USER_SNAP_TO_GRID", Integer.toString(Const.GRID_SIZE))); //$NON-NLS-1$ 
 				miPopAD.setMenu(mPopAD);
 
 				miPopALeft.addSelectionListener(new SelectionAdapter()
@@ -814,7 +814,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 			if (bTable.isDrawn() && !activeModel.isTableUsedInRelationships(bTable.getPhysicalTable().getId()))
 			{
 				miHideStep = new MenuItem(mPop, SWT.CASCADE);
-				miHideStep.setText("Hide step");
+				miHideStep.setText(Messages.getString("MetaEditorGraph.USER_HIDE_STEP")); //$NON-NLS-1$
 				miHideStep.addSelectionListener(new SelectionAdapter()
 				{
 					public void widgetSelected(SelectionEvent e)
@@ -896,14 +896,14 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 						if (!bTable.isSelected()) nrsels++;
 
 						MessageBox mb = new MessageBox(shell, SWT.YES | SWT.NO | SWT.ICON_WARNING);
-						mb.setText("WARNING!");
-						String message = "Do you want to delete the " + nrsels + " following tables?"+Const.CR;
+						mb.setText(Messages.getString("MetaEditorGraph.USER_WARNING")); //$NON-NLS-1$
+						String message = Messages.getString("MetaEditorGraph.USER_CONFRIM_DELETE_TABLES", Integer.toString(nrsels)); //$NON-NLS-1$ 
 						for (int i = activeModel.nrBusinessTables() - 1; i >= 0; i--)
 						{
 							BusinessTable tableinfo = activeModel.getBusinessTable(i);
 							if (tableinfo.isSelected() || bTable.equals(tableinfo))
 							{
-								message += "  --> " + tableinfo.getId() + Const.CR;
+								message += "   " + tableinfo.getId() + Const.CR; //$NON-NLS-1$
 							}
 						}
 
@@ -933,8 +933,8 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 			{
                 final BusinessModel model = metaEditor.getSchemaMeta().getActiveModel(); // not null because we found a relationship
                 
-				Menu mPop = new Menu((Control) this);
-				MenuItem miEditHop = new MenuItem(mPop, SWT.CASCADE); miEditHop.setText("Edit relationship");
+				Menu mPop = new Menu(this);
+				MenuItem miEditHop = new MenuItem(mPop, SWT.CASCADE); miEditHop.setText(Messages.getString("MetaEditorGraph.USER_EDIT_RELATIONSHIP")); //$NON-NLS-1$
                 miEditHop.addSelectionListener(new SelectionAdapter()
                 {
                     public void widgetSelected(SelectionEvent e)
@@ -944,7 +944,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable
                     }
                 });
                 
-				MenuItem miDelHop = new MenuItem(mPop, SWT.CASCADE); miDelHop.setText("Delete relationship");
+				MenuItem miDelHop = new MenuItem(mPop, SWT.CASCADE); miDelHop.setText(Messages.getString("MetaEditorGraph.USER_DELETE_RELATIONSHIP")); //$NON-NLS-1$
 				miDelHop.addSelectionListener(new SelectionAdapter()
 				{
 					public void widgetSelected(SelectionEvent e)
@@ -966,12 +966,12 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 				{
 					// Delete note
 					// Edit note
-					Menu mPop = new Menu((Control) this);
+					Menu mPop = new Menu(this);
 
 					MenuItem miNoteEdit = new MenuItem(mPop, SWT.CASCADE);
-					miNoteEdit.setText("Edit note");
+					miNoteEdit.setText(Messages.getString("MetaEditorGraph.USER_EDIT_NOTE")); //$NON-NLS-1$
 					MenuItem miNoteDel = new MenuItem(mPop, SWT.CASCADE);
-					miNoteDel.setText("Delete note");
+					miNoteDel.setText(Messages.getString("MetaEditorGraph.USER_DELETE_NOTE")); //$NON-NLS-1$
 
 					miNoteEdit.addSelectionListener(new SelectionAdapter()
 					{
@@ -1000,18 +1000,18 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 				else
 				{
 					// New note
-					Menu mPop = new Menu((Control) this);
+					Menu mPop = new Menu(this);
 
 					MenuItem miNoteNew = new MenuItem(mPop, SWT.CASCADE);
-					miNoteNew.setText("New note");
+					miNoteNew.setText(Messages.getString("MetaEditorGraph.USER_NEW_NOTE")); //$NON-NLS-1$
 					miNoteNew.addSelectionListener(new SelectionAdapter()
 					{
 						public void widgetSelected(SelectionEvent e)
 						{
 							selrect = null;
-							String title = "Notes";
-							String message = "Note text:";
-							EnterTextDialog dd = new EnterTextDialog(shell, title, message, "");
+							String title = Messages.getString("MetaEditorGraph.USER_TITLE_NOTES"); //$NON-NLS-1$
+							String message = Messages.getString("MetaEditorGraph.USER_NOTE_TEXT"); //$NON-NLS-1$
+							EnterTextDialog dd = new EnterTextDialog(shell, title, message, ""); //$NON-NLS-1$
 							String n = dd.open();
 							if (n != null)
 							{
@@ -1094,7 +1094,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable
                 }
             };
         
-        EnterTextDialog.editDescription(shell, descriptionInterface, "Table description dialog", "Table description:");
+        EnterTextDialog.editDescription(shell, descriptionInterface, Messages.getString("MetaEditorGraph.USER_TABLE_DESCRIPTION_DIALOG"), Messages.getString("MetaEditorGraph.USER_TABLE_DESCRIPTION")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public void paintControl(PaintEvent e)
@@ -1147,7 +1147,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable
             // Display the active locale in the right hand corner.
             org.eclipse.swt.graphics.Rectangle rect = gc.getClipping();
             gc.setFont( GUIResource.getInstance().getFontMedium() );
-            String localeMessage = "Locale : "+activeLocale;
+            String localeMessage = Messages.getString("MetaEditorGraph.USER_LOCALE", activeLocale); //$NON-NLS-1$
             org.eclipse.swt.graphics.Point messageSize = gc.textExtent(localeMessage);
             gc.drawText(localeMessage, rect.width - messageSize.x - 20, 10);
             
@@ -1198,9 +1198,9 @@ public class MetaEditorGraph extends Canvas implements Redrawable
             String message1, message2;
             switch(nrModels)
             {
-            case 0:  message1 = "There are no business models defined."; message2="Create one first to start drawing on it."; break;
-            case 1:  message1 = "There is one business model defined."; message2="Select it in the tree to show it over here."; break;
-            default: message1 = "There are "+nrModels+" business models available."; message2="Select one of them in the tree to view."; break;
+            case 0:  message1 = Messages.getString("MetaEditorGraph.USER_NO_BUSINESS_MODELS_DEFINED"); message2=Messages.getString("MetaEditorGraph.USER_CREATE_ONE_FIRST"); break; //$NON-NLS-1$ //$NON-NLS-2$
+            case 1:  message1 = Messages.getString("MetaEditorGraph.USER_ONE_BUSINESS_MODEL_DEFINED"); message2=Messages.getString("MetaEditorGraph.USER_SELECT_IN_TREE"); break; //$NON-NLS-1$ //$NON-NLS-2$
+            default: message1 = Messages.getString("MetaEditorGraph.USER_N_BUSINESS_MODELS_DEFINED", Integer.toString(nrModels)); message2=Messages.getString("MetaEditorGraph.USER_SELECT_ONE_IN_TREE"); break; //$NON-NLS-1$ //$NON-NLS-2$ 
             }
             gc.drawText(message1, 10,  10, true);
             gc.drawText(message2, 10, 20+h, true);
@@ -1384,9 +1384,9 @@ public class MetaEditorGraph extends Canvas implements Redrawable
             max = metaEditor.getSchemaMeta().getActiveModel().getMaximum();
         }
 		Point thumb = getThumb(area, max);
-		Point offset = getOffset(thumb, area);
+		Point off = getOffset(thumb, area);
 
-		return offset;
+		return off;
 
 	}
     
@@ -1415,8 +1415,8 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 
 	private void editNote(NotePadMeta ni)
 	{
-		String title = "Notes";
-		String message = "Note text:";
+		String title = Messages.getString("MetaEditorGraph.USER_TITLE_NOTES"); //$NON-NLS-1$
+		String message = Messages.getString("MetaEditorGraph.USER_NOTE_TEXT"); //$NON-NLS-1$
 		EnterTextDialog dd = new EnterTextDialog(shell, title, message, ni.getNote());
 		String n = dd.open();
 		if (n != null)
@@ -1433,7 +1433,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 	private void editRelationship(RelationshipMeta hopinfo)
 	{
 		String name = hopinfo.toString();
-		log.logDebug(toString(), "Editing relationship: " + name);
+		log.logDebug(toString(), Messages.getString("MetaEditorGraph.DEBUG_EDITING_RELATIONSHIP", name)); //$NON-NLS-1$
 		metaEditor.editRelationship(name);
 	}
 
