@@ -32,29 +32,29 @@ public class TestConcept
      */
     public static void main(String[] args)
     {
-        Concept baseConcept = new Concept("BaseConcept");
-        baseConcept.addProperty(new ConceptPropertyFont("field.font", new FontSettings("Arial", 10, false, false)));
+        Concept baseConcept = new Concept("BaseConcept"); //$NON-NLS-1$
+        baseConcept.addProperty(new ConceptPropertyFont("field.font", new FontSettings("Arial", 10, false, false))); //$NON-NLS-1$ //$NON-NLS-2$
 
-        Concept stringConcept = new Concept("StringConcept", baseConcept);
+        Concept stringConcept = new Concept("StringConcept", baseConcept); //$NON-NLS-1$
         stringConcept.addProperty(ConceptPropertyDataType.STRING);
-        stringConcept.addProperty(new ConceptPropertyNumber("field.data.length", 50));
-        stringConcept.addProperty(new ConceptPropertyFieldType("field.type", new FieldTypeSettings(FieldTypeSettings.TYPE_DIMENSION)));
+        stringConcept.addProperty(new ConceptPropertyNumber("field.data.length", 50)); //$NON-NLS-1$
+        stringConcept.addProperty(new ConceptPropertyFieldType("field.type", new FieldTypeSettings(FieldTypeSettings.TYPE_DIMENSION))); //$NON-NLS-1$
         
-        Concept nameConcept = new Concept("NameConcept", stringConcept);
-        nameConcept.addProperty(new ConceptPropertyNumber("field.data.length", 35));
+        Concept nameConcept = new Concept("NameConcept", stringConcept); //$NON-NLS-1$
+        nameConcept.addProperty(new ConceptPropertyNumber("field.data.length", 35)); //$NON-NLS-1$
         
         ArrayList values = new ArrayList(nameConcept.getPropertyInterfaces().values());
         for (int i = 0; i < values.size(); i++)
         {
             ConceptPropertyInterface property = (ConceptPropertyInterface) values.get(i);
-            System.out.println("["+property.getId()+" : "+property.getType()+"] --> "+property);
+            System.out.println("["+property.getId()+" : "+property.getType()+"] --> "+property); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
         
-        ConceptPropertyInterface lookupLength = stringConcept.getProperty("field.data.length");
+        ConceptPropertyInterface lookupLength = stringConcept.getProperty("field.data.length"); //$NON-NLS-1$
         if (lookupLength!=null)
         {
             BigDecimal length = (BigDecimal) lookupLength.getValue();
-            System.out.println("lookupLength = "+length.intValue());
+            System.out.println("lookupLength = "+length.intValue()); //$NON-NLS-1$
         }
     }
 }

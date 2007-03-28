@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.DefaultPropertyID;
@@ -97,7 +98,7 @@ public class NewPropertyDialog extends Dialog
 		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.MIN);
  		props.setLook(shell);
         
-        log.logDebug(this.getClass().getName(), "Opening dialog");
+        log.logDebug(this.getClass().getName(), Messages.getString("NewPropertyDialog.DEBUG_OPENING_DIALOG")); //$NON-NLS-1$
 
         int middle = 50;
         int margin = Const.MARGIN;
@@ -113,9 +114,9 @@ public class NewPropertyDialog extends Dialog
         // That way we know how low we can go...
         
         wOK=new Button(shell, SWT.PUSH);
-        wOK.setText(" &OK ");
+        wOK.setText(Messages.getString("NewPropertyDialog.USER_OK")); //$NON-NLS-1$
         wCancel=new Button(shell, SWT.PUSH);
-        wCancel.setText(" &Cancel ");
+        wCancel.setText(Messages.getString("NewPropertyDialog.USER_CANCEL")); //$NON-NLS-1$
         
         BaseStepDialog.positionBottomButtons(shell, new Button[] { wOK, wCancel }, Const.MARGIN, null);
 
@@ -126,7 +127,7 @@ public class NewPropertyDialog extends Dialog
         // Ask for an (optional) name for this property.
         //
         wName=new Text(shell, SWT.LEFT | SWT.BORDER);
-        wName.setToolTipText("Specify the name in case one of the defaults is not enough");
+        wName.setToolTipText(Messages.getString("NewPropertyDialog.USER_SPECIFY_NAME")); //$NON-NLS-1$
         props.setLook(wName);
         fdName=new FormData();
         fdName.left   = new FormAttachment(0, 0);
@@ -136,7 +137,7 @@ public class NewPropertyDialog extends Dialog
         wName.setEnabled(false);
 
         wNameLabel=new Label(shell, SWT.LEFT);
-        wNameLabel.setText("The property name...");
+        wNameLabel.setText(Messages.getString("NewPropertyDialog.USER_PROPERTY_NAME")); //$NON-NLS-1$
         props.setLook(wNameLabel);
         fdNameLabel=new FormData();
         fdNameLabel.left   = new FormAttachment(0, 0);
@@ -148,7 +149,7 @@ public class NewPropertyDialog extends Dialog
         //
         wUseDefault=new Button(shell, SWT.CHECK);
         props.setLook(wUseDefault);
-        wUseDefault.setText("Use a default property");
+        wUseDefault.setText(Messages.getString("NewPropertyDialog.USER_USE_DEFAULT_PROPERTY")); //$NON-NLS-1$
         wUseDefault.setSelection(true);
         fdUseDefault=new FormData();
         fdUseDefault.top  = new FormAttachment(wNameLabel, margin*2);
@@ -181,7 +182,7 @@ public class NewPropertyDialog extends Dialog
         // ::::::::::::::::::::::::::::
 
         wTypeLabel=new Label(shell, SWT.LEFT);
-        wTypeLabel.setText("The property type...");
+        wTypeLabel.setText(Messages.getString("NewPropertyDialog.USER_PROPERTY_TYPE")); //$NON-NLS-1$
         props.setLook(wTypeLabel);
         fdTypeLabel=new FormData();
         fdTypeLabel.left   = new FormAttachment(middle, margin);
@@ -294,7 +295,7 @@ public class NewPropertyDialog extends Dialog
         if (concept==null) return null;
         
         // First ask for a new property
-        NewPropertyDialog newPropertyDialog = new NewPropertyDialog(shell, "New Property", "Enter the name and type of the new property");
+        NewPropertyDialog newPropertyDialog = new NewPropertyDialog(shell, Messages.getString("NewPropertyDialog.USER_NEW_PROPERTY"), Messages.getString("NewPropertyDialog.USER_ENTER_PROPERTY_NAME_TYPE")); //$NON-NLS-1$ //$NON-NLS-2$
         ConceptPropertyInterface property = newPropertyDialog.open();
         if (property!=null)
         {

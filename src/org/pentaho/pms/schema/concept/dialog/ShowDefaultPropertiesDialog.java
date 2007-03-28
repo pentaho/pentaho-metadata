@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.DefaultProperties;
 import org.pentaho.pms.schema.DefaultProperty;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
@@ -97,7 +98,7 @@ public class ShowDefaultPropertiesDialog extends Dialog
 		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.MIN);
  		props.setLook(shell);
         
-        log.logDebug(this.getClass().getName(), "Opening dialog");
+        log.logDebug(this.getClass().getName(), Messages.getString("ShowDefaultPropertiesDialog.DEBUG_OPENING_DIALOG")); //$NON-NLS-1$
 
 		ModifyListener lsMod = new ModifyListener() 
 		{
@@ -129,7 +130,7 @@ public class ShowDefaultPropertiesDialog extends Dialog
 
         // List line
         wlList=new Label(shell, SWT.LEFT);
-        wlList.setText("Subject");
+        wlList.setText(Messages.getString("ShowDefaultPropertiesDialog.USER_SUBJECT")); //$NON-NLS-1$
         props.setLook(wlList);
         fdlList=new FormData();
         fdlList.left = new FormAttachment(0, 0);
@@ -159,10 +160,10 @@ public class ShowDefaultPropertiesDialog extends Dialog
         // Add the table to the right of the listbox.
         ColumnInfo[] colinf=new ColumnInfo[]
             {
-              new ColumnInfo("Name",           ColumnInfo.COLUMN_TYPE_CCOMBO, DefaultPropertyID.getDefaultPropertyIDs()),
-              new ColumnInfo("Description",    ColumnInfo.COLUMN_TYPE_TEXT,   false),
-              new ColumnInfo("Property type",  ColumnInfo.COLUMN_TYPE_CCOMBO, ConceptPropertyType.getTypeDescriptions()),
-              new ColumnInfo("Default value",  ColumnInfo.COLUMN_TYPE_TEXT,   false),
+              new ColumnInfo(Messages.getString("ShowDefaultPropertiesDialog.USER_NAME"),           ColumnInfo.COLUMN_TYPE_CCOMBO, DefaultPropertyID.getDefaultPropertyIDs()), //$NON-NLS-1$
+              new ColumnInfo(Messages.getString("ShowDefaultPropertiesDialog.USER_DESCRIPTION"),    ColumnInfo.COLUMN_TYPE_TEXT,   false), //$NON-NLS-1$
+              new ColumnInfo(Messages.getString("ShowDefaultPropertiesDialog.USER_PROPERTY_TYPE"),  ColumnInfo.COLUMN_TYPE_CCOMBO, ConceptPropertyType.getTypeDescriptions()), //$NON-NLS-1$
+              new ColumnInfo(Messages.getString("ShowDefaultPropertiesDialog.USER_DEFAULT_VALUE"),  ColumnInfo.COLUMN_TYPE_TEXT,   false), //$NON-NLS-1$
             };
         
         wFields=new TableView(shell, 
@@ -175,9 +176,9 @@ public class ShowDefaultPropertiesDialog extends Dialog
                               );
 
         wOK=new Button(shell, SWT.PUSH);
-		wOK.setText(" &OK ");
+		wOK.setText(Messages.getString("ShowDefaultPropertiesDialog.USER_OK")); //$NON-NLS-1$
 		wCancel=new Button(shell, SWT.PUSH);
-		wCancel.setText(" &Cancel ");
+		wCancel.setText(Messages.getString("ShowDefaultPropertiesDialog.USER_CANCEL")); //$NON-NLS-1$
         
         BaseStepDialog.positionBottomButtons(shell, new Button[] { wOK, wCancel }, margin, null);
 

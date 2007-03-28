@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.pentaho.pms.locale.Locales;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
@@ -95,19 +96,19 @@ public class EditConceptPropertyDialog extends Dialog
 		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.MIN);
  		props.setLook(shell);
         
-        log.logDebug(this.getClass().getName(), "Opening dialog");
+        log.logDebug(this.getClass().getName(), Messages.getString("EditConceptPropertyDialog.DEBUG_OPENING_DIALOG")); //$NON-NLS-1$
 
 		FormLayout formLayout = new FormLayout ();
 		formLayout.marginWidth  = Const.FORM_MARGIN;
 		formLayout.marginHeight = Const.FORM_MARGIN;
 
 		shell.setLayout(formLayout);
-		shell.setText("Concept property editor ("+type.getDescription()+")");
+		shell.setText(Messages.getString("EditConceptPropertyDialog.USER_CONCEPT_PROPERY_EDITOR", type.getDescription())); //$NON-NLS-1$ 
 		
         wOK=new Button(shell, SWT.PUSH);
-        wOK.setText(" &OK ");
+        wOK.setText(Messages.getString("EditConceptPropertyDialog.USER_OK")); //$NON-NLS-1$
         wCancel=new Button(shell, SWT.PUSH);
-        wCancel.setText(" &Cancel ");
+        wCancel.setText(Messages.getString("EditConceptPropertyDialog.USER_CANCEL")); //$NON-NLS-1$
         
         BaseStepDialog.positionBottomButtons(shell, new Button[] { wOK, wCancel }, Const.MARGIN, null);
         
@@ -119,7 +120,7 @@ public class EditConceptPropertyDialog extends Dialog
         FormLayout compLayout = new FormLayout();
         composite.setLayout(compLayout);
         
-        String description = "Enter the value for property '"+property.getId()+"'";
+        String description = Messages.getString("EditConceptPropertyDialog.USER_ENTER_PROPERTY_VALUE", property.getId()); //$NON-NLS-1$ 
         ConceptDefaultsDialog.addControl(composite, concept, description, property, null, conceptPropertyInterfaces, locales, securityReference);
 
         composite.layout(true, true);

@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.pentaho.pms.locale.Locales;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
@@ -108,7 +109,7 @@ public class ConceptDialog extends Dialog
 		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.MIN);
  		props.setLook(shell);
         
-        log.logDebug(this.getClass().getName(), "Opening dialog");
+        log.logDebug(this.getClass().getName(), Messages.getString("ConceptDialog.DEBUG_OPENING_DIALOG")); //$NON-NLS-1$
 
         int middle = props.getMiddlePct();
         int margin = Const.MARGIN;
@@ -116,16 +117,16 @@ public class ConceptDialog extends Dialog
         // put the buttons below to get a base-line to work from...
         //
         wOK=new Button(shell, SWT.PUSH);
-        wOK.setText(" &OK ");
+        wOK.setText(Messages.getString("ConceptDialog.USER_OK")); //$NON-NLS-1$
         wCancel=new Button(shell, SWT.PUSH);
-        wCancel.setText(" &Cancel ");
+        wCancel.setText(Messages.getString("ConceptDialog.USER_CANCEL")); //$NON-NLS-1$
         
         BaseStepDialog.positionBottomButtons(shell, new Button[] { wOK, wCancel }, Const.MARGIN, null);
 
         // Ask for an ID for this model element
         //
         wlId=new Label(shell, SWT.RIGHT);
-        wlId.setText("The ID of this model element: ");
+        wlId.setText(Messages.getString("ConceptDialog.USER_MODEL_ELEMENT_ID")); //$NON-NLS-1$
         props.setLook(wlId);
         fdlId=new FormData();
         fdlId.left = new FormAttachment(0, 0);
@@ -164,13 +165,13 @@ public class ConceptDialog extends Dialog
         // Add a property
         Button wAddProperty = new Button(wGroup, SWT.PUSH);
         props.setLook(wAddProperty);
-        wAddProperty.setText("Add property");
+        wAddProperty.setText(Messages.getString("ConceptDialog.USER_ADD_PROPERTY")); //$NON-NLS-1$
         wAddProperty.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent arg0) { addProperty(); } } );
         
         // Delete a property
         Button wDelProperty = new Button(wGroup, SWT.PUSH);
         props.setLook(wDelProperty);
-        wDelProperty.setText("Delete property");
+        wDelProperty.setText(Messages.getString("ConceptDialog.USER_DELETE_PROPERTY")); //$NON-NLS-1$
         wDelProperty.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent arg0) { if (delChildProperty(shell, conceptInterface)) refreshConceptProperties(); }});
 
         BaseStepDialog.positionBottomButtons(wGroup, new Button[] { wAddProperty, wDelProperty }, Const.MARGIN, wId);
@@ -232,14 +233,14 @@ public class ConceptDialog extends Dialog
            DefaultPropertyID defaultId = DefaultPropertyID.findDefaultPropertyID(allIDs[i]);
            if (defaultId!=null)
            {
-               choices[i]+=" : "+defaultId.getDescription();
+               choices[i]+=" : "+defaultId.getDescription(); //$NON-NLS-1$
            }
            
-           choices[i]+=" ("+property.getType().getDescription()+")";
+           choices[i]+=" ("+property.getType().getDescription()+")"; //$NON-NLS-1$ //$NON-NLS-2$
        }
        
        // Display this list of choices...
-       EnterSelectionDialog selectionDialog = new EnterSelectionDialog(shell, choices, "Delete property", "Select the properties to delete");
+       EnterSelectionDialog selectionDialog = new EnterSelectionDialog(shell, choices, Messages.getString("ConceptDialog.USER_DELETE_PROPERTY"), Messages.getString("ConceptDialog.USER_SELECT_PROPERTIES_TO_DELETE")); //$NON-NLS-1$ //$NON-NLS-2$
        selectionDialog.setMulti(true);
        if (selectionDialog.open()!=null)
        {
@@ -311,7 +312,7 @@ public class ConceptDialog extends Dialog
                 }
                 catch(Exception exception)
                 {
-                    new ErrorDialog(shell, "Error", "There was an error setting a property", exception);
+                    new ErrorDialog(shell, Messages.getString("ConceptDialog.USER_TITLE_ERROR"), Messages.getString("ConceptDialog.USER_ERROR_SETTING_PROPERTY"), exception); //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }
         };
@@ -358,7 +359,7 @@ public class ConceptDialog extends Dialog
             }
             catch (ObjectAlreadyExistsException e)
             {
-                new ErrorDialog(shell, "Error", "A property with ID '"+id+"' already exist.", e);
+                new ErrorDialog(shell, Messages.getString("ConceptDialog.USER_TITLE_ERROR"), Messages.getString("ConceptDialog.USER_ERROR_PROPERTY_ID_EXISTS", id), e); //$NON-NLS-1$ //$NON-NLS-2$ 
                 return;
             }
         }
