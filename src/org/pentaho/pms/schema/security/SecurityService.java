@@ -45,9 +45,9 @@ public class SecurityService extends ChangedFlag implements Cloneable
       Messages.getString("SecurityService.USER_ROLES"), //$NON-NLS-1$
       Messages.getString("SecurityService.USER_ACLS"), }; //$NON-NLS-1$
     
-    public static final String ACTION   = Messages.getString("SecurityService.USER_AC"); //$NON-NLS-1$
-    public static final String USERNAME = Messages.getString("SecurityService.9"); //$NON-NLS-1$
-    public static final String PASSWORD = Messages.getString("SecurityService.10"); //$NON-NLS-1$
+    public static final String ACTION   = "action"; //$NON-NLS-1$
+    public static final String USERNAME = "userid"; //$NON-NLS-1$
+    public static final String PASSWORD = "password"; //$NON-NLS-1$
     
     private String serviceURL;
     private String detailsServiceName;

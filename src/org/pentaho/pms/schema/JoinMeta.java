@@ -28,7 +28,6 @@
 package org.pentaho.pms.schema;
 import java.util.ArrayList;
 
-import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.util.Const;
 import org.w3c.dom.Node;
 

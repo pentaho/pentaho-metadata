@@ -21,7 +21,6 @@ import org.pentaho.pms.cwm.pentaho.meta.core.CwmExpression;
 import org.pentaho.pms.cwm.pentaho.meta.core.CwmPackage;
 import org.pentaho.pms.cwm.pentaho.meta.relational.CwmColumn;
 import org.pentaho.pms.cwm.pentaho.meta.relational.CwmTable;
-import org.pentaho.pms.messages.Messages;
 
 import be.ibridge.kettle.core.Row;
 import be.ibridge.kettle.core.value.Value;
