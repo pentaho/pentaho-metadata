@@ -21,6 +21,7 @@ import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLConnection;
 
+import org.pentaho.pms.messages.Messages;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -37,12 +38,16 @@ public class SecurityService extends ChangedFlag implements Cloneable
     public static final int SERVICE_TYPE_ROLES  = 2;
     public static final int SERVICE_TYPE_ACLS   = 3;
     
-    public static final String[] serviceTypeCodes        = new String[] { "all", "users", "roles", "acls", };
-    public static final String[] serviceTypeDescriptions = new String[] { "All", "Users", "Roles", "ACLs", };
+    public static final String[] serviceTypeCodes        = new String[] { "all", "users", "roles", "acls", }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    public static final String[] serviceTypeDescriptions = new String[] { 
+      Messages.getString("SecurityService.USER_ALL"), //$NON-NLS-1$
+      Messages.getString("SecurityService.USER_USERS"), //$NON-NLS-1$
+      Messages.getString("SecurityService.USER_ROLES"), //$NON-NLS-1$
+      Messages.getString("SecurityService.USER_ACLS"), }; //$NON-NLS-1$
     
-    public static final String ACTION   = "action";
-    public static final String USERNAME = "userid";
-    public static final String PASSWORD = "password";
+    public static final String ACTION   = Messages.getString("SecurityService.USER_AC"); //$NON-NLS-1$
+    public static final String USERNAME = Messages.getString("SecurityService.9"); //$NON-NLS-1$
+    public static final String PASSWORD = Messages.getString("SecurityService.10"); //$NON-NLS-1$
     
     private String serviceURL;
     private String detailsServiceName;
@@ -75,7 +80,7 @@ public class SecurityService extends ChangedFlag implements Cloneable
     public String toString()
     {
         if (hasService()) return detailsServiceName;
-        return "SecurityService";
+        return "SecurityService"; //$NON-NLS-1$
     }
     
     
@@ -257,7 +262,7 @@ public class SecurityService extends ChangedFlag implements Cloneable
         {
             return getContentFromFile();
         }
-        throw new Exception("unable to get security reference : no service nor filename specified.");
+        throw new Exception(Messages.getString("SecurityService.ERROR_0001_UNABLE_TO_GET_SECURITY_REFERENCE")); //$NON-NLS-1$
     }
    
     /**
@@ -275,21 +280,21 @@ public class SecurityService extends ChangedFlag implements Cloneable
         
         try
         {
-            String beforeProxyHost     = System.getProperty("http.proxyHost"); 
-            String beforeProxyPort     = System.getProperty("http.proxyPort"); 
-            String beforeNonProxyHosts = System.getProperty("http.nonProxyHosts"); 
+            String beforeProxyHost     = System.getProperty("http.proxyHost");  //$NON-NLS-1$
+            String beforeProxyPort     = System.getProperty("http.proxyPort");  //$NON-NLS-1$
+            String beforeNonProxyHosts = System.getProperty("http.nonProxyHosts");  //$NON-NLS-1$
 
             BufferedReader      input        = null;
             
             try
             {
-                log.logBasic(toString(), "Connecting to URL: "+urlToUse);
+                log.logBasic(toString(), Messages.getString("SecurityService.INFO_CONNECTING_TO_URL", urlToUse)); //$NON-NLS-1$
 
                 if (proxyHostname!=null) 
                 {
-                    System.setProperty("http.proxyHost", proxyHostname);
-                    System.setProperty("http.proxyPort", proxyPort);
-                    if (nonProxyHosts!=null) System.setProperty("http.nonProxyHosts", nonProxyHosts);
+                    System.setProperty("http.proxyHost", proxyHostname); //$NON-NLS-1$
+                    System.setProperty("http.proxyPort", proxyPort); //$NON-NLS-1$
+                    if (nonProxyHosts!=null) System.setProperty("http.nonProxyHosts", nonProxyHosts); //$NON-NLS-1$
                 }
                 
                 if (username!=null && username.length()>0)
@@ -308,7 +313,7 @@ public class SecurityService extends ChangedFlag implements Cloneable
                 server = new URL(urlToUse);
                 URLConnection connection = server.openConnection();
                 
-                log.logDetailed(toString(), "Start reading reply from webserver.");
+                log.logDetailed(toString(), Messages.getString("SecurityService.INFO_START_READING_WEBSERVER_REPLY")); //$NON-NLS-1$
     
                 // Read the result from the server...
                 input = new BufferedReader(new InputStreamReader( connection.getInputStream() ));
@@ -321,21 +326,21 @@ public class SecurityService extends ChangedFlag implements Cloneable
                     bytesRead+=line.length();
                 }
                 
-                log.logBasic(toString(), "Finished reading "+bytesRead+" bytes as a response from the webserver");
+                log.logBasic(toString(), Messages.getString("SecurityService.INFO_FINISHED_READING_RESPONSE", Long.toString(bytesRead))); //$NON-NLS-1$ 
             }
             catch(MalformedURLException e)
             {
-                log.logError(toString(), "The specified URL is not valid ["+urlToUse+"] : "+e.getMessage());
+                log.logError(toString(), Messages.getString("SecurityService.ERROR_0002_INVALID_URL", urlToUse, e.getMessage())); //$NON-NLS-1$
                 log.logError(toString(), Const.getStackTracker(e));
             }
             catch(IOException e)
             {
-                log.logError(toString(), "I was unable to save the HTTP result to file because of a I/O error: "+e.getMessage());
+                log.logError(toString(), Messages.getString("SecurityService.ERROR_0003_CANT_SAVE_IO_ERROR", e.getMessage())); //$NON-NLS-1$
                 log.logError(toString(), Const.getStackTracker(e));
             }
             catch(Exception e)
             {
-                log.logError(toString(), "Error getting file from HTTP : "+e.getMessage());
+                log.logError(toString(), Messages.getString("SecurityService.ERROR_0004_ERROR_RETRIEVING_FILE_FROM_HTTP", e.getMessage())); //$NON-NLS-1$
                 log.logError(toString(), Const.getStackTracker(e));
             }
             finally
@@ -347,29 +352,29 @@ public class SecurityService extends ChangedFlag implements Cloneable
                 }
                 catch(Exception e)
                 {
-                    log.logError(toString(), "Unable to close streams : "+e.getMessage());
+                    log.logError(toString(), Messages.getString("SecurityService.ERROR_0005_CANT_CLOSE_STREAMS", e.getMessage())); //$NON-NLS-1$
                     log.logError(toString(), Const.getStackTracker(e));
                 }
 
             }
 
             // Set the proxy settings back as they were on the system!
-            System.setProperty("http.proxyHost", Const.NVL(beforeProxyHost, ""));
-            System.setProperty("http.proxyPort", Const.NVL(beforeProxyPort, ""));
-            System.setProperty("http.nonProxyHosts", Const.NVL(beforeNonProxyHosts, ""));
+            System.setProperty("http.proxyHost", Const.NVL(beforeProxyHost, "")); //$NON-NLS-1$ //$NON-NLS-2$
+            System.setProperty("http.proxyPort", Const.NVL(beforeProxyPort, "")); //$NON-NLS-1$ //$NON-NLS-2$
+            System.setProperty("http.nonProxyHosts", Const.NVL(beforeNonProxyHosts, "")); //$NON-NLS-1$ //$NON-NLS-2$
             
             // Get the result back...
             Document doc = XMLHandler.loadXMLString(result.toString());
-            Node envelope = XMLHandler.getSubNode(doc, "SOAP-ENV:Envelope");
+            Node envelope = XMLHandler.getSubNode(doc, "SOAP-ENV:Envelope"); //$NON-NLS-1$
             if (envelope!=null)
             {
-                Node body = XMLHandler.getSubNode(envelope, "SOAP-ENV:Body");
+                Node body = XMLHandler.getSubNode(envelope, "SOAP-ENV:Body"); //$NON-NLS-1$
                 if (body!=null)
                 {
-                    Node response = XMLHandler.getSubNode(body, "ExecuteActivityResponse");
+                    Node response = XMLHandler.getSubNode(body, "ExecuteActivityResponse"); //$NON-NLS-1$
                     if (response!=null)
                     {
-                        Node content = XMLHandler.getSubNode(response, "content");
+                        Node content = XMLHandler.getSubNode(response, "content"); //$NON-NLS-1$
                         return content;
                     }
                 }
@@ -378,7 +383,7 @@ public class SecurityService extends ChangedFlag implements Cloneable
         }
         catch(Exception e)
         {
-            throw new Exception("Unable to contact URL ["+urlToUse+"] to get the security reference information.", e);
+            throw new Exception(Messages.getString("SecurityService.ERROR_0006_UNABLE_TO_CONTACT_URL",urlToUse), e); //$NON-NLS-1$ 
         }
     }
     
@@ -392,11 +397,11 @@ public class SecurityService extends ChangedFlag implements Cloneable
         try
         {
             Document doc = XMLHandler.loadXMLFile(filename);
-            return XMLHandler.getSubNode(doc, "content");
+            return XMLHandler.getSubNode(doc, "content"); //$NON-NLS-1$
         }
         catch(KettleXMLException e)
         {
-            throw new Exception("Unable to get security content from file ["+filename+"]", e);
+            throw new Exception(Messages.getString("SecurityService.ERROR_0007_UNABLE_TO_GET_SECURITY_CONTENT", filename), e); //$NON-NLS-1$ 
         }
     }
     
@@ -412,10 +417,10 @@ public class SecurityService extends ChangedFlag implements Cloneable
     {
         StringBuffer url = new StringBuffer();
         url.append(serviceURL);
-        url.append("?").append(USERNAME).append("=").append(username);
-        url.append("&").append(PASSWORD).append("=").append(password);
-        url.append("&").append(ACTION).append("=").append(detailsServiceName);
-        url.append("&").append(detailServiceName).append("=").append(getServiceTypeCode());
+        url.append("?").append(USERNAME).append("=").append(username); //$NON-NLS-1$ //$NON-NLS-2$
+        url.append("&").append(PASSWORD).append("=").append(password); //$NON-NLS-1$ //$NON-NLS-2$
+        url.append("&").append(ACTION).append("=").append(detailsServiceName); //$NON-NLS-1$ //$NON-NLS-2$
+        url.append("&").append(detailServiceName).append("=").append(getServiceTypeCode()); //$NON-NLS-1$ //$NON-NLS-2$
         
         return url.toString();
     }

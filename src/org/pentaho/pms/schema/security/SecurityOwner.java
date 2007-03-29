@@ -13,6 +13,7 @@
 package org.pentaho.pms.schema.security;
 
 
+import org.pentaho.pms.messages.Messages;
 import org.w3c.dom.Node;
 
 import be.ibridge.kettle.core.XMLHandler;
@@ -27,13 +28,13 @@ import be.ibridge.kettle.core.XMLHandler;
  */
 public class SecurityOwner implements Cloneable
 {
-    public static final String STRING_USER_DESC = "User";
-    public static final String STRING_ROLE_DESC = "Role";
+    public static final String STRING_USER_DESC = Messages.getString("SecurityOwner.USER_USER"); //$NON-NLS-1$
+    public static final String STRING_ROLE_DESC = Messages.getString("SecurityOwner.USER_ROLE"); //$NON-NLS-1$
     
     public static final int OWNER_TYPE_USER = 0;
     public static final int OWNER_TYPE_ROLE = 1;
     
-    public static final String[] ownerTypeCodes        = new String[] { "user", "role" };
+    public static final String[] ownerTypeCodes        = new String[] { "user", "role" }; //$NON-NLS-1$ //$NON-NLS-2$
     public static final String[] ownerTypeDescriptions = new String[] { STRING_USER_DESC, STRING_ROLE_DESC };
     
     private int ownerType;
@@ -62,25 +63,25 @@ public class SecurityOwner implements Cloneable
 
     public String toString()
     {
-        return ownerName+":"+getOwnerTypeDescription();
+        return ownerName+":"+getOwnerTypeDescription(); //$NON-NLS-1$
     }
 
     public String toXML()
     {
         StringBuffer xml = new StringBuffer();
         
-        xml.append("<owner>");
-        xml.append(XMLHandler.addTagValue("type", getOwnerTypeCode(), false));
-        xml.append(XMLHandler.addTagValue("name", ownerName, false));
-        xml.append("</owner>");
+        xml.append("<owner>"); //$NON-NLS-1$
+        xml.append(XMLHandler.addTagValue("type", getOwnerTypeCode(), false)); //$NON-NLS-1$
+        xml.append(XMLHandler.addTagValue("name", ownerName, false)); //$NON-NLS-1$
+        xml.append("</owner>"); //$NON-NLS-1$
         
         return xml.toString();
     }
     
     public SecurityOwner(Node ownerNode)
     {
-        ownerType = getOwnerType( XMLHandler.getTagValue(ownerNode, "type") );
-        ownerName = XMLHandler.getTagValue(ownerNode, "name");
+        ownerType = getOwnerType( XMLHandler.getTagValue(ownerNode, "type") ); //$NON-NLS-1$
+        ownerName = XMLHandler.getTagValue(ownerNode, "name"); //$NON-NLS-1$
     }
     
 

@@ -17,6 +17,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.util.Const;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -54,16 +55,16 @@ public class Security implements Cloneable
     {
         StringBuffer string = new StringBuffer();
 
-        string.append("{");
+        string.append("{"); //$NON-NLS-1$
         List owners = getOwners();
         for (int i=0;i<owners.size();i++)
         {
             SecurityOwner owner = (SecurityOwner) owners.get(i);
             int rights = getOwnerRights(owner);
-            if (i>0) string.append(", ");
-            string.append(owner.toString()+"("+rights+")");
+            if (i>0) string.append(", "); //$NON-NLS-1$
+            string.append(owner.toString()+"("+rights+")"); //$NON-NLS-1$ //$NON-NLS-2$
         }
-        string.append("}");
+        string.append("}"); //$NON-NLS-1$
         
         return string.toString();
     }
@@ -86,19 +87,19 @@ public class Security implements Cloneable
     {
         StringBuffer xml = new StringBuffer();
         
-        xml.append("<security>").append(Const.CR);
+        xml.append("<security>").append(Const.CR); //$NON-NLS-1$
         
         List owners = getOwners();
         for (int i=0;i<owners.size();i++)
         {
-            xml.append("  <owner-rights>").append(Const.CR);
+            xml.append("  <owner-rights>").append(Const.CR); //$NON-NLS-1$
             SecurityOwner owner = (SecurityOwner) owners.get(i);
             int rights = getOwnerRights(owner); 
-            xml.append("  "+owner.toXML()+" <rights>"+rights+"</rights>").append(Const.CR);
-            xml.append("  </owner-rights>").append(Const.CR);
+            xml.append("  "+owner.toXML()+" <rights>"+rights+"</rights>").append(Const.CR); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            xml.append("  </owner-rights>").append(Const.CR); //$NON-NLS-1$
         }
         
-        xml.append("</security>").append(Const.CR);
+        xml.append("</security>").append(Const.CR); //$NON-NLS-1$
         
         return xml.toString();
     }
@@ -115,20 +116,20 @@ public class Security implements Cloneable
         
         try
         {
-            int nrOwnerRights = XMLHandler.countNodes(securityNode, "owner-rights");
+            int nrOwnerRights = XMLHandler.countNodes(securityNode, "owner-rights"); //$NON-NLS-1$
             for (int i=0;i<nrOwnerRights;i++)
             {
-                Node ownerRightsNode = XMLHandler.getSubNodeByNr(securityNode, "owner-rights", i);
-                Node ownerNode = XMLHandler.getSubNode(ownerRightsNode, "owner");
+                Node ownerRightsNode = XMLHandler.getSubNodeByNr(securityNode, "owner-rights", i); //$NON-NLS-1$
+                Node ownerNode = XMLHandler.getSubNode(ownerRightsNode, "owner"); //$NON-NLS-1$
                 SecurityOwner owner = new SecurityOwner(ownerNode);
-                int rights = Integer.parseInt( XMLHandler.getTagValue(ownerRightsNode, "rights") );
+                int rights = Integer.parseInt( XMLHandler.getTagValue(ownerRightsNode, "rights") ); //$NON-NLS-1$
                 
                 putOwnerRights(owner, rights);
             }
         }
         catch(Exception e)
         {
-            throw new Exception("Unable to create security object from XML", e);
+            throw new Exception(Messages.getString("Security.ERROR_0001_CANT_CREATE_SECURITY_OBJECT"), e); //$NON-NLS-1$
         }
     }
     
@@ -138,11 +139,11 @@ public class Security implements Cloneable
         try
         {
             Document doc = XMLHandler.loadXMLString(value);
-            return new Security(XMLHandler.getSubNode(doc, "security"));
+            return new Security(XMLHandler.getSubNode(doc, "security")); //$NON-NLS-1$
         }
         catch(Exception e)
         {
-            throw new Exception("Unable to create security object from XML / String", e);
+            throw new Exception(Messages.getString("Security.ERROR_0001_CANT_CREATE_SECURITY_OBJECT"), e); //$NON-NLS-1$
         }
     }
 

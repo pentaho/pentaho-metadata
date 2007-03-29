@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessColumnString;
 import org.pentaho.pms.schema.BusinessModel;
@@ -85,19 +86,19 @@ public class WhereConditionsDialog extends Dialog
         formLayout.marginHeight = Const.FORM_MARGIN;
         shell.setLayout(formLayout);
         
-        shell.setText("Create a where clause");
+        shell.setText(Messages.getString("WhereConditionsDialog.USER_CREATE_WHERE_CLAUSE")); //$NON-NLS-1$
         
         // The buttons...
         wOK=new Button(shell, SWT.PUSH);
-        wOK.setText("  &OK  ");
+        wOK.setText(Messages.getString("WhereConditionsDialog.USER_OK")); //$NON-NLS-1$
         wCancel=new Button(shell, SWT.PUSH);
-        wCancel.setText("  &Cancel  ");
+        wCancel.setText(Messages.getString("WhereConditionsDialog.USER_CANCEL")); //$NON-NLS-1$
         
         BaseStepDialog.positionBottomButtons(shell, new Button[] { wOK, wCancel }, Const.MARGIN, null);
 
         // Add a label
         Label label = new Label(shell, SWT.LEFT);
-        label.setText("Construct the where clause:");
+        label.setText(Messages.getString("WhereConditionsDialog.USER_CONSTRUCT_WHERE_CLAUSE")); //$NON-NLS-1$
         props.setLook(label);
         FormData fdLabel = new FormData();
         fdLabel.left = new FormAttachment(0,0);
@@ -107,9 +108,9 @@ public class WhereConditionsDialog extends Dialog
         // Add a table view
         ColumnInfo[] columns =new ColumnInfo[]
           {
-            new ColumnInfo("Operator",        ColumnInfo.COLUMN_TYPE_CCOMBO, new String[] { "AND", "OR" }, false),
-            new ColumnInfo("Column",          ColumnInfo.COLUMN_TYPE_CCOMBO, flatView, false),
-            new ColumnInfo("Condition",       ColumnInfo.COLUMN_TYPE_TEXT,   false, false),
+            new ColumnInfo(Messages.getString("WhereConditionsDialog.USER_OPERATOR"),        ColumnInfo.COLUMN_TYPE_CCOMBO, new String[] { "AND", "OR" }, false), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            new ColumnInfo(Messages.getString("WhereConditionsDialog.USER_COLUMN"),          ColumnInfo.COLUMN_TYPE_CCOMBO, flatView, false), //$NON-NLS-1$
+            new ColumnInfo(Messages.getString("WhereConditionsDialog.USER_CONDITION"),       ColumnInfo.COLUMN_TYPE_TEXT,   false, false), //$NON-NLS-1$
           };
                           
         wFields=new TableView(shell, 

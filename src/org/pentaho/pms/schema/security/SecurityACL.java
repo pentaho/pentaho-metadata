@@ -59,18 +59,18 @@ public class SecurityACL implements Cloneable, Comparable
     {
         StringBuffer xml = new StringBuffer();
         
-        xml.append("<acl>");
-        xml.append(XMLHandler.addTagValue("name", name, false));
-        xml.append(XMLHandler.addTagValue("mask", mask, false));
-        xml.append("</acl>");
+        xml.append("<acl>"); //$NON-NLS-1$
+        xml.append(XMLHandler.addTagValue("name", name, false)); //$NON-NLS-1$
+        xml.append(XMLHandler.addTagValue("mask", mask, false)); //$NON-NLS-1$
+        xml.append("</acl>"); //$NON-NLS-1$
         
         return xml.toString();
     }
     
     public SecurityACL(Node aclNode)
     {
-        name = XMLHandler.getTagValue(aclNode, "name");
-        mask = Const.toInt(XMLHandler.getTagValue(aclNode, "mask"), 0);
+        name = XMLHandler.getTagValue(aclNode, "name"); //$NON-NLS-1$
+        mask = Const.toInt(XMLHandler.getTagValue(aclNode, "mask"), 0); //$NON-NLS-1$
     }
     
     public String toString()
