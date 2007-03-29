@@ -12,6 +12,8 @@
 */
 package org.pentaho.pms.schema.concept.types;
 
+import org.pentaho.pms.messages.Messages;
+
 public class ConceptPropertyType
 {
     public static final int PROPERTY_TYPE_STRING           =  0;  
@@ -35,21 +37,21 @@ public class ConceptPropertyType
      */
     private static final ConceptPropertyType[] propertyTypes = 
         {
-            new ConceptPropertyType( PROPERTY_TYPE_STRING,           "String",      "String"),
-            new ConceptPropertyType( PROPERTY_TYPE_DATE,             "Date",        "Date"),
-            new ConceptPropertyType( PROPERTY_TYPE_NUMBER,           "Number",      "Numeric value"),
-            new ConceptPropertyType( PROPERTY_TYPE_COLOR,            "Color",       "Color"),
-            new ConceptPropertyType( PROPERTY_TYPE_FONT,             "Font",        "Font"),
-            new ConceptPropertyType( PROPERTY_TYPE_FIELDTYPE,        "FieldType",   "Type of field"),
-            new ConceptPropertyType( PROPERTY_TYPE_AGGREGATION,      "Aggregation", "Type of aggregation"),
-            new ConceptPropertyType( PROPERTY_TYPE_BOOLEAN,          "Boolean",     "Boolean"),
-            new ConceptPropertyType( PROPERTY_TYPE_DATATYPE,         "DataType",    "Field data type"),
-            new ConceptPropertyType( PROPERTY_TYPE_LOCALIZED_STRING, "LocString",   "Localized string"),
-            new ConceptPropertyType( PROPERTY_TYPE_TABLETYPE,        "TableType",   "Type of table"),
-            new ConceptPropertyType( PROPERTY_TYPE_URL,              "URL",         "URL"),
-            new ConceptPropertyType( PROPERTY_TYPE_SECURITY,         "Security",    "Security"),
-            new ConceptPropertyType( PROPERTY_TYPE_ALIGNMENT,        "Alignment",   "Text alignment"),
-            new ConceptPropertyType( PROPERTY_TYPE_COLUMN_WIDTH,     "ColumnWidth", "Column Width"),
+            new ConceptPropertyType( PROPERTY_TYPE_STRING,           "String",      Messages.getString("ConceptPropertyType.USER_STRING_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
+            new ConceptPropertyType( PROPERTY_TYPE_DATE,             "Date",        Messages.getString("ConceptPropertyType.USER_DATE_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
+            new ConceptPropertyType( PROPERTY_TYPE_NUMBER,           "Number",      Messages.getString("ConceptPropertyType.USER_NUMBER_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
+            new ConceptPropertyType( PROPERTY_TYPE_COLOR,            "Color",       Messages.getString("ConceptPropertyType.USER_COLOR_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
+            new ConceptPropertyType( PROPERTY_TYPE_FONT,             "Font",        Messages.getString("ConceptPropertyType.USER_FONT_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
+            new ConceptPropertyType( PROPERTY_TYPE_FIELDTYPE,        "FieldType",   Messages.getString("ConceptPropertyType.USER_FIELDTYPE_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
+            new ConceptPropertyType( PROPERTY_TYPE_AGGREGATION,      "Aggregation", Messages.getString("ConceptPropertyType.USER_AGGREGATION_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
+            new ConceptPropertyType( PROPERTY_TYPE_BOOLEAN,          "Boolean",     Messages.getString("ConceptPropertyType.USER_BOOLEAN_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
+            new ConceptPropertyType( PROPERTY_TYPE_DATATYPE,         "DataType",    Messages.getString("ConceptPropertyType.USER_DATATYPE_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
+            new ConceptPropertyType( PROPERTY_TYPE_LOCALIZED_STRING, "LocString",   Messages.getString("ConceptPropertyType.USER_LOCALIZED_STRING_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
+            new ConceptPropertyType( PROPERTY_TYPE_TABLETYPE,        "TableType",   Messages.getString("ConceptPropertyType.USER_TABLE_TYPE_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
+            new ConceptPropertyType( PROPERTY_TYPE_URL,              "URL",         Messages.getString("ConceptPropertyType.USER_URL_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
+            new ConceptPropertyType( PROPERTY_TYPE_SECURITY,         "Security",    Messages.getString("ConceptPropertyType.USER_SECURITY_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
+            new ConceptPropertyType( PROPERTY_TYPE_ALIGNMENT,        "Alignment",   Messages.getString("ConceptPropertyType.USER_ALIGNMENT_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
+            new ConceptPropertyType( PROPERTY_TYPE_COLUMN_WIDTH,     "ColumnWidth", Messages.getString("ConceptPropertyType.USER_COLUMN_WIDTH_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
         };
     
     public static final ConceptPropertyType STRING           = propertyTypes[ PROPERTY_TYPE_STRING ];  
@@ -68,7 +70,7 @@ public class ConceptPropertyType
     public static final ConceptPropertyType ALIGNMENT        = propertyTypes[ PROPERTY_TYPE_ALIGNMENT ];
     public static final ConceptPropertyType COLUMN_WIDTH     = propertyTypes[ PROPERTY_TYPE_COLUMN_WIDTH];
     
-    public static final String ISO_DATE_FORMAT = "yyyy/MM/dd'T'HH:mm:ss";
+    public static final String ISO_DATE_FORMAT = "yyyy/MM/dd'T'HH:mm:ss"; //$NON-NLS-1$
     
     /**
      * @return an array of the core concept property type descriptions

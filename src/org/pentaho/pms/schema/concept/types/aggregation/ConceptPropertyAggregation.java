@@ -18,12 +18,12 @@ import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
 public class ConceptPropertyAggregation extends ConceptPropertyBase implements ConceptPropertyInterface, Cloneable
 {
-    public static final ConceptPropertyAggregation NONE     = new ConceptPropertyAggregation("aggregation", AggregationSettings.NONE);
-    public static final ConceptPropertyAggregation SUM      = new ConceptPropertyAggregation("aggregation", AggregationSettings.SUM);
-    public static final ConceptPropertyAggregation AVERAGE  = new ConceptPropertyAggregation("aggregation", AggregationSettings.AVERAGE);
-    public static final ConceptPropertyAggregation COUNT    = new ConceptPropertyAggregation("aggregation", AggregationSettings.COUNT);
-    public static final ConceptPropertyAggregation MINIMUM  = new ConceptPropertyAggregation("aggregation", AggregationSettings.MINIMUM);
-    public static final ConceptPropertyAggregation MAXIMUM  = new ConceptPropertyAggregation("aggregation", AggregationSettings.MAXIMUM);
+    public static final ConceptPropertyAggregation NONE     = new ConceptPropertyAggregation("aggregation", AggregationSettings.NONE); //$NON-NLS-1$ 
+    public static final ConceptPropertyAggregation SUM      = new ConceptPropertyAggregation("aggregation", AggregationSettings.SUM); //$NON-NLS-1$ 
+    public static final ConceptPropertyAggregation AVERAGE  = new ConceptPropertyAggregation("aggregation", AggregationSettings.AVERAGE); //$NON-NLS-1$ 
+    public static final ConceptPropertyAggregation COUNT    = new ConceptPropertyAggregation("aggregation", AggregationSettings.COUNT); //$NON-NLS-1$ 
+    public static final ConceptPropertyAggregation MINIMUM  = new ConceptPropertyAggregation("aggregation", AggregationSettings.MINIMUM); //$NON-NLS-1$ 
+    public static final ConceptPropertyAggregation MAXIMUM  = new ConceptPropertyAggregation("aggregation", AggregationSettings.MAXIMUM); //$NON-NLS-1$ 
     
     private AggregationSettings value;
     

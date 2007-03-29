@@ -15,6 +15,7 @@ package org.pentaho.pms.schema.concept.test;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.pentaho.pms.locale.Locales;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.DefaultProperties;
 import org.pentaho.pms.schema.concept.Concept;
@@ -48,20 +49,20 @@ public class TestDefaultProperties
         // Test the default properties dialog...
         DefaultProperties defaultProperties = new DefaultProperties();
         
-        ShowDefaultPropertiesDialog dialog = new ShowDefaultPropertiesDialog(shell, "Default properties", "Select the list of default properties for each subject", defaultProperties);
+        ShowDefaultPropertiesDialog dialog = new ShowDefaultPropertiesDialog(shell, Messages.getString("TestDefaultProperties.USER_TITLE_DEFAULT_PROPERTIES"), Messages.getString("TestDefaultProperties.USER_DEFAULT_PROPERTIES"), defaultProperties); //$NON-NLS-1$ //$NON-NLS-2$
         DefaultProperties dp = dialog.open();
         if (dp!=null)
         {
             BusinessColumn businessColumn = new BusinessColumn();
             
             // Set some parent on the business column concept...
-            Concept baseConcept = new Concept("BaseConcept");
-            baseConcept.addProperty(new ConceptPropertyFont(DefaultPropertyID.FONT.getId(), new FontSettings("Arial", 14, true, true)));
+            Concept baseConcept = new Concept("BaseConcept"); //$NON-NLS-1$
+            baseConcept.addProperty(new ConceptPropertyFont(DefaultPropertyID.FONT.getId(), new FontSettings("Arial", 14, true, true))); //$NON-NLS-1$
 
             businessColumn.getConcept().setParentInterface(baseConcept);
 
             
-            ConceptDefaultsDialog defaultsDialog = new ConceptDefaultsDialog(shell, "Business column properties", businessColumn, dp, new Locales(), new SecurityReference());
+            ConceptDefaultsDialog defaultsDialog = new ConceptDefaultsDialog(shell, Messages.getString("TestDefaultProperties.USER_TITLE_BUSINESS_COLUMN_PROPERTIES"), businessColumn, dp, new Locales(), new SecurityReference()); //$NON-NLS-1$
             if (defaultsDialog.open()!=null)
             {
                 ConceptInterface concept = businessColumn.getConcept();
@@ -71,7 +72,7 @@ public class TestDefaultProperties
                 for (int i=0;i<ids.length;i++)
                 {
                     ConceptPropertyInterface property = concept.getProperty(ids[i]);
-                    System.out.println("#"+(i+1)+" : "+property.getId()+" = "+property.toString());
+                    System.out.println("#"+(i+1)+" : "+property.getId()+" = "+property.toString()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 }
             }
         }

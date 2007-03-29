@@ -12,6 +12,8 @@
 */
 package org.pentaho.pms.schema.concept.types.alignment;
 
+import org.pentaho.pms.messages.Messages;
+
 public class AlignmentSettings
 {
     public static final int TYPE_ALIGNMENT_LEFT          = 0;
@@ -26,12 +28,15 @@ public class AlignmentSettings
     
     public static final String typeCodes[] = 
         { 
-            "left", "right", "centered", "justified",   
+            "left", "right", "centered", "justified",    //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         };
     
     public static final String typeDescriptions[] = 
         { 
-            "Left", "Right", "Centered", "Justified",    
+            Messages.getString("AlignmentSettings.USER_LEFT_DESC"),  //$NON-NLS-1$ 
+            Messages.getString("AlignmentSettings.USER_RIGHT_DESC"), //$NON-NLS-1$ 
+            Messages.getString("AlignmentSettings.USER_CENTERED_DESC"), //$NON-NLS-1$ 
+            Messages.getString("AlignmentSettings.USER_JUSTIFIED_DESC"),     //$NON-NLS-1$ 
         };
     
     public static final AlignmentSettings[] types = new AlignmentSettings[]

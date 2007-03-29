@@ -12,6 +12,8 @@
 */
 package org.pentaho.pms.schema.concept.types.aggregation;
 
+import org.pentaho.pms.messages.Messages;
+
 public class AggregationSettings
 {
     public static final int TYPE_AGGREGATION_NONE           = 0;
@@ -32,12 +34,18 @@ public class AggregationSettings
     
     public static final String typeCodes[] = 
         { 
-            "none", "sum", "average", "count", "count_distinct", "minimum", "maximum",   
+            "none", "sum", "average", "count", "count_distinct", "minimum", "maximum",    //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
         };
     
     public static final String typeDescriptions[] = 
         { 
-            "None", "Sum", "Average", "Count", "Distinct count", "Minimum", "Maximum",   
+            Messages.getString("AggregationSettings.USER_NONE_DESC"), //$NON-NLS-1$ 
+            Messages.getString("AggregationSettings.USER_SUM_DESC"), //$NON-NLS-1$ 
+            Messages.getString("AggregationSettings.USER_AVERAGE_DESC"), //$NON-NLS-1$ 
+            Messages.getString("AggregationSettings.USER_COUNT_DESC"), //$NON-NLS-1$ 
+            Messages.getString("AggregationSettings.USER_DISTINCT_COUNT_DESC"), //$NON-NLS-1$ 
+            Messages.getString("AggregationSettings.USER_MINIMUM_DESC"), //$NON-NLS-1$ 
+            Messages.getString("AggregationSettings.USER_MAXIMUM_DESC"),    //$NON-NLS-1$ 
         };
     
     public static final AggregationSettings[] types = new AggregationSettings[]
