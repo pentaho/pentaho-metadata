@@ -62,6 +62,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.pentaho.pms.locale.Locales;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.PhysicalColumn;
 import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.WhereCondition;
@@ -177,14 +178,14 @@ public class PhysicalTableDialog extends Dialog
 		formLayout.marginHeight = Const.FORM_MARGIN;
 
 		shell.setLayout(formLayout);
-		shell.setText("Physical Table properties");
+		shell.setText(Messages.getString("PhysicalTableDialog.USER_PHYSICAL_TABLE_PROPERTIES")); //$NON-NLS-1$
 		
 		int middle = props.getMiddlePct();
 		int margin = Const.MARGIN;
 
 		// Name line
 		wlId=new Label(shell, SWT.RIGHT);
-		wlId.setText("Name/ID ");
+		wlId.setText(Messages.getString("PhysicalTableDialog.USER_NAME_ID")); //$NON-NLS-1$
  		props.setLook(wlId);
 		fdlId=new FormData();
 		fdlId.left = new FormAttachment(0, 0);
@@ -192,7 +193,7 @@ public class PhysicalTableDialog extends Dialog
 		fdlId.top  = new FormAttachment(0, margin);
 		wlId.setLayoutData(fdlId);
 		wId=new Text(shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
-		wId.setText("");
+		wId.setText(""); //$NON-NLS-1$
  		props.setLook(wId);
 		wId.addModifyListener(lsMod);
 		fdId=new FormData();
@@ -217,9 +218,9 @@ public class PhysicalTableDialog extends Dialog
 
 		
 		wOK=new Button(shell, SWT.PUSH);
-		wOK.setText(" &OK ");
+		wOK.setText(Messages.getString("PhysicalTableDialog.USER_OK")); //$NON-NLS-1$
 		wCancel=new Button(shell, SWT.PUSH);
-		wCancel.setText(" &Cancel ");
+		wCancel.setText(Messages.getString("PhysicalTableDialog.USER_CANCEL")); //$NON-NLS-1$
         
         BaseStepDialog.positionBottomButtons(shell, new Button[] { wOK, wCancel }, margin, null);
 
@@ -255,17 +256,17 @@ public class PhysicalTableDialog extends Dialog
     private void addConditionsTab()
     {
         CTabItem wItemConditions = new CTabItem(wTabfolder, SWT.NONE);
-        wItemConditions.setText("Conditions");
+        wItemConditions.setText(Messages.getString("PhysicalTableDialog.USER_CONDITIONS")); //$NON-NLS-1$
 
         final int ConditionsCols=5;
         final int ConditionsRows=0;
         
         ColumnInfo[] colinf=new ColumnInfo[ConditionsCols];
-        colinf[0]=new ColumnInfo("Name",        ColumnInfo.COLUMN_TYPE_TEXT, false, false);
-        colinf[1]=new ColumnInfo("Fieldname",   ColumnInfo.COLUMN_TYPE_TEXT, false, false);
-        colinf[2]=new ColumnInfo("Comparator",  ColumnInfo.COLUMN_TYPE_CCOMBO, WhereCondition.comparators );
-        colinf[3]=new ColumnInfo("DB Formula",  ColumnInfo.COLUMN_TYPE_TEXT, false, false);
-        colinf[4]=new ColumnInfo("Description", ColumnInfo.COLUMN_TYPE_BUTTON, "", "...");
+        colinf[0]=new ColumnInfo(Messages.getString("PhysicalTableDialog.USER_NAME"),        ColumnInfo.COLUMN_TYPE_TEXT, false, false); //$NON-NLS-1$
+        colinf[1]=new ColumnInfo(Messages.getString("PhysicalTableDialog.USER_FIELDNAME"),   ColumnInfo.COLUMN_TYPE_TEXT, false, false); //$NON-NLS-1$
+        colinf[2]=new ColumnInfo(Messages.getString("PhysicalTableDialog.USER_COMPARATOR"),  ColumnInfo.COLUMN_TYPE_CCOMBO, WhereCondition.comparators ); //$NON-NLS-1$
+        colinf[3]=new ColumnInfo(Messages.getString("PhysicalTableDialog.USER_DB_FORMULA"),  ColumnInfo.COLUMN_TYPE_TEXT, false, false); //$NON-NLS-1$
+        colinf[4]=new ColumnInfo(Messages.getString("PhysicalTableDialog.USER_DESCRIPTION"), ColumnInfo.COLUMN_TYPE_BUTTON, "", "..."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         
         wConditions=new TableView(wTabfolder, 
                               SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI, 
@@ -281,7 +282,7 @@ public class PhysicalTableDialog extends Dialog
             public void widgetSelected(SelectionEvent e) 
             {
                 String str = wConditions.getButtonString();
-                EnterTextDialog etd = new EnterTextDialog(shell, "Button", "enter text", str);
+                EnterTextDialog etd = new EnterTextDialog(shell, Messages.getString("PhysicalTableDialog.USER_BUTTON"), Messages.getString("PhysicalTableDialog.USER_ENTER-TEXT"), str); //$NON-NLS-1$ //$NON-NLS-2$
                 etd.setModal();
                 String res = etd.open();
                 if (res!=null)
@@ -294,7 +295,7 @@ public class PhysicalTableDialog extends Dialog
         ;
 
         colinf[2].setSelectionAdapter(selCondition);
-        colinf[2].setToolTip("Click on this button to edit the description...");
+        colinf[2].setToolTip(Messages.getString("PhysicalTableDialog.USER_CLICK_BUTTON_TO_EDIT_DESC")); //$NON-NLS-1$
 
         fdConditions=new FormData();
         fdConditions.left   = new FormAttachment(0, 0);
@@ -312,18 +313,18 @@ public class PhysicalTableDialog extends Dialog
 	private void addPropertiesTab()
     {        
         CTabItem wItemProps = new CTabItem(wTabfolder, SWT.NONE);
-        wItemProps.setText("Table properties");
+        wItemProps.setText(Messages.getString("PhysicalTableDialog.USER_TABLE_PROPERTIES")); //$NON-NLS-1$
 
         Composite composite = new Composite(wTabfolder, SWT.NONE);
         props.setLook(composite);
         composite.setLayout(new FormLayout());
         
         wTarget=new Button(composite, SWT.PUSH);
-        wTarget.setText(" &Find target table ");
+        wTarget.setText(Messages.getString("PhysicalTableDialog.USER_FIND_TARGET_TABLE")); //$NON-NLS-1$
         lsTarget = new Listener() { public void handleEvent(Event e) { getTableName(); } };
         wTarget.addListener(SWT.Selection, lsTarget);
 
-        ConceptDefaultsDialog.getControls(composite, physicalTable, "Physical table '"+physicalTable.getDisplayName(activeLocale)+"'", conceptInterface, widgetInterfaces, locales, securityReference);
+        ConceptDefaultsDialog.getControls(composite, physicalTable, Messages.getString("PhysicalTableDialog.USER_PHYSICAL_TABLE_NAME", physicalTable.getDisplayName(activeLocale)), conceptInterface, widgetInterfaces, locales, securityReference); //$NON-NLS-1$ 
 
         BaseStepDialog.positionBottomButtons(composite, new Button[] { wTarget }, Const.MARGIN, null);
 
@@ -340,7 +341,7 @@ public class PhysicalTableDialog extends Dialog
     private void addColumnsDetailsTab()
     {
         CTabItem wItemDetails = new CTabItem(wTabfolder, SWT.NONE);
-        wItemDetails.setText("Columns details");
+        wItemDetails.setText(Messages.getString("PhysicalTableDialog.USER_COLUMN_DETAILS")); //$NON-NLS-1$
         
         detailsComposite = new Composite(wTabfolder, SWT.NONE);
         props.setLook(detailsComposite);
@@ -351,7 +352,7 @@ public class PhysicalTableDialog extends Dialog
         
         // List to the left with all the columns
         Label wlList = new Label(detailsComposite, SWT.LEFT);
-        wlList.setText("Subject");
+        wlList.setText(Messages.getString("PhysicalTableDialog.USER_SUBJECT")); //$NON-NLS-1$
         props.setLook(wlList);
         FormData fdlList = new FormData();
         fdlList.left = new FormAttachment(0, 0);
@@ -370,7 +371,7 @@ public class PhysicalTableDialog extends Dialog
         // Show the column ID if a column is selected
         //
         Label wlColId = new Label(detailsComposite, SWT.RIGHT);
-        wlColId.setText("Physical Column ID ");
+        wlColId.setText(Messages.getString("PhysicalTableDialog.USER_PHYSICAL_COLUMN_ID")); //$NON-NLS-1$
         props.setLook(wlColId);
         FormData fdlColId = new FormData();
         fdlColId.left   = new FormAttachment(middle/2, margin);
@@ -389,24 +390,24 @@ public class PhysicalTableDialog extends Dialog
         // Allow buttons to be added
         wAddColumn = new Button(detailsComposite, SWT.PUSH);
         props.setLook(wAddColumn);
-        wAddColumn.setText("Add new column");
+        wAddColumn.setText(Messages.getString("PhysicalTableDialog.USER_ADD_NEW_COLUMN")); //$NON-NLS-1$
         wAddColumn.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent arg0) { addColumn(); } });
         
         // Allow buttons to be deleted
         wDelColumn = new Button(detailsComposite, SWT.PUSH);
         props.setLook(wDelColumn);
-        wDelColumn.setText("Delete column");
+        wDelColumn.setText(Messages.getString("PhysicalTableDialog.USER_DELETE_COLUMN")); //$NON-NLS-1$
         wDelColumn.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent arg0) { delColumn(); } });
         
         // Allow buttons to be added
         wAddProperty = new Button(detailsComposite, SWT.PUSH);
         props.setLook(wAddProperty);
-        wAddProperty.setText("Add property");
+        wAddProperty.setText(Messages.getString("PhysicalTableDialog.USER_ADD_PROPERTY")); //$NON-NLS-1$
         wAddProperty.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent arg0) { addProperty(); } });
         
         wDelProperty = new Button(detailsComposite, SWT.PUSH);
         props.setLook(wDelProperty);
-        wDelProperty.setText("Delete property");
+        wDelProperty.setText(Messages.getString("PhysicalTableDialog.USER_DELETE_PROPERTY")); //$NON-NLS-1$
         wDelProperty.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent arg0) { delProperty(); } });
         
         BaseStepDialog.positionBottomButtons(detailsComposite, new Button[] { wAddColumn, wDelColumn, wAddProperty, wDelProperty }, margin, wColId);
@@ -435,7 +436,7 @@ public class PhysicalTableDialog extends Dialog
                     }
                     catch (ObjectAlreadyExistsException e)
                     {
-                        new ErrorDialog(shell, "Error", "There was an error applying column changes (duplicate column ID)", e);
+                        new ErrorDialog(shell, Messages.getString("PhysicalTableDialog.USER_TITLE_ERROR"), Messages.getString("PhysicalTableDialog.USER_ERROR_DUPLICATE_COLUMN_ID"), e); //$NON-NLS-1$ //$NON-NLS-2$
                     }
                 }
             };
@@ -460,7 +461,7 @@ public class PhysicalTableDialog extends Dialog
         
         while (true)
         {
-            EnterStringDialog dialog = new EnterStringDialog(shell, startID, "New column", "Enter the name of the new physical column" );
+            EnterStringDialog dialog = new EnterStringDialog(shell, startID, Messages.getString("PhysicalTableDialog.USER_TITLE_NEW_COLUMN"), Messages.getString("PhysicalTableDialog.USER_NEW_COLUMN_NAME") ); //$NON-NLS-1$ //$NON-NLS-2$
             String id = dialog.open();
             if (id!=null)
             {
@@ -484,7 +485,7 @@ public class PhysicalTableDialog extends Dialog
                 }
                 catch (ObjectAlreadyExistsException e)
                 {
-                    new ErrorDialog(shell, "Error", "There was an error while trying to change a column:", e);
+                    new ErrorDialog(shell, Messages.getString("PhysicalTableDialog.USER_TITLE_ERROR"), Messages.getString("PhysicalTableDialog.USER_ERROR_ATTEMPTING_COLUMN_CHANGE"), e); //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }
         }
@@ -493,15 +494,17 @@ public class PhysicalTableDialog extends Dialog
     private void delColumn()
     {
         String[] columnNames = physicalTable.getColumnNames(activeLocale);
-        EnterSelectionDialog dialog = new EnterSelectionDialog(shell, columnNames, "Delete columns", "Select the columns to delete");
+        EnterSelectionDialog dialog = new EnterSelectionDialog(shell, columnNames, Messages.getString("PhysicalTableDialog.USER_TITLE_DELETE_COLUMNS"), Messages.getString("PhysicalTableDialog.USER_SELECT_COLUMNS_FOR_DELETE")); //$NON-NLS-1$ //$NON-NLS-2$
         dialog.setMulti(true);
         if (dialog.open()!=null)
         {
             int[] idxs = dialog.getSelectionIndeces();
 
             MessageBox box = new MessageBox(shell, SWT.ICON_WARNING | SWT.YES | SWT.NO);
-            box.setText("Warning!");
-            box.setMessage("Warning, you are about to delete "+idxs.length+" "+(idxs.length!=1?"columns":"column")+".\nThis operation can not be undone!\n\nAre you sure you want to continue?");
+            box.setText(Messages.getString("PhysicalTableDialog.USER_TITLE_WARNING")); //$NON-NLS-1$
+            box.setMessage(Messages.getString("PhysicalTableDialog.USER_WARNING_DELETE_COLUMNS", Integer.toString(idxs.length))+ //$NON-NLS-1$
+                (idxs.length!=1?Messages.getString("PhysicalTableDialog.USER_COLUMNS"):Messages.getString("PhysicalTableDialog.USER_COLUMN"))+ //$NON-NLS-1$ //$NON-NLS-2$
+                Messages.getString("PhysicalTableDialog.USER_CONFIRM_OPERATION_CANT_BE_UNDONE")); //$NON-NLS-1$  
             if (box.open()!=SWT.YES) return;
                 
             PhysicalColumn columns[] = new PhysicalColumn[idxs.length];
@@ -603,7 +606,7 @@ public class PhysicalTableDialog extends Dialog
                         }
                         catch(Exception e)
                         {
-                            new ErrorDialog(shell, "Error", "Error getting value for property '"+id+"'", e);
+                            new ErrorDialog(shell, Messages.getString("PhysicalTableDialog.USER_TITLE_ERROR"), Messages.getString("PhysicalTableDialog.USER_ERROR_GETTING_PROPERTY_VALUE", id), e); //$NON-NLS-1$ //$NON-NLS-2$ 
                         }
                         if (property!=null)
                         {
@@ -645,7 +648,7 @@ public class PhysicalTableDialog extends Dialog
         detailsComposite.layout(true, true);
         
         // clear the id too
-        wColId.setText("");
+        wColId.setText(""); //$NON-NLS-1$
     }
 
     private void refreshList()
@@ -659,7 +662,7 @@ public class PhysicalTableDialog extends Dialog
     {
         wColId.setText( column.getId() );
         
-        String message = "Properties for column '"+column.getDisplayName(locales.getActiveLocale())+"'";
+        String message = Messages.getString("PhysicalTableDialog.USER_COLUMN_PROPERTIES_NAME", column.getDisplayName(locales.getActiveLocale())); //$NON-NLS-1$ 
 
         ConceptDefaultsDialog.getControls(propertiesComposite, column, message, column.getConcept(), detailsWidgetInterfaces, locales, securityReference);
         previousColumn = column;
@@ -707,7 +710,7 @@ public class PhysicalTableDialog extends Dialog
         }
         catch (ObjectAlreadyExistsException e)
         {
-            new ErrorDialog(shell, "Error", "A physical table with the same id '"+wId.getText()+"' already exists.", e);
+            new ErrorDialog(shell, Messages.getString("PhysicalTableDialog.USER_TITLE_ERROR"), Messages.getString("PhysicalTableDialog.USER_ERROR_PHYSICAL_TABLE_ID_EXISTS", wId.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
             return;
         }
 		
@@ -729,7 +732,7 @@ public class PhysicalTableDialog extends Dialog
             }
             catch (ObjectAlreadyExistsException e)
             {
-                new ErrorDialog(shell, "Error", "A column with the same id '"+wColId.getText()+"' already exists.", e);
+                new ErrorDialog(shell, Messages.getString("PhysicalTableDialog.USER_TITLE_ERROR"), Messages.getString("PhysicalTableDialog.USER_ERROR_COLUMN_ID_EXISTS", wColId.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
             }
         }
 
@@ -768,7 +771,7 @@ public class PhysicalTableDialog extends Dialog
             }
             catch (ObjectAlreadyExistsException e)
             {
-                new ErrorDialog(shell, "Error", "A physical column with the same id '"+physicalColumn.getId()+"' already exists.", e);
+                new ErrorDialog(shell, Messages.getString("PhysicalTableDialog.USER_TITLE_ERROR"), Messages.getString("PhysicalTableDialog.USER_ERROR_PHYSICAL_COLUMN_ID_EXISTS", physicalColumn.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
             }
         }
 
@@ -802,7 +805,7 @@ public class PhysicalTableDialog extends Dialog
         }
         catch(Exception e)
         {
-            new ErrorDialog(shell, "Error", "There was an error getting the target table name", e);
+            new ErrorDialog(shell, Messages.getString("PhysicalTableDialog.USER_TITLE_ERROR"), Messages.getString("PhysicalTableDialog.USER_ERROR_GETTING_TARGET_TABLE_NAME"), e); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
 }

@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.OrderBy;
 import org.pentaho.pms.util.Const;
@@ -44,8 +45,8 @@ import be.ibridge.kettle.trans.step.BaseStepDialog;
 
 public class OrderByDialog extends Dialog
 {
-    private static final String STRING_ASCENDING = "Ascending";
-    private static final String STRING_DESCENDING = "Descending";
+    private static final String STRING_ASCENDING = "Ascending"; //$NON-NLS-1$
+    private static final String STRING_DESCENDING = "Descending"; //$NON-NLS-1$
     
     private Button wOK, wCancel;
     private Listener lsOK, lsCancel;
@@ -79,8 +80,8 @@ public class OrderByDialog extends Dialog
         Hashtable tables = new Hashtable();
         for (int i=0;i<selectedColumns.length;i++)
         {
-            columns.put(selectedColumns[i].getDisplayName(locale), "");
-            tables.put(selectedColumns[i].getBusinessTable().getDisplayName(locale), "");
+            columns.put(selectedColumns[i].getDisplayName(locale), ""); //$NON-NLS-1$
+            tables.put(selectedColumns[i].getBusinessTable().getDisplayName(locale), ""); //$NON-NLS-1$
         }
         tableNames = (String[]) tables.keySet().toArray(new String[tables.keySet().size()]);
         columnNames = (String[]) columns.keySet().toArray(new String[columns.keySet().size()]);
@@ -100,19 +101,19 @@ public class OrderByDialog extends Dialog
         formLayout.marginHeight = Const.FORM_MARGIN;
         shell.setLayout(formLayout);
         
-        shell.setText("Select the column ordering");
+        shell.setText(Messages.getString("OrderByDialog.USER_SELECT_COLUMN_ORDERING")); //$NON-NLS-1$
         
         // The buttons...
         wOK=new Button(shell, SWT.PUSH);
-        wOK.setText("  &OK  ");
+        wOK.setText(Messages.getString("OrderByDialog.USER_OK")); //$NON-NLS-1$
         wCancel=new Button(shell, SWT.PUSH);
-        wCancel.setText("  &Cancel  ");
+        wCancel.setText(Messages.getString("OrderByDialog.USER_CANCEL")); //$NON-NLS-1$
         
         BaseStepDialog.positionBottomButtons(shell, new Button[] { wOK, wCancel }, Const.MARGIN, null);
 
         // Add a label
         Label label = new Label(shell, SWT.LEFT);
-        label.setText("Select the column ordering:");
+        label.setText(Messages.getString("OrderByDialog.USER_SELECT_COLUMN_ORDERING")); //$NON-NLS-1$
         props.setLook(label);
         FormData fdLabel = new FormData();
         fdLabel.left = new FormAttachment(0,0);
@@ -122,9 +123,9 @@ public class OrderByDialog extends Dialog
         // Add a table view
         ColumnInfo[] columns =new ColumnInfo[]
           {
-            new ColumnInfo("Table",           ColumnInfo.COLUMN_TYPE_CCOMBO, tableNames, false),
-            new ColumnInfo("Column",          ColumnInfo.COLUMN_TYPE_CCOMBO, columnNames, false),
-            new ColumnInfo("Ordering",        ColumnInfo.COLUMN_TYPE_CCOMBO, new String[] { STRING_ASCENDING, STRING_DESCENDING }, false),
+            new ColumnInfo(Messages.getString("OrderByDialog.USER_TABLE"),           ColumnInfo.COLUMN_TYPE_CCOMBO, tableNames, false), //$NON-NLS-1$
+            new ColumnInfo(Messages.getString("OrderByDialog.USER_COLUMN"),          ColumnInfo.COLUMN_TYPE_CCOMBO, columnNames, false), //$NON-NLS-1$
+            new ColumnInfo(Messages.getString("OrderByDialog.USER_ORDERING"),        ColumnInfo.COLUMN_TYPE_CCOMBO, new String[] { STRING_ASCENDING, STRING_DESCENDING }, false), //$NON-NLS-1$
           };
                           
         wFields=new TableView(shell, 

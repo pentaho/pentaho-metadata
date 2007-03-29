@@ -36,6 +36,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.pentaho.pms.locale.Locales;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.PhysicalColumn;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.dialog.ConceptDefaultsDialog;
@@ -103,7 +104,7 @@ public class PhysicalColumnDialog extends Dialog
 		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.MIN);
  		props.setLook(shell);
         
-        log.logDebug(this.getClass().getName(), "Opening dialog");
+        log.logDebug(this.getClass().getName(), Messages.getString("PhysicalColumnDialog.DEBUG_OPENING_DIALOG")); //$NON-NLS-1$
 
 		ModifyListener lsMod = new ModifyListener() 
 		{
@@ -118,14 +119,14 @@ public class PhysicalColumnDialog extends Dialog
 		formLayout.marginHeight = Const.FORM_MARGIN;
 
 		shell.setLayout(formLayout);
-		shell.setText("Physical Column Properties");
+		shell.setText(Messages.getString("PhysicalColumnDialog.USER_PHYSICAL_COLUMN_PROPERTIES")); //$NON-NLS-1$
 		
 		int middle = props.getMiddlePct();
 		int margin = Const.MARGIN;
 
 		// Name line
 		wlName=new Label(shell, SWT.RIGHT);
-		wlName.setText("Name / ID");
+		wlName.setText(Messages.getString("PhysicalColumnDialog.USER_NAME_ID")); //$NON-NLS-1$
  		props.setLook(wlName);
 		fdlName=new FormData();
 		fdlName.left = new FormAttachment(0, 0);
@@ -133,7 +134,7 @@ public class PhysicalColumnDialog extends Dialog
 		fdlName.top  = new FormAttachment(0, margin);
 		wlName.setLayoutData(fdlName);
 		wName=new Text(shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
-		wName.setText("");
+		wName.setText(""); //$NON-NLS-1$
  		props.setLook(wName);
 		wName.addModifyListener(lsMod);
 		fdName=new FormData();
@@ -143,9 +144,9 @@ public class PhysicalColumnDialog extends Dialog
 		wName.setLayoutData(fdName);
 
         wOK=new Button(shell, SWT.PUSH);
-		wOK.setText(" &OK ");
+		wOK.setText(Messages.getString("PhysicalColumnDialog.USER_OK")); //$NON-NLS-1$
 		wCancel=new Button(shell, SWT.PUSH);
-		wCancel.setText(" &Cancel ");
+		wCancel.setText(Messages.getString("PhysicalColumnDialog.USER_CANCEL")); //$NON-NLS-1$
         
         BaseStepDialog.positionBottomButtons(shell, new Button[] { wOK, wCancel }, margin, null);
         
@@ -155,7 +156,7 @@ public class PhysicalColumnDialog extends Dialog
         
         props.setLook(composite);
         
-        ConceptDefaultsDialog.getControls(composite, physicalColumn, "Physical column properties for ["+physicalColumn.getId()+"]", physicalColumn.getConcept(), okInterfaces, locales, securityReference);
+        ConceptDefaultsDialog.getControls(composite, physicalColumn, Messages.getString("PhysicalColumnDialog.USER_PHYSICAL_COLUMN_PROPERTIES_FOR", physicalColumn.getId()), physicalColumn.getConcept(), okInterfaces, locales, securityReference); //$NON-NLS-1$ 
         
         FormData fdComposite = new FormData();
         fdComposite.left   = new FormAttachment(0,0);
@@ -221,7 +222,7 @@ public class PhysicalColumnDialog extends Dialog
         }
         catch (ObjectAlreadyExistsException e)
         {
-            new ErrorDialog(shell, "Error", "A physical column with ID '"+wName.getText()+"' already exists.", e);
+            new ErrorDialog(shell, Messages.getString("PhysicalColumnDialog.USER_TITLE_ERROR"), Messages.getString("PhysicalColumnDialog.USER_ERROR_PHYSICAL_COLUMN_ID_EXISTS", wName.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
             return;
         }
         ConceptInterface concept = physicalColumn.getConcept();
