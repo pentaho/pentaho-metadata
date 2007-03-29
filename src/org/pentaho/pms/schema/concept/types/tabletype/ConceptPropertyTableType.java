@@ -18,9 +18,9 @@ import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
 public class ConceptPropertyTableType extends ConceptPropertyBase implements ConceptPropertyInterface, Cloneable
 {
-    public static final ConceptPropertyTableType DEFAULT_OTHER     = new ConceptPropertyTableType("tabletype", TableTypeSettings.OTHER);  
-    public static final ConceptPropertyTableType DEFAULT_DIMENSION = new ConceptPropertyTableType("tabletype", TableTypeSettings.DIMENSION);  
-    public static final ConceptPropertyTableType DEFAULT_FACT      = new ConceptPropertyTableType("tabletype", TableTypeSettings.FACT);  
+    public static final ConceptPropertyTableType DEFAULT_OTHER     = new ConceptPropertyTableType("tabletype", TableTypeSettings.OTHER);    //$NON-NLS-1$
+    public static final ConceptPropertyTableType DEFAULT_DIMENSION = new ConceptPropertyTableType("tabletype", TableTypeSettings.DIMENSION);    //$NON-NLS-1$
+    public static final ConceptPropertyTableType DEFAULT_FACT      = new ConceptPropertyTableType("tabletype", TableTypeSettings.FACT);    //$NON-NLS-1$
 
     private TableTypeSettings value;
     

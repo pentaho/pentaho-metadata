@@ -22,6 +22,7 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyWidgetInterface;
@@ -103,7 +104,7 @@ public class ConceptPropertyStringWidget extends ChangedFlag implements ConceptP
         ConceptPropertyInterface property = concept.getProperty(name);
         
         final Text string = new Text(composite, SWT.BORDER);
-        string.setToolTipText("Enter the String property with name '"+name+"'");
+        string.setToolTipText(Messages.getString("ConceptPropertyStringWidget.USER_ENTER_STRING_PROPERTY_NAME", name)); //$NON-NLS-1$ 
         props.setLook(string);
         FormData fdString = new FormData();
         fdString.left  = new FormAttachment(props.getMiddlePct(), Const.MARGIN);

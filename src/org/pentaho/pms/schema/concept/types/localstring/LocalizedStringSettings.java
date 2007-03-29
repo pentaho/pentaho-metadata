@@ -56,9 +56,9 @@ public class LocalizedStringSettings implements Cloneable
         String[] locales = getLocales();
         for (int i=0;i<locales.length;i++)
         {
-            if (i>0) buffer.append(", ");
+            if (i>0) buffer.append(", ");  //$NON-NLS-1$
             String string = getString(locales[i]);
-            buffer.append("["+locales[i]+"]:"+string);
+            buffer.append("["+locales[i]+"]:"+string);  //$NON-NLS-1$  //$NON-NLS-2$
         }
         
         return buffer.toString();

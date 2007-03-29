@@ -23,9 +23,9 @@ public class FontSettings
     private boolean bold;
     private boolean italic;
 
-    private static final String SEPARATOR = "-";
-    private static final String BOLD = "bold";
-    private static final String ITALIC = "italic";
+    private static final String SEPARATOR = "-";  //$NON-NLS-1$
+    private static final String BOLD = "bold";  //$NON-NLS-1$
+    private static final String ITALIC = "italic";  //$NON-NLS-1$
 
     public FontSettings()
     {
@@ -47,7 +47,7 @@ public class FontSettings
     
     public String toString()
     {
-        return name+SEPARATOR+height+(bold?SEPARATOR+BOLD:"")+(italic?SEPARATOR+ITALIC:"");
+        return name+SEPARATOR+height+(bold?SEPARATOR+BOLD:"")+(italic?SEPARATOR+ITALIC:"");  //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     public static FontSettings fromString(String value)

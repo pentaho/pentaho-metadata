@@ -36,6 +36,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.pentaho.pms.locale.Locales;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
@@ -115,7 +116,7 @@ public class BusinessCategoryDialog extends Dialog
 		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.MIN);
  		props.setLook(shell);
         
-        log.logDebug(this.getClass().getName(), "Opening dialog");
+        log.logDebug(this.getClass().getName(), Messages.getString("BusinessCategoryDialog.DEBUG_OPENING_DIALOG")); //$NON-NLS-1$
 
 		ModifyListener lsMod = new ModifyListener() 
 		{
@@ -130,14 +131,14 @@ public class BusinessCategoryDialog extends Dialog
 		formLayout.marginHeight = Const.FORM_MARGIN;
 
 		shell.setLayout(formLayout);
-		shell.setText("Business Category Properties");
+		shell.setText(Messages.getString("BusinessCategoryDialog.USER_BUSINESS_CATEGORY_PROPERTIES")); //$NON-NLS-1$
 		
 		int middle = props.getMiddlePct();
 		int margin = Const.MARGIN;
 
 		// Name line
 		wlId=new Label(shell, SWT.RIGHT);
-		wlId.setText("Name / ID");
+		wlId.setText(Messages.getString("BusinessCategoryDialog.USER_NAME_ID")); //$NON-NLS-1$
  		props.setLook(wlId);
 		fdlId=new FormData();
 		fdlId.left = new FormAttachment(0, 0);
@@ -145,7 +146,7 @@ public class BusinessCategoryDialog extends Dialog
 		fdlId.top  = new FormAttachment(0, margin);
 		wlId.setLayoutData(fdlId);
 		wId=new Text(shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
-		wId.setText("");
+		wId.setText(""); //$NON-NLS-1$
  		props.setLook(wId);
 		wId.addModifyListener(lsMod);
 		fdId=new FormData();
@@ -155,9 +156,9 @@ public class BusinessCategoryDialog extends Dialog
 		wId.setLayoutData(fdId);
 
         wOK=new Button(shell, SWT.PUSH);
-		wOK.setText(" &OK ");
+		wOK.setText(Messages.getString("BusinessCategoryDialog.USER_OK")); //$NON-NLS-1$
 		wCancel=new Button(shell, SWT.PUSH);
-		wCancel.setText(" &Cancel ");
+		wCancel.setText(Messages.getString("BusinessCategoryDialog.USER_CANCEL")); //$NON-NLS-1$
         
         BaseStepDialog.positionBottomButtons(shell, new Button[] { wOK, wCancel }, margin, null);
         
@@ -170,13 +171,13 @@ public class BusinessCategoryDialog extends Dialog
         // Add a property
         Button wAddProperty = new Button(composite, SWT.PUSH);
         props.setLook(wAddProperty);
-        wAddProperty.setText("Add property");
+        wAddProperty.setText(Messages.getString("BusinessCategoryDialog.USER_ADD_PROPERTY")); //$NON-NLS-1$
         wAddProperty.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent arg0) { addProperty(); } } );
         
         // Delete a property
         Button wDelProperty = new Button(composite, SWT.PUSH);
         props.setLook(wDelProperty);
-        wDelProperty.setText("Delete property");
+        wDelProperty.setText(Messages.getString("BusinessCategoryDialog.USER_DELETE_PROPERTY")); //$NON-NLS-1$
         wDelProperty.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent arg0) { if (ConceptDialog.delChildProperty(shell, conceptInterface)) refreshConceptProperties(); } });
         
         BaseStepDialog.positionBottomButtons(composite, new Button[] { wAddProperty, wDelProperty }, Const.MARGIN, wId);
@@ -185,7 +186,7 @@ public class BusinessCategoryDialog extends Dialog
         propertiesComposite.setLayout(new FormLayout());
         props.setLook(propertiesComposite);
         
-        ConceptDefaultsDialog.getControls(propertiesComposite, businessCategory, "Business category properties", conceptInterface, conceptWidgetInterfaces, locales, securityReference);
+        ConceptDefaultsDialog.getControls(propertiesComposite, businessCategory, Messages.getString("BusinessCategoryDialog.USER_BUSINESS_CATEGORY_PROPERTIES"), conceptInterface, conceptWidgetInterfaces, locales, securityReference); //$NON-NLS-1$
         
         FormData fdRight = new FormData();
         fdRight.top    = new FormAttachment(wAddProperty, 3*Const.MARGIN);
@@ -267,7 +268,7 @@ public class BusinessCategoryDialog extends Dialog
 
     protected void refreshConceptProperties()
     {
-        ConceptDefaultsDialog.getControls(propertiesComposite, "Business category properties", conceptInterface, conceptWidgetInterfaces, locales, securityReference);
+        ConceptDefaultsDialog.getControls(propertiesComposite, Messages.getString("BusinessCategoryDialog.USER_BUSINESS_CATEGORY_PROPERTIES"), conceptInterface, conceptWidgetInterfaces, locales, securityReference); //$NON-NLS-1$
         propertiesComposite.layout(true, true);
     }
 
@@ -279,7 +280,7 @@ public class BusinessCategoryDialog extends Dialog
         }
         catch (ObjectAlreadyExistsException e)
         {
-            new ErrorDialog(shell, "Error", "A business category with ID '"+wId.getText()+"' already exists!", e);
+            new ErrorDialog(shell, Messages.getString("BusinessCategoryDialog.USER_TITLE_ERROR"), Messages.getString("BusinessCategoryDialog.USER_ERROR_BUSINESS_CATEGORY_EXISTS", wId.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
             return;
         }
 

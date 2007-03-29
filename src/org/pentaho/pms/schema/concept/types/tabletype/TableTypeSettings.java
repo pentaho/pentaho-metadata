@@ -12,14 +12,16 @@
 */
 package org.pentaho.pms.schema.concept.types.tabletype;
 
+import org.pentaho.pms.messages.Messages;
+
 public class TableTypeSettings
 {
     public static final int TYPE_OTHER     = 0; 
     public static final int TYPE_DIMENSION = 1; 
     public static final int TYPE_FACT      = 2;
     
-    public static final String typeCodes[] = new String[] { "Other", "Dimension", "Fact" };
-    public static final String typeDescriptions[] = new String[] { "Other", "Dimension", "Fact" };
+    public static final String typeCodes[] = new String[] { "Other", "Dimension", "Fact" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    public static final String typeDescriptions[] = new String[] { Messages.getString("TableTypeSettings.USER_OTHER_DESC"), Messages.getString("TableTypeSettings.USER_DIMENSION_DESC"), Messages.getString("TableTypeSettings.USER_FACT_DESC") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     
     public static final TableTypeSettings OTHER     = new TableTypeSettings(TYPE_OTHER);  
     public static final TableTypeSettings DIMENSION = new TableTypeSettings(TYPE_DIMENSION);  

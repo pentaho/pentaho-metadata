@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.pentaho.pms.editor.MetaEditor;
 import org.pentaho.pms.locale.Locales;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessTable;
@@ -56,7 +57,7 @@ import be.ibridge.kettle.trans.step.BaseStepDialog;
  */
 public class BusinessCategoriesDialog extends Dialog
 {
-	private static final String STRING_TABLES_TREE = "TablesTree";
+	private static final String STRING_TABLES_TREE = "TablesTree"; //$NON-NLS-1$
 
     private LogWriter    log;
 
@@ -110,20 +111,20 @@ public class BusinessCategoriesDialog extends Dialog
 		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.MIN | SWT.APPLICATION_MODAL);
  		props.setLook(shell);
         
-        log.logDebug(this.getClass().getName(), "Opening dialog");
+        log.logDebug(this.getClass().getName(), Messages.getString("BusinessCategoriesDialog.DEBUG_OPENING_DIALOG")); //$NON-NLS-1$
 
 		FormLayout formLayout = new FormLayout ();
 		formLayout.marginWidth  = Const.FORM_MARGIN;
 		formLayout.marginHeight = Const.FORM_MARGIN;
 
 		shell.setLayout(formLayout);
-		shell.setText("Business Categories Editor");
+		shell.setText(Messages.getString("BusinessCategoriesDialog.USER_BUSINESS_CATEGORIES_EDITOR")); //$NON-NLS-1$
 		
 		int middle = 45;
 		int margin = Const.MARGIN;
         
 		wClose=new Button(shell, SWT.PUSH);
-		wClose.setText(" &Close ");
+		wClose.setText(Messages.getString("BusinessCategoriesDialog.USER_CLOSE")); //$NON-NLS-1$
         lsClose = new Listener() { public void handleEvent(Event e) { close(); } };
         wClose.addListener(SWT.Selection, lsClose );
 
@@ -133,7 +134,7 @@ public class BusinessCategoriesDialog extends Dialog
         //
         Label wlTables = new Label(shell, SWT.LEFT);
         props.setLook(wlTables);
-        wlTables.setText("Business Tables");
+        wlTables.setText(Messages.getString("BusinessCategoriesDialog.USER_BUSINESS_TABLES")); //$NON-NLS-1$
         FormData fdlTables = new FormData();
         fdlTables.left  = new FormAttachment(0, 0);
         fdlTables.right = new FormAttachment(middle, 0);
@@ -152,7 +153,7 @@ public class BusinessCategoriesDialog extends Dialog
         // Some buttons in the middle
         //
         wDelAll = new Button(shell, SWT.PUSH);
-        wDelAll.setText("Remove all");
+        wDelAll.setText(Messages.getString("BusinessCategoriesDialog.USER_REMOVE_ALL")); //$NON-NLS-1$
         props.setLook(wDelAll);
         FormData fdDelAll = new FormData();
         fdDelAll.left   = new FormAttachment(middle, margin);
@@ -161,7 +162,7 @@ public class BusinessCategoriesDialog extends Dialog
         wDelAll.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent event) { delAll(); } } );
 
         wDelSelection = new Button(shell, SWT.PUSH);
-        wDelSelection.setText("&Remove");
+        wDelSelection.setText(Messages.getString("BusinessCategoriesDialog.USER_REMOVE")); //$NON-NLS-1$
         props.setLook(wDelSelection);
         FormData fdDelSelection = new FormData();
         fdDelSelection.left   = new FormAttachment(wDelAll, 0, SWT.CENTER);
@@ -170,7 +171,7 @@ public class BusinessCategoriesDialog extends Dialog
         wDelSelection.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent event) { delSelection(); } } );
 
         wAddSelection = new Button(shell, SWT.PUSH);
-        wAddSelection.setText("&Add");
+        wAddSelection.setText(Messages.getString("BusinessCategoriesDialog.USER_ADD")); //$NON-NLS-1$
         props.setLook(wAddSelection);
         FormData fdAddSelection = new FormData();
         fdAddSelection.left   = new FormAttachment(wDelAll, 0, SWT.CENTER);
@@ -179,7 +180,7 @@ public class BusinessCategoriesDialog extends Dialog
         wAddSelection.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent event) { addSelection(); } } );
 
         wAddAll = new Button(shell, SWT.PUSH);
-        wAddAll.setText("Add all");
+        wAddAll.setText(Messages.getString("BusinessCategoriesDialog.USER_ADD_ALL")); //$NON-NLS-1$
         props.setLook(wAddAll);
         FormData fdAddAll = new FormData();
         fdAddAll.left   = new FormAttachment(wDelAll, 0, SWT.CENTER);
@@ -189,7 +190,7 @@ public class BusinessCategoriesDialog extends Dialog
 
         
         wNew = new Button(shell, SWT.PUSH);
-        wNew.setText("New");
+        wNew.setText(Messages.getString("BusinessCategoriesDialog.USER_NEW")); //$NON-NLS-1$
         props.setLook(wNew);
         FormData fdNew = new FormData();
         fdNew.left   = new FormAttachment(wDelAll, 0, SWT.CENTER);
@@ -202,7 +203,7 @@ public class BusinessCategoriesDialog extends Dialog
         //
         Label wlCategories = new Label(shell, SWT.LEFT);
         props.setLook(wlCategories);
-        wlCategories.setText("Business Categories");
+        wlCategories.setText(Messages.getString("BusinessCategoriesDialog.USER_BUSINESS_CATEGORIES")); //$NON-NLS-1$
         FormData fdlCategories = new FormData();
         fdlCategories.left  = new FormAttachment(wDelAll, margin);
         fdlCategories.right = new FormAttachment(100, 0);
@@ -282,7 +283,7 @@ public class BusinessCategoriesDialog extends Dialog
         while (businessModel.getRootCategory().findBusinessCategory(newId)!=null)
         {
             catNr++;
-            newId = id+"_"+catNr;
+            newId = id+"_"+catNr; //$NON-NLS-1$
         }
         if (Settings.isAnIdUppercase()) newId = newId.toUpperCase();
         
@@ -296,7 +297,7 @@ public class BusinessCategoriesDialog extends Dialog
         while (businessModel.getRootCategory().findBusinessCategory(activeLocale, categoryName)!=null)
         {
             catNr++;
-            categoryName = businessTable.getDisplayName(activeLocale)+" "+catNr;
+            categoryName = businessTable.getDisplayName(activeLocale)+" "+catNr; //$NON-NLS-1$
         }
         businessCategory.setName(activeLocale, categoryName);
         
@@ -315,7 +316,7 @@ public class BusinessCategoriesDialog extends Dialog
         }
         catch (ObjectAlreadyExistsException e)
         {
-            new ErrorDialog(shell, "Error", "A business category with id '"+businessCategory.getId()+"' already exists.", e);
+            new ErrorDialog(shell, Messages.getString("BusinessCategoriesDialog.USER_TITLE_ERROR"), Messages.getString("BusinessCategoriesDialog.USER_ERROR_BUSINESS_CATEGORY_EXISTS", businessCategory.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
             return;
         }
         
@@ -457,7 +458,7 @@ public class BusinessCategoriesDialog extends Dialog
                 }
                 catch (ObjectAlreadyExistsException e)
                 {
-                    new ErrorDialog(shell, "Error", "A business category with id '"+businessCategory.getId()+"' already exists.", e);
+                    new ErrorDialog(shell, Messages.getString("BusinessCategoriesDialog.USER_TITLE_ERROR"), Messages.getString("BusinessCategoriesDialog.USER_ERROR_BUSINESS_CATEGORY_EXISTS", businessCategory.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
                 }
             }
             else

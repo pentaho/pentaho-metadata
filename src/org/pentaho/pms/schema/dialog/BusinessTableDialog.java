@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.PhysicalColumn;
@@ -141,7 +142,7 @@ public class BusinessTableDialog extends Dialog
 		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.MIN);
  		props.setLook(shell);
         
-        log.logDebug(this.getClass().getName(), "Opening dialog");
+        log.logDebug(this.getClass().getName(), Messages.getString("BusinessTableDialog.DEBUG_OPENING_DIALOG")); //$NON-NLS-1$
 
 		lsMod = new ModifyListener() 
 		{
@@ -156,14 +157,14 @@ public class BusinessTableDialog extends Dialog
 		formLayout.marginHeight = Const.FORM_MARGIN;
 
 		shell.setLayout(formLayout);
-		shell.setText("Business Table Properties");
+		shell.setText(Messages.getString("BusinessTableDialog.USER_BUSINESS_TABLE_PROPERTIES")); //$NON-NLS-1$
 		
 		int middle = props.getMiddlePct();
 		int margin = Const.MARGIN;
 
 		// Name line
 		wlName=new Label(shell, SWT.RIGHT);
-		wlName.setText("Name / ID");
+		wlName.setText(Messages.getString("BusinessTableDialog.USER_NAME_ID")); //$NON-NLS-1$
  		props.setLook(wlName);
 		fdlName=new FormData();
 		fdlName.left = new FormAttachment(0, 0);
@@ -171,7 +172,7 @@ public class BusinessTableDialog extends Dialog
 		fdlName.top  = new FormAttachment(0, margin);
 		wlName.setLayoutData(fdlName);
 		wName=new Text(shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
-		wName.setText("");
+		wName.setText(""); //$NON-NLS-1$
  		props.setLook(wName);
 		wName.addModifyListener(lsMod);
 		fdName=new FormData();
@@ -182,7 +183,7 @@ public class BusinessTableDialog extends Dialog
 
         // Table line...
         wlTable=new Label(shell, SWT.RIGHT);
-        wlTable.setText("Physical table ");
+        wlTable.setText(Messages.getString("BusinessTableDialog.USER_PHYSICAL_TABLE")); //$NON-NLS-1$
         props.setLook(wlTable);
         fdlTable=new FormData();
         fdlTable.left = new FormAttachment(0, 0);
@@ -207,13 +208,13 @@ public class BusinessTableDialog extends Dialog
         // wlTable.setEnabled(false);
         
         wOK=new Button(shell, SWT.PUSH);
-        wOK.setText(" &OK ");
+        wOK.setText(Messages.getString("BusinessTableDialog.USER_OK")); //$NON-NLS-1$
         wGet=new Button(shell, SWT.PUSH);
-        wGet.setText(" &Get unused columns ");
+        wGet.setText(Messages.getString("BusinessTableDialog.USER_GET_UNUSED_COLUMNS")); //$NON-NLS-1$
         wAdd=new Button(shell, SWT.PUSH);
-        wAdd.setText(" &Add column ");
+        wAdd.setText(Messages.getString("BusinessTableDialog.USER_ADD_COLUMNS")); //$NON-NLS-1$
         wCancel=new Button(shell, SWT.PUSH);
-        wCancel.setText(" &Cancel ");
+        wCancel.setText(Messages.getString("BusinessTableDialog.USER_CANCEL")); //$NON-NLS-1$
         
         BaseStepDialog.positionBottomButtons(shell, new Button[] { wOK, wGet, wAdd, wCancel }, margin, null);
 
@@ -269,7 +270,7 @@ public class BusinessTableDialog extends Dialog
     private void addColumnsDetailsTab()
     {
         CTabItem wItemDetails = new CTabItem(wTabfolder, SWT.NONE);
-        wItemDetails.setText("Columns details");
+        wItemDetails.setText(Messages.getString("BusinessTableDialog.USER_COLUMN_DETAILS")); //$NON-NLS-1$
         
         detailsComposite = new Composite(wTabfolder, SWT.NONE);
         props.setLook(detailsComposite);
@@ -280,7 +281,7 @@ public class BusinessTableDialog extends Dialog
 
         // List to the left with all the columns
         Label wlList = new Label(detailsComposite, SWT.LEFT);
-        wlList.setText("Subject");
+        wlList.setText(Messages.getString("BusinessTableDialog.USER_SUBJECT")); //$NON-NLS-1$
         props.setLook(wlList);
         FormData fdlList = new FormData();
         fdlList.left = new FormAttachment(0, 0);
@@ -299,7 +300,7 @@ public class BusinessTableDialog extends Dialog
         // Show the column ID if a column is selected
         //
         Label wlColId = new Label(detailsComposite, SWT.RIGHT);
-        wlColId.setText("Physical Column ID ");
+        wlColId.setText(Messages.getString("BusinessTableDialog.USER_PHYSICAL_COLUMN_ID")); //$NON-NLS-1$
         props.setLook(wlColId);
         FormData fdlColId = new FormData();
         fdlColId.left   = new FormAttachment(middle/2, margin);
@@ -318,25 +319,25 @@ public class BusinessTableDialog extends Dialog
         // Allow columns to be added
         Button wAddColumn = new Button(detailsComposite, SWT.PUSH);
         props.setLook(wAddColumn);
-        wAddColumn.setText("Add new column");
+        wAddColumn.setText(Messages.getString("BusinessTableDialog.USER_ADD_NEW_COLUMN")); //$NON-NLS-1$
         wAddColumn.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent arg0) { addColumn(); } });
         
         // Allow columns to be deleted
         Button wDelColumn = new Button(detailsComposite, SWT.PUSH);
         props.setLook(wDelColumn);
-        wDelColumn.setText("Delete column");
+        wDelColumn.setText(Messages.getString("BusinessTableDialog.USER_DELETE_COLUMN")); //$NON-NLS-1$
         wDelColumn.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent arg0) { delColumn(); } });
 
         // Add a property
         wAddProperty = new Button(detailsComposite, SWT.PUSH);
         props.setLook(wAddProperty);
-        wAddProperty.setText("Add property");
+        wAddProperty.setText(Messages.getString("BusinessTableDialog.USER_ADD_PROPERTY")); //$NON-NLS-1$
         wAddProperty.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent arg0) { addProperty(); } } );
         
         // Delete a property
         wDelProperty = new Button(detailsComposite, SWT.PUSH);
         props.setLook(wDelProperty);
-        wDelProperty.setText("Delete property");
+        wDelProperty.setText(Messages.getString("BusinessTableDialog.USER_DELETE_PROPERTY")); //$NON-NLS-1$
         wDelProperty.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent arg0) { delProperty(); } });
         
         BaseStepDialog.positionBottomButtons(detailsComposite, new Button[] { wAddColumn, wDelColumn, wAddProperty, wDelProperty }, Const.MARGIN, wColId);
@@ -411,15 +412,17 @@ public class BusinessTableDialog extends Dialog
     private void delColumn()
     {
         String[] columnNames = businessTable.getColumnNames(activeLocale);
-        EnterSelectionDialog dialog = new EnterSelectionDialog(shell, columnNames, "Delete columns", "Select the columns to delete");
+        EnterSelectionDialog dialog = new EnterSelectionDialog(shell, columnNames, Messages.getString("BusinessTableDialog.USER_TITLE_DELETE_COLUMNS"), Messages.getString("BusinessTableDialog.USER_DELETE_COLUMNS")); //$NON-NLS-1$ //$NON-NLS-2$
         dialog.setMulti(true);
         if (dialog.open()!=null)
         {
             int[] idxs = dialog.getSelectionIndeces();
 
             MessageBox box = new MessageBox(shell, SWT.ICON_WARNING | SWT.YES | SWT.NO);
-            box.setText("Warning!");
-            box.setMessage("Warning, you are about to delete "+idxs.length+" "+(idxs.length!=1?"columns":"column")+".\nThis operation can not be undone!\n\nAre you sure you want to continue?");
+            box.setText(Messages.getString("BusinessTableDialog.USER_TITLE_WARNING")); //$NON-NLS-1$
+            box.setMessage(Messages.getString("BusinessTableDialog.USER_WARNING_CONFIRM_DELETE_COLUMNS", Integer.toString(idxs.length))+ //$NON-NLS-1$
+                (idxs.length!=1?Messages.getString("BusinessTableDialog.USER_COLUMNS"):Messages.getString("BusinessTableDialog.USER_COLUMN"))+ //$NON-NLS-1$ //$NON-NLS-2$
+                Messages.getString("BusinessTableDialog.USER_CONFIRM_OPERATION_CANNOT_BE_UNDONE")); //$NON-NLS-1$ 
             if (box.open()!=SWT.YES) return;
                 
             BusinessColumn columns[] = new BusinessColumn[idxs.length];
@@ -478,7 +481,7 @@ public class BusinessTableDialog extends Dialog
                                 }
                                 catch(Exception e)
                                 {
-                                    new ErrorDialog(shell, "Error", "Error getting value for property '"+id+"'", e);
+                                    new ErrorDialog(shell, Messages.getString("BusinessTableDialog.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_GETTING_PROPERTY_VALUE", id), e); //$NON-NLS-1$ //$NON-NLS-2$ 
                                 }
                                 if (property!=null)
                                 {
@@ -509,7 +512,7 @@ public class BusinessTableDialog extends Dialog
                 }
                 catch(ObjectAlreadyExistsException e)
                 {
-                    new ErrorDialog(shell, "Error", "The ID '"+wColId.getText()+"' for this column is already used, please use a different one.", e);
+                    new ErrorDialog(shell, Messages.getString("BusinessTableDialog.USER_ERROR_TITLE"), Messages.getString("BusinessTableDialog.USER_ERROR_COLUMN_ID_IN_USE", wColId.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
                     // Go back to the previous column
                     // It's obvious that's where the problem was...
                     int prevIndex = businessTable.indexOfBusinessColumn(previousColumn);
@@ -524,7 +527,7 @@ public class BusinessTableDialog extends Dialog
     {
         wColId.setText( column.getId() );
         
-        String message = "Properties for column '"+column.getDisplayName(activeLocale)+"'";
+        String message = Messages.getString("BusinessTableDialog.USER_PROPERTIES_FOR_COLUMN", column.getDisplayName(activeLocale)); //$NON-NLS-1$ 
 
         ConceptDefaultsDialog.getControls(propertiesComposite, column, message, column.getConcept(), detailsWidgetInterfaces, schemaMeta.getLocales(), schemaMeta.getSecurityReference());
         previousColumn = column;
@@ -548,13 +551,13 @@ public class BusinessTableDialog extends Dialog
     private void addPropertiesTab()
     {        
         CTabItem wItemProps = new CTabItem(wTabfolder, SWT.NONE);
-        wItemProps.setText("Table properties");
+        wItemProps.setText(Messages.getString("BusinessTableDialog.USER_TABLE_PROPERTIES")); //$NON-NLS-1$
 
         Composite composite = new Composite(wTabfolder, SWT.NONE);
         props.setLook(composite);
         composite.setLayout(new FormLayout());
         
-        ConceptDefaultsDialog.getControls(composite, businessTable, "Business table '"+businessTable.getDisplayName(activeLocale)+"'", null, null, conceptInterface, widgetInterfaces, schemaMeta.getLocales(), schemaMeta.getSecurityReference());
+        ConceptDefaultsDialog.getControls(composite, businessTable, Messages.getString("BusinessTableDialog.USER_BUSINESS_TABLE_NAME", businessTable.getDisplayName(activeLocale)), null, null, conceptInterface, widgetInterfaces, schemaMeta.getLocales(), schemaMeta.getSecurityReference()); //$NON-NLS-1$ 
 
         FormData fdProperties=new FormData();
         fdProperties.left   = new FormAttachment(0, 0);
@@ -608,7 +611,7 @@ public class BusinessTableDialog extends Dialog
         }
         catch (ObjectAlreadyExistsException e)
         {
-            new ErrorDialog(shell, "Error", "The ID '"+wName.getText()+"' for this table is already used, please use a different one.", e);
+            new ErrorDialog(shell, Messages.getString("BusinessTableDialog.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_TABLE_ID_IN_USE", wName.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
             return;
         }
         
@@ -633,7 +636,7 @@ public class BusinessTableDialog extends Dialog
             }
             catch (ObjectAlreadyExistsException e)
             {
-                new ErrorDialog(shell, "Error", "The ID '"+wColId.getText()+"' for this column is already used, please use a different one.", e);
+                new ErrorDialog(shell, Messages.getString("BusinessTableDialog.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_COLUMN_ID_IN_USE", wColId.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
                 return;
             } 
         }
@@ -669,7 +672,7 @@ public class BusinessTableDialog extends Dialog
                 }
                 catch (ObjectAlreadyExistsException e)
                 {
-                    new ErrorDialog(shell, "Error", "The business column ID '"+businessColumn.getId()+"' is already used, please use a different one.", e);
+                    new ErrorDialog(shell, Messages.getString("BusinessTableDialog.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_BUSINESS_COLUMN_ID_IN_USE", businessColumn.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
                     return;
                 }
             }
@@ -681,7 +684,7 @@ public class BusinessTableDialog extends Dialog
             }
             catch (ObjectAlreadyExistsException e)
             {
-                new ErrorDialog(shell, "Error", "The business column ID '"+businessColumn.getId()+"' is already used, please use a different one.", e);
+                new ErrorDialog(shell, Messages.getString("BusinessTableDialog.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_BUSINESS_COLUMN_ID_IN_USE", businessColumn.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
                 return;
             }
         }
@@ -696,7 +699,7 @@ public class BusinessTableDialog extends Dialog
         if (physicalTable!=null)
         {
             String[] columns = physicalTable.getColumnNames(activeLocale);
-            EnterSelectionDialog dialog = new EnterSelectionDialog(shell, columns, "Select a column", "Select the physical column for this business column");
+            EnterSelectionDialog dialog = new EnterSelectionDialog(shell, columns, Messages.getString("BusinessTableDialog.USER_TITLE_SELECT_COLUMN"), Messages.getString("BusinessTableDialog.USER_SELECT_COLUMN")); //$NON-NLS-1$ //$NON-NLS-2$
             String name = dialog.open();
             if (name!=null)
             {
@@ -709,7 +712,7 @@ public class BusinessTableDialog extends Dialog
                 }
                 catch (ObjectAlreadyExistsException e)
                 {
-                    new ErrorDialog(shell, "Error", "A business column with ID '"+businessColumn.getId()+"' already exists and was not added", e);
+                    new ErrorDialog(shell, Messages.getString("BusinessTableDialog.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_ID_EXISTS_NOT_ADDED", businessColumn.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
                 }
             }
             
@@ -734,7 +737,7 @@ public class BusinessTableDialog extends Dialog
                 }
                 catch (ObjectAlreadyExistsException e)
                 {
-                    new ErrorDialog(shell, "Error", "A business table with ID '"+wName.getText()+"' already exists.", e);
+                    new ErrorDialog(shell, Messages.getString("BusinessTableDialog.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_BUSINESS_TABLE_ID_EXISTS", wName.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
                     return;
                 }
             }
@@ -756,7 +759,7 @@ public class BusinessTableDialog extends Dialog
                     }
                     catch (ObjectAlreadyExistsException e)
                     {
-                        new ErrorDialog(shell, "Error", "A business column with ID '"+businessColumn.getId()+"' already exists and was not added", e);
+                        new ErrorDialog(shell, Messages.getString("BusinessTableDialog.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_ID_EXISTS_NOT_ADDED", businessColumn.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
                     }
                 }
 			}
@@ -766,8 +769,8 @@ public class BusinessTableDialog extends Dialog
         else
 		{
 			MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR );
-			mb.setMessage("Sorry, I couldn't find the physical table you specified");
-			mb.setText("Sorry");
+			mb.setMessage(Messages.getString("BusinessTableDialog.USER_ERROR_CANT_FIND_PHYSICAL_TABLE")); //$NON-NLS-1$
+			mb.setText(Messages.getString("BusinessTableDialog.USER_TITLE_ERROR")); //$NON-NLS-1$
 			mb.open();
 		}
 	}

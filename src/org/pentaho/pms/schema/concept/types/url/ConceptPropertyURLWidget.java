@@ -25,6 +25,7 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Link;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyWidgetInterface;
@@ -96,15 +97,15 @@ public class ConceptPropertyURLWidget  extends ChangedFlag implements ConceptPro
     public void setValue(ConceptPropertyInterface property)
     {
         final URL value = (URL) property.getValue();
-        final StringBuffer url = new StringBuffer();
-        if (value!=null) url.append(value.toString());
+        final StringBuffer thisUrl = new StringBuffer();
+        if (value!=null) thisUrl.append(value.toString());
         if (value!=null)
         {
-            link.setText("<A>"+value.toString()+"</A>");
+            link.setText("<A>"+value.toString()+"</A>"); //$NON-NLS-1$ //$NON-NLS-2$
         }
         else
         {
-            link.setText("<A>Enter a URL</A>");
+            link.setText("<A>"+Messages.getString("ConceptPropertyURLWidget.USER_ENTER_URL")+"</A>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
     }
 
@@ -116,7 +117,7 @@ public class ConceptPropertyURLWidget  extends ChangedFlag implements ConceptPro
     public static boolean getURL(Composite composite, ConceptPropertyInterface property, Link link, StringBuffer url)
     {
         URL value = (URL) property.getValue();
-        EnterStringDialog dialog = new EnterStringDialog(composite.getShell(), value!=null?value.toString():"", "Enter an URL", "Enter an URL");
+        EnterStringDialog dialog = new EnterStringDialog(composite.getShell(), value!=null?value.toString():"", Messages.getString("ConceptPropertyURLWidget.USER_ENTER_URL"), Messages.getString("ConceptPropertyURLWidget.USER_ENTER_URL")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         String newValue = dialog.open();
         if (newValue!=null)
         {
@@ -125,12 +126,12 @@ public class ConceptPropertyURLWidget  extends ChangedFlag implements ConceptPro
                 property.setValue(new URL(newValue));
                 url.setLength(0);
                 url.append(newValue);
-                link.setText("<A>"+newValue+"</A>");
+                link.setText("<A>"+newValue+"</A>"); //$NON-NLS-1$ //$NON-NLS-2$
                 return true;
             }
             catch(Exception e)
             {
-                new ErrorDialog(composite.getShell(), "Error in URL", "There is an error in the URL", e);
+                new ErrorDialog(composite.getShell(), Messages.getString("ConceptPropertyURLWidget.USER_TITLE_ERROR_IN_URL"), Messages.getString("ConceptPropertyURLWidget.USER_ERROR_IN_URL"), e); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
         return false;

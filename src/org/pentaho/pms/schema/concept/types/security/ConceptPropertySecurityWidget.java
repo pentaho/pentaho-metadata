@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TableItem;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyWidgetInterface;
@@ -110,7 +111,7 @@ public class ConceptPropertySecurityWidget extends ChangedFlag implements Concep
         final Security security = (Security)property.getValue();
         // Set buttons to the right of the screen...
         Button delete = new Button(composite, SWT.PUSH);
-        delete.setText(" Delete ");
+        delete.setText(Messages.getString("ConceptPropertySecurityWidget.USER_DELETE")); //$NON-NLS-1$
         props.setLook(delete);
         FormData fdDelete = new FormData();
         fdDelete.right= new FormAttachment(100, 0);
@@ -125,7 +126,7 @@ public class ConceptPropertySecurityWidget extends ChangedFlag implements Concep
         delete.setLayoutData(fdDelete);
         
         Button edit = new Button(composite, SWT.PUSH);
-        edit.setText(" Edit ");
+        edit.setText(Messages.getString("ConceptPropertySecurityWidget.USER_EDIT")); //$NON-NLS-1$
         props.setLook(edit);
         FormData fdEdit = new FormData();
         fdEdit.right= new FormAttachment(delete, -Const.MARGIN);
@@ -140,7 +141,7 @@ public class ConceptPropertySecurityWidget extends ChangedFlag implements Concep
         edit.setLayoutData(fdEdit);
         
         Button add = new Button(composite, SWT.PUSH);
-        add.setText(" Add ");
+        add.setText(Messages.getString("ConceptPropertySecurityWidget.USER_ADD")); //$NON-NLS-1$
         props.setLook(add);
         FormData fdAdd = new FormData();
         fdAdd.right= new FormAttachment(edit, -Const.MARGIN);
@@ -157,9 +158,9 @@ public class ConceptPropertySecurityWidget extends ChangedFlag implements Concep
 
         ColumnInfo[] colinf=new ColumnInfo[]
            {
-              new ColumnInfo("Owner type",  ColumnInfo.COLUMN_TYPE_TEXT, false, true),
-              new ColumnInfo("Owner name",  ColumnInfo.COLUMN_TYPE_TEXT, false, true),
-              new ColumnInfo("Rights",      ColumnInfo.COLUMN_TYPE_TEXT, false, true),
+              new ColumnInfo(Messages.getString("ConceptPropertySecurityWidget.USER_OWNER_TYPE"),  ColumnInfo.COLUMN_TYPE_TEXT, false, true), //$NON-NLS-1$
+              new ColumnInfo(Messages.getString("ConceptPropertySecurityWidget.USER_OWNER_NAME"),  ColumnInfo.COLUMN_TYPE_TEXT, false, true), //$NON-NLS-1$
+              new ColumnInfo(Messages.getString("ConceptPropertySecurityWidget.USER_RIGHTS"),      ColumnInfo.COLUMN_TYPE_TEXT, false, true), //$NON-NLS-1$
            };
                                     
         final TableView wFields=new TableView( composite, 

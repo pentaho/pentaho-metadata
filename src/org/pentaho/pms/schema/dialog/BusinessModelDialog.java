@@ -36,6 +36,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.pentaho.pms.locale.Locales;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.dialog.ConceptDefaultsDialog;
@@ -111,7 +112,7 @@ public class BusinessModelDialog extends Dialog
         shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.MIN);
         props.setLook(shell);
         
-        log.logDebug(this.getClass().getName(), "Opening dialog");
+        log.logDebug(this.getClass().getName(), Messages.getString("BusinessModelDialog.DEBUG_OPENING_DIALOG")); //$NON-NLS-1$
 
         ModifyListener lsMod = new ModifyListener() 
         {
@@ -126,14 +127,14 @@ public class BusinessModelDialog extends Dialog
         formLayout.marginHeight = Const.FORM_MARGIN;
 
         shell.setLayout(formLayout);
-        shell.setText("Business Model Properties");
+        shell.setText(Messages.getString("BusinessModelDialog.USER_BUSINESS_MODEL_PROPERTIES")); //$NON-NLS-1$
         
         int middle = props.getMiddlePct();
         int margin = Const.MARGIN;
 
         // Name line
         wlName=new Label(shell, SWT.RIGHT);
-        wlName.setText("Name / ID");
+        wlName.setText(Messages.getString("BusinessModelDialog.USER_NAME_ID")); //$NON-NLS-1$
         props.setLook(wlName);
         fdlName=new FormData();
         fdlName.left = new FormAttachment(0, 0);
@@ -141,7 +142,7 @@ public class BusinessModelDialog extends Dialog
         fdlName.top  = new FormAttachment(0, margin);
         wlName.setLayoutData(fdlName);
         wName=new Text(shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
-        wName.setText("");
+        wName.setText(""); //$NON-NLS-1$
         props.setLook(wName);
         wName.addModifyListener(lsMod);
         fdName=new FormData();
@@ -151,9 +152,9 @@ public class BusinessModelDialog extends Dialog
         wName.setLayoutData(fdName);
 
         wOK=new Button(shell, SWT.PUSH);
-        wOK.setText(" &OK ");
+        wOK.setText(Messages.getString("BusinessModelDialog.USER_OK")); //$NON-NLS-1$
         wCancel=new Button(shell, SWT.PUSH);
-        wCancel.setText(" &Cancel ");
+        wCancel.setText(Messages.getString("BusinessModelDialog.USER_CANCEL")); //$NON-NLS-1$
         
         BaseStepDialog.positionBottomButtons(shell, new Button[] { wOK, wCancel }, margin, null);
         
@@ -167,7 +168,7 @@ public class BusinessModelDialog extends Dialog
         propertiesComposite.setLayout(new FormLayout());
         props.setLook(propertiesComposite);
         
-        ConceptDefaultsDialog.getControls(propertiesComposite, businessModel, "Business Model properties", conceptInterface, widgetInterfaces, locales, securityReference);
+        ConceptDefaultsDialog.getControls(propertiesComposite, businessModel, Messages.getString("BusinessModelDialog.USER_BUSINESS_MODEL_PROPERTIES"), conceptInterface, widgetInterfaces, locales, securityReference); //$NON-NLS-1$
         
         FormData fdRight = new FormData();
         fdRight.top    = new FormAttachment(0, 0);
@@ -234,7 +235,7 @@ public class BusinessModelDialog extends Dialog
 
     protected void refreshConceptProperties()
     {
-        ConceptDefaultsDialog.getControls(propertiesComposite, "Business Model properties", conceptInterface, widgetInterfaces, locales, securityReference);
+        ConceptDefaultsDialog.getControls(propertiesComposite, Messages.getString("BusinessModelDialog.USER_BUSINESS_MODEL_PROPERTIES"), conceptInterface, widgetInterfaces, locales, securityReference); //$NON-NLS-1$
         propertiesComposite.layout(true, true);
     }
 
@@ -246,7 +247,7 @@ public class BusinessModelDialog extends Dialog
         }
         catch (ObjectAlreadyExistsException e)
         {
-            new ErrorDialog(shell, "Error", "A business Model with ID '"+wName.getText()+"' already exists.", e);
+            new ErrorDialog(shell, Messages.getString("BusinessModelDialog.USER_TITLE_ERROR"), Messages.getString("BusinessModelDialog.USER_ERROR_BUSINESS_MODEL_EXISTS", wName.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
             return;
         }
 

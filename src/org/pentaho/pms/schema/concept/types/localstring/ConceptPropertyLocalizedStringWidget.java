@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TableItem;
 import org.pentaho.pms.locale.Locales;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyWidgetInterface;
@@ -142,8 +143,8 @@ public class ConceptPropertyLocalizedStringWidget extends ChangedFlag implements
 
         ColumnInfo[] colinf=new ColumnInfo[]
            {
-              new ColumnInfo("Locale",      ColumnInfo.COLUMN_TYPE_TEXT, false, true),
-              new ColumnInfo("String",      ColumnInfo.COLUMN_TYPE_TEXT, false, false),
+              new ColumnInfo(Messages.getString("ConceptPropertyLocalizedStringWidget.USER_LOCALE_DESC"),      ColumnInfo.COLUMN_TYPE_TEXT, false, true), //$NON-NLS-1$
+              new ColumnInfo(Messages.getString("ConceptPropertyLocalizedStringWidget.USER_STRING_DESC"),      ColumnInfo.COLUMN_TYPE_TEXT, false, false), //$NON-NLS-1$
            };
                                     
         final TableView wFields=new TableView( composite, 

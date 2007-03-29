@@ -36,6 +36,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FontDialog;
 import org.eclipse.swt.widgets.Shell;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyWidgetInterface;
@@ -166,7 +167,7 @@ public class ConceptPropertyFontWidget extends ChangedFlag implements ConceptPro
         composite.addDisposeListener(new DisposeListener() { public void widgetDisposed(DisposeEvent e) { managedFont.dispose(); }});
 
         final Button button = new Button(composite, SWT.PUSH);
-        button.setText("Edit font...");
+        button.setText(Messages.getString("ConceptPropertyFontWidget.USER_EDIT_FONT")); //$NON-NLS-1$
         FormData fdButton = new FormData();
         fdButton.right = new FormAttachment( 100, 0);
         if (lastControl!=null)
