@@ -141,12 +141,12 @@ public class OlapHierarchy extends ChangedFlag implements Cloneable
         this.primaryKey = primaryKey;
     }
 
-    public OlapHierarchyLevel findOlapHierarchyLevel(String name)
+    public OlapHierarchyLevel findOlapHierarchyLevel(String thisName)
     {
         for (int i=0;i<hierarchyLevels.size();i++)
         {
             OlapHierarchyLevel level = (OlapHierarchyLevel) hierarchyLevels.get(i);
-            if (level.getName().equalsIgnoreCase(name)) return level;
+            if (level.getName().equalsIgnoreCase(thisName)) return level;
         }
         return null;
     }
@@ -191,20 +191,20 @@ public class OlapHierarchy extends ChangedFlag implements Cloneable
         
         for (int i=names.size()-1;i>=0;i--)
         {
-            String name = (String) names.get(i);
-            if (findBusinessColumn(locale, name)!=null) names.remove(i);
+            String columnName = (String) names.get(i);
+            if (findBusinessColumn(locale, columnName)!=null) names.remove(i);
         }
         
         return (String[]) names.toArray(new String[names.size()]);
     }
     
-    public BusinessColumn findBusinessColumn(String locale, String name)
+    public BusinessColumn findBusinessColumn(String locale, String columnName)
     {
         // Look in the levels
         for (int i=0;i<hierarchyLevels.size();i++)
         {
             OlapHierarchyLevel level = (OlapHierarchyLevel) hierarchyLevels.get(i);
-            BusinessColumn businessColumn = level.findBusinessColumn(locale, name);
+            BusinessColumn businessColumn = level.findBusinessColumn(locale, columnName);
             if (businessColumn!=null) return businessColumn;
         }
         return null;

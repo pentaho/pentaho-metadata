@@ -18,14 +18,14 @@ import be.ibridge.kettle.core.Props;
 
 public class Settings
 {
-    private static final String BUSINESS_MODEL_ID_PREFIX      = "BUSINESS_MODEL_ID_PREFIX";
-    private static final String BUSINESS_CATEGORY_ID_PREFIX  = "BUSINESS_CATEGORY_ID_PREFIX";
-    private static final String BUSINESS_TABLE_ID_PREFIX     = "BUSINESS_TABLE_ID_PREFIX";
-    private static final String BUSINESS_COLUMN_ID_PREFIX    = "BUSINESS_COLUMN_ID_PREFIX";
-    private static final String PHYSICAL_TABLE_ID_PREFIX     = "PHYSICAL_TABLE_ID_PREFIX";
-    private static final String PHYSICAL_COLUMN_ID_PREFIX    = "PHYSICAL_COLUMN_ID_PREFIX";
-    private static final String IDS_ARE_UPPERCASE            = "IDS_ARE_UPPERCASE";
-    private static final String SCHEMA_FACTORY_CLASS_NAME         = "SCHEMA_FACTORY_CLASS_NAME";
+    private static final String BUSINESS_MODEL_ID_PREFIX      = "BUSINESS_MODEL_ID_PREFIX"; //$NON-NLS-1$
+    private static final String BUSINESS_CATEGORY_ID_PREFIX  = "BUSINESS_CATEGORY_ID_PREFIX"; //$NON-NLS-1$
+    private static final String BUSINESS_TABLE_ID_PREFIX     = "BUSINESS_TABLE_ID_PREFIX"; //$NON-NLS-1$
+    private static final String BUSINESS_COLUMN_ID_PREFIX    = "BUSINESS_COLUMN_ID_PREFIX"; //$NON-NLS-1$
+    private static final String PHYSICAL_TABLE_ID_PREFIX     = "PHYSICAL_TABLE_ID_PREFIX"; //$NON-NLS-1$
+    private static final String PHYSICAL_COLUMN_ID_PREFIX    = "PHYSICAL_COLUMN_ID_PREFIX"; //$NON-NLS-1$
+    private static final String IDS_ARE_UPPERCASE            = "IDS_ARE_UPPERCASE"; //$NON-NLS-1$
+    private static final String SCHEMA_FACTORY_CLASS_NAME         = "SCHEMA_FACTORY_CLASS_NAME"; //$NON-NLS-1$
     private static final String CONCEPT_NAME_BASE = null;
     private static final String CONCEPT_NAME_NUMBER = null;
     private static final String CONCEPT_NAME_ID = null;
@@ -33,7 +33,7 @@ public class Settings
     
     public static final String getBusinessModelIDPrefix()
     {
-        return Props.getInstance().getCustomParameter(BUSINESS_MODEL_ID_PREFIX, "bv_");
+        return Props.getInstance().getCustomParameter(BUSINESS_MODEL_ID_PREFIX, "bv_"); //$NON-NLS-1$
     }
     
     public static final void setBusinessModelIDPrefix(String prefix)
@@ -43,7 +43,7 @@ public class Settings
     
     public static final String getBusinessTableIDPrefix()
     {
-        return Props.getInstance().getCustomParameter(BUSINESS_TABLE_ID_PREFIX, "bt_");
+        return Props.getInstance().getCustomParameter(BUSINESS_TABLE_ID_PREFIX, "bt_"); //$NON-NLS-1$
     }
 
     public static final void setBusinessTableIDPrefix(String prefix)
@@ -53,7 +53,7 @@ public class Settings
 
     public static final String getBusinessColumnIDPrefix()
     {
-        return Props.getInstance().getCustomParameter(BUSINESS_COLUMN_ID_PREFIX, "bc_");
+        return Props.getInstance().getCustomParameter(BUSINESS_COLUMN_ID_PREFIX, "bc_"); //$NON-NLS-1$
     }
 
     public static final void setBusinessColumnIDPrefix(String prefix)
@@ -63,7 +63,7 @@ public class Settings
 
     public static final String getBusinessCategoryIDPrefix()
     {
-        return Props.getInstance().getCustomParameter(BUSINESS_CATEGORY_ID_PREFIX, "bc_");
+        return Props.getInstance().getCustomParameter(BUSINESS_CATEGORY_ID_PREFIX, "bc_"); //$NON-NLS-1$
     }
 
     public static final void setBusinessCategoryIDPrefix(String prefix)
@@ -73,7 +73,7 @@ public class Settings
 
     public static final String getPhysicalTableIDPrefix()
     {
-        return Props.getInstance().getCustomParameter(PHYSICAL_TABLE_ID_PREFIX, "pt_");
+        return Props.getInstance().getCustomParameter(PHYSICAL_TABLE_ID_PREFIX, "pt_"); //$NON-NLS-1$
     }
 
     public static final void setPhysicalTableIDPrefix(String prefix)
@@ -83,7 +83,7 @@ public class Settings
 
     public static final String getPhysicalColumnIDPrefix()
     {
-        return Props.getInstance().getCustomParameter(PHYSICAL_COLUMN_ID_PREFIX, "pc_");
+        return Props.getInstance().getCustomParameter(PHYSICAL_COLUMN_ID_PREFIX, "pc_"); //$NON-NLS-1$
     }
 
     public static final void setPhysicalColumnIDPrefix(String prefix)
@@ -93,32 +93,32 @@ public class Settings
 
     public static final boolean isAnIdUppercase()
     {
-        return "Y".equalsIgnoreCase( Props.getInstance().getCustomParameter(IDS_ARE_UPPERCASE, "Y") );
+        return "Y".equalsIgnoreCase( Props.getInstance().getCustomParameter(IDS_ARE_UPPERCASE, "Y") ); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     public static String getConceptNameBase()
     {
-        return Props.getInstance().getCustomParameter(CONCEPT_NAME_BASE, "Base");
+        return Props.getInstance().getCustomParameter(CONCEPT_NAME_BASE, "Base"); //$NON-NLS-1$
     }
 
     public static String getConceptNameNumber()
     {
-        return Props.getInstance().getCustomParameter(CONCEPT_NAME_NUMBER, "Number");
+        return Props.getInstance().getCustomParameter(CONCEPT_NAME_NUMBER, "Number"); //$NON-NLS-1$
     }
 
     public static String getConceptNameID()
     {
-        return Props.getInstance().getCustomParameter(CONCEPT_NAME_ID, "ID");
+        return Props.getInstance().getCustomParameter(CONCEPT_NAME_ID, "ID"); //$NON-NLS-1$
     }
 
     public static String getConceptNameSK()
     {
-        return Props.getInstance().getCustomParameter(CONCEPT_NAME_SK, "SurrogateKey");
+        return Props.getInstance().getCustomParameter(CONCEPT_NAME_SK, "SurrogateKey"); //$NON-NLS-1$
     }
 
     
     public static final CwmSchemaFactoryInterface getCwmSchemaFactory() {
-      String cwmSchemaClassName = Props.getInstance().getCustomParameter(SCHEMA_FACTORY_CLASS_NAME, "org.pentaho.pms.factory.CwmSchemaFactory");
+      String cwmSchemaClassName = Props.getInstance().getCustomParameter(SCHEMA_FACTORY_CLASS_NAME, "org.pentaho.pms.factory.CwmSchemaFactory"); //$NON-NLS-1$
       try {
         Class cwlSchemaObj = Class.forName(cwmSchemaClassName);
         Object obj = cwlSchemaObj.newInstance();

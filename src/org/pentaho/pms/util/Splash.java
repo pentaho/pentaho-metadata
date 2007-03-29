@@ -26,6 +26,7 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.pentaho.pms.messages.Messages;
 
 /**
  * Displays the Kettle splash screen
@@ -46,7 +47,7 @@ public class Splash
         
         splash = new Shell(display, SWT.NONE /*SWT.ON_TOP*/);
         splash.setImage(splashIcon);
-        splash.setText("Pentaho Data Integration");
+        splash.setText(Messages.getString("Splash.USER_APP_TITLE")); //$NON-NLS-1$
         
 		FormLayout splashLayout = new FormLayout();
 		splash.setLayout(splashLayout);

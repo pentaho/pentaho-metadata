@@ -56,20 +56,20 @@ public class SimpleTest
         FunctionRegistry functionRegistry = context.getFunctionRegistry();
         Locale locale = Locale.ENGLISH; 
 
-        String strFormula = "LEFT( TRIM( [name] ) ; 3 )";
+        String strFormula = "LEFT( TRIM( [name] ) ; 3 )"; //$NON-NLS-1$
         
         LValue x = parser.parse(strFormula);
 
         if (x instanceof FormulaFunction)
         {
             FormulaFunction formulaFunction = (FormulaFunction) x;
-            System.out.println("Function detected: "+formulaFunction.getFunctionName());
+            System.out.println("Function detected: "+formulaFunction.getFunctionName()); //$NON-NLS-1$
             
             // OK, look in the function registry...
             FunctionDescription metaData = functionRegistry.getMetaData(formulaFunction.getFunctionName());
-            System.out.println("  Description      : "+metaData.getDescription(locale));
-            System.out.println("  Display name     : "+metaData.getDisplayName(locale));
-            System.out.println("  Nr of parameters : "+metaData.getParameterCount());
+            System.out.println("  Description      : "+metaData.getDescription(locale)); //$NON-NLS-1$
+            System.out.println("  Display name     : "+metaData.getDisplayName(locale)); //$NON-NLS-1$
+            System.out.println("  Nr of parameters : "+metaData.getParameterCount()); //$NON-NLS-1$
 
             MySQLDialect mysqlDialect = new MySQLDialect();
             Map hFunctions = mysqlDialect.getFunctions();
@@ -77,7 +77,7 @@ public class SimpleTest
             for (Iterator iter = col.iterator(); iter.hasNext();)
             {
                 SQLFunction sqlFunction = (SQLFunction) iter.next();
-                System.out.println("hibernate function found: "+sqlFunction);                
+                System.out.println("hibernate function found: "+sqlFunction);                 //$NON-NLS-1$
             }
             
             /*
@@ -108,7 +108,7 @@ public class SimpleTest
         x.initialize(context);
         System.out.println (x);
         TypeValuePair result = x.evaluate();
-        System.out.println("result of formula: ["+strFormula+"] = "+result.getValue());
+        System.out.println("result of formula: ["+strFormula+"] = "+result.getValue()); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     public static void main(String[] args) throws KettleException, ParseException, EvaluationException
@@ -116,17 +116,17 @@ public class SimpleTest
         List rows = new ArrayList();
         
         Row r1 = new Row();
-        r1.addValue(new Value("year", (long)2007));
-        r1.addValue(new Value("month", (long)02));
-        r1.addValue(new Value("day", (long)20));
-        r1.addValue(new Value("name", "  Casters  "));
-        r1.addValue(new Value("firstname", "Matt"));
+        r1.addValue(new Value("year", (long)2007)); //$NON-NLS-1$
+        r1.addValue(new Value("month", (long)02)); //$NON-NLS-1$
+        r1.addValue(new Value("day", (long)20)); //$NON-NLS-1$
+        r1.addValue(new Value("name", "  Casters  ")); //$NON-NLS-1$ //$NON-NLS-2$
+        r1.addValue(new Value("firstname", "Matt")); //$NON-NLS-1$ //$NON-NLS-2$
         Row r2 = new Row();
-        r2.addValue(new Value("year", (long)2006));
-        r2.addValue(new Value("month", (long)12));
-        r2.addValue(new Value("day", (long)31));
-        r2.addValue(new Value("name", "  Bar  "));
-        r2.addValue(new Value("firstname", "Foo"));
+        r2.addValue(new Value("year", (long)2006)); //$NON-NLS-1$
+        r2.addValue(new Value("month", (long)12)); //$NON-NLS-1$
+        r2.addValue(new Value("day", (long)31)); //$NON-NLS-1$
+        r2.addValue(new Value("name", "  Bar  ")); //$NON-NLS-1$ //$NON-NLS-2$
+        r2.addValue(new Value("firstname", "Foo")); //$NON-NLS-1$ //$NON-NLS-2$
         
         rows.add(r1);
         rows.add(r2);

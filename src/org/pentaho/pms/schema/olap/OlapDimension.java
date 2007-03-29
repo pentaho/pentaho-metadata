@@ -99,12 +99,12 @@ public class OlapDimension extends ChangedFlag implements Cloneable
         this.timeDimension = timeDimension;
     }
 
-    public OlapHierarchy findOlapHierarchy(String name)
+    public OlapHierarchy findOlapHierarchy(String thisName)
     {
         for (int i=0;i<hierarchies.size();i++)
         {
             OlapHierarchy hierarchy = (OlapHierarchy) hierarchies.get(i);
-            if (hierarchy.getName().equalsIgnoreCase(name)) return hierarchy;
+            if (hierarchy.getName().equalsIgnoreCase(thisName)) return hierarchy;
         }
         return null;
     }

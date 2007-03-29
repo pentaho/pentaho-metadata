@@ -81,7 +81,7 @@ public class ConceptPropertyNumber extends ConceptPropertyBase implements Concep
     
     public boolean equals(Object obj)
     {
-        return value.equals((BigDecimal)obj);
+        return value.equals(obj);
     }
 
     public int hashCode()

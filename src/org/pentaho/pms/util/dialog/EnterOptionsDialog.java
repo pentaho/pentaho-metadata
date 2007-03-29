@@ -49,6 +49,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.util.Const;
 
 import be.ibridge.kettle.core.Props;
@@ -236,7 +237,7 @@ public class EnterOptionsDialog extends Dialog
 		formLayout.marginHeight = Const.FORM_MARGIN;
 
 		shell.setLayout(formLayout);
-        shell.setText("Pentaho Metadata Editor : options...");
+        shell.setText(Messages.getString("EnterOptionsDialog.USER_PME_OPTIONS")); //$NON-NLS-1$
 		
 		int middle = props.getMiddlePct();
 		int margin = Const.MARGIN;
@@ -250,7 +251,7 @@ public class EnterOptionsDialog extends Dialog
 		// START OF GENERAL TAB///
 		///
 		wGeneralTab=new CTabItem(wTabFolder, SWT.NONE);
-		wGeneralTab.setText("General");
+		wGeneralTab.setText(Messages.getString("EnterOptionsDialog.USER_GENERAL")); //$NON-NLS-1$
 
 		FormLayout generalLayout = new FormLayout ();
 		generalLayout.marginWidth  = 3;
@@ -321,7 +322,7 @@ public class EnterOptionsDialog extends Dialog
 
 		// Use DB Cache?
 		wlUseCache=new Label(wGeneralComp, SWT.RIGHT);
-		wlUseCache.setText("Use Database cache? ");
+		wlUseCache.setText(Messages.getString("EnterOptionsDialog.USER_USE_DATABASE)CACHE")); //$NON-NLS-1$
         props.setLook(wlUseCache);
 		fdlUseCache=new FormData();
 		fdlUseCache.left = new FormAttachment(0, 0);
@@ -340,7 +341,7 @@ public class EnterOptionsDialog extends Dialog
 
 		// Auto load last file at startup?
 		wlOpenLast=new Label(wGeneralComp, SWT.RIGHT);
-		wlOpenLast.setText("Open last file at startup? ");
+		wlOpenLast.setText(Messages.getString("EnterOptionsDialog.USER_OPEN_LAST_FILE_ON_STARTUP")); //$NON-NLS-1$
         props.setLook(wlOpenLast);
 		fdlOpenLast=new FormData();
 		fdlOpenLast.left = new FormAttachment(0, 0);
@@ -358,7 +359,7 @@ public class EnterOptionsDialog extends Dialog
 
 		// Auto save changed files?
 		wlAutoSave=new Label(wGeneralComp, SWT.RIGHT);
-		wlAutoSave.setText("Auto save changed file? ");
+		wlAutoSave.setText(Messages.getString("EnterOptionsDialog.USER_AUTO_SAVE")); //$NON-NLS-1$
         props.setLook(wlAutoSave);
 		fdlAutoSave=new FormData();
 		fdlAutoSave.left = new FormAttachment(0, 0);
@@ -432,7 +433,7 @@ public class EnterOptionsDialog extends Dialog
         
 		// Show confirmation after save?
 		wlSaveConf=new Label(wGeneralComp, SWT.RIGHT);
-		wlSaveConf.setText("Show save confirmation? ");
+		wlSaveConf.setText(Messages.getString("EnterOptionsDialog.USER_SHOW_SAVE_CONFIRMATION")); //$NON-NLS-1$
         props.setLook(wlSaveConf);
 		fdlSaveConf=new FormData();
 		fdlSaveConf.left = new FormAttachment(0, 0);
@@ -488,7 +489,7 @@ public class EnterOptionsDialog extends Dialog
 
         // Show exit warning?
         wlExitWarning=new Label(wGeneralComp, SWT.RIGHT);
-        wlExitWarning.setText("Show a warning before exiting? ");
+        wlExitWarning.setText(Messages.getString("EnterOptionsDialog.USER_SHOW_WARNING_ON_EXIT")); //$NON-NLS-1$
         props.setLook(wlExitWarning);
         fdlExitWarning=new FormData();
         fdlExitWarning.left = new FormAttachment(0, 0);
@@ -570,7 +571,7 @@ public class EnterOptionsDialog extends Dialog
 		// START OF LOOK TAB///
 		///
 		wLookTab=new CTabItem(wTabFolder, SWT.NONE);
-		wLookTab.setText("Look && Feel");
+		wLookTab.setText(Messages.getString("EnterOptionsDialog.USER_LOOK_AND_FEEL")); //$NON-NLS-1$
 		
         sLookComp = new ScrolledComposite(wTabFolder, SWT.V_SCROLL | SWT.H_SCROLL );
         sLookComp.setLayout(new FillLayout());
@@ -587,7 +588,7 @@ public class EnterOptionsDialog extends Dialog
 		// Fixed font
         int nr = 0;
 		wlFFont=new Label(wLookComp, SWT.RIGHT);
-		wlFFont.setText("Fixed width font");
+		wlFFont.setText(Messages.getString("EnterOptionsDialog.uSER_FIXED_WIDTH_FONT")); //$NON-NLS-1$
         props.setLook(wlFFont);
 		fdlFFont=new FormData();
 		fdlFFont.left  = new FormAttachment(0, 0);
@@ -596,7 +597,7 @@ public class EnterOptionsDialog extends Dialog
 		wlFFont.setLayoutData(fdlFFont);
 
         wdFFont = new Button(wLookComp, SWT.PUSH | SWT.BORDER | SWT.CENTER);
-        wdFFont.setText("default");
+        wdFFont.setText(Messages.getString("EnterOptionsDialog.USER_DEFAULT")); //$NON-NLS-1$
         props.setLook(wdFFont);
         fddFFont = new FormData();
         fddFFont.right= new FormAttachment(100, 0);
@@ -616,7 +617,7 @@ public class EnterOptionsDialog extends Dialog
         );
 
 		wbFFont = new Button(wLookComp, SWT.PUSH | SWT.BORDER | SWT.CENTER);
-		wbFFont.setText("change");
+		wbFFont.setText(Messages.getString("EnterOptionsDialog.USER_CHANGE")); //$NON-NLS-1$
         props.setLook(wbFFont);
         fdbFFont = new FormData();
 		fdbFFont.right= new FormAttachment(wdFFont, -margin);
@@ -666,7 +667,7 @@ public class EnterOptionsDialog extends Dialog
 		// Graph font
         nr++;
 		wlGFont=new Label(wLookComp, SWT.RIGHT);
-		wlGFont.setText("Graph font");
+		wlGFont.setText(Messages.getString("EnterOptionsDialog.USER_GRAPH_FONT")); //$NON-NLS-1$
         props.setLook(wlGFont);
 		fdlGFont=new FormData();
 		fdlGFont.left  = new FormAttachment(0, 0);
@@ -675,7 +676,7 @@ public class EnterOptionsDialog extends Dialog
 		wlGFont.setLayoutData(fdlGFont);
 
         wdGFont = new Button(wLookComp, SWT.PUSH | SWT.BORDER | SWT.CENTER);
-        wdGFont.setText("default");
+        wdGFont.setText(Messages.getString("EnterOptionsDialog.USER_DEFAULT")); //$NON-NLS-1$
         props.setLook(wdGFont);
         fddGFont=new FormData();
         fddGFont.right= new FormAttachment(100, 0);
@@ -696,7 +697,7 @@ public class EnterOptionsDialog extends Dialog
         );
 
 		wbGFont = new Button(wLookComp, SWT.PUSH | SWT.BORDER | SWT.CENTER);
-		wbGFont.setText("change");
+		wbGFont.setText(Messages.getString("EnterOptionsDialog.USER_CHANGE")); //$NON-NLS-1$
         props.setLook(wbGFont);
 		fdbGFont=new FormData();
 		fdbGFont.right= new FormAttachment(wdGFont, -margin);
@@ -748,7 +749,7 @@ public class EnterOptionsDialog extends Dialog
 		// Note font
         nr++;
 		wlNFont = new Label(wLookComp, SWT.RIGHT);
-		wlNFont.setText("Note font");
+		wlNFont.setText(Messages.getString("EnterOptionsDialog.USER_NOTE_FONT")); //$NON-NLS-1$
         props.setLook(wlNFont);
 		fdlNFont = new FormData();
 		fdlNFont.left  = new FormAttachment(0, 0);
@@ -757,7 +758,7 @@ public class EnterOptionsDialog extends Dialog
 		wlNFont.setLayoutData(fdlNFont);
 
 		wdNFont = new Button(wLookComp, SWT.PUSH | SWT.BORDER | SWT.CENTER);
-        wdNFont.setText("default");
+        wdNFont.setText(Messages.getString("EnterOptionsDialog.USER_DEFAULT")); //$NON-NLS-1$
         props.setLook(wdNFont);
 		fddNFont = new FormData();
         fddNFont.right = new FormAttachment(100, 0);
@@ -777,7 +778,7 @@ public class EnterOptionsDialog extends Dialog
 		);
 
         wbNFont = new Button(wLookComp, SWT.PUSH | SWT.BORDER | SWT.CENTER);
-        wbNFont.setText("change");
+        wbNFont.setText(Messages.getString("EnterOptionsDialog.USER_CHANGE")); //$NON-NLS-1$
         props.setLook(wbNFont);
         fdbNFont = new FormData();
         fdbNFont.right = new FormAttachment(wdNFont, -margin);
@@ -831,7 +832,7 @@ public class EnterOptionsDialog extends Dialog
 		// Background color
         nr++;
 		wlBGColor = new Label(wLookComp, SWT.RIGHT);
-		wlBGColor.setText("Background color");
+		wlBGColor.setText(Messages.getString("EnterOptionsDialog.USER_BACKGROUND_COLOR")); //$NON-NLS-1$
         props.setLook(wlBGColor);
 		fdlBGColor = new FormData();
 		fdlBGColor.left = new FormAttachment(0, 0);
@@ -840,7 +841,7 @@ public class EnterOptionsDialog extends Dialog
 		wlBGColor.setLayoutData(fdlBGColor);
 
         wdBGcolor = new Button(wLookComp, SWT.PUSH | SWT.BORDER | SWT.CENTER);
-        wdBGcolor.setText("default");
+        wdBGcolor.setText(Messages.getString("EnterOptionsDialog.USER_DEFAULT")); //$NON-NLS-1$
         props.setLook(wdBGcolor);
         fddBGColor = new FormData();
         fddBGColor.right = new FormAttachment(100, 0);  // to the right of the dialog
@@ -862,7 +863,7 @@ public class EnterOptionsDialog extends Dialog
         );
 
         wbBGColor = new Button(wLookComp, SWT.PUSH | SWT.BORDER | SWT.CENTER);
-        wbBGColor.setText("change");
+        wbBGColor.setText(Messages.getString("EnterOptionsDialog.USER_CHANGE")); //$NON-NLS-1$
         props.setLook(wbBGColor);
         fdbBGColor = new FormData();
         fdbBGColor.right = new FormAttachment(wdBGcolor, -margin); // to the left of the "default" button
@@ -904,7 +905,7 @@ public class EnterOptionsDialog extends Dialog
 		// Graph background color
         nr++;
 		wlGrColor = new Label(wLookComp, SWT.RIGHT);
-		wlGrColor.setText("Graph background color");
+		wlGrColor.setText(Messages.getString("EnterOptionsDialog.USER_GRAPH_BACKGROUND_COLOR")); //$NON-NLS-1$
         props.setLook(wlGrColor);
 		fdlGrColor = new FormData();
 		fdlGrColor.left = new FormAttachment(0, 0);
@@ -913,7 +914,7 @@ public class EnterOptionsDialog extends Dialog
 		wlGrColor.setLayoutData(fdlGrColor);
 
         wdGrColor = new Button(wLookComp, SWT.PUSH | SWT.BORDER | SWT.CENTER);
-        wdGrColor.setText("default");
+        wdGrColor.setText(Messages.getString("EnterOptionsDialog.USER_DEFAULT")); //$NON-NLS-1$
         props.setLook(wdGrColor);
         fddGrColor = new FormData();
         fddGrColor.right = new FormAttachment(100, 0);
@@ -935,7 +936,7 @@ public class EnterOptionsDialog extends Dialog
         );
 
 		wbGrColor = new Button(wLookComp, SWT.PUSH | SWT.BORDER | SWT.CENTER);
-		wbGrColor.setText("change");
+		wbGrColor.setText(Messages.getString("EnterOptionsDialog.USER_CHANGE")); //$NON-NLS-1$
         props.setLook(wbGrColor);
 		fdbGrColor = new FormData();
 		fdbGrColor.right = new FormAttachment(wdGrColor, -margin);
@@ -975,7 +976,7 @@ public class EnterOptionsDialog extends Dialog
 		// Tab selected color
         nr++;
 		wlTabColor = new Label(wLookComp, SWT.RIGHT);
-		wlTabColor.setText("Color of selected tabs");
+		wlTabColor.setText(Messages.getString("EnterOptionsDialog.USER_COLOR_SELECTED_TABS")); //$NON-NLS-1$
         props.setLook(wlTabColor);
 		fdlTabColor = new FormData();
 		fdlTabColor.left = new FormAttachment(0, 0);
@@ -984,7 +985,7 @@ public class EnterOptionsDialog extends Dialog
 		wlTabColor.setLayoutData(fdlTabColor);
 
         wdTabColor = new Button(wLookComp, SWT.PUSH | SWT.BORDER | SWT.CENTER);
-        wdTabColor.setText("default");
+        wdTabColor.setText(Messages.getString("EnterOptionsDialog.USER_DEFAULT")); //$NON-NLS-1$
         props.setLook(wdTabColor);
         fddTabColor = new FormData();
         fddTabColor.right = new FormAttachment(100, 0);
@@ -1006,7 +1007,7 @@ public class EnterOptionsDialog extends Dialog
         );
 
 		wbTabColor = new Button(wLookComp, SWT.PUSH | SWT.BORDER | SWT.CENTER);
-        wbTabColor.setText("change");
+        wbTabColor.setText(Messages.getString("EnterOptionsDialog.USER_CHANGE")); //$NON-NLS-1$
         props.setLook(wbTabColor);
 		fdbTabColor = new FormData();
 		fdbTabColor.right = new FormAttachment(wdTabColor, -margin);
@@ -1046,7 +1047,7 @@ public class EnterOptionsDialog extends Dialog
 		
 		// Iconsize line
 		wlIconsize=new Label(wLookComp, SWT.RIGHT);
-		wlIconsize.setText("Icon size ");
+		wlIconsize.setText(Messages.getString("EnterOptionsDialog.USER_ICON_SIZE")); //$NON-NLS-1$
         props.setLook(wlIconsize);
 		fdlIconsize=new FormData();
 		fdlIconsize.left = new FormAttachment(0, 0);
@@ -1054,7 +1055,7 @@ public class EnterOptionsDialog extends Dialog
 		fdlIconsize.top  = new FormAttachment(wTabColor, margin);
 		wlIconsize.setLayoutData(fdlIconsize);
 		wIconsize=new Text(wLookComp, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
-		wIconsize.setText(""+props.getIconSize());
+		wIconsize.setText(""+props.getIconSize()); //$NON-NLS-1$
         props.setLook(wIconsize);
 		fdIconsize=new FormData();
 		fdIconsize.left = new FormAttachment(middle, 0);
@@ -1064,7 +1065,7 @@ public class EnterOptionsDialog extends Dialog
 
 		// LineWidth line
 		wlLineWidth=new Label(wLookComp, SWT.RIGHT);
-		wlLineWidth.setText("Line width ");
+		wlLineWidth.setText(Messages.getString("EnterOptionsDialog.USER_LINE_WIDTH")); //$NON-NLS-1$
         props.setLook(wlLineWidth);
 		fdlLineWidth=new FormData();
 		fdlLineWidth.left = new FormAttachment(0, 0);
@@ -1072,7 +1073,7 @@ public class EnterOptionsDialog extends Dialog
 		fdlLineWidth.top  = new FormAttachment(wIconsize, margin);
 		wlLineWidth.setLayoutData(fdlLineWidth);
 		wLineWidth=new Text(wLookComp, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
-		wLineWidth.setText(""+props.getLineWidth());
+		wLineWidth.setText(""+props.getLineWidth()); //$NON-NLS-1$
         props.setLook(wLineWidth);
 		fdLineWidth=new FormData();
 		fdLineWidth.left = new FormAttachment(middle, 0);
@@ -1082,7 +1083,7 @@ public class EnterOptionsDialog extends Dialog
 
 		// ShadowSize line
 		wlShadowSize=new Label(wLookComp, SWT.RIGHT);
-		wlShadowSize.setText("Shadow size ");
+		wlShadowSize.setText(Messages.getString("EnterOptionsDialog.USER_SHANDOW_SIZE")); //$NON-NLS-1$
         props.setLook(wlShadowSize);
 		fdlShadowSize=new FormData();
 		fdlShadowSize.left = new FormAttachment(0, 0);
@@ -1090,7 +1091,7 @@ public class EnterOptionsDialog extends Dialog
 		fdlShadowSize.top  = new FormAttachment(wLineWidth, margin);
 		wlShadowSize.setLayoutData(fdlShadowSize);
 		wShadowSize=new Text(wLookComp, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
-		wShadowSize.setText(""+props.getShadowSize());
+		wShadowSize.setText(""+props.getShadowSize()); //$NON-NLS-1$
         props.setLook(wShadowSize);
 		fdShadowSize=new FormData();
 		fdShadowSize.left = new FormAttachment(middle, 0);
@@ -1100,7 +1101,7 @@ public class EnterOptionsDialog extends Dialog
 
 		// MiddlePct line
 		wlMiddlePct=new Label(wLookComp, SWT.RIGHT);
-		wlMiddlePct.setText("Dialog middle percentage ");
+		wlMiddlePct.setText(Messages.getString("EnterOptionsDialog.USER_DIALOG_MIDDLE_PERCENTAGE")); //$NON-NLS-1$
         props.setLook(wlMiddlePct);
 		fdlMiddlePct=new FormData();
 		fdlMiddlePct.left = new FormAttachment(0, 0);
@@ -1108,7 +1109,7 @@ public class EnterOptionsDialog extends Dialog
 		fdlMiddlePct.top  = new FormAttachment(wShadowSize, margin);
 		wlMiddlePct.setLayoutData(fdlMiddlePct);
 		wMiddlePct=new Text(wLookComp, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
-		wMiddlePct.setText(""+props.getMiddlePct());
+		wMiddlePct.setText(""+props.getMiddlePct()); //$NON-NLS-1$
         props.setLook(wMiddlePct);
 		fdMiddlePct=new FormData();
 		fdMiddlePct.left = new FormAttachment(middle, 0);
@@ -1119,7 +1120,7 @@ public class EnterOptionsDialog extends Dialog
         
         // Enable anti-aliasing
         wlAntiAlias=new Label(wLookComp, SWT.RIGHT);
-        wlAntiAlias.setText("Canvas anti-aliasing enabled? ");
+        wlAntiAlias.setText(Messages.getString("EnterOptionsDialog.USER_CANVAS_ANTIALIASING_ENABLED")); //$NON-NLS-1$
         props.setLook(wlAntiAlias);
         fdlAntiAlias=new FormData();
         fdlAntiAlias.left = new FormAttachment(0, 0);
@@ -1137,7 +1138,7 @@ public class EnterOptionsDialog extends Dialog
 
         // Show original look
         wlOriginalLook=new Label(wLookComp, SWT.RIGHT);
-        wlOriginalLook.setText("Take over look from the OS? ");
+        wlOriginalLook.setText(Messages.getString("EnterOptionsDialog.USER_TAKE_OVER_LOOK_FROM_OS")); //$NON-NLS-1$
         props.setLook(wlOriginalLook);
         fdlOriginalLook=new FormData();
         fdlOriginalLook.left = new FormAttachment(0, 0);
@@ -1223,9 +1224,9 @@ public class EnterOptionsDialog extends Dialog
 
 		// Some buttons
 		wOK=new Button(shell, SWT.PUSH );
-		wOK.setText("  &OK  ");
+		wOK.setText(Messages.getString("EnterOptionsDialog.USER_OK")); //$NON-NLS-1$
 		wCancel=new Button(shell, SWT.PUSH);
-		wCancel.setText("  &Cancel  ");
+		wCancel.setText(Messages.getString("EnterOptionsDialog.USER_CANCEL")); //$NON-NLS-1$
 		
 		BaseStepDialog.positionBottomButtons(shell, new Button[] { wOK, wCancel }, margin, null);
 		

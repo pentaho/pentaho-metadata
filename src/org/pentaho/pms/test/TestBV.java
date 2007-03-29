@@ -22,8 +22,8 @@ public class TestBV
         //      this contains one or more localized business model metadata sets.
         //
         BusinessModel businessModel = new BusinessModel();
-        businessModel.getConcept().setName("en_US", "Customer information");
-        businessModel.getConcept().setDescription("en_US", "This is the customer information Business Model");
+        businessModel.getConcept().setName("en_US", "Customer information"); //$NON-NLS-1$ //$NON-NLS-2$
+        businessModel.getConcept().setDescription("en_US", "This is the customer information Business Model"); //$NON-NLS-1$ //$NON-NLS-2$
         
         // Add one or more business Tables to this...
         /*

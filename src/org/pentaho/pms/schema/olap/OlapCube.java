@@ -145,11 +145,11 @@ public class OlapCube extends ChangedFlag implements Cloneable
         
         for (int i=names.size()-1;i>=0;i--)
         {
-            String name = (String) names.get(i);
+            String columnName = (String) names.get(i);
             for (int m=0;m<olapMeasures.size();m++)
             {
                 OlapMeasure measure = (OlapMeasure)olapMeasures.get(m);
-                if (measure.getBusinessColumn().getDisplayName(locale).equals(name)) names.remove(i);
+                if (measure.getBusinessColumn().getDisplayName(locale).equals(columnName)) names.remove(i);
             }
         }
         

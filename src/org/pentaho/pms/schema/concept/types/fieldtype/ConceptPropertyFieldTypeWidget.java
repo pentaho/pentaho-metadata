@@ -108,7 +108,7 @@ public class ConceptPropertyFieldTypeWidget extends ChangedFlag implements Conce
         
         final CCombo combo = new CCombo(composite, SWT.BORDER);
         combo.setItems(FieldTypeSettings.typeDescriptions);
-        combo.setToolTipText(Messages.getString("ConceptPropertyFieldTypeWidget.USER_SELECT_PROPERTY_FIELDTYPE", name)); //$NON-NLS-1$ //$NON-NLS-2$
+        combo.setToolTipText(Messages.getString("ConceptPropertyFieldTypeWidget.USER_SELECT_PROPERTY_FIELDTYPE", name)); //$NON-NLS-1$ 
         props.setLook(combo);
         FormData fdCombo = new FormData();
         fdCombo.left  = new FormAttachment(props.getMiddlePct(), Const.MARGIN);

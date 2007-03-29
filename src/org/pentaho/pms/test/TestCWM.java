@@ -21,6 +21,7 @@ import org.pentaho.pms.cwm.pentaho.meta.core.CwmExpression;
 import org.pentaho.pms.cwm.pentaho.meta.core.CwmPackage;
 import org.pentaho.pms.cwm.pentaho.meta.relational.CwmColumn;
 import org.pentaho.pms.cwm.pentaho.meta.relational.CwmTable;
+import org.pentaho.pms.messages.Messages;
 
 import be.ibridge.kettle.core.Row;
 import be.ibridge.kettle.core.value.Value;
@@ -33,9 +34,9 @@ import be.ibridge.kettle.core.value.Value;
  */
 public class TestCWM
 {
-    public static final String DOMAIN = "SomeDomain";  // The domain name
+    public static final String DOMAIN = "SomeDomain";  // The domain name //$NON-NLS-1$
     
-    private static final String TEST_TABLE_NAME = "PentahoTable1";
+    private static final String TEST_TABLE_NAME = "PentahoTable1"; //$NON-NLS-1$
     
     private static CWM cwm = CWM.getInstance(DOMAIN);
 
@@ -53,7 +54,7 @@ public class TestCWM
         String[] domainNames = CWM.getDomainNames();
         for (int i=0;i<domainNames.length;i++)
         {
-            System.out.println("Package #"+(i+1)+" found : "+domainNames[i]);
+            System.out.println("Package #"+(i+1)+" found : "+domainNames[i]); //$NON-NLS-1$ //$NON-NLS-2$
             cwm.removePackage(domainNames[i]);
         }
         
@@ -65,32 +66,32 @@ public class TestCWM
         CwmTable table = cwm.getTable(TEST_TABLE_NAME);
         if (table==null)
         {
-            System.out.println("Table ["+TEST_TABLE_NAME+"] not found: creating...");
+            System.out.println("Table ["+TEST_TABLE_NAME+"] not found: creating..."); //$NON-NLS-1$ //$NON-NLS-2$
         }
         else
         {
-            System.out.println("Table ["+TEST_TABLE_NAME+"] found: overwriting...");
+            System.out.println("Table ["+TEST_TABLE_NAME+"] found: overwriting..."); //$NON-NLS-1$ //$NON-NLS-2$
         }
         cwm.beginTransaction();
         
         Row fields = new Row();
         { 
-          Value field = new Value("field1", Value.VALUE_TYPE_STRING   );  
+          Value field = new Value("field1", Value.VALUE_TYPE_STRING   );   //$NON-NLS-1$
           field.setLength(35);    
-          field.setOrigin("field1 description"); 
+          field.setOrigin("field1 description");  //$NON-NLS-1$
           fields.addValue(field);
         } 
-        { Value field = new Value("field2", Value.VALUE_TYPE_NUMBER   );  field.setLength(7,2);   field.setOrigin("field2 description"); fields.addValue(field); } 
-        { Value field = new Value("field3", Value.VALUE_TYPE_INTEGER  );  field.setLength(5);     field.setOrigin("field3 description"); fields.addValue(field); } 
-        { Value field = new Value("field4", Value.VALUE_TYPE_DATE     );                          field.setOrigin("field4 description"); fields.addValue(field); } 
-        { Value field = new Value("field5", Value.VALUE_TYPE_BIGNUMBER);  field.setLength(52,16); field.setOrigin("field5 description"); fields.addValue(field); } 
-        { Value field = new Value("field6", Value.VALUE_TYPE_BOOLEAN  );                          field.setOrigin("field6 description"); fields.addValue(field); } 
+        { Value field = new Value("field2", Value.VALUE_TYPE_NUMBER   );  field.setLength(7,2);   field.setOrigin("field2 description"); fields.addValue(field); }  //$NON-NLS-1$ //$NON-NLS-2$
+        { Value field = new Value("field3", Value.VALUE_TYPE_INTEGER  );  field.setLength(5);     field.setOrigin("field3 description"); fields.addValue(field); }  //$NON-NLS-1$ //$NON-NLS-2$
+        { Value field = new Value("field4", Value.VALUE_TYPE_DATE     );                          field.setOrigin("field4 description"); fields.addValue(field); }  //$NON-NLS-1$ //$NON-NLS-2$
+        { Value field = new Value("field5", Value.VALUE_TYPE_BIGNUMBER);  field.setLength(52,16); field.setOrigin("field5 description"); fields.addValue(field); }  //$NON-NLS-1$ //$NON-NLS-2$
+        { Value field = new Value("field6", Value.VALUE_TYPE_BOOLEAN  );                          field.setOrigin("field6 description"); fields.addValue(field); }  //$NON-NLS-1$ //$NON-NLS-2$
         
         table = cwm.createTable(TEST_TABLE_NAME, fields);
         
         // Add descriptions to table and columns...
         
-        CwmDescription description = cwm.createDescription("This is a table description");
+        CwmDescription description = cwm.createDescription("This is a table description"); //$NON-NLS-1$
         cwm.setDescription(table, description);
         
         Collection collection = table.getOwnedElement();
@@ -108,13 +109,13 @@ public class TestCWM
         }
         
         // Try to create a package here...
-        CwmPackage p = cwm.createPackage(DOMAIN+" package");
+        CwmPackage p = cwm.createPackage(DOMAIN+" package"); //$NON-NLS-1$
         p.getImportedElement().add(table);
-        cwm.setDescription(p, cwm.createDescription("This is a package description for ["+DOMAIN+"]") );
+        cwm.setDescription(p, cwm.createDescription("This is a package description for ["+DOMAIN+"]") ); //$NON-NLS-1$ //$NON-NLS-2$
         
         cwm.endTransaction();
         
-        System.out.println("Finished writing to table ["+TEST_TABLE_NAME+"].");
+        System.out.println("Finished writing to table ["+TEST_TABLE_NAME+"]."); //$NON-NLS-1$ //$NON-NLS-2$
     }
     
     public void readBack()
@@ -122,31 +123,31 @@ public class TestCWM
         CwmTable table = cwm.getTable(TEST_TABLE_NAME);
         if (table!=null) 
         {
-            System.out.println("Readback found table : "+table.getName());
+            System.out.println("Readback found table : "+table.getName()); //$NON-NLS-1$
             CwmDescription[] tableDescription = cwm.getDescription(table);
             for (int i=0;i<tableDescription.length;i++)
             {
-                System.out.println("Table description #"+(i+1)+" : "+tableDescription[i].getBody());
+                System.out.println(Messages.getString("TestCWM.27")+(i+1)+" : "+tableDescription[i].getBody()); //$NON-NLS-1$ //$NON-NLS-2$
             }
 
             Collection collection = table.getOwnedElement();
             for (Iterator iter = collection.iterator(); iter.hasNext();)
             {
                 CwmColumn column = (CwmColumn) iter.next();
-                System.out.print("Column: "+column.getName()+", type="+column.getType().getName()+", length="+column.getLength()+", precision="+column.getPrecision());
+                System.out.print("Column: "+column.getName()+", type="+column.getType().getName()+", length="+column.getLength()+", precision="+column.getPrecision()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
                 // The formula
                 CwmExpression expression = column.getInitialValue();
                 if (expression!=null)
                 {
-                    System.out.print(" Formula: "+expression.getBody()+" ("+expression.getLanguage()+")");
+                    System.out.print(" Formula: "+expression.getBody()+" ("+expression.getLanguage()+")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 }
                 
                 // The descriptions
                 CwmDescription[] columnDescription = cwm.getDescription(column);
                 for (int i=0;i<columnDescription.length;i++)
                 {
-                    System.out.print(" ["+columnDescription[i].getBody()+"]");
+                    System.out.print(" ["+columnDescription[i].getBody()+"]"); //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 
                 System.out.println();
@@ -155,18 +156,18 @@ public class TestCWM
             CwmPackage p = cwm.getPackage(DOMAIN);
             if (p!=null)
             {
-                System.out.println("Package found ! --> "+p.getName());
+                System.out.println("Package found ! --> "+p.getName()); //$NON-NLS-1$
                 // do we have a package description?
                 CwmDescription description[] = cwm.getDescription(p);
                 for (int i=0;i<description.length;i++)
                 {
-                    System.out.println("Package description #"+(i+1)+" --> "+description[i].getBody());
+                    System.out.println("Package description #"+(i+1)+" --> "+description[i].getBody()); //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }
         }
         else 
         {
-            System.out.println("Couldn't find table "+TEST_TABLE_NAME);
+            System.out.println("Couldn't find table "+TEST_TABLE_NAME); //$NON-NLS-1$
         }
     }   
     

@@ -56,6 +56,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.GUIResource;
 
@@ -68,7 +69,7 @@ import be.ibridge.kettle.trans.step.BaseStepDialog;
 
 public class SelectSecurityOwnerRightsDialog extends Dialog
 {
-	private static final String STRING_SECURITY_TREE = "SecurityTree";
+	private static final String STRING_SECURITY_TREE = "SecurityTree"; //$NON-NLS-1$
     
     private Button wOK, wCancel;
 	private Listener lsOK, lsCancel;
@@ -113,7 +114,7 @@ public class SelectSecurityOwnerRightsDialog extends Dialog
 		formLayout.marginHeight = Const.FORM_MARGIN;
 
 		shell.setLayout(formLayout);
-		shell.setText("Select an owner and rights");
+		shell.setText(Messages.getString("SelectSecurityOwnerRightsDialog.USER_SELECT_OWNER_RIGHTS")); //$NON-NLS-1$
 		
 		int middle = props.getMiddlePct();
 		int margin = Const.MARGIN;
@@ -121,15 +122,15 @@ public class SelectSecurityOwnerRightsDialog extends Dialog
         // Some buttons at the bottom to create a baseline
         //
         wOK=new Button(shell, SWT.PUSH);
-        wOK.setText("  &OK  ");
+        wOK.setText(Messages.getString("SelectSecurityOwnerRightsDialog.USER_OK")); //$NON-NLS-1$
         wCancel=new Button(shell, SWT.PUSH);
-        wCancel.setText("  &Cancel  ");
+        wCancel.setText(Messages.getString("SelectSecurityOwnerRightsDialog.USER_CANCEL")); //$NON-NLS-1$
         
         BaseStepDialog.positionBottomButtons(shell, new Button[] { wOK, wCancel }, margin, null);
 
 		// From step line
 		Label wlFilter = new Label(shell, SWT.LEFT);
-		wlFilter.setText("Filter: ");
+		wlFilter.setText(Messages.getString("SelectSecurityOwnerRightsDialog.USER_FILTER")); //$NON-NLS-1$
         props.setLook(wlFilter);
 		FormData fdlFilter = new FormData();
 		fdlFilter.left = new FormAttachment(0, 0);
@@ -195,9 +196,9 @@ public class SelectSecurityOwnerRightsDialog extends Dialog
                             rights |= mask; // set the mask
 
                             // Optionally set other the appropriate checkboxes too...
-                            for (int i=0;i<checkBoxes.size();i++)
+                            for (int ix=0;ix<checkBoxes.size();ix++)
                             {
-                                Button b = (Button) checkBoxes.get(i);
+                                Button b = (Button) checkBoxes.get(ix);
                                 int checkMask = securityReference.findAcl(b.getText()).getMask();
                                 if ( (mask & checkMask)==checkMask && checkMask!=0)
                                 {
@@ -223,9 +224,9 @@ public class SelectSecurityOwnerRightsDialog extends Dialog
                     {
                         public void widgetSelected(SelectionEvent e)
                         {
-                            for (int i=0;i<checkBoxes.size();i++)
+                            for (int ix=0;ix<checkBoxes.size();ix++)
                             {
-                                Button b = (Button) checkBoxes.get(i);
+                                Button b = (Button) checkBoxes.get(ix);
                                 b.setSelection(false);
                             }
                             checkBox.setSelection(true);
@@ -240,10 +241,10 @@ public class SelectSecurityOwnerRightsDialog extends Dialog
                     {
                         public void widgetSelected(SelectionEvent e)
                         {
-                            for (int i=0;i<checkBoxes.size();i++)
+                            for (int ix=0;ix<checkBoxes.size();ix++)
                             {
-                                Button b = (Button)checkBoxes.get(i);
-                                int mask = ((Integer)masks.get(i)).intValue();
+                                Button b = (Button)checkBoxes.get(ix);
+                                int mask = ((Integer)masks.get(ix)).intValue();
                                 if (mask==0) b.setSelection(rights==0);
                             }
                         }
@@ -256,7 +257,7 @@ public class SelectSecurityOwnerRightsDialog extends Dialog
         
         // Add the "All" button too 
         final Button checkBox = new Button(shell, SWT.PUSH);
-        checkBox.setText("  Check all ");
+        checkBox.setText(Messages.getString("SelectSecurityOwnerRightsDialog.USER_CHECK_ALL")); //$NON-NLS-1$
         props.setLook(checkBox);
         FormData fdCheckBox = new FormData();
         fdCheckBox.left  = new FormAttachment(middle, margin);

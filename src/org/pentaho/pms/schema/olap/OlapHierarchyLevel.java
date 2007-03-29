@@ -117,14 +117,14 @@ public class OlapHierarchyLevel extends ChangedFlag implements Cloneable
         this.referenceColumn = referenceColumn;
     }
 
-    public BusinessColumn findBusinessColumn(String locale, String name)
+    public BusinessColumn findBusinessColumn(String locale, String thisName)
     {
-        if (referenceColumn!=null && referenceColumn.getDisplayName(locale).equalsIgnoreCase(name)) return referenceColumn;
+        if (referenceColumn!=null && referenceColumn.getDisplayName(locale).equalsIgnoreCase(thisName)) return referenceColumn;
         
         for (int i=0;i<businessColumns.size();i++)
         {
             BusinessColumn column = (BusinessColumn) businessColumns.get(i);
-            if (column.getDisplayName(locale).equalsIgnoreCase(name)) return column;
+            if (column.getDisplayName(locale).equalsIgnoreCase(thisName)) return column;
         }
         return null;
     }

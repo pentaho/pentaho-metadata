@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.pentaho.pms.messages.Messages;
 
 import be.ibridge.kettle.core.Const;
 import be.ibridge.kettle.core.Props;
@@ -124,23 +125,23 @@ public class SecurityServiceDialog extends Dialog
 		formLayout.marginWidth  = Const.FORM_MARGIN;
 		formLayout.marginHeight = Const.FORM_MARGIN;
 		
-		shell.setText("Security service dialog");
+		shell.setText(Messages.getString("SecurityServiceDialog.USER_SECURITY_SERVICE_DIALOG")); //$NON-NLS-1$
 		shell.setLayout (formLayout);
  		
 		// First, add the buttons...
 		
 		// Buttons
 		wOK     = new Button(shell, SWT.PUSH); 
-		wOK.setText(" &OK ");
+		wOK.setText(Messages.getString("SecurityServiceDialog.USER_OK")); //$NON-NLS-1$
 
         wLoad     = new Button(shell, SWT.PUSH); 
-        wLoad.setText(" &Load ");
+        wLoad.setText(Messages.getString("SecurityServiceDialog.USER_LOAD")); //$NON-NLS-1$
 
 		wTest    = new Button(shell, SWT.PUSH); 
-		wTest.setText(" &Test ");
+		wTest.setText(Messages.getString("SecurityServiceDialog.USER_TEST")); //$NON-NLS-1$
 
 		wCancel = new Button(shell, SWT.PUSH); 
-		wCancel.setText(" &Cancel ");
+		wCancel.setText(Messages.getString("SecurityServiceDialog.USER_CANCEL")); //$NON-NLS-1$
 
 		Button[] buttons = new Button[] { wOK, wLoad, wTest, wCancel };
 		BaseStepDialog.positionBottomButtons(shell, buttons, margin, null);
@@ -205,7 +206,7 @@ public class SecurityServiceDialog extends Dialog
         // START OF DB TAB   ///
         //////////////////////////
         wServiceTab=new CTabItem(wTabFolder, SWT.NONE);
-        wServiceTab.setText("Service");
+        wServiceTab.setText(Messages.getString("SecurityServiceDialog.USER_SERVICE")); //$NON-NLS-1$
         
         wServiceComp = new Composite(wTabFolder, SWT.NONE);
         props.setLook(wServiceComp);
@@ -218,7 +219,7 @@ public class SecurityServiceDialog extends Dialog
         // What's the service URL?
         wlServiceURL = new Label(wServiceComp, SWT.RIGHT); 
         props.setLook(wlServiceURL);
-        wlServiceURL.setText("Service URL: ");
+        wlServiceURL.setText(Messages.getString("SecurityServiceDialog.USER_SERVICE_URL")); //$NON-NLS-1$
         FormData fdlServiceURL = new FormData();
         fdlServiceURL.top   = new FormAttachment(0, 0);
         fdlServiceURL.left  = new FormAttachment(0, 0);  // First one in the left top corner
@@ -236,7 +237,7 @@ public class SecurityServiceDialog extends Dialog
 
         // Security Details service name
         wlDetailsName = new Label(wServiceComp, SWT.RIGHT); 
-        wlDetailsName.setText("Security details service name: "); 
+        wlDetailsName.setText(Messages.getString("SecurityServiceDialog.USER_SECURITY_SERVICE_DETAILS_NAME"));  //$NON-NLS-1$
         props.setLook(wlDetailsName);
         FormData fdlDetailsName = new FormData();
         fdlDetailsName.top  = new FormAttachment(wServiceURL, margin);
@@ -255,7 +256,7 @@ public class SecurityServiceDialog extends Dialog
         
         // Detail name service
         wlDetailName = new Label(wServiceComp, SWT.RIGHT ); 
-        wlDetailName.setText("Security detail service name: "); 
+        wlDetailName.setText(Messages.getString("SecurityServiceDialog.USER_SECURITY_SERVICE_DETAILS_NAME"));  //$NON-NLS-1$
         props.setLook(wlDetailName);
         FormData fdlDetailName = new FormData();
         fdlDetailName.top  = new FormAttachment(wDetailsName, margin);
@@ -274,7 +275,7 @@ public class SecurityServiceDialog extends Dialog
                 
         // Port
         wlDetailType = new Label(wServiceComp, SWT.RIGHT ); 
-        wlDetailType.setText("Detail type: "); 
+        wlDetailType.setText(Messages.getString("SecurityServiceDialog.USER_DETAIL_TYPE"));  //$NON-NLS-1$
         props.setLook(wlDetailType);
         FormData fdlDetailType = new FormData();
         fdlDetailType.top  = new FormAttachment(wDetailName, margin);
@@ -300,7 +301,7 @@ public class SecurityServiceDialog extends Dialog
         
         // Username
         wlUsername = new Label(wServiceComp, SWT.RIGHT ); 
-        wlUsername.setText("Username: "); 
+        wlUsername.setText(Messages.getString("SecurityServiceDialog.USER_USERNAME"));  //$NON-NLS-1$
         props.setLook(wlUsername);
         FormData fdlUsername = new FormData();
         fdlUsername.top  = new FormAttachment(wDetailType, margin);
@@ -320,7 +321,7 @@ public class SecurityServiceDialog extends Dialog
         
         // Password
         wlPassword = new Label(wServiceComp, SWT.RIGHT ); 
-        wlPassword.setText("Password: "); 
+        wlPassword.setText(Messages.getString("SecurityServiceDialog.USER_PASSWORD"));  //$NON-NLS-1$
         props.setLook(wlPassword);
         FormData fdlPassword = new FormData();
         fdlPassword.top  = new FormAttachment(wUsername, margin);
@@ -360,7 +361,7 @@ public class SecurityServiceDialog extends Dialog
         // START OF POOL TAB///
         ///
         wProxyTab=new CTabItem(wTabFolder, SWT.NONE);
-        wProxyTab.setText("Proxy");
+        wProxyTab.setText(Messages.getString("SecurityServiceDialog.USER_PROXY")); //$NON-NLS-1$
 
         FormLayout poolLayout = new FormLayout ();
         poolLayout.marginWidth  = Const.FORM_MARGIN;
@@ -373,7 +374,7 @@ public class SecurityServiceDialog extends Dialog
         // What's the data tablespace name?
         wlProxyHost = new Label(wProxyComp, SWT.RIGHT); 
         props.setLook(wlProxyHost);
-        wlProxyHost.setText("Proxy server hostname: "); 
+        wlProxyHost.setText(Messages.getString("SecurityServiceDialog.USER_PROXY_SERVER_HOSTNAME"));  //$NON-NLS-1$
         FormData fdlProxyHost = new FormData();
         fdlProxyHost.top   = new FormAttachment(0, 0);
         fdlProxyHost.left  = new FormAttachment(0, 0);  // First one in the left top corner
@@ -392,7 +393,7 @@ public class SecurityServiceDialog extends Dialog
         // What's the initial pool size
         wlProxyPort = new Label(wProxyComp, SWT.RIGHT); 
         props.setLook(wlProxyPort);
-        wlProxyPort.setText("The proxy server port: "); 
+        wlProxyPort.setText(Messages.getString("SecurityServiceDialog.USER_PROXY_SERVE_PORT"));  //$NON-NLS-1$
         FormData fdlProxyPort = new FormData();
         fdlProxyPort.top   = new FormAttachment(wProxyHost, margin);
         fdlProxyPort.left  = new FormAttachment(0, 0);  // First one in the left top corner
@@ -411,7 +412,7 @@ public class SecurityServiceDialog extends Dialog
         // What's the maximum pool size
         wlNonProxyHosts = new Label(wProxyComp, SWT.RIGHT); 
         props.setLook(wlNonProxyHosts);
-        wlNonProxyHosts.setText("Ignore proxy for hosts: regexp | separated: "); 
+        wlNonProxyHosts.setText(Messages.getString("SecurityServiceDialog.USER_IGNORE_PRXY_FOR_HOSTS"));  //$NON-NLS-1$
         FormData fdlNonProxyHosts = new FormData();
         fdlNonProxyHosts.top   = new FormAttachment(wProxyPort, margin);
         fdlNonProxyHosts.left  = new FormAttachment(0, 0);  // First one in the left top corner
@@ -445,7 +446,7 @@ public class SecurityServiceDialog extends Dialog
         // START OF POOL TAB///
         ///
         wFileTab=new CTabItem(wTabFolder, SWT.NONE);
-        wFileTab.setText("File");
+        wFileTab.setText(Messages.getString("SecurityServiceDialog.USER_FILE")); //$NON-NLS-1$
 
         FormLayout poolLayout = new FormLayout ();
         poolLayout.marginWidth  = Const.FORM_MARGIN;
@@ -457,8 +458,8 @@ public class SecurityServiceDialog extends Dialog
 
         Button wbbFile = new Button(wFileComp, SWT.PUSH| SWT.CENTER);
         props.setLook(wbbFile);
-        wbbFile.setText("Browse...");
-        wbbFile.setToolTipText("Select the XML file to use");
+        wbbFile.setText(Messages.getString("SecurityServiceDialog.USER_BROWSE")); //$NON-NLS-1$
+        wbbFile.setToolTipText(Messages.getString("SecurityServiceDialog.USER_SELECT_XML_FILE")); //$NON-NLS-1$
         FormData fdbFile = new FormData();
         fdbFile.right= new FormAttachment(95, 0);
         fdbFile.top  = new FormAttachment(0, 0);
@@ -467,7 +468,7 @@ public class SecurityServiceDialog extends Dialog
         // What's the data tablespace name?
         wlFile = new Label(wFileComp, SWT.RIGHT); 
         props.setLook(wlFile);
-        wlFile.setText("Filename: "); 
+        wlFile.setText(Messages.getString("SecurityServiceDialog.USER_FILENAME"));  //$NON-NLS-1$
         FormData fdlFile = new FormData();
         fdlFile.top   = new FormAttachment(0, 0);
         fdlFile.left  = new FormAttachment(0, 0);  // First one in the left top corner
@@ -492,15 +493,15 @@ public class SecurityServiceDialog extends Dialog
                 public void widgetSelected(SelectionEvent e) 
                 {
                     FileDialog dialog = new FileDialog(shell, SWT.OPEN);
-                    dialog.setFilterExtensions(new String[] {"*.xml", "*"});
+                    dialog.setFilterExtensions(new String[] {"*.xml", "*"}); //$NON-NLS-1$ //$NON-NLS-2$
                     if (!Const.isEmpty(wFile.getText()))
                     {
                         dialog.setFileName( wFile.getText() );
                     }
-                    dialog.setFilterNames(new String[] {"XML files", "All files" });
+                    dialog.setFilterNames(new String[] {Messages.getString("SecurityServiceDialog.USER_XML_FILES"), Messages.getString("SecurityServiceDialog.USER_ALL_FILES") }); //$NON-NLS-1$ //$NON-NLS-2$
                     if (dialog.open()!=null)
                     {
-                        String str = dialog.getFilterPath()+System.getProperty("file.separator")+dialog.getFileName();
+                        String str = dialog.getFilterPath()+System.getProperty("file.separator")+dialog.getFileName(); //$NON-NLS-1$
                         wFile.setText(str);
                     }
                 }
@@ -526,18 +527,18 @@ public class SecurityServiceDialog extends Dialog
     
     public void getData()
 	{
-		wServiceURL.setText( Const.NVL(securityService.getServiceURL(), "") );
-		wDetailsName.setText( Const.NVL(securityService.getDetailsServiceName(), "") );
-		wDetailName.setText( Const.NVL(securityService.getDetailServiceName(), "") );
+		wServiceURL.setText( Const.NVL(securityService.getServiceURL(), "") ); //$NON-NLS-1$
+		wDetailsName.setText( Const.NVL(securityService.getDetailsServiceName(), "") ); //$NON-NLS-1$
+		wDetailName.setText( Const.NVL(securityService.getDetailServiceName(), "") ); //$NON-NLS-1$
 		wDetailType.select( securityService.getDetailServiceType() );
-        wUsername.setText( Const.NVL(securityService.getUsername(), "") );
-		wPassword.setText( Const.NVL(securityService.getPassword(), "") );
+        wUsername.setText( Const.NVL(securityService.getUsername(), "") ); //$NON-NLS-1$
+		wPassword.setText( Const.NVL(securityService.getPassword(), "") ); //$NON-NLS-1$
 
-        wProxyHost.setText( Const.NVL(securityService.getProxyHostname(), ""));
-        wProxyPort.setText( Const.NVL(securityService.getProxyPort(), ""));
-        wNonProxyHosts.setText( Const.NVL(securityService.getNonProxyHosts(), ""));
+        wProxyHost.setText( Const.NVL(securityService.getProxyHostname(), "")); //$NON-NLS-1$
+        wProxyPort.setText( Const.NVL(securityService.getProxyPort(), "")); //$NON-NLS-1$
+        wNonProxyHosts.setText( Const.NVL(securityService.getNonProxyHosts(), "")); //$NON-NLS-1$
         
-        wFile.setText( Const.NVL(securityService.getFilename(), ""));
+        wFile.setText( Const.NVL(securityService.getFilename(), "")); //$NON-NLS-1$
         
 		wServiceURL.setFocus();
 	}
@@ -602,17 +603,17 @@ public class SecurityServiceDialog extends Dialog
             SecurityReference securityReference = new SecurityReference(securityService);
             String xml = securityReference.toXML();
             
-            String message = "Connection info ";
-            if (securityService.hasService()) message+="from server URL: "+securityService.getURL()+Const.CR+Const.CR;
-            else message+="from file: "+securityService.getFilename()+Const.CR+Const.CR;
+            String message = Messages.getString("SecurityServiceDialog.USER_CONNECTION_INFO"); //$NON-NLS-1$
+            if (securityService.hasService()) message+=Messages.getString("SecurityServiceDialog.USER_FROM_SERVER_URL", securityService.getURL()+Const.CR+Const.CR); //$NON-NLS-1$
+            else message+=Messages.getString("SecurityServiceDialog.USER_FROM_FILE", securityService.getFilename()+Const.CR+Const.CR); //$NON-NLS-1$
             message+=xml;
             
-			EnterTextDialog dialog = new EnterTextDialog(shell, "XML", "The XML returned is:", message);
+			EnterTextDialog dialog = new EnterTextDialog(shell, Messages.getString("SecurityServiceDialog.USER_TITLE_XML"), Messages.getString("SecurityServiceDialog.USER_XML_RETURNED"), message); //$NON-NLS-1$ //$NON-NLS-2$
             dialog.open();
 		}
 		catch(Exception e)
 		{
-			new ErrorDialog(shell, "Error", "Unable to get security XML information back from URL ["+securityService.getURL()+"]", e);
+			new ErrorDialog(shell, Messages.getString("SecurityServiceDialog.USER_TITLE_ERROR"), Messages.getString("SecurityServiceDialog.USER_ERROR_CANT_GET_SECURITY_INFO", securityService.getURL()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
 		}		
 	}
 }

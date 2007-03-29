@@ -17,6 +17,7 @@ import java.util.Date;
 
 import org.apache.log4j.Layout;
 import org.apache.log4j.spi.LoggingEvent;
+import org.pentaho.pms.messages.Messages;
 
 import be.ibridge.kettle.core.Const;
 import be.ibridge.kettle.core.logging.Log4JLayoutInterface;
@@ -35,13 +36,13 @@ public class Log4jPMELayout extends Layout implements Log4JLayoutInterface
     {
         // OK, perhaps the logging information has multiple lines of data.
         // We need to split this up into different lines and all format these lines...
-        String line="";
+        String line=""; //$NON-NLS-1$
         
-        String dateTimeString = "";
+        String dateTimeString = ""; //$NON-NLS-1$
         if (timeAdded)
         {
-            SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-            dateTimeString = df.format(new Date(event.timeStamp))+" - ";
+            SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss"); //$NON-NLS-1$
+            dateTimeString = df.format(new Date(event.timeStamp))+" - "; //$NON-NLS-1$
         }
 
         Object object = event.getMessage();
@@ -58,12 +59,12 @@ public class Log4jPMELayout extends Layout implements Log4JLayoutInterface
                 // Include the subject too on every line...
                 if (message.getSubject()!=null)
                 {
-                    line+=message.getSubject()+" - ";
+                    line+=message.getSubject()+" - "; //$NON-NLS-1$
                 }
                 
                 if (message.isError())  
                 {
-                    line+="ERROR ";                
+                    line+=Messages.getString("Log4jPMELayout.ERROR_LOG4J_ERROR");                 //$NON-NLS-1$
                  }
                 
                 line+=parts[i];
