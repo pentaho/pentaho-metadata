@@ -109,7 +109,7 @@ public class ConceptDialog extends Dialog
 		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.MIN);
  		props.setLook(shell);
         
-        log.logDebug(this.getClass().getName(), Messages.getString("ConceptDialog.DEBUG_OPENING_DIALOG")); //$NON-NLS-1$
+        log.logDebug(this.getClass().getName(), Messages.getString("General.DEBUG_OPENING_DIALOG")); //$NON-NLS-1$
 
         int middle = props.getMiddlePct();
         int margin = Const.MARGIN;
@@ -117,9 +117,9 @@ public class ConceptDialog extends Dialog
         // put the buttons below to get a base-line to work from...
         //
         wOK=new Button(shell, SWT.PUSH);
-        wOK.setText(Messages.getString("ConceptDialog.USER_OK")); //$NON-NLS-1$
+        wOK.setText(Messages.getString("General.USER_OK")); //$NON-NLS-1$
         wCancel=new Button(shell, SWT.PUSH);
-        wCancel.setText(Messages.getString("ConceptDialog.USER_CANCEL")); //$NON-NLS-1$
+        wCancel.setText(Messages.getString("General.USER_CANCEL")); //$NON-NLS-1$
         
         BaseStepDialog.positionBottomButtons(shell, new Button[] { wOK, wCancel }, Const.MARGIN, null);
 
@@ -312,7 +312,7 @@ public class ConceptDialog extends Dialog
                 }
                 catch(Exception exception)
                 {
-                    new ErrorDialog(shell, Messages.getString("ConceptDialog.USER_TITLE_ERROR"), Messages.getString("ConceptDialog.USER_ERROR_SETTING_PROPERTY"), exception); //$NON-NLS-1$ //$NON-NLS-2$
+                    new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("ConceptDialog.USER_ERROR_SETTING_PROPERTY"), exception); //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }
         };
@@ -359,7 +359,7 @@ public class ConceptDialog extends Dialog
             }
             catch (ObjectAlreadyExistsException e)
             {
-                new ErrorDialog(shell, Messages.getString("ConceptDialog.USER_TITLE_ERROR"), Messages.getString("ConceptDialog.USER_ERROR_PROPERTY_ID_EXISTS", id), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+                new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("ConceptDialog.USER_ERROR_PROPERTY_ID_EXISTS", id), e); //$NON-NLS-1$ //$NON-NLS-2$ 
                 return;
             }
         }

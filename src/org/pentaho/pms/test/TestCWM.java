@@ -127,7 +127,7 @@ public class TestCWM
             CwmDescription[] tableDescription = cwm.getDescription(table);
             for (int i=0;i<tableDescription.length;i++)
             {
-                System.out.println(Messages.getString("TestCWM.27")+(i+1)+" : "+tableDescription[i].getBody()); //$NON-NLS-1$ //$NON-NLS-2$
+                System.out.println("Table description #"+(i+1)+" : "+tableDescription[i].getBody()); //$NON-NLS-1$ //$NON-NLS-2$
             }
 
             Collection collection = table.getOwnedElement();

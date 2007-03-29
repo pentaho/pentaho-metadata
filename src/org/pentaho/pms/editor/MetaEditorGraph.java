@@ -528,7 +528,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable
                         {
                             MessageBox mb = new MessageBox(shell, SWT.OK);
                             mb.setMessage(Messages.getString("MetaEditorGraph.USER_CANT_PLACE_ON_GRAPH")); //$NON-NLS-1$
-                            mb.setText(Messages.getString("MetaEditorGraph.USER_TITLE_ERROR")); //$NON-NLS-1$
+                            mb.setText(Messages.getString("General.USER_TITLE_ERROR")); //$NON-NLS-1$
                             mb.open();
                             return;
                         }

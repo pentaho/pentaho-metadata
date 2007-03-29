@@ -96,7 +96,7 @@ public class EditConceptPropertyDialog extends Dialog
 		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.MIN);
  		props.setLook(shell);
         
-        log.logDebug(this.getClass().getName(), Messages.getString("EditConceptPropertyDialog.DEBUG_OPENING_DIALOG")); //$NON-NLS-1$
+        log.logDebug(this.getClass().getName(), Messages.getString("General.DEBUG_OPENING_DIALOG")); //$NON-NLS-1$
 
 		FormLayout formLayout = new FormLayout ();
 		formLayout.marginWidth  = Const.FORM_MARGIN;
@@ -106,9 +106,9 @@ public class EditConceptPropertyDialog extends Dialog
 		shell.setText(Messages.getString("EditConceptPropertyDialog.USER_CONCEPT_PROPERY_EDITOR", type.getDescription())); //$NON-NLS-1$ 
 		
         wOK=new Button(shell, SWT.PUSH);
-        wOK.setText(Messages.getString("EditConceptPropertyDialog.USER_OK")); //$NON-NLS-1$
+        wOK.setText(Messages.getString("General.USER_OK")); //$NON-NLS-1$
         wCancel=new Button(shell, SWT.PUSH);
-        wCancel.setText(Messages.getString("EditConceptPropertyDialog.USER_CANCEL")); //$NON-NLS-1$
+        wCancel.setText(Messages.getString("General.USER_CANCEL")); //$NON-NLS-1$
         
         BaseStepDialog.positionBottomButtons(shell, new Button[] { wOK, wCancel }, Const.MARGIN, null);
         

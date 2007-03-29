@@ -192,10 +192,10 @@ public class SelectFieldDialog extends Dialog
  		
  		// Buttons
 		wOK = new Button(leftsplit, SWT.PUSH); 
-		wOK.setText(Messages.getString("SelectFieldDialog.USER_OK")); //$NON-NLS-1$
+		wOK.setText(Messages.getString("General.USER_OK")); //$NON-NLS-1$
 		
 		wCancel = new Button(leftsplit, SWT.PUSH);
-		wCancel.setText(Messages.getString("SelectFieldDialog.USER_CANCEL")); //$NON-NLS-1$
+		wCancel.setText(Messages.getString("General.USER_CANCEL")); //$NON-NLS-1$
 		
 		FormData fdTree      = new FormData(); 
 

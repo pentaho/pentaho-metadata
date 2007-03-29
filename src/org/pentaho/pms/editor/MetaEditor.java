@@ -469,7 +469,7 @@ public class MetaEditor
                     }
                     catch (Exception e)
                     {
-                        new ErrorDialog(shell, Messages.getString("MetaEditor.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_EXPORTING_XMI"), e); //$NON-NLS-1$ //$NON-NLS-2$
+                        new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_EXPORTING_XMI"), e); //$NON-NLS-1$ //$NON-NLS-2$
                     }
                 }
             }
@@ -806,7 +806,7 @@ public class MetaEditor
                         {
                             MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
                             mb.setMessage(Messages.getString("MetaEditor.USER_ERROR_OPENING_DOMAIN", fn)); //$NON-NLS-1$ 
-                            mb.setText(Messages.getString("MetaEditor.USER_TITLE_ERROR")); //$NON-NLS-1$
+                            mb.setText(Messages.getString("General.USER_TITLE_ERROR")); //$NON-NLS-1$
                             mb.open();
                         }
                     }
@@ -2217,7 +2217,7 @@ public class MetaEditor
                 }
                 catch (ObjectAlreadyExistsException e)
                 {
-                    new ErrorDialog(shell, Messages.getString("MetaEditor.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_BUSINESS_CATEGORY_EXISTS", businessCategory.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+                    new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_BUSINESS_CATEGORY_EXISTS", businessCategory.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
                 }
             }
             else
@@ -2337,7 +2337,7 @@ public class MetaEditor
                 }
                 catch (ObjectAlreadyExistsException e)
                 {
-                    new ErrorDialog(shell, Messages.getString("MetaEditor.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_BUSINESS_COLUMN_EXISTS", businessColumn.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+                    new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_BUSINESS_COLUMN_EXISTS", businessColumn.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
                 }
             }
         }
@@ -2358,7 +2358,7 @@ public class MetaEditor
                 }
                 catch(ObjectAlreadyExistsException e)
                 {
-                    new ErrorDialog(shell, Messages.getString("MetaEditor.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_BUSINESS_TABLE_EXISTS",businessTable.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+                    new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_BUSINESS_TABLE_EXISTS",businessTable.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
                 }
             }
             else
@@ -2723,7 +2723,7 @@ public class MetaEditor
                 }
                 catch(ObjectAlreadyExistsException e)
                 {
-                    new ErrorDialog(shell, Messages.getString("MetaEditor.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_BUSINESS_MODEL_NAME_EXISTS"), e); //$NON-NLS-1$ //$NON-NLS-2$
+                    new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_BUSINESS_MODEL_NAME_EXISTS"), e); //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }
             else
@@ -2754,7 +2754,7 @@ public class MetaEditor
         if (businessModel != null)
         {
             MessageBox box = new MessageBox(shell, SWT.YES | SWT.NO | SWT.ICON_QUESTION);
-            box.setText(Messages.getString("MetaEditor.USER_TITLE_WARNING")); //$NON-NLS-1$
+            box.setText(Messages.getString("General.USER_TITLE_WARNING")); //$NON-NLS-1$
             box.setMessage(Messages.getString("MetaEditor.USER_DELETE_BUSINESS_MODEL",  businessModel.getDisplayName(schemaMeta.getActiveLocale()))); //$NON-NLS-1$ 
             int answer = box.open();
             if (answer == SWT.YES)
@@ -2821,7 +2821,7 @@ public class MetaEditor
             }
             catch(ObjectAlreadyExistsException e)
             {
-                new ErrorDialog(shell, Messages.getString("MetaEditor.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_CONNECTION_NAME_EXISTS"), e); //$NON-NLS-1$ //$NON-NLS-2$
+                new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_CONNECTION_NAME_EXISTS"), e); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
     }
@@ -2898,7 +2898,7 @@ public class MetaEditor
                 }
                 catch(ObjectAlreadyExistsException e)
                 {
-                    new ErrorDialog(shell, Messages.getString("MetaEditor.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_PHYSICAL_TABLE_NAME_EXISTS"), e); //$NON-NLS-1$ //$NON-NLS-2$
+                    new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_PHYSICAL_TABLE_NAME_EXISTS"), e); //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }
         }
@@ -3004,7 +3004,7 @@ public class MetaEditor
             }
             catch(ObjectAlreadyExistsException e)
             {
-                new ErrorDialog(shell, Messages.getString("MetaEditor.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_DATABASE_NAME_EXISTS"), e); //$NON-NLS-1$ //$NON-NLS-2$
+                new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_DATABASE_NAME_EXISTS"), e); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
     }
@@ -3021,7 +3021,7 @@ public class MetaEditor
         {
             MessageBox mb = new MessageBox(shell, SWT.YES | SWT.NO | SWT.ICON_WARNING | SWT.APPLICATION_MODAL);
             mb.setMessage(message);
-            mb.setText(Messages.getString("MetaEditor.USER_TITLE_WARNING")); //$NON-NLS-1$
+            mb.setText(Messages.getString("General.USER_TITLE_WARNING")); //$NON-NLS-1$
             answer = mb.open() == SWT.YES;
         }
         return answer;
@@ -3061,7 +3061,7 @@ public class MetaEditor
         {
             MessageBox mb = new MessageBox(shell, SWT.YES | SWT.NO | SWT.CANCEL | SWT.ICON_WARNING);
             mb.setMessage(Messages.getString("MetaEditor.USER_DOMAIN_CHANGED_SAVE")); //$NON-NLS-1$
-            mb.setText(Messages.getString("MetaEditor.USER_TITLE_WARNING")); //$NON-NLS-1$
+            mb.setText(Messages.getString("General.USER_TITLE_WARNING")); //$NON-NLS-1$
             int answer = mb.open();
             switch (answer)
             {
@@ -3101,7 +3101,7 @@ public class MetaEditor
         {
             MessageBox mb = new MessageBox(shell, SWT.YES | SWT.NO | SWT.CANCEL | SWT.ICON_WARNING);
             mb.setMessage(Messages.getString("MetaEditor.USER_FILE_CHANGED_SAVE")); //$NON-NLS-1$
-            mb.setText(Messages.getString("MetaEditor.USER_TITLE_WARNING")); //$NON-NLS-1$
+            mb.setText(Messages.getString("General.USER_TITLE_WARNING")); //$NON-NLS-1$
             int answer = mb.open();
 
             switch (answer)
@@ -3192,7 +3192,7 @@ public class MetaEditor
         }
         catch (Exception e)
         {
-            new ErrorDialog(shell, Messages.getString("MetaEditor.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_SAVING_DOMAIN"), e); //$NON-NLS-1$ //$NON-NLS-2$
+            new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_SAVING_DOMAIN"), e); //$NON-NLS-1$ //$NON-NLS-2$
         }
         return false;
     }
@@ -3636,7 +3636,7 @@ public class MetaEditor
                 }
                 catch (KettleException e)
                 {
-                    new ErrorDialog(shell, Messages.getString("MetaEditor.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_READING_TABLE_FIELDS", tableName)  //$NON-NLS-1$ //$NON-NLS-2$ 
+                    new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_READING_TABLE_FIELDS", tableName)  //$NON-NLS-1$ //$NON-NLS-2$ 
                             + ((schemaName != null) ? ("(schema=" + schemaName + ")") : ""), e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 }
                 finally
@@ -3677,7 +3677,7 @@ public class MetaEditor
             }
             catch (Exception e)
             {
-                new ErrorDialog(shell, Messages.getString("MetaEditor.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_IMPORTING_PHYSICAL_TABLES"), e); //$NON-NLS-1$ //$NON-NLS-2$
+                new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_IMPORTING_PHYSICAL_TABLES"), e); //$NON-NLS-1$ //$NON-NLS-2$
             }
             finally
             {
@@ -3752,7 +3752,7 @@ public class MetaEditor
         }
         catch(ObjectAlreadyExistsException e)
         {
-            new ErrorDialog(shell, Messages.getString("MetaEditor.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_PHYICAL_TABLE_EXISTS", physicalTable.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+            new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_PHYICAL_TABLE_EXISTS", physicalTable.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
         }
         
         refreshTree();
@@ -3866,7 +3866,7 @@ public class MetaEditor
                     {
                         MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
                         mb.setMessage(Messages.getString("MetaEditor.USER_ERROR_CANT_FIND_CONNECTION")); //$NON-NLS-1$
-                        mb.setText(Messages.getString("MetaEditor.USER_TITLE_ERROR")); //$NON-NLS-1$
+                        mb.setText(Messages.getString("General.USER_TITLE_ERROR")); //$NON-NLS-1$
                         mb.open();
                     }
                 }
@@ -4082,7 +4082,7 @@ public class MetaEditor
                 }
                 catch (Throwable e)
                 {
-                    new ErrorDialog(shell, Messages.getString("MetaEditor.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_LOADING_SECURITY_INFORMATION"), //$NON-NLS-1$ //$NON-NLS-2$
+                    new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_LOADING_SECURITY_INFORMATION"), //$NON-NLS-1$ //$NON-NLS-2$
                             new Exception(e));
                 }
             }

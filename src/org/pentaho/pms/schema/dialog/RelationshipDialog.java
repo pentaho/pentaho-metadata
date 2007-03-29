@@ -345,9 +345,9 @@ public class RelationshipDialog extends Dialog
 
 		// Some buttons
 		wOK=new Button(shell, SWT.PUSH);
-		wOK.setText(Messages.getString("RelationshipDialog.USER_OK")); //$NON-NLS-1$
+		wOK.setText(Messages.getString("General.USER_OK")); //$NON-NLS-1$
 		wCancel=new Button(shell, SWT.PUSH);
-		wCancel.setText(Messages.getString("RelationshipDialog.USER_CANCEL")); //$NON-NLS-1$
+		wCancel.setText(Messages.getString("General.USER_CANCEL")); //$NON-NLS-1$
         
         BaseStepDialog.positionBottomButtons(shell, new Button[] { wOK, wCancel }, margin, null);
 
@@ -490,7 +490,7 @@ public class RelationshipDialog extends Dialog
 		{
 			MessageBox mb = new MessageBox(shell, SWT.YES | SWT.ICON_WARNING );
 			mb.setMessage(Messages.getString("RelationshipDialog.USER_WARNING_TABLE_DOESNT_EXIST", wFrom.getText())); //$NON-NLS-1$ 
-			mb.setText(Messages.getString("RelationshipDialog.USER_TITLE_WARNING")); //$NON-NLS-1$
+			mb.setText(Messages.getString("General.USER_TITLE_WARNING")); //$NON-NLS-1$
 			mb.open();
 		}
 		else
@@ -499,7 +499,7 @@ public class RelationshipDialog extends Dialog
 			{
 				MessageBox mb = new MessageBox(shell, SWT.YES | SWT.ICON_WARNING );
 				mb.setMessage(Messages.getString("RelationshipDialog.USER_WARNING_TABLE_DOESNT_EXIST", wFrom.getText())); //$NON-NLS-1$ 
-				mb.setText(Messages.getString("RelationshipDialog.USER_TITLE_WARNING")); //$NON-NLS-1$
+				mb.setText(Messages.getString("General.USER_TITLE_WARNING")); //$NON-NLS-1$
 				mb.open();
 			}
 			else
@@ -508,7 +508,7 @@ public class RelationshipDialog extends Dialog
 				{
 					MessageBox mb = new MessageBox(shell, SWT.YES | SWT.ICON_WARNING );
 					mb.setMessage(Messages.getString("RelationshipDialog.USER_WARNING_RELATIONSHIP_SAME_TABLE_NOT_ALLOWED")); //$NON-NLS-1$
-					mb.setText(Messages.getString("RelationshipDialog.USER_TITLE_WARNING")); //$NON-NLS-1$
+					mb.setText(Messages.getString("General.USER_TITLE_WARNING")); //$NON-NLS-1$
 					mb.open();
 				}
 				else

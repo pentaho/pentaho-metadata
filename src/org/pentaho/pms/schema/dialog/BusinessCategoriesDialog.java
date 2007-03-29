@@ -111,7 +111,7 @@ public class BusinessCategoriesDialog extends Dialog
 		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.MIN | SWT.APPLICATION_MODAL);
  		props.setLook(shell);
         
-        log.logDebug(this.getClass().getName(), Messages.getString("BusinessCategoriesDialog.DEBUG_OPENING_DIALOG")); //$NON-NLS-1$
+        log.logDebug(this.getClass().getName(), Messages.getString("General.DEBUG_OPENING_DIALOG")); //$NON-NLS-1$
 
 		FormLayout formLayout = new FormLayout ();
 		formLayout.marginWidth  = Const.FORM_MARGIN;
@@ -316,7 +316,7 @@ public class BusinessCategoriesDialog extends Dialog
         }
         catch (ObjectAlreadyExistsException e)
         {
-            new ErrorDialog(shell, Messages.getString("BusinessCategoriesDialog.USER_TITLE_ERROR"), Messages.getString("BusinessCategoriesDialog.USER_ERROR_BUSINESS_CATEGORY_EXISTS", businessCategory.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+            new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("BusinessCategoriesDialog.USER_ERROR_BUSINESS_CATEGORY_EXISTS", businessCategory.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
             return;
         }
         
@@ -458,7 +458,7 @@ public class BusinessCategoriesDialog extends Dialog
                 }
                 catch (ObjectAlreadyExistsException e)
                 {
-                    new ErrorDialog(shell, Messages.getString("BusinessCategoriesDialog.USER_TITLE_ERROR"), Messages.getString("BusinessCategoriesDialog.USER_ERROR_BUSINESS_CATEGORY_EXISTS", businessCategory.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+                    new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("BusinessCategoriesDialog.USER_ERROR_BUSINESS_CATEGORY_EXISTS", businessCategory.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
                 }
             }
             else

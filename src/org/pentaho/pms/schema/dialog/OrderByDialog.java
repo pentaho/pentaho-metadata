@@ -105,9 +105,9 @@ public class OrderByDialog extends Dialog
         
         // The buttons...
         wOK=new Button(shell, SWT.PUSH);
-        wOK.setText(Messages.getString("OrderByDialog.USER_OK")); //$NON-NLS-1$
+        wOK.setText(Messages.getString("General.USER_OK")); //$NON-NLS-1$
         wCancel=new Button(shell, SWT.PUSH);
-        wCancel.setText(Messages.getString("OrderByDialog.USER_CANCEL")); //$NON-NLS-1$
+        wCancel.setText(Messages.getString("General.USER_CANCEL")); //$NON-NLS-1$
         
         BaseStepDialog.positionBottomButtons(shell, new Button[] { wOK, wCancel }, Const.MARGIN, null);
 

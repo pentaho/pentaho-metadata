@@ -1578,7 +1578,7 @@ public class Const
         name = Const.replace(name, " ", "_"); //$NON-NLS-1$ //$NON-NLS-2$
         name = Const.replace(name, ".", "_"); //$NON-NLS-1$ //$NON-NLS-2$
         name = Const.replace(name, ",", "_"); //$NON-NLS-1$ //$NON-NLS-2$
-        name = Const.replace(name, Messages.getString("Const.68"), "_"); //$NON-NLS-1$ //$NON-NLS-2$
+        name = Const.replace(name, ":", "_"); //$NON-NLS-1$ //$NON-NLS-2$
         name = Const.replace(name, "(", "_"); //$NON-NLS-1$ //$NON-NLS-2$
         name = Const.replace(name, ")", "_"); //$NON-NLS-1$ //$NON-NLS-2$
         name = Const.replace(name, "{", "_"); //$NON-NLS-1$ //$NON-NLS-2$

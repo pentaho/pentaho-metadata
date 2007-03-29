@@ -104,7 +104,7 @@ public class PhysicalColumnDialog extends Dialog
 		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.MIN);
  		props.setLook(shell);
         
-        log.logDebug(this.getClass().getName(), Messages.getString("PhysicalColumnDialog.DEBUG_OPENING_DIALOG")); //$NON-NLS-1$
+        log.logDebug(this.getClass().getName(), Messages.getString("General.DEBUG_OPENING_DIALOG")); //$NON-NLS-1$
 
 		ModifyListener lsMod = new ModifyListener() 
 		{
@@ -144,9 +144,9 @@ public class PhysicalColumnDialog extends Dialog
 		wName.setLayoutData(fdName);
 
         wOK=new Button(shell, SWT.PUSH);
-		wOK.setText(Messages.getString("PhysicalColumnDialog.USER_OK")); //$NON-NLS-1$
+		wOK.setText(Messages.getString("General.USER_OK")); //$NON-NLS-1$
 		wCancel=new Button(shell, SWT.PUSH);
-		wCancel.setText(Messages.getString("PhysicalColumnDialog.USER_CANCEL")); //$NON-NLS-1$
+		wCancel.setText(Messages.getString("General.USER_CANCEL")); //$NON-NLS-1$
         
         BaseStepDialog.positionBottomButtons(shell, new Button[] { wOK, wCancel }, margin, null);
         
@@ -222,7 +222,7 @@ public class PhysicalColumnDialog extends Dialog
         }
         catch (ObjectAlreadyExistsException e)
         {
-            new ErrorDialog(shell, Messages.getString("PhysicalColumnDialog.USER_TITLE_ERROR"), Messages.getString("PhysicalColumnDialog.USER_ERROR_PHYSICAL_COLUMN_ID_EXISTS", wName.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+            new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("PhysicalColumnDialog.USER_ERROR_PHYSICAL_COLUMN_ID_EXISTS", wName.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
             return;
         }
         ConceptInterface concept = physicalColumn.getConcept();

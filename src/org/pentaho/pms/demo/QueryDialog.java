@@ -157,13 +157,13 @@ public class QueryDialog extends Dialog
         
         // The buttons...
         wOK=new Button(shell, SWT.PUSH);
-        wOK.setText(Messages.getString("QueryDialog.USER_OK")); //$NON-NLS-1$
+        wOK.setText(Messages.getString("General.USER_OK")); //$NON-NLS-1$
         wSQL=new Button(shell, SWT.PUSH);
         wSQL.setText(Messages.getString("QueryDialog.USER_SQL")); //$NON-NLS-1$
         wTrans=new Button(shell, SWT.PUSH);
         wTrans.setText(Messages.getString("QueryDialog.USER_TRANSFORMATION")); //$NON-NLS-1$
         wCancel=new Button(shell, SWT.PUSH);
-        wCancel.setText(Messages.getString("QueryDialog.USER_CANCEL")); //$NON-NLS-1$
+        wCancel.setText(Messages.getString("General.USER_CANCEL")); //$NON-NLS-1$
         wClear=new Button(shell, SWT.PUSH);
         wClear.setText(Messages.getString("QueryDialog.USER_CLEAR")); //$NON-NLS-1$
         
@@ -1012,7 +1012,7 @@ public class QueryDialog extends Dialog
         }
         catch(Throwable e)
         {
-            new ErrorDialog(shell, Messages.getString("QueryDialog.USER_TITLE_ERROR"), Messages.getString("QueryDialog.USER_ERROR_QUERY_GENERATION"), new Exception(e)); //$NON-NLS-1$ //$NON-NLS-2$
+            new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("QueryDialog.USER_ERROR_QUERY_GENERATION"), new Exception(e)); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
     
@@ -1033,7 +1033,7 @@ public class QueryDialog extends Dialog
             }
             catch(KettleException e)
             {
-                new ErrorDialog(shell, Messages.getString("QueryDialog.USER_TITLE_ERROR"), Messages.getString("QueryDialog.USER_ERROR_EXECUTE_QUERY"), e); //$NON-NLS-1$ //$NON-NLS-2$
+                new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("QueryDialog.USER_ERROR_EXECUTE_QUERY"), e); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
     }

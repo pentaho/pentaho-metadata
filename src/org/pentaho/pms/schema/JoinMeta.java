@@ -268,7 +268,7 @@ public class JoinMeta extends ChangedFlag implements Cloneable, XMLInterface, Ch
 		{
 			return table_from.getId()+"."+table_from.getPhysicalColumn(fieldnr_from).getId()+  //$NON-NLS-1$
                    " - "+ //$NON-NLS-1$
-				   table_to.getId()+Messages.getString("JoinMeta.31")+table_to.getPhysicalColumn(fieldnr_to).getId(); //$NON-NLS-1$
+				   table_to.getId()+"."+table_to.getPhysicalColumn(fieldnr_to).getId(); //$NON-NLS-1$
 		}
 		else
 		{

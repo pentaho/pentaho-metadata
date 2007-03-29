@@ -121,12 +121,12 @@ public class SchemaSaveProgressDialog
 		}
 		catch (InvocationTargetException e)
 		{
-			new ErrorDialog(shell, Messages.getString("SchemaSaveProgressDialog.USER_TITLE_ERROR"), Messages.getString("SchemaSaveProgressDialog.USER_ERROR_SAVING_SCHEMA"), e); //$NON-NLS-1$ //$NON-NLS-2$
+			new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("SchemaSaveProgressDialog.USER_ERROR_SAVING_SCHEMA"), e); //$NON-NLS-1$ //$NON-NLS-2$
             container.cwm=null;
 		}
 		catch (InterruptedException e)
 		{
-            new ErrorDialog(shell, Messages.getString("SchemaSaveProgressDialog.USER_TITLE_ERROR"), Messages.getString("SchemaSaveProgressDialog.USER_ERROR_SAVING_SCHEMA"), e); //$NON-NLS-1$ //$NON-NLS-2$
+            new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("SchemaSaveProgressDialog.USER_ERROR_SAVING_SCHEMA"), e); //$NON-NLS-1$ //$NON-NLS-2$
             container.cwm=null;
 		}
 

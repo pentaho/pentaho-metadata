@@ -122,9 +122,9 @@ public class SelectSecurityOwnerRightsDialog extends Dialog
         // Some buttons at the bottom to create a baseline
         //
         wOK=new Button(shell, SWT.PUSH);
-        wOK.setText(Messages.getString("SelectSecurityOwnerRightsDialog.USER_OK")); //$NON-NLS-1$
+        wOK.setText(Messages.getString("General.USER_OK")); //$NON-NLS-1$
         wCancel=new Button(shell, SWT.PUSH);
-        wCancel.setText(Messages.getString("SelectSecurityOwnerRightsDialog.USER_CANCEL")); //$NON-NLS-1$
+        wCancel.setText(Messages.getString("General.USER_CANCEL")); //$NON-NLS-1$
         
         BaseStepDialog.positionBottomButtons(shell, new Button[] { wOK, wCancel }, margin, null);
 

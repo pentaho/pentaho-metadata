@@ -142,7 +142,7 @@ public class BusinessTableDialog extends Dialog
 		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.MIN);
  		props.setLook(shell);
         
-        log.logDebug(this.getClass().getName(), Messages.getString("BusinessTableDialog.DEBUG_OPENING_DIALOG")); //$NON-NLS-1$
+        log.logDebug(this.getClass().getName(), Messages.getString("General.DEBUG_OPENING_DIALOG")); //$NON-NLS-1$
 
 		lsMod = new ModifyListener() 
 		{
@@ -208,13 +208,13 @@ public class BusinessTableDialog extends Dialog
         // wlTable.setEnabled(false);
         
         wOK=new Button(shell, SWT.PUSH);
-        wOK.setText(Messages.getString("BusinessTableDialog.USER_OK")); //$NON-NLS-1$
+        wOK.setText(Messages.getString("General.USER_OK")); //$NON-NLS-1$
         wGet=new Button(shell, SWT.PUSH);
         wGet.setText(Messages.getString("BusinessTableDialog.USER_GET_UNUSED_COLUMNS")); //$NON-NLS-1$
         wAdd=new Button(shell, SWT.PUSH);
         wAdd.setText(Messages.getString("BusinessTableDialog.USER_ADD_COLUMNS")); //$NON-NLS-1$
         wCancel=new Button(shell, SWT.PUSH);
-        wCancel.setText(Messages.getString("BusinessTableDialog.USER_CANCEL")); //$NON-NLS-1$
+        wCancel.setText(Messages.getString("General.USER_CANCEL")); //$NON-NLS-1$
         
         BaseStepDialog.positionBottomButtons(shell, new Button[] { wOK, wGet, wAdd, wCancel }, margin, null);
 
@@ -419,7 +419,7 @@ public class BusinessTableDialog extends Dialog
             int[] idxs = dialog.getSelectionIndeces();
 
             MessageBox box = new MessageBox(shell, SWT.ICON_WARNING | SWT.YES | SWT.NO);
-            box.setText(Messages.getString("BusinessTableDialog.USER_TITLE_WARNING")); //$NON-NLS-1$
+            box.setText(Messages.getString("General.USER_TITLE_WARNING")); //$NON-NLS-1$
             box.setMessage(Messages.getString("BusinessTableDialog.USER_WARNING_CONFIRM_DELETE_COLUMNS", Integer.toString(idxs.length))+ //$NON-NLS-1$
                 (idxs.length!=1?Messages.getString("BusinessTableDialog.USER_COLUMNS"):Messages.getString("BusinessTableDialog.USER_COLUMN"))+ //$NON-NLS-1$ //$NON-NLS-2$
                 Messages.getString("BusinessTableDialog.USER_CONFIRM_OPERATION_CANNOT_BE_UNDONE")); //$NON-NLS-1$ 
@@ -481,7 +481,7 @@ public class BusinessTableDialog extends Dialog
                                 }
                                 catch(Exception e)
                                 {
-                                    new ErrorDialog(shell, Messages.getString("BusinessTableDialog.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_GETTING_PROPERTY_VALUE", id), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+                                    new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_GETTING_PROPERTY_VALUE", id), e); //$NON-NLS-1$ //$NON-NLS-2$ 
                                 }
                                 if (property!=null)
                                 {
@@ -611,7 +611,7 @@ public class BusinessTableDialog extends Dialog
         }
         catch (ObjectAlreadyExistsException e)
         {
-            new ErrorDialog(shell, Messages.getString("BusinessTableDialog.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_TABLE_ID_IN_USE", wName.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+            new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_TABLE_ID_IN_USE", wName.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
             return;
         }
         
@@ -636,7 +636,7 @@ public class BusinessTableDialog extends Dialog
             }
             catch (ObjectAlreadyExistsException e)
             {
-                new ErrorDialog(shell, Messages.getString("BusinessTableDialog.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_COLUMN_ID_IN_USE", wColId.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+                new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_COLUMN_ID_IN_USE", wColId.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
                 return;
             } 
         }
@@ -672,7 +672,7 @@ public class BusinessTableDialog extends Dialog
                 }
                 catch (ObjectAlreadyExistsException e)
                 {
-                    new ErrorDialog(shell, Messages.getString("BusinessTableDialog.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_BUSINESS_COLUMN_ID_IN_USE", businessColumn.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+                    new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_BUSINESS_COLUMN_ID_IN_USE", businessColumn.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
                     return;
                 }
             }
@@ -684,7 +684,7 @@ public class BusinessTableDialog extends Dialog
             }
             catch (ObjectAlreadyExistsException e)
             {
-                new ErrorDialog(shell, Messages.getString("BusinessTableDialog.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_BUSINESS_COLUMN_ID_IN_USE", businessColumn.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+                new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_BUSINESS_COLUMN_ID_IN_USE", businessColumn.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
                 return;
             }
         }
@@ -712,7 +712,7 @@ public class BusinessTableDialog extends Dialog
                 }
                 catch (ObjectAlreadyExistsException e)
                 {
-                    new ErrorDialog(shell, Messages.getString("BusinessTableDialog.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_ID_EXISTS_NOT_ADDED", businessColumn.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+                    new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_ID_EXISTS_NOT_ADDED", businessColumn.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
                 }
             }
             
@@ -737,7 +737,7 @@ public class BusinessTableDialog extends Dialog
                 }
                 catch (ObjectAlreadyExistsException e)
                 {
-                    new ErrorDialog(shell, Messages.getString("BusinessTableDialog.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_BUSINESS_TABLE_ID_EXISTS", wName.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+                    new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_BUSINESS_TABLE_ID_EXISTS", wName.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
                     return;
                 }
             }
@@ -759,7 +759,7 @@ public class BusinessTableDialog extends Dialog
                     }
                     catch (ObjectAlreadyExistsException e)
                     {
-                        new ErrorDialog(shell, Messages.getString("BusinessTableDialog.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_ID_EXISTS_NOT_ADDED", businessColumn.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+                        new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_ID_EXISTS_NOT_ADDED", businessColumn.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
                     }
                 }
 			}
@@ -770,7 +770,7 @@ public class BusinessTableDialog extends Dialog
 		{
 			MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR );
 			mb.setMessage(Messages.getString("BusinessTableDialog.USER_ERROR_CANT_FIND_PHYSICAL_TABLE")); //$NON-NLS-1$
-			mb.setText(Messages.getString("BusinessTableDialog.USER_TITLE_ERROR")); //$NON-NLS-1$
+			mb.setText(Messages.getString("General.USER_TITLE_ERROR")); //$NON-NLS-1$
 			mb.open();
 		}
 	}

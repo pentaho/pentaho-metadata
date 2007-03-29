@@ -218,9 +218,9 @@ public class PhysicalTableDialog extends Dialog
 
 		
 		wOK=new Button(shell, SWT.PUSH);
-		wOK.setText(Messages.getString("PhysicalTableDialog.USER_OK")); //$NON-NLS-1$
+		wOK.setText(Messages.getString("General.USER_OK")); //$NON-NLS-1$
 		wCancel=new Button(shell, SWT.PUSH);
-		wCancel.setText(Messages.getString("PhysicalTableDialog.USER_CANCEL")); //$NON-NLS-1$
+		wCancel.setText(Messages.getString("General.USER_CANCEL")); //$NON-NLS-1$
         
         BaseStepDialog.positionBottomButtons(shell, new Button[] { wOK, wCancel }, margin, null);
 
@@ -436,7 +436,7 @@ public class PhysicalTableDialog extends Dialog
                     }
                     catch (ObjectAlreadyExistsException e)
                     {
-                        new ErrorDialog(shell, Messages.getString("PhysicalTableDialog.USER_TITLE_ERROR"), Messages.getString("PhysicalTableDialog.USER_ERROR_DUPLICATE_COLUMN_ID"), e); //$NON-NLS-1$ //$NON-NLS-2$
+                        new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("PhysicalTableDialog.USER_ERROR_DUPLICATE_COLUMN_ID"), e); //$NON-NLS-1$ //$NON-NLS-2$
                     }
                 }
             };
@@ -485,7 +485,7 @@ public class PhysicalTableDialog extends Dialog
                 }
                 catch (ObjectAlreadyExistsException e)
                 {
-                    new ErrorDialog(shell, Messages.getString("PhysicalTableDialog.USER_TITLE_ERROR"), Messages.getString("PhysicalTableDialog.USER_ERROR_ATTEMPTING_COLUMN_CHANGE"), e); //$NON-NLS-1$ //$NON-NLS-2$
+                    new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("PhysicalTableDialog.USER_ERROR_ATTEMPTING_COLUMN_CHANGE"), e); //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }
         }
@@ -501,7 +501,7 @@ public class PhysicalTableDialog extends Dialog
             int[] idxs = dialog.getSelectionIndeces();
 
             MessageBox box = new MessageBox(shell, SWT.ICON_WARNING | SWT.YES | SWT.NO);
-            box.setText(Messages.getString("PhysicalTableDialog.USER_TITLE_WARNING")); //$NON-NLS-1$
+            box.setText(Messages.getString("General.USER_TITLE_WARNING")); //$NON-NLS-1$
             box.setMessage(Messages.getString("PhysicalTableDialog.USER_WARNING_DELETE_COLUMNS", Integer.toString(idxs.length))+ //$NON-NLS-1$
                 (idxs.length!=1?Messages.getString("PhysicalTableDialog.USER_COLUMNS"):Messages.getString("PhysicalTableDialog.USER_COLUMN"))+ //$NON-NLS-1$ //$NON-NLS-2$
                 Messages.getString("PhysicalTableDialog.USER_CONFIRM_OPERATION_CANT_BE_UNDONE")); //$NON-NLS-1$  
@@ -606,7 +606,7 @@ public class PhysicalTableDialog extends Dialog
                         }
                         catch(Exception e)
                         {
-                            new ErrorDialog(shell, Messages.getString("PhysicalTableDialog.USER_TITLE_ERROR"), Messages.getString("PhysicalTableDialog.USER_ERROR_GETTING_PROPERTY_VALUE", id), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+                            new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("PhysicalTableDialog.USER_ERROR_GETTING_PROPERTY_VALUE", id), e); //$NON-NLS-1$ //$NON-NLS-2$ 
                         }
                         if (property!=null)
                         {
@@ -710,7 +710,7 @@ public class PhysicalTableDialog extends Dialog
         }
         catch (ObjectAlreadyExistsException e)
         {
-            new ErrorDialog(shell, Messages.getString("PhysicalTableDialog.USER_TITLE_ERROR"), Messages.getString("PhysicalTableDialog.USER_ERROR_PHYSICAL_TABLE_ID_EXISTS", wId.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+            new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("PhysicalTableDialog.USER_ERROR_PHYSICAL_TABLE_ID_EXISTS", wId.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
             return;
         }
 		
@@ -732,7 +732,7 @@ public class PhysicalTableDialog extends Dialog
             }
             catch (ObjectAlreadyExistsException e)
             {
-                new ErrorDialog(shell, Messages.getString("PhysicalTableDialog.USER_TITLE_ERROR"), Messages.getString("PhysicalTableDialog.USER_ERROR_COLUMN_ID_EXISTS", wColId.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+                new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("PhysicalTableDialog.USER_ERROR_COLUMN_ID_EXISTS", wColId.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
             }
         }
 
@@ -771,7 +771,7 @@ public class PhysicalTableDialog extends Dialog
             }
             catch (ObjectAlreadyExistsException e)
             {
-                new ErrorDialog(shell, Messages.getString("PhysicalTableDialog.USER_TITLE_ERROR"), Messages.getString("PhysicalTableDialog.USER_ERROR_PHYSICAL_COLUMN_ID_EXISTS", physicalColumn.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+                new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("PhysicalTableDialog.USER_ERROR_PHYSICAL_COLUMN_ID_EXISTS", physicalColumn.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
             }
         }
 
@@ -805,7 +805,7 @@ public class PhysicalTableDialog extends Dialog
         }
         catch(Exception e)
         {
-            new ErrorDialog(shell, Messages.getString("PhysicalTableDialog.USER_TITLE_ERROR"), Messages.getString("PhysicalTableDialog.USER_ERROR_GETTING_TARGET_TABLE_NAME"), e); //$NON-NLS-1$ //$NON-NLS-2$
+            new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("PhysicalTableDialog.USER_ERROR_GETTING_TARGET_TABLE_NAME"), e); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
 }

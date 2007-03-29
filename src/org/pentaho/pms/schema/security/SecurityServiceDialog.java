@@ -132,7 +132,7 @@ public class SecurityServiceDialog extends Dialog
 		
 		// Buttons
 		wOK     = new Button(shell, SWT.PUSH); 
-		wOK.setText(Messages.getString("SecurityServiceDialog.USER_OK")); //$NON-NLS-1$
+		wOK.setText(Messages.getString("General.USER_OK")); //$NON-NLS-1$
 
         wLoad     = new Button(shell, SWT.PUSH); 
         wLoad.setText(Messages.getString("SecurityServiceDialog.USER_LOAD")); //$NON-NLS-1$
@@ -141,7 +141,7 @@ public class SecurityServiceDialog extends Dialog
 		wTest.setText(Messages.getString("SecurityServiceDialog.USER_TEST")); //$NON-NLS-1$
 
 		wCancel = new Button(shell, SWT.PUSH); 
-		wCancel.setText(Messages.getString("SecurityServiceDialog.USER_CANCEL")); //$NON-NLS-1$
+		wCancel.setText(Messages.getString("General.USER_CANCEL")); //$NON-NLS-1$
 
 		Button[] buttons = new Button[] { wOK, wLoad, wTest, wCancel };
 		BaseStepDialog.positionBottomButtons(shell, buttons, margin, null);
@@ -613,7 +613,7 @@ public class SecurityServiceDialog extends Dialog
 		}
 		catch(Exception e)
 		{
-			new ErrorDialog(shell, Messages.getString("SecurityServiceDialog.USER_TITLE_ERROR"), Messages.getString("SecurityServiceDialog.USER_ERROR_CANT_GET_SECURITY_INFO", securityService.getURL()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+			new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("SecurityServiceDialog.USER_ERROR_CANT_GET_SECURITY_INFO", securityService.getURL()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
 		}		
 	}
 }

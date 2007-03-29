@@ -29,7 +29,6 @@ package org.pentaho.pms.schema;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
-import org.pentaho.pms.messages.Messages;
 
 /*
  * Created on 30-jan-04
@@ -180,7 +179,7 @@ public class Path
 	
 	public String toString()
 	{
-		String thisPath=Messages.getString("Path.0"); //$NON-NLS-1$
+		String thisPath=""; //$NON-NLS-1$
 		for (int i=0;i<size();i++)
 		{
             RelationshipMeta relationship = getRelationship(i);

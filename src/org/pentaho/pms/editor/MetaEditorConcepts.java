@@ -450,7 +450,7 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
             {
                 MessageBox mb = new MessageBox(shell, SWT.YES | SWT.NO | SWT.ICON_WARNING);
                 mb.setMessage(Messages.getString("MetaEditorConcepts.USER_DELETE_CONCEPT_CONFIRM",activeConcept.getName(), Integer.toString(list.size()))); //$NON-NLS-1$ 
-                mb.setText(Messages.getString("MetaEditorConcepts.USER_TITLE_WARNING")); //$NON-NLS-1$
+                mb.setText(Messages.getString("General.USER_TITLE_WARNING")); //$NON-NLS-1$
                 answer = mb.open();
             }
             if (answer==SWT.YES)
@@ -880,7 +880,7 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
             {
                 MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
                 mb.setMessage(Messages.getString("MetaEditorConcepts.USER_ERROR_CONCEPT_ALREADY_EXISTS", conceptName)); //$NON-NLS-1$ 
-                mb.setText(Messages.getString("MetaEditorConcepts.USER_TITLE_ERROR")); //$NON-NLS-1$
+                mb.setText(Messages.getString("General.USER_TITLE_ERROR")); //$NON-NLS-1$
                 mb.open();
                 return;
             }
@@ -898,7 +898,7 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
             }
             catch(ObjectAlreadyExistsException e)
             {
-                new ErrorDialog(shell, Messages.getString("MetaEditorConcepts.USER_TITLE_ERROR"), Messages.getString("MetaEditorConcepts.USER_ERROR_CONCEPT_ID_EXISTS", concept.getName()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+                new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditorConcepts.USER_ERROR_CONCEPT_ID_EXISTS", concept.getName()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
             }
             
             // refresh the tree on the left too.
@@ -918,7 +918,7 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
         {
             MessageBox mb = new MessageBox(shell, SWT.YES | SWT.NO | SWT.CANCEL | SWT.ICON_WARNING);
             mb.setMessage(Messages.getString("MetaEditorConcepts.USER_CONFIRM_CHANGES")); //$NON-NLS-1$
-            mb.setText(Messages.getString("MetaEditorConcepts.USER_TITLE_WARNING")); //$NON-NLS-1$
+            mb.setText(Messages.getString("General.USER_TITLE_WARNING")); //$NON-NLS-1$
             int answer = mb.open();
             if (answer==SWT.YES)
             {
@@ -962,7 +962,7 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
                     {
                         MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
                         mb.setMessage(Messages.getString("MetaEditorConcepts.USER_SPECIFY_DIFFERENT_CONCEPT_NAME", newName)); //$NON-NLS-1$ 
-                        mb.setText(Messages.getString("MetaEditorConcepts.USER_TITLE_ERROR")); //$NON-NLS-1$
+                        mb.setText(Messages.getString("General.USER_TITLE_ERROR")); //$NON-NLS-1$
                         mb.open();
                         return;
                     }
@@ -1004,7 +1004,7 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
             {
                 MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
                 mb.setMessage(Messages.getString("MetaEditorConcepts.USER_SPECIFY_NAME_FOR_CONCEPT")); //$NON-NLS-1$
-                mb.setText(Messages.getString("MetaEditorConcepts.USER_TITLE_ERROR")); //$NON-NLS-1$
+                mb.setText(Messages.getString("General.USER_TITLE_ERROR")); //$NON-NLS-1$
                 mb.open();
                 return;
             }
