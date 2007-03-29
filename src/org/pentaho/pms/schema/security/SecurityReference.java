@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.util.Const;
 import org.w3c.dom.Node;
 
@@ -51,7 +52,7 @@ public class SecurityReference
             SecurityACL acl = (SecurityACL) acls.get(i);
             if ( (rights & acl.getMask())==acl.getMask() && acl.getMask()>0 )
             {
-                if (!first) desc.append(", ");
+                if (!first) desc.append(", "); //$NON-NLS-1$
                 desc.append(acl.getName());
                 
                 first=false;
@@ -104,31 +105,31 @@ public class SecurityReference
                 Node contentNode = securityService.getContent();
                 
                 // Load the users
-                Node usersNode = XMLHandler.getSubNode(contentNode, "users");
-                int nrUsers = XMLHandler.countNodes(usersNode, "user");
+                Node usersNode = XMLHandler.getSubNode(contentNode, "users"); //$NON-NLS-1$
+                int nrUsers = XMLHandler.countNodes(usersNode, "user"); //$NON-NLS-1$
                 for (int i=0;i<nrUsers;i++)
                 {
-                    Node userNode = XMLHandler.getSubNodeByNr(usersNode, "user", i);
+                    Node userNode = XMLHandler.getSubNodeByNr(usersNode, "user", i); //$NON-NLS-1$
                     String username = XMLHandler.getNodeValue(userNode);
                     if (username!=null) users.add(username);
                 }
                 
                 // Load the roles
-                Node rolesNode = XMLHandler.getSubNode(contentNode, "roles");
-                int nrRoles = XMLHandler.countNodes(rolesNode, "role");
+                Node rolesNode = XMLHandler.getSubNode(contentNode, "roles"); //$NON-NLS-1$
+                int nrRoles = XMLHandler.countNodes(rolesNode, "role"); //$NON-NLS-1$
                 for (int i=0;i<nrRoles;i++)
                 {
-                    Node roleNode = XMLHandler.getSubNodeByNr(rolesNode, "role", i);
+                    Node roleNode = XMLHandler.getSubNodeByNr(rolesNode, "role", i); //$NON-NLS-1$
                     String rolename = XMLHandler.getNodeValue(roleNode);
                     if (rolename!=null) roles.add(rolename);
                 }
                 
                 // Load the ACLs
-                Node aclsNode = XMLHandler.getSubNode(contentNode, "acls");
-                int nrAcls = XMLHandler.countNodes(aclsNode, "acl");
+                Node aclsNode = XMLHandler.getSubNode(contentNode, "acls"); //$NON-NLS-1$
+                int nrAcls = XMLHandler.countNodes(aclsNode, "acl"); //$NON-NLS-1$
                 for (int i=0;i<nrAcls;i++)
                 {
-                    Node aclNode = XMLHandler.getSubNodeByNr(aclsNode, "acl", i);
+                    Node aclNode = XMLHandler.getSubNodeByNr(aclsNode, "acl", i); //$NON-NLS-1$
                     SecurityACL acl = new SecurityACL(aclNode);
                     acls.add(acl);
                 }
@@ -136,7 +137,7 @@ public class SecurityReference
             }
             catch(Exception e)
             {
-                throw new Exception("Unable to create new security reference object using XML string", e);
+                throw new Exception(Messages.getString("SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML"), e); //$NON-NLS-1$
             }
         }
     }
@@ -145,30 +146,30 @@ public class SecurityReference
     {
         StringBuffer xml = new StringBuffer();
         
-        xml.append("<content>").append(Const.CR);
+        xml.append("<content>").append(Const.CR); //$NON-NLS-1$
         
-        xml.append("  <users>").append(Const.CR);
+        xml.append("  <users>").append(Const.CR); //$NON-NLS-1$
         for (int i=0;i<users.size();i++)
         {
-            xml.append("    ").append(XMLHandler.addTagValue("user", (String)users.get(i)) );
+            xml.append("    ").append(XMLHandler.addTagValue("user", (String)users.get(i)) ); //$NON-NLS-1$ //$NON-NLS-2$
         }
-        xml.append("  </users>").append(Const.CR);
+        xml.append("  </users>").append(Const.CR); //$NON-NLS-1$
         
-        xml.append("  <roles>").append(Const.CR);
+        xml.append("  <roles>").append(Const.CR); //$NON-NLS-1$
         for (int i=0;i<roles.size();i++)
         {
-            xml.append("    ").append(XMLHandler.addTagValue("role", (String)roles.get(i)) );
+            xml.append("    ").append(XMLHandler.addTagValue("role", (String)roles.get(i)) ); //$NON-NLS-1$ //$NON-NLS-2$
         }
-        xml.append("  </roles>").append(Const.CR);
+        xml.append("  </roles>").append(Const.CR); //$NON-NLS-1$
 
-        xml.append("  <acls>").append(Const.CR);
+        xml.append("  <acls>").append(Const.CR); //$NON-NLS-1$
         for (int i=0;i<acls.size();i++)
         {
-            xml.append("    ").append(((SecurityACL)acls.get(i)).toXML() ).append(Const.CR);
+            xml.append("    ").append(((SecurityACL)acls.get(i)).toXML() ).append(Const.CR); //$NON-NLS-1$
         }
-        xml.append("  </acls>").append(Const.CR);
+        xml.append("  </acls>").append(Const.CR); //$NON-NLS-1$
 
-        xml.append("</content>").append(Const.CR);
+        xml.append("</content>").append(Const.CR); //$NON-NLS-1$
         
         return xml.toString();
     }

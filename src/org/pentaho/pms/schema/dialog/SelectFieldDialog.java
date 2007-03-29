@@ -65,6 +65,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.PhysicalColumn;
@@ -85,8 +86,8 @@ public class SelectFieldDialog extends Dialog
 	private LogWriter log;
 	private SchemaMeta schema;
 	
-	private static final String STRING_FIELDS     = "Fields";
-	private static final String STRING_CONDITIONS = "Conditions";
+	private static final String STRING_FIELDS     = "Fields"; //$NON-NLS-1$
+	private static final String STRING_CONDITIONS = "Conditions"; //$NON-NLS-1$
 	
 	private Shell     shell;
 	private Tree      wTree;
@@ -117,7 +118,7 @@ public class SelectFieldDialog extends Dialog
 		Shell parent = getParent();
 		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.MIN);
  		props.setLook(shell);
-		shell.setText("Field selection screen");
+		shell.setText(Messages.getString("SelectFieldDialog.USER_FIELD_SELECTION_SCREEN")); //$NON-NLS-1$
 		
         int margin = Const.MARGIN;
         
@@ -191,10 +192,10 @@ public class SelectFieldDialog extends Dialog
  		
  		// Buttons
 		wOK = new Button(leftsplit, SWT.PUSH); 
-		wOK.setText("  &OK  ");
+		wOK.setText(Messages.getString("SelectFieldDialog.USER_OK")); //$NON-NLS-1$
 		
 		wCancel = new Button(leftsplit, SWT.PUSH);
-		wCancel.setText("  &Cancel  ");
+		wCancel.setText(Messages.getString("SelectFieldDialog.USER_CANCEL")); //$NON-NLS-1$
 		
 		FormData fdTree      = new FormData(); 
 
@@ -211,7 +212,7 @@ public class SelectFieldDialog extends Dialog
 			{
 				public void handleEvent (Event e) 
 				{
-					log.logDebug(this.getClass().getName(), "CANCEL SelectFieldsDialog");
+					log.logDebug(this.getClass().getName(), Messages.getString("SelectFieldDialog.DEBUG_CANCEL_DIALOG")); //$NON-NLS-1$
 					dispose();
 				}
 			}
@@ -238,10 +239,10 @@ public class SelectFieldDialog extends Dialog
 		compmiddle.setLayout (middleLayout);
 
 		Button wAdd = new Button(compmiddle, SWT.PUSH);
-		wAdd.setText(" > ");
+		wAdd.setText(" > "); //$NON-NLS-1$
 
 		Button wRemove = new Button(compmiddle, SWT.PUSH);
-		wRemove.setText(" < ");
+		wRemove.setText(" < "); //$NON-NLS-1$
 
 		FormData fdAdd = new FormData();
 		fdAdd.left   = new FormAttachment(0, 0); // To the right of the label
@@ -264,7 +265,7 @@ public class SelectFieldDialog extends Dialog
 		rightsplit.setLayout (rightLayout);
 
 		wlList = new Label(rightsplit, SWT.LEFT);
-		wlList.setText("Selected fields: ");
+		wlList.setText(Messages.getString("SelectFieldDialog.USER_SELECTED_FIELDS")); //$NON-NLS-1$
  		props.setLook(wlList);
 		
 		
@@ -272,7 +273,7 @@ public class SelectFieldDialog extends Dialog
  		props.setLook(wList);
 
 		wlCondition = new Label(rightsplit, SWT.LEFT);
-		wlCondition.setText("Selected conditions: ");
+		wlCondition.setText(Messages.getString("SelectFieldDialog.USER_SELECTED_CONDITIONS")); //$NON-NLS-1$
  		props.setLook(wlCondition);
 
 		wCondition = new List(rightsplit, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
@@ -320,20 +321,20 @@ public class SelectFieldDialog extends Dialog
 					for (int i=0;i<ti.length;i++) 
 					{
 						String itemname = ti[i].getText();
-						TreeItem parent = ti[i].getParentItem();
-						if (parent!=null)
+						TreeItem thisParent = ti[i].getParentItem();
+						if (thisParent!=null)
 						{
-							String parentname = parent.getText();
-							TreeItem grandparent = parent.getParentItem();
+							String parentname = thisParent.getText();
+							TreeItem grandparent = thisParent.getParentItem();
 							if (grandparent!=null)
 							{
 								String grandparentname = grandparent.getText();
 								
-								System.out.println("Grandparent = "+grandparentname+", parent="+parentname+", item="+itemname);
+								System.out.println(Messages.getString("SelectFieldDialog.DEBUG_GRANDPARENT_PARENT_ITEM", grandparentname, parentname, itemname)); //$NON-NLS-1$ 
 								if (grandparentname.equalsIgnoreCase(STRING_FIELDS) ||
 								    grandparentname.equalsIgnoreCase(STRING_CONDITIONS))
 								{
-									data+=STRING_FIELDS+"\t"+parentname+"\t"+itemname+Const.CR;
+									data+=STRING_FIELDS+"\t"+parentname+"\t"+itemname+Const.CR; //$NON-NLS-1$ //$NON-NLS-2$
 								}
 							}
 						}
@@ -362,8 +363,8 @@ public class SelectFieldDialog extends Dialog
 				while (strtok.hasMoreTokens())
 				{
 					String   source = strtok.nextToken();
-					int idx  = source.indexOf("\t");
-					int idx2 = source.indexOf("\t", idx+1); 
+					int idx  = source.indexOf("\t"); //$NON-NLS-1$
+					int idx2 = source.indexOf("\t", idx+1);  //$NON-NLS-1$
 					if (idx>=0)
 					{
 						String fieldtype = source.substring(0, idx);
@@ -471,7 +472,7 @@ public class SelectFieldDialog extends Dialog
 				{
 					String grandparentname = grandparent.getText();
 								
-					System.out.println("Grandparent = "+grandparentname+", parent="+parentname+", item="+itemname);
+					System.out.println(Messages.getString("SelectFieldDialog.DEBUG_GRANDPARENT_PARENT_ITEM", grandparentname, parentname, itemname)); //$NON-NLS-1$
 					if (grandparentname.equalsIgnoreCase(STRING_FIELDS))
 					{
 						addToFieldsList(parentname, itemname);
@@ -506,14 +507,14 @@ public class SelectFieldDialog extends Dialog
 
 	public void addToFieldsList(String tablename, String fieldname)
 	{
-		String display = tablename+" . "+fieldname;
+		String display = tablename+" . "+fieldname; //$NON-NLS-1$
 		int idx = wList.indexOf(display);
 		if (idx<0) wList.add(display);
 	}
 
 	public void addToConditionsList(String tablename, String conditionname)
 	{
-		String display = tablename+" . "+conditionname;
+		String display = tablename+" . "+conditionname; //$NON-NLS-1$
 		int idx = wCondition.indexOf(display);
 		if (idx<0) wCondition.add(display);
 	}
@@ -548,7 +549,7 @@ public class SelectFieldDialog extends Dialog
 		// The selected fields...		
 		for (int i=0;i<str.length;i++)
 		{
-			int idx = str[i].indexOf(" . ");
+			int idx = str[i].indexOf(" . "); //$NON-NLS-1$
 			if (idx>=0)
 			{
 				String tablename = str[i].substring(0, idx);

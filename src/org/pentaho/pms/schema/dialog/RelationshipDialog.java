@@ -52,6 +52,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.BusinessModel;
@@ -149,7 +150,7 @@ public class RelationshipDialog extends Dialog
 		formLayout.marginHeight = Const.FORM_MARGIN;
 
 		shell.setLayout(formLayout);
-		shell.setText("Hop: From --> To");
+		shell.setText(Messages.getString("RelationshipDialog.USER_HOP_FROM_TO")); //$NON-NLS-1$
 		
 		int middle = props.getMiddlePct();
 		int length = 350;
@@ -157,7 +158,7 @@ public class RelationshipDialog extends Dialog
 
 		// From step line
 		wlFrom=new Label(shell, SWT.RIGHT);
-		wlFrom.setText("From table / field: ");
+		wlFrom.setText(Messages.getString("RelationshipDialog.USER_FROM_TABLE_FIELD")); //$NON-NLS-1$
         props.setLook(wlFrom);
 		fdlFrom=new FormData();
 		fdlFrom.left = new FormAttachment(0, 0);
@@ -165,7 +166,7 @@ public class RelationshipDialog extends Dialog
 		fdlFrom.top  = new FormAttachment(0, margin);
 		wlFrom.setLayoutData(fdlFrom);
 		wFrom=new CCombo(shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
-		wFrom.setText("Select the source table");
+		wFrom.setText(Messages.getString("RelationshipDialog.USER_SELECT_SOURCE_TABLE")); //$NON-NLS-1$
         props.setLook(wFrom);
 
 		for (int i=0;i<businessModel.nrBusinessTables();i++)
@@ -192,7 +193,7 @@ public class RelationshipDialog extends Dialog
 		wFrom.setLayoutData(fdFrom);
 
 		wFromField=new CCombo(shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
-		wFromField.setText("");
+		wFromField.setText(""); //$NON-NLS-1$
         props.setLook(wFromField);
         refreshFromFields();		
 		wFromField.addModifyListener(lsMod);
@@ -205,7 +206,7 @@ public class RelationshipDialog extends Dialog
 
 		// To line
 		wlTo=new Label(shell, SWT.RIGHT);
-		wlTo.setText("To table / field: ");
+		wlTo.setText(Messages.getString("RelationshipDialog.USER_TO_TABLE_FIELD")); //$NON-NLS-1$
         props.setLook(wlTo);
 		fdlTo=new FormData();
 		fdlTo.left = new FormAttachment(0, 0);
@@ -213,7 +214,7 @@ public class RelationshipDialog extends Dialog
 		fdlTo.top  = new FormAttachment(wFrom, margin);
 		wlTo.setLayoutData(fdlTo);
 		wTo=new CCombo(shell, SWT.BORDER | SWT.READ_ONLY);
-		wTo.setText("Select the destination table");
+		wTo.setText(Messages.getString("RelationshipDialog.USER_SELECT_DESTINATION_TABLE")); //$NON-NLS-1$
         props.setLook(wTo);
 
 		for (int i=0;i<businessModel.nrBusinessTables();i++)
@@ -242,7 +243,7 @@ public class RelationshipDialog extends Dialog
 
 		// ToField step line
 		wToField=new CCombo(shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
-		wToField.setText("Select the field");
+		wToField.setText(Messages.getString("RelationshipDialog.USER_SELECT_THE_FIELD")); //$NON-NLS-1$
         props.setLook(wToField);
 		refreshToFields();
 		wToField.addModifyListener(lsMod);
@@ -254,7 +255,7 @@ public class RelationshipDialog extends Dialog
 		wToField.setLayoutData(fdToField);
 
 		wGuess=new Button(shell, SWT.PUSH);
-		wGuess.setText("  &Guess matching fields  ");
+		wGuess.setText(Messages.getString("RelationshipDialog.USER_GUESS_MATCHING_FIELDS")); //$NON-NLS-1$
 		lsGuess = new Listener() { public void handleEvent(Event e) { guess(); } };
 		wGuess.addListener(SWT.Selection, lsGuess );
 		fdGuess=new FormData();
@@ -264,7 +265,7 @@ public class RelationshipDialog extends Dialog
 
 		// Relation line
 		wlRelation=new Label(shell, SWT.RIGHT);
-		wlRelation.setText("Relationship : ");
+		wlRelation.setText(Messages.getString("RelationshipDialog.USER_RELATIONSHIP")); //$NON-NLS-1$
         props.setLook(wlRelation);
 		fdlRelation=new FormData();
 		fdlRelation.left = new FormAttachment(0, 0);
@@ -287,7 +288,7 @@ public class RelationshipDialog extends Dialog
 		wRelation.setLayoutData(fdRelation);
 
 		wGuessRel=new Button(shell, SWT.PUSH);
-		wGuessRel.setText("  &Guess relationship  ");
+		wGuessRel.setText(Messages.getString("RelationshipDialog.USER_GUESS_RELATIONSHIP")); //$NON-NLS-1$
 		lsGuessRel = new Listener() { public void handleEvent(Event e) { guessRelationship(); } };
 		wGuessRel.addListener(SWT.Selection, lsGuessRel );
 		fdGuessRel=new FormData();
@@ -297,7 +298,7 @@ public class RelationshipDialog extends Dialog
 
 		// Complex checkbox
 		wlComplex=new Label(shell, SWT.RIGHT);
-		wlComplex.setText("Complex join? ");
+		wlComplex.setText(Messages.getString("RelationshipDialog.USER_COMPLEX_JOIN")); //$NON-NLS-1$
         props.setLook(wlComplex);
 		fdlComplex=new FormData();
 		fdlComplex.left = new FormAttachment(0, 0);
@@ -324,7 +325,7 @@ public class RelationshipDialog extends Dialog
 
 		// ComplexJoin line
 		wlComplexJoin=new Label(shell, SWT.RIGHT);
-		wlComplexJoin.setText("Complex join expression: ");
+		wlComplexJoin.setText(Messages.getString("RelationshipDialog.USER_COMPLEX_JOIN_EXPRESSION")); //$NON-NLS-1$
         props.setLook(wlComplexJoin);
 		fdlComplexJoin=new FormData();
 		fdlComplexJoin.left = new FormAttachment(0, 0);
@@ -332,7 +333,7 @@ public class RelationshipDialog extends Dialog
 		fdlComplexJoin.top  = new FormAttachment(wComplex, margin);
 		wlComplexJoin.setLayoutData(fdlComplexJoin);
 		wComplexJoin=new Text(shell, SWT.MULTI | SWT.LEFT | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-		wComplexJoin.setText("");
+		wComplexJoin.setText(""); //$NON-NLS-1$
         props.setLook(wComplexJoin);
 		wComplexJoin.addModifyListener(lsMod);
 		fdComplexJoin=new FormData();
@@ -344,9 +345,9 @@ public class RelationshipDialog extends Dialog
 
 		// Some buttons
 		wOK=new Button(shell, SWT.PUSH);
-		wOK.setText("  &OK  ");
+		wOK.setText(Messages.getString("RelationshipDialog.USER_OK")); //$NON-NLS-1$
 		wCancel=new Button(shell, SWT.PUSH);
-		wCancel.setText("  &Cancel  ");
+		wCancel.setText(Messages.getString("RelationshipDialog.USER_CANCEL")); //$NON-NLS-1$
         
         BaseStepDialog.positionBottomButtons(shell, new Button[] { wOK, wCancel }, margin, null);
 
@@ -488,8 +489,8 @@ public class RelationshipDialog extends Dialog
 		if (relationshipMeta.getTableFrom()==null)
 		{
 			MessageBox mb = new MessageBox(shell, SWT.YES | SWT.ICON_WARNING );
-			mb.setMessage("Table ["+wFrom.getText()+"] doesn't exist!");
-			mb.setText("Warning!");
+			mb.setMessage(Messages.getString("RelationshipDialog.USER_WARNING_TABLE_DOESNT_EXIST", wFrom.getText())); //$NON-NLS-1$ 
+			mb.setText(Messages.getString("RelationshipDialog.USER_TITLE_WARNING")); //$NON-NLS-1$
 			mb.open();
 		}
 		else
@@ -497,8 +498,8 @@ public class RelationshipDialog extends Dialog
 			if (relationshipMeta.getTableTo()==null)
 			{
 				MessageBox mb = new MessageBox(shell, SWT.YES | SWT.ICON_WARNING );
-				mb.setMessage("Table ["+wTo.getText()+"] doesn't exist!");
-				mb.setText("Warning!");
+				mb.setMessage(Messages.getString("RelationshipDialog.USER_WARNING_TABLE_DOESNT_EXIST", wFrom.getText())); //$NON-NLS-1$ 
+				mb.setText(Messages.getString("RelationshipDialog.USER_TITLE_WARNING")); //$NON-NLS-1$
 				mb.open();
 			}
 			else
@@ -506,8 +507,8 @@ public class RelationshipDialog extends Dialog
 				if (relationshipMeta.getTableFrom().getId().equalsIgnoreCase(relationshipMeta.getTableTo().getId()))
 				{
 					MessageBox mb = new MessageBox(shell, SWT.YES | SWT.ICON_WARNING );
-					mb.setMessage("A relationship can't be made to the same table!");
-					mb.setText("Warning!");
+					mb.setMessage(Messages.getString("RelationshipDialog.USER_WARNING_RELATIONSHIP_SAME_TABLE_NOT_ALLOWED")); //$NON-NLS-1$
+					mb.setText(Messages.getString("RelationshipDialog.USER_TITLE_WARNING")); //$NON-NLS-1$
 					mb.open();
 				}
 				else
