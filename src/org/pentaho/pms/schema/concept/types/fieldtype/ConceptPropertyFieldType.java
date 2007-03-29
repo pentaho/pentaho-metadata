@@ -18,10 +18,10 @@ import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
 public class ConceptPropertyFieldType extends ConceptPropertyBase implements ConceptPropertyInterface, Cloneable
 {
-    public static final ConceptPropertyFieldType DEFAULT_OTHER     = new ConceptPropertyFieldType("fieldtype", FieldTypeSettings.OTHER);  
-    public static final ConceptPropertyFieldType DEFAULT_DIMENSION = new ConceptPropertyFieldType("fieldtype", FieldTypeSettings.DIMENSION);  
-    public static final ConceptPropertyFieldType DEFAULT_FACT      = new ConceptPropertyFieldType("fieldtype", FieldTypeSettings.FACT);  
-    public static final ConceptPropertyFieldType DEFAULT_KEY       = new ConceptPropertyFieldType("fieldtype", FieldTypeSettings.KEY);  
+    public static final ConceptPropertyFieldType DEFAULT_OTHER     = new ConceptPropertyFieldType("fieldtype", FieldTypeSettings.OTHER);    //$NON-NLS-1$
+    public static final ConceptPropertyFieldType DEFAULT_DIMENSION = new ConceptPropertyFieldType("fieldtype", FieldTypeSettings.DIMENSION);    //$NON-NLS-1$
+    public static final ConceptPropertyFieldType DEFAULT_FACT      = new ConceptPropertyFieldType("fieldtype", FieldTypeSettings.FACT);    //$NON-NLS-1$
+    public static final ConceptPropertyFieldType DEFAULT_KEY       = new ConceptPropertyFieldType("fieldtype", FieldTypeSettings.KEY);    //$NON-NLS-1$
 
     private FieldTypeSettings value;
     

@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyWidgetInterface;
@@ -90,7 +91,7 @@ public class ConceptPropertyColumnWidthWidget extends ChangedFlag implements Con
         {
             type.setText(value.getDescription());
             if (value.getWidth()!=null) width.setText(value.getWidth().toString());
-            else width.setText("");
+            else width.setText(""); //$NON-NLS-1$ 
         }
     }
 
@@ -111,7 +112,7 @@ public class ConceptPropertyColumnWidthWidget extends ChangedFlag implements Con
         ConceptPropertyInterface property = concept.getProperty(name);
 
         Label typeLabel = new Label(composite, SWT.NONE);
-        typeLabel.setText("The column width type: ");
+        typeLabel.setText(Messages.getString("ConceptPropertyColumnWidthWidget.USER_COLUMN_WIDTH_TYPE")); //$NON-NLS-1$
         FormData fdTypeLabel = new FormData();
         fdTypeLabel.left  = new FormAttachment(props.getMiddlePct(), Const.MARGIN);
         if (lastControl!=null) fdTypeLabel.top   = new FormAttachment(lastControl, Const.MARGIN); else fdTypeLabel.top   = new FormAttachment(0, 0);
@@ -119,7 +120,7 @@ public class ConceptPropertyColumnWidthWidget extends ChangedFlag implements Con
         
         final CCombo type = new CCombo(composite, SWT.BORDER);
         type.setItems(ColumnWidth.typeDescriptions);
-        type.setToolTipText("Select the width type for property '"+name+"'");
+        type.setToolTipText(Messages.getString("ConceptPropertyColumnWidthWidget.USER_SELECT_PROPERTY_TYPE_WIDTH", name)); //$NON-NLS-1$ 
         props.setLook(type);
         FormData fdType = new FormData();
         fdType.left  = new FormAttachment(typeLabel, Const.MARGIN);
@@ -127,14 +128,14 @@ public class ConceptPropertyColumnWidthWidget extends ChangedFlag implements Con
         type.setLayoutData(fdType);
 
         Label widthLabel = new Label(composite, SWT.NONE);
-        widthLabel.setText("The column width : ");
+        widthLabel.setText(Messages.getString("ConceptPropertyColumnWidthWidget.USER_COLUMN_WIDTH")); //$NON-NLS-1$
         FormData fdWidthLabel = new FormData();
         fdWidthLabel.left  = new FormAttachment(type, 3*Const.MARGIN);
         if (lastControl!=null) fdWidthLabel.top   = new FormAttachment(lastControl, Const.MARGIN); else fdWidthLabel.top   = new FormAttachment(0, 0);
         widthLabel.setLayoutData(fdWidthLabel);
         
         final Text width = new Text(composite, SWT.BORDER | SWT.SINGLE | SWT.LEFT);
-        width.setToolTipText("Select the width for property '"+name+"'");
+        width.setToolTipText(Messages.getString("ConceptPropertyColumnWidthWidget.USER_SELECT_PROPERTY_WIDTH", name)); //$NON-NLS-1$ 
         props.setLook(width);
         FormData fdWidth = new FormData();
         fdWidth.left  = new FormAttachment(widthLabel, Const.MARGIN);

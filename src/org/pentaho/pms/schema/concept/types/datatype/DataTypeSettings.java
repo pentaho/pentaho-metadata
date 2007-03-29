@@ -12,6 +12,8 @@
 */
 package org.pentaho.pms.schema.concept.types.datatype;
 
+import org.pentaho.pms.messages.Messages;
+
 public class DataTypeSettings
 {
     public static final int DATA_TYPE_UNKNOWN   = 0;
@@ -32,11 +34,19 @@ public class DataTypeSettings
     public static final DataTypeSettings IMAGE   = new DataTypeSettings(DATA_TYPE_IMAGE);
     public static final DataTypeSettings URL     = new DataTypeSettings(DATA_TYPE_URL);
     
-    public static final String typeCodes[] = { "Unknown", "String", "Date", "Boolean", "Numeric", "Binary", "Image", "URL", };
-    public static final String typeDescriptions[] = { "Unknown", "String", "Date", "Boolean", "Numeric", "Binary", "Image", "URL", };
+    public static final String typeCodes[] = { "Unknown", "String", "Date", "Boolean", "Numeric", "Binary", "Image", "URL", }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    public static final String typeDescriptions[] = { 
+      Messages.getString("DataTypeSettings.USER_UNKNOWN_DESC"),   //$NON-NLS-1$
+      Messages.getString("DataTypeSettings.USER_STRING_DESC"),   //$NON-NLS-1$
+      Messages.getString("DataTypeSettings.USER_DATE_DESC"),   //$NON-NLS-1$
+      Messages.getString("DataTypeSettings.USER_BOOLEAN_DESC"),  //$NON-NLS-1$
+      Messages.getString("DataTypeSettings.USER_NUMERIC_DESC"),   //$NON-NLS-1$
+      Messages.getString("DataTypeSettings.USER_BINARY_DESC"),   //$NON-NLS-1$
+      Messages.getString("DataTypeSettings.USER_IMAGE_DESC"),   //$NON-NLS-1$
+      Messages.getString("DataTypeSettings.USER_URL_DESC"), }; //$NON-NLS-1$ 
     public static final DataTypeSettings[] types = new DataTypeSettings[] { UNKNOWN, STRING, DATE, BOOLEAN, NUMERIC, BINARY, IMAGE, URL, };
     
-    private static final String SEPARATOR = ",";
+    private static final String SEPARATOR = ","; //$NON-NLS-1$
     
     private int type;
     private int length;

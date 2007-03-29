@@ -14,6 +14,8 @@ package org.pentaho.pms.schema.concept.types.columnwidth;
 
 import java.math.BigDecimal;
 
+import org.pentaho.pms.messages.Messages;
+
 public class ColumnWidth
 {
     public static final int TYPE_WIDTH_PIXELS  = 0;
@@ -30,12 +32,12 @@ public class ColumnWidth
     
     public static final String typeCodes[] = 
         { 
-            "pixels", "percent", "inches", "cm", "points",  
+            "pixels", "percent", "inches", "cm", "points",   //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
         };
     
     public static final String typeDescriptions[] = 
         { 
-            "Pixels", "Percent of page width", "Inches", "Centimeters", "Points",    
+            Messages.getString("ColumnWidth.USER_PIXELS_DESC"), Messages.getString("ColumnWidth.USER_PERCENT_DESC"), Messages.getString("ColumnWidth.USER_INCHES_DESC"), Messages.getString("ColumnWidth.USER_CENTIMETERS_DESC"), Messages.getString("ColumnWidth.USER_POINTS_DESC"),     //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
         };
     
     public static final ColumnWidth[] types = new ColumnWidth[]

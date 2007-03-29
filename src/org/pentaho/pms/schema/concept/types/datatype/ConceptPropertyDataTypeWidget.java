@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyWidgetInterface;
@@ -140,7 +141,7 @@ public class ConceptPropertyDataTypeWidget  extends ChangedFlag implements Conce
         // Length
         Label lengthLabel = new Label(dataType, SWT.LEFT);
         props.setLook(lengthLabel);
-        lengthLabel.setText("Length: ");
+        lengthLabel.setText(Messages.getString("ConceptPropertyDataTypeWidget.USER_LENGTH"));  //$NON-NLS-1$
         FormData fdLengthLabel = new FormData();
         fdLengthLabel.left   = new FormAttachment(combo, 4*Const.MARGIN);
         fdLengthLabel.top    = new FormAttachment(combo, 0, SWT.CENTER);
@@ -156,7 +157,7 @@ public class ConceptPropertyDataTypeWidget  extends ChangedFlag implements Conce
         // Precision
         Label precisionLabel = new Label(dataType, SWT.LEFT);
         props.setLook(precisionLabel);
-        precisionLabel.setText("Precision: ");
+        precisionLabel.setText(Messages.getString("ConceptPropertyDataTypeWidget.USER_PRECISION")); //$NON-NLS-1$
         FormData fdPrecisionLabel = new FormData();
         fdPrecisionLabel.left   = new FormAttachment(length, 4*Const.MARGIN);
         fdPrecisionLabel.top    = new FormAttachment(combo, 0, SWT.CENTER);

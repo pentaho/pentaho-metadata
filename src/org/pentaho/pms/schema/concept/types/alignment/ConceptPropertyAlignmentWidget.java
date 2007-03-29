@@ -22,6 +22,7 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyWidgetInterface;
@@ -96,7 +97,7 @@ public class ConceptPropertyAlignmentWidget extends ChangedFlag implements Conce
 
         final CCombo combo = new CCombo(composite, SWT.BORDER);
         combo.setItems(AlignmentSettings.typeDescriptions);
-        combo.setToolTipText("Select the text alignment rule for property '"+name+"'");
+        combo.setToolTipText(Messages.getString("ConceptPropertyAlignmentWidget.USER_SELECT_PROPERTY_TEXT_ALIGNMENT_RULE", name)); //$NON-NLS-1$ 
         props.setLook(combo);
         FormData fdCombo = new FormData();
         fdCombo.left  = new FormAttachment(props.getMiddlePct(), Const.MARGIN);

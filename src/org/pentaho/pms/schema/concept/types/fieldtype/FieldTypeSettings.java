@@ -12,6 +12,8 @@
 */
 package org.pentaho.pms.schema.concept.types.fieldtype;
 
+import org.pentaho.pms.messages.Messages;
+
 public class FieldTypeSettings
 {
     public static final int TYPE_OTHER     = 0; 
@@ -27,8 +29,13 @@ public class FieldTypeSettings
     public static final FieldTypeSettings ATTRIBUTE = new FieldTypeSettings(TYPE_ATTRIBUTE);
 
     public static final FieldTypeSettings types[] = new FieldTypeSettings[] { OTHER, DIMENSION, FACT, KEY, ATTRIBUTE }; 
-    public static final String typeCodes[] = new String[] { "Other", "Dimension", "Fact", "Key", "Attribute" };
-    public static final String typeDescriptions[] = new String[] { "Other", "Dimension", "Fact", "Key", "Attribute" };
+    public static final String typeCodes[] = new String[] { "Other", "Dimension", "Fact", "Key", "Attribute" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+    public static final String typeDescriptions[] = new String[] { 
+      Messages.getString("FieldTypeSettings.USER_OTHER_DESC"),   //$NON-NLS-1$
+      Messages.getString("FieldTypeSettings.USER_DIMENSION_DESC"),   //$NON-NLS-1$
+      Messages.getString("FieldTypeSettings.USER_FACT_DESC"),   //$NON-NLS-1$
+      Messages.getString("FieldTypeSettings.USER_KEY_DESC"),   //$NON-NLS-1$
+      Messages.getString("FieldTypeSettings.USER_ATTRIBUTE_DESC") }; //$NON-NLS-1$ 
     
     private int type;
 
@@ -114,13 +121,13 @@ public class FieldTypeSettings
     public static FieldTypeSettings guessFieldType(String name)
     {
         String fieldname = name.toLowerCase();
-        String ids[] = new String[] { "id", "pk", "tk", "sk" };
+        String ids[] = new String[] { "id", "pk", "tk", "sk" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         
         // Is it a key field?
         boolean isKey = false;
         for (int i=0;i<ids.length && !isKey;i++)
         {
-            if (fieldname.startsWith(ids[i]+"_") || fieldname.endsWith("_"+ids[i])) isKey=true;
+            if (fieldname.startsWith(ids[i]+"_") || fieldname.endsWith("_"+ids[i])) isKey=true; //$NON-NLS-1$ //$NON-NLS-2$
         }
         
         if (isKey) return KEY;

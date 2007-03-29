@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyWidgetInterface;
@@ -103,12 +104,12 @@ public class ConceptPropertyDateWidget extends ChangedFlag implements ConceptPro
     public void setValue(ConceptPropertyInterface property)
     {
         Date value = (Date)property.getValue();
-        if (value!=null) year.setText(new SimpleDateFormat("yyyy").format(value));
-        if (value!=null) month.setText(new SimpleDateFormat("MM").format(value));
-        if (value!=null) day.setText(new SimpleDateFormat("dd").format(value));
-        if (value!=null) hours.setText(new SimpleDateFormat("HH").format(value));
-        if (value!=null) minutes.setText(new SimpleDateFormat("mm").format(value));
-        if (value!=null) seconds.setText(new SimpleDateFormat("ss").format(value));
+        if (value!=null) year.setText(new SimpleDateFormat("yyyy").format(value));  //$NON-NLS-1$
+        if (value!=null) month.setText(new SimpleDateFormat("MM").format(value));  //$NON-NLS-1$
+        if (value!=null) day.setText(new SimpleDateFormat("dd").format(value));  //$NON-NLS-1$
+        if (value!=null) hours.setText(new SimpleDateFormat("HH").format(value));  //$NON-NLS-1$
+        if (value!=null) minutes.setText(new SimpleDateFormat("mm").format(value));  //$NON-NLS-1$
+        if (value!=null) seconds.setText(new SimpleDateFormat("ss").format(value));  //$NON-NLS-1$
     }
 
     public void setEnabled(boolean enabled)
@@ -123,9 +124,9 @@ public class ConceptPropertyDateWidget extends ChangedFlag implements ConceptPro
 
     public static Date getDate(Text year, Text month, Text day, Text hours, Text minutes, Text seconds, Label message) throws ParseException
     {
-        String dateString = year.getText()+"/"+month.getText()+"/"+day.getText()+" "+hours.getText()+":"+minutes.getText()+":"+seconds.getText();
+        String dateString = year.getText()+"/"+month.getText()+"/"+day.getText()+" "+hours.getText()+":"+minutes.getText()+":"+seconds.getText(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
         
-        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss"); //$NON-NLS-1$
         format.setLenient(true);
 
         Date date = format.parse(dateString);
@@ -152,7 +153,7 @@ public class ConceptPropertyDateWidget extends ChangedFlag implements ConceptPro
         // Year
         Label yearLabel = new Label(dateComposite, SWT.LEFT);
         props.setLook(yearLabel);
-        yearLabel.setText("Year ");
+        yearLabel.setText(Messages.getString("ConceptPropertyDateWidget.USER_YEAR")); //$NON-NLS-1$
         FormData fdYearLabel = new FormData();
         fdYearLabel.left   = new FormAttachment(0, 0);
         fdYearLabel.top    = new FormAttachment(0, 0);
@@ -160,7 +161,7 @@ public class ConceptPropertyDateWidget extends ChangedFlag implements ConceptPro
 
         final Text year = new Text(dateComposite, SWT.BORDER);
         props.setLook(year);
-        year.setToolTipText("Enter the year as a 4-digit number");
+        year.setToolTipText(Messages.getString("ConceptPropertyDateWidget.USER_YEAR_DESC")); //$NON-NLS-1$
         FormData fdYear = new FormData();
         fdYear.left  = new FormAttachment(yearLabel, Const.MARGIN);
         fdYear.top   = new FormAttachment(0, 0);
@@ -169,7 +170,7 @@ public class ConceptPropertyDateWidget extends ChangedFlag implements ConceptPro
         // Month
         Label monthLabel = new Label(dateComposite, SWT.LEFT);
         props.setLook(monthLabel);
-        monthLabel.setText("Month ");
+        monthLabel.setText(Messages.getString("ConceptPropertyDateWidget.USER_MONTH")); //$NON-NLS-1$
         FormData fdMonthLabel = new FormData();
         fdMonthLabel.left   = new FormAttachment(year, Const.MARGIN);
         fdMonthLabel.top    = new FormAttachment(0, 0);
@@ -177,7 +178,7 @@ public class ConceptPropertyDateWidget extends ChangedFlag implements ConceptPro
 
         final Text month = new Text(dateComposite, SWT.BORDER);
         props.setLook(month);
-        month.setToolTipText("Enter the month as a 2-digit number (1-12)");
+        month.setToolTipText(Messages.getString("ConceptPropertyDateWidget.USER_MONTH_DESC")); //$NON-NLS-1$
         FormData fdMonth = new FormData();
         fdMonth.left  = new FormAttachment(monthLabel, Const.MARGIN);
         fdMonth.top   = new FormAttachment(0, 0);
@@ -186,7 +187,7 @@ public class ConceptPropertyDateWidget extends ChangedFlag implements ConceptPro
         // Day
         Label dayLabel = new Label(dateComposite, SWT.LEFT);
         props.setLook(dayLabel);
-        dayLabel.setText("Day ");
+        dayLabel.setText(Messages.getString("ConceptPropertyDateWidget.USER_DAY")); //$NON-NLS-1$
         FormData fdDayLabel = new FormData();
         fdDayLabel.left   = new FormAttachment(month, Const.MARGIN);
         fdDayLabel.top    = new FormAttachment(0, 0);
@@ -194,7 +195,7 @@ public class ConceptPropertyDateWidget extends ChangedFlag implements ConceptPro
 
         final Text day = new Text(dateComposite, SWT.BORDER);
         props.setLook(day);
-        day.setToolTipText("Enter the day as a 2-digit number (1-31)");
+        day.setToolTipText(Messages.getString("ConceptPropertyDateWidget.USER_DAY_DESC")); //$NON-NLS-1$
         FormData fdDay = new FormData();
         fdDay.left  = new FormAttachment(dayLabel, Const.MARGIN);
         fdDay.top   = new FormAttachment(0, 0);
@@ -203,7 +204,7 @@ public class ConceptPropertyDateWidget extends ChangedFlag implements ConceptPro
         // Hours
         Label hoursLabel = new Label(dateComposite, SWT.LEFT);
         props.setLook(hoursLabel);
-        hoursLabel.setText("Hours ");
+        hoursLabel.setText(Messages.getString("ConceptPropertyDateWidget.USER_HOURS")); //$NON-NLS-1$
         FormData fdHoursLabel = new FormData();
         fdHoursLabel.left   = new FormAttachment(0, 0);
         fdHoursLabel.top    = new FormAttachment(year, Const.MARGIN);
@@ -211,7 +212,7 @@ public class ConceptPropertyDateWidget extends ChangedFlag implements ConceptPro
 
         final Text hours = new Text(dateComposite, SWT.BORDER);
         props.setLook(hours);
-        hours.setToolTipText("Enter the hours as a 2-digit number (0-23)");
+        hours.setToolTipText(Messages.getString("ConceptPropertyDateWidget.USER_HOURS_DESC")); //$NON-NLS-1$
         FormData fdHours = new FormData();
         fdHours.left  = new FormAttachment(hoursLabel, Const.MARGIN);
         fdHours.top   = new FormAttachment(year, Const.MARGIN);
@@ -220,7 +221,7 @@ public class ConceptPropertyDateWidget extends ChangedFlag implements ConceptPro
         // Minutes
         Label minutesLabel = new Label(dateComposite, SWT.LEFT);
         props.setLook(minutesLabel);
-        minutesLabel.setText("Minutes ");
+        minutesLabel.setText(Messages.getString("ConceptPropertyDateWidget.USER_MINUTES")); //$NON-NLS-1$
         FormData fdMinutesLabel = new FormData();
         fdMinutesLabel.left   = new FormAttachment(hours, Const.MARGIN);
         fdMinutesLabel.top    = new FormAttachment(year, Const.MARGIN);
@@ -228,7 +229,7 @@ public class ConceptPropertyDateWidget extends ChangedFlag implements ConceptPro
 
         final Text minutes = new Text(dateComposite, SWT.BORDER);
         props.setLook(minutes);
-        minutes.setToolTipText("Enter the minutes as a 2-digit number (0-59)");
+        minutes.setToolTipText(Messages.getString("ConceptPropertyDateWidget.USER_MINUTES_DESC")); //$NON-NLS-1$
         FormData fdMinutes = new FormData();
         fdMinutes.left  = new FormAttachment(minutesLabel, Const.MARGIN);
         fdMinutes.top   = new FormAttachment(year, Const.MARGIN);
@@ -237,7 +238,7 @@ public class ConceptPropertyDateWidget extends ChangedFlag implements ConceptPro
         // Seconds
         Label secondsLabel = new Label(dateComposite, SWT.LEFT);
         props.setLook(secondsLabel);
-        secondsLabel.setText("Seconds ");
+        secondsLabel.setText(Messages.getString("ConceptPropertyDateWidget.USER_SECONDS")); //$NON-NLS-1$
         FormData fdSecondsLabel = new FormData();
         fdSecondsLabel.left   = new FormAttachment(minutes, Const.MARGIN);
         fdSecondsLabel.top    = new FormAttachment(year, Const.MARGIN);
@@ -245,7 +246,7 @@ public class ConceptPropertyDateWidget extends ChangedFlag implements ConceptPro
 
         final Text seconds = new Text(dateComposite, SWT.BORDER);
         props.setLook(seconds);
-        seconds.setToolTipText("Enter the seconds as a 2-digit number (0-59)");
+        seconds.setToolTipText(Messages.getString("ConceptPropertyDateWidget.USER_SECONDS_DESC")); //$NON-NLS-1$
         FormData fdSeconds = new FormData();
         fdSeconds.left  = new FormAttachment(secondsLabel, Const.MARGIN);
         fdSeconds.top   = new FormAttachment(year, Const.MARGIN);
@@ -254,7 +255,7 @@ public class ConceptPropertyDateWidget extends ChangedFlag implements ConceptPro
         // Message
         final Label message = new Label(dateComposite, SWT.LEFT);
         props.setLook(message);
-        final String VALID_DATE = "This is a valid date";
+        final String VALID_DATE = Messages.getString("ConceptPropertyDateWidget.USER_VALID_DATE"); //$NON-NLS-1$
         message.setText(VALID_DATE);
         FormData fdMessage = new FormData();
         fdMessage.left   = new FormAttachment(seconds, 3*Const.MARGIN);
@@ -270,8 +271,8 @@ public class ConceptPropertyDateWidget extends ChangedFlag implements ConceptPro
                     try
                     {
                         Date date = ConceptPropertyDateWidget.getDate(year, month, day, hours, minutes, seconds, message);
-                        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                        message.setText(VALID_DATE+" : "+format.format(date));
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss"); //$NON-NLS-1$
+                        message.setText(VALID_DATE+" : "+format.format(date)); //$NON-NLS-1$
                     }
                     catch(Exception e)
                     {

@@ -22,6 +22,7 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyWidgetInterface;
@@ -107,7 +108,7 @@ public class ConceptPropertyFieldTypeWidget extends ChangedFlag implements Conce
         
         final CCombo combo = new CCombo(composite, SWT.BORDER);
         combo.setItems(FieldTypeSettings.typeDescriptions);
-        combo.setToolTipText("Select the field type for property '"+name+"'");
+        combo.setToolTipText(Messages.getString("ConceptPropertyFieldTypeWidget.USER_SELECT_PROPERTY_FIELDTYPE", name)); //$NON-NLS-1$ //$NON-NLS-2$
         props.setLook(combo);
         FormData fdCombo = new FormData();
         fdCombo.left  = new FormAttachment(props.getMiddlePct(), Const.MARGIN);

@@ -16,7 +16,7 @@ package org.pentaho.pms.schema.concept.types.color;
 
 public class ColorSettings
 {
-    private static final String SEPARATOR = ",";
+    private static final String SEPARATOR = ","; //$NON-NLS-1$ 
     
     public static final ColorSettings BLACK    = new ColorSettings(  0,   0,   0);
     public static final ColorSettings WHITE    = new ColorSettings(255, 255, 255);

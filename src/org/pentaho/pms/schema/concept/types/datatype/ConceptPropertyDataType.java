@@ -18,14 +18,14 @@ import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
 public class ConceptPropertyDataType extends ConceptPropertyBase implements ConceptPropertyInterface, Cloneable
 {
-    public static final ConceptPropertyDataType UNKNOWN = new ConceptPropertyDataType("datatype", DataTypeSettings.UNKNOWN);
-    public static final ConceptPropertyDataType STRING  = new ConceptPropertyDataType("datatype", DataTypeSettings.STRING);
-    public static final ConceptPropertyDataType DATE    = new ConceptPropertyDataType("datatype", DataTypeSettings.DATE);
-    public static final ConceptPropertyDataType BOOLEAN = new ConceptPropertyDataType("datatype", DataTypeSettings.BOOLEAN);
-    public static final ConceptPropertyDataType NUMERIC = new ConceptPropertyDataType("datatype", DataTypeSettings.NUMERIC);
-    public static final ConceptPropertyDataType BINARY  = new ConceptPropertyDataType("datatype", DataTypeSettings.BINARY);
-    public static final ConceptPropertyDataType IMAGE   = new ConceptPropertyDataType("datatype", DataTypeSettings.IMAGE);
-    public static final ConceptPropertyDataType URL     = new ConceptPropertyDataType("datatype", DataTypeSettings.URL);
+    public static final ConceptPropertyDataType UNKNOWN = new ConceptPropertyDataType("datatype", DataTypeSettings.UNKNOWN); //$NON-NLS-1$
+    public static final ConceptPropertyDataType STRING  = new ConceptPropertyDataType("datatype", DataTypeSettings.STRING);  //$NON-NLS-1$
+    public static final ConceptPropertyDataType DATE    = new ConceptPropertyDataType("datatype", DataTypeSettings.DATE);  //$NON-NLS-1$
+    public static final ConceptPropertyDataType BOOLEAN = new ConceptPropertyDataType("datatype", DataTypeSettings.BOOLEAN);  //$NON-NLS-1$
+    public static final ConceptPropertyDataType NUMERIC = new ConceptPropertyDataType("datatype", DataTypeSettings.NUMERIC);  //$NON-NLS-1$
+    public static final ConceptPropertyDataType BINARY  = new ConceptPropertyDataType("datatype", DataTypeSettings.BINARY);  //$NON-NLS-1$
+    public static final ConceptPropertyDataType IMAGE   = new ConceptPropertyDataType("datatype", DataTypeSettings.IMAGE);  //$NON-NLS-1$
+    public static final ConceptPropertyDataType URL     = new ConceptPropertyDataType("datatype", DataTypeSettings.URL);  //$NON-NLS-1$
     
     private DataTypeSettings value;
     

@@ -35,7 +35,7 @@ public class ConceptPropertyBoolean extends ConceptPropertyBase implements Conce
     public String toString()
     {
         if (value==null) return null;
-        return value.booleanValue()?"Y":"N";
+        return value.booleanValue()?"Y":"N"; //$NON-NLS-1$ //$NON-NLS-2$ 
     }
     
     public Object clone() throws CloneNotSupportedException 

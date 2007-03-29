@@ -18,10 +18,10 @@ import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
 public class ConceptPropertyColumnWidth extends ConceptPropertyBase implements ConceptPropertyInterface, Cloneable
 {
-    public static final ConceptPropertyColumnWidth PIXELS  = new ConceptPropertyColumnWidth("aggregation", ColumnWidth.PIXELS);
-    public static final ConceptPropertyColumnWidth PERCENT = new ConceptPropertyColumnWidth("aggregation", ColumnWidth.PERCENT);
-    public static final ConceptPropertyColumnWidth INCHES  = new ConceptPropertyColumnWidth("aggregation", ColumnWidth.INCHES);
-    public static final ConceptPropertyColumnWidth CM      = new ConceptPropertyColumnWidth("aggregation", ColumnWidth.CM);
+    public static final ConceptPropertyColumnWidth PIXELS  = new ConceptPropertyColumnWidth("aggregation", ColumnWidth.PIXELS); //$NON-NLS-1$ 
+    public static final ConceptPropertyColumnWidth PERCENT = new ConceptPropertyColumnWidth("aggregation", ColumnWidth.PERCENT); //$NON-NLS-1$ 
+    public static final ConceptPropertyColumnWidth INCHES  = new ConceptPropertyColumnWidth("aggregation", ColumnWidth.INCHES); //$NON-NLS-1$ 
+    public static final ConceptPropertyColumnWidth CM      = new ConceptPropertyColumnWidth("aggregation", ColumnWidth.CM); //$NON-NLS-1$ 
     
     private ColumnWidth value;
     

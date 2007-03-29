@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyWidgetInterface;
@@ -137,7 +138,7 @@ public class ConceptPropertyColorWidget extends ChangedFlag implements ConceptPr
         composite.addDisposeListener(new DisposeListener() { public void widgetDisposed(DisposeEvent e) { managedColor.dispose(); } });
         
         final Button button = new Button(composite, SWT.PUSH);
-        button.setText("Edit color...");
+        button.setText(Messages.getString("ConceptPropertyColorWidget.USER_EDIT_COLOR")); //$NON-NLS-1$
         FormData fdButton = new FormData();
         fdButton.right = new FormAttachment( 100, 0);
         if (lastControl!=null)
@@ -164,14 +165,14 @@ public class ConceptPropertyColorWidget extends ChangedFlag implements ConceptPr
                 public void paintControl(PaintEvent event)
                 {
                     GC gc = event.gc;
-                    Color bg = managedColor.getColor();
-                    canvas.setBackground(bg);
-                    gc.setForeground(bg);
+                    Color bgColor = managedColor.getColor();
+                    canvas.setBackground(bgColor);
+                    gc.setForeground(bgColor);
                     Rectangle bounds = canvas.getBounds();
-                    String message = "Click to edit...";
+                    String message = Messages.getString("ConceptPropertyColorWidget.USER_CLICK_TO_EDIT"); //$NON-NLS-1$
                     Point point = gc.textExtent(message, SWT.DRAW_TRANSPARENT);
                     
-                    Color color = new Color(composite.getDisplay(), 255-bg.getRed(), 255-bg.getGreen(), 255-bg.getBlue());
+                    Color color = new Color(composite.getDisplay(), 255-bgColor.getRed(), 255-bgColor.getGreen(), 255-bgColor.getBlue());
                     gc.setForeground(color);
                     gc.drawText(message, (bounds.width-point.x)/2, (bounds.height-point.y)/2, SWT.DRAW_TRANSPARENT);
                     color.dispose();
