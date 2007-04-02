@@ -152,7 +152,7 @@ public class PhysicalTableDialog extends Dialog
         
         detailsWidgetInterfaces = new Hashtable();
         
-        conceptInterface = (ConceptInterface)physicalTable.getConcept().clone();
+        conceptInterface = this.physicalTable.getConcept();
         
         activeLocale = locales.getActiveLocale();
 	}
