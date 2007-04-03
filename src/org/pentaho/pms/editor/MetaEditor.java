@@ -198,7 +198,7 @@ public class MetaEditor
 
     private Listener                  lsHelpAbout;
 
-    private SelectionAdapter          lsEditDef, lsEditMainSel, lsEditCatSel;
+    private SelectionAdapter          lsEditDef, lsEditMainSel;
 
     public static final String        STRING_CONNECTIONS     = Messages.getString("MetaEditor.USER_CONNECTIONS"); //$NON-NLS-1$
 
@@ -222,7 +222,7 @@ public class MetaEditor
 
     private Tree                      catTree;
 
-    private TreeItem                  tiCategories;
+//    private TreeItem                  tiCategories;
 
     public KeyAdapter                 defKeys;
 
@@ -230,7 +230,7 @@ public class MetaEditor
 
     private Props                     props;
 
-    private Menu                      catMenu;
+//    private Menu                      catMenu;
 
     private MetaEditorLocales         metaEditorLocales;
 
@@ -992,10 +992,10 @@ public class MetaEditor
 
         // Left bottom tree containing categories and selectable business columns.
         //
-        Composite compCategories = new Composite(leftsplit, SWT.NONE);
-        compCategories.setLayout(new FormLayout());
+//        Composite compCategories = new Composite(leftsplit, SWT.NONE);
+//        compCategories.setLayout(new FormLayout());
 
-        Button editCategories = new Button(compCategories, SWT.PUSH);
+        Button editCategories = new Button(leftsplit, SWT.PUSH);
         editCategories.setText(Messages.getString("MetaEditor.USER_CATEGORIES_EDITOR")); //$NON-NLS-1$
         props.setLook(editCategories);
         editCategories.addSelectionListener(new SelectionAdapter()
@@ -1008,7 +1008,7 @@ public class MetaEditor
                     BusinessCategoriesDialog dialog = new BusinessCategoriesDialog(shell, activeModel, schemaMeta.getLocales(), schemaMeta
                             .getSecurityReference());
                     dialog.open();
-                    refreshCategoriesTree();
+//                    refreshCategoriesTree();
                 }
             }
         });
@@ -1019,54 +1019,54 @@ public class MetaEditor
         editCategories.setLayoutData(fdEditCategories);
 
         // Now set up the main CSH tree
-        catTree = new Tree(compCategories, SWT.MULTI | SWT.BORDER);
-        catTree.setHeaderVisible(true);
-        tiCategories = new TreeItem(catTree, SWT.NONE);
-        tiCategories.setText(STRING_CATEGORIES);
-        FormData fdCatTree = new FormData();
-        fdCatTree.left = new FormAttachment(0, 0);
-        fdCatTree.right = new FormAttachment(100, 0);
-        fdCatTree.top = new FormAttachment(editCategories, 0);
-        fdCatTree.bottom = new FormAttachment(100, 0);
-        catTree.setLayoutData(fdCatTree);
+//        catTree = new Tree(compCategories, SWT.MULTI | SWT.BORDER);
+//        catTree.setHeaderVisible(true);
+//        tiCategories = new TreeItem(catTree, SWT.NONE);
+//        tiCategories.setText(STRING_CATEGORIES);
+//        FormData fdCatTree = new FormData();
+//        fdCatTree.left = new FormAttachment(0, 0);
+//        fdCatTree.right = new FormAttachment(100, 0);
+//        fdCatTree.top = new FormAttachment(editCategories, 0);
+//        fdCatTree.bottom = new FormAttachment(100, 0);
+//        catTree.setLayoutData(fdCatTree);
+//
+//        // Show the concept in an extra column next to the tree
+//        TreeColumn catObject = new TreeColumn(catTree, SWT.LEFT);
+//        catObject.setText(Messages.getString("MetaEditor.USER_CATEGORY_COLUMN")); //$NON-NLS-1$
+//        catObject.setWidth(200);
+//
+//        TreeColumn catConcept = new TreeColumn(catTree, SWT.LEFT);
+//        catConcept.setText(Messages.getString("MetaEditor.USER_PARENT_CONCEPT")); //$NON-NLS-1$
+//        catConcept.setWidth(200);
+//
+//        // Right click in tree: set a menu
+//        lsEditCatSel = new SelectionAdapter()
+//        {
+//            public void widgetSelected(SelectionEvent e)
+//            {
+//                setMenuCategories(e);
+//            }
+//        };
+//        catTree.addSelectionListener(lsEditCatSel);
+//
+//        // Double click in categories menu
+//        catTree.addSelectionListener(new SelectionAdapter()
+//        {
+//            public void widgetDefaultSelected(SelectionEvent e)
+//            {
+//                doubleClickedCategories();
+//            }
+//        });
 
-        // Show the concept in an extra column next to the tree
-        TreeColumn catObject = new TreeColumn(catTree, SWT.LEFT);
-        catObject.setText(Messages.getString("MetaEditor.USER_CATEGORY_COLUMN")); //$NON-NLS-1$
-        catObject.setWidth(200);
-
-        TreeColumn catConcept = new TreeColumn(catTree, SWT.LEFT);
-        catConcept.setText(Messages.getString("MetaEditor.USER_PARENT_CONCEPT")); //$NON-NLS-1$
-        catConcept.setWidth(200);
-
-        // Right click in tree: set a menu
-        lsEditCatSel = new SelectionAdapter()
-        {
-            public void widgetSelected(SelectionEvent e)
-            {
-                setMenuCategories(e);
-            }
-        };
-        catTree.addSelectionListener(lsEditCatSel);
-
-        // Double click in categories menu
-        catTree.addSelectionListener(new SelectionAdapter()
-        {
-            public void widgetDefaultSelected(SelectionEvent e)
-            {
-                doubleClickedCategories();
-            }
-        });
-
-        leftsplit.setWeights(new int[] { 60, 40 });
+        leftsplit.setWeights(new int[] { 95, 5 });
 
         addDragSourceToTree(mainTree);
-        addDropTargetToTree(catTree);
-        addKeyListenerToCategoriesTree();
+        addDropTargetToTree(mainTree);
+//        addKeyListenerToCategoriesTree();
 
         // Add tree memories to the trees.
         TreeMemory.addTreeListener(mainTree, STRING_MAIN_TREE);
-        TreeMemory.addTreeListener(catTree, STRING_CATEGORIES_TREE);
+//        TreeMemory.addTreeListener(catTree, STRING_CATEGORIES_TREE);
 
         // Set the business models item expanded by default...
         TreeMemory.getInstance().storeExpanded(STRING_MAIN_TREE, Const.getTreeStrings(tiBusinessModels), true);
@@ -1076,81 +1076,81 @@ public class MetaEditor
         mainTree.addKeyListener(modKeys);
     }
 
-    private void addKeyListenerToCategoriesTree()
-    {
-        catTree.addKeyListener(new KeyAdapter()
-        {
-            public void keyPressed(KeyEvent e)
-            {
-                final BusinessModel activeModel = schemaMeta.getActiveModel();
-                if (activeModel == null) return;
-                final String activeLocale = schemaMeta.getActiveLocale();
-
-                TreeItem[] selection = catTree.getSelection();
-                if (selection.length == 0 || selection.length > 1) return;
-                final TreeItem treeItem = selection[0];
-
-                final String itemText = treeItem.getText();
-                final String[] path = Const.getTreeStrings(treeItem, 1);
-                final boolean isLowestLevel = treeItem.getItemCount() == 0; // no children
-
-                final BusinessCategory businessCategory = activeModel.findBusinessCategory(path, activeLocale);
-                final BusinessCategory parentCategory;
-
-                if (path.length > 1)
-                {
-                    String[] parentPath = new String[path.length - 1];
-                    for (int i = 0; i < parentPath.length; i++)
-                        parentPath[i] = path[i];
-                    parentCategory = activeModel.findBusinessCategory(parentPath, activeLocale);
-                }
-                else
-                {
-                    parentCategory = activeModel.getRootCategory();
-                }
-
-                if (path.length == 0)
-                {
-                    // Nothing really
-                }
-                else
-                    //
-                    if (isLowestLevel && businessCategory != null)
-                    {
-                        final BusinessColumn businessColumn = businessCategory.findBusinessColumn(itemText, false, activeLocale);
-                        if (businessColumn != null)
-                        {
-                            if (e.keyCode == SWT.ARROW_UP && ((e.stateMask & SWT.CTRL) != 0))
-                            {
-                                moveBusinessColumnUp(businessCategory, businessColumn);
-                                selectTreeItem(catTree, path);
-                            }
-                            if (e.keyCode == SWT.ARROW_DOWN && ((e.stateMask & SWT.CTRL) != 0))
-                            {
-                                moveBusinessColumnDown(businessCategory, businessColumn);
-                                selectTreeItem(catTree, path);
-                            }
-                        }
-                    }
-                    // We're typing in the tree, not at the top, not at the column level: it's in a business category
-                    // 
-                    else
-                    {
-                        if (e.keyCode == SWT.ARROW_UP && ((e.stateMask & SWT.CTRL) != 0))
-                        {
-                            moveBusinessCategoryUp(parentCategory, businessCategory);
-                            selectTreeItem(catTree, path);
-                        }
-                        if (e.keyCode == SWT.ARROW_DOWN && ((e.stateMask & SWT.CTRL) != 0))
-                        {
-                            moveBusinessCategoryDown(parentCategory, businessCategory);
-                            selectTreeItem(catTree, path);
-                        }
-                    }
-            }
-        });
-
-    }
+//    private void addKeyListenerToCategoriesTree()
+//    {
+//        catTree.addKeyListener(new KeyAdapter()
+//        {
+//            public void keyPressed(KeyEvent e)
+//            {
+//                final BusinessModel activeModel = schemaMeta.getActiveModel();
+//                if (activeModel == null) return;
+//                final String activeLocale = schemaMeta.getActiveLocale();
+//
+//                TreeItem[] selection = catTree.getSelection();
+//                if (selection.length == 0 || selection.length > 1) return;
+//                final TreeItem treeItem = selection[0];
+//
+//                final String itemText = treeItem.getText();
+//                final String[] path = Const.getTreeStrings(treeItem, 1);
+//                final boolean isLowestLevel = treeItem.getItemCount() == 0; // no children
+//
+//                final BusinessCategory businessCategory = activeModel.findBusinessCategory(path, activeLocale);
+//                final BusinessCategory parentCategory;
+//
+//                if (path.length > 1)
+//                {
+//                    String[] parentPath = new String[path.length - 1];
+//                    for (int i = 0; i < parentPath.length; i++)
+//                        parentPath[i] = path[i];
+//                    parentCategory = activeModel.findBusinessCategory(parentPath, activeLocale);
+//                }
+//                else
+//                {
+//                    parentCategory = activeModel.getRootCategory();
+//                }
+//
+//                if (path.length == 0)
+//                {
+//                    // Nothing really
+//                }
+//                else
+//                    //
+//                    if (isLowestLevel && businessCategory != null)
+//                    {
+//                        final BusinessColumn businessColumn = businessCategory.findBusinessColumn(itemText, false, activeLocale);
+//                        if (businessColumn != null)
+//                        {
+//                            if (e.keyCode == SWT.ARROW_UP && ((e.stateMask & SWT.CTRL) != 0))
+//                            {
+//                                moveBusinessColumnUp(businessCategory, businessColumn);
+//                                selectTreeItem(catTree, path);
+//                            }
+//                            if (e.keyCode == SWT.ARROW_DOWN && ((e.stateMask & SWT.CTRL) != 0))
+//                            {
+//                                moveBusinessColumnDown(businessCategory, businessColumn);
+//                                selectTreeItem(catTree, path);
+//                            }
+//                        }
+//                    }
+//                    // We're typing in the tree, not at the top, not at the column level: it's in a business category
+//                    // 
+//                    else
+//                    {
+//                        if (e.keyCode == SWT.ARROW_UP && ((e.stateMask & SWT.CTRL) != 0))
+//                        {
+//                            moveBusinessCategoryUp(parentCategory, businessCategory);
+//                            selectTreeItem(catTree, path);
+//                        }
+//                        if (e.keyCode == SWT.ARROW_DOWN && ((e.stateMask & SWT.CTRL) != 0))
+//                        {
+//                            moveBusinessCategoryDown(parentCategory, businessCategory);
+//                            selectTreeItem(catTree, path);
+//                        }
+//                    }
+//            }
+//        });
+//
+//    }
 
     public static final void selectTreeItem(Tree tree, String[] path)
     {
@@ -1376,7 +1376,7 @@ public class MetaEditor
         {
             schemaMeta.setActiveModel(businessModel);
             refreshGraph();
-            refreshCategoriesTree();
+//            refreshCategoriesTree();
             if (metaEditorOlap != null) metaEditorOlap.refreshScreen();
         }
     }
@@ -1736,7 +1736,7 @@ public class MetaEditor
                     });
                 }
                     break;
-                case 3: // Business Tables or Relationships "title"
+                case 3: // Business Tables, Relationships, or Business View "title"
                     if (path[2].equals(STRING_BUSINESS_TABLES))
                     {
                         MenuItem miNew = new MenuItem(mainMenu, SWT.PUSH);
@@ -1762,8 +1762,24 @@ public class MetaEditor
                                 }
                             });
                         }
+                        else
+                          if (path[2].equals(STRING_CATEGORIES))
+                          {
+                            MenuItem miNew = new MenuItem(mainMenu, SWT.PUSH);
+                            miNew.setText(Messages.getString("MetaEditor.USER_NEW_CATEGORY")); //$NON-NLS-1$
+                            miNew.addListener(SWT.Selection, new Listener()
+                            {
+                                public void handleEvent(Event e)
+                                {
+                                  String activeLocale = schemaMeta.getActiveLocale();
+                                  BusinessModel activeModel = schemaMeta.getActiveModel();
+                                  final BusinessCategory businessCategory = activeModel.findBusinessCategory(path, activeLocale);
+                                  newBusinessCategory(businessCategory);
+                                }
+                            });
+                          }
                     break;
-                case 4: // Business Tables or Relationships
+                case 4: // Business Tables, Relationships, or Business View
                     if (path[2].equals(STRING_BUSINESS_TABLES))
                     {
                         MenuItem miNew = new MenuItem(mainMenu, SWT.PUSH);
@@ -1825,6 +1841,97 @@ public class MetaEditor
                                 }
                             });
                         }
+                        else
+                          if (path[2].equals(STRING_CATEGORIES))
+                          {
+                            final String activeLocale = schemaMeta.getActiveLocale();
+                            final BusinessModel activeModel = schemaMeta.getActiveModel();
+                            if (activeModel == null) {
+                              break;  // No active model so don't kn
+                            }
+                            final BusinessCategory businessCategory = activeModel.findBusinessCategory(path, activeLocale);
+
+                            MenuItem miNew = new MenuItem(mainMenu, SWT.PUSH);
+                            miNew.setText(Messages.getString("MetaEditor.USER_NEW_CATEGORY")); //$NON-NLS-1$
+                            miNew.addListener(SWT.Selection, new Listener()
+                            {
+                                public void handleEvent(Event e)
+                                {
+                                    newBusinessCategory(businessCategory);
+                                }
+                            });
+
+                            MenuItem miEdit = new MenuItem(mainMenu, SWT.PUSH);
+                            miEdit.setText(Messages.getString("MetaEditor.USER_EDIT_CATEGORY")); //$NON-NLS-1$
+                            miEdit.addListener(SWT.Selection, new Listener()
+                            {
+                                public void handleEvent(Event e)
+                                {
+                                    editBusinessCategory(businessCategory);
+                                }
+                            });
+
+                            MenuItem miDelete = new MenuItem(mainMenu, SWT.PUSH);
+                            miDelete.setText(Messages.getString("MetaEditor.USER_REMOVE_CATEGORY")); //$NON-NLS-1$
+                            miDelete.addListener(SWT.Selection, new Listener()
+                            {
+                                public void handleEvent(Event e)
+                                {
+                                  BusinessCategory parentCategory = null;
+
+                                  if (path.length > 0)
+                                  {
+                                      String[] parentPath = new String[path.length - 1];
+                                      for (int i = 0; i < parentPath.length; i++)
+                                          parentPath[i] = path[i];
+                                      parentCategory = activeModel.findBusinessCategory(parentPath, activeLocale);
+                                  }
+                                    delBusinessCategory(parentCategory, businessCategory);
+                                }
+                            });
+
+                            new MenuItem(mainMenu, SWT.SEPARATOR);
+
+                            MenuItem miUp = new MenuItem(mainMenu, SWT.PUSH);
+                            miUp.setText(Messages.getString("MetaEditor.USER_MOVE_UP")); //$NON-NLS-1$
+                            miUp.addListener(SWT.Selection, new Listener()
+                            {
+                                public void handleEvent(Event e)
+                                {
+                                  BusinessCategory parentCategory = null;
+
+                                  if (path.length > 0)
+                                  {
+                                      String[] parentPath = new String[path.length - 1];
+                                      for (int i = 0; i < parentPath.length; i++)
+                                          parentPath[i] = path[i];
+                                      parentCategory = activeModel.findBusinessCategory(parentPath, activeLocale);
+                                  }
+                                  moveBusinessCategoryUp(parentCategory, businessCategory);
+                                  selectTreeItem(mainTree, path);
+                                }
+                            });
+
+                            MenuItem miDown = new MenuItem(mainMenu, SWT.PUSH);
+                            miDown.setText(Messages.getString("MetaEditor.USER_MOVE_DOWN")); //$NON-NLS-1$
+                            miDown.addListener(SWT.Selection, new Listener()
+                            {
+                                public void handleEvent(Event e)
+                                {
+                                  BusinessCategory parentCategory = null;
+
+                                  if (path.length > 0)
+                                  {
+                                      String[] parentPath = new String[path.length - 1];
+                                      for (int i = 0; i < parentPath.length; i++)
+                                          parentPath[i] = path[i];
+                                      parentCategory = activeModel.findBusinessCategory(parentPath, activeLocale);
+                                  }
+                                  moveBusinessCategoryDown(parentCategory, businessCategory);
+                                  selectTreeItem(mainTree, path);
+                                }
+                            });
+                          }
                     break;
                 }
             }
@@ -1877,238 +1984,238 @@ public class MetaEditor
      * 
      * @param e
      */
-    private void setMenuCategories(SelectionEvent e)
-    {
-        BusinessModel activeModel = schemaMeta.getActiveModel();
-        if (activeModel == null) return; // perhaps give some feedback why nothing is happening?
-        String activeLocale = schemaMeta.getActiveLocale();
+//    private void setMenuCategories(SelectionEvent e)
+//    {
+//        BusinessModel activeModel = schemaMeta.getActiveModel();
+//        if (activeModel == null) return; // perhaps give some feedback why nothing is happening?
+//        String activeLocale = schemaMeta.getActiveLocale();
+//
+//        final int nrSelected = catTree.getSelectionCount();
+//
+//        final TreeItem treeItem = (TreeItem) e.item;
+//        log.logDebug(APPLICATION_NAME, Messages.getString("MetaEditor.DEBUG_CLICKED_IN_TREE", treeItem.getText())); //$NON-NLS-1$
+//
+//        if (catMenu == null)
+//        {
+//            catMenu = new Menu(shell, SWT.POP_UP);
+//        }
+//        else
+//        {
+//            MenuItem items[] = catMenu.getItems();
+//            for (int i = 0; i < items.length; i++)
+//                items[i].dispose();
+//        }
+//
+//        final String itemText = treeItem.getText();
+//        final String[] path = Const.getTreeStrings(treeItem, 1);
+//        final boolean isLowestLevel = treeItem.getItemCount() == 0; // no children
+//
+//        final BusinessCategory businessCategory = activeModel.findBusinessCategory(path, activeLocale);
+//        final BusinessCategory parentCategory;
+//
+//        if (path.length > 0)
+//        {
+//            String[] parentPath = new String[path.length - 1];
+//            for (int i = 0; i < parentPath.length; i++)
+//                parentPath[i] = path[i];
+//            parentCategory = activeModel.findBusinessCategory(parentPath, activeLocale);
+//        }
+//        else
+//        {
+//            parentCategory = activeModel.getRootCategory();
+//        }
+//
+//        // The top level Categories tree item
+//        if (path.length == 0)
+//        {
+//            setMenuCategoriesTopLevel(catMenu, businessCategory, path);
+//        }
+//        else
+//            if (isLowestLevel && businessCategory != null)
+//            {
+//                final BusinessColumn businessColumn = businessCategory.findBusinessColumn(itemText, false, activeLocale);
+//                if (businessColumn != null)
+//                {
+//                    setMenuCategoriesBusinessColumn(catMenu, businessCategory, businessColumn, activeModel, nrSelected);
+//                }
+//                else
+//                // it's a category without selected columns in it.
+//                {
+//                    setMenuCategoriesBusinessCategory(catMenu, parentCategory, businessCategory, path);
+//                }
+//            }
+//            // We clicked in the tree, not at the top, not at the column level: it's on a business category
+//            // Here we can add, delete or edit categories
+//            else
+//            {
+//                setMenuCategoriesBusinessCategory(catMenu, parentCategory, businessCategory, path);
+//            }
+//
+//        final ConceptUtilityInterface[] utilityInterfaces = getSelectedConceptUtilityInterfacesInCategoriesTree();
+//        if (utilityInterfaces.length > 0)
+//        {
+//            if (catMenu.getItemCount() > 0)
+//            {
+//                new MenuItem(catMenu, SWT.SEPARATOR);
+//            }
+//
+//            MenuItem miSetConcept = new MenuItem(catMenu, SWT.PUSH);
+//            miSetConcept.setText(Messages.getString("MetaEditor.USER_SET_PARENT_CONCEPT")); //$NON-NLS-1$
+//            miSetConcept.addListener(SWT.Selection, new Listener()
+//            {
+//                public void handleEvent(Event evt)
+//                {
+//                    setParentConcept(utilityInterfaces);
+//                }
+//            });
+//
+//            MenuItem miClearConcept = new MenuItem(catMenu, SWT.PUSH);
+//            miClearConcept.setText(Messages.getString("MetaEditor.USER_CLEAR_PARENT_CONCEPT")); //$NON-NLS-1$
+//            miClearConcept.addListener(SWT.Selection, new Listener()
+//            {
+//                public void handleEvent(Event evt)
+//                {
+//                    clearParentConcept(utilityInterfaces);
+//                }
+//            });
+//        }
+//
+//        catTree.setMenu(catMenu);
+//    }
 
-        final int nrSelected = catTree.getSelectionCount();
+//    private void setMenuCategoriesTopLevel(Menu menu, final BusinessCategory businessCategory, final String[] path)
+//    {
+//        MenuItem miNew = new MenuItem(menu, SWT.PUSH);
+//        miNew.setText(Messages.getString("MetaEditor.USER_NEW_CATEGORY")); //$NON-NLS-1$
+//        miNew.addListener(SWT.Selection, new Listener()
+//        {
+//            public void handleEvent(Event e)
+//            {
+//                TreeMemory.getInstance().storeExpanded(STRING_CATEGORIES_TREE, path, true); // Expand the parent item on
+//                                                                                            // the next refresh.
+//                newBusinessCategory(businessCategory);
+//            }
+//        });
+//    }
+//
+//    private void setMenuCategoriesBusinessCategory(Menu menu, final BusinessCategory parentCategory, final BusinessCategory businessCategory,
+//            final String[] path)
+//    {
+//        MenuItem miNew = new MenuItem(menu, SWT.PUSH);
+//        miNew.setText(Messages.getString("MetaEditor.USER_NEW_CATEGORY")); //$NON-NLS-1$
+//        miNew.addListener(SWT.Selection, new Listener()
+//        {
+//            public void handleEvent(Event e)
+//            {
+//                newBusinessCategory(businessCategory);
+//            }
+//        });
+//
+//        MenuItem miEdit = new MenuItem(menu, SWT.PUSH);
+//        miEdit.setText(Messages.getString("MetaEditor.USER_EDIT_CATEGORY")); //$NON-NLS-1$
+//        miEdit.addListener(SWT.Selection, new Listener()
+//        {
+//            public void handleEvent(Event e)
+//            {
+//                editBusinessCategory(businessCategory);
+//            }
+//        });
+//
+//        MenuItem miDelete = new MenuItem(menu, SWT.PUSH);
+//        miDelete.setText(Messages.getString("MetaEditor.USER_REMOVE_CATEGORY")); //$NON-NLS-1$
+//        miDelete.addListener(SWT.Selection, new Listener()
+//        {
+//            public void handleEvent(Event e)
+//            {
+//                delBusinessCategory(parentCategory, businessCategory);
+//            }
+//        });
+//
+//        new MenuItem(menu, SWT.SEPARATOR);
+//
+//        MenuItem miUp = new MenuItem(menu, SWT.PUSH);
+//        miUp.setText(Messages.getString("MetaEditor.USER_MOVE_UP")); //$NON-NLS-1$
+//        miUp.addListener(SWT.Selection, new Listener()
+//        {
+//            public void handleEvent(Event e)
+//            {
+//                moveBusinessCategoryUp(parentCategory, businessCategory);
+//                selectTreeItem(mainTree, path);
+//            }
+//        });
+//
+//        MenuItem miDown = new MenuItem(menu, SWT.PUSH);
+//        miDown.setText(Messages.getString("MetaEditor.USER_MOVE_DOWN")); //$NON-NLS-1$
+//        miDown.addListener(SWT.Selection, new Listener()
+//        {
+//            public void handleEvent(Event e)
+//            {
+//                moveBusinessCategoryDown(parentCategory, businessCategory);
+//                selectTreeItem(mainTree, path);
+//            }
+//        });
+//    }
 
-        final TreeItem treeItem = (TreeItem) e.item;
-        log.logDebug(APPLICATION_NAME, Messages.getString("MetaEditor.DEBUG_CLICKED_IN_TREE", treeItem.getText())); //$NON-NLS-1$
-
-        if (catMenu == null)
-        {
-            catMenu = new Menu(shell, SWT.POP_UP);
-        }
-        else
-        {
-            MenuItem items[] = catMenu.getItems();
-            for (int i = 0; i < items.length; i++)
-                items[i].dispose();
-        }
-
-        final String itemText = treeItem.getText();
-        final String[] path = Const.getTreeStrings(treeItem, 1);
-        final boolean isLowestLevel = treeItem.getItemCount() == 0; // no children
-
-        final BusinessCategory businessCategory = activeModel.findBusinessCategory(path, activeLocale);
-        final BusinessCategory parentCategory;
-
-        if (path.length > 0)
-        {
-            String[] parentPath = new String[path.length - 1];
-            for (int i = 0; i < parentPath.length; i++)
-                parentPath[i] = path[i];
-            parentCategory = activeModel.findBusinessCategory(parentPath, activeLocale);
-        }
-        else
-        {
-            parentCategory = activeModel.getRootCategory();
-        }
-
-        // The top level Categories tree item
-        if (path.length == 0)
-        {
-            setMenuCategoriesTopLevel(catMenu, businessCategory, path);
-        }
-        else
-            if (isLowestLevel && businessCategory != null)
-            {
-                final BusinessColumn businessColumn = businessCategory.findBusinessColumn(itemText, false, activeLocale);
-                if (businessColumn != null)
-                {
-                    setMenuCategoriesBusinessColumn(catMenu, businessCategory, businessColumn, activeModel, nrSelected);
-                }
-                else
-                // it's a category without selected columns in it.
-                {
-                    setMenuCategoriesBusinessCategory(catMenu, parentCategory, businessCategory, path);
-                }
-            }
-            // We clicked in the tree, not at the top, not at the column level: it's on a business category
-            // Here we can add, delete or edit categories
-            else
-            {
-                setMenuCategoriesBusinessCategory(catMenu, parentCategory, businessCategory, path);
-            }
-
-        final ConceptUtilityInterface[] utilityInterfaces = getSelectedConceptUtilityInterfacesInCategoriesTree();
-        if (utilityInterfaces.length > 0)
-        {
-            if (catMenu.getItemCount() > 0)
-            {
-                new MenuItem(catMenu, SWT.SEPARATOR);
-            }
-
-            MenuItem miSetConcept = new MenuItem(catMenu, SWT.PUSH);
-            miSetConcept.setText(Messages.getString("MetaEditor.USER_SET_PARENT_CONCEPT")); //$NON-NLS-1$
-            miSetConcept.addListener(SWT.Selection, new Listener()
-            {
-                public void handleEvent(Event evt)
-                {
-                    setParentConcept(utilityInterfaces);
-                }
-            });
-
-            MenuItem miClearConcept = new MenuItem(catMenu, SWT.PUSH);
-            miClearConcept.setText(Messages.getString("MetaEditor.USER_CLEAR_PARENT_CONCEPT")); //$NON-NLS-1$
-            miClearConcept.addListener(SWT.Selection, new Listener()
-            {
-                public void handleEvent(Event evt)
-                {
-                    clearParentConcept(utilityInterfaces);
-                }
-            });
-        }
-
-        catTree.setMenu(catMenu);
-    }
-
-    private void setMenuCategoriesTopLevel(Menu menu, final BusinessCategory businessCategory, final String[] path)
-    {
-        MenuItem miNew = new MenuItem(menu, SWT.PUSH);
-        miNew.setText(Messages.getString("MetaEditor.USER_NEW_CATEGORY")); //$NON-NLS-1$
-        miNew.addListener(SWT.Selection, new Listener()
-        {
-            public void handleEvent(Event e)
-            {
-                TreeMemory.getInstance().storeExpanded(STRING_CATEGORIES_TREE, path, true); // Expand the parent item on
-                                                                                            // the next refresh.
-                newBusinessCategory(businessCategory);
-            }
-        });
-    }
-
-    private void setMenuCategoriesBusinessCategory(Menu menu, final BusinessCategory parentCategory, final BusinessCategory businessCategory,
-            final String[] path)
-    {
-        MenuItem miNew = new MenuItem(menu, SWT.PUSH);
-        miNew.setText(Messages.getString("MetaEditor.USER_NEW_CATEGORY")); //$NON-NLS-1$
-        miNew.addListener(SWT.Selection, new Listener()
-        {
-            public void handleEvent(Event e)
-            {
-                newBusinessCategory(businessCategory);
-            }
-        });
-
-        MenuItem miEdit = new MenuItem(menu, SWT.PUSH);
-        miEdit.setText(Messages.getString("MetaEditor.USER_EDIT_CATEGORY")); //$NON-NLS-1$
-        miEdit.addListener(SWT.Selection, new Listener()
-        {
-            public void handleEvent(Event e)
-            {
-                editBusinessCategory(businessCategory);
-            }
-        });
-
-        MenuItem miDelete = new MenuItem(menu, SWT.PUSH);
-        miDelete.setText(Messages.getString("MetaEditor.USER_REMOVE_CATEGORY")); //$NON-NLS-1$
-        miDelete.addListener(SWT.Selection, new Listener()
-        {
-            public void handleEvent(Event e)
-            {
-                delBusinessCategory(parentCategory, businessCategory);
-            }
-        });
-
-        new MenuItem(menu, SWT.SEPARATOR);
-
-        MenuItem miUp = new MenuItem(menu, SWT.PUSH);
-        miUp.setText(Messages.getString("MetaEditor.USER_MOVE_UP")); //$NON-NLS-1$
-        miUp.addListener(SWT.Selection, new Listener()
-        {
-            public void handleEvent(Event e)
-            {
-                moveBusinessCategoryUp(parentCategory, businessCategory);
-                selectTreeItem(catTree, path);
-            }
-        });
-
-        MenuItem miDown = new MenuItem(menu, SWT.PUSH);
-        miDown.setText(Messages.getString("MetaEditor.USER_MOVE_DOWN")); //$NON-NLS-1$
-        miDown.addListener(SWT.Selection, new Listener()
-        {
-            public void handleEvent(Event e)
-            {
-                moveBusinessCategoryDown(parentCategory, businessCategory);
-                selectTreeItem(catTree, path);
-            }
-        });
-    }
-
-    private void setMenuCategoriesBusinessColumn(Menu menu, final BusinessCategory businessCategory, final BusinessColumn businessColumn,
-            final BusinessModel activeModel, int nrSelected)
-    {
-        // Edit the business column by going to the business table editor
-        //
-        final BusinessTable businessTable = activeModel.findBusinessTable(businessColumn);
-        if (businessTable != null)
-        {
-            if (nrSelected == 1)
-            {
-                MenuItem miEdit = new MenuItem(menu, SWT.PUSH);
-                miEdit.setText(Messages.getString("MetaEditor.USER_EDIT_BUSINESS_COLUMN")); //$NON-NLS-1$
-                miEdit.addListener(SWT.Selection, new Listener()
-                {
-                    public void handleEvent(Event e)
-                    {
-                        editBusinessColumn(businessTable, businessColumn);
-                    }
-                });
-            }
-        }
-
-        // Delete the business column from the parent category
-        //
-        if (nrSelected == 1)
-        {
-            MenuItem miDel = new MenuItem(menu, SWT.PUSH);
-            miDel.setText(Messages.getString("MetaEditor.USER_REMOVE_BUSINESS_COLUMN")); //$NON-NLS-1$
-            miDel.addListener(SWT.Selection, new Listener()
-            {
-                public void handleEvent(Event e)
-                {
-                    delColumnFromCategory(businessCategory, businessColumn);
-                }
-            });
-
-            // Move up or down
-            new MenuItem(menu, SWT.SEPARATOR);
-
-            MenuItem miUp = new MenuItem(menu, SWT.PUSH);
-            miUp.setText(Messages.getString("MetaEditor.USER_MOVE_UP")); //$NON-NLS-1$
-            miUp.addListener(SWT.Selection, new Listener()
-            {
-                public void handleEvent(Event e)
-                {
-                    moveBusinessColumnUp(businessCategory, businessColumn);
-                }
-            });
-
-            MenuItem miDown = new MenuItem(menu, SWT.PUSH);
-            miDown.setText(Messages.getString("MetaEditor.USER_MOVE_DOWN")); //$NON-NLS-1$
-            miDown.addListener(SWT.Selection, new Listener()
-            {
-                public void handleEvent(Event e)
-                {
-                    moveBusinessColumnDown(businessCategory, businessColumn);
-                }
-            });
-        }
-    }
+//    private void setMenuCategoriesBusinessColumn(Menu menu, final BusinessCategory businessCategory, final BusinessColumn businessColumn,
+//            final BusinessModel activeModel, int nrSelected)
+//    {
+//        // Edit the business column by going to the business table editor
+//        //
+//        final BusinessTable businessTable = activeModel.findBusinessTable(businessColumn);
+//        if (businessTable != null)
+//        {
+//            if (nrSelected == 1)
+//            {
+//                MenuItem miEdit = new MenuItem(menu, SWT.PUSH);
+//                miEdit.setText(Messages.getString("MetaEditor.USER_EDIT_BUSINESS_COLUMN")); //$NON-NLS-1$
+//                miEdit.addListener(SWT.Selection, new Listener()
+//                {
+//                    public void handleEvent(Event e)
+//                    {
+//                        editBusinessColumn(businessTable, businessColumn);
+//                    }
+//                });
+//            }
+//        }
+//
+//        // Delete the business column from the parent category
+//        //
+//        if (nrSelected == 1)
+//        {
+//            MenuItem miDel = new MenuItem(menu, SWT.PUSH);
+//            miDel.setText(Messages.getString("MetaEditor.USER_REMOVE_BUSINESS_COLUMN")); //$NON-NLS-1$
+//            miDel.addListener(SWT.Selection, new Listener()
+//            {
+//                public void handleEvent(Event e)
+//                {
+//                    delColumnFromCategory(businessCategory, businessColumn);
+//                }
+//            });
+//
+//            // Move up or down
+//            new MenuItem(menu, SWT.SEPARATOR);
+//
+//            MenuItem miUp = new MenuItem(menu, SWT.PUSH);
+//            miUp.setText(Messages.getString("MetaEditor.USER_MOVE_UP")); //$NON-NLS-1$
+//            miUp.addListener(SWT.Selection, new Listener()
+//            {
+//                public void handleEvent(Event e)
+//                {
+//                    moveBusinessColumnUp(businessCategory, businessColumn);
+//                }
+//            });
+//
+//            MenuItem miDown = new MenuItem(menu, SWT.PUSH);
+//            miDown.setText(Messages.getString("MetaEditor.USER_MOVE_DOWN")); //$NON-NLS-1$
+//            miDown.addListener(SWT.Selection, new Listener()
+//            {
+//                public void handleEvent(Event e)
+//                {
+//                    moveBusinessColumnDown(businessCategory, businessColumn);
+//                }
+//            });
+//        }
+//    }
 
     protected void setCategoriesParentConcepts()
     {
@@ -2165,7 +2272,7 @@ public class MetaEditor
         if (idx >= 0)
         {
             businessCategory.removeBusinessColumn(idx);
-            refreshCategoriesTree();
+//            refreshCategoriesTree();
         }
     }
 
@@ -2176,7 +2283,7 @@ public class MetaEditor
         {
             businessCategory.removeBusinessColumn(index);
             businessCategory.addBusinessColumn(index + 1, businessColumn);
-            refreshCategoriesTree();
+//            refreshCategoriesTree();
         }
 
     }
@@ -2188,7 +2295,7 @@ public class MetaEditor
         {
             businessCategory.removeBusinessColumn(index);
             businessCategory.addBusinessColumn(index - 1, businessColumn);
-            refreshCategoriesTree();
+//            refreshCategoriesTree();
         }
     }
 
@@ -2233,7 +2340,7 @@ public class MetaEditor
         if (index >= 0)
         {
             parentCategory.removeBusinessCategory(index);
-            refreshCategoriesTree();
+//            refreshCategoriesTree();
         }
     }
 
@@ -2262,7 +2369,7 @@ public class MetaEditor
             {
                 // Moving anything should not have any impact.
             }
-            refreshCategoriesTree();
+//            refreshCategoriesTree();
         }
     }
 
@@ -2280,7 +2387,7 @@ public class MetaEditor
             {
                 // Moving anything should not have any impact.
             }
-            refreshCategoriesTree();
+//            refreshCategoriesTree();
         }
     }
 
@@ -3291,7 +3398,7 @@ public class MetaEditor
     public void refreshAll()
     {
         refreshTree();
-        refreshCategoriesTree();
+//        refreshCategoriesTree();
         refreshGraph();
         metaEditorConcept.refreshTree();
         metaEditorConcept.refreshScreen();
@@ -3413,31 +3520,37 @@ public class MetaEditor
                 columnItem.setForeground(GUIResource.getInstance().getColorBlack());
                 columnItem.setImage(GUIResource.getInstance().getImageBol());
             }
-
+            
+            TreeItem businessViewParent = new TreeItem(modelItem, SWT.NONE);
+            businessViewParent.setText(STRING_CATEGORIES);
+            businessViewParent.setForeground(GUIResource.getInstance().getColorBlack());
+            businessViewParent.setImage(GUIResource.getInstance().getImageBol());
+            
+            addTreeCategories(businessViewParent, businessModel.getRootCategory(), activeLocale, true);
         }
 
         // Set expanded from memory...
         TreeMemory.setExpandedFromMemory(mainTree, STRING_MAIN_TREE);
 
-        refreshCategoriesTree();
+//        refreshCategoriesTree();
 
         setShellText();
     }
 
-    private void refreshCategoriesTree()
-    {
-        tiCategories.removeAll();
-
-        BusinessModel activeModel = schemaMeta.getActiveModel();
-        if (activeModel != null)
-        {
-            String activeLocale = schemaMeta.getActiveLocale();
-            addTreeCategories(tiCategories, activeModel.getRootCategory(), activeLocale, true);
-        }
-        TreeMemory.setExpandedFromMemory(catTree, STRING_CATEGORIES_TREE);
-
-        setShellText();
-    }
+//    private void refreshCategoriesTree()
+//    {
+//        tiCategories.removeAll();
+//
+//        BusinessModel activeModel = schemaMeta.getActiveModel();
+//        if (activeModel != null)
+//        {
+//            String activeLocale = schemaMeta.getActiveLocale();
+//            addTreeCategories(tiCategories, activeModel.getRootCategory(), activeLocale, true);
+//        }
+//        TreeMemory.setExpandedFromMemory(catTree, STRING_CATEGORIES_TREE);
+//
+//        setShellText();
+//    }
 
     public static final void addTreeCategories(TreeItem tiParent, BusinessCategory parentCategory, String locale, boolean hiddenToo)
     {
@@ -4160,7 +4273,7 @@ public class MetaEditor
                         if (model != null) list.add(model);
                     }
                         break;
-                    case 4: // Business Tables or Relationships
+                    case 4: // Business Tables, BusinessView, or Relationships
                         if (path[2].equals(STRING_BUSINESS_TABLES))
                         {
                             BusinessModel model = schemaMeta.findModel(locale, path[1]);
@@ -4169,7 +4282,10 @@ public class MetaEditor
                                 BusinessTable table = model.findBusinessTable(locale, path[3]);
                                 if (table != null) list.add(table);
                             }
-                        }
+                        } else 
+                          if (path[2].equals(STRING_CATEGORIES)) {
+                            // TODO need to add the BusinessView (category) to the list.
+                          }
                         break;
                     case 5: // Business Column
                         if (path[2].equals(STRING_BUSINESS_TABLES))
