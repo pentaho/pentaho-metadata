@@ -31,12 +31,13 @@ import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessColumn;
-import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.BusinessModel;
+import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.OrderBy;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.WhereCondition;
 import org.pentaho.pms.util.Const;
+import org.pentaho.pms.util.Settings;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -443,7 +444,8 @@ public class MQLQuery {
             // get the domain id
             String modelId = getElementText( doc, "model_id" ); //$NON-NLS-1$
             CWM cwm = CWM.getInstance(modelId);
-            // CwmSchemaFactoryInterface cwmSchemaFactory = Settings.getCwmSchemaFactory();
+            if (null == cwmSchemaFactory)
+              cwmSchemaFactory = Settings.getCwmSchemaFactory();
             schemaMeta = cwmSchemaFactory.getSchemaMeta(cwm);
                         
             // get the Business View id

@@ -507,7 +507,8 @@ public class QueryDialog extends Dialog
     private void newFile()
     {
         query = null;
-        getData();
+        //getData();
+        clearQuery();
     }
 
     private void clearSelection()
@@ -937,12 +938,13 @@ public class QueryDialog extends Dialog
         {
             updateModelList();
         }
+
         
         if (query!=null && wModels!= null && query.getModel()!=null && query.getModel().getDisplayName(locale)!=null)
         {
             int idx = wModels.indexOf( query.getModel().getDisplayName(locale) );
             if (idx>=0 && idx<wModels.getItemCount()) wModels.select(idx);
-            
+
             clearSelection();
             for (int i=0;i<query.getOrder().size();i++) orders.add(query.getOrder().get(i));
             for (int i=0;i<query.getSelections().size();i++) columns.add(query.getSelections().get(i));
