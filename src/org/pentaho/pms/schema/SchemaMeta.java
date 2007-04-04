@@ -236,6 +236,11 @@ public class SchemaMeta
 		{
 			PhysicalTable ti = getTable(i);
 			if (ti.hasChanged()) return true;
+      for (int ix=0;ix<ti.nrPhysicalColumns();ix++)
+      {
+        PhysicalColumn tc = ti.getPhysicalColumn(ix);
+        if (tc.hasChanged()) return true;
+      }
 		}
 		return false;
 	}

@@ -50,12 +50,12 @@ public class PhysicalColumn extends ConceptUtilityBase implements ConceptUtility
 		
 	public PhysicalColumn(String id, String formula, FieldTypeSettings fieldType, AggregationSettings aggregationType, PhysicalTable tableinfo)
 	{
-        super(id);
+    super(id);
 		setFormula(formula);
 		setFieldType(fieldType);
 		setAggregationType(aggregationType);
 
-        this.physicalTable       = tableinfo;
+   this.physicalTable       = tableinfo;
 	}
 
     public PhysicalColumn(String id)
@@ -199,15 +199,18 @@ public class PhysicalColumn extends ConceptUtilityBase implements ConceptUtility
     public void setAggregationType(AggregationSettings aggregationType)
     {
         getConcept().addProperty(new ConceptPropertyAggregation(DefaultPropertyID.AGGREGATION.getId(), aggregationType));
+        setChanged();
     }
 
     public void setAggregationType(String aggregationTypeDesc)
     {
         setAggregationType( AggregationSettings.getType(aggregationTypeDesc));
+        setChanged();
     }
 
     public void setFieldType(String fieldTypeDescription)
     {
         setFieldType( FieldTypeSettings.getType(fieldTypeDescription) );
+        setChanged();
     }
  }
