@@ -11,6 +11,8 @@
  * the license for the specific language governing your rights and limitations.
 */
 package org.pentaho.pms.schema.dialog;
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -33,8 +35,8 @@ import org.pentaho.pms.locale.Locales;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
-import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.BusinessModel;
+import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.security.SecurityReference;
 import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.GUIResource;
@@ -375,6 +377,12 @@ public class BusinessCategoriesDialog extends Dialog
         {
             TreeItem treeItem = target[0];
             path = Const.getTreeStrings(treeItem);
+            String[] newPath = new String[path.length-1];
+            for (int p=1; p < path.length; p++){
+              newPath[p-1]=path[p];
+            }
+            path=newPath;
+            
             if (path.length>1)
             {
                 BusinessCategory businessCategory = businessModel.findBusinessCategory(path, activeLocale);
