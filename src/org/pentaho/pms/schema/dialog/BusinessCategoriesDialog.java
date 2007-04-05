@@ -11,7 +11,6 @@
  * the license for the specific language governing your rights and limitations.
 */
 package org.pentaho.pms.schema.dialog;
-import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -376,13 +375,8 @@ public class BusinessCategoriesDialog extends Dialog
         if (target!=null && target.length>0)
         {
             TreeItem treeItem = target[0];
-            path = Const.getTreeStrings(treeItem);
-            String[] newPath = new String[path.length-1];
-            for (int p=1; p < path.length; p++){
-              newPath[p-1]=path[p];
-            }
-            path=newPath;
-            
+            path = Const.getTreeStrings(treeItem, 1);
+                        
             if (path.length>1)
             {
                 BusinessCategory businessCategory = businessModel.findBusinessCategory(path, activeLocale);
