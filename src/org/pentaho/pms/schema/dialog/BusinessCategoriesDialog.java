@@ -376,10 +376,10 @@ public class BusinessCategoriesDialog extends Dialog
         {
             TreeItem treeItem = target[0];
             path = Const.getTreeStrings(treeItem, 1);
+            BusinessCategory businessCategory = businessModel.findBusinessCategory(path, activeLocale);
                         
-            if (path.length>1)
+            if (path.length>1) // removing a business column
             {
-                BusinessCategory businessCategory = businessModel.findBusinessCategory(path, activeLocale);
                 BusinessColumn businessColumn = null;
                 if (businessCategory!=null) businessColumn = businessCategory.findBusinessColumn(treeItem.getText(), activeLocale);
                 
@@ -388,28 +388,17 @@ public class BusinessCategoriesDialog extends Dialog
                     int idx = businessCategory.indexOfBusinessColumn(businessColumn);
                     if (idx>=0) businessCategory.removeBusinessColumn(idx);
                 }
-                else
-                {
-                    BusinessCategory parentCategory;
-                    if (path.length>2)
-                    {
-                        // Find the parentCategory
-                        String parentPath[] = new String[path.length-1];
-                        for (int i=0;i<path.length-1;i++) parentPath[i] = path[i];
-                        parentCategory = businessModel.findBusinessCategory(parentPath, activeLocale);
-                    }
-                    else
-                    {
-                        parentCategory = businessModel.getRootCategory();
-                    }
-                    
-                    if (!businessCategory.equals(parentCategory))
-                    {
-                        int idx = parentCategory.indexOfBusinessCategory(businessCategory);
-                        if (idx>=0) parentCategory.removeBusinessCategory(idx);
-                    }
-                }
+            }else{ // removing a business category
+              
+              BusinessCategory parentCategory = businessModel.getRootCategory();
+              
+              if (!businessCategory.equals(parentCategory))
+              {
+                  int idx = parentCategory.indexOfBusinessCategory(businessCategory);
+                  if (idx>=0) parentCategory.removeBusinessCategory(idx);
+              }              
             }
+              
             refreshCategories();
         }
 
