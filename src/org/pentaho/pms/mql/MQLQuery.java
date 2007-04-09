@@ -460,26 +460,26 @@ public class MQLQuery {
             
             // process the selections
             NodeList nodes = doc.getElementsByTagName( "selection" ); //$NON-NLS-1$
-            Node selectionNode;
+            Element selectionElement;
             for( int idx=0; idx<nodes.getLength(); idx++ ) {
-            		selectionNode = nodes.item( idx );
-            		addBusinessColumnFromXmlNode( selectionNode );
+            		selectionElement = (Element)nodes.item( idx );
+            		addBusinessColumnFromXmlNode( selectionElement );
             }
             
             // process the constraints
             nodes = doc.getElementsByTagName( "constraint" ); //$NON-NLS-1$
-            Node constraintNode;
+            Element constraintElement;
             for( int idx=0; idx<nodes.getLength(); idx++ ) {
-            		constraintNode = nodes.item( idx );
-            		addConstraintFromXmlNode( constraintNode );
+              constraintElement = (Element)nodes.item( idx );
+            		addConstraintFromXmlNode( constraintElement );
             }
             
             // process the constraints
             nodes = doc.getElementsByTagName( "order" ); //$NON-NLS-1$
-            Node orderNode;
+            Element orderElement;
             for( int idx=0; idx<nodes.getLength(); idx++ ) {
-            		orderNode = nodes.item( idx );
-            		addOrderByFromXmlNode( orderNode );
+            		orderElement = (Element)nodes.item( idx );
+            		addOrderByFromXmlNode( orderElement );
             }
             
         } catch (Exception e) {
@@ -488,39 +488,66 @@ public class MQLQuery {
 
 	}
 	
-	private void addBusinessColumnFromXmlNode( Node node ) {
-		NodeList nodes = node.getChildNodes();
-		String columnId = nodes.item(1).getFirstChild().getNodeValue();
-        BusinessColumn businessColumn = model.findBusinessColumn( columnId );
-        if (businessColumn == null) {
-            // TODO: throw some exception in the future.
-            return;
-        }
-            
-		addSelection( businessColumn );
+	private void addBusinessColumnFromXmlNode(Element selectionElement) {
+    NodeList nodes = selectionElement.getElementsByTagName("column"); //$NON-NLS-1$
+    if (nodes.getLength() > 0) {
+      String columnId = nodes.item(0).getTextContent();
+      BusinessColumn businessColumn = model.findBusinessColumn(columnId);
+      if (businessColumn != null) {
+        addSelection(businessColumn);
+      }
+    }
+  }
+	
+	
+	private void addOrderByFromXmlNode( Element orderElement ) {
+    boolean ascending = true;
+    String table_id = null;
+    String column_id = null;
+    
+    NodeList nodes = orderElement.getElementsByTagName("direction"); //$NON-NLS-1$
+    if (nodes.getLength() > 0) {
+      ascending = nodes.item(0).getTextContent().equals("asc");
+    }
+    nodes = orderElement.getElementsByTagName("table_id"); //$NON-NLS-1$
+    if (nodes.getLength() > 0) {
+      table_id = nodes.item(0).getTextContent();
+    }
+    nodes = orderElement.getElementsByTagName("column_id"); //$NON-NLS-1$
+    if (nodes.getLength() > 0) {
+      column_id = nodes.item(0).getTextContent();
+    }
+    
+    if ((table_id != null) && (column_id != null)) {
+      addOrderBy( table_id, column_id, ascending );
+    }
 	}
 	
-	
-	private void addOrderByFromXmlNode( Node node ) {
-		NodeList nodes = node.getChildNodes();
-		boolean ascending  = nodes.item(0).getFirstChild()!=null ? nodes.item(0).getFirstChild().getNodeValue().equals( "asc" ) : true; //$NON-NLS-1$
-        String table_id  = nodes.item(1).getFirstChild().getNodeValue();
-		String column_id = nodes.item(2).getFirstChild().getNodeValue();
-        addOrderBy( table_id, column_id, ascending );
-	}
-	
-	private void addConstraintFromXmlNode( Node node ) {
-		NodeList nodes = node.getChildNodes();
-		
-		String operator  = nodes.item(0).getFirstChild()!=null ? nodes.item(0).getFirstChild().getNodeValue() : null;
-        String table_id  = nodes.item(1).getFirstChild()!=null ? nodes.item(1).getFirstChild().getNodeValue() : null;
-		String column_id = nodes.item(2).getFirstChild()!=null ? nodes.item(2).getFirstChild().getNodeValue() : null;
-		String condition = nodes.item(3).getFirstChild()!=null ? nodes.item(3).getFirstChild().getNodeValue() : null;
-        /*
-         * TODO
-		Node nameNode    = nodes.item(4).getFirstChild();
-        Node descNode    = nodes.item(5).getFirstChild();
-         */
+	private void addConstraintFromXmlNode( Element constraintElement ) {
+    NodeList nodes = constraintElement.getElementsByTagName("operator"); //$NON-NLS-1$
+    String operator = null;
+    if (nodes.getLength() > 0) {
+      operator = nodes.item(0).getTextContent();
+    }
+    
+    nodes = constraintElement.getElementsByTagName("table_id"); //$NON-NLS-1$
+    String table_id = null;
+    if (nodes.getLength() > 0) {
+      table_id = nodes.item(0).getTextContent();
+    }
+    
+    nodes = constraintElement.getElementsByTagName("column_id"); //$NON-NLS-1$
+    String column_id = null;
+    if (nodes.getLength() > 0) {
+      column_id = nodes.item(0).getTextContent();
+    }
+
+    nodes = constraintElement.getElementsByTagName("condition"); //$NON-NLS-1$
+    String condition = null;
+    if (nodes.getLength() > 0) {
+      condition = nodes.item(0).getTextContent();
+    }
+    
 		if( table_id != null && column_id != null && condition != null ) {
 			addConstraint( operator, column_id, condition );
 		}

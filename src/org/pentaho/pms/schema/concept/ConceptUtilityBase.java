@@ -60,7 +60,7 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
     
     public boolean equals(Object obj)
     {
-        return id.equals( ((ConceptUtilityInterface)obj).getId());
+        return (obj instanceof ConceptUtilityInterface) && id.equals( ((ConceptUtilityInterface)obj).getId());
     }
     
     public int hashCode()
