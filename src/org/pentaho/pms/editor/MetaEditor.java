@@ -1306,25 +1306,11 @@ public class MetaEditor {
             }
           });
           new MenuItem(mainMenu, SWT.SEPARATOR);
-          MenuItem miImp = new MenuItem(mainMenu, SWT.PUSH);
-          miImp.setText(Messages.getString("MetaEditor.USER_IMPORT_FROM_EXPLORER")); //$NON-NLS-1$
-          miImp.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event evt) {
-              importTables(path[1]);
-            }
-          });
           MenuItem miMImp = new MenuItem(mainMenu, SWT.PUSH);
           miMImp.setText(Messages.getString("MetaEditor.USER_IMPORT_MULTIPLE_TABLES")); //$NON-NLS-1$
           miMImp.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event evt) {
               importMultipleTables(path[1]);
-            }
-          });
-          MenuItem miSQL = new MenuItem(mainMenu, SWT.PUSH);
-          miSQL.setText(Messages.getString("MetaEditor.USER_SQL_EDITOR")); //$NON-NLS-1$
-          miSQL.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event evt) {
-              sqlSelected(itemText);
             }
           });
           MenuItem miCache = new MenuItem(mainMenu, SWT.PUSH);
@@ -1335,6 +1321,20 @@ public class MetaEditor {
             }
           });
           new MenuItem(mainMenu, SWT.SEPARATOR);
+//          MenuItem miImp = new MenuItem(mainMenu, SWT.PUSH);
+//          miImp.setText(Messages.getString("MetaEditor.USER_IMPORT_FROM_EXPLORER")); //$NON-NLS-1$
+//          miImp.addListener(SWT.Selection, new Listener() {
+//            public void handleEvent(Event evt) {
+//              importTables(path[1]);
+//            }
+//          });
+          MenuItem miSQL = new MenuItem(mainMenu, SWT.PUSH);
+          miSQL.setText(Messages.getString("MetaEditor.USER_SQL_EDITOR")); //$NON-NLS-1$
+          miSQL.addListener(SWT.Selection, new Listener() {
+            public void handleEvent(Event evt) {
+              sqlSelected(itemText);
+            }
+          });
           MenuItem miExpl = new MenuItem(mainMenu, SWT.PUSH);
           miExpl.setText(Messages.getString("MetaEditor.USER_EXPLORE")); //$NON-NLS-1$
           miExpl.addListener(SWT.Selection, new Listener() {
@@ -1348,7 +1348,7 @@ public class MetaEditor {
         case 3: // Name of a physical table
         {
           MenuItem miNew = new MenuItem(mainMenu, SWT.PUSH);
-          miNew.setText(Messages.getString("MetaEditor.USER_NEW_TEXT")); //$NON-NLS-1$
+          miNew.setText(Messages.getString("MetaEditor.USER_NEW_PHYSICAL_TABLETEXT")); //$NON-NLS-1$
           miNew.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event evt) {
               importTables(path[1]);
@@ -1387,7 +1387,7 @@ public class MetaEditor {
         case 1: // Business models
         {
           MenuItem miNew = new MenuItem(mainMenu, SWT.PUSH);
-          miNew.setText(Messages.getString("MetaEditor.USER_NEW_TEXT")); //$NON-NLS-1$
+          miNew.setText(Messages.getString("MetaEditor.USER_NEW_MODEL_TEXT")); //$NON-NLS-1$
           miNew.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event evt) {
               newBusinessModel();
@@ -1398,7 +1398,7 @@ public class MetaEditor {
         case 2: // Business model name
         {
           MenuItem miNew = new MenuItem(mainMenu, SWT.PUSH);
-          miNew.setText(Messages.getString("MetaEditor.USER_NEW_TEXT")); //$NON-NLS-1$
+          miNew.setText(Messages.getString("MetaEditor.USER_NEW_MODEL_INSTANCE")); //$NON-NLS-1$
           miNew.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event evt) {
               newBusinessModel();
@@ -1464,6 +1464,17 @@ public class MetaEditor {
             miEdit.addListener(SWT.Selection, new Listener() {
               public void handleEvent(Event evt) {
                 editBusinessTable(itemText);
+              }
+            });
+            MenuItem miDuplicate = new MenuItem(mainMenu, SWT.PUSH);
+            miDuplicate.setText("Duplicate...");
+            miDuplicate.addListener(SWT.Selection, new Listener() {
+              public void handleEvent(Event evt) {
+                String tableName = path[3];
+                final BusinessModel activeModel = schemaMeta.getActiveModel();
+                final String locale = schemaMeta.getActiveLocale();
+                BusinessTable businessTable = activeModel.findBusinessTable(locale, tableName);
+                dupeBusinessTable(businessTable);
               }
             });
             MenuItem miDel = new MenuItem(mainMenu, SWT.PUSH);
@@ -3167,6 +3178,36 @@ public class MetaEditor {
       refreshAll();
     }
   }
+  
+  public void dupeBusinessTable(BusinessTable businessTable) {
+    if (businessTable != null) {
+      log.logDebug(APPLICATION_NAME, Messages.getString("MetaEditor.DEBUG_DUPLICATE_TABLE", businessTable.getId())); //$NON-NLS-1$
+      BusinessModel activeModel = schemaMeta.getActiveModel();
+      String locale = schemaMeta.getActiveLocale();
+      
+      BusinessTable newTable = (BusinessTable) businessTable.clone();
+      if (newTable != null) {
+        try {
+          String newname = businessTable.getId() + " (copy)"; //$NON-NLS-1$
+          int nr = 2;
+          while (activeModel.findBusinessTable(locale, newname) != null) {
+            newname = businessTable.getId() + " (copy " + nr + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+            nr++;
+          }
+          newTable.setId(newname);
+
+          activeModel.addBusinessTable(newTable);
+          refreshTree();
+          refreshGraph();
+        } catch (ObjectAlreadyExistsException e) {
+          new ErrorDialog(
+              shell,
+              Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_BUSINESS_TABLE_NAME_EXISTS"), e); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+      }
+    }
+  }
+
 
   /**
    * Test Query & Reporting
