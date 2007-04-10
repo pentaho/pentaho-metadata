@@ -40,12 +40,12 @@ import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.Settings;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import be.ibridge.kettle.core.LogWriter;
 import be.ibridge.kettle.core.Row;
+import be.ibridge.kettle.core.XMLHandler;
 import be.ibridge.kettle.core.database.DatabaseMeta;
 import be.ibridge.kettle.core.exception.KettleException;
 import be.ibridge.kettle.core.logging.Log4jStringAppender;
@@ -491,7 +491,7 @@ public class MQLQuery {
 	private void addBusinessColumnFromXmlNode(Element selectionElement) {
     NodeList nodes = selectionElement.getElementsByTagName("column"); //$NON-NLS-1$
     if (nodes.getLength() > 0) {
-      String columnId = nodes.item(0).getTextContent();
+      String columnId = XMLHandler.getNodeValue(nodes.item(0));
       BusinessColumn businessColumn = model.findBusinessColumn(columnId);
       if (businessColumn != null) {
         addSelection(businessColumn);
@@ -507,15 +507,15 @@ public class MQLQuery {
     
     NodeList nodes = orderElement.getElementsByTagName("direction"); //$NON-NLS-1$
     if (nodes.getLength() > 0) {
-      ascending = nodes.item(0).getTextContent().equals("asc");
+      ascending = XMLHandler.getNodeValue(nodes.item(0)).equals("asc");
     }
     nodes = orderElement.getElementsByTagName("table_id"); //$NON-NLS-1$
     if (nodes.getLength() > 0) {
-      table_id = nodes.item(0).getTextContent();
+      table_id = XMLHandler.getNodeValue(nodes.item(0));
     }
     nodes = orderElement.getElementsByTagName("column_id"); //$NON-NLS-1$
     if (nodes.getLength() > 0) {
-      column_id = nodes.item(0).getTextContent();
+      column_id = XMLHandler.getNodeValue(nodes.item(0));
     }
     
     if ((table_id != null) && (column_id != null)) {
@@ -527,25 +527,25 @@ public class MQLQuery {
     NodeList nodes = constraintElement.getElementsByTagName("operator"); //$NON-NLS-1$
     String operator = null;
     if (nodes.getLength() > 0) {
-      operator = nodes.item(0).getTextContent();
+      operator = XMLHandler.getNodeValue(nodes.item(0));
     }
     
     nodes = constraintElement.getElementsByTagName("table_id"); //$NON-NLS-1$
     String table_id = null;
     if (nodes.getLength() > 0) {
-      table_id = nodes.item(0).getTextContent();
+      table_id = XMLHandler.getNodeValue(nodes.item(0));
     }
     
     nodes = constraintElement.getElementsByTagName("column_id"); //$NON-NLS-1$
     String column_id = null;
     if (nodes.getLength() > 0) {
-      column_id = nodes.item(0).getTextContent();
+      column_id = XMLHandler.getNodeValue(nodes.item(0));
     }
 
     nodes = constraintElement.getElementsByTagName("condition"); //$NON-NLS-1$
     String condition = null;
     if (nodes.getLength() > 0) {
-      condition = nodes.item(0).getTextContent();
+      condition = XMLHandler.getNodeValue(nodes.item(0));
     }
     
 		if( table_id != null && column_id != null && condition != null ) {
