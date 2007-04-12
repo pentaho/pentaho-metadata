@@ -1,13 +1,20 @@
 package org.pentaho.pms.schema.concept.editor;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -20,47 +27,27 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
+import org.eclipse.swt.widgets.Tree;
 import org.pentaho.pms.schema.concept.DefaultPropertyID;
 
-public class PropertyListWidget extends Composite {
+public class PropertyTreeWidget extends Composite implements ISelectionProvider {
+
   // ~ Static fields/initializers ======================================================================================
 
-  private static final Log logger = LogFactory.getLog(PropertyListWidget.class);
+  private static final Log logger = LogFactory.getLog(PropertyTreeWidget.class);
 
   // ~ Instance fields =================================================================================================
 
   private IConceptModel conceptModel;
 
+  private EventSupport eventSupport = new EventSupport();
+
   // ~ Constructors ====================================================================================================
 
-  public PropertyListWidget(final Composite parent, final int style, final IConceptModel conceptModel) {
+  public PropertyTreeWidget(final Composite parent, final int style, final IConceptModel conceptModel) {
     super(parent, style);
     this.conceptModel = conceptModel;
-    //    conceptModel.addConceptModificationListener(new IConceptModificationListener() {
-    //      public void conceptModified(ConceptModificationEvent e) {
-    //        PropertyListWidget.this.conceptModified(e);
-    //      }
-    //    });
     createContents();
-
-    //    try {
-    //      Thread.sleep(1000);
-    //
-    //      conceptModel.setProperty(new ConceptPropertyString("blah", "blah"));
-    //
-    //      Thread.sleep(1000);
-    //
-    //      conceptModel.removeProperty("blah");
-    //
-    //      Thread.sleep(1000);
-    //    } catch (InterruptedException e1) {
-    //      if (logger.isErrorEnabled()) {
-    //      	// TODO Auto-generated catch block
-    //      	logger.error("an exception occurred", e1);
-    //      }
-    //    }
-
   }
 
   // ~ Methods =========================================================================================================
@@ -68,7 +55,7 @@ public class PropertyListWidget extends Composite {
   protected void createContents() {
     addDisposeListener(new DisposeListener() {
       public void widgetDisposed(DisposeEvent e) {
-        PropertyListWidget.this.widgetDisposed(e);
+        PropertyTreeWidget.this.widgetDisposed(e);
       }
     });
     Composite c0 = new Composite(this, SWT.NONE);
@@ -81,18 +68,42 @@ public class PropertyListWidget extends Composite {
     fd0.left = new FormAttachment(0, 3);
     lab0.setLayoutData(fd0);
 
-    final TreeViewer tv = new TreeViewer(c0);
+    Tree tree2 = new Tree(c0, SWT.SINGLE); // single selection at a time
     FormData fd1 = new FormData();
     fd1.top = new FormAttachment(lab0, 3);
     fd1.left = new FormAttachment(0, 3);
     fd1.right = new FormAttachment(100, -3);
     fd1.bottom = new FormAttachment(100, -3);
-    tv.getTree().setLayoutData(fd1);
-    tv.setContentProvider(new PropertyListContentProvider());
-    tv.setLabelProvider(new PropertyListLabelProvider());
+    tree2.setLayoutData(fd1);
+    TreeViewer tv = new TreeViewer(tree2);
+
+    tv.setContentProvider(new PropertyTreeContentProvider());
+    tv.setLabelProvider(new PropertyTreeLabelProvider());
     tv.setInput("ignored");
     tv.expandAll();
-    //    tv.setInput("root"); // ignored
+
+    tv.addSelectionChangedListener(new ISelectionChangedListener() {
+      public void selectionChanged(final SelectionChangedEvent e) {
+        // propagate the event, but first create a high-level event from the low-level event
+
+        TreeSelection treeSelection = (TreeSelection) e.getSelection();
+        Object objectSelected = treeSelection.getFirstElement();
+
+        ISelection highLevelSelection = null;
+        if (objectSelected instanceof SectionNode) {
+          SectionNode n = (SectionNode) objectSelected;
+          highLevelSelection = new PropertyTreeSelection(n.getSectionName(), true);
+        } else if (objectSelected instanceof PropertyNode) {
+          PropertyNode n = (PropertyNode) objectSelected;
+          highLevelSelection = new PropertyTreeSelection(n.getId(), false);
+        } else {
+          if (logger.isWarnEnabled()) {
+            logger.warn("dropped event since it is an unknown type:" + treeSelection.getClass().getName());
+          }
+        }
+        fireSelectionChangedEvent(new SelectionChangedEvent(PropertyTreeWidget.this, highLevelSelection));
+      }
+    });
     setLayout(new FillLayout());
   }
 
@@ -146,23 +157,23 @@ public class PropertyListWidget extends Composite {
     }
   }
 
-  private class PropertyListContentProvider implements ITreeContentProvider {
+  private class PropertyTreeContentProvider implements ITreeContentProvider {
 
     private final Object[] EMPTY_ARRAY = new Object[0];
 
     //    private IConceptModel conceptModel;
     private TreeViewer viewer;
 
-    public PropertyListContentProvider() {
+    public PropertyTreeContentProvider() {
       //      this.conceptModel = conceptModel;
       conceptModel.addConceptModificationListener(new IConceptModificationListener() {
         public void conceptModified(ConceptModificationEvent e) {
-          PropertyListContentProvider.this.conceptModified(e);
+          PropertyTreeContentProvider.this.conceptModified(e);
         }
       });
     }
 
-    public void conceptModified(ConceptModificationEvent e) {
+    protected void conceptModified(ConceptModificationEvent e) {
       if (logger.isDebugEnabled()) {
         logger.debug("heard concept modified event; event is " + e);
       }
@@ -178,7 +189,7 @@ public class PropertyListWidget extends Composite {
             n.getSectionName(), conceptModel).toArray());
       } else {
         // a property node
-        return new Object[0];
+        return EMPTY_ARRAY;
       }
     }
 
@@ -230,7 +241,7 @@ public class PropertyListWidget extends Composite {
     }
   }
 
-  private class PropertyListLabelProvider implements ILabelProvider {
+  private class PropertyTreeLabelProvider implements ILabelProvider {
 
     public Image getImage(Object element) {
       return null;
@@ -264,7 +275,32 @@ public class PropertyListWidget extends Composite {
     public void removeListener(ILabelProviderListener listener) {
       // not used
     }
+  }
 
+  public void addSelectionChangedListener(ISelectionChangedListener listener) {
+    eventSupport.addListener(listener);
+  }
+
+  public ISelection getSelection() {
+    // not currently supported
+    throw new UnsupportedOperationException();
+  }
+
+  public void removeSelectionChangedListener(final ISelectionChangedListener listener) {
+    eventSupport.removeListener(listener);
+  }
+
+  protected void fireSelectionChangedEvent(final SelectionChangedEvent e) {
+    Set listeners = eventSupport.getListeners();
+    for (Iterator iter = listeners.iterator(); iter.hasNext();) {
+      ISelectionChangedListener listener = (ISelectionChangedListener) iter.next();
+      listener.selectionChanged(e);
+    }
+  }
+
+  public void setSelection(ISelection selection) {
+    //  not currently supported
+    throw new UnsupportedOperationException();
   }
 
 }
