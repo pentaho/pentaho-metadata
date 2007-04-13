@@ -1,36 +1,39 @@
 package org.pentaho.pms.schema.concept.editor;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.List;
 
-import org.apache.commons.collections.MultiHashMap;
-import org.apache.commons.collections.MultiMap;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.OrderedMap;
+import org.apache.commons.collections.map.ListOrderedMap;
+import org.apache.commons.collections.map.MultiValueMap;
 import org.pentaho.pms.schema.concept.DefaultPropertyID;
 
 /**
- * Helper for getting sections, properties belonging to sections, and a section for a given property.
+ * Helper for getting sections, properties belonging to sections, and a section for a given property. Maintains
+ * arbitrary ordering of sections and properties.
  * @author mlowery
  */
-public class PropertyListSectionHelper {
+public class PropertySectionHelper {
 
   // ~ Static fields/initializers ======================================================================================
 
   /**
    * Keys are property IDs. Values are section names.
    */
-  private static Map sectionMapping = new HashMap();
+  private static OrderedMap sectionMapping = new ListOrderedMap();
+
+  /**
+   * Not to be accessed except via <code>getOrderedSections()</code>.
+   */
+  private static ListOrderedMap wrappedPropertyMap = new ListOrderedMap();
 
   /**
    * Keys are section names. Values are collections of property IDs.
    */
-  private static MultiMap propertyMapping = new MultiHashMap();
+  private static MultiValueMap propertyMapping = MultiValueMap.decorate(wrappedPropertyMap);
 
   public static final String SECTION_GENERAL = "General";
 
@@ -43,7 +46,8 @@ public class PropertyListSectionHelper {
   public static final String SECTION_MISC = "Miscellaneous";
 
   /**
-   * Do not directly access sectionMapping or propertyMapping. Instead, use add method.
+   * Do not directly access sectionMapping or propertyMapping. Instead, use add method. The order that the sections
+   * and properties are added matter!
    */
   static {
     // general section
@@ -98,12 +102,11 @@ public class PropertyListSectionHelper {
    * @param section the section to search
    * @return a set of property IDs
    */
-  public static Set getSectionProperties(final String section) {
-    if (null != propertyMapping.get(section)) {
-      // return set to remove duplicates
-      return new HashSet((Collection) propertyMapping.get(section));
+  public static List getPropertiesForSection(final String section) {
+    if (null != propertyMapping.getCollection(section)) {
+      return new ArrayList(propertyMapping.getCollection(section));
     } else {
-      return Collections.EMPTY_SET;
+      return Collections.EMPTY_LIST;
     }
   }
 
@@ -123,32 +126,61 @@ public class PropertyListSectionHelper {
    * @param conceptModel the concept to search
    * @return a set of property IDs
    */
-  public static Set getRelevantPropertiesForSection(final String section, final IConceptModel conceptModel) {
-    final Set allProperties = getSectionProperties(section);
-    Set relevantProperties = new HashSet();
+  public static List getUsedPropertiesForSection(final String section, final IConceptModel conceptModel) {
+    final List allProperties = getPropertiesForSection(section);
+    List usedProperties = new ArrayList();
     for (Iterator iter = allProperties.iterator(); iter.hasNext();) {
       String id = (String) iter.next();
       if (null != conceptModel.getEffectiveProperty(id)) {
-        relevantProperties.add(id);
+        usedProperties.add(id);
       }
     }
-    return relevantProperties;
+    return usedProperties;
   }
 
-  public static SortedSet getSections() {
-    return new TreeSet(propertyMapping.keySet());
+  /**
+   * Gets a subset of all properties belonging to given section, eliminating properties currently present in the given
+   * concept.
+   * @param section the section to search
+   * @param conceptModel the concept to search
+   * @return a set of property IDs
+   */
+  public static List getUnusedPropertiesForSection(final String section, final IConceptModel conceptModel) {
+    final List allProperties = getPropertiesForSection(section);
+    final List usedProperties = getUsedPropertiesForSection(section, conceptModel);
+    return new ArrayList(CollectionUtils.subtract(allProperties, usedProperties));
   }
 
-  public static SortedSet getRelevantSections(final IConceptModel conceptModel) {
-    SortedSet allSections = getSections();
-    SortedSet relevantSections = new TreeSet();
+  private static List getOrderedSections() {
+    return wrappedPropertyMap.keyList();
+  }
+
+  public static List getSections() {
+    return getOrderedSections();
+  }
+
+  public static List getUsedSections(final IConceptModel conceptModel) {
+    List allSections = getSections();
+    List usedSections = new ArrayList();
     for (Iterator iter = allSections.iterator(); iter.hasNext();) {
       String sectionName = (String) iter.next();
-      if (!getRelevantPropertiesForSection(sectionName, conceptModel).isEmpty()) {
-        relevantSections.add(sectionName);
+      if (!getUsedPropertiesForSection(sectionName, conceptModel).isEmpty()) {
+        usedSections.add(sectionName);
       }
     }
-    return relevantSections;
+    return usedSections;
+  }
+
+  public static List getUnusedSections(final IConceptModel conceptModel) {
+    List allSections = getSections();
+    List unusedSections = new ArrayList();
+    for (Iterator iter = allSections.iterator(); iter.hasNext();) {
+      String sectionName = (String) iter.next();
+      if (!getUnusedPropertiesForSection(sectionName, conceptModel).isEmpty()) {
+        unusedSections.add(sectionName);
+      }
+    }
+    return unusedSections;
   }
 
 }
