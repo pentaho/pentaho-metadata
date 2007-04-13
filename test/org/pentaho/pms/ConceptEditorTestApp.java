@@ -6,6 +6,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -38,9 +39,14 @@ public class ConceptEditorTestApp extends ApplicationWindow {
     Display.getCurrent().dispose();
   }
 
+  protected Point getInitialSize() {
+    return new Point(400, 400);
+  }
+
   protected Control createContents(final Composite parent) {
     ConceptModel c = new ConceptModel(new Concept());
-    PropertyTreeWidget widget = new PropertyTreeWidget(parent, SWT.NONE, c);
+//    PropertyTreeWidget widget = new PropertyTreeWidget(parent, SWT.NONE);
+    PropertyTreeWidget widget = new PropertyTreeWidget(parent, SWT.NONE, c, PropertyTreeWidget.SHOW_USED);
     widget.addSelectionChangedListener(new ISelectionChangedListener() {
       public void selectionChanged(SelectionChangedEvent e) {
         if (logger.isDebugEnabled()) {
