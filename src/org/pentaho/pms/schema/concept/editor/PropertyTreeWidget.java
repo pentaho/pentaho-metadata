@@ -64,9 +64,7 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
    * Shows all properties in a tree along with section names. Can get selected property via <code>getSelection()</code>.
    */
   public PropertyTreeWidget(final Composite parent, final int style) {
-    super(parent, style);
-    this.visibility = SHOW_ALL;
-    createContents();
+    this(parent, style, null, SHOW_ALL);
   }
 
   /**
@@ -97,47 +95,8 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
         PropertyTreeWidget.this.widgetDisposed(e);
       }
     });
-    Composite c0 = new Composite(this, SWT.NONE);
-    FormLayout propListLayout = new FormLayout();
-    c0.setLayout(propListLayout);
-    //    Label lab0 = new Label(c0, SWT.NONE);
-    //    lab0.setText("Properties");
-
-    //    ToolBar tb3 = new ToolBar(c0, SWT.FLAT);
-    //    FormData fd3 = new FormData();
-    //    fd3.top = new FormAttachment(0, 3);
-    //    fd3.right = new FormAttachment(100, -3);
-    //    tb3.setLayoutData(fd3);
-    //
-    //    ToolItem ti4 = new ToolItem(tb3, SWT.PUSH);
-    //    ti4.setText("ADD");
-    //    ti4.addSelectionListener(new SelectionListener() {
-    //
-    //      public void widgetDefaultSelected(final SelectionEvent e) {
-    //        PropertyTreeWidget.this.addButtonPressed(e);
-    //      }
-    //
-    //      public void widgetSelected(final SelectionEvent e) {
-    //        PropertyTreeWidget.this.addButtonPressed(e);
-    //      }
-    //
-    //    });
-    //    ToolItem ti5 = new ToolItem(tb3, SWT.PUSH);
-    //    ti5.setText("DEL");
-
-    Tree tree2 = new Tree(c0, SWT.SINGLE); // single selection at a time
-    FormData fd2 = new FormData();
-    fd2.top = new FormAttachment(0, 3);
-    fd2.left = new FormAttachment(0, 3);
-    fd2.right = new FormAttachment(100, -3);
-    fd2.bottom = new FormAttachment(100, -3);
-    tree2.setLayoutData(fd2);
-
-    //    FormData fd0 = new FormData();
-    //    fd0.bottom = new FormAttachment(tree2, -3);
-    //    fd0.left = new FormAttachment(0, 3);
-    //    lab0.setLayoutData(fd0);
-
+    setLayout(new FillLayout());
+    Tree tree2 = new Tree(this, SWT.SINGLE); // single selection at a time
     TreeViewer tv = new TreeViewer(tree2);
     ITreeContentProvider contentProvider = null;
     if (showOnlyRelevantProperties()) {
@@ -176,12 +135,7 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
         fireSelectionChangedEvent(new SelectionChangedEvent(PropertyTreeWidget.this, highLevelSelection));
       }
     });
-    setLayout(new FillLayout());
   }
-
-  //  protected void addButtonPressed(final SelectionEvent e) {
-  //    conceptModel.setProperty(new ConceptPropertyString(DefaultPropertyID.NAME.getId(), "mofongo"));
-  //  }
 
   protected void widgetDisposed(final DisposeEvent e) {
     if (logger.isDebugEnabled()) {
