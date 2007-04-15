@@ -22,9 +22,6 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.pentaho.pms.schema.concept.DefaultPropertyID;
@@ -73,7 +70,8 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
    * Shows only the properties defined in the given concept model. Refreshes itself in reaction to concept model
    * changes.
    */
-  public PropertyTreeWidget(final Composite parent, final int style, final IConceptModel conceptModel, final int visibility) {
+  public PropertyTreeWidget(final Composite parent, final int style, final IConceptModel conceptModel,
+      final int visibility) {
     super(parent, style);
     this.visibility = visibility;
     this.conceptModel = conceptModel;
@@ -139,16 +137,16 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
    * @return transformed selection or <code>null</code> if unknown selection type
    */
   protected PropertyTreeSelection transformTreeSelection(final TreeSelection sel) {
-	  Object objectSelected = sel.getFirstElement();
-	  if (objectSelected instanceof SectionNode) {
-          SectionNode n = (SectionNode) objectSelected;
-          return new PropertyTreeSelection(n.getSectionName(), true);
-        } else if (objectSelected instanceof PropertyNode) {
-          PropertyNode n = (PropertyNode) objectSelected;
-          return new PropertyTreeSelection(n.getId(), false);
-        } else {
-        	return null;
-        }
+    Object objectSelected = sel.getFirstElement();
+    if (objectSelected instanceof SectionNode) {
+      SectionNode n = (SectionNode) objectSelected;
+      return new PropertyTreeSelection(n.getSectionName(), true);
+    } else if (objectSelected instanceof PropertyNode) {
+      PropertyNode n = (PropertyNode) objectSelected;
+      return new PropertyTreeSelection(n.getId(), false);
+    } else {
+      return null;
+    }
   }
 
   protected void widgetDisposed(final DisposeEvent e) {
@@ -274,7 +272,8 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
 
   }
 
-  private abstract class RelevantPropertiesContentProvider extends AbstractPropertyTreeContentProvider implements IConceptModificationListener {
+  private abstract class RelevantPropertiesContentProvider extends AbstractPropertyTreeContentProvider implements
+      IConceptModificationListener {
     public RelevantPropertiesContentProvider() {
       //      this.conceptModel = conceptModel;
       conceptModel.addConceptModificationListener(this);
@@ -290,15 +289,13 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
     }
 
     public void dispose() {
-        // remove the concept modification listener
-    	conceptModel.removeConceptModificationListener(this);
-      }
+      // remove the concept modification listener
+      conceptModel.removeConceptModificationListener(this);
+    }
 
   }
 
   private class UsedPropertiesContentProvider extends RelevantPropertiesContentProvider {
-
-
 
     public Object[] getChildren(final Object parentElement) {
       if (parentElement instanceof SectionNode) {
@@ -324,8 +321,8 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
       if (parentElement instanceof SectionNode) {
         // a section node
         SectionNode n = (SectionNode) parentElement;
-        return this.makeTreeNodesFromPropertyIds(PropertySectionHelper.getUnusedPropertiesForSection(n.getSectionName(),
-            conceptModel).toArray());
+        return this.makeTreeNodesFromPropertyIds(PropertySectionHelper.getUnusedPropertiesForSection(
+            n.getSectionName(), conceptModel).toArray());
       } else {
         // a property node
         return EMPTY_ARRAY;
@@ -379,8 +376,8 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
   }
 
   public ISelection getSelection() {
-	  TreeSelection origSel = (TreeSelection) treeViewer.getSelection();
-	  return transformTreeSelection(origSel);
+    TreeSelection origSel = (TreeSelection) treeViewer.getSelection();
+    return transformTreeSelection(origSel);
   }
 
   public void removeSelectionChangedListener(final ISelectionChangedListener listener) {
