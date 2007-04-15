@@ -58,6 +58,8 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
 
   private int visibility = SHOW_ALL;
 
+  private TreeViewer treeViewer;
+
   // ~ Constructors ====================================================================================================
 
   /**
@@ -96,8 +98,8 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
       }
     });
     setLayout(new FillLayout());
-    Tree tree2 = new Tree(this, SWT.SINGLE); // single selection at a time
-    TreeViewer tv = new TreeViewer(tree2);
+    Tree tree2 = new Tree(this, SWT.SINGLE | SWT.BORDER); // single selection at a time
+    treeViewer = new TreeViewer(tree2);
     ITreeContentProvider contentProvider = null;
     if (showOnlyRelevantProperties()) {
       if (SHOW_USED == visibility) {
@@ -108,33 +110,45 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
     } else {
       contentProvider = new AllPropertiesContentProvider();
     }
-    tv.setContentProvider(contentProvider);
-    tv.setLabelProvider(new PropertyTreeLabelProvider());
-    tv.setInput("ignored");
+    treeViewer.setContentProvider(contentProvider);
+    treeViewer.setLabelProvider(new PropertyTreeLabelProvider());
+    treeViewer.setInput("ignored");
 
-    tv.addSelectionChangedListener(new ISelectionChangedListener() {
+    treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
       public void selectionChanged(final SelectionChangedEvent e) {
         // propagate the event, but first create a high-level event from the low-level event
 
         TreeSelection treeSelection = (TreeSelection) e.getSelection();
-        Object objectSelected = treeSelection.getFirstElement();
+        ISelection highLevelSelection = transformTreeSelection(treeSelection);
 
-        ISelection highLevelSelection = null;
-        if (objectSelected instanceof SectionNode) {
-          SectionNode n = (SectionNode) objectSelected;
-          highLevelSelection = new PropertyTreeSelection(n.getSectionName(), true);
-        } else if (objectSelected instanceof PropertyNode) {
-          PropertyNode n = (PropertyNode) objectSelected;
-          highLevelSelection = new PropertyTreeSelection(n.getId(), false);
-        } else {
+        if (null == highLevelSelection) {
           if (logger.isWarnEnabled()) {
-            logger.warn("dropped event since it is an unknown type:" + treeSelection.getClass().getName());
+            logger.warn("dropped event since it is an unknown type: " + treeSelection.getClass().getName());
           }
           return;
         }
         fireSelectionChangedEvent(new SelectionChangedEvent(PropertyTreeWidget.this, highLevelSelection));
       }
     });
+  }
+
+  /**
+   * Transforms low-level tree event (i.e. <code>TreeSelection</code>) into high-level property tree event (i.e.
+   * <code>PropertyTreeSelection</code>).
+   * @param sel selection to transform
+   * @return transformed selection or <code>null</code> if unknown selection type
+   */
+  protected PropertyTreeSelection transformTreeSelection(final TreeSelection sel) {
+	  Object objectSelected = sel.getFirstElement();
+	  if (objectSelected instanceof SectionNode) {
+          SectionNode n = (SectionNode) objectSelected;
+          return new PropertyTreeSelection(n.getSectionName(), true);
+        } else if (objectSelected instanceof PropertyNode) {
+          PropertyNode n = (PropertyNode) objectSelected;
+          return new PropertyTreeSelection(n.getId(), false);
+        } else {
+        	return null;
+        }
   }
 
   protected void widgetDisposed(final DisposeEvent e) {
@@ -260,17 +274,13 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
 
   }
 
-  private abstract class RelevantPropertiesContentProvider extends AbstractPropertyTreeContentProvider {
+  private abstract class RelevantPropertiesContentProvider extends AbstractPropertyTreeContentProvider implements IConceptModificationListener {
     public RelevantPropertiesContentProvider() {
       //      this.conceptModel = conceptModel;
-      conceptModel.addConceptModificationListener(new IConceptModificationListener() {
-        public void conceptModified(ConceptModificationEvent e) {
-          RelevantPropertiesContentProvider.this.conceptModified(e);
-        }
-      });
+      conceptModel.addConceptModificationListener(this);
     }
 
-    protected void conceptModified(ConceptModificationEvent e) {
+    public void conceptModified(final ConceptModificationEvent e) {
       if (logger.isDebugEnabled()) {
         logger.debug("heard concept modified event; event is " + e);
       }
@@ -278,6 +288,12 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
       getViewer().refresh(true);
       getViewer().expandAll();
     }
+
+    public void dispose() {
+        // remove the concept modification listener
+    	conceptModel.removeConceptModificationListener(this);
+      }
+
   }
 
   private class UsedPropertiesContentProvider extends RelevantPropertiesContentProvider {
@@ -363,8 +379,8 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
   }
 
   public ISelection getSelection() {
-    // not currently supported
-    throw new UnsupportedOperationException();
+	  TreeSelection origSel = (TreeSelection) treeViewer.getSelection();
+	  return transformTreeSelection(origSel);
   }
 
   public void removeSelectionChangedListener(final ISelectionChangedListener listener) {
