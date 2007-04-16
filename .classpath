@@ -57,15 +57,15 @@
 	<classpathentry kind="lib" path="libext/misc/log4j-1.2.8.jar"/>
 	<classpathentry kind="lib" path="libext/misc/mail.jar"/>
 	<classpathentry kind="lib" path="libext/misc/xbasej.jar"/>
-	<classpathentry kind="lib" path="libext/pentaho/pentaho-1.2.0.jar"/>
 	<classpathentry kind="lib" path="libext/pentaho/simple-jndi-0.11.1.jar"/>
 	<classpathentry kind="lib" path="libswt/win32/swt.jar"/>
 	<classpathentry kind="lib" path="libswt/commands.jar"/>
 	<classpathentry kind="lib" path="libswt/common.jar"/>
-	<classpathentry kind="lib" path="libswt/jface.jar" sourcepath="C:/Documents and Settings/mlowery/My Documents/My Downloads/src.zip"/>
+	<classpathentry kind="lib" path="libswt/jface.jar"/>
 	<classpathentry kind="lib" path="libswt/runtime.jar"/>
-	<classpathentry kind="lib" path="libext/pentaho/kettle.jar" sourcepath="/Kettle trunk"/>
+	<classpathentry kind="lib" path="libext/pentaho/kettle.jar" sourcepath="E:/workspace_1.6/Kettle/src"/>
 	<classpathentry kind="lib" path="libext/pentaho/libformula-0.1.5.jar" sourcepath="libext-src/libformula-src-0.1.5.zip"/>
 	<classpathentry kind="lib" path="libext/commons/commons-collections-3.2.jar"/>
+	<classpathentry kind="lib" path="libext/pentaho/pentaho-core-1.5.2.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>

@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.pentaho.messages.util.LocaleHelper;
+import org.pentaho.locale.util.LocaleHelper;
 
 public class Messages {
     private static final String BUNDLE_NAME = "org.pentaho.locale.messages";//$NON-NLS-1$
