@@ -67,6 +67,7 @@ import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.RelationshipMeta;
 import org.pentaho.pms.schema.concept.ConceptInterface;
+import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.GUIResource;
 
@@ -121,7 +122,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 		this.metaEditor = pm;
 		metaEditorGraph = this;
         
-        props = Props.getInstance();
+    props = Props.getInstance();
 
 		iconsize = props.getIconSize();
 
@@ -702,26 +703,153 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 		if (bTable != null) // We clicked on a Step!
 		{
 			Menu mPop = new Menu(this);
-			MenuItem miNewHop = null;
-			MenuItem miHideStep = null;
 
 			int sels = activeModel.nrSelected();
-			if (sels == 2)
-			{
-				miNewHop = new MenuItem(mPop, SWT.CASCADE);
-				miNewHop.setText(Messages.getString("MetaEditorGraph.USER_ADD_RELATIONSHIP")); //$NON-NLS-1$
-			}
-			MenuItem miEditBTable = new MenuItem(mPop, SWT.CASCADE);
-			miEditBTable.setText(Messages.getString("MetaEditorGraph.USER_EDIT_BUSINESS_TABLE")); //$NON-NLS-1$
-			MenuItem miEditDesc = new MenuItem(mPop, SWT.CASCADE);
-			miEditDesc.setText(Messages.getString("MetaEditorGraph.USER_EDIT_BUSINESS_TABLE_DESC")); //$NON-NLS-1$
-            MenuItem miEditPTable = new MenuItem(mPop, SWT.CASCADE);
-            miEditPTable.setText(Messages.getString("MetaEditorGraph.USER_EDIT_PHYSICAL_TABLE", bTable.getPhysicalTable().getDisplayName(activeLocale))); //$NON-NLS-1$
+      if (sels == 1) {
+        MenuItem miNewBTable = new MenuItem(mPop, SWT.CASCADE);
+        miNewBTable.setText(Messages.getString("MetaEditorGraph.USER_NEW_BUSINESS_TABLE")); //$NON-NLS-1$
+        miNewBTable.addSelectionListener(new SelectionAdapter() {
+          public void widgetSelected(SelectionEvent e) {
+            selected_items = null;
+            newBusinessTable();
+          }
+        });
+        MenuItem miEditBTable = new MenuItem(mPop, SWT.CASCADE);
+        miEditBTable.setText(Messages.getString("MetaEditorGraph.USER_EDIT_BUSINESS_TABLE")); //$NON-NLS-1$
+        miEditBTable.addSelectionListener(new SelectionAdapter()
+        {
+          public void widgetSelected(SelectionEvent e)
+          {
+            selected_items = null;
+            editBusinessTable(activeModel, bTable);
+          }
+        });
+        MenuItem miDupeBTable = new MenuItem(mPop, SWT.CASCADE);
+        miDupeBTable.setText(Messages.getString("MetaEditorGraph.USER_DUPE_BUSINESS_TABLE")); //$NON-NLS-1$
+        miDupeBTable.addSelectionListener(new SelectionAdapter() {
+          public void widgetSelected(SelectionEvent e) {
+            dupeBusinessTable(activeModel, bTable);
+          }
+        });
+        MenuItem miDelStep = new MenuItem(mPop, SWT.CASCADE);
+        miDelStep.setText(Messages.getString("MetaEditorGraph.USER_DELETE_TABLE")); //$NON-NLS-1$
+        miDelStep.addSelectionListener(new SelectionAdapter()
+        {
+          public void widgetSelected(SelectionEvent e)
+          {
+            int nrsels = activeModel.nrSelected();
+            if (nrsels == 0)
+            {
+              metaEditor.delPhysicalTable(bTable.getId());
+            }
+            else
+            {
+              if (!bTable.isSelected()) nrsels++;
 
-			MenuItem miDupeStep = new MenuItem(mPop, SWT.CASCADE);
-			miDupeStep.setText(Messages.getString("MetaEditorGraph.USER_DUPLICATE_TABLE")); //$NON-NLS-1$
-			MenuItem miDelStep = new MenuItem(mPop, SWT.CASCADE);
-			miDelStep.setText(Messages.getString("MetaEditorGraph.USER_DELETE_TABLE")); //$NON-NLS-1$
+              MessageBox mb = new MessageBox(shell, SWT.YES | SWT.NO | SWT.ICON_WARNING);
+              mb.setText(Messages.getString("MetaEditorGraph.USER_WARNING")); //$NON-NLS-1$
+              String message = Messages.getString("MetaEditorGraph.USER_CONFRIM_DELETE_TABLES", Integer.toString(nrsels)); //$NON-NLS-1$ 
+              for (int i = activeModel.nrBusinessTables() - 1; i >= 0; i--)
+              {
+                BusinessTable tableinfo = activeModel.getBusinessTable(i);
+                if (tableinfo.isSelected() || bTable.equals(tableinfo))
+                {
+                  message += "   " + tableinfo.getId() + Const.CR; //$NON-NLS-1$
+                }
+              }
+
+              mb.setMessage(message);
+              int result = mb.open();
+              if (result == SWT.YES)
+              {
+                for (int i = activeModel.nrBusinessTables() - 1; i >= 0; i--)
+                {
+                  BusinessTable tableinfo = activeModel.getBusinessTable(i);
+                  if (tableinfo.isSelected() || bTable.equals(tableinfo))
+                  {
+                    metaEditor.delBusinessTable(tableinfo.getId());
+                  }
+                }
+              }
+            }
+          }
+        });
+
+        new MenuItem(mPop, SWT.SEPARATOR);
+        MenuItem miSetParentConcept = new MenuItem(mPop, SWT.CASCADE);
+        miSetParentConcept.setText(Messages.getString("MetaEditorGraph.USER_SET_PARENT_CONCEPT")); //$NON-NLS-1$
+        miSetParentConcept.addSelectionListener(new SelectionAdapter() {
+          public void widgetSelected(SelectionEvent e) {
+            ConceptUtilityInterface[] conceptUtilityInterfaces = metaEditor.getSelectedConceptUtilityInterfacesInMainTree();
+            metaEditor.setParentConcept(conceptUtilityInterfaces);
+          }
+        });
+        MenuItem miClearParentConcept = new MenuItem(mPop, SWT.CASCADE);
+        miClearParentConcept.setText(Messages.getString("MetaEditorGraph.USER_CLEAR_PARENT_CONCEPT")); //$NON-NLS-1$
+        miClearParentConcept.addSelectionListener(new SelectionAdapter() {
+          public void widgetSelected(SelectionEvent e) {
+            ConceptUtilityInterface[] conceptUtilityInterfaces = metaEditor.getSelectedConceptUtilityInterfacesInMainTree();
+            metaEditor.clearParentConcept(conceptUtilityInterfaces);
+          }
+        });
+        MenuItem miRemoveChildProps = new MenuItem(mPop, SWT.CASCADE);
+        miRemoveChildProps.setText(Messages.getString("MetaEditorGraph.USER_REMOVE_CHILD_PROPS")); //$NON-NLS-1$
+        miRemoveChildProps.addSelectionListener(new SelectionAdapter() {
+          public void widgetSelected(SelectionEvent e) {
+            ConceptUtilityInterface[] conceptUtilityInterfaces = metaEditor.getSelectedConceptUtilityInterfacesInMainTree();
+            metaEditor.removeChildProperties(conceptUtilityInterfaces);
+          }
+        });
+        
+        new MenuItem(mPop, SWT.SEPARATOR);
+        MenuItem miEditPTable = new MenuItem(mPop, SWT.CASCADE);
+        miEditPTable.setText(Messages.getString("MetaEditorGraph.USER_EDIT_PHYSICAL_TABLE", bTable.getPhysicalTable().getDisplayName(activeLocale))); //$NON-NLS-1$
+        if (bTable.getPhysicalTable()!=null)
+        {
+            miEditPTable.addSelectionListener(new SelectionAdapter()
+            {
+                public void widgetSelected(SelectionEvent e)
+                {
+                    metaEditor.editPhysicalTable(bTable.getPhysicalTable());
+                }
+            });
+        }
+        MenuItem miDupeStep = new MenuItem(mPop, SWT.CASCADE);
+        miDupeStep.setText(Messages.getString("MetaEditorGraph.USER_DUPLICATE_TABLE")); //$NON-NLS-1$
+        miDupeStep.addSelectionListener(new SelectionAdapter()
+        {
+          public void widgetSelected(SelectionEvent e)
+          {
+            if (activeModel.nrSelected() <= 1)
+            {
+              metaEditor.dupePhysicalTable(bTable.getPhysicalTable());
+            }
+            else
+            {
+              for (int i = 0; i < activeModel.nrBusinessTables(); i++)
+              {
+                BusinessTable businessTable = activeModel.getBusinessTable(i);
+                if (businessTable.isSelected())
+                {
+                  metaEditor.dupePhysicalTable(businessTable.getPhysicalTable());
+                }
+              }
+            }
+          }
+        });
+      } else if (sels == 2) {
+        MenuItem miNewHop = new MenuItem(mPop, SWT.CASCADE);
+				miNewHop.setText(Messages.getString("MetaEditorGraph.USER_ADD_RELATIONSHIP")); //$NON-NLS-1$
+        miNewHop.addSelectionListener(new SelectionAdapter()
+        {
+          public void widgetSelected(SelectionEvent e)
+          {
+            selected_items = null;
+            newRelationship();
+          }
+        });
+			}
+			
 
 			// Allign & Distribute options...
 			if (sels > 1)
@@ -800,129 +928,49 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 				});
 			}
 
-			if (sels == 2)
-			{
-				miNewHop.addSelectionListener(new SelectionAdapter()
-				{
-					public void widgetSelected(SelectionEvent e)
-					{
-						selected_items = null;
-						newRelationship();
-					}
-				});
-			}
-			if (bTable.isDrawn() && !activeModel.isTableUsedInRelationships(bTable.getPhysicalTable().getId()))
-			{
-				miHideStep = new MenuItem(mPop, SWT.CASCADE);
-				miHideStep.setText(Messages.getString("MetaEditorGraph.USER_HIDE_STEP")); //$NON-NLS-1$
-				miHideStep.addSelectionListener(new SelectionAdapter()
-				{
-					public void widgetSelected(SelectionEvent e)
-					{
-						for (int i = 0; i < activeModel.nrSelected(); i++)
-						{
-							BusinessTable businessTable = activeModel.getSelected(i);
-							if (businessTable.isDrawn() && businessTable.isSelected())
-							{
-								businessTable.hide();
-								metaEditor.refreshTree();
-							}
-						}
-						bTable.hide();
-						metaEditor.refreshTree();
-						redraw();
-					}
-				});
-			}
+//			if (sels == 2)
+//			{
+//				miNewHop.addSelectionListener(new SelectionAdapter()
+//				{
+//					public void widgetSelected(SelectionEvent e)
+//					{
+//						selected_items = null;
+//						newRelationship();
+//					}
+//				});
+//			}
+//			if (bTable.isDrawn() && !activeModel.isTableUsedInRelationships(bTable.getPhysicalTable().getId()))
+//			{
+//				miHideStep = new MenuItem(mPop, SWT.CASCADE);
+//				miHideStep.setText(Messages.getString("MetaEditorGraph.USER_HIDE_STEP")); //$NON-NLS-1$
+//				miHideStep.addSelectionListener(new SelectionAdapter()
+//				{
+//					public void widgetSelected(SelectionEvent e)
+//					{
+//						for (int i = 0; i < activeModel.nrSelected(); i++)
+//						{
+//							BusinessTable businessTable = activeModel.getSelected(i);
+//							if (businessTable.isDrawn() && businessTable.isSelected())
+//							{
+//								businessTable.hide();
+//								metaEditor.refreshTree();
+//							}
+//						}
+//						bTable.hide();
+//						metaEditor.refreshTree();
+//						redraw();
+//					}
+//				});
+//			}
 
-			miEditBTable.addSelectionListener(new SelectionAdapter()
-			{
-				public void widgetSelected(SelectionEvent e)
-				{
-					selected_items = null;
-					editBusinessTable(activeModel, bTable);
-				}
-			});            
-			miEditDesc.addSelectionListener(new SelectionAdapter()
-			{
-				public void widgetSelected(SelectionEvent e)
-				{
-					editDescription(bTable.getConcept());
-				}
-			});
-            if (bTable.getPhysicalTable()!=null)
-            {
-                miEditPTable.addSelectionListener(new SelectionAdapter()
-                {
-                    public void widgetSelected(SelectionEvent e)
-                    {
-                        metaEditor.ediPhysicalTable(bTable.getPhysicalTable());
-                    }
-                });
-            }
-			miDupeStep.addSelectionListener(new SelectionAdapter()
-			{
-				public void widgetSelected(SelectionEvent e)
-				{
-					if (activeModel.nrSelected() <= 1)
-					{
-						metaEditor.dupePhysicalTable(bTable.getPhysicalTable());
-					}
-					else
-					{
-						for (int i = 0; i < activeModel.nrBusinessTables(); i++)
-						{
-							BusinessTable businessTable = activeModel.getBusinessTable(i);
-							if (businessTable.isSelected())
-							{
-								metaEditor.dupePhysicalTable(businessTable.getPhysicalTable());
-							}
-						}
-					}
-				}
-			});
+//			miEditDesc.addSelectionListener(new SelectionAdapter()
+//			{
+//				public void widgetSelected(SelectionEvent e)
+//				{
+//					editDescription(bTable.getConcept());
+//				}
+//			});
 
-			miDelStep.addSelectionListener(new SelectionAdapter()
-			{
-				public void widgetSelected(SelectionEvent e)
-				{
-					int nrsels = activeModel.nrSelected();
-					if (nrsels == 0)
-					{
-						metaEditor.delPhysicalTable(bTable.getId());
-					}
-					else
-					{
-						if (!bTable.isSelected()) nrsels++;
-
-						MessageBox mb = new MessageBox(shell, SWT.YES | SWT.NO | SWT.ICON_WARNING);
-						mb.setText(Messages.getString("MetaEditorGraph.USER_WARNING")); //$NON-NLS-1$
-						String message = Messages.getString("MetaEditorGraph.USER_CONFRIM_DELETE_TABLES", Integer.toString(nrsels)); //$NON-NLS-1$ 
-						for (int i = activeModel.nrBusinessTables() - 1; i >= 0; i--)
-						{
-							BusinessTable tableinfo = activeModel.getBusinessTable(i);
-							if (tableinfo.isSelected() || bTable.equals(tableinfo))
-							{
-								message += "   " + tableinfo.getId() + Const.CR; //$NON-NLS-1$
-							}
-						}
-
-						mb.setMessage(message);
-						int result = mb.open();
-						if (result == SWT.YES)
-						{
-							for (int i = activeModel.nrBusinessTables() - 1; i >= 0; i--)
-							{
-								BusinessTable tableinfo = activeModel.getBusinessTable(i);
-								if (tableinfo.isSelected() || bTable.equals(tableinfo))
-								{
-									metaEditor.delBusinessTable(tableinfo.getId());
-								}
-							}
-						}
-					}
-				}
-			});
 
 			setMenu(mPop);
 		}
@@ -1021,6 +1069,31 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 							}
 						}
 					});
+          MenuItem miNewBTable = new MenuItem(mPop, SWT.CASCADE);
+          miNewBTable.setText(Messages.getString("MetaEditorGraph.USER_NEW_BUSINESS_TABLE")); //$NON-NLS-1$
+          miNewBTable.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+              selrect = null;
+              newBusinessTable();
+            }
+          });
+          MenuItem miNewRelationship = new MenuItem(mPop, SWT.CASCADE);
+          miNewRelationship.setText(Messages.getString("MetaEditorGraph.USER_NEW_RELATIONSHIP")); //$NON-NLS-1$
+          miNewRelationship.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+              selrect = null;
+              newRelationship();
+            }
+          });
+          MenuItem miSetLocale = new MenuItem(mPop, SWT.CASCADE);
+          miSetLocale.setText(Messages.getString("MetaEditorGraph.USER_SET_LOCALE")); //$NON-NLS-1$
+          miSetLocale.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+              selrect = null;
+              // TODO implement setLocale
+              log.logError("Not Implemented", "Set Locale functionality not yet implemented");
+            }
+          });
 
 					setMenu(mPop);
 				}
@@ -1408,10 +1481,18 @@ public class MetaEditorGraph extends Canvas implements Redrawable
 		return n < 0 ? -1 : (n > 0 ? 1 : 1);
 	}
 
+  private void newBusinessTable() {
+    metaEditor.newBusinessTable(null);
+  }
+  
 	private void editBusinessTable(BusinessModel activeModel, BusinessTable businessTable)
 	{
 		metaEditor.editBusinessTable(businessTable);
 	}
+  
+  private void dupeBusinessTable(BusinessModel activeModel, BusinessTable businessTable) {
+    metaEditor.dupeBusinessTable(businessTable);
+  }
 
 	private void editNote(NotePadMeta ni)
 	{

@@ -178,6 +178,7 @@ public class MetaEditor {
   private MenuItem miFileOpen, miFileNew, miFileSave, miFileSaveAs, miFileExport, miFileImport, miFileDelete,
       miFilePrint, miFileSep3, miFileQuit;
 
+  private MenuItem miNewDomain, miNewConnection, miNewPTable, miNewBTable, miNewBModel, miNewRel, miNewCat;
   private Listener lsFileOpen, lsFileNew, lsFileSave, lsFileSaveAs, lsFileExport, lsFileImport, lsFileDelete,
       lsFilePrint, lsFileQuit;
 
@@ -545,6 +546,27 @@ public class MetaEditor {
 
     miFileNew = new MenuItem(msFile, SWT.CASCADE);
     miFileNew.setText(Messages.getString("MetaEditor.USER_NEW")); //$NON-NLS-1$
+    
+    Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
+    miFileNew.setMenu(fileMenu);
+    
+    miNewDomain = new MenuItem(fileMenu, SWT.CASCADE);
+    miNewDomain.setText(Messages.getString("MetaEditor.USER_NEW_DOMAIN_MENU")); //$NON-NLS-1$
+    new MenuItem(fileMenu, SWT.SEPARATOR);
+    miNewConnection = new MenuItem(fileMenu, SWT.CASCADE);
+    miNewConnection.setText(Messages.getString("MetaEditor.USER_NEW_CONNECTION_MENU"));  //$NON-NLS-1$
+    miNewPTable = new MenuItem(fileMenu, SWT.CASCADE);
+    miNewPTable.setText(Messages.getString("MetaEditor.USER_NEW_PHYSICAL_TABLE_MENU")); //$NON-NLS-1$
+    new MenuItem(fileMenu, SWT.SEPARATOR);
+    miNewBTable = new MenuItem(fileMenu, SWT.CASCADE);
+    miNewBTable.setText(Messages.getString("MetaEditor.USER_NEW_BUSINESS_TABLE_MENU")); //$NON-NLS-1$
+    miNewBModel = new MenuItem(fileMenu, SWT.CASCADE);
+    miNewBModel.setText(Messages.getString("MetaEditor.USER_NEW_BUSINESS_MODEL_MENU"));//$NON-NLS-1$
+    miNewRel = new MenuItem(fileMenu, SWT.CASCADE);
+    miNewRel.setText(Messages.getString("MetaEditor.USER_NEW_RELATIONSHIP_MENU")); //$NON-NLS-1$
+    miNewCat = new MenuItem(fileMenu, SWT.CASCADE);
+    miNewCat.setText(Messages.getString("MetaEditor.USER_NEW_CATEGORY_MENU")); //$NON-NLS-1$
+    
     miFileOpen = new MenuItem(msFile, SWT.CASCADE);
     miFileOpen.setText(Messages.getString("MetaEditor.USER_OPEN")); //$NON-NLS-1$
     miFileSave = new MenuItem(msFile, SWT.CASCADE);
@@ -614,8 +636,40 @@ public class MetaEditor {
       }
     };
 
-    miFileOpen.addListener(SWT.Selection, lsFileOpen);
-    miFileNew.addListener(SWT.Selection, lsFileNew);
+
+    miNewDomain.addListener(SWT.Selection, lsFileNew);
+    miNewConnection.addSelectionListener(new SelectionAdapter() {
+      public void widgetSelected(SelectionEvent e) {
+        newConnection();
+      }
+    });
+    miNewPTable.addSelectionListener(new SelectionAdapter() {
+      public void widgetSelected(SelectionEvent e) {
+        // TODO Implement new physical table
+        log.logDetailed(APPLICATION_NAME, "New Physical Table Not Implemented");
+      }
+    });
+    miNewBTable.addSelectionListener(new SelectionAdapter() {
+      public void widgetSelected(SelectionEvent e) {
+        newBusinessTable(null);
+      }
+    });
+    miNewBModel.addSelectionListener(new SelectionAdapter() {
+      public void widgetSelected(SelectionEvent e) {
+        newBusinessModel();
+      }
+    });
+    miNewRel.addSelectionListener(new SelectionAdapter() {
+      public void widgetSelected(SelectionEvent e) {
+        newRelationship();
+      }
+    });
+    miNewCat.addSelectionListener(new SelectionAdapter() {
+      public void widgetSelected(SelectionEvent e) {
+        // TODO Implement new category
+        log.logDetailed(APPLICATION_NAME, "New Category Not Implemented");
+      }
+    });
     miFileSave.addListener(SWT.Selection, lsFileSave);
     miFileSaveAs.addListener(SWT.Selection, lsFileSaveAs);
     miFileExport.addListener(SWT.Selection, lsFileExport);
@@ -2165,10 +2219,10 @@ public class MetaEditor {
 
   public void editPhysicalTable(String name) {
     log.logDebug(APPLICATION_NAME, Messages.getString("MetaEditor.DEBUG_EDIT_TABLE", name)); //$NON-NLS-1$
-    ediPhysicalTable(schemaMeta.findPhysicalTable(schemaMeta.getActiveLocale(), name));
+    editPhysicalTable(schemaMeta.findPhysicalTable(schemaMeta.getActiveLocale(), name));
   }
 
-  public void ediPhysicalTable(PhysicalTable physicalTable) {
+  public void editPhysicalTable(PhysicalTable physicalTable) {
     if (physicalTable != null) {
       PhysicalTableDialog td = new PhysicalTableDialog(shell, SWT.NONE, physicalTable, schemaMeta.getLocales(),
           schemaMeta.getSecurityReference());
