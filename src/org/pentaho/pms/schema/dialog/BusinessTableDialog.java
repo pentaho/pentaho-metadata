@@ -636,8 +636,9 @@ public class BusinessTableDialog extends Dialog {
   }
 
   private void ok() {
+
     try {
-      originalTable.setId(wName.getText());
+      originalTable.setId(wName.getText().trim());
     } catch (ObjectAlreadyExistsException e) {
       new ErrorDialog(
           shell,

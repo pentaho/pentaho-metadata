@@ -89,6 +89,10 @@ public class BusinessTable extends ConceptUtilityBase
     {
         BusinessTable businessTable = new BusinessTable(getId(), physicalTable);
         
+        // TODO (GEM) this could be a problem - not sure about dependencies; see case 
+        // PMD-85 and PMD-86 for why this is here. 
+        businessTable.idChangedListeners = this.idChangedListeners;
+        
         businessTable.setConcept( (ConceptInterface) getConcept().clone() ); // deep copy
         businessTable.getBusinessColumns().clear(); // clear the list of column
         for (int i=0;i<nrBusinessColumns();i++)
@@ -112,7 +116,6 @@ public class BusinessTable extends ConceptUtilityBase
         {
             businessTable.setLocation( null );
         }
-        
         return businessTable;
     }
     

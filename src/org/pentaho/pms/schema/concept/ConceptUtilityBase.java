@@ -44,7 +44,7 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
     private String id;
     private ConceptInterface concept;
 
-    private transient List idChangedListeners;
+    protected transient List idChangedListeners;
     
     public ConceptUtilityBase()
     {
