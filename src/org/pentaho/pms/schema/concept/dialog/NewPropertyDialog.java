@@ -232,6 +232,20 @@ public class NewPropertyDialog extends Dialog
                 { 
                     public void widgetSelected(SelectionEvent event) 
                     {  
+                      /*
+                       * (GEM) 
+                        Here is how the dialog functions now, which resolves several small issues:
+                        When "Use a Default Property" is checked:
+                        1. Default properties and types are both enabled.
+                        2. The text box at the bottom of the dialog (for defining custom properties) is disabled.
+
+                        When "Use a Default Property" is unchecked:
+                        1. If a default property was selected at the time that the checkbox is unchecked, it will be deselected.
+                        2. The default properteis are disabled
+                        3. The types are left enabled, do that atype can be selected for the custom property being defined
+                        4. The text box at the bottom of the dialog (for defining custom properties) is enabled.
+                       */
+                      
                         wDefaults.setEnabled(wUseDefault.getSelection());
                         wName.setEnabled(!wUseDefault.getSelection());
                         if (!wDefaults.isEnabled()){
