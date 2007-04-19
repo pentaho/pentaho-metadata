@@ -189,7 +189,7 @@ public class NewPropertyDialog extends Dialog
         fdTypeLabel.right  = new FormAttachment(100, 0);
         fdTypeLabel.top    = new FormAttachment(0, 0);
         wTypeLabel.setLayoutData(fdTypeLabel);
-        wTypeLabel.setEnabled(false);
+        //wTypeLabel.setEnabled(false);
         
         wTypes=new List(shell, SWT.LEFT | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
         props.setLook(wTypes);
@@ -234,7 +234,11 @@ public class NewPropertyDialog extends Dialog
                     {  
                         wDefaults.setEnabled(wUseDefault.getSelection());
                         wName.setEnabled(!wUseDefault.getSelection());
-                        wTypes.setEnabled(!wUseDefault.getSelection());
+                        if (!wDefaults.isEnabled()){
+                          wDefaults.deselectAll();
+                          wTypes.deselectAll(); 
+                        }
+                       // wTypes.setEnabled(!wUseDefault.getSelection());
                     }
                 }
             );
