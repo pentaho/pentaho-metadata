@@ -8,7 +8,7 @@
 
 	  <!-- system properties to use -->
 	  <property name="cr" value="${line.separator}"/> 
-	  <property name="version" value="0.7.2"/>      
+	  <property name="version" value="1.5.3"/>      
 		
 	  <!-- set global properties for this build -->
 	
@@ -148,6 +148,11 @@
 	  	
 	        <!-- root directory -->
 	  		<mkdir dir="${distrib}"/>
+	  	
+  			<copy todir="${distrib}">
+  				<fileset dir="." includes="releasenotes.txt"/>
+  			</copy>
+	  	
 	  		<copy todir="${distrib}">
 	  			<fileset dir="${bin}" includes="**/*" excludes="**/.vpn .project .classpath"/>
 	  			</copy>
@@ -202,7 +207,7 @@
 		
 	  <target name="zip" depends="distrib" description="generate the PentahoMetaData-${version}.zip file">
 	  	<echo>Generating the Pentaho Metadata distribution package PentahoMetaData-${version}.zip ...</echo>
-	  	<jar jarfile="PentahoMetaData-${version}.zip" 
+	  	<jar jarfile="pentaho-metadata-${version}.zip" 
 	    	 basedir="${distrib}" 
 	    	 includes="**/*"
 	  	     excludes="**/Thumbs.db"
@@ -217,11 +222,16 @@
 		
 	  <target name="sourcezip" depends="" description="generate the PentahoMetaData-src-${version}.zip file">
 	  	<echo>Generating the Pentaho Metadata source packge zip file (PentahoMetaData-src-${version}.zip) ...</echo>
-	  	<jar jarfile="PentahoMetaData-src-${version}.zip" 
-	  		 basedir="."
-	    	 includes="**/*"
-	  	     excludes="*.zip ${classes}/**/* ${distrib}/**/* ${lib}/**/*"
-	  		/>
+	  	
+		<zip destfile="pentaho-metadata-src-${version}.zip">
+			<zipfileset dir="." prefix="pentaho-metadata-src-${version}">
+				<exclude name=".settings"/>
+				<exclude name="*.zip"/>
+				<exclude name="classes/**"/>
+				<exclude name="distrib/**"/>
+				<exclude name="lib/**"/>
+			</zipfileset>
+		</zip>
 	  </target>
 
 	

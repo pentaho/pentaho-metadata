@@ -1,5 +1,5 @@
-<!-- release.date -->
-Pentaho metadata Release Notes for: <!-- release.major.number -->.<!-- release.minor.number -->.<!-- release.milestone.number -->.<!-- release.build.number -->
+04/26/2007
+Pentaho metadata Release Notes for: 1.5.3
 
 This is a milestone\development build of the Pentaho metadata layer and the Metadata Editor. 
 As a snapshot of the progress towards the first official version of Pentaho metadata, this build
