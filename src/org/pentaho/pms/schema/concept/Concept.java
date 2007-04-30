@@ -1,13 +1,13 @@
 /*
- * Copyright 2006 Pentaho Corporation.  All rights reserved. 
- * This software was developed by Pentaho Corporation and is provided under the terms 
- * of the Mozilla Public License, Version 1.1, or any later version. You may not use 
- * this file except in compliance with the license. If you need a copy of the license, 
- * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho 
+ * Copyright 2006 Pentaho Corporation.  All rights reserved.
+ * This software was developed by Pentaho Corporation and is provided under the terms
+ * of the Mozilla Public License, Version 1.1, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho
  * BI Platform.  The Initial Developer is Pentaho Corporation.
  *
- * Software distributed under the Mozilla Public License is distributed on an "AS IS" 
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to 
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
  * the license for the specific language governing your rights and limitations.
 */
 package org.pentaho.pms.schema.concept;
@@ -31,7 +31,7 @@ import be.ibridge.kettle.core.ChangedFlag;
 public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
 {
     private String name;
-    
+
     private Map childPropertyInterfaces;
     private ConceptInterface parentInterface;
     private ConceptInterface inheritedInterface;
@@ -53,7 +53,7 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
         this(name);
         this.parentInterface = parentInterface;
     }
-    
+
     public boolean equals(Object obj)
     {
         Concept concept = (Concept)obj;
@@ -66,7 +66,7 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
             return false;
         }
     }
-    
+
     public int hashCode()
     {
         if (name!=null)
@@ -75,7 +75,7 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
         }
         return 0;
     }
-    
+
     public Object clone()
     {
         try
@@ -95,11 +95,11 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
                 }
                 else
                 {
-                    System.out.println(Messages.getString("Concept.ERROR_0001_NO_PROPERTY_FOUND", ids[i])); //$NON-NLS-1$ 
+                    System.out.println(Messages.getString("Concept.ERROR_0001_NO_PROPERTY_FOUND", ids[i])); //$NON-NLS-1$
                 }
             }
             concept.setChanged(hasChanged());
-            
+
             return concept;
         }
         catch(CloneNotSupportedException e)
@@ -107,11 +107,11 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
             return null;
         }
     }
-    
+
     public String toString()
     {
         StringBuffer string = new StringBuffer();
-        
+
         // Print the properties...
         String[] propertyIDs = getPropertyIDs();
         for (int i = 0; i < propertyIDs.length; i++)
@@ -121,10 +121,10 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
             if (i>0) string.append(", "); //$NON-NLS-1$
             string.append(value);
         }
-        
+
         return string.toString();
     }
-    
+
     /**
      * @return the name
      */
@@ -140,12 +140,12 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
     {
         this.name = name;
     }
-    
+
     public Map getChildPropertyInterfaces()
     {
         return childPropertyInterfaces;
     }
-    
+
     public Map getParentPropertyInterfaces()
     {
         if (parentInterface==null) return null;
@@ -184,7 +184,7 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
         {
             all.putAll(parentInterface.getPropertyInterfaces());
         }
-        
+
         // The security settings from the security parent: Business table inherits from Business model, business column from business table
         //
         if (securityParentInterface!=null) // Only take over the security information, nothing else
@@ -213,7 +213,7 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
         {
             setChanged(true);
         }
-        this.parentInterface = parentInterface; 
+        this.parentInterface = parentInterface;
     }
 
     public ConceptInterface getParentInterface()
@@ -226,7 +226,7 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
         childPropertyInterfaces.put(property.getId(), property);
         setChanged(true);
     }
-    
+
     public ConceptInterface getInheritedInterface()
     {
         return inheritedInterface;
@@ -241,7 +241,7 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
     {
         return (ConceptPropertyInterface) getPropertyInterfaces().get(id);
     }
-    
+
     public ConceptPropertyInterface getChildProperty(String id)
     {
         return (ConceptPropertyInterface) getChildPropertyInterfaces().get(id);
@@ -252,24 +252,24 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
         if (parentInterface==null) return null;
         return (ConceptPropertyInterface) getParentPropertyInterfaces().get(id);
     }
-    
+
     public ConceptPropertyInterface getInheritedProperty(String id)
     {
         if (inheritedInterface==null) return null;
         return (ConceptPropertyInterface) getInheritedPropertyInterfaces().get(id);
     }
-    
+
     public ConceptPropertyInterface getSecurityProperty(String id)
     {
         if (securityParentInterface==null) return null;
         return (ConceptPropertyInterface) getSecurityPropertyInterfaces().get(id);
     }
-    
+
     public void clearChanged()
     {
         setChanged(false);
     }
-    
+
     public String[] getChildPropertyIDs()
     {
         return getSortedPropertyIDs(childPropertyInterfaces);
@@ -279,7 +279,7 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
     {
         return getSortedPropertyIDs(getPropertyInterfaces());
     }
-    
+
     private static final String[] getSortedPropertyIDs(Map map)
     {
         Set keySet = map.keySet();
@@ -290,12 +290,12 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
             {
                 String one = (String) o1;
                 String two = (String) o2;
-                
+
                 int oneOrder = DefaultPropertyID.findDefaultPropertyOrder(one);
                 int twoOrder = DefaultPropertyID.findDefaultPropertyOrder(two);
-                
+
                 if (oneOrder!=twoOrder) return oneOrder-twoOrder;
-                
+
                 // Non-default properties: order by ID
                 return one.compareTo(two);
             }
@@ -303,7 +303,7 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
         Collections.sort(list, comparator);
         return (String[])list.toArray(new String[list.size()]);
     }
-    
+
     /**
      * @return the depth from the root concept<br>
      * <br>
@@ -321,10 +321,10 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
             follow = follow.getParentInterface();
             depth++;
         }
-        
+
         return depth;
     }
-    
+
     /**
      * @return the path from root --> .. --> gp --> parent --> concept
      */
@@ -332,7 +332,7 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
     {
         int depth = getDepth();
         String[] retval = new String[depth];
-        
+
         int d=0;
         ConceptInterface follow = this;
         while (follow!=null)
@@ -341,18 +341,18 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
             follow = follow.getParentInterface();
             d++;
         }
-        
+
         return retval;
     }
 
     /**
-     * @param path the path to match with 
+     * @param path the path to match with
      * @return true if the path matches the specified path from root --> .. --> gp --> parent --> concept
      */
     public boolean matches(String[] path)
     {
         if (path.length==0) return false;
-        
+
         int depth=0;
         ConceptInterface follow = this;
         while (follow!=null && depth<path.length)
@@ -361,13 +361,13 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
             follow = follow.getParentInterface();
             depth++;
         }
-        
+
         if (depth!=path.length) return false;
-        
+
         return true;
     }
-    
-    
+
+
     /**
      * Find a localized property (type ConceptPropertyType.PROPERTY_TYPE_LOC_STRING)
      * @param propertyName the name
@@ -393,11 +393,11 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
      */
     public void addLocalizedProperty(String propertyName, String locale, String value)
     {
-        // Get the property 
-        // 
+        // Get the property
+        //
         ConceptPropertyInterface property = getChildProperty(propertyName);
         LocalizedStringSettings locStringSettings;
-        
+
         // Found anything?
         if (property==null || (property!=null && !property.getType().equals(ConceptPropertyType.LOCALIZED_STRING)) || property.getValue()==null)
         {
@@ -412,7 +412,7 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
         {
             locStringSettings = (LocalizedStringSettings) property.getValue();
         }
-        
+
         // Now, that we have the localized String settings property, add the localized value to it..
         locStringSettings.setLocaleString(locale, value);
     }
@@ -426,7 +426,7 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
         String[] propertyNames = getChildPropertyIDs();
         for (int i = 0; i < propertyNames.length; i++)
         {
-            ConceptPropertyInterface property = getProperty(propertyNames[i]); 
+            ConceptPropertyInterface property = getProperty(propertyNames[i]);
             if (property.getType().equals(ConceptPropertyType.LOCALIZED_STRING))
             {
                 // Yep, this is localized.
@@ -435,7 +435,7 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
                 for (int j=0;j<locs.length;j++) locales.put(locs[j], ""); //$NON-NLS-1$
             }
         }
-        
+
         Set keySet = locales.keySet();
         return (String[])keySet.toArray(new String[keySet.size()]);
     }
@@ -448,16 +448,16 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
     public ConceptPropertyInterface[] getLocalizedProperties(String locale)
     {
         List propertiesList = new ArrayList();
-        
+
         String[] propertyNames = getChildPropertyIDs();
         for (int i = 0; i < propertyNames.length; i++)
         {
-            ConceptPropertyInterface property = getProperty(propertyNames[i]); 
+            ConceptPropertyInterface property = getProperty(propertyNames[i]);
             if (property.getType().equals(ConceptPropertyType.LOCALIZED_STRING))
             {
                 // Yep, this is localized.
                 LocalizedStringSettings locString = (LocalizedStringSettings) property.getValue();
-                if (locString.getString(locale)!=null) 
+                if (locString.getString(locale)!=null)
                 {
                     // We have a property for this locale
                     // add it to the list or properties
@@ -465,10 +465,10 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
                 }
             }
         }
-        
+
         return (ConceptPropertyInterface[])propertiesList.toArray(new ConceptPropertyInterface[propertiesList.size()]);
     }
-    
+
     /**
      * Special utility method: save a special localized property indicating the name
      * @param locale the locale the name is in
@@ -548,19 +548,19 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
 
     public boolean hasInheritedConcept()
     {
-        return parentInterface!=null;
+        return inheritedInterface!=null;
     }
 
     public boolean hasParentConcept()
     {
-        return inheritedInterface!=null;
+        return parentInterface!=null;
     }
 
     public boolean hasSecurityParentConcept()
     {
         return securityParentInterface!=null;
     }
-    
+
     /**
      * @return the securityParentInterface
      */
@@ -576,9 +576,9 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
     {
         this.securityParentInterface = securityParentInterface;
     }
-    
+
     /**
-     * Go up to the parent, the grandparent, etc, until you find a parent concept. 
+     * Go up to the parent, the grandparent, etc, until you find a parent concept.
      * @return the first parent concept by going up until the root
      */
     public ConceptInterface findFirstParentConcept()
