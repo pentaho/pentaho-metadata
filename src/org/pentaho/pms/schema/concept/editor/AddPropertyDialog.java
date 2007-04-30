@@ -49,12 +49,12 @@ public class AddPropertyDialog extends TitleAreaDialog {
     c1.setLayout(gl1);
     setTitle("Properties");
     setMessage("Add a property to the current concept.");
-    propertyTree = new PropertyTreeWidget(c1, SWT.NONE, conceptModel, PropertyTreeWidget.SHOW_UNUSED);
+    propertyTree = new PropertyTreeWidget(c1, SWT.NONE, conceptModel, PropertyTreeWidget.SHOW_UNUSED, false);
     propertyTree.addSelectionChangedListener(new ISelectionChangedListener() {
       public void selectionChanged(final SelectionChangedEvent e) {
         if (e.getSelection() instanceof PropertyTreeSelection) {
           PropertyTreeSelection sel = (PropertyTreeSelection) e.getSelection();
-          if (sel.isSection()) {
+          if (sel.isGroup()) {
             setErrorMessage("Please select a property within a group.");
             getButton(IDialogConstants.OK_ID).setEnabled(false);
           } else {

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.pms.schema.concept.ConceptInterface;
@@ -69,14 +70,14 @@ public class ConceptModel implements IConceptModel {
   /**
    * Experimental at this point.
    */
-  public List getEffectivePropertySource(final String id) {
+  public List getPropertySource(final String id) {
     // quick check to see if id is inherited at all
     if (concept.getPropertyInterfaces().containsKey(id)) {
       return Collections.EMPTY_LIST;
     }
     // otherwise, start the recursion
     List path = new ArrayList();
-    getEffectivePropertySourceInternal(concept, id, path);
+    getPropertySourceInternal(concept, id, path);
     return path;
   }
 
@@ -84,20 +85,20 @@ public class ConceptModel implements IConceptModel {
    * Recursively searches related concepts (i.e. itself, its parent, its security parent, and its inherited). Returns
    * the concept which has contributed the property with <code>id</code> to the leaf concept.
    */
-  protected void getEffectivePropertySourceInternal(final ConceptInterface concept, final String id, final List path) {
+  protected void getPropertySourceInternal(final ConceptInterface concept, final String id, final List path) {
     Map childPropertiesMap = concept.getChildPropertyInterfaces();
     if (childPropertiesMap.containsKey(id)) {
       path.add("source");
     } else if (DefaultPropertyID.SECURITY.getId().equals(id) && concept.hasSecurityParentConcept()
         && concept.getSecurityPropertyInterfaces().containsKey(id)) {
       path.add("security");
-      getEffectivePropertySourceInternal(concept.getSecurityParentInterface(), id, path);
+      getPropertySourceInternal(concept.getSecurityParentInterface(), id, path);
     } else if (concept.hasParentConcept() && concept.getParentPropertyInterfaces().containsKey(id)) {
       path.add("parent");
-      getEffectivePropertySourceInternal(concept.getParentInterface(), id, path);
+      getPropertySourceInternal(concept.getParentInterface(), id, path);
     } else if (concept.hasInheritedConcept() && concept.getInheritedPropertyInterfaces().containsKey(id)) {
       path.add("inherited");
-      getEffectivePropertySourceInternal(concept.getInheritedInterface(), id, path);
+      getPropertySourceInternal(concept.getInheritedInterface(), id, path);
     } else {
       // a default property perhaps?
       path.add("default");
@@ -191,27 +192,71 @@ public class ConceptModel implements IConceptModel {
   }
 
   public void setProperty(final ConceptPropertyInterface property) {
+    /*
+     * Logic goes like this:
+     * if child prop already exists, set old value to value of existing child prop and fire change event
+     * else if the prop is from inherited/parent/security, set the old value to the inherited/parent/security value and
+     *   fire override event
+     * else, the prop is a new child prop so fire add event
+     */
     int type = -1;
     ConceptPropertyInterface oldValue = null;
     if (concept.getChildPropertyInterfaces().containsKey(property.getId())) {
-      type = PropertyModificationEvent.CHANGE_PROPERTY;
+      type = PropertyExistenceModificationEvent.CHANGE_PROPERTY;
       oldValue = (ConceptPropertyInterface) concept.getChildPropertyInterfaces().get(property.getId());
+    } else if (null != concept.getInheritedProperty(property.getId())
+        || null != concept.getParentProperty(property.getId())
+        || (null != concept.getSecurityProperty(property.getId()) && DefaultPropertyID.SECURITY.getId().equals(
+            property.getId()))) {
+      type = PropertyExistenceModificationEvent.OVERRIDE_PROPERTY;
+      // get old value which is the value from parent/inherited/security; order matters here!
+      if (null != concept.getSecurityProperty(property.getId())
+          && DefaultPropertyID.SECURITY.getId().equals(property.getId())) {
+        oldValue = (ConceptPropertyInterface) concept.getSecurityProperty(property.getId());
+      } else if (null != concept.getParentProperty(property.getId())) {
+        oldValue = concept.getParentProperty(property.getId());
+      } else {
+        oldValue = concept.getInheritedProperty(property.getId());
+      }
     } else {
-      type = PropertyModificationEvent.ADD_PROPERTY;
+      type = PropertyExistenceModificationEvent.ADD_PROPERTY;
     }
     concept.addProperty(property);
-    PropertyModificationEvent e = new PropertyModificationEvent(this, type, property.getId(), oldValue, property);
+    PropertyExistenceModificationEvent e = new PropertyExistenceModificationEvent(this, property.getId(), type,
+        oldValue, property);
     fireConceptModificationEvent(e);
   }
 
   public void removeProperty(final String id) {
+    /*
+     * Logic goes like this:
+     * if property was overriding a property from parent/inherited/security, the new value in fired event will be the
+     *   value from parent/inherited/security and event will be an "inherit" event (the opposite of "override")
+     * else new value is null and event will be a remove event
+     */
     ConceptPropertyInterface oldValue = (ConceptPropertyInterface) concept.getChildProperty(id);
-    if (null != oldValue) {
-      concept.getChildPropertyInterfaces().remove(id);
-      PropertyModificationEvent e = new PropertyModificationEvent(this, PropertyModificationEvent.REMOVE_PROPERTY, id,
-          oldValue, null);
-      fireConceptModificationEvent(e);
+    int type = -1;
+    ConceptPropertyInterface newValue = null;
+    if (null == oldValue) {
+      // property with given id does not exist
+      return;
     }
+    if (null != concept.getInheritedProperty(id) || null != concept.getParentProperty(id)
+        || (null != concept.getSecurityProperty(id) && DefaultPropertyID.SECURITY.getId().equals(id))) {
+      type = PropertyExistenceModificationEvent.INHERIT_PROPERTY;
+      if (null != concept.getSecurityProperty(id) && DefaultPropertyID.SECURITY.getId().equals(id)) {
+        newValue = (ConceptPropertyInterface) concept.getSecurityProperty(id);
+      } else if (null != concept.getParentProperty(id)) {
+        newValue = concept.getParentProperty(id);
+      } else {
+        newValue = concept.getInheritedProperty(id);
+      }
+    } else {
+      type = PropertyExistenceModificationEvent.REMOVE_PROPERTY;
+    }
+    concept.getChildPropertyInterfaces().remove(id);
+    PropertyModificationEvent e = new PropertyExistenceModificationEvent(this, id, type, oldValue, newValue);
+    fireConceptModificationEvent(e);
   }
 
   public void setRelatedConcept(final ConceptInterface relatedConcept, final int relType) {
@@ -297,6 +342,61 @@ public class ConceptModel implements IConceptModel {
     for (Iterator iter = eventSupport.getListeners().iterator(); iter.hasNext();) {
       IConceptModificationListener target = (IConceptModificationListener) iter.next();
       target.conceptModified(e);
+    }
+  }
+
+  /**
+   * Returns whether or not this property can be overridden.  This can return false if the property is a "default"
+   * property.
+   */
+  public boolean canOverride(final String id) {
+    ConceptPropertyInterface propFromSecurity = this.getProperty(id, IConceptModel.REL_SECURITY);
+    ConceptPropertyInterface propFromInherited = this.getProperty(id, IConceptModel.REL_INHERITED);
+    ConceptPropertyInterface propFromParent = this.getProperty(id, IConceptModel.REL_PARENT);
+
+    if (null != propFromInherited || null != propFromParent) {
+      return true;
+    } else if (null != propFromSecurity && DefaultPropertyID.SECURITY.getId().equals(id)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public boolean isOverridden(final String id) {
+    return null != getProperty(id, IConceptModel.REL_THIS) && canOverride(id);
+  }
+
+  public void setPropertyValue(final String id, final Object value) {
+    ConceptPropertyInterface prop = concept.getChildProperty(id);
+    if (null == prop) {
+      if (logger.isWarnEnabled()) {
+        logger.warn("property with id \"" + id + "\" does not exist in the concept; ignoring");
+      }
+      return;
+    }
+    Object oldValue = prop.getValue();
+    prop.setValue(value);
+    fireConceptModificationEvent(new PropertyValueModificationEvent(this, id, oldValue, value));
+  }
+
+  public String toString() {
+    return new ReflectionToStringBuilder(this).toString();
+  }
+
+  public int getPropertyContributor(final String id) {
+    Map childPropertiesMap = concept.getChildPropertyInterfaces();
+    if (childPropertiesMap.containsKey(id)) {
+      return IConceptModel.REL_THIS;
+    } else if (DefaultPropertyID.SECURITY.getId().equals(id) && concept.hasSecurityParentConcept()
+        && concept.getSecurityPropertyInterfaces().containsKey(id)) {
+      return IConceptModel.REL_SECURITY;
+    } else if (concept.hasParentConcept() && concept.getParentPropertyInterfaces().containsKey(id)) {
+      return IConceptModel.REL_PARENT;
+    } else if (concept.hasInheritedConcept() && concept.getInheritedPropertyInterfaces().containsKey(id)) {
+      return IConceptModel.REL_INHERITED;
+    } else {
+      return -1;
     }
   }
 

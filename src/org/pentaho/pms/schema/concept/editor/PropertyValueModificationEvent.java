@@ -1,36 +1,39 @@
 package org.pentaho.pms.schema.concept.editor;
 
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public abstract class PropertyModificationEvent extends ConceptModificationEvent {
+public class PropertyValueModificationEvent extends PropertyModificationEvent {
 
   // ~ Static fields/initializers ======================================================================================
 
-  private static final Log logger = LogFactory.getLog(PropertyModificationEvent.class);
+  private static final Log logger = LogFactory.getLog(PropertyValueModificationEvent.class);
 
-  private static final long serialVersionUID = -5810693858905811872L;
+  private static final long serialVersionUID = 3440212934863199561L;
 
   // ~ Instance fields =================================================================================================
 
-  private String propertyId;
+  private Object oldValue;
+
+  private Object newValue;
 
   // ~ Constructors ====================================================================================================
 
-  public PropertyModificationEvent(final Object source, final String propertyId) {
-    super(source);
-    this.propertyId = propertyId;
+  public PropertyValueModificationEvent(final Object source, final String propertyId, final Object oldValue,
+      final Object newValue) {
+    super(source, propertyId);
+    this.oldValue = oldValue;
+    this.newValue = newValue;
   }
 
   // ~ Methods =========================================================================================================
 
-  public String getPropertyId() {
-    return propertyId;
+  public Object getOldValue() {
+    return oldValue;
   }
 
-  public String toString() {
-    return new ReflectionToStringBuilder(this).toString();
+  public Object getNewValue() {
+    return newValue;
   }
 
 }

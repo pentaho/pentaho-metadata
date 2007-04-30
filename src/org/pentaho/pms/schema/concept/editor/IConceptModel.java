@@ -55,9 +55,27 @@ public interface IConceptModel {
 
   Set getPropertyIds(final int relType);
 
-  List getEffectivePropertySource(final String id);
+  /**
+   * Recursively searches related concepts (i.e. itself, its parent, its security parent, and its inherited). Returns
+   * a list of strings showing the path from the this concept to the concept who originally contributed this property as
+   * a child property..
+   */
+  List getPropertySource(final String id);
+
+  /**
+   * Returns one of <code>REL_THIS</code>, <code>REL_PARENT</code>, <code>REL_INHERITED</code>, or
+   * <code>REL_SECURITY</code> indicating from where this property came. Note that a "contributor" does not necessarily
+   * define this property--it could have itself inherited that property from an ancestor.
+   */
+  int getPropertyContributor(final String id);
 
   void addConceptModificationListener(final IConceptModificationListener conceptModelListener);
 
   void removeConceptModificationListener(final IConceptModificationListener conceptModelListener);
+
+  boolean canOverride(final String id);
+
+  boolean isOverridden(final String id);
+
+  void setPropertyValue(final String id, final Object value);
 }

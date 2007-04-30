@@ -23,6 +23,7 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.pentaho.pms.schema.concept.DefaultPropertyID;
 
@@ -57,13 +58,15 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
 
   private TreeViewer treeViewer;
 
+  private boolean decorate = true;
+
   // ~ Constructors ====================================================================================================
 
   /**
-   * Shows all properties in a tree along with section names. Can get selected property via <code>getSelection()</code>.
+   * Shows all properties in a tree along with group names. Can get selected property via <code>getSelection()</code>.
    */
   public PropertyTreeWidget(final Composite parent, final int style) {
-    this(parent, style, null, SHOW_ALL);
+    this(parent, style, null, SHOW_ALL, false);
   }
 
   /**
@@ -71,10 +74,11 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
    * changes.
    */
   public PropertyTreeWidget(final Composite parent, final int style, final IConceptModel conceptModel,
-      final int visibility) {
+      final int visibility, final boolean decorate) {
     super(parent, style);
     this.visibility = visibility;
     this.conceptModel = conceptModel;
+    this.decorate = decorate;
     createContents();
   }
 
@@ -128,6 +132,7 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
         fireSelectionChangedEvent(new SelectionChangedEvent(PropertyTreeWidget.this, highLevelSelection));
       }
     });
+    treeViewer.expandAll();
   }
 
   /**
@@ -138,9 +143,9 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
    */
   protected PropertyTreeSelection transformTreeSelection(final TreeSelection sel) {
     Object objectSelected = sel.getFirstElement();
-    if (objectSelected instanceof SectionNode) {
-      SectionNode n = (SectionNode) objectSelected;
-      return new PropertyTreeSelection(n.getSectionName(), true);
+    if (objectSelected instanceof GroupNode) {
+      GroupNode n = (GroupNode) objectSelected;
+      return new PropertyTreeSelection(n.getGroupName(), true);
     } else if (objectSelected instanceof PropertyNode) {
       PropertyNode n = (PropertyNode) objectSelected;
       return new PropertyTreeSelection(n.getId(), false);
@@ -150,31 +155,28 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
   }
 
   protected void widgetDisposed(final DisposeEvent e) {
-    if (logger.isDebugEnabled()) {
-      logger.debug("heard dispose event");
-    }
   }
 
   /**
-   * Abstract parent of two child node types: <code>PropertyNode</code> and <code>SectionNode</code>.
+   * Abstract parent of two child node types: <code>PropertyNode</code> and <code>GroupNode</code>.
    * @author mlowery
    */
   private abstract class PropertyTreeNode {
   }
 
   /**
-   * Section nodes contain property nodes.
+   * Group nodes contain property nodes.
    * @author mlowery
    */
-  private class SectionNode extends PropertyTreeNode {
-    private String sectionName;
+  private class GroupNode extends PropertyTreeNode {
+    private String groupName;
 
-    public SectionNode(final String sectionName) {
-      this.sectionName = sectionName;
+    public GroupNode(final String groupName) {
+      this.groupName = groupName;
     }
 
-    public String getSectionName() {
-      return sectionName;
+    public String getGroupName() {
+      return groupName;
     }
   }
 
@@ -212,14 +214,14 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
       if (element instanceof PropertyNode) {
         // a property element
         PropertyNode n = (PropertyNode) element;
-        return new SectionNode(PropertySectionHelper.getSectionForProperty(n.getId()));
+        return new GroupNode(PropertyGroupHelper.getGroupForProperty(n.getId()));
       } else {
         return null;
       }
     }
 
     public boolean hasChildren(final Object element) {
-      if (element instanceof SectionNode) {
+      if (element instanceof GroupNode) {
         return true;
       } else {
         return false;
@@ -235,10 +237,10 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
       // no need to adjust listeners
     }
 
-    protected PropertyTreeNode[] makeTreeNodesFromSectionNames(final Object[] sectionNames) {
+    protected PropertyTreeNode[] makeTreeNodesFromGroupNames(final Object[] groupNames) {
       List propertyTreeNodes = new ArrayList();
-      for (int i = 0; i < sectionNames.length; i++) {
-        propertyTreeNodes.add(new SectionNode((String) sectionNames[i]));
+      for (int i = 0; i < groupNames.length; i++) {
+        propertyTreeNodes.add(new GroupNode((String) groupNames[i]));
       }
       return (PropertyTreeNode[]) propertyTreeNodes.toArray(new PropertyTreeNode[0]);
     }
@@ -255,11 +257,10 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
   private class AllPropertiesContentProvider extends AbstractPropertyTreeContentProvider {
 
     public Object[] getChildren(final Object parentElement) {
-      if (parentElement instanceof SectionNode) {
-        // a section node
-        SectionNode n = (SectionNode) parentElement;
-        return this.makeTreeNodesFromPropertyIds(PropertySectionHelper.getPropertiesForSection(n.getSectionName())
-            .toArray());
+      if (parentElement instanceof GroupNode) {
+        // a group node
+        GroupNode n = (GroupNode) parentElement;
+        return this.makeTreeNodesFromPropertyIds(PropertyGroupHelper.getPropertiesForGroup(n.getGroupName()).toArray());
       } else {
         // a property node
         return EMPTY_ARRAY;
@@ -267,7 +268,7 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
     }
 
     public Object[] getElements(final Object inputElement) {
-      return makeTreeNodesFromSectionNames(PropertySectionHelper.getSections().toArray());
+      return makeTreeNodesFromGroupNames(PropertyGroupHelper.getGroups().toArray());
     }
 
   }
@@ -298,10 +299,10 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
   private class UsedPropertiesContentProvider extends RelevantPropertiesContentProvider {
 
     public Object[] getChildren(final Object parentElement) {
-      if (parentElement instanceof SectionNode) {
-        // a section node
-        SectionNode n = (SectionNode) parentElement;
-        return this.makeTreeNodesFromPropertyIds(PropertySectionHelper.getUsedPropertiesForSection(n.getSectionName(),
+      if (parentElement instanceof GroupNode) {
+        // a group node
+        GroupNode n = (GroupNode) parentElement;
+        return this.makeTreeNodesFromPropertyIds(PropertyGroupHelper.getUsedPropertiesForGroup(n.getGroupName(),
             conceptModel).toArray());
       } else {
         // a property node
@@ -310,7 +311,7 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
     }
 
     public Object[] getElements(final Object inputElement) {
-      return makeTreeNodesFromSectionNames(PropertySectionHelper.getUsedSections(conceptModel).toArray());
+      return makeTreeNodesFromGroupNames(PropertyGroupHelper.getUsedGroups(conceptModel).toArray());
     }
 
   }
@@ -318,11 +319,11 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
   private class UnusedPropertiesContentProvider extends RelevantPropertiesContentProvider {
 
     public Object[] getChildren(final Object parentElement) {
-      if (parentElement instanceof SectionNode) {
-        // a section node
-        SectionNode n = (SectionNode) parentElement;
-        return this.makeTreeNodesFromPropertyIds(PropertySectionHelper.getUnusedPropertiesForSection(
-            n.getSectionName(), conceptModel).toArray());
+      if (parentElement instanceof GroupNode) {
+        // a group node
+        GroupNode n = (GroupNode) parentElement;
+        return this.makeTreeNodesFromPropertyIds(PropertyGroupHelper.getUnusedPropertiesForGroup(n.getGroupName(),
+            conceptModel).toArray());
       } else {
         // a property node
         return EMPTY_ARRAY;
@@ -330,7 +331,7 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
     }
 
     public Object[] getElements(final Object inputElement) {
-      return makeTreeNodesFromSectionNames(PropertySectionHelper.getUnusedSections(conceptModel).toArray());
+      return makeTreeNodesFromGroupNames(PropertyGroupHelper.getUnusedGroups(conceptModel).toArray());
     }
 
   }
@@ -338,13 +339,41 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
   private class PropertyTreeLabelProvider implements ILabelProvider {
 
     public Image getImage(Object element) {
-      return null;
+      if (decorate) {
+        if (element instanceof GroupNode) {
+          return Constants.getImageRegistry(Display.getCurrent()).get("property-group");
+        } else if (element instanceof PropertyNode) {
+          PropertyNode node = (PropertyNode) element;
+          String propertyId = node.getId();
+          switch (conceptModel.getPropertyContributor(propertyId)) {
+            case IConceptModel.REL_THIS: {
+              return Constants.getImageRegistry(Display.getCurrent()).get("child-property");
+            }
+            case IConceptModel.REL_SECURITY: {
+              return Constants.getImageRegistry(Display.getCurrent()).get("security-property");
+            }
+            case IConceptModel.REL_PARENT: {
+              return Constants.getImageRegistry(Display.getCurrent()).get("parent-property");
+            }
+            case IConceptModel.REL_INHERITED: {
+              return Constants.getImageRegistry(Display.getCurrent()).get("inherited-property");
+            }
+            default: {
+              return null;
+            }
+          }
+        } else {
+          return null;
+        }
+      } else {
+        return null;
+      }
     }
 
     public String getText(Object element) {
-      if (element instanceof SectionNode) {
-        SectionNode n = (SectionNode) element;
-        return n.getSectionName();
+      if (element instanceof GroupNode) {
+        GroupNode n = (GroupNode) element;
+        return n.getGroupName();
       } else if (element instanceof PropertyNode) {
         PropertyNode n = (PropertyNode) element;
         return DefaultPropertyID.findDefaultPropertyID(n.getId()).getDescription();
@@ -371,7 +400,7 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
     }
   }
 
-  public void addSelectionChangedListener(ISelectionChangedListener listener) {
+  public void addSelectionChangedListener(final ISelectionChangedListener listener) {
     eventSupport.addListener(listener);
   }
 

@@ -11,14 +11,14 @@ public class PropertyTreeSelection implements ISelection {
 
   private String name;
 
-  private boolean section;
+  private boolean group;
 
   // ~ Constructors ====================================================================================================
 
-  public PropertyTreeSelection(final String name, final boolean section) {
+  public PropertyTreeSelection(final String name, final boolean group) {
     super();
     this.name = name;
-    this.section = section;
+    this.group = group;
   }
 
   // ~ Methods =========================================================================================================
@@ -31,8 +31,8 @@ public class PropertyTreeSelection implements ISelection {
     return name;
   }
 
-  public boolean isSection() {
-    return section;
+  public boolean isGroup() {
+    return group;
   }
 
   public String toString() {
