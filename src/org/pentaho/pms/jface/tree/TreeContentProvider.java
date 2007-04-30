@@ -45,6 +45,7 @@ public class TreeContentProvider implements ITreeContentProvider, ITreeNodeChang
     }
 
     public void onDelete(ITreeNode node) {
+      node.removeTreeNodeChangeListener(this);
       viewer.remove(node);
     }
 

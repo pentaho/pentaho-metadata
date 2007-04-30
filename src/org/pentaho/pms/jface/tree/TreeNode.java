@@ -11,7 +11,7 @@ public abstract class TreeNode implements ITreeNode
 {
   protected ITreeNode fParent;
   protected List fChildren;
-  private List fModelChangeListeners;
+  private transient List fModelChangeListeners;
   
   public TreeNode(ITreeNode parent) {
     fParent = parent;
@@ -109,11 +109,18 @@ public abstract class TreeNode implements ITreeNode
  
   protected void fireTreeNodeDeleted()
   {
+    List listeners = new ArrayList();
+    
+    // make copy of listener list so removals of listeners 
+    // doesn't cause a problem
     Iterator listenerIter = getModelChangedListeners().iterator();
     while ( listenerIter.hasNext() )
-      ((ITreeNodeChangedListener)listenerIter.next()).onDelete(this);
+      listeners.add(listenerIter.next());
     
-    fModelChangeListeners = null;
+    Iterator i = listeners.iterator();
+    while ( i.hasNext() )
+      ((ITreeNodeChangedListener)i.next()).onDelete(this);
+    
     
   }
 
