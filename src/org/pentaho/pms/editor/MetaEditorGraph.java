@@ -1613,27 +1613,27 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
     return new SnapAllignDistribute(activeModel, elements, indices, null, this);
   }
 
-  private void snaptogrid(int size) {
+  void snaptogrid(int size) {
     createSnapAllignDistribute().snaptogrid(size);
   }
 
-  private void allignleft() {
+  void allignleft() {
     createSnapAllignDistribute().allignleft();
   }
 
-  private void allignright() {
+  void allignright() {
     createSnapAllignDistribute().allignright();
   }
 
-  private void alligntop() {
+  void alligntop() {
     createSnapAllignDistribute().alligntop();
   }
 
-  private void allignbottom() {
+  void allignbottom() {
     createSnapAllignDistribute().allignbottom();
   }
 
-  private void distributehorizontal() {
+  void distributehorizontal() {
     createSnapAllignDistribute().distributehorizontal();
   }
 

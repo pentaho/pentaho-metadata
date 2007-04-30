@@ -36,6 +36,9 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.MenuAdapter;
+import org.eclipse.swt.events.MenuEvent;
+import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -76,8 +79,8 @@ import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.mql.MQLQuery;
 import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
-import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.BusinessModel;
+import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.PhysicalColumn;
 import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.RelationshipMeta;
@@ -95,8 +98,8 @@ import org.pentaho.pms.schema.concept.types.fieldtype.FieldTypeSettings;
 import org.pentaho.pms.schema.concept.types.tabletype.TableTypeSettings;
 import org.pentaho.pms.schema.dialog.BusinessCategoriesDialog;
 import org.pentaho.pms.schema.dialog.BusinessCategoryDialog;
-import org.pentaho.pms.schema.dialog.BusinessTableDialog;
 import org.pentaho.pms.schema.dialog.BusinessModelDialog;
+import org.pentaho.pms.schema.dialog.BusinessTableDialog;
 import org.pentaho.pms.schema.dialog.PhysicalTableDialog;
 import org.pentaho.pms.schema.dialog.RelationshipDialog;
 import org.pentaho.pms.schema.security.SecurityReference;
@@ -171,6 +174,8 @@ public class MetaEditor {
 
   private Menu mBar;
 
+  private Listener mainListener;
+  
   private MenuItem mFile;
 
   private Menu msFile;
@@ -179,16 +184,23 @@ public class MetaEditor {
       miFilePrint, miFileSep3, miFileQuit;
 
   private MenuItem miNewDomain, miNewConnection, miNewPTable, miNewBTable, miNewBModel, miNewRel, miNewCat;
-  private Listener lsFileOpen, lsFileNew, lsFileSave, lsFileSaveAs, lsFileExport, lsFileImport, lsFileDelete,
-      lsFilePrint, lsFileQuit;
+  
+  private MenuItem miNewDomainTB, miNewConnectionTB, miNewPTableTB, miNewBTableTB, miNewBModelTB, miNewRelTB, miNewCatTB;
+  
+  private Listener lsDomainNew, lsConnectionNew, lsPTableNew, lsBTableNew, lsBModelNew, lsRelationNew, lsCategoryNew, lsFileOpen, lsFileSave, lsFileSaveAs, lsFileExport, lsFileImport, lsFileDelete,
+      lsFilePrint, lsFileQuit, lsEditLocales, lsEditConcepts, lsEditCategories, lsAlignRight, lsAlignLeft, lsAlignTop, lsAlignBottom, lsDistribHoriz, lsDistribVert;
 
   private MenuItem mEdit;
+  
+  private ToolItem tiAlignLeft, tiAlignRight, tiAlignTop, tiAlignBottom;
 
   private Menu msEdit;
+  
+  private Menu mPopAD;
 
-  private MenuItem miEditSelectAll, miEditUnselectAll, miEditOptions;
+  private MenuItem miEditSelectAll, miEditUnselectAll, miEditOptions, miEditRefresh;
 
-  private Listener lsEditSelectAll, lsEditUnselectAll, lsEditOptions;
+  private Listener lsEditSelectAll, lsEditUnselectAll, lsEditOptions, lsEditRefresh;
 
   private MenuItem mHelp;
 
@@ -228,11 +240,11 @@ public class MetaEditor {
 
   private MetaEditorLocales metaEditorLocales;
 
-  private MenuItem mSecurity;
+  private MenuItem mTools;
 
-  private Menu msSecurity;
+  private Menu msTools;
 
-  private MenuItem miSecurityService;
+  private MenuItem miSecurityService, miLocalesEditor, miConceptEditor, miCategoryEditor, miLogging;
 
   private Listener lsSecurityService;
 
@@ -266,13 +278,33 @@ public class MetaEditor {
     // INIT Data structure
     schemaMeta = new SchemaMeta();
     loadQuery();
-
     // Load settings in the props
     loadSettings();
-
-    // shell.setFont(GUIResource.getInstance().getFontDefault());
     shell.setImage(new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "icon.png"))); //$NON-NLS-1$
+    
+    initGlobalKeyBindings();
+    initGlobalListeners();
+    initToolBar();
+    initMainForm();
+    initMenu();
+    initTree();
+    initTabs();
 
+    // In case someone dares to press the [X] in the corner ;-)
+    shell.addShellListener(new ShellAdapter() {
+      public void shellClosed(ShellEvent e) {
+        e.doit = quitFile();
+      }
+    });
+    int weights[] = props.getSashWeights();
+    sashform.setWeights(weights);
+    sashform.setVisible(true);
+
+    shell.layout();
+    getMainListener().handleEvent(null); // Force everything to match the current state
+  }
+
+  private void initGlobalKeyBindings() {
     defKeys = new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
         boolean control = (e.stateMask & SWT.CONTROL) != 0;
@@ -288,7 +320,6 @@ public class MetaEditor {
           }
           metaEditorGraph.control = false;
         }
-        ;
 
         // F5 --> refresh
         if (e.keyCode == SWT.F5) {
@@ -365,14 +396,175 @@ public class MetaEditor {
           metaEditorGraph.control = false;
       }
     };
+  }
+  
+  private void initGlobalListeners() {
+    lsDomainNew = new Listener() {
+      public void handleEvent(Event e) {
+        newFile();
+      }
+    };
+    lsConnectionNew = new Listener() {
+      public void handleEvent(Event e) {
+        newConnection();
+      }
+    };
+    lsPTableNew = new Listener() {
+      public void handleEvent(Event e) {
+        newConnection();
+      }
+    };
+    lsBTableNew = new Listener() {
+      public void handleEvent(Event e) {
+        newBusinessTable(null);
+      }
+    };
+    lsBModelNew = new Listener() {
+      public void handleEvent(Event e) {
+        newBusinessModel();
+      }
+    };
+    lsRelationNew = new Listener() {
+      public void handleEvent(Event e) {
+        newRelationship();
+      }
+    };
+    lsCategoryNew = new Listener() {
+      public void handleEvent(Event e) {
+        BusinessModel activeModel = schemaMeta.getActiveModel();
+        if (activeModel != null) {
+          BusinessCategoriesDialog dialog = new BusinessCategoriesDialog(shell, activeModel, schemaMeta.getLocales(),
+              schemaMeta.getSecurityReference());
+          dialog.open();
+          refreshTree();
+        }
+      }
+    };
+    lsFileOpen = new Listener() {
+      public void handleEvent(Event e) {
+        openFile();
+      }
+    };
+    lsFileSave = new Listener() {
+      public void handleEvent(Event e) {
+        saveFile();
+      }
+    };
+    lsFileSaveAs = new Listener() {
+      public void handleEvent(Event e) {
+        saveFileAs();
+      }
+    };
+    lsFileExport = new Listener() {
+      public void handleEvent(Event e) {
+        exportToXMI();
+      }
+    };
+    lsFileImport = new Listener() {
+      public void handleEvent(Event e) {
+        importFromXMI();
+      }
+    };
+    lsFileDelete = new Listener() {
+      public void handleEvent(Event e) {
+        deleteFile();
+      }
+    };
+    lsFilePrint = new Listener() {
+      public void handleEvent(Event e) {
+        printFile();
+      }
+    };
+    lsFileQuit = new Listener() {
+      public void handleEvent(Event e) {
+        quitFile();
+      }
+    };
+    lsEditUnselectAll = new Listener() {
+      public void handleEvent(Event e) {
+        editUnselectAll();
+      }
+    };
+    lsEditSelectAll = new Listener() {
+      public void handleEvent(Event e) {
+        editSelectAll();
+      }
+    };
+    lsEditOptions = new Listener() {
+      public void handleEvent(Event e) {
+        editOptions();
+      }
+    };
+    lsEditRefresh = new Listener() {
+      public void handleEvent(Event e) {
+        refreshAll();
+      }
+    };
+    lsSecurityService = new Listener() {
+      public void handleEvent(Event e) {
+        editSecurityService();
+      }
+    };
+    lsEditLocales = new Listener() {
+      public void handleEvent(Event e) {
+        tabfolder.setSelection(2);
+      }
+    };
+    lsEditConcepts = new Listener() {
+      public void handleEvent(Event e) {
+        tabfolder.setSelection(1);
+      }
+    };
+    lsEditCategories = new Listener() {
+      public void handleEvent(Event e) {
+        BusinessModel activeModel = schemaMeta.getActiveModel();
+        if (activeModel != null) {
+          BusinessCategoriesDialog dialog = new BusinessCategoriesDialog(shell, activeModel, schemaMeta.getLocales(),
+              schemaMeta.getSecurityReference());
+          dialog.open();
+          refreshTree();
+        } 
+      }
+    };
+    lsAlignLeft = new Listener() {
+      public void handleEvent(Event e) {
+        metaEditorGraph.allignleft();
+      }
+    };
+    lsAlignRight = new Listener() {
+      public void handleEvent(Event e) {
+        metaEditorGraph.allignright();
+      }
+    };
+    lsAlignTop = new Listener() {
+      public void handleEvent(Event e) {
+        metaEditorGraph.alligntop();
+      }
+    };
+    lsAlignBottom = new Listener() {
+      public void handleEvent(Event e) {
+        metaEditorGraph.allignbottom();
+      }
+    };
+    lsDistribHoriz = new Listener() {
+      public void handleEvent(Event e) {
+        metaEditorGraph.distributehorizontal();
+      }
+    };
+    lsDistribVert = new Listener() {
+      public void handleEvent(Event e) {
+        metaEditorGraph.distributevertical();
+      }
+    };
 
-    addBar();
-
-    FormData fdBar = new FormData();
-    fdBar.left = new FormAttachment(0, 0);
-    fdBar.top = new FormAttachment(0, 0);
-    tBar.setLayoutData(fdBar);
-
+    lsHelpAbout = new Listener() {
+      public void handleEvent(Event e) {
+        helpAbout();
+      }
+    };
+  }
+  
+  private void initMainForm() {
     sashform = new SashForm(shell, SWT.HORIZONTAL);
 
     FormData fdSash = new FormData();
@@ -381,26 +573,8 @@ public class MetaEditor {
     fdSash.bottom = new FormAttachment(100, 0);
     fdSash.right = new FormAttachment(100, 0);
     sashform.setLayoutData(fdSash);
-
-    addMenu();
-    addTree();
-    addTabs();
-
-    setTreeImages();
-
-    // In case someone dares to press the [X] in the corner ;-)
-    shell.addShellListener(new ShellAdapter() {
-      public void shellClosed(ShellEvent e) {
-        e.doit = quitFile();
-      }
-    });
-    int weights[] = props.getSashWeights();
-    sashform.setWeights(weights);
-    sashform.setVisible(true);
-
-    shell.layout();
   }
-
+  
   public void exportToXMI() {
     boolean goAhead = true;
     if (schemaMeta.hasChanged()) {
@@ -534,7 +708,7 @@ public class MetaEditor {
     disp.sleep();
   }
 
-  public void addMenu() {
+  public void initMenu() {
     mBar = new Menu(shell, SWT.BAR);
     shell.setMenuBar(mBar);
 
@@ -542,6 +716,7 @@ public class MetaEditor {
     mFile = new MenuItem(mBar, SWT.CASCADE);
     mFile.setText(Messages.getString("MetaEditor.USER_FILE")); //$NON-NLS-1$
     msFile = new Menu(shell, SWT.DROP_DOWN);
+ 
     mFile.setMenu(msFile);
 
     miFileNew = new MenuItem(msFile, SWT.CASCADE);
@@ -552,196 +727,209 @@ public class MetaEditor {
     
     miNewDomain = new MenuItem(fileMenu, SWT.CASCADE);
     miNewDomain.setText(Messages.getString("MetaEditor.USER_NEW_DOMAIN_MENU")); //$NON-NLS-1$
+    miNewDomain.addListener(SWT.Selection, lsDomainNew);
+    
     new MenuItem(fileMenu, SWT.SEPARATOR);
     miNewConnection = new MenuItem(fileMenu, SWT.CASCADE);
     miNewConnection.setText(Messages.getString("MetaEditor.USER_NEW_CONNECTION_MENU"));  //$NON-NLS-1$
+    miNewConnection.addListener(SWT.Selection, lsConnectionNew);
+    
     miNewPTable = new MenuItem(fileMenu, SWT.CASCADE);
     miNewPTable.setText(Messages.getString("MetaEditor.USER_NEW_PHYSICAL_TABLE_MENU")); //$NON-NLS-1$
+    miNewPTable.addListener(SWT.Selection, lsPTableNew);
+    
     new MenuItem(fileMenu, SWT.SEPARATOR);
     miNewBTable = new MenuItem(fileMenu, SWT.CASCADE);
     miNewBTable.setText(Messages.getString("MetaEditor.USER_NEW_BUSINESS_TABLE_MENU")); //$NON-NLS-1$
+    miNewBTable.addListener(SWT.Selection, lsBTableNew);
+    
     miNewBModel = new MenuItem(fileMenu, SWT.CASCADE);
     miNewBModel.setText(Messages.getString("MetaEditor.USER_NEW_BUSINESS_MODEL_MENU"));//$NON-NLS-1$
+    miNewBModel.addListener(SWT.Selection, lsBModelNew);
+    
     miNewRel = new MenuItem(fileMenu, SWT.CASCADE);
     miNewRel.setText(Messages.getString("MetaEditor.USER_NEW_RELATIONSHIP_MENU")); //$NON-NLS-1$
+    miNewRel.addListener(SWT.Selection, lsRelationNew);
+    
     miNewCat = new MenuItem(fileMenu, SWT.CASCADE);
     miNewCat.setText(Messages.getString("MetaEditor.USER_NEW_CATEGORY_MENU")); //$NON-NLS-1$
+    miNewCat.addListener(SWT.Selection, lsCategoryNew);
     
     miFileOpen = new MenuItem(msFile, SWT.CASCADE);
     miFileOpen.setText(Messages.getString("MetaEditor.USER_OPEN")); //$NON-NLS-1$
+    miFileOpen.addListener(SWT.Selection, lsFileOpen);
+    
     miFileSave = new MenuItem(msFile, SWT.CASCADE);
     miFileSave.setText(Messages.getString("MetaEditor.USER_SAVE")); //$NON-NLS-1$
+    miFileSave.addListener(SWT.Selection, lsFileSave);
+    
     miFileSaveAs = new MenuItem(msFile, SWT.CASCADE);
     miFileSaveAs.setText(Messages.getString("MetaEditor.USER_SAVE_AS")); //$NON-NLS-1$
+    miFileSaveAs.addListener(SWT.Selection, lsFileSaveAs);
+    
     new MenuItem(msFile, SWT.SEPARATOR);
     miFileImport = new MenuItem(msFile, SWT.CASCADE);
     miFileImport.setText(Messages.getString("MetaEditor.USER_IMPORT")); //$NON-NLS-1$
+    miFileImport.addListener(SWT.Selection, lsFileImport);
+    
     miFileExport = new MenuItem(msFile, SWT.CASCADE);
     miFileExport.setText(Messages.getString("MetaEditor.USER_EXPORT")); //$NON-NLS-1$
+    miFileExport.addListener(SWT.Selection, lsFileExport);
+    
     new MenuItem(msFile, SWT.SEPARATOR);
     miFileDelete = new MenuItem(msFile, SWT.CASCADE);
     miFileDelete.setText(Messages.getString("MetaEditor.USER_DELETE_DOMAIN")); //$NON-NLS-1$
+    miFileDelete.addListener(SWT.Selection, lsFileDelete);
+    
     new MenuItem(msFile, SWT.SEPARATOR);
     miFilePrint = new MenuItem(msFile, SWT.CASCADE);
     miFilePrint.setText(Messages.getString("MetaEditor.USER_PRINT")); //$NON-NLS-1$
+    miFilePrint.addListener(SWT.Selection, lsFilePrint);
+    
     new MenuItem(msFile, SWT.SEPARATOR);
     miFileQuit = new MenuItem(msFile, SWT.CASCADE);
     miFileQuit.setText(Messages.getString("MetaEditor.USER_QUIT")); //$NON-NLS-1$
+    miFileQuit.addListener(SWT.Selection, lsFileQuit);
+    
     miFileSep3 = new MenuItem(msFile, SWT.SEPARATOR);
     addMenuLast();
-
-    lsFileOpen = new Listener() {
-      public void handleEvent(Event e) {
-        openFile();
-      }
-    };
-    lsFileNew = new Listener() {
-      public void handleEvent(Event e) {
-        newFile();
-      }
-    };
-    lsFileSave = new Listener() {
-      public void handleEvent(Event e) {
-        saveFile();
-      }
-    };
-    lsFileSaveAs = new Listener() {
-      public void handleEvent(Event e) {
-        saveFileAs();
-      }
-    };
-    lsFileExport = new Listener() {
-      public void handleEvent(Event e) {
-        exportToXMI();
-      }
-    };
-    lsFileImport = new Listener() {
-      public void handleEvent(Event e) {
-        importFromXMI();
-      }
-    };
-    lsFileDelete = new Listener() {
-      public void handleEvent(Event e) {
-        deleteFile();
-      }
-    };
-    lsFilePrint = new Listener() {
-      public void handleEvent(Event e) {
-        printFile();
-      }
-    };
-    lsFileQuit = new Listener() {
-      public void handleEvent(Event e) {
-        quitFile();
-      }
-    };
-
-
-    miNewDomain.addListener(SWT.Selection, lsFileNew);
-    miNewConnection.addSelectionListener(new SelectionAdapter() {
-      public void widgetSelected(SelectionEvent e) {
-        newConnection();
-      }
-    });
-    miNewPTable.addSelectionListener(new SelectionAdapter() {
-      public void widgetSelected(SelectionEvent e) {
-        // TODO Implement new physical table
-        log.logDetailed(APPLICATION_NAME, "New Physical Table Not Implemented");
-      }
-    });
-    miNewBTable.addSelectionListener(new SelectionAdapter() {
-      public void widgetSelected(SelectionEvent e) {
-        newBusinessTable(null);
-      }
-    });
-    miNewBModel.addSelectionListener(new SelectionAdapter() {
-      public void widgetSelected(SelectionEvent e) {
-        newBusinessModel();
-      }
-    });
-    miNewRel.addSelectionListener(new SelectionAdapter() {
-      public void widgetSelected(SelectionEvent e) {
-        newRelationship();
-      }
-    });
-    miNewCat.addSelectionListener(new SelectionAdapter() {
-      public void widgetSelected(SelectionEvent e) {
-        // TODO Implement new category
-        log.logDetailed(APPLICATION_NAME, "New Category Not Implemented");
-      }
-    });
-    miFileSave.addListener(SWT.Selection, lsFileSave);
-    miFileSaveAs.addListener(SWT.Selection, lsFileSaveAs);
-    miFileExport.addListener(SWT.Selection, lsFileExport);
-    miFileImport.addListener(SWT.Selection, lsFileImport);
-    miFileDelete.addListener(SWT.Selection, lsFileDelete);
-    miFilePrint.addListener(SWT.Selection, lsFilePrint);
-    miFileQuit.addListener(SWT.Selection, lsFileQuit);
 
     // main Edit menu...
     mEdit = new MenuItem(mBar, SWT.CASCADE);
     mEdit.setText(Messages.getString("MetaEditor.USER_EDIT")); //$NON-NLS-1$
     msEdit = new Menu(shell, SWT.DROP_DOWN);
     mEdit.setMenu(msEdit);
-    miEditUnselectAll = new MenuItem(msEdit, SWT.CASCADE);
-    miEditUnselectAll.setText(Messages.getString("MetaEditor.USER_CLEAR_SELECTION")); //$NON-NLS-1$
-    miEditSelectAll = new MenuItem(msEdit, SWT.CASCADE);
-    miEditSelectAll.setText(Messages.getString("MetaEditor.USER_SELECT_ALL_STEPS")); //$NON-NLS-1$
-    new MenuItem(msEdit, SWT.SEPARATOR);
+    
     miEditOptions = new MenuItem(msEdit, SWT.CASCADE);
-    miEditOptions.setText(Messages.getString("MetaEditor.USER_REFRESH")); //$NON-NLS-1$
-    new MenuItem(msEdit, SWT.SEPARATOR);
-    miEditOptions = new MenuItem(msEdit, SWT.CASCADE);
-    miEditOptions.setText(Messages.getString("MetaEditor.USER_OPTIONS")); //$NON-NLS-1$
-
-    lsEditUnselectAll = new Listener() {
-      public void handleEvent(Event e) {
-        editUnselectAll();
-      }
-    };
-    lsEditSelectAll = new Listener() {
-      public void handleEvent(Event e) {
-        editSelectAll();
-      }
-    };
-    lsEditOptions = new Listener() {
-      public void handleEvent(Event e) {
-        editOptions();
-      }
-    };
-
-    miEditUnselectAll.addListener(SWT.Selection, lsEditUnselectAll);
-    miEditSelectAll.addListener(SWT.Selection, lsEditSelectAll);
+    miEditOptions.setText(Messages.getString("MetaEditor.USER_EDIT_PROPS")); //$NON-NLS-1$
     miEditOptions.addListener(SWT.Selection, lsEditOptions);
 
-    // Security
-    mSecurity = new MenuItem(mBar, SWT.CASCADE);
-    mSecurity.setText(Messages.getString("MetaEditor.USER_SECURITY")); //$NON-NLS-1$
-    msSecurity = new Menu(shell, SWT.DROP_DOWN);
-    mSecurity.setMenu(msSecurity);
-    miSecurityService = new MenuItem(msSecurity, SWT.CASCADE);
-    miSecurityService.setText(Messages.getString("MetaEditor.USER_CONFIGURE_SECURITY_SERVICE")); //$NON-NLS-1$
+    new MenuItem(msEdit, SWT.SEPARATOR);
+    miEditUnselectAll = new MenuItem(msEdit, SWT.CASCADE);
+    miEditUnselectAll.setText(Messages.getString("MetaEditor.USER_CLEAR_SELECTION")); //$NON-NLS-1$
+    miEditUnselectAll.addListener(SWT.Selection, lsEditUnselectAll);
+    
+    miEditSelectAll = new MenuItem(msEdit, SWT.CASCADE);
+    miEditSelectAll.setText(Messages.getString("MetaEditor.USER_SELECT_ALL_STEPS")); //$NON-NLS-1$
+    miEditSelectAll.addListener(SWT.Selection, lsEditSelectAll);
 
-    lsSecurityService = new Listener() {
-      public void handleEvent(Event e) {
-        editSecurityService();
-      }
-    };
+    new MenuItem(msEdit, SWT.SEPARATOR);
+    miEditRefresh = new MenuItem(msEdit, SWT.CASCADE);
+    miEditRefresh.setText(Messages.getString("MetaEditor.USER_REFRESH")); //$NON-NLS-1$
+    miEditRefresh.addListener(SWT.Selection, lsEditRefresh);
+
+    // Tools
+    mTools = new MenuItem(mBar, SWT.CASCADE);
+    mTools.setText(Messages.getString("MetaEditor.USER_TOOLS")); //$NON-NLS-1$
+    msTools = new Menu(shell, SWT.DROP_DOWN);
+    mTools.setMenu(msTools);
+    
+    miSecurityService = new MenuItem(msTools, SWT.CASCADE);
+    miSecurityService.setText(Messages.getString("MetaEditor.USER_CONFIGURE_SECURITY_SERVICE")); //$NON-NLS-1$
     miSecurityService.addListener(SWT.Selection, lsSecurityService);
+    
+    new MenuItem(msTools, SWT.SEPARATOR);
+    miLocalesEditor = new MenuItem(msTools, SWT.CASCADE);
+    miLocalesEditor.setText(Messages.getString("MetaEditor.USER_CONFIGURE_LOCALES"));
+    miLocalesEditor.addListener(SWT.Selection, lsEditLocales);
+    
+    miConceptEditor = new MenuItem(msTools, SWT.CASCADE);
+    miConceptEditor.setText(Messages.getString("MetaEditor.USER_CONFIGURE_CONCEPTS"));
+    miConceptEditor.addListener(SWT.Selection, lsEditConcepts);
+    
+    miCategoryEditor = new MenuItem(msTools, SWT.CASCADE);
+    miCategoryEditor.setText(Messages.getString("MetaEditor.USER_CONFIGURE_CATEGORYS"));
+    miCategoryEditor.addListener(SWT.Selection, lsEditCategories);
+    
+    new MenuItem(msTools, SWT.SEPARATOR);
+    miLogging = new MenuItem(msTools, SWT.CASCADE);
+    miLogging.setText(Messages.getString("MetaEditor.USER_CONFIGURE_LOGGING"));
+
+    new MenuItem(msTools, SWT.SEPARATOR);
+    MenuItem miPopAD = new MenuItem(msTools, SWT.CASCADE);
+    miPopAD.setText(Messages.getString("MetaEditorGraph.USER_ALIGN_DISTRIBUTE")); //$NON-NLS-1$
+    mPopAD = new Menu(miPopAD);
+    
+    MenuItem miPopALeft = new MenuItem(mPopAD, SWT.CASCADE);
+    miPopALeft.setText(Messages.getString("MetaEditorGraph.USER_ALIGN_LEFT")); //$NON-NLS-1$
+    miPopALeft.addListener(SWT.Selection, lsAlignLeft);
+    
+    MenuItem miPopARight = new MenuItem(mPopAD, SWT.CASCADE);
+    miPopARight.setText(Messages.getString("MetaEditorGraph.USER_ALIGN_RIGHT")); //$NON-NLS-1$
+    miPopARight.addListener(SWT.Selection, lsAlignRight);
+    
+    MenuItem miPopATop = new MenuItem(mPopAD, SWT.CASCADE);
+    miPopATop.setText(Messages.getString("MetaEditorGraph.USER_ALIGN_TOP")); //$NON-NLS-1$
+    miPopATop.addListener(SWT.Selection, lsAlignTop);
+    
+    MenuItem miPopABottom = new MenuItem(mPopAD, SWT.CASCADE);
+    miPopABottom.setText(Messages.getString("MetaEditorGraph.USER_ALIGN_BOTTOM")); //$NON-NLS-1$
+    miPopABottom.addListener(SWT.Selection, lsAlignBottom);
+    
+    new MenuItem(mPopAD, SWT.SEPARATOR);
+    MenuItem miPopDHoriz = new MenuItem(mPopAD, SWT.CASCADE);
+    miPopDHoriz.setText(Messages.getString("MetaEditorGraph.USER_DISTRIBUTE_HORIZ")); //$NON-NLS-1$
+    miPopDHoriz.addListener(SWT.Selection, lsDistribHoriz);
+    
+    MenuItem miPopDVertic = new MenuItem(mPopAD, SWT.CASCADE);
+    miPopDVertic.setText(Messages.getString("MetaEditorGraph.USER_DISTRIBUTE_VERT")); //$NON-NLS-1$
+    miPopDVertic.addListener(SWT.Selection, lsDistribVert);
+    
+    new MenuItem(mPopAD, SWT.SEPARATOR);
+    MenuItem miPopSSnap = new MenuItem(mPopAD, SWT.CASCADE);
+    miPopSSnap.setText(Messages.getString("MetaEditorGraph.USER_SNAP_TO_GRID", Integer.toString(Const.GRID_SIZE))); //$NON-NLS-1$ 
+    miPopAD.setMenu(mPopAD);
+
+    miPopSSnap.addSelectionListener(new SelectionAdapter() {
+      public void widgetSelected(SelectionEvent e) {
+        metaEditorGraph.snaptogrid(Const.GRID_SIZE);
+      }
+    });
+    
+    miLogging.addSelectionListener(new SelectionAdapter() {
+      public void widgetSelected(SelectionEvent e) {
+        tabfolder.setSelection(3);
+      }
+    });  
 
     // main Help menu...
     mHelp = new MenuItem(mBar, SWT.CASCADE);
     mHelp.setText(Messages.getString("MetaEditor.USER_HELP")); //$NON-NLS-1$
     msHelp = new Menu(shell, SWT.DROP_DOWN);
+
     mHelp.setMenu(msHelp);
     miHelpAbout = new MenuItem(msHelp, SWT.CASCADE);
     miHelpAbout.setText(Messages.getString("MetaEditor.USER_ABOUT")); //$NON-NLS-1$
-    lsHelpAbout = new Listener() {
-      public void handleEvent(Event e) {
-        helpAbout();
-      }
-    };
     miHelpAbout.addListener(SWT.Selection, lsHelpAbout);
+  }
+
+  /**
+   * @return
+   */
+  private Listener getMainListener() {
+    if (mainListener == null) {
+      mainListener = new Listener() {
+        public void handleEvent(Event e) {
+          BusinessModel activeModel = schemaMeta.getActiveModel();
+          boolean hasActiveModel = false;
+          int nrSelected = 0;
+          if (activeModel != null) {
+            hasActiveModel = true;
+            nrSelected = activeModel.nrSelected();
+          }
+          // Enable/disable menus that rely on having an active model
+          miNewBTable.setEnabled(hasActiveModel);
+          
+          // Enable/disable menus that rely on having more than 1 graph item selected
+          mPopAD.setEnabled(nrSelected > 1);
+          tiAlignLeft.setEnabled(nrSelected > 1);
+          tiAlignRight.setEnabled(nrSelected > 1);
+          tiAlignTop.setEnabled(nrSelected > 1);
+          tiAlignBottom.setEnabled(nrSelected > 1);
+        }
+      };
+    }
+    return mainListener;
   }
 
   private void addMenuLast() {
@@ -785,92 +973,161 @@ public class MetaEditor {
     }
   }
 
-  private void addBar() {
-    tBar = new ToolBar(shell, SWT.HORIZONTAL | SWT.FLAT);
-    // tBar.setFont(GUIResource.getInstance().getFontDefault());
-
-    // tBar.setSize(200, 20);
-    final ToolItem tiFileNew = new ToolItem(tBar, SWT.PUSH);
+  private void initToolBar() {
+    // First get the toolbar images
+    // Make sure that any images we get are disposed of down below in the DisposeListener
     final Image imFileNew = new Image(disp, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "new.png")); //$NON-NLS-1$
-    tiFileNew.setImage(imFileNew);
-    tiFileNew.addSelectionListener(new SelectionAdapter() {
-      public void widgetSelected(SelectionEvent e) {
-        newFile();
-      }
-    });
-    tiFileNew.setToolTipText(Messages.getString("MetaEditorUSER_NEW_FILE_CLEAR_SETTINGS")); //$NON-NLS-1$
-
-    final ToolItem tiFileOpen = new ToolItem(tBar, SWT.PUSH);
     final Image imFileOpen = new Image(disp, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "open.png")); //$NON-NLS-1$
-    tiFileOpen.setImage(imFileOpen);
-    tiFileOpen.addSelectionListener(new SelectionAdapter() {
-      public void widgetSelected(SelectionEvent e) {
-        openFile();
-      }
-    });
-    tiFileOpen.setToolTipText(Messages.getString("MetaEditor.USER_OPEN_FILE")); //$NON-NLS-1$
-
-    final ToolItem tiFileSave = new ToolItem(tBar, SWT.PUSH);
     final Image imFileSave = new Image(disp, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "save.png")); //$NON-NLS-1$
-    tiFileSave.setImage(imFileSave);
-    tiFileSave.addSelectionListener(new SelectionAdapter() {
-      public void widgetSelected(SelectionEvent e) {
-        saveFile();
-      }
-    });
-    tiFileSave.setToolTipText(Messages.getString("MetaEditor.USER_SAVE_FILE")); //$NON-NLS-1$
-
-    final ToolItem tiFileSaveAs = new ToolItem(tBar, SWT.PUSH);
     final Image imFileSaveAs = new Image(disp, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "saveas.png")); //$NON-NLS-1$
-    tiFileSaveAs.setImage(imFileSaveAs);
-    tiFileSaveAs.addSelectionListener(new SelectionAdapter() {
-      public void widgetSelected(SelectionEvent e) {
-        saveFileAs();
-      }
-    });
-    tiFileSaveAs.setToolTipText(Messages.getString("MetaEditor.USER_SAVE_FILE_NEW_NAME")); //$NON-NLS-1$
-
-    new ToolItem(tBar, SWT.SEPARATOR);
-    final ToolItem tiFilePrint = new ToolItem(tBar, SWT.PUSH);
     final Image imFilePrint = new Image(disp, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "print.png")); //$NON-NLS-1$
-    tiFilePrint.setImage(imFilePrint);
-    tiFilePrint.addSelectionListener(new SelectionAdapter() {
-      public void widgetSelected(SelectionEvent e) {
-        printFile();
-      }
-    });
-    tiFilePrint.setToolTipText(Messages.getString("MetaEditor.USER_PRINT_TEXT")); //$NON-NLS-1$
-
-    new ToolItem(tBar, SWT.SEPARATOR);
-    final ToolItem tiSQL = new ToolItem(tBar, SWT.PUSH);
     final Image imSQL = new Image(disp, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "SQLbutton.png")); //$NON-NLS-1$
     // Can't seem to get the transparency correct for this image!
     ImageData idSQL = imSQL.getImageData();
     int sqlPixel = idSQL.palette.getPixel(new RGB(255, 255, 255));
     idSQL.transparentPixel = sqlPixel;
-    Image imSQL2 = new Image(disp, idSQL);
+    final Image imSQL2 = new Image(disp, idSQL);
+
+    tBar = new ToolBar(shell, SWT.HORIZONTAL | SWT.FLAT);
+    tBar.addListener(SWT.MouseEnter, getMainListener());
+
+    final Menu fileMenus = new Menu(shell, SWT.NONE);
+    
+    // Add the new file toolbar items dropdowns
+    miNewDomainTB = new MenuItem(fileMenus, SWT.CASCADE);
+    miNewDomainTB.setText(Messages.getString("MetaEditor.USER_NEW_DOMAIN_MENU")); //$NON-NLS-1$
+    miNewDomainTB.addListener(SWT.Selection, lsDomainNew);
+    
+    new MenuItem(fileMenus, SWT.SEPARATOR);
+    miNewConnectionTB = new MenuItem(fileMenus, SWT.CASCADE);
+    miNewConnectionTB.setText(Messages.getString("MetaEditor.USER_NEW_CONNECTION_MENU"));  //$NON-NLS-1$
+    miNewConnectionTB.addListener(SWT.Selection, lsConnectionNew);
+    
+    miNewPTableTB = new MenuItem(fileMenus, SWT.CASCADE);
+    miNewPTableTB.setText(Messages.getString("MetaEditor.USER_NEW_PHYSICAL_TABLE_MENU")); //$NON-NLS-1$
+    miNewPTableTB.addListener(SWT.Selection, lsPTableNew);
+    
+    new MenuItem(fileMenus, SWT.SEPARATOR);
+    miNewBTableTB = new MenuItem(fileMenus, SWT.CASCADE);
+    miNewBTableTB.setText(Messages.getString("MetaEditor.USER_NEW_BUSINESS_TABLE_MENU")); //$NON-NLS-1$
+    miNewBTableTB.addListener(SWT.Selection, lsBTableNew);
+    
+    miNewBModelTB = new MenuItem(fileMenus, SWT.CASCADE);
+    miNewBModelTB.setText(Messages.getString("MetaEditor.USER_NEW_BUSINESS_MODEL_MENU"));//$NON-NLS-1$
+    miNewBModelTB.addListener(SWT.Selection, lsBModelNew);
+    
+    miNewRelTB = new MenuItem(fileMenus, SWT.CASCADE);
+    miNewRelTB.setText(Messages.getString("MetaEditor.USER_NEW_RELATIONSHIP_MENU")); //$NON-NLS-1$
+    miNewRelTB.addListener(SWT.Selection, lsRelationNew);
+    
+    miNewCatTB = new MenuItem(fileMenus, SWT.CASCADE);
+    miNewCatTB.setText(Messages.getString("MetaEditor.USER_NEW_CATEGORY_MENU")); //$NON-NLS-1$
+    miNewCatTB.addListener(SWT.Selection, lsCategoryNew);
+    
+    final ToolItem tiFileNew = new ToolItem(tBar, SWT.DROP_DOWN);
+    
+    tiFileNew.setImage(imFileNew);
+    tiFileNew.setToolTipText(Messages.getString("MetaEditorUSER_NEW_FILE_CLEAR_SETTINGS")); //$NON-NLS-1$
+    // Handles creating a drop down on top of the button if the user clicks on the drop down arrow
+    tiFileNew.addSelectionListener(new SelectionAdapter() {
+      public void widgetSelected(SelectionEvent e) {
+        if (e.detail == SWT.ARROW) {
+          Point pt = new Point(shell.getLocation().x, shell.getLocation().y + tiFileNew.getBounds().height);
+          fileMenus.setLocation(pt.x, pt.y);
+          fileMenus.setVisible(true);
+        } else {
+          newFile();
+        }
+      }
+    });
+
+    final ToolItem tiFileOpen = new ToolItem(tBar, SWT.PUSH);
+    tiFileOpen.setImage(imFileOpen);
+    tiFileOpen.setToolTipText(Messages.getString("MetaEditor.USER_OPEN_FILE")); //$NON-NLS-1$
+    tiFileOpen.addListener(SWT.Selection, lsFileOpen);
+
+    final ToolItem tiFileSave = new ToolItem(tBar, SWT.PUSH);
+    tiFileSave.setImage(imFileSave);
+    tiFileSave.setToolTipText(Messages.getString("MetaEditor.USER_SAVE_FILE")); //$NON-NLS-1$
+    tiFileSave.addListener(SWT.Selection, lsFileSave);
+
+    final ToolItem tiFileSaveAs = new ToolItem(tBar, SWT.PUSH);
+    tiFileSaveAs.setImage(imFileSaveAs);
+    tiFileSaveAs.setToolTipText(Messages.getString("MetaEditor.USER_SAVE_FILE_NEW_NAME")); //$NON-NLS-1$
+    tiFileSaveAs.addListener(SWT.Selection, lsFileSaveAs);
+
+    new ToolItem(tBar, SWT.SEPARATOR);
+    final ToolItem tiFilePrint = new ToolItem(tBar, SWT.PUSH);
+    tiFilePrint.setImage(imFilePrint);
+    tiFilePrint.setToolTipText(Messages.getString("MetaEditor.USER_PRINT_TEXT")); //$NON-NLS-1$
+    tiFilePrint.addListener(SWT.Selection, lsFilePrint);
+
+    new ToolItem(tBar, SWT.SEPARATOR);
+    final ToolItem tiSQL = new ToolItem(tBar, SWT.PUSH);
     tiSQL.setImage(imSQL2);
+    tiSQL.setToolTipText(Messages.getString("MetaEditor.USER_TEST_Q_AND_R")); //$NON-NLS-1$
     tiSQL.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(SelectionEvent e) {
         testQR();
       }
     });
-    tiSQL.setToolTipText(Messages.getString("MetaEditor.USER_TEST_Q_AND_R")); //$NON-NLS-1$
-
+    
+    final ToolItem tiConceptEdit = new ToolItem(tBar, SWT.PUSH);
+    tiConceptEdit.setImage(imFileNew);
+    tiConceptEdit.addListener(SWT.Selection, lsEditConcepts);
+    
+    final ToolItem tiLocaleEdit = new ToolItem(tBar, SWT.PUSH);
+    tiLocaleEdit.setImage(imFileNew);
+    tiLocaleEdit.addListener(SWT.Selection, lsEditLocales);
+    
+    final ToolItem tiCategoryEdit = new ToolItem(tBar, SWT.PUSH);
+    tiCategoryEdit.setImage(imFileNew);
+    tiCategoryEdit.addListener(SWT.Selection, lsEditCategories);
+    
+    new ToolItem(tBar, SWT.SEPARATOR);
+    final ToolItem tiProperties = new ToolItem(tBar, SWT.PUSH);
+    tiProperties.setImage(imFileNew);
+    tiProperties.addListener(SWT.Selection, lsEditOptions);
+    
+    new ToolItem(tBar, SWT.SEPARATOR);
+    tiAlignLeft = new ToolItem(tBar, SWT.PUSH);
+    tiAlignLeft.setImage(imFileNew);
+    tiAlignLeft.addListener(SWT.Selection, lsAlignLeft);
+    
+    tiAlignRight = new ToolItem(tBar, SWT.PUSH);
+    tiAlignRight.setImage(imFileNew);
+    tiAlignRight.addListener(SWT.Selection, lsAlignRight);
+    
+    tiAlignTop = new ToolItem(tBar, SWT.PUSH);
+    tiAlignTop.setImage(imFileNew);
+    tiAlignTop.addListener(SWT.Selection, lsAlignTop);
+    
+    tiAlignBottom = new ToolItem(tBar, SWT.PUSH);
+    tiAlignBottom.setImage(imFileNew);
+    tiAlignBottom.addListener(SWT.Selection, lsAlignBottom);
+    
     tBar.addDisposeListener(new DisposeListener() {
       public void widgetDisposed(DisposeEvent e) {
         imFileNew.dispose();
         imFileOpen.dispose();
         imFileSave.dispose();
         imFileSaveAs.dispose();
+        imFilePrint.dispose();
+        imSQL.dispose();
+        imSQL2.dispose();
       }
     });
+    
     tBar.addKeyListener(defKeys);
     tBar.addKeyListener(modKeys);
     tBar.pack();
+    FormData fdBar = new FormData();
+    fdBar.left = new FormAttachment(0, 0);
+    fdBar.top = new FormAttachment(0, 0);
+    tBar.setLayoutData(fdBar);
   }
 
-  private void addTree() {
+  private void initTree() {
     SashForm leftsplit = new SashForm(sashform, SWT.VERTICAL);
     leftsplit.setLayout(new FillLayout());
 
@@ -969,6 +1226,7 @@ public class MetaEditor {
     // Keyboard shortcuts!
     mainTree.addKeyListener(defKeys);
     mainTree.addKeyListener(modKeys);
+    setTreeImages();
   }
 
   public static final void selectTreeItem(Tree tree, String[] path) {
@@ -1375,13 +1633,6 @@ public class MetaEditor {
             }
           });
           new MenuItem(mainMenu, SWT.SEPARATOR);
-//          MenuItem miImp = new MenuItem(mainMenu, SWT.PUSH);
-//          miImp.setText(Messages.getString("MetaEditor.USER_IMPORT_FROM_EXPLORER")); //$NON-NLS-1$
-//          miImp.addListener(SWT.Selection, new Listener() {
-//            public void handleEvent(Event evt) {
-//              importTables(path[1]);
-//            }
-//          });
           MenuItem miSQL = new MenuItem(mainMenu, SWT.PUSH);
           miSQL.setText(Messages.getString("MetaEditor.USER_SQL_EDITOR")); //$NON-NLS-1$
           miSQL.addListener(SWT.Selection, new Listener() {
@@ -1870,7 +2121,7 @@ public class MetaEditor {
     }
   }
 
-  private void addTabs() {
+  private void initTabs() {
     Composite child = new Composite(sashform, SWT.BORDER);
     child.setLayout(new FillLayout());
 
@@ -1897,6 +2148,7 @@ public class MetaEditor {
     tiTabsLog.setToolTipText(Messages.getString("MetaEditor.USER_LOG_VIEW_TEXT")); //$NON-NLS-1$
 
     metaEditorGraph = new MetaEditorGraph(tabfolder, SWT.V_SCROLL | SWT.H_SCROLL | SWT.NO_BACKGROUND, this);
+    metaEditorGraph.addListener(SWT.MouseExit, getMainListener());
     metaEditorConcept = new MetaEditorConcepts(tabfolder, SWT.NONE, this);
     metaEditorLocales = new MetaEditorLocales(tabfolder, SWT.NONE, this);
     metaEditorLog = new MetaEditorLog(tabfolder, SWT.NONE, null);
