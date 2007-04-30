@@ -120,6 +120,12 @@ public class BusinessCategory extends ConceptUtilityBase implements ChangedFlagI
         setChanged();
     }
     
+    public void removeBusinessCategory(BusinessCategory category)
+    {
+        businessCategories.remove(category);
+        setChanged();
+    }
+
     public void addBusinessCategory(BusinessCategory businessCategory) throws ObjectAlreadyExistsException
     {
         businessCategories.add(businessCategory);
@@ -183,6 +189,12 @@ public class BusinessCategory extends ConceptUtilityBase implements ChangedFlagI
     public void removeBusinessColumn(int index)
     {
         businessColumns.remove(index);
+        setChanged();
+    }
+
+    public void removeBusinessColumn(BusinessColumn obj)
+    {
+        businessColumns.remove(obj);
         setChanged();
     }
 
