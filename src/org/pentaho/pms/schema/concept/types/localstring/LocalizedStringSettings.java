@@ -1,13 +1,13 @@
 /*
- * Copyright 2006 Pentaho Corporation.  All rights reserved. 
- * This software was developed by Pentaho Corporation and is provided under the terms 
- * of the Mozilla Public License, Version 1.1, or any later version. You may not use 
- * this file except in compliance with the license. If you need a copy of the license, 
- * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho 
+ * Copyright 2006 Pentaho Corporation.  All rights reserved.
+ * This software was developed by Pentaho Corporation and is provided under the terms
+ * of the Mozilla Public License, Version 1.1, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho
  * BI Platform.  The Initial Developer is Pentaho Corporation.
  *
- * Software distributed under the Mozilla Public License is distributed on an "AS IS" 
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to 
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
  * the license for the specific language governing your rights and limitations.
 */
 package org.pentaho.pms.schema.concept.types.localstring;
@@ -15,10 +15,16 @@ package org.pentaho.pms.schema.concept.types.localstring;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+import org.pentaho.pms.schema.concept.types.columnwidth.ColumnWidth;
+
 public class LocalizedStringSettings implements Cloneable
 {
     public static final LocalizedStringSettings EMPTY = new LocalizedStringSettings();
-    
+
     private Map localeStringMap;
 
     /**
@@ -28,7 +34,7 @@ public class LocalizedStringSettings implements Cloneable
     {
         localeStringMap=new Hashtable(5);
     }
-    
+
     public Object clone() throws CloneNotSupportedException
     {
         LocalizedStringSettings settings = new LocalizedStringSettings();
@@ -41,7 +47,7 @@ public class LocalizedStringSettings implements Cloneable
         */
         return settings;
     }
-    
+
     /**
      * @param localeStringMap
      */
@@ -49,52 +55,27 @@ public class LocalizedStringSettings implements Cloneable
     {
         this.localeStringMap = localeStringMap;
     }
-    
-    public String toString()
-    {
-        StringBuffer buffer = new StringBuffer();
-        String[] locales = getLocales();
-        for (int i=0;i<locales.length;i++)
-        {
-            if (i>0) buffer.append(", ");  //$NON-NLS-1$
-            String string = getString(locales[i]);
-            buffer.append("["+locales[i]+"]:"+string);  //$NON-NLS-1$  //$NON-NLS-2$
-        }
-        
-        return buffer.toString();
+
+    public boolean equals(Object obj) {
+      if (obj instanceof LocalizedStringSettings == false) {
+        return false;
+      }
+      if (this == obj) {
+        return true;
+      }
+      LocalizedStringSettings rhs = (LocalizedStringSettings) obj;
+      return new EqualsBuilder().append(localeStringMap, rhs.localeStringMap).isEquals();
     }
 
-    public boolean equals(Object object)
-    {
-        LocalizedStringSettings cmp = (LocalizedStringSettings) object;
-        if (cmp.getLocaleStringMap().size()!=cmp.getLocaleStringMap().size()) return false;
-        
-        String[] locales = getLocales(); 
-        for (int i=0;i<locales.length;i++)
-        {
-            String stringOrg = getString(locales[i]);
-            String stringCmp = cmp.getString(locales[i]);
-            
-            if (!stringOrg.equals(stringCmp)) return false;
-        }
-        
-        return true;
+    public int hashCode() {
+      return new HashCodeBuilder(19, 163).append(localeStringMap).toHashCode();
     }
-    
-    public int hashCode()
-    {
-        int hashCode=0;
-        String[] locales = getLocales(); 
-        for (int i=0;i<locales.length;i++)
-        {
-            String string = getString(locales[i]);
-            hashCode^=locales[i].hashCode();
-            hashCode^=string.hashCode();
-        }
-        
-        return hashCode;
+
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).
+          append(localeStringMap).
+          toString();
     }
-    
 
     /**
      * @return the localeStringMap
@@ -111,17 +92,17 @@ public class LocalizedStringSettings implements Cloneable
     {
         this.localeStringMap = localeStringMap;
     }
-    
+
     public String getString(String locale)
     {
         return (String) localeStringMap.get(locale);
     }
-    
+
     public void setLocaleString(String locale, String string)
     {
         localeStringMap.put(locale, string);
     }
-    
+
     public String[] getLocales()
     {
         return (String[]) localeStringMap.keySet().toArray(new String[localeStringMap.keySet().size()]);
@@ -131,5 +112,5 @@ public class LocalizedStringSettings implements Cloneable
     {
         localeStringMap.clear();
     }
-    
+
 }
