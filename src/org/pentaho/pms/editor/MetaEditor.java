@@ -100,6 +100,7 @@ import org.pentaho.pms.schema.dialog.BusinessCategoriesDialog;
 import org.pentaho.pms.schema.dialog.BusinessCategoryDialog;
 import org.pentaho.pms.schema.dialog.BusinessModelDialog;
 import org.pentaho.pms.schema.dialog.BusinessTableDialog;
+import org.pentaho.pms.schema.dialog.CategoryEditorDialog;
 import org.pentaho.pms.schema.dialog.PhysicalTableDialog;
 import org.pentaho.pms.schema.dialog.RelationshipDialog;
 import org.pentaho.pms.schema.security.SecurityReference;
@@ -1199,8 +1200,12 @@ public class MetaEditor {
       public void widgetSelected(SelectionEvent arg0) {
         BusinessModel activeModel = schemaMeta.getActiveModel();
         if (activeModel != null) {
+          CategoryEditorDialog dialog = new CategoryEditorDialog(shell, activeModel, schemaMeta.getLocales(), schemaMeta.getSecurityReference());
+         
+          /*
           BusinessCategoriesDialog dialog = new BusinessCategoriesDialog(shell, activeModel, schemaMeta.getLocales(),
               schemaMeta.getSecurityReference());
+          */
           dialog.open();
           refreshTree();
         }
