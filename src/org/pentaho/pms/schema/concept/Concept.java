@@ -20,8 +20,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
+import org.pentaho.pms.schema.concept.types.columnwidth.ColumnWidth;
 import org.pentaho.pms.schema.concept.types.localstring.ConceptPropertyLocalizedString;
 import org.pentaho.pms.schema.concept.types.localstring.LocalizedStringSettings;
 import org.pentaho.pms.schema.concept.types.security.ConceptPropertySecurity;
@@ -54,27 +59,30 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
         this.parentInterface = parentInterface;
     }
 
-    public boolean equals(Object obj)
-    {
-        Concept concept = (Concept)obj;
-        if (name!=null)
-        {
-            return name.equals(concept.getName());
-        }
-        else
-        {
-            return false;
-        }
+    public boolean equals(Object obj) {
+      if (!(obj instanceof Concept)) {
+        return false;
+      }
+      if (this == obj) {
+        return true;
+      }
+      Concept rhs = (Concept) obj;
+      return new EqualsBuilder().append(name, rhs.name).append(parentInterface, rhs.parentInterface)
+      .append(inheritedInterface, rhs.inheritedInterface).append(securityParentInterface, rhs.securityParentInterface)
+      .isEquals();
     }
 
-    public int hashCode()
-    {
-        if (name!=null)
-        {
-            return name.hashCode();
-        }
-        return 0;
+    public int hashCode() {
+      return new HashCodeBuilder(131,  173 ).append(name).append(parentInterface).append(inheritedInterface)
+      .append(securityParentInterface).toHashCode();
     }
+
+//    public String toString() {
+//        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).
+//          append(type).
+//          append(width).
+//          toString();
+//    }
 
     public Object clone()
     {
