@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -36,9 +37,6 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.MenuAdapter;
-import org.eclipse.swt.events.MenuEvent;
-import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -75,6 +73,9 @@ import org.pentaho.pms.core.exception.CWMException;
 import org.pentaho.pms.demo.QueryDialog;
 import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
 import org.pentaho.pms.factory.SchemaSaveProgressDialog;
+import org.pentaho.pms.jface.tree.ITreeNodeChangedListener;
+import org.pentaho.pms.jface.tree.TreeContentProvider;
+import org.pentaho.pms.jface.tree.TreeLabelProvider;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.mql.MQLQuery;
 import org.pentaho.pms.schema.BusinessCategory;
@@ -100,12 +101,12 @@ import org.pentaho.pms.schema.dialog.BusinessCategoriesDialog;
 import org.pentaho.pms.schema.dialog.BusinessCategoryDialog;
 import org.pentaho.pms.schema.dialog.BusinessModelDialog;
 import org.pentaho.pms.schema.dialog.BusinessTableDialog;
-import org.pentaho.pms.schema.dialog.CategoryEditorDialog;
 import org.pentaho.pms.schema.dialog.PhysicalTableDialog;
 import org.pentaho.pms.schema.dialog.RelationshipDialog;
 import org.pentaho.pms.schema.security.SecurityReference;
 import org.pentaho.pms.schema.security.SecurityService;
 import org.pentaho.pms.schema.security.SecurityServiceDialog;
+import org.pentaho.pms.ui.tree.SchemaMetaTreeNode;
 import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.GUIResource;
 import org.pentaho.pms.util.Settings;
@@ -229,9 +230,11 @@ public class MetaEditor {
 
   public static final String STRING_CATEGORIES_TREE = "CategoriesTree"; //$NON-NLS-1$
 
-  private Tree mainTree;
+  private TreeViewer treeViewer;
+  
+  private SchemaMetaTreeNode mainTreeNode;
 
-  private TreeItem tiConnections, tiBusinessModels;
+//  private TreeItem tiConnections, tiBusinessModels;
 
   public KeyAdapter defKeys;
 
@@ -658,7 +661,7 @@ public class MetaEditor {
             schemaMeta = cwmSchemaFactory.getSchemaMeta(cwmInstance);
 
             // refresh it all...
-            refreshAll();
+            treeViewer.setInput(mainTreeNode);
           }
         } catch (Exception e) {
           new ErrorDialog(
@@ -1144,25 +1147,30 @@ public class MetaEditor {
     } else {
       treeFlags |= SWT.MULTI;
     }
-    mainTree = new Tree(compMain, treeFlags);
-    mainTree.setHeaderVisible(true);
+    treeViewer = new TreeViewer(compMain, treeFlags);
+    treeViewer.setContentProvider(new TreeContentProvider());
+    treeViewer.setLabelProvider(new TreeLabelProvider());
+    mainTreeNode = new SchemaMetaTreeNode(null, schemaMeta);
+    mainTreeNode.addTreeNodeChangeListener((ITreeNodeChangedListener) treeViewer.getContentProvider());
+    
+    treeViewer.getTree().setHeaderVisible(true);
 
     // Show the concept in an extra column next to the tree
-    TreeColumn mainObject = new TreeColumn(mainTree, SWT.LEFT);
+    TreeColumn mainObject = new TreeColumn(treeViewer.getTree(), SWT.LEFT);
     mainObject.setText(""); //$NON-NLS-1$
     mainObject.setWidth(200);
 
-    TreeColumn mainConcept = new TreeColumn(mainTree, SWT.LEFT);
+    TreeColumn mainConcept = new TreeColumn(treeViewer.getTree(), SWT.LEFT);
     mainConcept.setText(Messages.getString("MetaEditor.USER_PARENT_CONCEPT")); //$NON-NLS-1$
     mainConcept.setWidth(200);
 
     // mainTree.setFont(GUIResource.getInstance().getFontDefault());
-    tiConnections = new TreeItem(mainTree, SWT.NONE);
-    tiConnections.setText(STRING_CONNECTIONS);
+//    tiConnections = new TreeItem(mainTree, SWT.NONE);
+//    tiConnections.setText(STRING_CONNECTIONS);
+//
+//    tiConnections.setExpanded(true);
 
-    tiConnections.setExpanded(true);
-
-    mainTree.setBackground(GUIResource.getInstance().getColorBackground());
+    treeViewer.getTree().setBackground(GUIResource.getInstance().getColorBackground());
 
     // Default selection (double-click, enter)
     lsEditDef = new SelectionAdapter() {
@@ -1170,7 +1178,7 @@ public class MetaEditor {
         doubleClickedMain();
       }
     };
-    mainTree.addSelectionListener(lsEditDef); // double click somewhere in the tree...
+    treeViewer.getTree().addSelectionListener(lsEditDef); // double click somewhere in the tree...
 
     // Normal selection: right click
     lsEditMainSel = new SelectionAdapter() {
@@ -1178,7 +1186,7 @@ public class MetaEditor {
         setMenuMain(e);
       }
     };
-    mainTree.addSelectionListener(lsEditMainSel);
+    treeViewer.getTree().addSelectionListener(lsEditMainSel);
 
     // Normal selection: left click to select business model
     SelectionListener lsSelBusinessModel = new SelectionAdapter() {
@@ -1186,11 +1194,11 @@ public class MetaEditor {
         setActiveBusinessModel(e);
       }
     };
-    mainTree.addSelectionListener(lsSelBusinessModel);
+    treeViewer.getTree().addSelectionListener(lsSelBusinessModel);
 
-    tiBusinessModels = new TreeItem(mainTree, SWT.NONE);
-    tiBusinessModels.setText(STRING_BUSINESS_MODELS);
-    tiBusinessModels.setExpanded(true);
+//    tiBusinessModels = new TreeItem(mainTree, SWT.NONE);
+//    tiBusinessModels.setText(STRING_BUSINESS_MODELS);
+//    tiBusinessModels.setExpanded(true);
 
     // Add the button at the left bottom to edit the categories
     Button editCategories = new Button(leftsplit, SWT.PUSH);
@@ -1200,12 +1208,8 @@ public class MetaEditor {
       public void widgetSelected(SelectionEvent arg0) {
         BusinessModel activeModel = schemaMeta.getActiveModel();
         if (activeModel != null) {
-          CategoryEditorDialog dialog = new CategoryEditorDialog(shell, activeModel, schemaMeta.getLocales(), schemaMeta.getSecurityReference());
-         
-          /*
           BusinessCategoriesDialog dialog = new BusinessCategoriesDialog(shell, activeModel, schemaMeta.getLocales(),
               schemaMeta.getSecurityReference());
-          */
           dialog.open();
           refreshTree();
         }
@@ -1219,19 +1223,19 @@ public class MetaEditor {
 
     leftsplit.setWeights(new int[] { 95, 5 });
 
-    addDragSourceToTree(mainTree);
-    addDropTargetToTree(mainTree);
+    addDragSourceToTree(treeViewer.getTree());
+    addDropTargetToTree(treeViewer.getTree());
 
     // Add tree memories to the trees.
-    TreeMemory.addTreeListener(mainTree, STRING_MAIN_TREE);
+    TreeMemory.addTreeListener(treeViewer.getTree(), STRING_MAIN_TREE);
 
     // Set the business models item expanded by default...
-    TreeMemory.getInstance().storeExpanded(STRING_MAIN_TREE, Const.getTreeStrings(tiBusinessModels), true);
+//    TreeMemory.getInstance().storeExpanded(STRING_MAIN_TREE, Const.getTreeStrings(tiBusinessModels), true);
 
     // Keyboard shortcuts!
-    mainTree.addKeyListener(defKeys);
-    mainTree.addKeyListener(modKeys);
-    setTreeImages();
+    treeViewer.getTree().addKeyListener(defKeys);
+    treeViewer.getTree().addKeyListener(modKeys);
+//    setTreeImages();
   }
 
   public static final void selectTreeItem(Tree tree, String[] path) {
@@ -1869,7 +1873,7 @@ public class MetaEditor {
             miUp.addListener(SWT.Selection, new Listener() {
               public void handleEvent(Event e) {
                 moveBusinessCategoryUp(parentCategory, currentCategory);
-                selectTreeItem(mainTree, path);
+                selectTreeItem(treeViewer.getTree(), path);
               }
             });
 
@@ -1878,7 +1882,7 @@ public class MetaEditor {
             miDown.addListener(SWT.Selection, new Listener() {
               public void handleEvent(Event e) {
                 moveBusinessCategoryDown(parentCategory, currentCategory);
-                selectTreeItem(mainTree, path);
+                selectTreeItem(treeViewer.getTree(), path);
               }
             });
           }
@@ -1918,7 +1922,7 @@ public class MetaEditor {
 
     }
 
-    mainTree.setMenu(mainMenu);
+    treeViewer.getTree().setMenu(mainMenu);
   }
 
   public void delColumnFromCategory(BusinessCategory businessCategory, BusinessColumn businessColumn) {
@@ -2214,7 +2218,7 @@ public class MetaEditor {
     log.logDebug(APPLICATION_NAME, Messages.getString("MetaEditor.DEBUG_NEW_SELECTED")); //$NON-NLS-1$
     // Determine what menu we selected from...
 
-    TreeItem ti[] = mainTree.getSelection();
+    TreeItem ti[] = treeViewer.getTree().getSelection();
 
     // Then call newConnection or newTrans
     if (ti.length >= 1) {
@@ -2244,7 +2248,7 @@ public class MetaEditor {
   public void doubleClickedMain() {
     // Determine what tree-item we selected from...
 
-    TreeItem ti[] = mainTree.getSelection();
+    TreeItem ti[] = treeViewer.getTree().getSelection();
 
     // Then call editConnection or editStep or editTrans
     if (ti.length == 1) {
@@ -2867,119 +2871,124 @@ public class MetaEditor {
   }
 
   public void refreshTree() {
-    String activeLocale = schemaMeta.getActiveLocale();
+    mainTreeNode = new SchemaMetaTreeNode(null, schemaMeta);
+    mainTreeNode.addTreeNodeChangeListener((ITreeNodeChangedListener) treeViewer.getContentProvider());
 
-    // Remove all connections...
-    tiConnections.removeAll();
-
-    // Remove all Models
-    tiBusinessModels.removeAll();
-
-    for (int d = 0; d < schemaMeta.nrDatabases(); d++) {
-      DatabaseMeta databaseMeta = schemaMeta.getDatabase(d);
-
-      TreeItem databaseItem = new TreeItem(tiConnections, SWT.NONE);
-      databaseItem.setText(databaseMeta.getName());
-      databaseItem.setForeground(GUIResource.getInstance().getColorBlack());
-      databaseItem.setImage(GUIResource.getInstance().getImageConnection());
-
-      // Below this database we put all the tables that use this database connection...
-      PhysicalTable[] tables = schemaMeta.getTablesOnDatabase(databaseMeta);
-      for (int t = 0; t < tables.length; t++) {
-        PhysicalTable table = tables[t];
-
-        TreeItem tableItem = new TreeItem(databaseItem, SWT.NONE);
-        tableItem.setText(table.getDisplayName(activeLocale));
-        tableItem.setForeground(GUIResource.getInstance().getColorBlack());
-        tableItem.setImage(GUIResource.getInstance().getImageBol());
-
-        // Below this we put the columns...
-        // OK, now add the columns of the table...
-        for (int c = 0; c < table.nrPhysicalColumns(); c++) {
-          PhysicalColumn column = table.getPhysicalColumn(c);
-          ConceptInterface concept = column.getConcept();
-          TreeItem columnItem = new TreeItem(tableItem, SWT.NONE);
-          columnItem.setText(0, column.getDisplayName(activeLocale));
-          if (concept != null && concept.findFirstParentConcept() != null) {
-            columnItem.setText(1, concept.findFirstParentConcept().getName());
-          }
-          columnItem.setForeground(GUIResource.getInstance().getColorBlue());
-          columnItem.setImage(GUIResource.getInstance().getImageBol());
-        }
-      }
-    }
-
-    // Refresh models...
-    for (int v = 0; v < schemaMeta.nrBusinessModels(); v++) {
-      BusinessModel businessModel = schemaMeta.getModel(v);
-      ConceptInterface modelConcept = businessModel.getConcept();
-
-      TreeItem modelItem = new TreeItem(tiBusinessModels, SWT.NONE);
-      modelItem.setText(0, businessModel.getDisplayName(activeLocale));
-      if (modelConcept != null && modelConcept.findFirstParentConcept() != null) {
-        modelItem.setText(1, modelConcept.findFirstParentConcept().getName());
-      }
-
-      modelItem.setForeground(GUIResource.getInstance().getColorBlack());
-      modelItem.setImage(GUIResource.getInstance().getImageBol());
-
-      TreeItem tableParent = new TreeItem(modelItem, SWT.NONE);
-      tableParent.setText(STRING_BUSINESS_TABLES);
-      tableParent.setForeground(GUIResource.getInstance().getColorBlack());
-      tableParent.setImage(GUIResource.getInstance().getImageBol());
-
-      for (int t = 0; t < businessModel.nrBusinessTables(); t++) {
-        BusinessTable businessTable = businessModel.getBusinessTable(t);
-        ConceptInterface tableConcept = businessTable.getConcept();
-
-        TreeItem tableItem = new TreeItem(tableParent, SWT.NONE);
-        tableItem.setText(0, businessTable.getDisplayName(activeLocale));
-        if (tableConcept != null && tableConcept.findFirstParentConcept() != null) {
-          tableItem.setText(1, tableConcept.findFirstParentConcept().getName());
-        }
-        tableItem.setForeground(GUIResource.getInstance().getColorBlack());
-        tableItem.setImage(GUIResource.getInstance().getImageBol());
-
-        for (int c = 0; c < businessTable.nrBusinessColumns(); c++) {
-          BusinessColumn businessColumn = businessTable.getBusinessColumn(c);
-          ConceptInterface columnConcept = businessColumn.getConcept();
-
-          TreeItem columnItem = new TreeItem(tableItem, SWT.NONE);
-          columnItem.setText(0, businessColumn.getDisplayName(activeLocale));
-          if (columnConcept != null && columnConcept.findFirstParentConcept() != null) {
-            columnItem.setText(1, columnConcept.findFirstParentConcept().getName());
-          }
-
-          columnItem.setForeground(GUIResource.getInstance().getColorBlue());
-          columnItem.setImage(GUIResource.getInstance().getImageBol());
-        }
-      }
-
-      TreeItem relationParent = new TreeItem(modelItem, SWT.NONE);
-      relationParent.setText(STRING_RELATIONSHIPS);
-      relationParent.setForeground(GUIResource.getInstance().getColorBlack());
-      relationParent.setImage(GUIResource.getInstance().getImageBol());
-
-      for (int r = 0; r < businessModel.nrRelationships(); r++) {
-        RelationshipMeta relationshipMeta = businessModel.getRelationship(r);
-
-        TreeItem columnItem = new TreeItem(relationParent, SWT.NONE);
-        columnItem.setText(0, relationshipMeta.toString());
-        columnItem.setForeground(GUIResource.getInstance().getColorBlack());
-        columnItem.setImage(GUIResource.getInstance().getImageBol());
-      }
-
-      TreeItem businessViewParent = new TreeItem(modelItem, SWT.NONE);
-      businessViewParent.setText(STRING_CATEGORIES);
-      businessViewParent.setForeground(GUIResource.getInstance().getColorBlack());
-      businessViewParent.setImage(GUIResource.getInstance().getImageBol());
-
-      addTreeCategories(businessViewParent, businessModel.getRootCategory(), activeLocale, true);
-    }
-
-    // Set expanded from memory...
-    TreeMemory.setExpandedFromMemory(mainTree, STRING_MAIN_TREE);
-    setShellText();
+    treeViewer.setInput(mainTreeNode);
+    treeViewer.refresh();
+//    String activeLocale = schemaMeta.getActiveLocale();
+//
+//    // Remove all connections...
+//    tiConnections.removeAll();
+//
+//    // Remove all Models
+//    tiBusinessModels.removeAll();
+//
+//    for (int d = 0; d < schemaMeta.nrDatabases(); d++) {
+//      DatabaseMeta databaseMeta = schemaMeta.getDatabase(d);
+//
+//      TreeItem databaseItem = new TreeItem(tiConnections, SWT.NONE);
+//      databaseItem.setText(databaseMeta.getName());
+//      databaseItem.setForeground(GUIResource.getInstance().getColorBlack());
+//      databaseItem.setImage(GUIResource.getInstance().getImageConnection());
+//
+//      // Below this database we put all the tables that use this database connection...
+//      PhysicalTable[] tables = schemaMeta.getTablesOnDatabase(databaseMeta);
+//      for (int t = 0; t < tables.length; t++) {
+//        PhysicalTable table = tables[t];
+//
+//        TreeItem tableItem = new TreeItem(databaseItem, SWT.NONE);
+//        tableItem.setText(table.getDisplayName(activeLocale));
+//        tableItem.setForeground(GUIResource.getInstance().getColorBlack());
+//        tableItem.setImage(GUIResource.getInstance().getImageBol());
+//
+//        // Below this we put the columns...
+//        // OK, now add the columns of the table...
+//        for (int c = 0; c < table.nrPhysicalColumns(); c++) {
+//          PhysicalColumn column = table.getPhysicalColumn(c);
+//          ConceptInterface concept = column.getConcept();
+//          TreeItem columnItem = new TreeItem(tableItem, SWT.NONE);
+//          columnItem.setText(0, column.getDisplayName(activeLocale));
+//          if (concept != null && concept.findFirstParentConcept() != null) {
+//            columnItem.setText(1, concept.findFirstParentConcept().getName());
+//          }
+//          columnItem.setForeground(GUIResource.getInstance().getColorBlue());
+//          columnItem.setImage(GUIResource.getInstance().getImageBol());
+//        }
+//      }
+//    }
+//
+//    // Refresh models...
+//    for (int v = 0; v < schemaMeta.nrBusinessModels(); v++) {
+//      BusinessModel businessModel = schemaMeta.getModel(v);
+//      ConceptInterface modelConcept = businessModel.getConcept();
+//
+//      TreeItem modelItem = new TreeItem(tiBusinessModels, SWT.NONE);
+//      modelItem.setText(0, businessModel.getDisplayName(activeLocale));
+//      if (modelConcept != null && modelConcept.findFirstParentConcept() != null) {
+//        modelItem.setText(1, modelConcept.findFirstParentConcept().getName());
+//      }
+//
+//      modelItem.setForeground(GUIResource.getInstance().getColorBlack());
+//      modelItem.setImage(GUIResource.getInstance().getImageBol());
+//
+//      TreeItem tableParent = new TreeItem(modelItem, SWT.NONE);
+//      tableParent.setText(STRING_BUSINESS_TABLES);
+//      tableParent.setForeground(GUIResource.getInstance().getColorBlack());
+//      tableParent.setImage(GUIResource.getInstance().getImageBol());
+//
+//      for (int t = 0; t < businessModel.nrBusinessTables(); t++) {
+//        BusinessTable businessTable = businessModel.getBusinessTable(t);
+//        ConceptInterface tableConcept = businessTable.getConcept();
+//
+//        TreeItem tableItem = new TreeItem(tableParent, SWT.NONE);
+//        tableItem.setText(0, businessTable.getDisplayName(activeLocale));
+//        if (tableConcept != null && tableConcept.findFirstParentConcept() != null) {
+//          tableItem.setText(1, tableConcept.findFirstParentConcept().getName());
+//        }
+//        tableItem.setForeground(GUIResource.getInstance().getColorBlack());
+//        tableItem.setImage(GUIResource.getInstance().getImageBol());
+//
+//        for (int c = 0; c < businessTable.nrBusinessColumns(); c++) {
+//          BusinessColumn businessColumn = businessTable.getBusinessColumn(c);
+//          ConceptInterface columnConcept = businessColumn.getConcept();
+//
+//          TreeItem columnItem = new TreeItem(tableItem, SWT.NONE);
+//          columnItem.setText(0, businessColumn.getDisplayName(activeLocale));
+//          if (columnConcept != null && columnConcept.findFirstParentConcept() != null) {
+//            columnItem.setText(1, columnConcept.findFirstParentConcept().getName());
+//          }
+//
+//          columnItem.setForeground(GUIResource.getInstance().getColorBlue());
+//          columnItem.setImage(GUIResource.getInstance().getImageBol());
+//        }
+//      }
+//
+//      TreeItem relationParent = new TreeItem(modelItem, SWT.NONE);
+//      relationParent.setText(STRING_RELATIONSHIPS);
+//      relationParent.setForeground(GUIResource.getInstance().getColorBlack());
+//      relationParent.setImage(GUIResource.getInstance().getImageBol());
+//
+//      for (int r = 0; r < businessModel.nrRelationships(); r++) {
+//        RelationshipMeta relationshipMeta = businessModel.getRelationship(r);
+//
+//        TreeItem columnItem = new TreeItem(relationParent, SWT.NONE);
+//        columnItem.setText(0, relationshipMeta.toString());
+//        columnItem.setForeground(GUIResource.getInstance().getColorBlack());
+//        columnItem.setImage(GUIResource.getInstance().getImageBol());
+//      }
+//
+//      TreeItem businessViewParent = new TreeItem(modelItem, SWT.NONE);
+//      businessViewParent.setText(STRING_CATEGORIES);
+//      businessViewParent.setForeground(GUIResource.getInstance().getColorBlack());
+//      businessViewParent.setImage(GUIResource.getInstance().getImageBol());
+//
+//      addTreeCategories(businessViewParent, businessModel.getRootCategory(), activeLocale, true);
+//    }
+//
+//    // Set expanded from memory...
+//    TreeMemory.setExpandedFromMemory(mainTree, STRING_MAIN_TREE);
+//    setShellText();
   }
 
   public static final void addTreeCategories(TreeItem tiParent, BusinessCategory parentCategory, String locale,
@@ -3023,10 +3032,10 @@ public class MetaEditor {
     setShellText();
   }
 
-  private void setTreeImages() {
-    tiConnections.setImage(GUIResource.getInstance().getImageConnection());
-    tiBusinessModels.setImage(GUIResource.getInstance().getImageBol());
-  }
+//  private void setTreeImages() {
+//    tiConnections.setImage(GUIResource.getInstance().getImageConnection());
+//    tiBusinessModels.setImage(GUIResource.getInstance().getImageBol());
+//  }
 
   public DatabaseMeta getConnection(String name) {
     int i;
@@ -3114,7 +3123,7 @@ public class MetaEditor {
   }
 
   public void changeLooks() {
-    mainTree.setBackground(GUIResource.getInstance().getColorBackground());
+    treeViewer.getTree().setBackground(GUIResource.getInstance().getColorBackground());
     metaEditorGraph.newProps();
 
     refreshAll();
@@ -3123,7 +3132,7 @@ public class MetaEditor {
   public void clearDBCache() {
     // Determine what menu we selected from...
 
-    TreeItem ti[] = mainTree.getSelection();
+    TreeItem ti[] = treeViewer.getTree().getSelection();
 
     // Then call editConnection or editStep or editTrans
     if (ti.length == 1) {
@@ -3353,7 +3362,7 @@ public class MetaEditor {
   public void exploreDB() {
     // Determine what menu we selected from...
 
-    TreeItem ti[] = mainTree.getSelection();
+    TreeItem ti[] = treeViewer.getTree().getSelection();
 
     // Then call editConnection or editStep or editTrans
     if (ti.length == 1) {
@@ -3616,7 +3625,7 @@ public class MetaEditor {
     String locale = schemaMeta.getActiveLocale();
 
     // The main tree
-    TreeItem[] selection = mainTree.getSelection();
+    TreeItem[] selection = treeViewer.getTree().getSelection();
     for (int i = 0; i < selection.length; i++) {
       TreeItem treeItem = selection[i];
       String[] path = Const.getTreeStrings(treeItem);
