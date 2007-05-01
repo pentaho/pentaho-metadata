@@ -44,8 +44,8 @@ import org.pentaho.pms.schema.security.SecurityReference;
 import org.pentaho.pms.ui.tree.BusinessTablesTreeNode;
 import org.pentaho.pms.ui.tree.BusinessViewTreeNode;
 import org.pentaho.pms.ui.tree.CategoryTreeNode;
-import org.pentaho.pms.ui.tree.ColumnTreeNode;
-import org.pentaho.pms.ui.tree.TableTreeNode;
+import org.pentaho.pms.ui.tree.BusinessColumnTreeNode;
+import org.pentaho.pms.ui.tree.BusinessTableTreeNode;
 import org.pentaho.pms.util.GUIResource;
 import org.pentaho.pms.util.Settings;
 
@@ -432,8 +432,8 @@ public class CategoryEditorDialog extends TitleAreaDialog {
 
       Object domainObject = iterator.next();
 
-      if (domainObject instanceof ColumnTreeNode) {
-        ColumnTreeNode columnTreeNode = (ColumnTreeNode) domainObject;
+      if (domainObject instanceof BusinessColumnTreeNode) {
+        BusinessColumnTreeNode columnTreeNode = (BusinessColumnTreeNode) domainObject;
         CategoryTreeNode categoryTreeNode = (CategoryTreeNode) columnTreeNode.getParent();
         BusinessCategory category = (BusinessCategory) categoryTreeNode.getDomainObject();
         category.removeBusinessColumn((BusinessColumn) columnTreeNode.getDomainObject());
@@ -516,14 +516,14 @@ public class CategoryEditorDialog extends TitleAreaDialog {
     IStructuredSelection selection = (IStructuredSelection) wTables.getSelection();
     for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
       Object domainObject = iterator.next();
-      if (domainObject instanceof TableTreeNode) {
-        addCategoryFromBusinessTable((BusinessCategory)rootCategory.getDomainObject(), (BusinessTable)((TableTreeNode)domainObject).getDomainObject());
+      if (domainObject instanceof BusinessTableTreeNode) {
+        addCategoryFromBusinessTable((BusinessCategory)rootCategory.getDomainObject(), (BusinessTable)((BusinessTableTreeNode)domainObject).getDomainObject());
       }
     }
 
     for (Iterator iterator = selection.iterator(); iterator.hasNext();) {
       Object domainObject = iterator.next();
-      if (domainObject instanceof ColumnTreeNode){
+      if (domainObject instanceof BusinessColumnTreeNode){
         // There are no categories selected in the category tree, so ... 
         if (!foundSelectedParent){
           MessageBox mb = new MessageBox(this.getShell(), SWT.OK | SWT.ICON_ERROR);
@@ -533,8 +533,8 @@ public class CategoryEditorDialog extends TitleAreaDialog {
           break;
         }
         // Add the column to the category
-        parentCategory.addBusinessColumn((BusinessColumn)((ColumnTreeNode)domainObject).getDomainObject());
-        ((CategoryTreeNode)firstSelection).addDomainChild((BusinessColumn)((ColumnTreeNode)domainObject).getDomainObject());
+        parentCategory.addBusinessColumn((BusinessColumn)((BusinessColumnTreeNode)domainObject).getDomainObject());
+        ((CategoryTreeNode)firstSelection).addDomainChild((BusinessColumn)((BusinessColumnTreeNode)domainObject).getDomainObject());
       }
     }
   }

@@ -4,18 +4,17 @@ import java.util.List;
 
 import org.eclipse.swt.graphics.Image;
 import org.pentaho.pms.jface.tree.ITreeNode;
-import org.pentaho.pms.jface.tree.TreeNode;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 
 
-public class ColumnTreeNode extends ConceptTreeNode {
+public class BusinessColumnTreeNode extends ConceptTreeNode {
 
   protected BusinessColumn column = null;
   private String locale = null;
   
-  public ColumnTreeNode(ITreeNode parent, final BusinessColumn column, final String locale) {
+  public BusinessColumnTreeNode(ITreeNode parent, final BusinessColumn column, final String locale) {
     super(parent);
     this.column = column;
     this.locale = locale; 

@@ -5,10 +5,9 @@ import java.util.List;
 
 import org.eclipse.swt.graphics.Image;
 import org.pentaho.pms.jface.tree.ITreeNode;
-import org.pentaho.pms.jface.tree.TreeNode;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
-import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 
 
@@ -34,14 +33,14 @@ public class BusinessTablesTreeNode extends ConceptTreeNode {
   
   public void addDomainChild(Object domainObject){
     if (domainObject instanceof BusinessTable){
-      addChild(new TableTreeNode(this,(BusinessTable)domainObject, locale));
+      addChild(new BusinessTableTreeNode(this,(BusinessTable)domainObject, locale));
     }
   }
   
   public void removeDomainChild(Object domainObject){
     if (domainObject instanceof BusinessTable){
         for (Iterator iter = fChildren.iterator(); iter.hasNext();) {
-          TableTreeNode element = (TableTreeNode) iter.next();
+          BusinessTableTreeNode element = (BusinessTableTreeNode) iter.next();
           if (element.table.equals(domainObject))
             removeChild(element);
         }
@@ -49,13 +48,11 @@ public class BusinessTablesTreeNode extends ConceptTreeNode {
   }
 
   public Image getImage() {
-    // TODO Auto-generated method stub
     return super.getImage();
   }
 
   public String getName() {
-    // TODO Auto-generated method stub
-    return "Business Tables";
+    return Messages.getString("MetaEditor.USER_BUSINESS_TABLES");
   }
 
   public ConceptUtilityInterface getDomainObject(){

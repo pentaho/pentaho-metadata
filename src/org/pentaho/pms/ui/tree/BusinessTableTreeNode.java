@@ -11,12 +11,12 @@ import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 
 
-public class TableTreeNode extends ConceptTreeNode {
+public class BusinessTableTreeNode extends ConceptTreeNode {
 
   protected BusinessTable table = null;
   protected String locale = null;
   
-  public TableTreeNode(ITreeNode parent, final BusinessTable table, final String locale) {
+  public BusinessTableTreeNode(ITreeNode parent, final BusinessTable table, final String locale) {
     super(parent);
     this.table = table;
     this.locale = locale; 
@@ -31,14 +31,14 @@ public class TableTreeNode extends ConceptTreeNode {
   
   public void addDomainChild(Object domainObject){
     if (domainObject instanceof BusinessColumn){
-      addChild(new ColumnTreeNode(this,(BusinessColumn)domainObject, locale));
+      addChild(new BusinessColumnTreeNode(this,(BusinessColumn)domainObject, locale));
     }
   }
   
   public void removeDomainChild(Object domainObject){
     if (domainObject instanceof BusinessColumn){
         for (Iterator iter = fChildren.iterator(); iter.hasNext();) {
-          ColumnTreeNode element = (ColumnTreeNode) iter.next();
+          BusinessColumnTreeNode element = (BusinessColumnTreeNode) iter.next();
           if (element.column.equals(domainObject))
             removeChild(element);
         }
@@ -55,13 +55,11 @@ public class TableTreeNode extends ConceptTreeNode {
   }
   
   public Image getImage() {
-    // TODO Auto-generated method stub
     return super.getImage();
   }
 
   public String getName() {
-    // TODO Auto-generated method stub
-    return table.getDisplayName(locale);
+     return table.getDisplayName(locale);
   }
 
   public ConceptUtilityInterface getDomainObject(){

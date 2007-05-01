@@ -21,19 +21,14 @@ public class BusinessModelTreeNode extends ConceptTreeNode {
   }
 
   protected void createChildren(List children) {
+    BusinessTablesTreeNode businessTablesNode = new BusinessTablesTreeNode(fParent, model, locale);
+    addChild(businessTablesNode);
     
-    LabelTreeNode modelLabel = new LabelTreeNode(fParent, model.getDisplayName(locale));
+    RelationshipsTreeNode relationshipsNode = new RelationshipsTreeNode(fParent, model);
+    addChild(relationshipsNode);
     
-    BusinessTablesTreeNode businessTablesNode = new BusinessTablesTreeNode(modelLabel, model, locale);
-    modelLabel.addChild(businessTablesNode);
-    
-    RelationshipsTreeNode relationshipsNode = new RelationshipsTreeNode(modelLabel, model);
-    modelLabel.addChild(relationshipsNode);
-    
-    BusinessViewTreeNode businessViewNode = new BusinessViewTreeNode(modelLabel, model.getRootCategory(), locale);
-    modelLabel.addChild(businessViewNode);
-    
-    this.addChild(modelLabel);
+    BusinessViewTreeNode businessViewNode = new BusinessViewTreeNode(fParent, model.getRootCategory(), locale);
+    addChild(businessViewNode);
   }
 
   public Image getImage() {

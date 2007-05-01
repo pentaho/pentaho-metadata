@@ -1,18 +1,12 @@
 package org.pentaho.pms.ui.tree;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.TreeItem;
 import org.pentaho.pms.jface.tree.ITreeNode;
-import org.pentaho.pms.jface.tree.TreeNode;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessCategory;
-import org.pentaho.pms.schema.BusinessColumn;
-import org.pentaho.pms.schema.concept.ConceptInterface;
-import org.pentaho.pms.util.GUIResource;
 
 
 public class BusinessViewTreeNode extends CategoryTreeNode {
@@ -50,7 +44,7 @@ public class BusinessViewTreeNode extends CategoryTreeNode {
 
   public String getName() {
     // TODO Auto-generated method stub
-    return "Business View";
+    return Messages.getString("MetaEditor.USER_CATEGORIES");
   }
   
   public String getConceptName(){

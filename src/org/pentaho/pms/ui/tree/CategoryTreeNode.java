@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.eclipse.swt.graphics.Image;
 import org.pentaho.pms.jface.tree.ITreeNode;
-import org.pentaho.pms.jface.tree.TreeNode;
 import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.concept.ConceptInterface;
@@ -32,14 +31,14 @@ public class CategoryTreeNode extends ConceptTreeNode {
   }
   public void addDomainChild(Object domainObject){
     if (domainObject instanceof BusinessColumn){
-      addChild(new ColumnTreeNode(this,(BusinessColumn)domainObject, locale));
+      addChild(new BusinessColumnTreeNode(this,(BusinessColumn)domainObject, locale));
     }
   }
   
   public void removeDomainChild(Object domainObject){
     if (domainObject instanceof BusinessColumn){
         for (Iterator iter = fChildren.iterator(); iter.hasNext();) {
-          ColumnTreeNode element = (ColumnTreeNode) iter.next();
+          BusinessColumnTreeNode element = (BusinessColumnTreeNode) iter.next();
           if (element.column.equals(domainObject))
             removeChild(element);
         }
