@@ -90,6 +90,8 @@ public class ColorPropertyEditorWidget extends AbstractPropertyEditorWidget {
             color.dispose();
           }
           color = new Color(Display.getCurrent(), rgb);
+          setValue(color);
+          putPropertyValue();
           button.redraw();
         }
       }
@@ -109,13 +111,16 @@ public class ColorPropertyEditorWidget extends AbstractPropertyEditorWidget {
   }
 
   public Object getValue() {
-    return null;
+    return new ColorSettings(color.getRed(), color.getGreen(), color.getBlue());
   }
 
   protected void setValue(final Object value) {
     if (value instanceof ColorSettings) {
       ColorSettings colorSettings = (ColorSettings) value;
       color = new Color(Display.getCurrent(), colorSettings.getRed(), colorSettings.getGreen(), colorSettings.getBlue());
+    } else if (value instanceof Color) {
+      Color color = (Color) value;
+      this.color = color;
     }
   }
 

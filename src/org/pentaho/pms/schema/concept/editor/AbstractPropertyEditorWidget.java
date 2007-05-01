@@ -155,7 +155,7 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
     return conceptModel.getEffectiveProperty(getPropertyId());
   }
 
-  private void putPropertyValue(final String propertyId) {
+  protected void putPropertyValue() {
     getConceptModel().setPropertyValue(propertyId, getValue());
   }
 
@@ -183,7 +183,7 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
           if (logger.isDebugEnabled()) {
             logger.debug("control's value has been modified");
           }
-          putPropertyValue(propertyId);
+          putPropertyValue();
           resetModified();
         } else {
           if (logger.isDebugEnabled()) {
@@ -203,16 +203,16 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
       /*
        * Warn the user if this control is not editable but the user is trying to click (to edit) the value.
        */
-      if (!isEditable() && !hasWarned()) {
-        setWarned(true);
-        boolean override = showOverrideConfirmDialog();
-        if (override) {
-          if (logger.isDebugEnabled()) {
-            logger.debug("user chose to override after viewing override confirm dialog");
-          }
-          conceptModel.setProperty(DefaultPropertyID.findDefaultPropertyID(propertyId).getDefaultValue());
-        }
-      }
+//      if (!isEditable() && !hasWarned()) {
+//        setWarned(true);
+//        boolean override = showOverrideConfirmDialog();
+//        if (override) {
+//          if (logger.isDebugEnabled()) {
+//            logger.debug("user chose to override after viewing override confirm dialog");
+//          }
+//          conceptModel.setProperty(DefaultPropertyID.findDefaultPropertyID(propertyId).getDefaultValue());
+//        }
+//      }
     }
 
   }
@@ -220,14 +220,14 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
   protected class PropertyEditorWidgetModifyListener implements ModifyListener {
 
     public void modifyText(final ModifyEvent e) {
-      putPropertyValue(propertyId);
+      putPropertyValue();
     }
 
   }
 
   protected class PropertyEditorWidgetSelectionChangedListener implements ISelectionChangedListener {
     public void selectionChanged(final SelectionChangedEvent e) {
-      putPropertyValue(propertyId);
+      putPropertyValue();
     }
   }
 
