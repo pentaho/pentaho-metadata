@@ -40,7 +40,7 @@ public class LocalizedStringPropertyEditorWidget extends AbstractSchemaMetaAware
 
   // ~ Methods =========================================================================================================
 
-  protected void createContents() {
+  protected void createContents(final Composite parent) {
     Props props = Props.getInstance();
 
     ColumnInfo[] colinf = new ColumnInfo[] {
@@ -50,14 +50,14 @@ public class LocalizedStringPropertyEditorWidget extends AbstractSchemaMetaAware
             ColumnInfo.COLUMN_TYPE_TEXT, false, false), //$NON-NLS-1$
     };
 
-    table = new TableView(this, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI, colinf, 0, true, null,
+    table = new TableView(parent, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI, colinf, 0, true, null,
         props);
 
-    createTitleLabel();
+//    createTitleLabel();
     FormData fdFields = new FormData();
     fdFields.left = new FormAttachment(0, 0);
+    fdFields.top = new FormAttachment(0, 0);
     fdFields.right = new FormAttachment(100, 0);
-    fdFields.top = new FormAttachment(createTitleLabel(), 10);
     table.setLayoutData(fdFields);
     //table.table.addFocusListener(this);
 //    table.addModifyListener(new PropertyEditorWidgetModifyListener());

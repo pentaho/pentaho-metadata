@@ -38,10 +38,10 @@ public class PropertyEditorWidgetFactory {
     propertyEditors.put(ConceptPropertyType.STRING, StringPropertyEditorWidget.class);
     //    propertyEditors.put(ConceptPropertyType.PROPERTY_TYPE_DATE, .class);
     //  propertyEditors.put(ConceptPropertyType.PROPERTY_TYPE_NUMBER, .class);
-    //  propertyEditors.put(ConceptPropertyType.PROPERTY_TYPE_COLOR, .class);
+    propertyEditors.put(ConceptPropertyType.COLOR, ColorPropertyEditorWidget.class);
     //  propertyEditors.put(ConceptPropertyType.PROPERTY_TYPE_FONT, .class);
     //  propertyEditors.put(ConceptPropertyType.PROPERTY_TYPE_FIELDTYPE, .class);
-    //  propertyEditors.put(ConceptPropertyType.PROPERTY_TYPE_AGGREGATION, .class);
+    propertyEditors.put(ConceptPropertyType.AGGREGATION, AggregationPropertyEditorWidget.class);
     propertyEditors.put(ConceptPropertyType.BOOLEAN, BooleanPropertyEditorWidget.class);
     //  propertyEditors.put(ConceptPropertyType.PROPERTY_TYPE_DATATYPE, .class);
     propertyEditors.put(ConceptPropertyType.LOCALIZED_STRING, LocalizedStringPropertyEditorWidget.class);
@@ -50,13 +50,6 @@ public class PropertyEditorWidgetFactory {
     //  propertyEditors.put(ConceptPropertyType.PROPERTY_TYPE_SECURITY, .class);
     //  propertyEditors.put(ConceptPropertyType.PROPERTY_TYPE_ALIGNMENT, .class);
     propertyEditors.put(ConceptPropertyType.COLUMN_WIDTH, ColumnWidthPropertyEditorWidget.class);
-    //  propertyEditors.put(ConceptPropertyType., .class);
-    //  propertyEditors.put(ConceptPropertyType., .class);
-    //  propertyEditors.put(ConceptPropertyType., .class);
-    //  propertyEditors.put(ConceptPropertyType., .class);
-    //  propertyEditors.put(ConceptPropertyType., .class);
-    //  propertyEditors.put(ConceptPropertyType., .class);
-    //  propertyEditors.put(ConceptPropertyType., .class);
     propertyEditorMap = Collections.unmodifiableMap(propertyEditors);
   }
 

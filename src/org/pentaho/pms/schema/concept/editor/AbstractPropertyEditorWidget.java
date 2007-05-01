@@ -6,19 +6,23 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.DefaultPropertyID;
 
@@ -42,7 +46,11 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
    */
   private String propertyId;
 
-  private CLabel titleLabel;
+  private Control topControl;
+
+  private ToolBar toolBar;
+
+  private ToolItem overrideButton;
 
   // ~ Constructors ====================================================================================================
 
@@ -58,11 +66,24 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
 
   // ~ Methods =========================================================================================================
 
+  protected final void createContents() {
+    addToolBar();
+    addTitleLabel();
+    Composite parent = new Composite(this, SWT.NONE);
+    parent.setLayout(new FormLayout());
+    FormData fdParent = new FormData();
+    fdParent.left = new FormAttachment(0, 0);
+    fdParent.right = new FormAttachment(100, 0);
+    fdParent.bottom = new FormAttachment(100, 0);
+    fdParent.top = new FormAttachment(topControl, 10);
+    parent.setLayoutData(fdParent);
+    createContents(parent);
+  }
+
   /**
    * Subclasses should:
    * <ol>
    * <li>Add a dispose listener.</li>
-   * <li>Add a selection or modification listener that sets <code>modified</code> flag to <code>true</code>.</li>
    * <li>Adds itself as a focus listener.</li>
    * <li>Sets itself editable according to <code>isEditable()</code>.</li>
    * <li></li>
@@ -70,7 +91,7 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
    * <li></li>
    * </ol>
    */
-  protected abstract void createContents();
+  protected abstract void createContents(final Composite parent);
 
   protected IConceptModel getConceptModel() {
     return conceptModel;
@@ -84,48 +105,31 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
    * Creates title label according to this widget's property id. Assumes <code>FormLayout</code>.
    * @return title control
    */
-  protected Control createTitleLabel() {
-    if (null == titleLabel) {
-      Image titleImage = null;
+  protected void addTitleLabel() {
+    Label titleLabel = new Label(this, SWT.NONE);
+    titleLabel.setText(DefaultPropertyID.findDefaultPropertyID(propertyId).getDescription());
+    Label sep = new Label(this, SWT.SEPARATOR | SWT.HORIZONTAL);
+    topControl = sep;
 
-      switch (conceptModel.getPropertyContributor(propertyId)) {
-        case IConceptModel.REL_THIS: {
-          titleImage = Constants.getImageRegistry(Display.getCurrent()).get("child-property");
-          break;
-        }
-        case IConceptModel.REL_SECURITY: {
-          titleImage = Constants.getImageRegistry(Display.getCurrent()).get("security-property");
-          break;
-        }
-        case IConceptModel.REL_PARENT: {
-          titleImage = Constants.getImageRegistry(Display.getCurrent()).get("parent-property");
-          break;
-        }
-        case IConceptModel.REL_INHERITED: {
-          titleImage = Constants.getImageRegistry(Display.getCurrent()).get("inherited-property");
-          break;
-        }
-        default: {
-          titleImage = null;
-        }
-      }
 
-      titleLabel = new CLabel(this, SWT.NONE);
-      titleLabel.setImage(titleImage);
-
-      titleLabel.setText(DefaultPropertyID.findDefaultPropertyID(propertyId).getDescription());
-      // Set the background gradient
-//      titleLabel.setBackground(
-//          new Color[] { Display.getCurrent().getSystemColor(SWT.COLOR_WHITE),
-//              Display.getCurrent().getSystemColor(SWT.COLOR_GRAY),
-//              Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY) }, new int[] { 33, 100 });
-      FormData fdTitle = new FormData();
+    FormData fdTitle = new FormData();
+    FormData fdSep = new FormData();
+    fdTitle.left = new FormAttachment(0, 0);
+    fdSep.left = new FormAttachment(0, 0);
+    fdSep.right = new FormAttachment(100, 0);
+    if (null != toolBar) {
+      fdTitle.bottom = new FormAttachment(sep, 0);
+      fdSep.top = new FormAttachment(toolBar, 0);
+    } else {
       fdTitle.top = new FormAttachment(0, 0);
-      fdTitle.left = new FormAttachment(0, 0);
-      fdTitle.right = new FormAttachment(100, 0);
-      titleLabel.setLayoutData(fdTitle);
+      fdSep.top = new FormAttachment(titleLabel, 10);
     }
-    return titleLabel;
+
+
+    titleLabel.setLayoutData(fdTitle);
+
+    sep.setLayoutData(fdSep);
+
   }
 
   protected boolean showOverrideConfirmDialog() {
@@ -226,4 +230,62 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
       putPropertyValue(propertyId);
     }
   }
+
+  protected void addToolBar() {
+    if (null != toolBar) {
+      toolBar.dispose();
+    }
+    if (null != propertyId) {
+      toolBar = new ToolBar(this, SWT.FLAT);
+
+      FormData fdToolBar = new FormData();
+      fdToolBar.top = new FormAttachment(0, 0);
+      fdToolBar.right = new FormAttachment(100, 0);
+      //      fdToolBar.bottom = new FormAttachment(topControl, 0);
+      toolBar.setLayoutData(fdToolBar);
+
+      // override button
+      if (conceptModel.canOverride(propertyId)) {
+        overrideButton = new ToolItem(toolBar, SWT.PUSH);
+        if (conceptModel.isOverridden(propertyId)) {
+          overrideButton.setImage(Constants.getImageRegistry(Display.getCurrent()).get("stop-override-button"));
+          overrideButton.setToolTipText("Stop Override");
+        } else {
+          overrideButton.setImage(Constants.getImageRegistry(Display.getCurrent()).get("override-button"));
+          overrideButton.setToolTipText("Override");
+        }
+        overrideButton.addSelectionListener(new SelectionAdapter() {
+          public void widgetSelected(final SelectionEvent e) {
+            overridePressed();
+          }
+        });
+      }
+    }
+  }
+
+  protected void overridePressed() {
+    /*
+     * Remember: override button is a button with toggle behavior.
+     * If the top property id is an existing child property, prompt to delete property and delete it if true,
+     * else add the child property. Concept model will fire events accordingly.
+     */
+    if (null != conceptModel.getProperty(propertyId, IConceptModel.REL_THIS)) {
+      boolean delete = MessageDialog.openConfirm(getShell(), "Confirm",
+          "Are you sure you want to stop overriding the property '"
+              + DefaultPropertyID.findDefaultPropertyID(propertyId).getDescription() + "'?");
+      if (delete) {
+        conceptModel.removeProperty(propertyId);
+        // no need to update override button selection status; concept mod event will do that
+      } else {
+        // user canceled; set override button back to "pressed" status
+        //        overrideButton.setSelection(true);
+      }
+    } else {
+      conceptModel.setProperty(DefaultPropertyID.findDefaultPropertyID(propertyId).getDefaultValue());
+      overrideButton.setImage(Constants.getImageRegistry(Display.getCurrent()).get("stop-override-button"));
+      overrideButton.setToolTipText("Stop Override");
+      //      overrideButton.setSelection(true);
+    }
+  }
+
 }

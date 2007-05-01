@@ -46,16 +46,16 @@ public class ColumnWidthPropertyEditorWidget extends AbstractPropertyEditorWidge
 
   // ~ Methods =========================================================================================================
 
-  protected void createContents() {
+  protected void createContents(final Composite parent) {
     addDisposeListener(new DisposeListener() {
       public void widgetDisposed(DisposeEvent e) {
         ColumnWidthPropertyEditorWidget.this.widgetDisposed(e);
       }
     });
-    Label typeLabel = new Label(this, SWT.NONE);
+    Label typeLabel = new Label(parent, SWT.NONE);
     typeLabel.setText(Messages.getString("ConceptPropertyColumnWidthWidget.USER_COLUMN_WIDTH_TYPE")); //$NON-NLS-1$
 
-    Combo type = new Combo(this, SWT.READ_ONLY | SWT.BORDER);
+    Combo type = new Combo(parent, SWT.READ_ONLY | SWT.BORDER);
 
     typeComboViewer = new ComboViewer(type);
 
@@ -87,7 +87,7 @@ public class ColumnWidthPropertyEditorWidget extends AbstractPropertyEditorWidge
     //    type.setToolTipText(Messages.getString("ConceptPropertyColumnWidthWidget.USER_SELECT_PROPERTY_TYPE_WIDTH", name)); //$NON-NLS-1$
     FormData fdType = new FormData();
     fdType.left = new FormAttachment(typeLabel, 10);
-    fdType.top = new FormAttachment(createTitleLabel(), 10);
+    fdType.top = new FormAttachment(0, 0);
     type.setLayoutData(fdType);
 
     FormData fdTypeLabel = new FormData();
@@ -95,10 +95,10 @@ public class ColumnWidthPropertyEditorWidget extends AbstractPropertyEditorWidge
     fdTypeLabel.top = new FormAttachment(type, 0, SWT.CENTER);
     typeLabel.setLayoutData(fdTypeLabel);
 
-    Label widthLabel = new Label(this, SWT.NONE);
+    Label widthLabel = new Label(parent, SWT.NONE);
     widthLabel.setText(Messages.getString("ConceptPropertyColumnWidthWidget.USER_COLUMN_WIDTH")); //$NON-NLS-1$
 
-    width = new Text(this, SWT.BORDER | SWT.SINGLE | SWT.LEFT);
+    width = new Text(parent, SWT.BORDER | SWT.SINGLE | SWT.LEFT);
 
     // only allow digits
     width.addListener(SWT.Verify, new Listener() {

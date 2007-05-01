@@ -47,12 +47,13 @@ public class Constants {
     imageRegistry = new ImageRegistry(display);
     //    imageRegistry.put("add-button", createImage(display, "16-circle-blue-add.png"));
     //    imageRegistry.put("del-button", createImage(display, "16-circle-blue-remove.png"));
-    //    imageRegistry.put("override-button", createImage(display, "16-circle-blue-check.png"));
+//        imageRegistry.put("override-button", createImage(display, "16-circle-blue-check.png"));
     //    imageRegistry.put("concept-editor-app", createImage(display, "16-circle-blue.png"));
-    imageRegistry.put("add-button", createImage(display, "16-em-plus.png"));
-    imageRegistry.put("del-button", createImage(display, "16-em-cross.png"));
-    imageRegistry.put("override-button", createImage(display, "16-em-check.png"));
-    imageRegistry.put("concept-editor-app", createImage(display, "16-em-pencil.png"));
+    imageRegistry.put("add-button", createImage(display, "child-property-add.png"));
+    imageRegistry.put("del-button", createImage(display, "child-property-delete.png"));
+    imageRegistry.put("override-button", createImage(display, "override.png"));
+    imageRegistry.put("stop-override-button", createImage(display, "stop-override.png"));
+    imageRegistry.put("concept-editor-app", createImage(display, "concept-editor.png"));
     imageRegistry.put("property-group", createImage(display, "folder.png"));
 
     imageRegistry.put("parent-property", createImage(display, "parent-property.png"));

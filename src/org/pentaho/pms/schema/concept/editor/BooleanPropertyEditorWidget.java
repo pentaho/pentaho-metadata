@@ -36,18 +36,18 @@ public class BooleanPropertyEditorWidget extends AbstractPropertyEditorWidget {
 
   // ~ Methods =========================================================================================================
 
-  protected void createContents() {
+  protected void createContents(final Composite parent) {
     addDisposeListener(new DisposeListener() {
       public void widgetDisposed(DisposeEvent e) {
         BooleanPropertyEditorWidget.this.widgetDisposed(e);
       }
     });
-    button = new Button(this, SWT.CHECK);
+    button = new Button(parent, SWT.CHECK);
     button.setText(DefaultPropertyID.findDefaultPropertyID(getPropertyId()).getDescription());
 
     FormData fdCheck = new FormData();
     fdCheck.left = new FormAttachment(0, 0);
-    fdCheck.top = new FormAttachment(createTitleLabel(), 10);
+    fdCheck.top = new FormAttachment(0, 0);
     button.setLayoutData(fdCheck);
 
     button.addFocusListener(new PropertyEditorWidgetFocusListener());

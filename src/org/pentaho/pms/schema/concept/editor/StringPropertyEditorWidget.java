@@ -38,17 +38,17 @@ public class StringPropertyEditorWidget extends AbstractPropertyEditorWidget {
 
   // ~ Methods =========================================================================================================
 
-  protected void createContents() {
+  protected void createContents(final Composite parent) {
     addDisposeListener(new DisposeListener() {
       public void widgetDisposed(DisposeEvent e) {
         StringPropertyEditorWidget.this.widgetDisposed(e);
       }
     });
 
-    stringLabel = new Label(this, SWT.NONE);
+    stringLabel = new Label(parent, SWT.NONE);
     stringLabel.setText("Value:");
 
-    string = new Text(this, SWT.BORDER);
+    string = new Text(parent, SWT.BORDER);
 
     FormData fd1 = new FormData();
     fd1.left = new FormAttachment(0, 0);
@@ -57,7 +57,7 @@ public class StringPropertyEditorWidget extends AbstractPropertyEditorWidget {
 
     FormData fd2 = new FormData();
     fd2.left = new FormAttachment(stringLabel, 10);
-    fd2.top = new FormAttachment(createTitleLabel(), 10);
+    fd2.top = new FormAttachment(0, 0);
     fd2.right = new FormAttachment(100, 0);
     string.setLayoutData(fd2);
 
