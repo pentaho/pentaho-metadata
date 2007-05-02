@@ -18,13 +18,12 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
+import org.pentaho.pms.schema.concept.types.alignment.AlignmentSettings;
 
-public class AggregationPropertyEditorWidget extends AbstractPropertyEditorWidget {
-
+public class AlignmentPropertyEditorWidget extends AbstractPropertyEditorWidget {
   // ~ Static fields/initializers ======================================================================================
 
-  private static final Log logger = LogFactory.getLog(AggregationPropertyEditorWidget.class);
+  private static final Log logger = LogFactory.getLog(AlignmentPropertyEditorWidget.class);
 
   // ~ Instance fields =================================================================================================
 
@@ -34,12 +33,12 @@ public class AggregationPropertyEditorWidget extends AbstractPropertyEditorWidge
 
   // ~ Constructors ====================================================================================================
 
-  public AggregationPropertyEditorWidget(final Composite parent, final int style, final IConceptModel conceptModel,
+  public AlignmentPropertyEditorWidget(final Composite parent, final int style, final IConceptModel conceptModel,
       final String propertyId) {
     super(parent, style, conceptModel, propertyId);
     setValue(getProperty().getValue());
     if (logger.isDebugEnabled()) {
-      logger.debug("created AggregationPropertyEditorWidget");
+      logger.debug("created AlignmentPropertyEditorWidget");
     }
   }
 
@@ -48,7 +47,7 @@ public class AggregationPropertyEditorWidget extends AbstractPropertyEditorWidge
   protected void createContents(final Composite parent) {
     addDisposeListener(new DisposeListener() {
       public void widgetDisposed(DisposeEvent e) {
-        AggregationPropertyEditorWidget.this.widgetDisposed(e);
+        AlignmentPropertyEditorWidget.this.widgetDisposed(e);
       }
     });
     Label typeLabel = new Label(parent, SWT.NONE);
@@ -59,7 +58,7 @@ public class AggregationPropertyEditorWidget extends AbstractPropertyEditorWidge
 
     typeComboViewer.setContentProvider(new IStructuredContentProvider() {
       public Object[] getElements(final Object inputElement) {
-        return (AggregationSettings[]) inputElement;
+        return (AlignmentSettings[]) inputElement;
       }
 
       public void dispose() {
@@ -69,7 +68,7 @@ public class AggregationPropertyEditorWidget extends AbstractPropertyEditorWidge
       }
     });
 
-    typeComboViewer.setInput(AggregationSettings.types);
+    typeComboViewer.setInput(AlignmentSettings.types);
 
     typeComboViewer.setLabelProvider(new LabelProvider() {
       public Image getImage(final Object element) {
@@ -78,7 +77,7 @@ public class AggregationPropertyEditorWidget extends AbstractPropertyEditorWidge
       }
 
       public String getText(final Object element) {
-        return ((AggregationSettings) element).getDescription();
+        return ((AlignmentSettings) element).getDescription();
       }
     });
 
@@ -98,15 +97,15 @@ public class AggregationPropertyEditorWidget extends AbstractPropertyEditorWidge
 
   public Object getValue() {
     IStructuredSelection selection = (IStructuredSelection) typeComboViewer.getSelection();
-    AggregationSettings aggSettings = (AggregationSettings) selection.getFirstElement();
+    AlignmentSettings aggSettings = (AlignmentSettings) selection.getFirstElement();
     int aggType = aggSettings.getType();
-    return new AggregationSettings(aggType);
+    return new AlignmentSettings(aggType);
   }
 
   protected void setValue(final Object value) {
-    if (value instanceof AggregationSettings) {
-      AggregationSettings aggSettings = (AggregationSettings) value;
-      typeComboViewer.setSelection(new StructuredSelection(AggregationSettings.getType(aggSettings.getCode())));
+    if (value instanceof AlignmentSettings) {
+      AlignmentSettings aggSettings = (AlignmentSettings) value;
+      typeComboViewer.setSelection(new StructuredSelection(AlignmentSettings.getType(aggSettings.getCode())));
     }
   }
 

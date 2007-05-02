@@ -67,8 +67,18 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
   // ~ Methods =========================================================================================================
 
   protected final void createContents() {
-    addToolBar();
-    addTitleLabel();
+    createToolBar();
+    createTitleLabel();
+    createContents(createWidgetArea());
+    addModificationListeners();
+    addDisposeListener(new DisposeListener() {
+      public void widgetDisposed(final DisposeEvent e) {
+        removeModificationListeners();
+      }
+    });
+  }
+
+  protected final Composite createWidgetArea() {
     Composite parent = new Composite(this, SWT.NONE);
     parent.setLayout(new FormLayout());
     FormData fdParent = new FormData();
@@ -77,8 +87,20 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
     fdParent.bottom = new FormAttachment(100, 0);
     fdParent.top = new FormAttachment(topControl, 10);
     parent.setLayoutData(fdParent);
-    createContents(parent);
+    return parent;
   }
+
+  /**
+   * Subclasses should add listeners (e.g. focus, modify, selectionChanged) to each of their child widgets so that
+   * modifications to property values can be captured and saved to the model. Note that there is no listener type as a
+   * parameter to this method. It exists to enforce listener addition in subclasses.
+   */
+  protected abstract void addModificationListeners();
+
+  /**
+   * Removes the listeners added in <code>addModificationListeners</code>.
+   */
+  protected abstract void removeModificationListeners();
 
   /**
    * Subclasses should:
@@ -102,7 +124,7 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
    * Creates title label according to this widget's property id. Assumes <code>FormLayout</code>.
    * @return title control
    */
-  protected void addTitleLabel() {
+  protected final void createTitleLabel() {
     Label titleLabel = new Label(this, SWT.NONE);
     titleLabel.setText(DefaultPropertyID.findDefaultPropertyID(propertyId).getDescription());
     Label sep = new Label(this, SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -208,7 +230,7 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
     }
   }
 
-  protected void addToolBar() {
+  protected final void createToolBar() {
     if (null != toolBar) {
       toolBar.dispose();
     }
@@ -250,8 +272,6 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
       }
     } else {
       conceptModel.setProperty(DefaultPropertyID.findDefaultPropertyID(propertyId).getDefaultValue());
-      overrideButton.setImage(Constants.getImageRegistry(Display.getCurrent()).get("stop-override-button"));
-      overrideButton.setToolTipText("Stop Override");
     }
   }
 

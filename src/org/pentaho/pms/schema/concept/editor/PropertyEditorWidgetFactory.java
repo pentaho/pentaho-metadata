@@ -43,12 +43,12 @@ public class PropertyEditorWidgetFactory {
     //  propertyEditors.put(ConceptPropertyType.PROPERTY_TYPE_FIELDTYPE, .class);
     propertyEditors.put(ConceptPropertyType.AGGREGATION, AggregationPropertyEditorWidget.class);
     propertyEditors.put(ConceptPropertyType.BOOLEAN, BooleanPropertyEditorWidget.class);
-    //  propertyEditors.put(ConceptPropertyType.PROPERTY_TYPE_DATATYPE, .class);
+      propertyEditors.put(ConceptPropertyType.DATATYPE, DataTypePropertyEditorWidget.class);
     propertyEditors.put(ConceptPropertyType.LOCALIZED_STRING, LocalizedStringPropertyEditorWidget.class);
     //  propertyEditors.put(ConceptPropertyType.PROPERTY_TYPE_TABLETYPE, .class);
     //  propertyEditors.put(ConceptPropertyType.PROPERTY_TYPE_URL, .class);
     //  propertyEditors.put(ConceptPropertyType.PROPERTY_TYPE_SECURITY, .class);
-    //  propertyEditors.put(ConceptPropertyType.PROPERTY_TYPE_ALIGNMENT, .class);
+    propertyEditors.put(ConceptPropertyType.ALIGNMENT, AlignmentPropertyEditorWidget.class);
     propertyEditors.put(ConceptPropertyType.COLUMN_WIDTH, ColumnWidthPropertyEditorWidget.class);
     propertyEditorMap = Collections.unmodifiableMap(propertyEditors);
   }

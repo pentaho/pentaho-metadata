@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -13,6 +14,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -37,6 +39,10 @@ public class ColumnWidthPropertyEditorWidget extends AbstractPropertyEditorWidge
 
   private Text width;
 
+  private FocusListener focusListener;
+
+  private ISelectionChangedListener selectionChangedListener;
+
   // ~ Constructors ====================================================================================================
 
   public ColumnWidthPropertyEditorWidget(final Composite parent, final int style, final IConceptModel conceptModel,
@@ -54,7 +60,7 @@ public class ColumnWidthPropertyEditorWidget extends AbstractPropertyEditorWidge
       }
     });
     Label typeLabel = new Label(parent, SWT.NONE);
-    typeLabel.setText(Messages.getString("ConceptPropertyColumnWidthWidget.USER_COLUMN_WIDTH_TYPE")); //$NON-NLS-1$
+    typeLabel.setText("Column Width Type:"); //$NON-NLS-1$
 
     Combo type = new Combo(parent, SWT.READ_ONLY | SWT.BORDER);
 
@@ -85,7 +91,6 @@ public class ColumnWidthPropertyEditorWidget extends AbstractPropertyEditorWidge
       }
     });
 
-    //    type.setToolTipText(Messages.getString("ConceptPropertyColumnWidthWidget.USER_SELECT_PROPERTY_TYPE_WIDTH", name)); //$NON-NLS-1$
     FormData fdType = new FormData();
     fdType.left = new FormAttachment(typeLabel, 10);
     fdType.top = new FormAttachment(0, 0);
@@ -97,7 +102,7 @@ public class ColumnWidthPropertyEditorWidget extends AbstractPropertyEditorWidge
     typeLabel.setLayoutData(fdTypeLabel);
 
     Label widthLabel = new Label(parent, SWT.NONE);
-    widthLabel.setText(Messages.getString("ConceptPropertyColumnWidthWidget.USER_COLUMN_WIDTH")); //$NON-NLS-1$
+    widthLabel.setText("Column Width:"); //$NON-NLS-1$
 
     width = new Text(parent, SWT.BORDER | SWT.SINGLE | SWT.LEFT);
 
@@ -127,10 +132,6 @@ public class ColumnWidthPropertyEditorWidget extends AbstractPropertyEditorWidge
     fdWidthLabel.left = new FormAttachment(0, 0);
     fdWidthLabel.top = new FormAttachment(width, 0, SWT.CENTER);
     widthLabel.setLayoutData(fdWidthLabel);
-
-//    type.addFocusListener(new PropertyEditorWidgetFocusListener());
-    typeComboViewer.addSelectionChangedListener(new PropertyEditorWidgetSelectionChangedListener());
-    width.addFocusListener(new PropertyEditorWidgetFocusListener());
   }
 
   protected void widgetDisposed(final DisposeEvent e) {
@@ -160,6 +161,20 @@ public class ColumnWidthPropertyEditorWidget extends AbstractPropertyEditorWidge
         width.setText("");
       }
     }
+  }
+
+  protected void addModificationListeners() {
+    if (null == selectionChangedListener) {
+      selectionChangedListener = new PropertyEditorWidgetSelectionChangedListener();
+      focusListener = new PropertyEditorWidgetFocusListener();
+      typeComboViewer.addSelectionChangedListener(selectionChangedListener);
+      width.addFocusListener(focusListener);
+    }
+  }
+
+  protected void removeModificationListeners() {
+    typeComboViewer.removeSelectionChangedListener(selectionChangedListener);
+    width.removeFocusListener(focusListener);
   }
 
 }

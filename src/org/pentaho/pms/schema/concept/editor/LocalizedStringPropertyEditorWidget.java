@@ -129,4 +129,14 @@ public class LocalizedStringPropertyEditorWidget extends AbstractSchemaMetaAware
     setValue(getProperty().getValue());
   }
 
+  protected void addModificationListeners() {
+    // TODO Auto-generated method stub
+
+  }
+
+  protected void removeModificationListeners() {
+    // TODO Auto-generated method stub
+
+  }
+
 }

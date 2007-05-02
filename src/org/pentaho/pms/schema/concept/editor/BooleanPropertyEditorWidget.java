@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Button;
@@ -17,9 +18,11 @@ public class BooleanPropertyEditorWidget extends AbstractPropertyEditorWidget {
 
   private static final Log logger = LogFactory.getLog(BooleanPropertyEditorWidget.class);
 
-  private Button button;
-
   // ~ Instance fields =================================================================================================
+
+  private FocusListener focusListener;
+
+  private Button button;
 
   // ~ Constructors ====================================================================================================
 
@@ -48,7 +51,7 @@ public class BooleanPropertyEditorWidget extends AbstractPropertyEditorWidget {
     fdCheck.top = new FormAttachment(0, 0);
     button.setLayoutData(fdCheck);
 
-    button.addFocusListener(new PropertyEditorWidgetFocusListener());
+
 
     button.setEnabled(isEditable());
   }
@@ -62,6 +65,18 @@ public class BooleanPropertyEditorWidget extends AbstractPropertyEditorWidget {
 
   protected void setValue(final Object value) {
     button.setSelection(((Boolean) value).booleanValue());
+  }
+
+  protected void addModificationListeners() {
+    if (null == focusListener) {
+      focusListener = new PropertyEditorWidgetFocusListener();
+    button.addFocusListener(focusListener);
+    }
+
+  }
+
+  protected void removeModificationListeners() {
+    button.removeFocusListener(focusListener);
   }
 
 }

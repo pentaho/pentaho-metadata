@@ -5,14 +5,12 @@ import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.pentaho.pms.schema.concept.editor.AbstractPropertyEditorWidget.PropertyEditorWidgetFocusListener;
 
 public class StringPropertyEditorWidget extends AbstractPropertyEditorWidget {
   // ~ Static fields/initializers ======================================================================================
@@ -24,6 +22,8 @@ public class StringPropertyEditorWidget extends AbstractPropertyEditorWidget {
   private Text string;
 
   private Label stringLabel;
+
+  private FocusListener focusListener;
 
   // ~ Constructors ====================================================================================================
 
@@ -61,18 +61,6 @@ public class StringPropertyEditorWidget extends AbstractPropertyEditorWidget {
     fd2.right = new FormAttachment(100, 0);
     string.setLayoutData(fd2);
 
-//    string.addModifyListener(new ModifyListener() {
-//      public void modifyText(final ModifyEvent e) {
-//        // setting modified now; remember to reset when control loses focus
-//        synchronized (StringPropertyEditorWidget.this) {
-//
-//          setModified(true);
-//        }
-//      }
-//    });
-
-    string.addFocusListener(new PropertyEditorWidgetFocusListener());
-
     string.setEditable(isEditable());
   }
 
@@ -85,5 +73,16 @@ public class StringPropertyEditorWidget extends AbstractPropertyEditorWidget {
 
   protected void setValue(final Object value) {
     string.setText(value.toString());
+  }
+
+  protected void addModificationListeners() {
+    if (null == focusListener) {
+      focusListener = new PropertyEditorWidgetFocusListener();
+      string.addFocusListener(focusListener);
+    }
+  }
+
+  protected void removeModificationListeners() {
+    string.removeFocusListener(focusListener);
   }
 }

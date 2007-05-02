@@ -121,4 +121,13 @@ public class ColorPropertyEditorWidget extends AbstractPropertyEditorWidget {
     }
   }
 
+  protected void addModificationListeners() {
+    // nothing to do
+  }
+
+  protected void removeModificationListeners() {
+    // nothing to do
+
+  }
+
 }

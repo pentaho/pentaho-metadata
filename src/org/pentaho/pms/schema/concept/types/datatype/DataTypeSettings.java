@@ -1,17 +1,19 @@
 /*
- * Copyright 2006 Pentaho Corporation.  All rights reserved. 
- * This software was developed by Pentaho Corporation and is provided under the terms 
- * of the Mozilla Public License, Version 1.1, or any later version. You may not use 
- * this file except in compliance with the license. If you need a copy of the license, 
- * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho 
+ * Copyright 2006 Pentaho Corporation.  All rights reserved.
+ * This software was developed by Pentaho Corporation and is provided under the terms
+ * of the Mozilla Public License, Version 1.1, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho
  * BI Platform.  The Initial Developer is Pentaho Corporation.
  *
- * Software distributed under the Mozilla Public License is distributed on an "AS IS" 
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to 
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
  * the license for the specific language governing your rights and limitations.
 */
 package org.pentaho.pms.schema.concept.types.datatype;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.pentaho.pms.messages.Messages;
 
 public class DataTypeSettings
@@ -24,7 +26,7 @@ public class DataTypeSettings
     public static final int DATA_TYPE_BINARY    = 5;
     public static final int DATA_TYPE_IMAGE     = 6;
     public static final int DATA_TYPE_URL       = 7;
-    
+
     public static final DataTypeSettings UNKNOWN = new DataTypeSettings(DATA_TYPE_UNKNOWN);
     public static final DataTypeSettings STRING  = new DataTypeSettings(DATA_TYPE_STRING);
     public static final DataTypeSettings DATE    = new DataTypeSettings(DATA_TYPE_DATE);
@@ -33,9 +35,9 @@ public class DataTypeSettings
     public static final DataTypeSettings BINARY  = new DataTypeSettings(DATA_TYPE_BINARY);
     public static final DataTypeSettings IMAGE   = new DataTypeSettings(DATA_TYPE_IMAGE);
     public static final DataTypeSettings URL     = new DataTypeSettings(DATA_TYPE_URL);
-    
+
     public static final String typeCodes[] = { "Unknown", "String", "Date", "Boolean", "Numeric", "Binary", "Image", "URL", }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
-    public static final String typeDescriptions[] = { 
+    public static final String typeDescriptions[] = {
       Messages.getString("DataTypeSettings.USER_UNKNOWN_DESC"),   //$NON-NLS-1$
       Messages.getString("DataTypeSettings.USER_STRING_DESC"),   //$NON-NLS-1$
       Messages.getString("DataTypeSettings.USER_DATE_DESC"),   //$NON-NLS-1$
@@ -43,15 +45,15 @@ public class DataTypeSettings
       Messages.getString("DataTypeSettings.USER_NUMERIC_DESC"),   //$NON-NLS-1$
       Messages.getString("DataTypeSettings.USER_BINARY_DESC"),   //$NON-NLS-1$
       Messages.getString("DataTypeSettings.USER_IMAGE_DESC"),   //$NON-NLS-1$
-      Messages.getString("DataTypeSettings.USER_URL_DESC"), }; //$NON-NLS-1$ 
+      Messages.getString("DataTypeSettings.USER_URL_DESC"), }; //$NON-NLS-1$
     public static final DataTypeSettings[] types = new DataTypeSettings[] { UNKNOWN, STRING, DATE, BOOLEAN, NUMERIC, BINARY, IMAGE, URL, };
-    
+
     private static final String SEPARATOR = ","; //$NON-NLS-1$
-    
+
     private int type;
     private int length;
     private int precision;
-    
+
     /**
      * @param type
      * @param length
@@ -64,7 +66,7 @@ public class DataTypeSettings
         this.length = length;
         this.precision = precision;
     }
-    
+
     /**
      * @param type
      * @param length
@@ -77,12 +79,12 @@ public class DataTypeSettings
         this.length = -1;
         this.precision = -1;
     }
-    
+
     public String toString()
     {
         return getCode()+SEPARATOR+length+SEPARATOR+precision;
     }
-    
+
     public static DataTypeSettings fromString(String value)
     {
         String pieces[] = value.split(SEPARATOR);
@@ -97,7 +99,7 @@ public class DataTypeSettings
                     settings.setPrecision(Integer.parseInt(pieces[2]));
                 }
             }
-            
+
             return settings;
         }
         return null;
@@ -133,17 +135,17 @@ public class DataTypeSettings
     {
         this.type = type;
     }
-    
+
     public String getCode()
     {
         return typeCodes[type];
     }
-    
+
     public String getDescription()
     {
         return typeDescriptions[type];
     }
-    
+
     public static DataTypeSettings getType(String description)
     {
         for (int i=0;i<typeDescriptions.length;i++)
@@ -161,6 +163,22 @@ public class DataTypeSettings
             }
         }
         return UNKNOWN;
+    }
+
+    public boolean equals(Object obj) {
+      if (obj instanceof DataTypeSettings == false) {
+        return false;
+      }
+      if (this == obj) {
+        return true;
+      }
+      DataTypeSettings rhs = (DataTypeSettings) obj;
+      return new EqualsBuilder().append(type, rhs.type).append(length, rhs.length).append(precision, rhs.precision)
+      .isEquals();
+    }
+
+    public int hashCode() {
+      return new HashCodeBuilder(23, 227).append(type).append(length).append(precision).toHashCode();
     }
 
 }
