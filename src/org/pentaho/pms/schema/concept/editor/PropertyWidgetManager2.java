@@ -119,7 +119,7 @@ public class PropertyWidgetManager2 extends Composite implements ISelectionChang
     //    widgetAreaWrapper.setLayout(new FillLayout());
     //    Composite widgetAreaWrapper = new Composite(this, SWT.BORDER);
     FormData fd9 = new FormData();
-    fd9.top = new FormAttachment(0, 16 + 10 + 6);
+    fd9.top = new FormAttachment(0, 38);
     fd9.left = new FormAttachment(0, 0);
     fd9.right = new FormAttachment(100, 0);
     fd9.bottom = new FormAttachment(100, 0);

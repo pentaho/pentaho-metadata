@@ -114,16 +114,18 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
 
     FormData fdTitle = new FormData();
     FormData fdSep = new FormData();
-    fdTitle.left = new FormAttachment(0, 0);
+    fdSep.top = new FormAttachment(0, 28);
     fdSep.left = new FormAttachment(0, 0);
     fdSep.right = new FormAttachment(100, 0);
-    if (null != toolBar) {
-      fdTitle.bottom = new FormAttachment(sep, 0);
-      fdSep.top = new FormAttachment(toolBar, 0);
-    } else {
-      fdTitle.top = new FormAttachment(0, 0);
-      fdSep.top = new FormAttachment(titleLabel, 10);
-    }
+    fdTitle.left = new FormAttachment(0, 0);
+    fdTitle.bottom = new FormAttachment(sep, 0);
+
+    //    if (null != toolBar) {
+//
+//    } else {
+//      fdTitle.top = new FormAttachment(0, 0);
+////      fdSep.top = new FormAttachment(titleLabel, 10);
+//    }
 
 
     titleLabel.setLayoutData(fdTitle);
@@ -239,6 +241,7 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
       toolBar = new ToolBar(this, SWT.FLAT);
 
       FormData fdToolBar = new FormData();
+//      fdToolBar.bottom = new FormAttachment(topControl, -10);
       fdToolBar.top = new FormAttachment(0, 0);
       fdToolBar.right = new FormAttachment(100, 0);
       //      fdToolBar.bottom = new FormAttachment(topControl, 0);

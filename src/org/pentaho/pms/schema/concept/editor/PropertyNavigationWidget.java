@@ -124,7 +124,7 @@ public class PropertyNavigationWidget extends Composite implements ISelectionPro
     lab1.setLayoutData(fd1);
 
     FormData fd6 = new FormData();
-    fd6.top = new FormAttachment(tb3, 10);
+    fd6.top = new FormAttachment(0, 38);
     fd6.left = new FormAttachment(0, 0);
     fd6.right = new FormAttachment(100, 0);
     fd6.bottom = new FormAttachment(100, 0);
