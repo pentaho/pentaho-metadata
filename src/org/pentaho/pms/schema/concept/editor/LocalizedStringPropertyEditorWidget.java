@@ -50,17 +50,13 @@ public class LocalizedStringPropertyEditorWidget extends AbstractSchemaMetaAware
             ColumnInfo.COLUMN_TYPE_TEXT, false, false), //$NON-NLS-1$
     };
 
-    table = new TableView(parent, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI, colinf, 0, true, null,
-        props);
+    table = new TableView(parent, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI, colinf, 0, true, null, props);
 
-//    createTitleLabel();
     FormData fdFields = new FormData();
     fdFields.left = new FormAttachment(0, 0);
     fdFields.top = new FormAttachment(0, 0);
     fdFields.right = new FormAttachment(100, 0);
     table.setLayoutData(fdFields);
-    //table.table.addFocusListener(this);
-//    table.addModifyListener(new PropertyEditorWidgetModifyListener());
     table.addKeyListener(new KeyListener() {
 
       public void keyPressed(KeyEvent arg0) {
@@ -68,18 +64,16 @@ public class LocalizedStringPropertyEditorWidget extends AbstractSchemaMetaAware
           logger.debug("keypressed");
         }
 
-        for (int i = 0; i < table.nrNonEmpty(); i++)
-        {
-            TableItem item = table.getNonEmpty(i);
-            String locale = item.getText(1);
-            String string = item.getText(2);
+        for (int i = 0; i < table.nrNonEmpty(); i++) {
+          TableItem item = table.getNonEmpty(i);
+          String locale = item.getText(1);
+          String string = item.getText(2);
 
-            if (!Const.isEmpty(locale) && !Const.isEmpty(string))
-            {
-                if (logger.isDebugEnabled()) {
-                  logger.debug(locale + ", " + string);
-                }
+          if (!Const.isEmpty(locale) && !Const.isEmpty(string)) {
+            if (logger.isDebugEnabled()) {
+              logger.debug(locale + ", " + string);
             }
+          }
         }
 
       }
@@ -92,23 +86,18 @@ public class LocalizedStringPropertyEditorWidget extends AbstractSchemaMetaAware
       }
 
     });
-
-
-
   }
 
   public Object getValue() {
     LocalizedStringSettings settings = new LocalizedStringSettings();
-    for (int i = 0; i < table.nrNonEmpty(); i++)
-    {
-        TableItem item = table.getNonEmpty(i);
-        String locale = item.getText(1);
-        String string = item.getText(2);
+    for (int i = 0; i < table.nrNonEmpty(); i++) {
+      TableItem item = table.getNonEmpty(i);
+      String locale = item.getText(1);
+      String string = item.getText(2);
 
-        if (!Const.isEmpty(locale) && !Const.isEmpty(string))
-        {
-            settings.setLocaleString(locale, string);
-        }
+      if (!Const.isEmpty(locale) && !Const.isEmpty(string)) {
+        settings.setLocaleString(locale, string);
+      }
     }
     return settings;
   }
@@ -119,14 +108,15 @@ public class LocalizedStringPropertyEditorWidget extends AbstractSchemaMetaAware
 
     table.removeAll();
 
-    for (int i=0;i<locs.length;i++)
-    {
-        TableItem item = new TableItem(table.table, SWT.NONE);
-        String string = null;
-        if (settings!=null) string = settings.getString(locs[i]);
+    for (int i = 0; i < locs.length; i++) {
+      TableItem item = new TableItem(table.table, SWT.NONE);
+      String string = null;
+      if (settings != null)
+        string = settings.getString(locs[i]);
 
-        item.setText(1, locs[i]);
-        if (string!=null) item.setText(2, string);
+      item.setText(1, locs[i]);
+      if (string != null)
+        item.setText(2, string);
     }
     table.removeEmptyRows();
     table.setRowNums();

@@ -12,7 +12,7 @@ import org.pentaho.pms.util.Const;
 
 public class Constants {
 
-  // ~ Static fields/initializers ============================================
+  // ~ Static fields/initializers ======================================================================================
 
   private static final Log logger = LogFactory.getLog(Constants.class);
 
@@ -20,7 +20,11 @@ public class Constants {
 
   private static ImageRegistry imageRegistry;
 
-  // ~ Methods ===============================================================
+  // ~ Instance fields =================================================================================================
+
+  // ~ Constructors ====================================================================================================
+
+  // ~ Methods =========================================================================================================
 
   public static FontRegistry getFontRegistry(final Display display) {
     if (null == fontRegistry) {
@@ -45,10 +49,6 @@ public class Constants {
 
   private static void initImageRegistry(final Display display) {
     imageRegistry = new ImageRegistry(display);
-    //    imageRegistry.put("add-button", createImage(display, "16-circle-blue-add.png"));
-    //    imageRegistry.put("del-button", createImage(display, "16-circle-blue-remove.png"));
-//        imageRegistry.put("override-button", createImage(display, "16-circle-blue-check.png"));
-    //    imageRegistry.put("concept-editor-app", createImage(display, "16-circle-blue.png"));
     imageRegistry.put("add-button", createImage(display, "child-property-add.png"));
     imageRegistry.put("del-button", createImage(display, "child-property-delete.png"));
     imageRegistry.put("override-button", createImage(display, "override.png"));

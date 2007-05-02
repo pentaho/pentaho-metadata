@@ -5,16 +5,14 @@ import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.pentaho.pms.schema.concept.DefaultPropertyID;
-import org.pentaho.pms.schema.concept.editor.AbstractPropertyEditorWidget.PropertyEditorWidgetFocusListener;
 
 public class BooleanPropertyEditorWidget extends AbstractPropertyEditorWidget {
+
   // ~ Static fields/initializers ======================================================================================
 
   private static final Log logger = LogFactory.getLog(BooleanPropertyEditorWidget.class);

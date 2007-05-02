@@ -84,11 +84,8 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
    * Subclasses should:
    * <ol>
    * <li>Add a dispose listener.</li>
-   * <li>Adds itself as a focus listener.</li>
+   * <li>Adds itself as a focus/modify/selectionChanged listener or some other way to track modification.</li>
    * <li>Sets itself editable according to <code>isEditable()</code>.</li>
-   * <li></li>
-   * <li></li>
-   * <li></li>
    * </ol>
    */
   protected abstract void createContents(final Composite parent);
@@ -111,7 +108,6 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
     Label sep = new Label(this, SWT.SEPARATOR | SWT.HORIZONTAL);
     topControl = sep;
 
-
     FormData fdTitle = new FormData();
     FormData fdSep = new FormData();
     fdSep.top = new FormAttachment(0, 28);
@@ -119,14 +115,6 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
     fdSep.right = new FormAttachment(100, 0);
     fdTitle.left = new FormAttachment(0, 0);
     fdTitle.bottom = new FormAttachment(sep, 0);
-
-    //    if (null != toolBar) {
-//
-//    } else {
-//      fdTitle.top = new FormAttachment(0, 0);
-////      fdSep.top = new FormAttachment(titleLabel, 10);
-//    }
-
 
     titleLabel.setLayoutData(fdTitle);
 
@@ -202,19 +190,6 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
       if (logger.isDebugEnabled()) {
         logger.debug("focus gained on control for property with id \"" + propertyId + "\"");
       }
-      /*
-       * Warn the user if this control is not editable but the user is trying to click (to edit) the value.
-       */
-//      if (!isEditable() && !hasWarned()) {
-//        setWarned(true);
-//        boolean override = showOverrideConfirmDialog();
-//        if (override) {
-//          if (logger.isDebugEnabled()) {
-//            logger.debug("user chose to override after viewing override confirm dialog");
-//          }
-//          conceptModel.setProperty(DefaultPropertyID.findDefaultPropertyID(propertyId).getDefaultValue());
-//        }
-//      }
     }
 
   }
@@ -241,10 +216,8 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
       toolBar = new ToolBar(this, SWT.FLAT);
 
       FormData fdToolBar = new FormData();
-//      fdToolBar.bottom = new FormAttachment(topControl, -10);
       fdToolBar.top = new FormAttachment(0, 0);
       fdToolBar.right = new FormAttachment(100, 0);
-      //      fdToolBar.bottom = new FormAttachment(topControl, 0);
       toolBar.setLayoutData(fdToolBar);
 
       // override button
@@ -267,11 +240,6 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
   }
 
   protected void overridePressed() {
-    /*
-     * Remember: override button is a button with toggle behavior.
-     * If the top property id is an existing child property, prompt to delete property and delete it if true,
-     * else add the child property. Concept model will fire events accordingly.
-     */
     if (null != conceptModel.getProperty(propertyId, IConceptModel.REL_THIS)) {
       boolean delete = MessageDialog.openConfirm(getShell(), "Confirm",
           "Are you sure you want to stop overriding the property '"
@@ -279,15 +247,11 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
       if (delete) {
         conceptModel.removeProperty(propertyId);
         // no need to update override button selection status; concept mod event will do that
-      } else {
-        // user canceled; set override button back to "pressed" status
-        //        overrideButton.setSelection(true);
       }
     } else {
       conceptModel.setProperty(DefaultPropertyID.findDefaultPropertyID(propertyId).getDefaultValue());
       overrideButton.setImage(Constants.getImageRegistry(Display.getCurrent()).get("stop-override-button"));
       overrideButton.setToolTipText("Stop Override");
-      //      overrideButton.setSelection(true);
     }
   }
 

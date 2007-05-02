@@ -9,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * An event fired from the concept model when modifications are made.
  * @author mlowery
+ * @see IConceptModificationListener
  */
 public abstract class ConceptModificationEvent extends EventObject {
 

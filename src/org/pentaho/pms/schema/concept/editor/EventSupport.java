@@ -3,6 +3,9 @@ package org.pentaho.pms.schema.concept.editor;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * A more generic version of <code>PropertyChangeSupport</code>. Encourages thread-safe listener management and event
  * firing. Use <code>getListeners</code> in your "notify listeners" methods.
@@ -12,6 +15,20 @@ import java.util.Set;
  * @author mlowery
  */
 public class EventSupport {
+  // ~ Static fields/initializers ======================================================================================
+
+  private static final Log logger = LogFactory.getLog(EventSupport.class);
+
+  // ~ Instance fields =================================================================================================
+
+  // ~ Constructors ====================================================================================================
+
+  public EventSupport() {
+    super();
+  }
+
+  // ~ Methods =========================================================================================================
+
   private HashSet listeners = new HashSet();
 
   public synchronized void addListener(final Object listener) {

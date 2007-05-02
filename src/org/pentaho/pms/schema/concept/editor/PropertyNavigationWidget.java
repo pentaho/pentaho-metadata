@@ -132,7 +132,6 @@ public class PropertyNavigationWidget extends Composite implements ISelectionPro
 
     FormData fd3 = new FormData();
     fd3.top = new FormAttachment(0, 0);
-    //    fd3.bottom = new FormAttachment(propertyTree, 0);
     fd3.right = new FormAttachment(100, 0);
     tb3.setLayoutData(fd3);
 
@@ -162,7 +161,6 @@ public class PropertyNavigationWidget extends Composite implements ISelectionPro
   }
 
   protected void widgetDisposed(final DisposeEvent e) {
-    // TODO Auto-generated method stub
 
   }
 

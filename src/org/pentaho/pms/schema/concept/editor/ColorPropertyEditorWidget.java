@@ -15,7 +15,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -24,18 +23,16 @@ import org.pentaho.pms.schema.concept.types.color.ColorSettings;
 
 public class ColorPropertyEditorWidget extends AbstractPropertyEditorWidget {
 
-  // ~ Static fields/initializers ============================================
+  // ~ Static fields/initializers ======================================================================================
   private static final Log logger = LogFactory.getLog(ColorPropertyEditorWidget.class);
 
-  // ~ Instance fields =======================================================
+  // ~ Instance fields =================================================================================================
 
   private Color color = new Color(Display.getCurrent(), 255, 0, 0);
 
   private Button button;
 
-  private Canvas canvas;
-
-  // ~ Constructors ==========================================================
+  // ~ Constructors ====================================================================================================
 
   public ColorPropertyEditorWidget(final Composite parent, final int style, final IConceptModel conceptModel,
       final String propertyId) {
@@ -46,7 +43,7 @@ public class ColorPropertyEditorWidget extends AbstractPropertyEditorWidget {
     }
   }
 
-  // ~ Methods ===============================================================
+  // ~ Methods =========================================================================================================
 
   protected void createContents(Composite parent) {
     addDisposeListener(new DisposeListener() {

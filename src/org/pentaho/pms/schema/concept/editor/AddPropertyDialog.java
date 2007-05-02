@@ -18,16 +18,24 @@ import org.pentaho.pms.schema.concept.DefaultPropertyID;
 
 public class AddPropertyDialog extends TitleAreaDialog {
 
+  // ~ Static fields/initializers ======================================================================================
+
   private static final Log logger = LogFactory.getLog(PropertyTreeWidget.class);
+
+  // ~ Instance fields ===================================================================================================
 
   private IConceptModel conceptModel;
 
   private PropertyTreeWidget propertyTree;
 
+  // ~ Constructors ======================================================================================================
+
   public AddPropertyDialog(Shell parentShell, IConceptModel conceptModel) {
     super(parentShell);
     this.conceptModel = conceptModel;
   }
+
+  // ~ Methods ===========================================================================================================
 
   protected void configureShell(Shell shell) {
     super.configureShell(shell);

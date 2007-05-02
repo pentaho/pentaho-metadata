@@ -1,7 +1,5 @@
 package org.pentaho.pms.schema.concept.editor;
 
-import java.math.BigDecimal;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -20,18 +18,18 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
-import org.pentaho.pms.schema.concept.types.columnwidth.ColumnWidth;
 
 public class AggregationPropertyEditorWidget extends AbstractPropertyEditorWidget {
 
-  // ~ Static fields/initializers ============================================
+  // ~ Static fields/initializers ======================================================================================
+
   private static final Log logger = LogFactory.getLog(AggregationPropertyEditorWidget.class);
 
-  // ~ Instance fields =======================================================
+  // ~ Instance fields =================================================================================================
 
   private ComboViewer typeComboViewer;
 
-  // ~ Constructors ==========================================================
+  // ~ Constructors ====================================================================================================
 
   public AggregationPropertyEditorWidget(final Composite parent, final int style, final IConceptModel conceptModel,
       final String propertyId) {
@@ -42,22 +40,15 @@ public class AggregationPropertyEditorWidget extends AbstractPropertyEditorWidge
     }
   }
 
-  // ~ Methods ===============================================================
+  // ~ Methods =========================================================================================================
 
   protected void createContents(final Composite parent) {
-    //    Combo combo = new Combo(parent, SWT.BORDER);
-    //    combo.setItems(AggregationSettings.typeDescriptions);
-    //    FormData fdCombo = new FormData();
-    //    fdCombo.left = new FormAttachment(0, 0);
-    //    fdCombo.top = new FormAttachment(0, 0);
-    //    combo.setLayoutData(fdCombo);
     addDisposeListener(new DisposeListener() {
       public void widgetDisposed(DisposeEvent e) {
         AggregationPropertyEditorWidget.this.widgetDisposed(e);
       }
     });
     Label typeLabel = new Label(parent, SWT.NONE);
-    //    typeLabel.setText(Messages.getString("ConceptPropertyColumnWidthWidget.USER_COLUMN_WIDTH_TYPE")); //$NON-NLS-1$
     typeLabel.setText("Type:");
     Combo type = new Combo(parent, SWT.READ_ONLY | SWT.BORDER);
 
@@ -88,7 +79,6 @@ public class AggregationPropertyEditorWidget extends AbstractPropertyEditorWidge
       }
     });
 
-    //    type.setToolTipText(Messages.getString("ConceptPropertyColumnWidthWidget.USER_SELECT_PROPERTY_TYPE_WIDTH", name)); //$NON-NLS-1$
     FormData fdType = new FormData();
     fdType.left = new FormAttachment(typeLabel, 10);
     fdType.top = new FormAttachment(0, 0);

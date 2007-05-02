@@ -58,7 +58,8 @@ public class PropertyWidgetManager extends Composite implements ISelectionChange
 
   // ~ Constructors ====================================================================================================
 
-  public PropertyWidgetManager(final Composite parent, final int style, final SchemaMeta schemaMeta, final IConceptModel conceptModel) {
+  public PropertyWidgetManager(final Composite parent, final int style, final SchemaMeta schemaMeta,
+      final IConceptModel conceptModel) {
     super(parent, style);
     this.schemaMeta = schemaMeta;
     this.conceptModel = conceptModel;
@@ -155,7 +156,7 @@ public class PropertyWidgetManager extends Composite implements ISelectionChange
       // override button
       if (conceptModel.canOverride(propertyId)) {
         overrideButton = new ToolItem(toolBar, SWT.CHECK);
-//        overrideButton.setText("OVR");
+        //        overrideButton.setText("OVR");
         overrideButton.setImage(Constants.getImageRegistry(Display.getCurrent()).get("override-button"));
         overrideButton.setToolTipText("Override");
         if (conceptModel.isOverridden(propertyId)) {
@@ -209,8 +210,8 @@ public class PropertyWidgetManager extends Composite implements ISelectionChange
   }
 
   protected void addWidget(final ConceptPropertyInterface prop) {
-    IPropertyEditorWidget widget = PropertyEditorWidgetFactory.getWidget(schemaMeta, prop.getType(), stack, SWT.NONE, conceptModel,
-        prop.getId());
+    IPropertyEditorWidget widget = PropertyEditorWidgetFactory.getWidget(schemaMeta, prop.getType(), stack, SWT.NONE,
+        conceptModel, prop.getId());
     widgets.put(prop.getId(), widget);
     swapWidget(prop.getId());
   }

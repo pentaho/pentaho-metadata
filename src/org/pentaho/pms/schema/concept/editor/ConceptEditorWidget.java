@@ -1,24 +1,20 @@
 package org.pentaho.pms.schema.concept.editor;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.pentaho.pms.schema.SchemaMeta;
-import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 
+/**
+ * Given an <code>IConceptModel</code> instance, this graphical control provides a user interface for modifying the
+ * properties of the concept wrapped by the model.
+ * @author mlowery
+ */
 public class ConceptEditorWidget extends Composite {
 
   // ~ Static fields/initializers ======================================================================================
@@ -37,7 +33,8 @@ public class ConceptEditorWidget extends Composite {
 
   // ~ Constructors ====================================================================================================
 
-  public ConceptEditorWidget(final Composite parent, final int style, final SchemaMeta schemaMeta, final IConceptModel conceptModel) {
+  public ConceptEditorWidget(final Composite parent, final int style, final SchemaMeta schemaMeta,
+      final IConceptModel conceptModel) {
     super(parent, style);
     this.schemaMeta = schemaMeta;
     this.conceptModel = conceptModel;
@@ -76,7 +73,6 @@ public class ConceptEditorWidget extends Composite {
     w5.setLayoutData(fd5);
     this.propertyManagementWidget = w5;
 
-
     // widget for right side of sash
     PropertyWidgetManager2 m7 = new PropertyWidgetManager2(c3, SWT.NONE, schemaMeta, conceptModel);
     FormData fd7 = new FormData();
@@ -87,10 +83,7 @@ public class ConceptEditorWidget extends Composite {
     m7.setLayoutData(fd7);
     this.propertyWidgetManager = m7;
 
-
     propertyManagementWidget.addSelectionChangedListener(propertyWidgetManager);
-
-
 
     s0.setWeights(new int[] { 1, 2 });
   }
