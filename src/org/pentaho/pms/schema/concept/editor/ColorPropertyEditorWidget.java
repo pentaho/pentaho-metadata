@@ -130,4 +130,8 @@ public class ColorPropertyEditorWidget extends AbstractPropertyEditorWidget {
 
   }
 
+  protected boolean isValid() {
+    return true;
+  }
+
 }

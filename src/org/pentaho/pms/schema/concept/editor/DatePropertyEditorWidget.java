@@ -50,4 +50,9 @@ public class DatePropertyEditorWidget extends AbstractPropertyEditorWidget {
     return null;
   }
 
+  protected boolean isValid() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
 }

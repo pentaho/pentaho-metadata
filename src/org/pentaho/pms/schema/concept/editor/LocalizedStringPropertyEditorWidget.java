@@ -139,4 +139,8 @@ public class LocalizedStringPropertyEditorWidget extends AbstractSchemaMetaAware
 
   }
 
+  protected boolean isValid() {
+    return true;
+  }
+
 }

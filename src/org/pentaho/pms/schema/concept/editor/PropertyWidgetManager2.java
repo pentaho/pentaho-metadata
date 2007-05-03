@@ -160,11 +160,11 @@ public class PropertyWidgetManager2 extends Composite implements ISelectionChang
         String propertyId = (String) propIter.next();
         ConceptPropertyInterface prop = (ConceptPropertyInterface) conceptModel.getEffectiveProperty(propertyId);
         // add widget
+        if (logger.isDebugEnabled()) {
+          logger.debug("creating widget for property with id \"" + propertyId + "\"");
+        }
         IPropertyEditorWidget widget = PropertyEditorWidgetFactory.getWidget(schemaMeta, prop.getType(), widgetArea,
             SWT.NONE, conceptModel, prop.getId());
-        if (logger.isDebugEnabled()) {
-          logger.debug("adding widget for property with id \"" + propertyId + "\"");
-        }
         addWidget((Control) widget);
         widgets.put(prop.getId(), widget);
         focusWidget(prop.getId());

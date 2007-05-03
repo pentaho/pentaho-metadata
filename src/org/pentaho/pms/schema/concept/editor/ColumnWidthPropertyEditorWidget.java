@@ -176,4 +176,13 @@ public class ColumnWidthPropertyEditorWidget extends AbstractPropertyEditorWidge
     width.removeFocusListener(focusListener);
   }
 
+  protected boolean isValid() {
+    try {
+      new BigDecimal(width.getText());
+    } catch (NumberFormatException e) {
+      return false;
+    }
+    return true;
+  }
+
 }

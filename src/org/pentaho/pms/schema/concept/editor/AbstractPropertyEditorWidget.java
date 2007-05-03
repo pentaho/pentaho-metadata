@@ -103,6 +103,11 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
   protected abstract void removeModificationListeners();
 
   /**
+   * Returns whether or not the value encapsulated by this widget is valid so that it can be saved.
+   */
+  protected abstract boolean isValid();
+
+  /**
    * Subclasses should:
    * <ol>
    * <li>Add a dispose listener.</li>
@@ -167,8 +172,13 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
     return conceptModel.getEffectiveProperty(getPropertyId());
   }
 
-  protected void putPropertyValue() {
-    getConceptModel().setPropertyValue(propertyId, getValue());
+  protected synchronized void putPropertyValue() {
+    if (isValid()) {
+      if (logger.isDebugEnabled()) {
+        logger.debug("writing to the concept model");
+      }
+      getConceptModel().setPropertyValue(propertyId, getValue());
+    }
   }
 
   protected class PropertyEditorWidgetFocusListener implements FocusListener {

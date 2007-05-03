@@ -187,4 +187,14 @@ public class DataTypePropertyEditorWidget extends AbstractPropertyEditorWidget {
     length.removeFocusListener(lengthFocusListener);
     precision.removeFocusListener(precisionFocusListener);
   }
+
+  protected boolean isValid() {
+    try {
+      new Integer(precision.getText());
+      new Integer(length.getText());
+    } catch (NumberFormatException e) {
+      return false;
+    }
+    return true;
+  }
 }

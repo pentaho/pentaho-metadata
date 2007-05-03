@@ -121,4 +121,8 @@ public class AggregationPropertyEditorWidget extends AbstractPropertyEditorWidge
     typeComboViewer.removeSelectionChangedListener(selectionChangedListener);
   }
 
+  protected boolean isValid() {
+    return true;
+  }
+
 }

@@ -120,4 +120,8 @@ public class FieldTypePropertyEditorWidget extends AbstractPropertyEditorWidget 
     typeComboViewer.removeSelectionChangedListener(selectionChangedListener);
   }
 
+  protected boolean isValid() {
+    return true;
+  }
+
 }

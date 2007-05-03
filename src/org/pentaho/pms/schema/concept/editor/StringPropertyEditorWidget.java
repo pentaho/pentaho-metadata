@@ -85,4 +85,8 @@ public class StringPropertyEditorWidget extends AbstractPropertyEditorWidget {
   protected void removeModificationListeners() {
     string.removeFocusListener(focusListener);
   }
+
+  protected boolean isValid() {
+    return true;
+  }
 }

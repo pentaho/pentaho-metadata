@@ -37,7 +37,7 @@ public class PropertyEditorWidgetFactory {
     HashMap propertyEditors = new HashMap();
     propertyEditors.put(ConceptPropertyType.STRING, StringPropertyEditorWidget.class);
     propertyEditors.put(ConceptPropertyType.DATE, DatePropertyEditorWidget.class);
-    //  propertyEditors.put(ConceptPropertyType.PROPERTY_TYPE_NUMBER, .class);
+    propertyEditors.put(ConceptPropertyType.NUMBER, NumberPropertyEditorWidget.class);
     propertyEditors.put(ConceptPropertyType.COLOR, ColorPropertyEditorWidget.class);
     propertyEditors.put(ConceptPropertyType.FONT, FontPropertyEditorWidget.class);
     propertyEditors.put(ConceptPropertyType.FIELDTYPE, FieldTypePropertyEditorWidget.class);

@@ -79,4 +79,7 @@ public class BooleanPropertyEditorWidget extends AbstractPropertyEditorWidget {
     button.removeFocusListener(focusListener);
   }
 
+  protected boolean isValid() {
+    return true;
+  }
 }
