@@ -27,14 +27,8 @@ import org.pentaho.pms.schema.PhysicalColumn;
  *
  */
 public class PhysicalColumnTreeNode extends ConceptTreeNode {
-  PhysicalColumn physicalColumn;
-  String locale;
-  /**
-   * @param parent
-   */
-  public PhysicalColumnTreeNode(ITreeNode parent) {
-    super(parent);
-  }
+  protected PhysicalColumn physicalColumn = null;
+  protected String locale = null;
 
   /**
    * @param node
@@ -42,7 +36,8 @@ public class PhysicalColumnTreeNode extends ConceptTreeNode {
    * @param locale
    */
   public PhysicalColumnTreeNode(ITreeNode parent, PhysicalColumn physicalColumn, String locale) {
-    this(parent);
+    super(parent);
+    
     this.physicalColumn = physicalColumn;
     this.locale = locale;
   }
@@ -61,6 +56,13 @@ public class PhysicalColumnTreeNode extends ConceptTreeNode {
   public String getName() {
     // TODO Auto-generated method stub
     return physicalColumn.getName(locale);
+  }
+
+  /**
+   * @return
+   */
+  public PhysicalColumn getPhysicalColumn() {
+    return physicalColumn;
   }
 
 }

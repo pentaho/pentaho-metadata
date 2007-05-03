@@ -29,22 +29,17 @@ import org.pentaho.pms.schema.PhysicalTable;
  *
  */
 public class PhysicalTableTreeNode extends ConceptTreeNode {
-  private PhysicalTable physicalTable;
-  private String locale;
-  /**
-   * @param parent
-   */
-  public PhysicalTableTreeNode(ITreeNode parent) {
-    super(parent);
-  }
-
-  /**
+  protected PhysicalTable physicalTable = null;
+  protected String locale = null;
+  
+   /**
    * @param node
    * @param physicalTable
    * @param locale
    */
   public PhysicalTableTreeNode(ITreeNode parent, PhysicalTable physicalTable, String locale) {
-    this(parent);
+    super(parent);
+    
     this.physicalTable = physicalTable;
     this.locale = locale;
   }
@@ -65,6 +60,13 @@ public class PhysicalTableTreeNode extends ConceptTreeNode {
    */
   public String getName() {
     return physicalTable.getName(locale);
+  }
+
+  /**
+   * @return
+   */
+  public PhysicalTable getPhysicalTable() {
+    return physicalTable;
   }
 
 }

@@ -30,27 +30,18 @@ import be.ibridge.kettle.core.database.DatabaseMeta;
  *
  */
 public class DatabaseMetaTreeNode extends ConceptTreeNode {
-  private SchemaMeta schemaMeta;
-  private DatabaseMeta databaseMeta;
-  private String locale;
+  protected SchemaMeta schemaMeta = null;
+  protected DatabaseMeta databaseMeta = null;
   
-  /**
-   * @param parent
-   */
-  public DatabaseMetaTreeNode(ITreeNode parent) {
-    super(parent);
-  }
-
   /**
    * @param connectionsLabel
    * @param database
    * @param activeLocale
    */
-  public DatabaseMetaTreeNode(ITreeNode parent, SchemaMeta schemaMeta, DatabaseMeta databaseMeta, String activeLocale) {
-    this(parent);
+  public DatabaseMetaTreeNode(ITreeNode parent, SchemaMeta schemaMeta, DatabaseMeta databaseMeta) {
+    super(parent);
     this.schemaMeta = schemaMeta;
     this.databaseMeta = databaseMeta;
-    this.locale = activeLocale;
   }
 
   /* (non-Javadoc)
@@ -60,8 +51,12 @@ public class DatabaseMetaTreeNode extends ConceptTreeNode {
     PhysicalTable[] physicalTables = schemaMeta.getTablesOnDatabase(databaseMeta);
     for(int i=0; i<physicalTables.length; i++) {
       PhysicalTable physicalTable = physicalTables[i];
-      addChild(new PhysicalTableTreeNode(this, physicalTable, locale));
+      addChild(new PhysicalTableTreeNode(this, physicalTable, schemaMeta.getActiveLocale()));
     }
+  }
+  
+  public DatabaseMeta getDatabaseMeta(){
+    return databaseMeta;
   }
 
   /* (non-Javadoc)
@@ -70,5 +65,5 @@ public class DatabaseMetaTreeNode extends ConceptTreeNode {
   public String getName() {
     return databaseMeta.getName();
   }
-
+  
 }

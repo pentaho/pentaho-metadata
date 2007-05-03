@@ -65,4 +65,11 @@ public class BusinessTableTreeNode extends ConceptTreeNode {
   public ConceptUtilityInterface getDomainObject(){
     return table;
   }
+
+  /**
+   * @return
+   */
+  public BusinessTable getBusinessTable() {
+    return table;
+  }
 }

@@ -696,7 +696,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
                 for (int i = activeModel.nrBusinessTables() - 1; i >= 0; i--) {
                   BusinessTable tableinfo = activeModel.getBusinessTable(i);
                   if (tableinfo.isSelected() || bTable.equals(tableinfo)) {
-                    metaEditor.delBusinessTable(tableinfo.getId());
+                    metaEditor.delBusinessTable(tableinfo);
                   }
                 }
               }
@@ -832,50 +832,6 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
           }
         });
       }
-
-      //			if (sels == 2)
-      //			{
-      //				miNewHop.addSelectionListener(new SelectionAdapter()
-      //				{
-      //					public void widgetSelected(SelectionEvent e)
-      //					{
-      //						selected_items = null;
-      //						newRelationship();
-      //					}
-      //				});
-      //			}
-      //			if (bTable.isDrawn() && !activeModel.isTableUsedInRelationships(bTable.getPhysicalTable().getId()))
-      //			{
-      //				miHideStep = new MenuItem(mPop, SWT.CASCADE);
-      //				miHideStep.setText(Messages.getString("MetaEditorGraph.USER_HIDE_STEP")); //$NON-NLS-1$
-      //				miHideStep.addSelectionListener(new SelectionAdapter()
-      //				{
-      //					public void widgetSelected(SelectionEvent e)
-      //					{
-      //						for (int i = 0; i < activeModel.nrSelected(); i++)
-      //						{
-      //							BusinessTable businessTable = activeModel.getSelected(i);
-      //							if (businessTable.isDrawn() && businessTable.isSelected())
-      //							{
-      //								businessTable.hide();
-      //								metaEditor.refreshTree();
-      //							}
-      //						}
-      //						bTable.hide();
-      //						metaEditor.refreshTree();
-      //						redraw();
-      //					}
-      //				});
-      //			}
-
-      //			miEditDesc.addSelectionListener(new SelectionAdapter()
-      //			{
-      //				public void widgetSelected(SelectionEvent e)
-      //				{
-      //					editDescription(bTable.getConcept());
-      //				}
-      //			});
-
       setMenu(mPop);
     } else {
       final RelationshipMeta relationshipMeta = findRelationship(x, y);
@@ -1024,13 +980,6 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
 
   public void editDescription(final ConceptInterface conceptInterface) {
     final String activeLocale = metaEditor.getSchemaMeta().getActiveLocale();
-    /*
-     String description = conceptUtilityInterface.getDescription(activeLocale);
-     if (description==null)
-     {
-     conceptUtilityInterface.setDescription(activeLocale, "");
-     }
-     */
 
     DescriptionInterface descriptionInterface = new DescriptionInterface() {
       public void setDescription(String desc) {
@@ -1360,7 +1309,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
   private void editRelationship(RelationshipMeta hopinfo) {
     String name = hopinfo.toString();
     log.logDebug(toString(), Messages.getString("MetaEditorGraph.DEBUG_EDITING_RELATIONSHIP", name)); //$NON-NLS-1$
-    metaEditor.editRelationship(name);
+    metaEditor.editRelationship(hopinfo);
   }
 
   private void newRelationship() {

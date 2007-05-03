@@ -40,4 +40,11 @@ public class RelationshipTreeNode extends ConceptTreeNode {
   public Object getDomainObject(){
     return relationship;
   }
+
+  /**
+   * @return
+   */
+  public RelationshipMeta getRelationship() {
+    return relationship;
+  }
 }

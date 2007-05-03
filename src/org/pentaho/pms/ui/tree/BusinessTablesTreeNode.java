@@ -12,9 +12,6 @@ import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 
 
 public class BusinessTablesTreeNode extends ConceptTreeNode {
-
-  
-
   protected BusinessModel model = null;
   protected String locale = null;
   

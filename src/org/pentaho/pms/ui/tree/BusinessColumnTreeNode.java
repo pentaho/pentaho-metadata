@@ -12,13 +12,12 @@ import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 public class BusinessColumnTreeNode extends ConceptTreeNode {
 
   protected BusinessColumn column = null;
-  private String locale = null;
+  protected String locale = null;
   
   public BusinessColumnTreeNode(ITreeNode parent, final BusinessColumn column, final String locale) {
     super(parent);
     this.column = column;
     this.locale = locale; 
-    // TODO Auto-generated constructor stub
   }
 
   protected void createChildren(List children) {
@@ -30,8 +29,7 @@ public class BusinessColumnTreeNode extends ConceptTreeNode {
   }
 
   public String getName() {
-    // TODO Auto-generated method stub
-    return column.getDisplayName(locale);
+     return column.getDisplayName(locale);
   }
 
   /* (non-Javadoc)
@@ -52,6 +50,13 @@ public class BusinessColumnTreeNode extends ConceptTreeNode {
       return concept.findFirstParentConcept().getName();
     }
     return null;
+  }
+
+  /**
+   * @return
+   */
+  public BusinessColumn getBusinessColumn() {
+    return column;
   }
 
 }

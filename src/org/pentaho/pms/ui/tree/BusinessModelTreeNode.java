@@ -21,13 +21,13 @@ public class BusinessModelTreeNode extends ConceptTreeNode {
   }
 
   protected void createChildren(List children) {
-    BusinessTablesTreeNode businessTablesNode = new BusinessTablesTreeNode(fParent, model, locale);
+    BusinessTablesTreeNode businessTablesNode = new BusinessTablesTreeNode(this, model, locale);
     addChild(businessTablesNode);
     
-    RelationshipsTreeNode relationshipsNode = new RelationshipsTreeNode(fParent, model);
+    RelationshipsTreeNode relationshipsNode = new RelationshipsTreeNode(this, model);
     addChild(relationshipsNode);
     
-    BusinessViewTreeNode businessViewNode = new BusinessViewTreeNode(fParent, model.getRootCategory(), locale);
+    BusinessViewTreeNode businessViewNode = new BusinessViewTreeNode(this, model.getRootCategory(), locale);
     addChild(businessViewNode);
   }
 
@@ -49,6 +49,13 @@ public class BusinessModelTreeNode extends ConceptTreeNode {
   }
 
   public ConceptUtilityInterface getDomainObject(){
+    return model;
+  }
+
+  /**
+   * @return
+   */
+  public BusinessModel getBusinessModel() {
     return model;
   }
 }

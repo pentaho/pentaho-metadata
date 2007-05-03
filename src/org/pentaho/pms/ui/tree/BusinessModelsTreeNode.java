@@ -10,45 +10,59 @@
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to 
  * the license for the specific language governing your rights and limitations.
  *
- * @created Apr 30, 2007 
+ * @created May 2, 2007 
  * @author wseyler
  */
 
 
 package org.pentaho.pms.ui.tree;
 
+import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.swt.graphics.Image;
 import org.pentaho.pms.jface.tree.ITreeNode;
+import org.pentaho.pms.messages.Messages;
+import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.SchemaMeta;
+import org.pentaho.pms.util.GUIResource;
 
 /**
  * @author wseyler
  *
  */
-public class SchemaMetaTreeNode extends ConceptTreeNode {
-
+public class BusinessModelsTreeNode extends ConceptTreeNode {
   protected SchemaMeta schemaMeta = null;
-    
-  public SchemaMetaTreeNode(ITreeNode parent, SchemaMeta schemaMeta) {
+ 
+  /**
+   * @param node
+   * @param schemaMeta
+   */
+  public BusinessModelsTreeNode(ITreeNode parent, SchemaMeta schemaMeta) {
     super(parent);
-    this.schemaMeta = schemaMeta;  
+    
+    this.schemaMeta = schemaMeta;
   }
 
   /* (non-Javadoc)
    * @see org.pentaho.pms.ui.tree.ConceptTreeNode#createChildren(java.util.List)
    */
   protected void createChildren(List children) {
-    addChild(new ConnectionsTreeNode(this, schemaMeta));
-    addChild(new BusinessModelsTreeNode(this, schemaMeta));
+    Iterator iter = schemaMeta.getBusinessModels().iterator();
+    while(iter.hasNext()) {
+      BusinessModel businessModel = (BusinessModel) iter.next();
+      addChild(new BusinessModelTreeNode(this, businessModel, schemaMeta.getActiveLocale()));
+    }
   }
 
   /* (non-Javadoc)
    * @see org.pentaho.pms.jface.tree.ITreeNode#getName()
    */
   public String getName() {
-    // TODO Auto-generated method stub
-    return null;
+    return Messages.getString("MetaEditor.USER_BUSINESS_MODELS");
   }
-  
+
+  public Image getImage(){
+    return GUIResource.getInstance().getImageBol();
+  }   
 }

@@ -18,6 +18,7 @@ public class CategoryTreeNode extends ConceptTreeNode {
   
   public CategoryTreeNode(ITreeNode parent, final BusinessCategory category, final String locale) {
     super(parent);
+    
     this.category = category;
     this.locale = locale; 
   }
@@ -31,7 +32,7 @@ public class CategoryTreeNode extends ConceptTreeNode {
   }
   public void addDomainChild(Object domainObject){
     if (domainObject instanceof BusinessColumn){
-      addChild(new BusinessColumnTreeNode(this,(BusinessColumn)domainObject, locale));
+      addChild(new BusinessColumnTreeNode(this, (BusinessColumn)domainObject, locale));
     }
   }
   
@@ -66,5 +67,9 @@ public class CategoryTreeNode extends ConceptTreeNode {
       return concept.findFirstParentConcept().getName();
     }
     return null;
+  }
+  
+  public BusinessCategory getCategory() {
+    return category;
   }
 }

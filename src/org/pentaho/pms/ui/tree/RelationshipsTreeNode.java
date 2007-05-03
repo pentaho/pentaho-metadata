@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.eclipse.swt.graphics.Image;
 import org.pentaho.pms.jface.tree.ITreeNode;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.RelationshipMeta;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
@@ -50,7 +51,7 @@ public class RelationshipsTreeNode extends ConceptTreeNode {
 
   public String getName() {
     // TODO Auto-generated method stub
-    return "Relationships";
+    return Messages.getString("MetaEditor.USER_RELATIONSHIPS");
   }
 
   public ConceptUtilityInterface getDomainObject(){

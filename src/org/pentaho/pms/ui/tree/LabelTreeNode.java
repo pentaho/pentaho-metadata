@@ -3,14 +3,14 @@ package org.pentaho.pms.ui.tree;
 import java.util.List;
 
 import org.pentaho.pms.jface.tree.ITreeNode;
-import org.pentaho.pms.jface.tree.TreeNode;
 
 public class LabelTreeNode extends ConceptTreeNode {
   
-  protected String labelName;
+  protected String labelName = null;
 
   public LabelTreeNode(ITreeNode parent, String name) {
     super(parent);
+    
     labelName = name; 
   }
 
