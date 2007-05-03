@@ -26,9 +26,7 @@ import org.pentaho.pms.schema.concept.types.columnwidth.ColumnWidth;
 import org.pentaho.pms.schema.concept.types.columnwidth.ConceptPropertyColumnWidth;
 import org.pentaho.pms.schema.concept.types.localstring.ConceptPropertyLocalizedString;
 import org.pentaho.pms.schema.concept.types.localstring.LocalizedStringSettings;
-import org.pentaho.pms.schema.concept.types.security.ConceptPropertySecurity;
 import org.pentaho.pms.schema.concept.types.string.ConceptPropertyString;
-import org.pentaho.pms.schema.security.Security;
 import org.pentaho.pms.util.Const;
 
 import be.ibridge.kettle.core.Props;

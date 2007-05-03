@@ -24,7 +24,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.types.columnwidth.ColumnWidth;
 
 public class ColumnWidthPropertyEditorWidget extends AbstractPropertyEditorWidget {

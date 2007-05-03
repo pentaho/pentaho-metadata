@@ -8,6 +8,9 @@ public class RelatedConceptModificationEvent extends ConceptModificationEvent {
 
   // ~ Static fields/initializers ======================================================================================
 
+
+  private static final long serialVersionUID = 4845956108753834446L;
+
   private static final Log logger = LogFactory.getLog(RelatedConceptModificationEvent.class);
 
   public static final int ADD_RELATED_CONCEPT = 0;

@@ -597,6 +597,16 @@ public class MetaEditor {
 
   public void exportToXMI() {
     boolean goAhead = true;
+    
+    if (Const.isEmpty(schemaMeta.getDomainName())) {
+        MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
+        mb.setMessage(Messages.getString("MetaEditor.USER_NO_NAME_CAN_NOT_EXPORT")); //$NON-NLS-1$
+        mb.setText(Messages.getString("MetaEditor.USER_SORRY")); //$NON-NLS-1$
+        if (mb.open() != SWT.YES) {
+          goAhead = false;
+      }
+    }
+    
     if (schemaMeta.hasChanged()) {
       MessageBox mb = new MessageBox(shell, SWT.NO | SWT.YES | SWT.ICON_WARNING);
       mb.setMessage(Messages.getString("MetaEditor.USER_SAVE_DOMAIN")); //$NON-NLS-1$
