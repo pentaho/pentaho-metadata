@@ -58,7 +58,7 @@ public class Const
 	/**
 	 *  Version number
 	 */
-	public static final String VERSION = "0.7.1"; //$NON-NLS-1$
+	public static final String VERSION = "0.8.0"; //$NON-NLS-1$
 
 	/**
 	 * What's the file systems file separator on this operating system?
