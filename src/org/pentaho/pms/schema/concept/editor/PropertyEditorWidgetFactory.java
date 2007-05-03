@@ -36,14 +36,14 @@ public class PropertyEditorWidgetFactory {
   static {
     HashMap propertyEditors = new HashMap();
     propertyEditors.put(ConceptPropertyType.STRING, StringPropertyEditorWidget.class);
-    //    propertyEditors.put(ConceptPropertyType.PROPERTY_TYPE_DATE, .class);
+    propertyEditors.put(ConceptPropertyType.DATE, DatePropertyEditorWidget.class);
     //  propertyEditors.put(ConceptPropertyType.PROPERTY_TYPE_NUMBER, .class);
     propertyEditors.put(ConceptPropertyType.COLOR, ColorPropertyEditorWidget.class);
-    //  propertyEditors.put(ConceptPropertyType.PROPERTY_TYPE_FONT, .class);
-    //  propertyEditors.put(ConceptPropertyType.PROPERTY_TYPE_FIELDTYPE, .class);
+    propertyEditors.put(ConceptPropertyType.FONT, FontPropertyEditorWidget.class);
+    propertyEditors.put(ConceptPropertyType.FIELDTYPE, FieldTypePropertyEditorWidget.class);
     propertyEditors.put(ConceptPropertyType.AGGREGATION, AggregationPropertyEditorWidget.class);
     propertyEditors.put(ConceptPropertyType.BOOLEAN, BooleanPropertyEditorWidget.class);
-      propertyEditors.put(ConceptPropertyType.DATATYPE, DataTypePropertyEditorWidget.class);
+    propertyEditors.put(ConceptPropertyType.DATATYPE, DataTypePropertyEditorWidget.class);
     propertyEditors.put(ConceptPropertyType.LOCALIZED_STRING, LocalizedStringPropertyEditorWidget.class);
     //  propertyEditors.put(ConceptPropertyType.PROPERTY_TYPE_TABLETYPE, .class);
     //  propertyEditors.put(ConceptPropertyType.PROPERTY_TYPE_URL, .class);

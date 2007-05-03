@@ -1,17 +1,19 @@
 /*
- * Copyright 2006 Pentaho Corporation.  All rights reserved. 
- * This software was developed by Pentaho Corporation and is provided under the terms 
- * of the Mozilla Public License, Version 1.1, or any later version. You may not use 
- * this file except in compliance with the license. If you need a copy of the license, 
- * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho 
+ * Copyright 2006 Pentaho Corporation.  All rights reserved.
+ * This software was developed by Pentaho Corporation and is provided under the terms
+ * of the Mozilla Public License, Version 1.1, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho
  * BI Platform.  The Initial Developer is Pentaho Corporation.
  *
- * Software distributed under the Mozilla Public License is distributed on an "AS IS" 
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to 
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
  * the license for the specific language governing your rights and limitations.
 */
 package org.pentaho.pms.schema.concept.types.font;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.pentaho.pms.util.Const;
 
 
@@ -30,7 +32,7 @@ public class FontSettings
     public FontSettings()
     {
     }
-    
+
     /**
      * @param name
      * @param size
@@ -44,23 +46,23 @@ public class FontSettings
         this.bold = bold;
         this.italic = italic;
     }
-    
+
     public String toString()
     {
         return name+SEPARATOR+height+(bold?SEPARATOR+BOLD:"")+(italic?SEPARATOR+ITALIC:"");  //$NON-NLS-1$ //$NON-NLS-2$
     }
-    
+
     public static FontSettings fromString(String value)
     {
         String pieces[] = value.split(SEPARATOR);
         switch(pieces.length)
         {
-        case 0: return null; 
+        case 0: return null;
         case 1: return new FontSettings(pieces[0], 10, false, false);
         case 2: return new FontSettings(pieces[0], Const.toInt(pieces[1], 10), false, false);
         case 3: return new FontSettings(pieces[0], Const.toInt(pieces[1], 10), BOLD.equalsIgnoreCase(pieces[2]), ITALIC.equalsIgnoreCase(pieces[2]));
         case 4: return new FontSettings(pieces[0], Const.toInt(pieces[1], 10), true, true);
-        default: return null; 
+        default: return null;
         }
     }
 
@@ -71,7 +73,7 @@ public class FontSettings
     {
         return bold;
     }
-    
+
     /**
      * @param bold the bold to set
      */
@@ -79,7 +81,7 @@ public class FontSettings
     {
         this.bold = bold;
     }
-    
+
     /**
      * @return the italic
      */
@@ -87,7 +89,7 @@ public class FontSettings
     {
         return italic;
     }
-    
+
     /**
      * @param italic the italic to set
      */
@@ -95,7 +97,7 @@ public class FontSettings
     {
         this.italic = italic;
     }
-    
+
     /**
      * @return the name
      */
@@ -103,7 +105,7 @@ public class FontSettings
     {
         return name;
     }
-    
+
     /**
      * @param name the name to set
      */
@@ -111,7 +113,7 @@ public class FontSettings
     {
         this.name = name;
     }
-    
+
     /**
      * @return the size
      */
@@ -128,15 +130,20 @@ public class FontSettings
         this.height = size;
     }
 
-    public boolean equals(Object obj)
-    {
-        FontSettings cmp = (FontSettings) obj;
-        return (cmp.getName().equals(name)) && (cmp.getHeight()==height) && (cmp.isBold()==bold) && (cmp.isItalic()==italic);
+    public boolean equals(Object obj) {
+      if (obj instanceof FontSettings == false) {
+        return false;
+      }
+      if (this == obj) {
+        return true;
+      }
+      FontSettings rhs = (FontSettings) obj;
+      return new EqualsBuilder().append(name, rhs.name).append(height, rhs.height).append(bold, rhs.bold)
+      .append(italic, rhs.italic).isEquals();
     }
-    
-    public int hashCode()
-    {
-        return (name.hashCode()) ^ (new Integer(height).hashCode()) ^ (new Boolean(bold).hashCode()) ^ (new Boolean(italic).hashCode());
+
+    public int hashCode() {
+      return new HashCodeBuilder(89, 211).append(name).append(height).append(bold).append(italic).toHashCode();
     }
-    
+
 }
