@@ -20,12 +20,13 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.pentaho.pms.schema.concept.types.alignment.AlignmentSettings;
+import org.pentaho.pms.schema.concept.types.tabletype.TableTypeSettings;
 
-public class AlignmentPropertyEditorWidget extends AbstractPropertyEditorWidget {
+public class TableTypePropertyEditorWidget extends AbstractPropertyEditorWidget {
+
   // ~ Static fields/initializers ======================================================================================
 
-  private static final Log logger = LogFactory.getLog(AlignmentPropertyEditorWidget.class);
+  private static final Log logger = LogFactory.getLog(TableTypePropertyEditorWidget.class);
 
   // ~ Instance fields =================================================================================================
 
@@ -35,12 +36,12 @@ public class AlignmentPropertyEditorWidget extends AbstractPropertyEditorWidget 
 
   // ~ Constructors ====================================================================================================
 
-  public AlignmentPropertyEditorWidget(final Composite parent, final int style, final IConceptModel conceptModel,
+  public TableTypePropertyEditorWidget(final Composite parent, final int style, final IConceptModel conceptModel,
       final String propertyId, final Map context) {
     super(parent, style, conceptModel, propertyId, context);
     setValue(getProperty().getValue());
     if (logger.isDebugEnabled()) {
-      logger.debug("created AlignmentPropertyEditorWidget");
+      logger.debug("created TableTypePropertyEditorWidget");
     }
   }
 
@@ -49,18 +50,18 @@ public class AlignmentPropertyEditorWidget extends AbstractPropertyEditorWidget 
   protected void createContents(final Composite parent) {
     addDisposeListener(new DisposeListener() {
       public void widgetDisposed(DisposeEvent e) {
-        AlignmentPropertyEditorWidget.this.widgetDisposed(e);
+        TableTypePropertyEditorWidget.this.widgetDisposed(e);
       }
     });
     Label typeLabel = new Label(parent, SWT.NONE);
-    typeLabel.setText("Alignment Type:");
+    typeLabel.setText("Table Type:");
     Combo type = new Combo(parent, SWT.READ_ONLY | SWT.BORDER);
 
     typeComboViewer = new ComboViewer(type);
 
     typeComboViewer.setContentProvider(new IStructuredContentProvider() {
       public Object[] getElements(final Object inputElement) {
-        return (AlignmentSettings[]) inputElement;
+        return (TableTypeSettings[]) inputElement;
       }
 
       public void dispose() {
@@ -70,7 +71,7 @@ public class AlignmentPropertyEditorWidget extends AbstractPropertyEditorWidget 
       }
     });
 
-    typeComboViewer.setInput(AlignmentSettings.types);
+    typeComboViewer.setInput(TableTypeSettings.types);
 
     typeComboViewer.setLabelProvider(new LabelProvider() {
       public Image getImage(final Object element) {
@@ -79,7 +80,7 @@ public class AlignmentPropertyEditorWidget extends AbstractPropertyEditorWidget 
       }
 
       public String getText(final Object element) {
-        return ((AlignmentSettings) element).getDescription();
+        return ((TableTypeSettings) element).getDescription();
       }
     });
 
@@ -99,15 +100,15 @@ public class AlignmentPropertyEditorWidget extends AbstractPropertyEditorWidget 
 
   public Object getValue() {
     IStructuredSelection selection = (IStructuredSelection) typeComboViewer.getSelection();
-    AlignmentSettings alignmentSettings = (AlignmentSettings) selection.getFirstElement();
-    int aggType = alignmentSettings.getType();
-    return new AlignmentSettings(aggType);
+    TableTypeSettings tableTypeSettings = (TableTypeSettings) selection.getFirstElement();
+    int aggType = tableTypeSettings.getType();
+    return new TableTypeSettings(aggType);
   }
 
   protected void setValue(final Object value) {
-    if (value instanceof AlignmentSettings) {
-      AlignmentSettings alignmentSettings = (AlignmentSettings) value;
-      typeComboViewer.setSelection(new StructuredSelection(AlignmentSettings.getType(alignmentSettings.getCode())));
+    if (value instanceof TableTypeSettings) {
+      TableTypeSettings tableTypeSettings = (TableTypeSettings) value;
+      typeComboViewer.setSelection(new StructuredSelection(TableTypeSettings.getType(tableTypeSettings.getCode())));
     }
   }
 

@@ -25,7 +25,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.ScrollBar;
-import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 
 public class PropertyWidgetManager2 extends Composite implements ISelectionChangedListener {
@@ -44,7 +43,7 @@ public class PropertyWidgetManager2 extends Composite implements ISelectionChang
 
   private Composite widgetArea;
 
-  private SchemaMeta schemaMeta;
+  private Map context;
 
   private ScrolledComposite widgetAreaWrapper;
 
@@ -52,10 +51,10 @@ public class PropertyWidgetManager2 extends Composite implements ISelectionChang
 
   // ~ Constructors ====================================================================================================
 
-  public PropertyWidgetManager2(final Composite parent, final int style, final SchemaMeta schemaMeta,
-      final IConceptModel conceptModel) {
+  public PropertyWidgetManager2(final Composite parent, final int style,
+      final IConceptModel conceptModel, final Map context) {
     super(parent, style);
-    this.schemaMeta = schemaMeta;
+    this.context = context;
     this.conceptModel = conceptModel;
     conceptModel.addConceptModificationListener(new IConceptModificationListener() {
       public void conceptModified(final ConceptModificationEvent e) {
@@ -163,8 +162,8 @@ public class PropertyWidgetManager2 extends Composite implements ISelectionChang
         if (logger.isDebugEnabled()) {
           logger.debug("creating widget for property with id \"" + propertyId + "\"");
         }
-        IPropertyEditorWidget widget = PropertyEditorWidgetFactory.getWidget(schemaMeta, prop.getType(), widgetArea,
-            SWT.NONE, conceptModel, prop.getId());
+        IPropertyEditorWidget widget = PropertyEditorWidgetFactory.getWidget(prop.getType(), widgetArea, SWT.NONE,
+            conceptModel, prop.getId(), context);
         addWidget((Control) widget);
         widgets.put(prop.getId(), widget);
         focusWidget(prop.getId());

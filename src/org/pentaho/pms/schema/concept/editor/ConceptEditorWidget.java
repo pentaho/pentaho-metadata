@@ -1,5 +1,7 @@
 package org.pentaho.pms.schema.concept.editor;
 
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.SWT;
@@ -8,7 +10,6 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.pentaho.pms.schema.SchemaMeta;
 
 /**
  * Given an <code>IConceptModel</code> instance, this graphical control provides a user interface for modifying the
@@ -29,14 +30,14 @@ public class ConceptEditorWidget extends Composite {
 
   private PropertyWidgetManager2 propertyWidgetManager;
 
-  private SchemaMeta schemaMeta;
+  private Map context;
 
   // ~ Constructors ====================================================================================================
 
-  public ConceptEditorWidget(final Composite parent, final int style, final SchemaMeta schemaMeta,
-      final IConceptModel conceptModel) {
+  public ConceptEditorWidget(final Composite parent, final int style, final IConceptModel conceptModel,
+      final Map context) {
     super(parent, style);
-    this.schemaMeta = schemaMeta;
+    this.context = context;
     this.conceptModel = conceptModel;
     createContents();
   }
@@ -74,7 +75,7 @@ public class ConceptEditorWidget extends Composite {
     this.propertyManagementWidget = w5;
 
     // widget for right side of sash
-    PropertyWidgetManager2 m7 = new PropertyWidgetManager2(c3, SWT.NONE, schemaMeta, conceptModel);
+    PropertyWidgetManager2 m7 = new PropertyWidgetManager2(c3, SWT.NONE, conceptModel, context);
     FormData fd7 = new FormData();
     fd7.top = new FormAttachment(0, 10);
     fd7.bottom = new FormAttachment(100, -10);

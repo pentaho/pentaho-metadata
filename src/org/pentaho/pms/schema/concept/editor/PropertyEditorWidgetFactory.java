@@ -9,7 +9,6 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.widgets.Composite;
-import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
 /**
@@ -25,7 +24,7 @@ public class PropertyEditorWidgetFactory {
   private static final Map propertyEditorMap;
 
   private static final Class[] constructorParamTypes = { Composite.class, Integer.TYPE, IConceptModel.class,
-      String.class };
+      String.class, Map.class };
 
   // ~ Instance fields =================================================================================================
 
@@ -45,7 +44,7 @@ public class PropertyEditorWidgetFactory {
     propertyEditors.put(ConceptPropertyType.BOOLEAN, BooleanPropertyEditorWidget.class);
     propertyEditors.put(ConceptPropertyType.DATATYPE, DataTypePropertyEditorWidget.class);
     propertyEditors.put(ConceptPropertyType.LOCALIZED_STRING, LocalizedStringPropertyEditorWidget.class);
-    //  propertyEditors.put(ConceptPropertyType.PROPERTY_TYPE_TABLETYPE, .class);
+    propertyEditors.put(ConceptPropertyType.TABLETYPE, TableTypePropertyEditorWidget.class);
     //  propertyEditors.put(ConceptPropertyType.PROPERTY_TYPE_URL, .class);
     //  propertyEditors.put(ConceptPropertyType.PROPERTY_TYPE_SECURITY, .class);
     propertyEditors.put(ConceptPropertyType.ALIGNMENT, AlignmentPropertyEditorWidget.class);
@@ -53,8 +52,8 @@ public class PropertyEditorWidgetFactory {
     propertyEditorMap = Collections.unmodifiableMap(propertyEditors);
   }
 
-  public static IPropertyEditorWidget getWidget(final SchemaMeta schemaMeta, final ConceptPropertyType propertyType,
-      final Composite parent, final int style, final IConceptModel conceptModel, final String propertyId) {
+  public static IPropertyEditorWidget getWidget(final ConceptPropertyType propertyType, final Composite parent,
+      final int style, final IConceptModel conceptModel, final String propertyId, final Map context) {
 
     Class clazz = (Class) propertyEditorMap.get(propertyType);
     if (null == clazz) {
@@ -83,7 +82,8 @@ public class PropertyEditorWidgetFactory {
         logger.debug("conceptModel = " + conceptModel);
         logger.debug("propertyId = " + propertyId);
       }
-      widget = (IPropertyEditorWidget) cons.newInstance(makeConstructorArgs(parent, style, conceptModel, propertyId));
+      widget = (IPropertyEditorWidget) cons.newInstance(makeConstructorArgs(parent, style, conceptModel, propertyId,
+          context));
     } catch (IllegalArgumentException e) {
       if (logger.isErrorEnabled()) {
         logger.error("an exception occurred", e);
@@ -105,19 +105,17 @@ public class PropertyEditorWidgetFactory {
       }
       return null;
     }
-    if (widget instanceof ISchemaMetaAwarePropertyEditorWidget) {
-      ((ISchemaMetaAwarePropertyEditorWidget) widget).setSchemaMeta(schemaMeta);
-    }
     return widget;
   }
 
   private static Object[] makeConstructorArgs(final Composite parent, final int style,
-      final IConceptModel conceptModel, final String propertyId) {
-    Object[] args = new Object[4];
+      final IConceptModel conceptModel, final String propertyId, final Map context) {
+    Object[] args = new Object[5];
     args[0] = parent;
     args[1] = new Integer(style);
     args[2] = conceptModel;
     args[3] = propertyId;
+    args[4] = context;
     return args;
   }
 

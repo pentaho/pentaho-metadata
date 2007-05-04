@@ -1,5 +1,7 @@
 package org.pentaho.pms.schema.concept.editor;
 
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -44,8 +46,8 @@ public class DataTypePropertyEditorWidget extends AbstractPropertyEditorWidget {
   // ~ Constructors ====================================================================================================
 
   public DataTypePropertyEditorWidget(final Composite parent, final int style, final IConceptModel conceptModel,
-      final String propertyId) {
-    super(parent, style, conceptModel, propertyId);
+      final String propertyId, final Map context) {
+    super(parent, style, conceptModel, propertyId, context);
     setValue(getProperty().getValue());
     if (logger.isDebugEnabled()) {
       logger.debug("created DataTypePropertyEditorWidget");
@@ -62,7 +64,7 @@ public class DataTypePropertyEditorWidget extends AbstractPropertyEditorWidget {
     });
 
     Label typeLabel = new Label(parent, SWT.NONE);
-    typeLabel.setText("Type:");
+    typeLabel.setText("Data Type:");
     Combo type = new Combo(parent, SWT.READ_ONLY | SWT.BORDER);
 
     typeComboViewer = new ComboViewer(type);

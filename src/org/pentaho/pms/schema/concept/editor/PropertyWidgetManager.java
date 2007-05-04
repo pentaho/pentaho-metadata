@@ -1,6 +1,7 @@
 package org.pentaho.pms.schema.concept.editor;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -208,8 +209,8 @@ public class PropertyWidgetManager extends Composite implements ISelectionChange
   }
 
   protected void addWidget(final ConceptPropertyInterface prop) {
-    IPropertyEditorWidget widget = PropertyEditorWidgetFactory.getWidget(schemaMeta, prop.getType(), stack, SWT.NONE,
-        conceptModel, prop.getId());
+    IPropertyEditorWidget widget = PropertyEditorWidgetFactory.getWidget(prop.getType(), stack, SWT.NONE,
+        conceptModel, prop.getId(), Collections.EMPTY_MAP);
     widgets.put(prop.getId(), widget);
     swapWidget(prop.getId());
   }

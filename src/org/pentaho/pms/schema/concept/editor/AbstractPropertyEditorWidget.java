@@ -1,5 +1,7 @@
 package org.pentaho.pms.schema.concept.editor;
 
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -42,6 +44,12 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
   private IConceptModel conceptModel;
 
   /**
+   * If this widget needs "outside" information, for example a list of locales, then this information will be available
+   * via this map.
+   */
+  private Map context;
+
+  /**
    * The id of the property for which this widget is an editor.
    */
   private String propertyId;
@@ -55,10 +63,11 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
   // ~ Constructors ====================================================================================================
 
   public AbstractPropertyEditorWidget(final Composite parent, final int style, final IConceptModel conceptModel,
-      final String propertyId) {
+      final String propertyId, final Map context) {
     super(parent, style);
     this.conceptModel = conceptModel;
     this.propertyId = propertyId;
+    this.context = context;
     createContents();
     // subclasses can ditch this layout if they like
     setLayout(new FormLayout());
@@ -283,6 +292,10 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
     } else {
       conceptModel.setProperty(DefaultPropertyID.findDefaultPropertyID(propertyId).getDefaultValue());
     }
+  }
+
+  protected Map getContext() {
+    return context;
   }
 
 }
