@@ -75,7 +75,6 @@ import org.pentaho.pms.factory.SchemaSaveProgressDialog;
 import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.jface.tree.ITreeNodeChangedListener;
 import org.pentaho.pms.jface.tree.TreeContentProvider;
-import org.pentaho.pms.jface.tree.TreeLabelProvider;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.mql.MQLQuery;
 import org.pentaho.pms.schema.BusinessCategory;
@@ -113,6 +112,7 @@ import org.pentaho.pms.ui.tree.BusinessTableTreeNode;
 import org.pentaho.pms.ui.tree.BusinessTablesTreeNode;
 import org.pentaho.pms.ui.tree.BusinessViewTreeNode;
 import org.pentaho.pms.ui.tree.CategoryTreeNode;
+import org.pentaho.pms.ui.tree.ConceptLabelProvider;
 import org.pentaho.pms.ui.tree.ConnectionsTreeNode;
 import org.pentaho.pms.ui.tree.DatabaseMetaTreeNode;
 import org.pentaho.pms.ui.tree.LabelTreeNode;
@@ -1174,7 +1174,7 @@ public class MetaEditor {
     }
     treeViewer = new TreeViewer(compMain, treeFlags);
     treeViewer.setContentProvider(new TreeContentProvider());
-    treeViewer.setLabelProvider(new TreeLabelProvider());
+    treeViewer.setLabelProvider(new ConceptLabelProvider());
     mainTreeNode = new SchemaMetaTreeNode(null, schemaMeta);
     mainTreeNode.addTreeNodeChangeListener((ITreeNodeChangedListener) treeViewer.getContentProvider());
 
@@ -1518,7 +1518,7 @@ public class MetaEditor {
    */
   private void setMenuMain(SelectionEvent e) {
     final TreeItem ti = (TreeItem) e.item;
-    Object node = ti.getData();
+    final ITreeNode node = (ITreeNode) ti.getData();
 
     log.logDebug(APPLICATION_NAME, Messages.getString("MetaEditor.DEBUG_CLICKED_ON", ti.getText())); //$NON-NLS-1$
 
@@ -1567,6 +1567,7 @@ public class MetaEditor {
       miEdit.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
           editConnection(databaseMeta);
+          treeViewer.refresh(node);
         }
       });
       MenuItem miDupe = new MenuItem(mainMenu, SWT.PUSH);
@@ -2281,7 +2282,7 @@ public class MetaEditor {
       String newname = con.open();
       if (newname != null) // null: CANCEL
       {
-        refreshTree();
+//        refreshTree();
       }
     }
     setShellText();

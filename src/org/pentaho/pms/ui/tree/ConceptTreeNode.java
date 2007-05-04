@@ -16,7 +16,7 @@ public abstract class ConceptTreeNode extends TreeNode {
   
 
   public String getConceptName(){
-    return "Test";
+    return null;
   }
 
   public Image getConceptImage(){

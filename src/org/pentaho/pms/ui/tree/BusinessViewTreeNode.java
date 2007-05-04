@@ -46,10 +46,4 @@ public class BusinessViewTreeNode extends CategoryTreeNode {
     // TODO Auto-generated method stub
     return Messages.getString("MetaEditor.USER_CATEGORIES");
   }
-  
-  public String getConceptName(){
-    // TODO remove this and replace with null
-    return "Test";
-  }
-
 }
