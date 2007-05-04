@@ -1,8 +1,5 @@
 package org.pentaho.pms;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.window.ApplicationWindow;
@@ -18,12 +15,12 @@ import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.concept.Concept;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.DefaultPropertyID;
-import org.pentaho.pms.schema.concept.editor.ConceptEditorWidget;
 import org.pentaho.pms.schema.concept.editor.ConceptModel;
 import org.pentaho.pms.schema.concept.editor.ConceptModificationEvent;
 import org.pentaho.pms.schema.concept.editor.Constants;
 import org.pentaho.pms.schema.concept.editor.IConceptModel;
 import org.pentaho.pms.schema.concept.editor.IConceptModificationListener;
+import org.pentaho.pms.schema.concept.editor.LocalizedStringTableWidget;
 import org.pentaho.pms.schema.concept.types.bool.ConceptPropertyBoolean;
 import org.pentaho.pms.schema.concept.types.columnwidth.ColumnWidth;
 import org.pentaho.pms.schema.concept.types.columnwidth.ConceptPropertyColumnWidth;
@@ -35,26 +32,38 @@ import org.pentaho.pms.util.Const;
 import be.ibridge.kettle.core.Props;
 import be.ibridge.kettle.core.util.EnvUtil;
 
-public class ConceptEditorTestApp extends ApplicationWindow {
+public class LocalizedStringTableTestApp extends ApplicationWindow {
 
   // ~ Static fields/initializers ======================================================================================
 
-  private static final Log logger = LogFactory.getLog(ConceptEditorTestApp.class);
+  private static final Log logger = LogFactory.getLog(LocalizedStringTableTestApp.class);
 
   // ~ Instance fields =================================================================================================
 
   private IConceptModel conceptModel;
 
-  private Map context = new HashMap();
+  private SchemaMeta schemaMeta;
 
   // ~ Constructors ====================================================================================================
 
-  public ConceptEditorTestApp() {
+  public LocalizedStringTableTestApp() {
     super(null);
     initModel();
+    conceptModel.addConceptModificationListener(new IConceptModificationListener() {
+      public void conceptModified(final ConceptModificationEvent e) {
+        LocalizedStringTableTestApp.this.conceptModified(e);
+      }
+    });
   }
 
   // ~ Methods =========================================================================================================
+
+  protected void conceptModified(final ConceptModificationEvent e) {
+    if (logger.isDebugEnabled()) {
+      logger.debug("heard concept modified event: " + e);
+    }
+
+  }
 
   protected void initModel() {
     conceptModel = new ConceptModel(new Concept());
@@ -78,8 +87,8 @@ public class ConceptEditorTestApp extends ApplicationWindow {
     conceptModel.setRelatedConcept(parentConcept, IConceptModel.REL_PARENT);
 
     Concept secConcept = new Concept();
-//    ConceptPropertyInterface sec1 = new ConceptPropertySecurity(DefaultPropertyID.SECURITY.getId(), new Security());
-//    secConcept.addProperty(sec1);
+    //    ConceptPropertyInterface sec1 = new ConceptPropertySecurity(DefaultPropertyID.SECURITY.getId(), new Security());
+    //    secConcept.addProperty(sec1);
     ConceptPropertyInterface sec2 = new ConceptPropertyString(DefaultPropertyID.TARGET_TABLE.getId(), "test_table");
     secConcept.addProperty(sec2);
     conceptModel.setRelatedConcept(secConcept, IConceptModel.REL_INHERITED);
@@ -97,21 +106,8 @@ public class ConceptEditorTestApp extends ApplicationWindow {
     locales.addLocale(new LocaleMeta("it_IT", "Italian (Italy)", 3, true));
     locales.addLocale(new LocaleMeta("es_ES", "Spanish (Spain)", 4, true));
     locales.addLocale(new LocaleMeta("de_DE", "German (Germany)", 5, true));
-    SchemaMeta schemaMeta = new SchemaMeta();
+    schemaMeta = new SchemaMeta();
     schemaMeta.setLocales(locales);
-    conceptModel.addConceptModificationListener(new IConceptModificationListener() {
-      public void conceptModified(final ConceptModificationEvent e) {
-        ConceptEditorTestApp.this.conceptModified(e);
-      }
-    });
-
-    context.put("schemaMeta", schemaMeta);
-  }
-
-  protected void conceptModified(final ConceptModificationEvent e) {
-    if (logger.isDebugEnabled()) {
-      logger.debug("heard concept modified event: " + e);
-    }
   }
 
   public void run() {
@@ -130,16 +126,17 @@ public class ConceptEditorTestApp extends ApplicationWindow {
   }
 
   protected Control createContents(final Composite parent) {
-    return new ConceptEditorWidget(parent, SWT.NONE, conceptModel, context);
+    return new LocalizedStringTableWidget(parent, SWT.NONE, conceptModel, "name", schemaMeta.getLocales());
+
   }
 
   public static void main(final String[] args) {
-    new ConceptEditorTestApp().run();
+    new LocalizedStringTableTestApp().run();
   }
 
   protected void configureShell(final Shell shell) {
     super.configureShell(shell);
-    shell.setText("Concept Editor");
+    shell.setText("Localized String Table Test Application");
     shell.setImage(Constants.getImageRegistry(Display.getCurrent()).get("concept-editor-app"));
   }
 
