@@ -1615,7 +1615,7 @@ public class MetaEditor {
         }
       });
     } else if (node instanceof PhysicalTableTreeNode) { // We clicked on a physical table
-      final PhysicalTable physicalTable = ((PhysicalTableTreeNode) node).getPhysicalTable();
+      final PhysicalTable physicalTable = (PhysicalTable) ((PhysicalTableTreeNode) node).getDomainObject();
       MenuItem miNew = new MenuItem(mainMenu, SWT.PUSH);
       miNew.setText(Messages.getString("MetaEditor.USER_NEW_PHYSICAL_TABLETEXT")); //$NON-NLS-1$
       miNew.addListener(SWT.Selection, new Listener() {
@@ -1638,7 +1638,7 @@ public class MetaEditor {
         }
       });
     } else if (node instanceof PhysicalColumnTreeNode) {
-      final PhysicalColumn physicalColumn = ((PhysicalColumnTreeNode) node).getPhysicalColumn();
+      final PhysicalColumn physicalColumn = (PhysicalColumn) ((PhysicalColumnTreeNode) node).getDomainObject();
       MenuItem miEdit = new MenuItem(mainMenu, SWT.PUSH);
       miEdit.setText(Messages.getString("MetaEditor.USER_EDIT_TEXT")); //$NON-NLS-1$
       miEdit.addListener(SWT.Selection, new Listener() {
@@ -1695,7 +1695,7 @@ public class MetaEditor {
         }
       });
     } else if (node instanceof BusinessTableTreeNode) {
-      final BusinessTable businessTable = ((BusinessTableTreeNode) node).getBusinessTable();
+      final BusinessTable businessTable = (BusinessTable) ((BusinessTableTreeNode) node).getDomainObject();
       MenuItem miNew = new MenuItem(mainMenu, SWT.PUSH);
       miNew.setText(Messages.getString("MetaEditor.USER_NEW_BUSINESS_TABLE")); //$NON-NLS-1$
       miNew.addListener(SWT.Selection, new Listener() {
@@ -1725,7 +1725,7 @@ public class MetaEditor {
         }
       });
     } else if (node instanceof RelationshipTreeNode) {
-      final RelationshipMeta relationshipMeta = ((RelationshipTreeNode) node).getRelationship();
+      final RelationshipMeta relationshipMeta = (RelationshipMeta) ((RelationshipTreeNode) node).getDomainObject();
       MenuItem miNew = new MenuItem(mainMenu, SWT.PUSH);
       miNew.setText(Messages.getString("MetaEditor.USER_NEW_RELATIONSHIP")); //$NON-NLS-1$
       miNew.addListener(SWT.Selection, new Listener() {
@@ -2163,10 +2163,10 @@ public class MetaEditor {
         DatabaseMeta databaseMeta = ((DatabaseMetaTreeNode) node).getDatabaseMeta();
         editConnection(databaseMeta);
       } else if (node instanceof PhysicalTableTreeNode) {
-        PhysicalTable physicalTable = ((PhysicalTableTreeNode) node).getPhysicalTable();
+        PhysicalTable physicalTable = (PhysicalTable) ((PhysicalTableTreeNode) node).getDomainObject();
         editPhysicalTable(physicalTable);
       } else if (node instanceof PhysicalColumn) {
-        PhysicalColumn physicalColumn = ((PhysicalColumnTreeNode) node).getPhysicalColumn();
+        PhysicalColumn physicalColumn = (PhysicalColumn) ((PhysicalColumnTreeNode) node).getDomainObject();
         editPhysicalColumn(physicalColumn);
       } else if (node instanceof BusinessModelTreeNode) {
         BusinessModel businessModel = ((BusinessModelTreeNode) node).getBusinessModel();
@@ -2176,10 +2176,10 @@ public class MetaEditor {
       } else if (node instanceof RelationshipsTreeNode) {
         newRelationship();
       } else if (node instanceof BusinessTableTreeNode) {
-        BusinessTable businessTable = ((BusinessTableTreeNode) node).getBusinessTable();
+        BusinessTable businessTable = (BusinessTable) ((BusinessTableTreeNode) node).getDomainObject();
         editBusinessTable(businessTable);
       } else if (node instanceof RelationshipTreeNode) {
-        RelationshipMeta relationship = ((RelationshipTreeNode) node).getRelationship();
+        RelationshipMeta relationship = (RelationshipMeta) ((RelationshipTreeNode) node).getDomainObject();
         editRelationship(relationship);
       } else if (node instanceof BusinessColumnTreeNode) {
         BusinessColumn businessColumn = ((BusinessColumnTreeNode) node).getBusinessColumn();

@@ -40,6 +40,7 @@ public class ConnectionsTreeNode extends ConceptTreeNode {
     
     this.schemaMeta = schemaMeta;
   }
+  
   /* (non-Javadoc)
    * @see org.pentaho.pms.ui.tree.ConceptTreeNode#createChildren(java.util.List)
    */
@@ -47,7 +48,23 @@ public class ConnectionsTreeNode extends ConceptTreeNode {
     Iterator iter = schemaMeta.getDatabases().iterator();
     while(iter.hasNext()) {
       DatabaseMeta databaseMeta = (DatabaseMeta) iter.next();
-      addChild(new DatabaseMetaTreeNode(this, schemaMeta, databaseMeta));
+      addDomainChild(databaseMeta);
+    }
+  }
+
+  public void addDomainChild(Object domainObject){
+    if (domainObject instanceof DatabaseMeta){
+      addChild(new DatabaseMetaTreeNode(this, schemaMeta, (DatabaseMeta) domainObject));
+    }
+  }
+  
+  public void removeDomainChild(Object domainObject){
+    if (domainObject instanceof DatabaseMeta){
+        for (Iterator iter = fChildren.iterator(); iter.hasNext();) {
+          DatabaseMetaTreeNode element = (DatabaseMetaTreeNode) iter.next();
+          if (element.databaseMeta.equals(domainObject))
+            removeChild(element);
+        }
     }
   }
 

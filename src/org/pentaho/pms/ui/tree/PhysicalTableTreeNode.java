@@ -23,6 +23,7 @@ import java.util.List;
 import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.schema.PhysicalColumn;
 import org.pentaho.pms.schema.PhysicalTable;
+import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 
 /**
  * @author wseyler
@@ -51,8 +52,28 @@ public class PhysicalTableTreeNode extends ConceptTreeNode {
     Iterator iter = physicalTable.getPhysicalColumns().iterator();
     while(iter.hasNext()) {
       PhysicalColumn physicalColumn = (PhysicalColumn) iter.next();
-      addChild(new PhysicalColumnTreeNode(this, physicalColumn, locale));
+      addDomainChild(physicalColumn);
     }
+  }
+  
+  public void addDomainChild(Object domainObject){
+    if (domainObject instanceof PhysicalColumn){
+      addChild(new PhysicalColumnTreeNode(this, (PhysicalColumn)domainObject, locale));
+    }
+  }
+  
+  public void removeDomainChild(Object domainObject){
+    if (domainObject instanceof PhysicalColumn){
+        for (Iterator iter = fChildren.iterator(); iter.hasNext();) {
+          PhysicalColumnTreeNode element = (PhysicalColumnTreeNode) iter.next();
+          if (element.physicalColumn.equals(domainObject))
+            removeChild(element);
+        }
+    }
+  }
+
+  public ConceptUtilityInterface getDomainObject(){
+    return physicalTable;
   }
 
   /* (non-Javadoc)
@@ -61,12 +82,4 @@ public class PhysicalTableTreeNode extends ConceptTreeNode {
   public String getName() {
     return physicalTable.getName(locale);
   }
-
-  /**
-   * @return
-   */
-  public PhysicalTable getPhysicalTable() {
-    return physicalTable;
-  }
-
 }

@@ -17,6 +17,7 @@
 
 package org.pentaho.pms.ui.tree;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.pentaho.pms.jface.tree.ITreeNode;
@@ -51,14 +52,30 @@ public class DatabaseMetaTreeNode extends ConceptTreeNode {
     PhysicalTable[] physicalTables = schemaMeta.getTablesOnDatabase(databaseMeta);
     for(int i=0; i<physicalTables.length; i++) {
       PhysicalTable physicalTable = physicalTables[i];
-      addChild(new PhysicalTableTreeNode(this, physicalTable, schemaMeta.getActiveLocale()));
+      addDomainChild(physicalTable);
+    }
+  }
+  
+  public void addDomainChild(Object domainObject){
+    if (domainObject instanceof PhysicalTable){
+      addChild(new PhysicalTableTreeNode(this, (PhysicalTable) domainObject, schemaMeta.getActiveLocale()));
+    }
+  }
+  
+  public void removeDomainChild(Object domainObject){
+    if (domainObject instanceof PhysicalTable){
+        for (Iterator iter = fChildren.iterator(); iter.hasNext();) {
+          PhysicalTableTreeNode element = (PhysicalTableTreeNode) iter.next();
+          if (element.physicalTable.equals(domainObject))
+            removeChild(element);
+        }
     }
   }
   
   public DatabaseMeta getDatabaseMeta(){
     return databaseMeta;
   }
-
+  
   /* (non-Javadoc)
    * @see org.pentaho.pms.jface.tree.ITreeNode#getName()
    */

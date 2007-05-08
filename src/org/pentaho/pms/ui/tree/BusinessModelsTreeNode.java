@@ -51,9 +51,26 @@ public class BusinessModelsTreeNode extends ConceptTreeNode {
     Iterator iter = schemaMeta.getBusinessModels().iterator();
     while(iter.hasNext()) {
       BusinessModel businessModel = (BusinessModel) iter.next();
-      addChild(new BusinessModelTreeNode(this, businessModel, schemaMeta.getActiveLocale()));
+      addDomainChild(businessModel);
     }
   }
+  
+  public void addDomainChild(Object domainObject){
+    if (domainObject instanceof BusinessModel){
+      addChild(new BusinessModelTreeNode(this, (BusinessModel) domainObject, schemaMeta.getActiveLocale()));
+    }
+  }
+  
+  public void removeDomainChild(Object domainObject){
+    if (domainObject instanceof BusinessModel){
+        for (Iterator iter = fChildren.iterator(); iter.hasNext();) {
+          BusinessModelTreeNode element = (BusinessModelTreeNode) iter.next();
+          if (element.model.equals(domainObject))
+            removeChild(element);
+        }
+    }
+  }
+
 
   /* (non-Javadoc)
    * @see org.pentaho.pms.jface.tree.ITreeNode#getName()

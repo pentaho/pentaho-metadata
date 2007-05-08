@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.schema.PhysicalColumn;
+import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 
 /**
  * @author wseyler
@@ -58,10 +59,7 @@ public class PhysicalColumnTreeNode extends ConceptTreeNode {
     return physicalColumn.getName(locale);
   }
 
-  /**
-   * @return
-   */
-  public PhysicalColumn getPhysicalColumn() {
+  public ConceptUtilityInterface getDomainObject(){
     return physicalColumn;
   }
 
