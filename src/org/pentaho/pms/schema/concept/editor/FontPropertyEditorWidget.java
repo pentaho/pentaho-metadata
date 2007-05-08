@@ -108,8 +108,8 @@ public class FontPropertyEditorWidget extends AbstractPropertyEditorWidget {
         dialog.open();
         if (null != dialog.getFontList()) {
           FontData fd = dialog.getFontList()[0];
-          boolean bold = (SWT.BOLD | fd.style) == SWT.BOLD;
-          boolean italic = (SWT.ITALIC | fd.style) == SWT.ITALIC;
+          boolean bold = (SWT.BOLD | fd.getStyle()) == SWT.BOLD;
+          boolean italic = (SWT.ITALIC | fd.getStyle()) == SWT.ITALIC;
           setValue(new FontSettings(fd.getName(), fd.getHeight(), bold, italic));
           putPropertyValue();
 
