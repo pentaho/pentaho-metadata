@@ -286,8 +286,8 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
           "Are you sure you want to stop overriding the property '"
               + DefaultPropertyID.findDefaultPropertyID(propertyId).getDescription() + "'?");
       if (delete) {
-        conceptModel.removeProperty(propertyId);
         // no need to update override button selection status; concept mod event will do that
+        conceptModel.removeProperty(propertyId);
       }
     } else {
       conceptModel.setProperty(DefaultPropertyID.findDefaultPropertyID(propertyId).getDefaultValue());

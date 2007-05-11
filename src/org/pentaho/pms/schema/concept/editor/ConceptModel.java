@@ -50,10 +50,6 @@ public class ConceptModel implements IConceptModel {
 
   public void clearProperties() {
     String[] ids = concept.getChildPropertyIDs();
-    if (0 == ids.length) {
-      return;
-    }
-    Map childPropertyMap = concept.getChildPropertyInterfaces();
     for (int i = 0; i < ids.length; i++) {
       removeProperty(ids[i]);
     }

@@ -60,6 +60,13 @@ public class Constants {
     imageRegistry.put("inherited-property", createImage(display, "inherited-property.png"));
     imageRegistry.put("security-property", createImage(display, "security-property.png"));
     imageRegistry.put("child-property", createImage(display, "child-property.png"));
+
+    imageRegistry.put("column-add-button", createImage(display, "column-add.png"));
+    imageRegistry.put("column-del-button", createImage(display, "column-delete.png"));
+
+    imageRegistry.put("column", createImage(display, "column.png"));
+    imageRegistry.put("table", createImage(display, "table.png"));
+
   }
 
   private static Image createImage(final Display display, final String filename) {

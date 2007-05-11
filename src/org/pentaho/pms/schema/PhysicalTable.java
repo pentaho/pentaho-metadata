@@ -1,13 +1,13 @@
 /*
- * Copyright 2006 Pentaho Corporation.  All rights reserved. 
- * This software was developed by Pentaho Corporation and is provided under the terms 
- * of the Mozilla Public License, Version 1.1, or any later version. You may not use 
- * this file except in compliance with the license. If you need a copy of the license, 
- * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho 
+ * Copyright 2006 Pentaho Corporation.  All rights reserved.
+ * This software was developed by Pentaho Corporation and is provided under the terms
+ * of the Mozilla Public License, Version 1.1, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho
  * BI Platform.  The Initial Developer is Pentaho Corporation.
  *
- * Software distributed under the Mozilla Public License is distributed on an "AS IS" 
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to 
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
  * the license for the specific language governing your rights and limitations.
 */
  /**********************************************************************
@@ -24,7 +24,7 @@
  ** info@kettle.be                                                    **
  **                                                                   **
  **********************************************************************/
- 
+
 package org.pentaho.pms.schema;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
@@ -40,7 +40,7 @@ import be.ibridge.kettle.core.list.UniqueList;
 
 /**
  * Represents a physical table on a physical database with physical columns.
- * 
+ *
  * @since 28-jan-2004
  */
 public class PhysicalTable extends ConceptUtilityBase implements Cloneable, ChangedFlagInterface, ConceptUtilityInterface
@@ -57,19 +57,19 @@ public class PhysicalTable extends ConceptUtilityBase implements Cloneable, Chan
         if (targetSchema!=null) setTargetSchema(targetSchema);
         setTargetTable(targetTable);
 	}
-	
+
 	public PhysicalTable()
 	{
 		this(null, null, null, null, new UniqueArrayList());
-	}	
-    
+	}
+
     public PhysicalTable(String id)
     {
         this(id, null, null, null, new UniqueArrayList());
     }
-    
+
     /**
-     * @return the description of the model element 
+     * @return the description of the model element
      */
     public String getModelElementDescription()
     {
@@ -100,7 +100,7 @@ public class PhysicalTable extends ConceptUtilityBase implements Cloneable, Chan
                 }
             }
             retval.setDatabaseMeta(databaseMeta); // shallow copy of the database information
-			
+
 			return retval;
 		}
 		catch(CloneNotSupportedException e)
@@ -108,33 +108,33 @@ public class PhysicalTable extends ConceptUtilityBase implements Cloneable, Chan
 			return null;
 		}
 	}
-	
+
 	public void setDatabaseMeta(DatabaseMeta databaseMeta)
 	{
 		this.databaseMeta = databaseMeta;
 	}
-	
+
 	public DatabaseMeta getDatabaseMeta()
 	{
 		return databaseMeta;
 	}
-	
+
 	public void setPhysicalColumns(UniqueList physicalColumns)
 	{
 		this.physicalColumns = physicalColumns;
         setChanged();
 	}
-	
+
 	public UniqueList getPhysicalColumns()
 	{
 		return physicalColumns;
 	}
-	
+
 	public PhysicalColumn getPhysicalColumn(int i)
 	{
 		return (PhysicalColumn)physicalColumns.get(i);
 	}
-	
+
 	public void addPhysicalColumn(PhysicalColumn column) throws ObjectAlreadyExistsException
 	{
 		physicalColumns.add(column);
@@ -155,7 +155,7 @@ public class PhysicalTable extends ConceptUtilityBase implements Cloneable, Chan
 		}
 		return -1;
 	}
-	
+
     /**
      * Find a physical column using its ID
      * @param columnId the column ID to look out for
@@ -164,11 +164,11 @@ public class PhysicalTable extends ConceptUtilityBase implements Cloneable, Chan
 	public PhysicalColumn findPhysicalColumn(String columnId)
 	{
 		int idx = findPhysicalColumnNr(columnId);
-		if (idx>=0) 
+		if (idx>=0)
 		{
 			// System.out.println("Found column #"+idx);
 			return getPhysicalColumn(idx);
-		} 
+		}
 		return null;
 	}
 
@@ -183,30 +183,30 @@ public class PhysicalTable extends ConceptUtilityBase implements Cloneable, Chan
         for (int i=0;i<nrPhysicalColumns();i++)
         {
             PhysicalColumn physicalColumn = getPhysicalColumn(i);
-            
+
             if (columnName.equalsIgnoreCase( physicalColumn.getConcept().getName(locale) ) ) return physicalColumn;
         }
-        
+
         return findPhysicalColumn(columnName);
     }
-    
+
 	public int indexOfPhysicalColumn(PhysicalColumn f)
 	{
 		return physicalColumns.indexOf(f);
 	}
-	
+
 	public void removePhysicalColumn(int i)
 	{
 		physicalColumns.remove(i);
         setChanged();
 	}
-	
+
 	public void removeAllPhysicalColumns()
 	{
 		physicalColumns.clear();
         setChanged();
 	}
-	
+
 	public int nrPhysicalColumns()
 	{
 		return physicalColumns.size();
@@ -214,24 +214,18 @@ public class PhysicalTable extends ConceptUtilityBase implements Cloneable, Chan
 
 	public boolean equals(Object obj)
 	{
-		if (obj==null) return false;
-		
-		PhysicalTable inf = (PhysicalTable)obj;
-		
-		if (!getId().equalsIgnoreCase(inf.getId())) return false;
-
-		return true; 
+	  return super.equals(obj);
 	}
-	
+
+  public int hashCode()
+  {
+    return super.hashCode();
+  }
+
 	public String toString()
 	{
 		if (databaseMeta!=null) return databaseMeta.getName()+"-->"+getId(); //$NON-NLS-1$
 		return getId();
-	}
-	
-	public int hashCode()
-	{
-		return getId().hashCode();
 	}
 
     /**
@@ -244,7 +238,7 @@ public class PhysicalTable extends ConceptUtilityBase implements Cloneable, Chan
         {
             ids[i] = getPhysicalColumn(i).getId();
         }
-        
+
         return ids;
     }
 
@@ -259,7 +253,7 @@ public class PhysicalTable extends ConceptUtilityBase implements Cloneable, Chan
         {
             names[i] = getPhysicalColumn(i).getDisplayName(locale);
         }
-        
+
         return names;
     }
 }

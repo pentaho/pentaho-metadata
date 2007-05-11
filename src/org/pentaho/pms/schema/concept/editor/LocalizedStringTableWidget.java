@@ -125,7 +125,7 @@ public class LocalizedStringTableWidget extends Composite {
     // 3rd column with task Owner
     column = new TableColumn(table, SWT.LEFT, 1);
     column.setText(columnNames[1]);
-    column.setWidth(400);
+    column.setWidth(300);
     // Add listener to column so tasks are sorted by owner when clicked
     column.addSelectionListener(new SelectionAdapter() {
 

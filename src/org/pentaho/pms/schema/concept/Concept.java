@@ -22,6 +22,8 @@ import java.util.Set;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 import org.pentaho.pms.schema.concept.types.localstring.ConceptPropertyLocalizedString;
@@ -64,9 +66,9 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
         return true;
       }
       Concept rhs = (Concept) obj;
-      return new EqualsBuilder().append(name, rhs.name).append(parentInterface, rhs.parentInterface)
-      .append(inheritedInterface, rhs.inheritedInterface).append(securityParentInterface, rhs.securityParentInterface)
-      .isEquals();
+      return new EqualsBuilder().append(name, rhs.name).append(childPropertyInterfaces, rhs.childPropertyInterfaces)
+          .append(parentInterface, rhs.parentInterface).append(inheritedInterface, rhs.inheritedInterface)
+          .append(securityParentInterface, rhs.securityParentInterface).isEquals();
     }
 
     public int hashCode() {
@@ -113,22 +115,28 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
         }
     }
 
-    public String toString()
-    {
-        StringBuffer string = new StringBuffer();
+//    public String toString()
+//    {
+//        StringBuffer string = new StringBuffer();
+//
+//        // Print the properties...
+//        String[] propertyIDs = getPropertyIDs();
+//        for (int i = 0; i < propertyIDs.length; i++)
+//        {
+//            String id = propertyIDs[i];
+//            String value = getProperty(id).toString();
+//            if (i>0) string.append(", "); //$NON-NLS-1$
+//            string.append(value);
+//        }
+//
+//        return string.toString();
+//    }
 
-        // Print the properties...
-        String[] propertyIDs = getPropertyIDs();
-        for (int i = 0; i < propertyIDs.length; i++)
-        {
-            String id = propertyIDs[i];
-            String value = getProperty(id).toString();
-            if (i>0) string.append(", "); //$NON-NLS-1$
-            string.append(value);
-        }
-
-        return string.toString();
-    }
+    public String toString() {
+      return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append(this.name)
+      .append(this.childPropertyInterfaces).append(this.inheritedInterface)
+      .append(this.parentInterface).append(this.securityParentInterface).toString();
+  }
 
     /**
      * @return the name

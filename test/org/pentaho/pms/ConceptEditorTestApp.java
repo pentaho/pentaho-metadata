@@ -78,8 +78,8 @@ public class ConceptEditorTestApp extends ApplicationWindow {
     conceptModel.setRelatedConcept(parentConcept, IConceptModel.REL_PARENT);
 
     Concept secConcept = new Concept();
-//    ConceptPropertyInterface sec1 = new ConceptPropertySecurity(DefaultPropertyID.SECURITY.getId(), new Security());
-//    secConcept.addProperty(sec1);
+    //    ConceptPropertyInterface sec1 = new ConceptPropertySecurity(DefaultPropertyID.SECURITY.getId(), new Security());
+    //    secConcept.addProperty(sec1);
     ConceptPropertyInterface sec2 = new ConceptPropertyString(DefaultPropertyID.TARGET_TABLE.getId(), "test_table");
     secConcept.addProperty(sec2);
     conceptModel.setRelatedConcept(secConcept, IConceptModel.REL_INHERITED);
@@ -105,7 +105,7 @@ public class ConceptEditorTestApp extends ApplicationWindow {
       }
     });
 
-    context.put("schemaMeta", schemaMeta);
+    context.put("locales", schemaMeta.getLocales());
   }
 
   protected void conceptModified(final ConceptModificationEvent e) {

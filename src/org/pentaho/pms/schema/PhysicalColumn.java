@@ -1,13 +1,13 @@
 /*
- * Copyright 2006 Pentaho Corporation.  All rights reserved. 
- * This software was developed by Pentaho Corporation and is provided under the terms 
- * of the Mozilla Public License, Version 1.1, or any later version. You may not use 
- * this file except in compliance with the license. If you need a copy of the license, 
- * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho 
+ * Copyright 2006 Pentaho Corporation.  All rights reserved.
+ * This software was developed by Pentaho Corporation and is provided under the terms
+ * of the Mozilla Public License, Version 1.1, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho
  * BI Platform.  The Initial Developer is Pentaho Corporation.
  *
- * Software distributed under the Mozilla Public License is distributed on an "AS IS" 
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to 
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
  * the license for the specific language governing your rights and limitations.
 */
  /**********************************************************************
@@ -24,14 +24,16 @@
  ** info@kettle.be                                                    **
  **                                                                   **
  **********************************************************************/
- 
+
 
 /*
  * Created on 28-jan-2004
- * 
+ *
  */
 
 package org.pentaho.pms.schema;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
@@ -47,7 +49,7 @@ import be.ibridge.kettle.core.database.DatabaseMeta;
 public class PhysicalColumn extends ConceptUtilityBase implements ConceptUtilityInterface, Cloneable
 {
 	private PhysicalTable physicalTable;
-		
+
 	public PhysicalColumn(String id, String formula, FieldTypeSettings fieldType, AggregationSettings aggregationType, PhysicalTable tableinfo)
 	{
     super(id);
@@ -70,7 +72,7 @@ public class PhysicalColumn extends ConceptUtilityBase implements ConceptUtility
 
 
     /**
-     * @return the description of the model element 
+     * @return the description of the model element
      */
     public String getModelElementDescription()
     {
@@ -90,21 +92,21 @@ public class PhysicalColumn extends ConceptUtilityBase implements ConceptUtility
             return null;
         }
     }
-    
+
 	public void setTable(PhysicalTable tableinfo)
 	{
-		this.physicalTable = tableinfo; 
+		this.physicalTable = tableinfo;
 	}
-	
+
 	public PhysicalTable getTable()
 	{
 		return physicalTable;
 	}
-	
+
 	public String getTableColumn()
 	{
 		String retval;
-		
+
 		if (getFormula()!=null && getFormula().length()>0)
 		{
 			retval=getFormula();
@@ -115,17 +117,17 @@ public class PhysicalColumn extends ConceptUtilityBase implements ConceptUtility
 			PhysicalTable table = getTable();
 			retval=table.getId()+"."+getId(); //$NON-NLS-1$
 		}
-		
+
 		return retval;
 	}
-	
+
 	public String getAliasColumn(String tableAlias, String formula)
 	{
 	    // Database?
         DatabaseMeta databaseMeta = getTable().getDatabaseMeta();
-        
+
 		String retval;
-		
+
 		if (getTable()!=null && formula!=null)
 		{
 			if (!isExact())
@@ -141,14 +143,14 @@ public class PhysicalColumn extends ConceptUtilityBase implements ConceptUtility
 		{
 			retval = "??"; //$NON-NLS-1$
 		}
-		
+
 		return retval;
 	}
 
     public String getRenameAsColumn(DatabaseMeta dbinfo, int columnNr)
 	{
 		String retval=""; //$NON-NLS-1$
-		
+
 		if (hasAggregate() && !isExact())
 		{
 			retval+="F___"+columnNr;  //$NON-NLS-1$
@@ -162,32 +164,35 @@ public class PhysicalColumn extends ConceptUtilityBase implements ConceptUtility
 		{
 			retval+=getFormula();
 		}
-	
+
 		return retval;
 	}
-		
-	public boolean equals(Object obj)
-	{
-		PhysicalColumn f = (PhysicalColumn)obj;
-		if (!getId().equalsIgnoreCase(f.getId())) return false;
-		if (!getFormula().equalsIgnoreCase(f.getFormula())) return false;
-		if (getAggregationType()!=f.getAggregationType()) return false;
-		if (getFieldType()!=f.getFieldType()) return false;
-		if (physicalTable!=null)
-		{
-			if (f.physicalTable!=null)
-			{
-				if (!physicalTable.getId().equalsIgnoreCase(f.physicalTable.getId())) return false;
-			}
-			else
-			{
-				return false;
-			}
-		}
-		
-		return true;
-	}
-	
+
+  public boolean equals(Object obj) {
+
+    if (obj instanceof PhysicalColumn == false) {
+      return false;
+    }
+    if (this == obj) {
+      return true;
+    }
+    PhysicalColumn rhs = (PhysicalColumn) obj;
+
+    // formula comparison should be case-insensitive
+    String lhsFormula = null != getFormula() ? getFormula().toUpperCase() : null;
+    String rhsFormula = null != rhs.getFormula() ? rhs.getFormula().toUpperCase() : null;
+
+    return new EqualsBuilder().appendSuper(super.equals(rhs)).append(lhsFormula, rhsFormula).append(
+        getAggregationType(), rhs.getAggregationType()).append(getFieldType(), rhs.getFieldType()).append(
+        physicalTable, rhs.physicalTable).isEquals();
+  }
+
+  public int hashCode() {
+    String formulaToHash = null != getFormula() ? getFormula().toUpperCase() : null;
+    return new HashCodeBuilder(17, 199).appendSuper(super.hashCode()).append(formulaToHash)
+        .append(getAggregationType()).append(getFieldType()).append(physicalTable).toHashCode();
+  }
+
 	public String toString()
 	{
 		return getId()==null?"NULL":getId(); //$NON-NLS-1$

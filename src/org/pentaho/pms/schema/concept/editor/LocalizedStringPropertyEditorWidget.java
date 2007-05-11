@@ -8,7 +8,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Composite;
-import org.pentaho.pms.schema.SchemaMeta;
+import org.pentaho.pms.locale.Locales;
 
 public class LocalizedStringPropertyEditorWidget extends AbstractPropertyEditorWidget {
 
@@ -33,9 +33,8 @@ public class LocalizedStringPropertyEditorWidget extends AbstractPropertyEditorW
   // ~ Methods =========================================================================================================
 
   protected void createContents(final Composite parent) {
-    SchemaMeta schemaMeta = (SchemaMeta) getContext().get("schemaMeta");
-    table = new LocalizedStringTableWidget(parent, SWT.NONE, getConceptModel(), getPropertyId(), schemaMeta
-        .getLocales());
+    Locales locales = (Locales) getContext().get("locales");
+    table = new LocalizedStringTableWidget(parent, SWT.NONE, getConceptModel(), getPropertyId(), locales);
 
     FormData fdTable = new FormData();
     fdTable.left = new FormAttachment(0, 0);

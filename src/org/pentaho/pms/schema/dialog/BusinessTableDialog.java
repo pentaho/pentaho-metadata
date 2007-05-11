@@ -1,13 +1,13 @@
 /*
- * Copyright 2006 Pentaho Corporation.  All rights reserved. 
- * This software was developed by Pentaho Corporation and is provided under the terms 
- * of the Mozilla Public License, Version 1.1, or any later version. You may not use 
- * this file except in compliance with the license. If you need a copy of the license, 
- * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho 
+ * Copyright 2006 Pentaho Corporation.  All rights reserved.
+ * This software was developed by Pentaho Corporation and is provided under the terms
+ * of the Mozilla Public License, Version 1.1, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho
  * BI Platform.  The Initial Developer is Pentaho Corporation.
  *
- * Software distributed under the Mozilla Public License is distributed on an "AS IS" 
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to 
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
  * the license for the specific language governing your rights and limitations.
  */
 package org.pentaho.pms.schema.dialog;
@@ -460,7 +460,7 @@ public class BusinessTableDialog extends Dialog {
           .setMessage(Messages.getString(
               "BusinessTableDialog.USER_WARNING_CONFIRM_DELETE_COLUMNS", Integer.toString(idxs.length)) + //$NON-NLS-1$
               (idxs.length != 1 ? Messages.getString("BusinessTableDialog.USER_COLUMNS") : Messages.getString("BusinessTableDialog.USER_COLUMN")) + //$NON-NLS-1$ //$NON-NLS-2$
-              Messages.getString("BusinessTableDialog.USER_CONFIRM_OPERATION_CANNOT_BE_UNDONE")); //$NON-NLS-1$ 
+              Messages.getString("BusinessTableDialog.USER_CONFIRM_OPERATION_CANNOT_BE_UNDONE")); //$NON-NLS-1$
       if (box.open() != SWT.YES)
         return;
 
@@ -514,7 +514,7 @@ public class BusinessTableDialog extends Dialog {
                 } catch (Exception e) {
                   new ErrorDialog(
                       shell,
-                      Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_GETTING_PROPERTY_VALUE", id), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+                      Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_GETTING_PROPERTY_VALUE", id), e); //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 if (property != null) {
                   ConceptDefaultsDialog.setPropertyValues(shell, detailsWidgetInterfaces);
@@ -542,7 +542,7 @@ public class BusinessTableDialog extends Dialog {
         } catch (ObjectAlreadyExistsException e) {
           new ErrorDialog(
               shell,
-              Messages.getString("BusinessTableDialog.USER_ERROR_TITLE"), Messages.getString("BusinessTableDialog.USER_ERROR_COLUMN_ID_IN_USE", wColId.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+              Messages.getString("BusinessTableDialog.USER_ERROR_TITLE"), Messages.getString("BusinessTableDialog.USER_ERROR_COLUMN_ID_IN_USE", wColId.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$
           // Go back to the previous column
           // It's obvious that's where the problem was...
           int prevIndex = businessTable.indexOfBusinessColumn(previousColumn);
@@ -558,7 +558,7 @@ public class BusinessTableDialog extends Dialog {
     wColId.setText(column.getId());
 
     String message = Messages.getString(
-        "BusinessTableDialog.USER_PROPERTIES_FOR_COLUMN", column.getDisplayName(activeLocale)); //$NON-NLS-1$ 
+        "BusinessTableDialog.USER_PROPERTIES_FOR_COLUMN", column.getDisplayName(activeLocale)); //$NON-NLS-1$
 
     ConceptDefaultsDialog.getControls(propertiesComposite, column, message, column.getConcept(),
         detailsWidgetInterfaces, schemaMeta.getLocales(), schemaMeta.getSecurityReference());
@@ -592,7 +592,7 @@ public class BusinessTableDialog extends Dialog {
             composite,
             businessTable,
             Messages.getString(
-                "BusinessTableDialog.USER_BUSINESS_TABLE_NAME", businessTable.getDisplayName(activeLocale)), null, null, conceptInterface, widgetInterfaces, schemaMeta.getLocales(), schemaMeta.getSecurityReference()); //$NON-NLS-1$ 
+                "BusinessTableDialog.USER_BUSINESS_TABLE_NAME", businessTable.getDisplayName(activeLocale)), null, null, conceptInterface, widgetInterfaces, schemaMeta.getLocales(), schemaMeta.getSecurityReference()); //$NON-NLS-1$
 
     FormData fdProperties = new FormData();
     fdProperties.left = new FormAttachment(0, 0);
@@ -642,7 +642,7 @@ public class BusinessTableDialog extends Dialog {
     } catch (ObjectAlreadyExistsException e) {
       new ErrorDialog(
           shell,
-          Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_TABLE_ID_IN_USE", wName.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+          Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_TABLE_ID_IN_USE", wName.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$
       return;
     }
 
@@ -665,7 +665,7 @@ public class BusinessTableDialog extends Dialog {
       } catch (ObjectAlreadyExistsException e) {
         new ErrorDialog(
             shell,
-            Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_COLUMN_ID_IN_USE", wColId.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+            Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_COLUMN_ID_IN_USE", wColId.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$
         return;
       }
     }
@@ -674,7 +674,7 @@ public class BusinessTableDialog extends Dialog {
     originalTable.getConcept().getChildPropertyInterfaces().putAll(conceptInterface.getChildPropertyInterfaces());
 
     // Now that we have all the properties and settings, copy these over to the original business table...
-    // 
+    //
     // The concept stuff: just overwrite it, there are no references from/to these...
     originalTable.setConcept(businessTable.getConcept());
 
@@ -695,7 +695,7 @@ public class BusinessTableDialog extends Dialog {
         } catch (ObjectAlreadyExistsException e) {
           new ErrorDialog(
               shell,
-              Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_BUSINESS_COLUMN_ID_IN_USE", businessColumn.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+              Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_BUSINESS_COLUMN_ID_IN_USE", businessColumn.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$
           return;
         }
       }
@@ -706,7 +706,7 @@ public class BusinessTableDialog extends Dialog {
       } catch (ObjectAlreadyExistsException e) {
         new ErrorDialog(
             shell,
-            Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_BUSINESS_COLUMN_ID_IN_USE", businessColumn.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+            Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_BUSINESS_COLUMN_ID_IN_USE", businessColumn.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$
         return;
       }
     }
@@ -724,6 +724,7 @@ public class BusinessTableDialog extends Dialog {
           columns,
           Messages.getString("BusinessTableDialog.USER_TITLE_SELECT_COLUMN"), Messages.getString("BusinessTableDialog.USER_SELECT_COLUMN")); //$NON-NLS-1$ //$NON-NLS-2$
       String name = dialog.open();
+      // -------------------- move to table model
       if (name != null) {
         PhysicalColumn physicalColumn = physicalTable.findPhysicalColumn(activeLocale, name);
         String id = BusinessColumn.proposeId(activeLocale, businessTable, physicalColumn);
@@ -733,9 +734,10 @@ public class BusinessTableDialog extends Dialog {
         } catch (ObjectAlreadyExistsException e) {
           new ErrorDialog(
               shell,
-              Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_ID_EXISTS_NOT_ADDED", businessColumn.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+              Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_ID_EXISTS_NOT_ADDED", businessColumn.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$
         }
       }
+      // -------------------- move to table model
 
       refreshList();
       wList.select(physicalTable.nrPhysicalColumns() - 1);
@@ -754,7 +756,7 @@ public class BusinessTableDialog extends Dialog {
         } catch (ObjectAlreadyExistsException e) {
           new ErrorDialog(
               shell,
-              Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_BUSINESS_TABLE_ID_EXISTS", wName.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+              Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_BUSINESS_TABLE_ID_EXISTS", wName.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$
           return;
         }
       }
@@ -765,12 +767,12 @@ public class BusinessTableDialog extends Dialog {
 
       for (int i = 0; i < physicalTable.nrPhysicalColumns(); i++) {
         PhysicalColumn column = physicalTable.getPhysicalColumn(i);
-        
-        // TODO We are trying to determine if the column is already in play. Our two logical options are to 
-        // test the id of the physical column, and the proposed id of the physical column, to see 
-        // if those values exist in our "used" list. If the user has re-named the id, this logic will 
-        // not catch the duplicate. We may want to revisit this and make the logic more robust.  
-        
+
+        // TODO We are trying to determine if the column is already in play. Our two logical options are to
+        // test the id of the physical column, and the proposed id of the physical column, to see
+        // if those values exist in our "used" list. If the user has re-named the id, this logic will
+        // not catch the duplicate. We may want to revisit this and make the logic more robust.
+
         String newId = BusinessColumn.proposeId(schemaMeta.getActiveLocale(), businessTable, column);
 
         if ((Const.indexOfString(column.getId(), used) < 0) && (Const.indexOfString(newId, used) < 0)) {
@@ -781,7 +783,7 @@ public class BusinessTableDialog extends Dialog {
           } catch (ObjectAlreadyExistsException e) {
             new ErrorDialog(
                 shell,
-                Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_ID_EXISTS_NOT_ADDED", businessColumn.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+                Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_ID_EXISTS_NOT_ADDED", businessColumn.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$
           }
         }
       }

@@ -67,20 +67,20 @@ public class ConceptEditorWidget extends Composite {
     // widget for left side of sash
     PropertyNavigationWidget w5 = new PropertyNavigationWidget(c1, SWT.NONE, conceptModel);
     FormData fd5 = new FormData();
-    fd5.top = new FormAttachment(0, 10);
-    fd5.bottom = new FormAttachment(100, -10);
-    fd5.left = new FormAttachment(0, 10);
-    fd5.right = new FormAttachment(100, -10);
+    fd5.top = new FormAttachment(0, 0);
+    fd5.bottom = new FormAttachment(100, 0);
+    fd5.left = new FormAttachment(0, 0);
+    fd5.right = new FormAttachment(100, -5);
     w5.setLayoutData(fd5);
     this.propertyManagementWidget = w5;
 
     // widget for right side of sash
     PropertyWidgetManager2 m7 = new PropertyWidgetManager2(c3, SWT.NONE, conceptModel, context);
     FormData fd7 = new FormData();
-    fd7.top = new FormAttachment(0, 10);
-    fd7.bottom = new FormAttachment(100, -10);
-    fd7.left = new FormAttachment(0, 10);
-    fd7.right = new FormAttachment(100, -10);
+    fd7.top = new FormAttachment(0, 0);
+    fd7.bottom = new FormAttachment(100, 0);
+    fd7.left = new FormAttachment(0, 5);
+    fd7.right = new FormAttachment(100, 0);
     m7.setLayoutData(fd7);
     this.propertyWidgetManager = m7;
 

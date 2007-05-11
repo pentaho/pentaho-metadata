@@ -15,6 +15,8 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -22,9 +24,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.ScrollBar;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 
 public class PropertyWidgetManager2 extends Composite implements ISelectionChangedListener {
@@ -82,6 +84,10 @@ public class PropertyWidgetManager2 extends Composite implements ISelectionChang
 
     widgetAreaWrapper = new ScrolledComposite(this, SWT.V_SCROLL | SWT.BORDER);
     widgetAreaWrapper.setAlwaysShowScrollBars(true);
+    widgetAreaWrapper.setExpandHorizontal(true);
+    widgetAreaWrapper.setMinWidth(50);
+//    widgetAreaWrapper.setBackground(new Color(Display.getDefault(), 5, 5, 5));
+//    widgetAreaWrapper.setLayout(new FillLayout());
 
     FormData fd9 = new FormData();
     fd9.top = new FormAttachment(0, 38);
@@ -102,8 +108,6 @@ public class PropertyWidgetManager2 extends Composite implements ISelectionChang
 
     widgetArea.setLayout(layout);
 
-    refreshMe();
-
     widgetAreaWrapper.setContent(widgetArea);
 
     focusWidget(null);
@@ -115,17 +119,7 @@ public class PropertyWidgetManager2 extends Composite implements ISelectionChang
       }
     });
 
-    ScrollBar scrollBar = widgetAreaWrapper.getVerticalBar();
-    if (logger.isDebugEnabled()) {
-      logger.debug("thumb: " + scrollBar.getThumb());
-      logger.debug("increment: " + scrollBar.getIncrement());
-      logger.debug("min: " + scrollBar.getMinimum());
-      logger.debug("max: " + scrollBar.getMaximum());
-      logger.debug("page increment: " + scrollBar.getPageIncrement());
-      logger.debug("selection: " + scrollBar.getSelection());
-      logger.debug("style: " + scrollBar.getStyle());
-    }
-
+    refreshMe();
   }
 
   protected void refreshMe() {
