@@ -1,13 +1,13 @@
 /*
- * Copyright 2006 Pentaho Corporation.  All rights reserved.
- * This software was developed by Pentaho Corporation and is provided under the terms
- * of the Mozilla Public License, Version 1.1, or any later version. You may not use
- * this file except in compliance with the license. If you need a copy of the license,
- * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho
+ * Copyright 2006 Pentaho Corporation.  All rights reserved. 
+ * This software was developed by Pentaho Corporation and is provided under the terms 
+ * of the Mozilla Public License, Version 1.1, or any later version. You may not use 
+ * this file except in compliance with the license. If you need a copy of the license, 
+ * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho 
  * BI Platform.  The Initial Developer is Pentaho Corporation.
  *
- * Software distributed under the Mozilla Public License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS" 
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to 
  * the license for the specific language governing your rights and limitations.
  */
 package org.pentaho.pms.editor;
@@ -16,13 +16,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -94,19 +91,17 @@ import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.schema.concept.DefaultPropertyID;
 import org.pentaho.pms.schema.concept.dialog.ConceptDialog;
-import org.pentaho.pms.schema.concept.editor.ITableModel;
-import org.pentaho.pms.schema.concept.editor.PhysicalTableModel;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.schema.concept.types.datatype.ConceptPropertyDataType;
 import org.pentaho.pms.schema.concept.types.datatype.DataTypeSettings;
 import org.pentaho.pms.schema.concept.types.fieldtype.FieldTypeSettings;
 import org.pentaho.pms.schema.concept.types.tabletype.TableTypeSettings;
-import org.pentaho.pms.schema.dialog.BusinessCategoriesDialog;
 import org.pentaho.pms.schema.dialog.BusinessCategoryDialog;
 import org.pentaho.pms.schema.dialog.BusinessModelDialog;
 import org.pentaho.pms.schema.dialog.BusinessTableDialog;
+import org.pentaho.pms.schema.dialog.CategoryEditorDialog;
+import org.pentaho.pms.schema.dialog.PhysicalTableDialog;
 import org.pentaho.pms.schema.dialog.RelationshipDialog;
-import org.pentaho.pms.schema.dialog.TableDialog;
 import org.pentaho.pms.schema.security.SecurityReference;
 import org.pentaho.pms.schema.security.SecurityService;
 import org.pentaho.pms.schema.security.SecurityServiceDialog;
@@ -118,6 +113,7 @@ import org.pentaho.pms.ui.tree.BusinessTablesTreeNode;
 import org.pentaho.pms.ui.tree.BusinessViewTreeNode;
 import org.pentaho.pms.ui.tree.CategoryTreeNode;
 import org.pentaho.pms.ui.tree.ConceptLabelProvider;
+import org.pentaho.pms.ui.tree.ConceptTreeNode;
 import org.pentaho.pms.ui.tree.ConnectionsTreeNode;
 import org.pentaho.pms.ui.tree.DatabaseMetaTreeNode;
 import org.pentaho.pms.ui.tree.LabelTreeNode;
@@ -130,6 +126,7 @@ import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.GUIResource;
 import org.pentaho.pms.util.Settings;
 import org.pentaho.pms.util.Splash;
+import org.pentaho.pms.util.dialog.ComboSelectionDialog;
 import org.pentaho.pms.util.dialog.EnterOptionsDialog;
 import org.pentaho.pms.util.logging.Log4jPMELayout;
 
@@ -163,7 +160,7 @@ import be.ibridge.kettle.trans.StepLoader;
 
 /**
  * Class to edit the metadata domain (Schema Metadata), load/store into the MDR/CWM model
- *
+ * 
  * @since 16-may-2003
  */
 public class MetaEditor {
@@ -255,6 +252,8 @@ public class MetaEditor {
   private TreeViewer treeViewer;
 
   private SchemaMetaTreeNode mainTreeNode;
+
+  private BusinessModelTreeNode activeModelTreeNode;
 
   public KeyAdapter defKeys;
 
@@ -441,7 +440,10 @@ public class MetaEditor {
     };
     lsBTableNew = new Listener() {
       public void handleEvent(Event e) {
-        newBusinessTable(null);
+        BusinessTable table = newBusinessTable(null);
+        if ((activeModelTreeNode != null) && (table != null)){
+          activeModelTreeNode.getBusinessTablesRoot().addDomainChild(table);
+        }
       }
     };
     lsBModelNew = new Listener() {
@@ -458,10 +460,15 @@ public class MetaEditor {
       public void handleEvent(Event e) {
         BusinessModel activeModel = schemaMeta.getActiveModel();
         if (activeModel != null) {
+          CategoryEditorDialog dialog = new CategoryEditorDialog(shell,activeModel, schemaMeta.getLocales(),
+              schemaMeta.getSecurityReference());
+            /*
           BusinessCategoriesDialog dialog = new BusinessCategoriesDialog(shell, activeModel, schemaMeta.getLocales(),
               schemaMeta.getSecurityReference());
+              */
           dialog.open();
-          refreshTree();
+          if(activeModelTreeNode != null)
+            activeModelTreeNode.getBusinessViewRoot().sync();
         }
       }
     };
@@ -544,10 +551,11 @@ public class MetaEditor {
       public void handleEvent(Event e) {
         BusinessModel activeModel = schemaMeta.getActiveModel();
         if (activeModel != null) {
-          BusinessCategoriesDialog dialog = new BusinessCategoriesDialog(shell, activeModel, schemaMeta.getLocales(),
+          CategoryEditorDialog dialog = new CategoryEditorDialog(shell,activeModel, schemaMeta.getLocales(),
               schemaMeta.getSecurityReference());
           dialog.open();
-          refreshTree();
+          if (activeModelTreeNode != null)
+            activeModelTreeNode.getBusinessViewRoot().sync();
         }
       }
     };
@@ -602,7 +610,7 @@ public class MetaEditor {
 
   public void exportToXMI() {
     boolean goAhead = true;
-
+    
     if (Const.isEmpty(schemaMeta.getDomainName())) {
         MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
         mb.setMessage(Messages.getString("MetaEditor.USER_NO_NAME_CAN_NOT_EXPORT")); //$NON-NLS-1$
@@ -611,7 +619,7 @@ public class MetaEditor {
           goAhead = false;
       }
     }
-
+    
     if (schemaMeta.hasChanged()) {
       MessageBox mb = new MessageBox(shell, SWT.NO | SWT.YES | SWT.ICON_WARNING);
       mb.setMessage(Messages.getString("MetaEditor.USER_SAVE_DOMAIN")); //$NON-NLS-1$
@@ -691,8 +699,8 @@ public class MetaEditor {
             // convert to a schema
             schemaMeta = cwmSchemaFactory.getSchemaMeta(cwmInstance);
 
-            // refresh it all...
-            treeViewer.setInput(mainTreeNode);
+            // Here, we are getting a whole new model, so rebuild the whole tree
+            refreshTree();
           }
         } catch (Exception e) {
           new ErrorDialog(
@@ -716,6 +724,7 @@ public class MetaEditor {
 
     // Perhaps the transformation contains elements at startup?
     if (schemaMeta.nrTables() > 0 || schemaMeta.nrDatabases() > 0) {
+      refreshTree();
       refreshAll(); // Do a complete refresh then...
     }
   }
@@ -912,7 +921,7 @@ public class MetaEditor {
 
     new MenuItem(mPopAD, SWT.SEPARATOR);
     MenuItem miPopSSnap = new MenuItem(mPopAD, SWT.CASCADE);
-    miPopSSnap.setText(Messages.getString("MetaEditorGraph.USER_SNAP_TO_GRID", Integer.toString(Const.GRID_SIZE))); //$NON-NLS-1$
+    miPopSSnap.setText(Messages.getString("MetaEditorGraph.USER_SNAP_TO_GRID", Integer.toString(Const.GRID_SIZE))); //$NON-NLS-1$ 
     miPopAD.setMenu(mPopAD);
 
     miPopSSnap.addSelectionListener(new SelectionAdapter() {
@@ -997,7 +1006,7 @@ public class MetaEditor {
               metaEditorGraph.control = false;
             } else {
               MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
-              mb.setMessage(Messages.getString("MetaEditor.USER_ERROR_OPENING_DOMAIN", fn)); //$NON-NLS-1$
+              mb.setMessage(Messages.getString("MetaEditor.USER_ERROR_OPENING_DOMAIN", fn)); //$NON-NLS-1$ 
               mb.setText(Messages.getString("General.USER_TITLE_ERROR")); //$NON-NLS-1$
               mb.open();
             }
@@ -1260,7 +1269,7 @@ public class MetaEditor {
         }
 
         try {
-          //
+          // 
           // Where exactly did we drop in the tree?
           TreeItem treeItem = (TreeItem) event.item;
           String path[] = Const.getTreeStrings(treeItem, 1);
@@ -1270,7 +1279,7 @@ public class MetaEditor {
           BusinessCategory parentCategory = activeModel.findBusinessCategory(path, activeLocale);
 
           // We expect a Drag and Drop container... (encased in XML & Base64)
-          //
+          // 
           DragAndDropContainer container = (DragAndDropContainer) event.data;
 
           // Block sub-categories & columns in the root for now, until Ad-hoc & MDR follow
@@ -1285,7 +1294,7 @@ public class MetaEditor {
           }
 
           switch (container.getType()) {
-            //
+            // 
             // Drag business table in categories: make business table name a new category
             //
             case DragAndDropContainer.TYPE_BUSINESS_TABLE: {
@@ -1361,10 +1370,10 @@ public class MetaEditor {
 
             //
             // Nothing we can use: give an error!
-            //
+            //  
             default: {
               MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
-              mb.setMessage(Messages.getString("MetaEditor.USER_CANT_PUT_IN_CATEGORIES_TREE", container.getTypeCode())); //$NON-NLS-1$
+              mb.setMessage(Messages.getString("MetaEditor.USER_CANT_PUT_IN_CATEGORIES_TREE", container.getTypeCode())); //$NON-NLS-1$ 
               mb.setText(Messages.getString("MetaEditor.USER_SORRY")); //$NON-NLS-1$
               mb.open();
               return;
@@ -1388,9 +1397,10 @@ public class MetaEditor {
     while (!(dataNode instanceof BusinessModelTreeNode) && dataNode.getParent() != null) {
       dataNode = dataNode.getParent();
     }
-
+    
     if (dataNode instanceof BusinessModelTreeNode) {
       setActiveBusinessModel(((BusinessModelTreeNode)dataNode).getBusinessModel());
+      activeModelTreeNode = (BusinessModelTreeNode)dataNode;
     }
   }
 
@@ -1518,12 +1528,12 @@ public class MetaEditor {
 
   /**
    * Only one selected item possible
-   *
+   * 
    * @param e
    */
   private void setMenuMain(SelectionEvent e) {
     final TreeItem ti = (TreeItem) e.item;
-    final ITreeNode node = (ITreeNode) ti.getData();
+    final ConceptTreeNode node = (ConceptTreeNode) ti.getData();
 
     log.logDebug(APPLICATION_NAME, Messages.getString("MetaEditor.DEBUG_CLICKED_ON", ti.getText())); //$NON-NLS-1$
 
@@ -1572,7 +1582,7 @@ public class MetaEditor {
       miEdit.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
           editConnection(databaseMeta);
-          treeViewer.refresh(node);
+          treeViewer.update(node, null);
         }
       });
       MenuItem miDupe = new MenuItem(mainMenu, SWT.PUSH);
@@ -1595,6 +1605,7 @@ public class MetaEditor {
       miMImp.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
           importMultipleTables(databaseMeta);
+          node.sync();
         }
       });
       MenuItem miCache = new MenuItem(mainMenu, SWT.PUSH);
@@ -1626,6 +1637,7 @@ public class MetaEditor {
       miNew.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
           importTables(physicalTable.getDatabaseMeta());
+          node.sync();
         }
       });
       MenuItem miEdit = new MenuItem(mainMenu, SWT.PUSH);
@@ -1633,6 +1645,7 @@ public class MetaEditor {
       miEdit.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
           editPhysicalTable(physicalTable);
+          treeViewer.update(node, null);
         }
       });
       MenuItem miDel = new MenuItem(mainMenu, SWT.PUSH);
@@ -1649,6 +1662,7 @@ public class MetaEditor {
       miEdit.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
           editPhysicalTable(physicalColumn.getTable());
+          treeViewer.update(node.getParent(), null);
         }
       });
     } else if (node instanceof BusinessModelTreeNode) {
@@ -1679,7 +1693,10 @@ public class MetaEditor {
       miNew.setText(Messages.getString("MetaEditor.USER_NEW_BUSINESS_TABLE")); //$NON-NLS-1$
       miNew.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
-          newBusinessTable(null);
+          BusinessTable table = newBusinessTable(null);
+          if ((activeModelTreeNode != null) && (null != table)){
+            activeModelTreeNode.getBusinessTablesRoot().addDomainChild(table);
+          }
         }
       });
     } else if (node instanceof RelationshipsTreeNode) {
@@ -1705,14 +1722,17 @@ public class MetaEditor {
       miNew.setText(Messages.getString("MetaEditor.USER_NEW_BUSINESS_TABLE")); //$NON-NLS-1$
       miNew.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
-          newBusinessTable(null);
+          BusinessTable table = newBusinessTable(null);
+          if ((activeModelTreeNode != null) && (null != table)){
+            activeModelTreeNode.getBusinessTablesRoot().addDomainChild(table);
+          }
         }
       });
       MenuItem miEdit = new MenuItem(mainMenu, SWT.PUSH);
       miEdit.setText(Messages.getString("MetaEditor.USER_EDIT_TEXT")); //$NON-NLS-1$
       miEdit.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
-          editBusinessTable(businessTable);
+          editBusinessTable(businessTable, node);
         }
       });
       MenuItem miDuplicate = new MenuItem(mainMenu, SWT.PUSH);
@@ -1736,6 +1756,7 @@ public class MetaEditor {
       miNew.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
           newRelationship();
+          
         }
       });
       MenuItem miEdit = new MenuItem(mainMenu, SWT.PUSH);
@@ -1743,6 +1764,7 @@ public class MetaEditor {
       miEdit.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
           editRelationship(relationshipMeta);
+          treeViewer.update(node,null);
         }
       });
       MenuItem miDel = new MenuItem(mainMenu, SWT.PUSH);
@@ -1750,6 +1772,8 @@ public class MetaEditor {
       miDel.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
           delRelationship(relationshipMeta);
+          if (activeModelTreeNode != null) 
+            activeModelTreeNode.getRelationshipsRoot().removeDomainChild(relationshipMeta);
         }
       });
     } else if (node instanceof CategoryTreeNode) {
@@ -1758,7 +1782,7 @@ public class MetaEditor {
         return;
       }
 
-      CategoryTreeNode parentNode = (CategoryTreeNode) ((CategoryTreeNode) node).getParent();
+      final CategoryTreeNode parentNode = (CategoryTreeNode)node.getParent();
       final BusinessCategory currentCategory = ((CategoryTreeNode) node).getCategory();
       final BusinessCategory parentCategory = parentNode.getCategory();
 
@@ -1776,6 +1800,7 @@ public class MetaEditor {
       miEdit.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event e) {
           editBusinessCategory(currentCategory);
+          treeViewer.update(node, null);
         }
       });
 
@@ -1819,6 +1844,7 @@ public class MetaEditor {
       miSetConcept.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
           setParentConcept(utilityInterfaces);
+          treeViewer.refresh(mainTreeNode);
         }
       });
 
@@ -1827,6 +1853,7 @@ public class MetaEditor {
       miClearConcept.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
           clearParentConcept(utilityInterfaces);
+          treeViewer.refresh(mainTreeNode);
         }
       });
 
@@ -1835,6 +1862,7 @@ public class MetaEditor {
       miRemoveProperty.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
           removeChildProperties(utilityInterfaces);
+          treeViewer.refresh(mainTreeNode);
         }
       });
 
@@ -1843,6 +1871,7 @@ public class MetaEditor {
     treeViewer.getTree().setMenu(mainMenu);
   }
 
+  /*
   public void delColumnFromCategory(BusinessCategory businessCategory, BusinessColumn businessColumn) {
     int idx = businessCategory.indexOfBusinessColumn(businessColumn);
     if (idx >= 0) {
@@ -1869,7 +1898,7 @@ public class MetaEditor {
       refreshTree();
     }
   }
-
+*/
   /**
    * Add a new business category to the specified parent.
    */
@@ -1888,13 +1917,13 @@ public class MetaEditor {
         // Add this to the parent.
         try {
           parentCategory.addBusinessCategory(businessCategory);
-          // refresh it all...
-          refreshAll();
+          if (activeModelTreeNode != null)
+            activeModelTreeNode.getBusinessViewRoot().addDomainChild(businessCategory);
           break;
         } catch (ObjectAlreadyExistsException e) {
           new ErrorDialog(
               shell,
-              Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_BUSINESS_CATEGORY_EXISTS", businessCategory.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$
+              Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_BUSINESS_CATEGORY_EXISTS", businessCategory.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
         }
       } else {
         break;
@@ -1906,17 +1935,14 @@ public class MetaEditor {
     int index = parentCategory.indexOfBusinessCategory(businessCategory);
     if (index >= 0) {
       parentCategory.removeBusinessCategory(index);
-      refreshAll();
+      if (activeModelTreeNode != null)
+        activeModelTreeNode.getBusinessViewRoot().removeDomainChild(businessCategory);
     }
   }
 
   public void editBusinessCategory(BusinessCategory businessCategory) {
     BusinessCategoryDialog dialog = new BusinessCategoryDialog(shell, businessCategory, schemaMeta.getLocales(),
         schemaMeta.getSecurityReference());
-    if (dialog.open() != null) {
-      // refresh it all...
-      refreshAll();
-    }
   }
 
   public void moveBusinessCategoryDown(BusinessCategory parentCategory, BusinessCategory businessCategory) {
@@ -1928,7 +1954,8 @@ public class MetaEditor {
       } catch (ObjectAlreadyExistsException e) {
         // Moving anything should not have any impact.
       }
-      refreshTree();
+      if (activeModelTreeNode != null)
+        activeModelTreeNode.getBusinessViewRoot().prune();
     }
   }
 
@@ -1941,7 +1968,8 @@ public class MetaEditor {
       } catch (ObjectAlreadyExistsException e) {
         // Moving anything should not have any impact.
       }
-      refreshTree();
+      if (activeModelTreeNode != null)
+        activeModelTreeNode.getBusinessViewRoot().prune();
     }
   }
 
@@ -1950,16 +1978,26 @@ public class MetaEditor {
     String activeLocale = schemaMeta.getActiveLocale();
     if (activeModel == null)
       return null;
-
+    
+    ComboSelectionDialog comboDialog = new ComboSelectionDialog(shell, "Select the physical table you woud like to associate with this business table." ,
+        "Select Physical Table", schemaMeta.getTableNames(schemaMeta.getActiveLocale()));
+    comboDialog.open();
+    String selection = comboDialog.getSelection();
+    if (selection == null){
+      return null;
+    }
+    physicalTable = schemaMeta.findPhysicalTable(schemaMeta.getActiveLocale(),selection); 
     // Ask a name for the business table.
     String tableName = ""; //$NON-NLS-1$
     if (physicalTable != null)
       tableName = physicalTable.getDisplayName(activeLocale);
-    EnterStringDialog enterStringDialog = new EnterStringDialog(shell, tableName, Messages
-        .getString("MetaEditor.USER_TITLE_ENTER_NAME"), Messages.getString("MetaEditor.USER_ENTER_NAME")); //$NON-NLS-1$ //$NON-NLS-2$
-    tableName = enterStringDialog.open();
-    if (tableName == null)
-      return null;
+    
+
+//    EnterStringDialog enterStringDialog = new EnterStringDialog(shell, tableName, Messages
+//        .getString("MetaEditor.USER_TITLE_ENTER_NAME"), Messages.getString("MetaEditor.USER_ENTER_NAME")); //$NON-NLS-1$ //$NON-NLS-2$
+//    tableName = enterStringDialog.open();
+//    if (tableName == null)
+//      return null;
 
     // Create a new ID based on this...
     String newId = null;
@@ -1995,7 +2033,7 @@ public class MetaEditor {
         } catch (ObjectAlreadyExistsException e) {
           new ErrorDialog(
               shell,
-              Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_BUSINESS_COLUMN_EXISTS", businessColumn.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$
+              Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_BUSINESS_COLUMN_EXISTS", businessColumn.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
         }
       }
     }
@@ -2007,12 +2045,14 @@ public class MetaEditor {
       if (name != null) {
         try {
           activeModel.addBusinessTable(businessTable);
-          refreshAll();
+          if (activeModelTreeNode != null)
+            activeModelTreeNode.getBusinessTablesRoot().addDomainChild(businessTable);
+          refreshGraph();
           return businessTable;
         } catch (ObjectAlreadyExistsException e) {
           new ErrorDialog(
               shell,
-              Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_BUSINESS_TABLE_EXISTS", businessTable.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$
+              Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_BUSINESS_TABLE_EXISTS", businessTable.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
         }
       } else {
         break;
@@ -2030,12 +2070,18 @@ public class MetaEditor {
       RelationshipMeta[] relationships = activeModel.findRelationshipsUsing(businessTable);
       for (int i = 0; i < relationships.length; i++) {
         int idx = activeModel.indexOfRelationship(relationships[i]);
-        if (idx >= 0)
+        if (idx >= 0){
           activeModel.removeRelationship(idx);
+          if (activeModelTreeNode != null)
+            activeModelTreeNode.getRelationshipsRoot().removeDomainChild(relationships[i]);
+        }
       }
 
       int idx = activeModel.indexOfBusinessTable(businessTable);
       activeModel.removeBusinessTable(idx);
+      if (activeModelTreeNode != null)
+        activeModelTreeNode.getBusinessTablesRoot().removeDomainChild(businessTable);
+      // call refresh all to refresh the rest of the UI - does not refresh the tree
       refreshAll();
     }
   }
@@ -2106,6 +2152,7 @@ public class MetaEditor {
       // Read some data from the domain...
       schemaMeta = cwmSchemaFactory.getSchemaMeta(cwm);
 
+      refreshTree();
       refreshAll();
       return true;
     } catch (Exception e) {
@@ -2115,7 +2162,8 @@ public class MetaEditor {
       return false;
     }
   }
-
+  
+/*
   public void newSelected() {
     BusinessModel activeModel = schemaMeta.getActiveModel();
     if (activeModel == null)
@@ -2150,13 +2198,14 @@ public class MetaEditor {
       }
     }
   }
-
+*/
+  
   public void doubleClickedMain() {
     // Determine what tree-item we selected from...
 
     TreeItem ti[] = treeViewer.getTree().getSelection();
     if (ti.length == 1) { // ensure we've only got one thing selected
-      Object node = ti[0].getData();
+      ConceptTreeNode node = (ConceptTreeNode)ti[0].getData();
       final String itemText = ti[0].getText();
       if (node instanceof LabelTreeNode) { // We clicked on one of the labels... not an actual object
         if (itemText.equals(STRING_CONNECTIONS)) {
@@ -2170,19 +2219,22 @@ public class MetaEditor {
       } else if (node instanceof PhysicalTableTreeNode) {
         PhysicalTable physicalTable = (PhysicalTable) ((PhysicalTableTreeNode) node).getDomainObject();
         editPhysicalTable(physicalTable);
-      } else if (node instanceof PhysicalColumn) {
+      } else if (node instanceof PhysicalColumnTreeNode) {
         PhysicalColumn physicalColumn = (PhysicalColumn) ((PhysicalColumnTreeNode) node).getDomainObject();
         editPhysicalColumn(physicalColumn);
       } else if (node instanceof BusinessModelTreeNode) {
         BusinessModel businessModel = ((BusinessModelTreeNode) node).getBusinessModel();
         editBusinessModel(businessModel);
       } else if (node instanceof BusinessTablesTreeNode) {
-        newBusinessTable(null);
+        BusinessTable table = newBusinessTable(null);
+        if ((activeModelTreeNode != null) && (table != null)){
+          activeModelTreeNode.getBusinessTablesRoot().addDomainChild(table);
+        }
       } else if (node instanceof RelationshipsTreeNode) {
         newRelationship();
       } else if (node instanceof BusinessTableTreeNode) {
         BusinessTable businessTable = (BusinessTable) ((BusinessTableTreeNode) node).getDomainObject();
-        editBusinessTable(businessTable);
+        editBusinessTable(businessTable, node);
       } else if (node instanceof RelationshipTreeNode) {
         RelationshipMeta relationship = (RelationshipMeta) ((RelationshipTreeNode) node).getDomainObject();
         editRelationship(relationship);
@@ -2190,20 +2242,21 @@ public class MetaEditor {
         BusinessColumn businessColumn = ((BusinessColumnTreeNode) node).getBusinessColumn();
         editBusinessColumn(businessColumn.getBusinessTable(), businessColumn);
       }
+      treeViewer.update(node,null);
     }
   }
 
   private void editBusinessColumn(BusinessTable businessTable, BusinessColumn businessColumn) {
     String columnName = businessColumn.getDisplayName(schemaMeta.getActiveLocale());
     String tableName = businessTable.getDisplayName(schemaMeta.getActiveLocale());
-    editProperties(Messages.getString("MetaEditor.USER_ENTER_COLUMN_PROPERTIES", columnName, tableName), businessColumn); //$NON-NLS-1$
+    editProperties(Messages.getString("MetaEditor.USER_ENTER_COLUMN_PROPERTIES", columnName, tableName), businessColumn); //$NON-NLS-1$ 
   }
 
   private void editPhysicalColumn(PhysicalColumn physicalColumn) {
     if (physicalColumn != null) {
       String activeLocale = schemaMeta.getActiveLocale();
       editProperties(Messages.getString(
-          "MetaEditor.USER_PHYSICAL_COLUMN_PROPERTIES", physicalColumn.getName(activeLocale)), physicalColumn); //$NON-NLS-1$
+          "MetaEditor.USER_PHYSICAL_COLUMN_PROPERTIES", physicalColumn.getName(activeLocale)), physicalColumn); //$NON-NLS-1$       
     }
   }
 
@@ -2264,7 +2317,7 @@ public class MetaEditor {
       MessageBox box = new MessageBox(shell, SWT.YES | SWT.NO | SWT.ICON_QUESTION);
       box.setText(Messages.getString("General.USER_TITLE_WARNING")); //$NON-NLS-1$
       box.setMessage(Messages.getString(
-          "MetaEditor.USER_DELETE_BUSINESS_MODEL", businessModel.getDisplayName(schemaMeta.getActiveLocale()))); //$NON-NLS-1$
+          "MetaEditor.USER_DELETE_BUSINESS_MODEL", businessModel.getDisplayName(schemaMeta.getActiveLocale()))); //$NON-NLS-1$ 
       int answer = box.open();
       if (answer == SWT.YES) {
         schemaMeta.removeBusinessModel(businessModel);
@@ -2285,10 +2338,6 @@ public class MetaEditor {
     if (db != null) {
       DatabaseDialog con = new DatabaseDialog(shell, db);
       String newname = con.open();
-      if (newname != null) // null: CANCEL
-      {
-//        refreshTree();
-      }
     }
     setShellText();
   }
@@ -2301,7 +2350,6 @@ public class MetaEditor {
         String dupename = Messages.getString("MetaEditor.USER_COPY_OF", databaseMeta.getName());
         newdb.setName(dupename);
         schemaMeta.addDatabase(pos + 1, newdb);
-        refreshTree();
 
         DatabaseDialog con = new DatabaseDialog(shell, newdb);
         String newname = con.open();
@@ -2310,9 +2358,8 @@ public class MetaEditor {
           schemaMeta.removeDatabaseMeta(pos + 1);
           schemaMeta.addDatabase(pos + 1, newdb);
 
-          if (!newname.equalsIgnoreCase(dupename))
-            refreshTree();
         }
+        mainTreeNode.getConnectionsRoot().addDomainChild(newdb);
       } catch (ObjectAlreadyExistsException e) {
         new ErrorDialog(
             shell,
@@ -2324,7 +2371,7 @@ public class MetaEditor {
   public void delConnection(DatabaseMeta databaseMeta) {
     if (databaseMeta != null) {
       schemaMeta.removeDatabaseMeta(databaseMeta);
-      refreshAll();
+      mainTreeNode.getConnectionsRoot().removeDomainChild(databaseMeta);
     }
     setShellText();
   }
@@ -2379,7 +2426,7 @@ public class MetaEditor {
         // OK, so the table has changed...
         //
         refreshGraph();
-        refreshTree(); // Perhaps other objects where touched in the dialog.
+        mainTreeNode.sync();
         setShellText();
         return;
       }
@@ -2400,9 +2447,8 @@ public class MetaEditor {
             nr++;
           }
           newTable.setId(newname);
-
           schemaMeta.addTable(newTable);
-          refreshTree();
+          mainTreeNode.sync();
           refreshGraph();
         } catch (ObjectAlreadyExistsException e) {
           new ErrorDialog(
@@ -2416,6 +2462,7 @@ public class MetaEditor {
   public void delPhysicalTable(String name) {
     PhysicalTable physicalTable = schemaMeta.findPhysicalTable(schemaMeta.getActiveLocale(), name);
     delPhysicalTable(physicalTable);
+    //mainTreeNode.sync();
   }
 
   public void delPhysicalTable(PhysicalTable physicalTable) {
@@ -2432,10 +2479,10 @@ public class MetaEditor {
         BusinessModel ri = schemaMeta.getModel(i);
         ri.deletePhysicalTableReferences(physicalTable);
       }
-      refreshTree();
+      mainTreeNode.sync();
       refreshGraph();
     } else {
-      log.logDebug(APPLICATION_NAME, Messages.getString("MetaEditor.DEBUG_CANT_FIND_TABLE", "null")); //$NON-NLS-1$
+      log.logDebug(APPLICATION_NAME, Messages.getString("MetaEditor.DEBUG_CANT_FIND_TABLE", "null")); //$NON-NLS-1$ 
     }
   }
 
@@ -2448,8 +2495,9 @@ public class MetaEditor {
       RelationshipDialog rd = new RelationshipDialog(shell, SWT.NONE, log, ri, activeModel);
       if (rd.open() != null) {
         String newname = ri.toString();
+
         if (!name.equalsIgnoreCase(newname)) {
-          refreshTree();
+          treeViewer.update(mainTreeNode, null);
         }
         refreshGraph(); // color, nr of copies...
       }
@@ -2462,7 +2510,6 @@ public class MetaEditor {
     if (activeModel == null)
       return;
     activeModel.removeRelationship(relationship);
-    refreshTree();
     refreshGraph();
   }
 
@@ -2482,7 +2529,8 @@ public class MetaEditor {
     RelationshipDialog dialog = new RelationshipDialog(shell, SWT.NONE, log, relationship, schemaMeta.getActiveModel());
     if (dialog.open() != null) {
       activeModel.addRelationship(relationship);
-      refreshTree();
+      if (activeModelTreeNode != null)
+        activeModelTreeNode.getRelationshipsRoot().addDomainChild(relationship);
       refreshGraph();
     }
   }
@@ -2494,7 +2542,7 @@ public class MetaEditor {
     if (con_name != null) {
       try {
         schemaMeta.addDatabase(db);
-        refreshTree();
+        mainTreeNode.getConnectionsRoot().addDomainChild(db);
       } catch (ObjectAlreadyExistsException e) {
         new ErrorDialog(
             shell,
@@ -2568,6 +2616,7 @@ public class MetaEditor {
       schemaMeta.addDefaults();
       schemaMeta.clearChanged();
       setDomainName(null);
+      refreshTree();
       refreshAll();
     }
   }
@@ -2654,7 +2703,7 @@ public class MetaEditor {
 
       schemaMeta.clearChanged();
       setShellText();
-      log.logDebug(APPLICATION_NAME, Messages.getString("MetaEditor.DEBUG_FILE_WRITTEN_TO_REPOSITORY", domainName)); //$NON-NLS-1$
+      log.logDebug(APPLICATION_NAME, Messages.getString("MetaEditor.DEBUG_FILE_WRITTEN_TO_REPOSITORY", domainName)); //$NON-NLS-1$ 
       return true;
     } catch (Exception e) {
       new ErrorDialog(shell,
@@ -2747,8 +2796,6 @@ public class MetaEditor {
   }
 
   public void refreshAll() {
-    refreshTree();
-    //        refreshCategoriesTree();
     refreshGraph();
     metaEditorConcept.refreshTree();
     metaEditorConcept.refreshScreen();
@@ -2761,11 +2808,17 @@ public class MetaEditor {
   public void refreshTree() {
     mainTreeNode = new SchemaMetaTreeNode(null, schemaMeta);
     mainTreeNode.addTreeNodeChangeListener((ITreeNodeChangedListener) treeViewer.getContentProvider());
-
     treeViewer.setInput(mainTreeNode);
     treeViewer.refresh();
+    if (mainTreeNode.getBusinessModelsRoot().hasChildren())
+      activeModelTreeNode = (BusinessModelTreeNode) mainTreeNode.getBusinessModelsRoot().getChildren().get(0);
   }
-
+  
+  public void synchronize (Object businessObject){
+    ConceptTreeNode node = mainTreeNode.findNode(businessObject);
+    node.sync();
+  }
+  
   public static final void addTreeCategories(TreeItem tiParent, BusinessCategory parentCategory, String locale,
       boolean hiddenToo) {
     // Draw the categories tree...
@@ -2936,7 +2989,7 @@ public class MetaEditor {
         } catch (KettleException e) {
           new ErrorDialog(
               shell,
-              Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_READING_TABLE_FIELDS", tableName) //$NON-NLS-1$ //$NON-NLS-2$
+              Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_READING_TABLE_FIELDS", tableName) //$NON-NLS-1$ //$NON-NLS-2$ 
                   + ((schemaName != null) ? ("(schema=" + schemaName + ")") : ""), e); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         } finally {
           if (database != null)
@@ -3040,10 +3093,9 @@ public class MetaEditor {
     } catch (ObjectAlreadyExistsException e) {
       new ErrorDialog(
           shell,
-          Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_PHYICAL_TABLE_EXISTS", physicalTable.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$
+          Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_PHYICAL_TABLE_EXISTS", physicalTable.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
     }
 
-    refreshTree();
   }
 
   private PhysicalColumn importPhysicalColumnDefinition(Value v, PhysicalTable physicalTable) {
@@ -3249,6 +3301,7 @@ public class MetaEditor {
     this.schemaMeta = schemaMeta;
   }
 
+/*
   public void editBusinessTable(String businessTableName) {
     BusinessModel activeModel = schemaMeta.getActiveModel();
     if (activeModel == null)
@@ -3259,10 +3312,20 @@ public class MetaEditor {
       editBusinessTable(businessTable);
     }
   }
-
+*/
+  
   public void editBusinessTable(BusinessTable businessTable) {
+    editBusinessTable(businessTable, null);
+  }
+
+  private void editBusinessTable(BusinessTable businessTable, ConceptTreeNode node) {
     BusinessTableDialog dialog = new BusinessTableDialog(shell, businessTable, schemaMeta);
     if (dialog.open() != null) {
+      if (node != null){
+        node.sync();
+      } else{
+        synchronize(businessTable);
+      }
       refreshAll();
     }
   }
@@ -3285,7 +3348,8 @@ public class MetaEditor {
           newTable.setId(newname);
 
           activeModel.addBusinessTable(newTable);
-          refreshTree();
+          if (activeModelTreeNode != null)
+            activeModelTreeNode.getBusinessTablesRoot().addDomainChild(newTable);
           refreshGraph();
         } catch (ObjectAlreadyExistsException e) {
           new ErrorDialog(
@@ -3298,7 +3362,7 @@ public class MetaEditor {
 
   /**
    * Test Query & Reporting
-   *
+   * 
    */
   protected void testQR() {
     try {

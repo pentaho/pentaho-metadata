@@ -20,6 +20,10 @@ public class RelationshipTreeNode extends ConceptTreeNode {
     // As of this impementation, relationships have no children
   }
   
+  public void sync(){
+    
+  }
+  
   public Image getImage() {
     // TODO Auto-generated method stub
     return super.getImage();

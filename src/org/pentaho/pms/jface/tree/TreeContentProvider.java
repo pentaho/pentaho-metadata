@@ -50,7 +50,7 @@ public class TreeContentProvider implements ITreeContentProvider, ITreeNodeChang
     }
 
     public void onUpdate(ITreeNode node) {
-      viewer.update(node, null);
+      viewer.refresh(node,true);
       
     }
 

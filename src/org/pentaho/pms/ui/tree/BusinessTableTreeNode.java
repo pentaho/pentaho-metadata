@@ -1,5 +1,6 @@
 package org.pentaho.pms.ui.tree;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -36,13 +37,60 @@ public class BusinessTableTreeNode extends ConceptTreeNode {
   }
   
   public void removeDomainChild(Object domainObject){
+    List children = new ArrayList();
+    
+    // make copy of list so removals doesn't cause a problem
+    Iterator childIter = fChildren.iterator();
+    while ( childIter.hasNext() )
+      children.add(childIter.next());
+
     if (domainObject instanceof BusinessColumn){
-        for (Iterator iter = fChildren.iterator(); iter.hasNext();) {
+        for (Iterator iter = children.iterator(); iter.hasNext();) {
           BusinessColumnTreeNode element = (BusinessColumnTreeNode) iter.next();
           if (element.column.equals(domainObject))
             removeChild(element);
         }
     }
+  }
+  
+  public void sync(){
+    
+    // no children, nothing to synchronize
+    if (fChildren == null)
+      return;
+    
+    // make copy of list so removals doesn't cause a problem
+    Iterator childIter = fChildren.iterator();
+    List children = new ArrayList();
+    while ( childIter.hasNext() )
+      children.add(childIter.next());
+    
+    // Check the business model for additions, add children if they exist
+    for (int c = 0; c < table.nrBusinessColumns(); c++) {
+      boolean found = false;
+      for (Iterator iter = children.iterator(); iter.hasNext();) {
+        BusinessColumnTreeNode element = (BusinessColumnTreeNode) iter.next();
+        if (element.getDomainObject().equals(table.getBusinessColumn(c)))
+          found = true;
+      }
+      if (!found){
+        addDomainChild(table.getBusinessColumn(c));
+      }
+    }
+    
+    // Check the children against the business model to see if any should be removed...
+    // Recursively sync the children that remain
+    for (int c = 0; c < children.size(); c++) {
+      ConceptTreeNode node = (ConceptTreeNode)children.get(c);
+
+      if (!table.getBusinessColumns().contains(node.getDomainObject())){
+        removeChild(node);
+      }else{
+        node.sync();
+      }
+    }
+    // update this node
+    fireTreeNodeUpdated();
   }
 
   public String getConceptName(){
@@ -62,7 +110,7 @@ public class BusinessTableTreeNode extends ConceptTreeNode {
      return table.getDisplayName(locale);
   }
 
-  public ConceptUtilityInterface getDomainObject(){
+  public Object getDomainObject(){
     return table;
   }
 }

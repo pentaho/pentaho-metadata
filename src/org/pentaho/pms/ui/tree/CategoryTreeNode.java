@@ -1,5 +1,6 @@
 package org.pentaho.pms.ui.tree;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -37,13 +38,57 @@ public class CategoryTreeNode extends ConceptTreeNode {
   }
   
   public void removeDomainChild(Object domainObject){
+    List children = new ArrayList();
+    
+    // make copy of list so removals doesn't cause a problem
+    Iterator childIter = fChildren.iterator();
+    while ( childIter.hasNext() )
+      children.add(childIter.next());
+
     if (domainObject instanceof BusinessColumn){
-        for (Iterator iter = fChildren.iterator(); iter.hasNext();) {
+        for (Iterator iter = children.iterator(); iter.hasNext();) {
           BusinessColumnTreeNode element = (BusinessColumnTreeNode) iter.next();
           if (element.column.equals(domainObject))
             removeChild(element);
         }
     }
+  }
+
+  public void sync(){
+    if (fChildren == null)
+      return;
+    
+    
+    // make copy of list so removals doesn't cause a problem
+    Iterator childIter = fChildren.iterator();
+    List children = new ArrayList();
+    while ( childIter.hasNext() )
+      children.add(childIter.next());
+    
+    for (int c = 0; c < category.nrBusinessColumns(); c++) {
+      boolean found = false;
+      for (Iterator iter = children.iterator(); iter.hasNext();) {
+        BusinessColumnTreeNode element = (BusinessColumnTreeNode) iter.next();
+        if (element.getDomainObject().equals(category.getBusinessColumn(c)))
+          found = true;
+      }
+      if (!found){
+        addDomainChild(category.getBusinessColumn(c));
+      }
+    }
+    
+    for (int c = 0; c < children.size(); c++) {
+      ConceptTreeNode node = (ConceptTreeNode)children.get(c);
+
+      if (!category.getBusinessColumns().contains(node.getDomainObject())){
+        removeChild(node);
+      }else{
+        node.sync();
+      }
+    }  
+    // update this node
+    fireTreeNodeUpdated();
+
   }
 
   public Image getImage() {
@@ -56,7 +101,7 @@ public class CategoryTreeNode extends ConceptTreeNode {
     return category.getDisplayName(locale);
   }
   
-  public ConceptUtilityInterface getDomainObject(){
+  public Object getDomainObject(){
     return category;
   }
   

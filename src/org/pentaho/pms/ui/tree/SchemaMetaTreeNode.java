@@ -29,6 +29,8 @@ import org.pentaho.pms.schema.SchemaMeta;
 public class SchemaMetaTreeNode extends ConceptTreeNode {
 
   protected SchemaMeta schemaMeta = null;
+  private ConnectionsTreeNode connectionsTreeNode;
+  private BusinessModelsTreeNode businessModelsTreeNode;
     
   public SchemaMetaTreeNode(ITreeNode parent, SchemaMeta schemaMeta) {
     super(parent);
@@ -39,8 +41,23 @@ public class SchemaMetaTreeNode extends ConceptTreeNode {
    * @see org.pentaho.pms.ui.tree.ConceptTreeNode#createChildren(java.util.List)
    */
   protected void createChildren(List children) {
-    addChild(new ConnectionsTreeNode(this, schemaMeta));
-    addChild(new BusinessModelsTreeNode(this, schemaMeta));
+    connectionsTreeNode = new ConnectionsTreeNode(this, schemaMeta);
+    businessModelsTreeNode = new BusinessModelsTreeNode(this, schemaMeta);
+    addChild(connectionsTreeNode);
+    addChild(businessModelsTreeNode);
+  }
+  
+  public BusinessModelsTreeNode getBusinessModelsRoot(){
+    return businessModelsTreeNode;
+  }
+  
+  public ConnectionsTreeNode getConnectionsRoot(){
+    return connectionsTreeNode;
+  }
+  
+  public void sync(){
+    connectionsTreeNode.sync();
+    businessModelsTreeNode.sync();
   }
 
   /* (non-Javadoc)
@@ -51,4 +68,7 @@ public class SchemaMetaTreeNode extends ConceptTreeNode {
     return null;
   }
   
+  public Object getDomainObject(){
+    return schemaMeta;
+  }
 }

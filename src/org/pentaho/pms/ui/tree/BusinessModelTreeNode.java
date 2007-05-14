@@ -14,6 +14,13 @@ public class BusinessModelTreeNode extends ConceptTreeNode {
   protected BusinessModel model = null;
   protected String locale = null;
   
+  // Hold on to strategic nodes in the subtree, to make accessing these nodes 
+  // a bit more efficient
+  
+  private BusinessTablesTreeNode businessTablesNode;
+  private RelationshipsTreeNode relationshipsNode;
+  private BusinessViewTreeNode businessViewNode;
+  
   public BusinessModelTreeNode(ITreeNode parent, BusinessModel model, String locale) {
     super(parent);
     this.model = model;
@@ -21,14 +28,24 @@ public class BusinessModelTreeNode extends ConceptTreeNode {
   }
 
   protected void createChildren(List children) {
-    BusinessTablesTreeNode businessTablesNode = new BusinessTablesTreeNode(this, model, locale);
+    businessTablesNode = new BusinessTablesTreeNode(this, model, locale);
     addChild(businessTablesNode);
     
-    RelationshipsTreeNode relationshipsNode = new RelationshipsTreeNode(this, model);
+    relationshipsNode = new RelationshipsTreeNode(this, model);
     addChild(relationshipsNode);
     
-    BusinessViewTreeNode businessViewNode = new BusinessViewTreeNode(this, model.getRootCategory(), locale);
+    businessViewNode = new BusinessViewTreeNode(this, model.getRootCategory(), locale);
     addChild(businessViewNode);
+  }
+  
+  public void sync(){
+    if ((businessTablesNode==null) || (relationshipsNode==null) || (businessViewNode==null)){
+      return;
+    }
+    
+    businessTablesNode.sync();
+    relationshipsNode.sync();
+    businessViewNode.sync();
   }
 
   public Image getImage() {
@@ -48,14 +65,32 @@ public class BusinessModelTreeNode extends ConceptTreeNode {
     return null;
   }
 
-  public ConceptUtilityInterface getDomainObject(){
+  public Object getDomainObject(){
     return model;
   }
 
-  /**
-   * @return
-   */
   public BusinessModel getBusinessModel() {
     return model;
+  }
+  
+  public BusinessTablesTreeNode getBusinessTablesRoot(){
+    if (businessTablesNode == null){
+      businessTablesNode = new BusinessTablesTreeNode(this, model, locale);
+    }
+    return businessTablesNode;
+  }
+
+  public RelationshipsTreeNode getRelationshipsRoot(){
+    if (relationshipsNode == null){
+      relationshipsNode = new RelationshipsTreeNode(this, model);      
+    }
+    return relationshipsNode;
+  }
+  
+  public BusinessViewTreeNode getBusinessViewRoot(){
+    if (businessViewNode == null){
+      businessViewNode = new BusinessViewTreeNode(this, model.getRootCategory(), locale);
+    }
+    return businessViewNode;
   }
 }

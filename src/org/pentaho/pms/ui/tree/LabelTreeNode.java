@@ -18,8 +18,16 @@ public class LabelTreeNode extends ConceptTreeNode {
     // Labels have no intuitive children, they are added manually as the tree requirements deem necessary
   }
 
+  public void sync(){
+    
+  }
+  
   public String getName() {
     return labelName;
+  }
+  
+  public Object getDomainObject(){
+    return getName();
   }
 
 }

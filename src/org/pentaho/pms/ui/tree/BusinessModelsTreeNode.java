@@ -17,6 +17,7 @@
 
 package org.pentaho.pms.ui.tree;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.SchemaMeta;
+import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.util.GUIResource;
 
 /**
@@ -62,16 +64,56 @@ public class BusinessModelsTreeNode extends ConceptTreeNode {
   }
   
   public void removeDomainChild(Object domainObject){
+    List children = new ArrayList();
+    
+    // make copy of list so removals doesn't cause a problem
+    Iterator childIter = fChildren.iterator();
+    while ( childIter.hasNext() )
+      children.add(childIter.next());
+
     if (domainObject instanceof BusinessModel){
-        for (Iterator iter = fChildren.iterator(); iter.hasNext();) {
+        for (Iterator iter = children.iterator(); iter.hasNext();) {
           BusinessModelTreeNode element = (BusinessModelTreeNode) iter.next();
           if (element.model.equals(domainObject))
             removeChild(element);
         }
     }
   }
-
-
+  
+  public void sync(){
+    if (fChildren == null)
+      return;
+    
+    // make copy of list so removals doesn't cause a problem
+    Iterator childIter = fChildren.iterator();
+    List children = new ArrayList();
+    while ( childIter.hasNext() )
+      children.add(childIter.next());
+    
+    for (int c = 0; c < schemaMeta.nrBusinessModels(); c++) {
+      boolean found = false;
+      for (Iterator iter = children.iterator(); iter.hasNext();) {
+        BusinessModelTreeNode element = (BusinessModelTreeNode) iter.next();
+        if (element.getDomainObject().equals(schemaMeta.getBusinessModels().get(c)))
+          found = true;
+      }
+      if (!found){
+        addDomainChild(schemaMeta.getBusinessModels().get(c));
+      }
+    }
+    
+    for (int c = 0; c < children.size(); c++) {
+      ConceptTreeNode node = (ConceptTreeNode)children.get(c);
+      if (!schemaMeta.getBusinessModels().contains(node.getDomainObject())){
+        removeChild(node);
+      }else{
+        node.sync();
+      }
+    }
+    // update this node
+    fireTreeNodeUpdated();
+  }
+   
   /* (non-Javadoc)
    * @see org.pentaho.pms.jface.tree.ITreeNode#getName()
    */
@@ -82,4 +124,8 @@ public class BusinessModelsTreeNode extends ConceptTreeNode {
   public Image getImage(){
     return GUIResource.getInstance().getImageBol();
   }   
+  
+  public Object getDomainObject(){
+    return schemaMeta;
+  }
 }

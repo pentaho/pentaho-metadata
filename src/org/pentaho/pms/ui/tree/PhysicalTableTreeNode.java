@@ -17,12 +17,14 @@
 
 package org.pentaho.pms.ui.tree;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.schema.PhysicalColumn;
 import org.pentaho.pms.schema.PhysicalTable;
+import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 
 /**
@@ -63,8 +65,15 @@ public class PhysicalTableTreeNode extends ConceptTreeNode {
   }
   
   public void removeDomainChild(Object domainObject){
+    List children = new ArrayList();
+    
+    // make copy of list so removals doesn't cause a problem
+    Iterator childIter = fChildren.iterator();
+    while ( childIter.hasNext() )
+      children.add(childIter.next());
+
     if (domainObject instanceof PhysicalColumn){
-        for (Iterator iter = fChildren.iterator(); iter.hasNext();) {
+        for (Iterator iter = children.iterator(); iter.hasNext();) {
           PhysicalColumnTreeNode element = (PhysicalColumnTreeNode) iter.next();
           if (element.physicalColumn.equals(domainObject))
             removeChild(element);
@@ -72,7 +81,43 @@ public class PhysicalTableTreeNode extends ConceptTreeNode {
     }
   }
 
-  public ConceptUtilityInterface getDomainObject(){
+  public void sync(){
+    if (fChildren == null)
+      return;
+    
+    
+    // make copy of list so removals doesn't cause a problem
+    Iterator childIter = fChildren.iterator();
+    List children = new ArrayList();
+    while ( childIter.hasNext() )
+      children.add(childIter.next());
+    
+    for (int c = 0; c < physicalTable.nrPhysicalColumns(); c++) {
+      boolean found = false;
+      for (Iterator iter = children.iterator(); iter.hasNext();) {
+        PhysicalColumnTreeNode element = (PhysicalColumnTreeNode) iter.next();
+        if (element.getDomainObject().equals(physicalTable.getPhysicalColumn(c)))
+          found = true;
+      }
+      if (!found){
+        addDomainChild(physicalTable.getPhysicalColumn(c));
+      }
+    }
+    
+    for (int c = 0; c < children.size(); c++) {
+      ConceptTreeNode node = (ConceptTreeNode)children.get(c);
+
+      if (!physicalTable.getPhysicalColumns().contains(node.getDomainObject())){
+        removeChild(node);
+      }else{
+        node.sync();
+      }
+    }  
+    // update this node
+    fireTreeNodeUpdated(); 
+  }
+
+  public Object getDomainObject(){
     return physicalTable;
   }
 
@@ -82,4 +127,14 @@ public class PhysicalTableTreeNode extends ConceptTreeNode {
   public String getName() {
     return physicalTable.getName(locale);
   }
+
+  public String getConceptName(){
+
+    ConceptInterface tableConcept = physicalTable.getConcept();
+    if (tableConcept != null && tableConcept.findFirstParentConcept() != null) {
+      return tableConcept.findFirstParentConcept().getName();
+    }
+    return null;
+  }
+  
 }

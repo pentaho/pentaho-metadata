@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.schema.PhysicalColumn;
+import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 
 /**
@@ -47,8 +48,11 @@ public class PhysicalColumnTreeNode extends ConceptTreeNode {
    * @see org.pentaho.pms.ui.tree.ConceptTreeNode#createChildren(java.util.List)
    */
   protected void createChildren(List children) {
-    // TODO Auto-generated method stub
 
+  }
+  
+  public void sync(){
+    
   }
 
   /* (non-Javadoc)
@@ -59,8 +63,17 @@ public class PhysicalColumnTreeNode extends ConceptTreeNode {
     return physicalColumn.getName(locale);
   }
 
-  public ConceptUtilityInterface getDomainObject(){
+  public Object getDomainObject(){
     return physicalColumn;
+  }
+
+  public String getConceptName(){
+
+    ConceptInterface concept = physicalColumn.getConcept();
+    if (concept != null && concept.findFirstParentConcept() != null) {
+      return concept.findFirstParentConcept().getName();
+    }
+    return null;
   }
 
 }

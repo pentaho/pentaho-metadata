@@ -40,6 +40,11 @@ public abstract class TreeNode implements ITreeNode
       
     return fChildren;
   }
+
+  public void prune(){
+    fChildren = null;
+    this.fireTreeNodeUpdated();
+  }
   
   public void addChild(ITreeNode node){
     if (fChildren == null)

@@ -23,6 +23,10 @@ public class BusinessColumnTreeNode extends ConceptTreeNode {
   protected void createChildren(List children) {
     // Category columns have no children under the default implementation
   }
+  
+  public void sync(){
+    // intentional nothing to do here 
+  }
 
   public Image getImage() {
     return super.getImage();
@@ -39,7 +43,7 @@ public class BusinessColumnTreeNode extends ConceptTreeNode {
     return false;
   }
   
-  public ConceptUtilityInterface getDomainObject(){
+  public Object getDomainObject(){
     return column;
   }
   
@@ -52,9 +56,6 @@ public class BusinessColumnTreeNode extends ConceptTreeNode {
     return null;
   }
 
-  /**
-   * @return
-   */
   public BusinessColumn getBusinessColumn() {
     return column;
   }

@@ -11,6 +11,7 @@ public interface ITreeNode {
     public boolean hasChildren();
     public ITreeNode getParent();
     public void addChild(ITreeNode child);
+    public void prune();
     public void addTreeNodeChangeListener(ITreeNodeChangedListener listener);    
     public void removeTreeNodeChangeListener(ITreeNodeChangedListener listener);
     

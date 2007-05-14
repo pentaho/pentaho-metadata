@@ -282,7 +282,8 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
         if (candidate != null) {
           if (activeModel.findRelationship(candidate.getTableFrom().getId(), candidate.getTableTo().getId()) == null) {
             activeModel.addRelationship(candidate);
-            metaEditor.refreshTree();
+            metaEditor.synchronize(candidate);
+            //metaEditor.refreshTree();
           }
           candidate = null;
           selected_items = null;
