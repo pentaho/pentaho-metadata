@@ -1683,7 +1683,7 @@ public class MetaEditor {
       miEdit.setText(Messages.getString("MetaEditor.USER_EDIT_TEXT")); //$NON-NLS-1$
       miEdit.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
-          editBusinessModel(businessModel);
+          editBusinessModel(businessModel, node);
         }
       });
       MenuItem miDelete = new MenuItem(mainMenu, SWT.PUSH);
@@ -2229,7 +2229,7 @@ public class MetaEditor {
         editPhysicalColumn(physicalColumn);
       } else if (node instanceof BusinessModelTreeNode) {
         BusinessModel businessModel = ((BusinessModelTreeNode) node).getBusinessModel();
-        editBusinessModel(businessModel);
+        editBusinessModel(businessModel, node);
       } else if (node instanceof BusinessTablesTreeNode) {
         BusinessTable table = newBusinessTable(null);
         if ((activeModelTreeNode != null) && (table != null)){
@@ -2290,7 +2290,9 @@ public class MetaEditor {
       if (modelName != null) {
         try {
           schemaMeta.addModel(businessModel);
+          mainTreeNode.getBusinessModelsRoot().addDomainChild(businessModel);
           schemaMeta.setActiveModel(businessModel);
+          activeModelTreeNode = (BusinessModelTreeNode)mainTreeNode.getBusinessModelsRoot().findNode(businessModel);
           refreshAll();
 
           return businessModel;
@@ -2307,11 +2309,20 @@ public class MetaEditor {
   }
 
   public void editBusinessModel(BusinessModel businessModel) {
+    editBusinessModel(businessModel, null);
+  }
+
+  public void editBusinessModel(BusinessModel businessModel, ConceptTreeNode node) {
     if (businessModel != null) {
       BusinessModelDialog dialog = new BusinessModelDialog(shell, businessModel, schemaMeta.getLocales(), schemaMeta
           .getSecurityReference());
       String modelName = dialog.open();
       if (modelName != null) {
+        if (node != null){
+          node.sync();
+        } else{
+          synchronize(businessModel);
+        }
         refreshAll();
       }
     }
@@ -2327,6 +2338,7 @@ public class MetaEditor {
       if (answer == SWT.YES) {
         schemaMeta.removeBusinessModel(businessModel);
         schemaMeta.setActiveModel(null);
+        mainTreeNode.getBusinessModelsRoot().removeDomainChild(businessModel);
         refreshAll();
       }
     }
@@ -2735,6 +2747,14 @@ public class MetaEditor {
         if (answer == SWT.YES) {
           CWM delCwm = CWM.getInstance(domainName);
           delCwm.removeDomain();
+          if (schemaMeta.getDomainName().equalsIgnoreCase(domainName)){
+            schemaMeta.clear();
+            schemaMeta.addDefaults();
+            schemaMeta.clearChanged();
+            setDomainName(null);
+            refreshTree();
+            refreshAll();
+          }
         }
       }
     } catch (Throwable e) {
@@ -2891,6 +2911,7 @@ public class MetaEditor {
 
   public void setDomainName(String domainName) {
     schemaMeta.domainName = domainName;
+    
     setShellText();
   }
 

@@ -46,6 +46,8 @@ public class BusinessModelTreeNode extends ConceptTreeNode {
     businessTablesNode.sync();
     relationshipsNode.sync();
     businessViewNode.sync();
+    
+    fireTreeNodeUpdated();
   }
 
   public Image getImage() {
