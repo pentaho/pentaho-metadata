@@ -268,16 +268,16 @@ public class MQLQuery {
 	    		}
 	    	
     			// insert the domain information
-            	Element typeElement = doc.createElement( "model_type" ); //$NON-NLS-1$
+            	Element typeElement = doc.createElement( "domain_type" ); //$NON-NLS-1$
             	typeElement.appendChild( doc.createTextNode( (domainType == DOMAIN_TYPE_RELATIONAL) ? "relational" : "olap" ) ); //$NON-NLS-1$ //$NON-NLS-2$
             	mqlElement.appendChild( typeElement );
         	
     			// insert the domain information
             	String data = schemaMeta.getDomainName();
             	if( data != null ) {
-	            	Element modelIdElement = doc.createElement( "model_id" ); //$NON-NLS-1$
-	            	modelIdElement.appendChild( doc.createTextNode( data ) );
-	            	mqlElement.appendChild( modelIdElement );
+	            	Element domainIdElement = doc.createElement( "domain_id" ); //$NON-NLS-1$
+	            	domainIdElement.appendChild( doc.createTextNode( data ) );
+	            	mqlElement.appendChild( domainIdElement );
             	} else {
             		System.err.println( Messages.getString("MQLQuery.ERROR_0004_DOMAIN_ID_NULL") ); //$NON-NLS-1$
 	        		return false;
@@ -286,9 +286,9 @@ public class MQLQuery {
             	// insert the model information
             	data = model.getId();
             	if( data != null ) {
-                	Element viewIdElement = doc.createElement( "view_id" ); //$NON-NLS-1$
-                	viewIdElement.appendChild( doc.createTextNode( data ) );
-                	mqlElement.appendChild( viewIdElement );
+                	Element modelIdElement = doc.createElement( "model_id" ); //$NON-NLS-1$
+                	modelIdElement.appendChild( doc.createTextNode( data ) );
+                	mqlElement.appendChild( modelIdElement );
             	} else {
             		System.err.println( Messages.getString("MQLQuery.ERROR_0005_MODEL_ID_NULL") ); //$NON-NLS-1$
 	        		return false;
@@ -296,9 +296,9 @@ public class MQLQuery {
             
             	data = model.getDisplayName( locale );
             	if( data != null ) {
-                	Element viewNameElement = doc.createElement( "view_name" ); //$NON-NLS-1$
-                	viewNameElement.appendChild( doc.createTextNode( data ) );
-                	mqlElement.appendChild( viewNameElement );
+                	Element modelNameElement = doc.createElement( "model_name" ); //$NON-NLS-1$
+                	modelNameElement.appendChild( doc.createTextNode( data ) );
+                	mqlElement.appendChild( modelNameElement );
             	} else {
             		System.err.println( Messages.getString("MQLQuery.ERROR_0006_MODEL_NAME_NULL") ); //$NON-NLS-1$
 	        		return false;
@@ -431,27 +431,27 @@ public class MQLQuery {
             doc = db.parse(new InputSource(new java.io.StringReader(XML)));
 
             // get the domain type
-            String modelTypeStr = getElementText( doc, "model_type" ); //$NON-NLS-1$
-            if( "relational".equals( modelTypeStr ) ) { //$NON-NLS-1$
+            String domainTypeStr = getElementText( doc, "domain_type" ); //$NON-NLS-1$
+            if( "relational".equals( domainTypeStr ) ) { //$NON-NLS-1$
             		domainType = DOMAIN_TYPE_RELATIONAL;
             }
-            else if( "olap".equals( modelTypeStr ) ) { //$NON-NLS-1$
+            else if( "olap".equals( domainTypeStr ) ) { //$NON-NLS-1$
             		domainType = DOMAIN_TYPE_OLAP;
             } else {
             		// need to throw an error
             }
 
             // get the domain id
-            String modelId = getElementText( doc, "model_id" ); //$NON-NLS-1$
-            CWM cwm = CWM.getInstance(modelId);
+            String domainId = getElementText( doc, "domain_id" ); //$NON-NLS-1$
+            CWM cwm = CWM.getInstance(domainId);
             if (null == cwmSchemaFactory)
               cwmSchemaFactory = Settings.getCwmSchemaFactory();
             schemaMeta = cwmSchemaFactory.getSchemaMeta(cwm);
                         
             // get the Business View id
-            String viewId = getElementText( doc, "view_id" ); //$NON-NLS-1$
-            System.out.println( viewId );  
-            model = schemaMeta.findModel(viewId); // This is the business model that was selected.
+            String modelId = getElementText( doc, "model_id" ); //$NON-NLS-1$
+            System.out.println( modelId );  
+            model = schemaMeta.findModel(modelId); // This is the business model that was selected.
 
             	if( model == null ) {
             		// TODO log this
