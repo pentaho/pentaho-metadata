@@ -25,7 +25,6 @@ public abstract class ConceptTreeNode extends TreeNode {
   public abstract void sync();
 
   public String getName() {
-    // TODO Auto-generated method stub
     return null;
   }
 

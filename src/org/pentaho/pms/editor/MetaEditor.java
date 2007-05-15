@@ -131,7 +131,7 @@ import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.GUIResource;
 import org.pentaho.pms.util.Settings;
 import org.pentaho.pms.util.Splash;
-import org.pentaho.pms.util.dialog.ComboSelectionDialog;
+import org.pentaho.pms.util.dialog.ListSelectionDialog;
 import org.pentaho.pms.util.dialog.EnterOptionsDialog;
 import org.pentaho.pms.util.logging.Log4jPMELayout;
 
@@ -1984,14 +1984,14 @@ public class MetaEditor {
     if (activeModel == null)
       return null;
     
-    ComboSelectionDialog comboDialog = new ComboSelectionDialog(shell, "Select the physical table you woud like to associate with this business table." ,
-        "Select Physical Table", schemaMeta.getTableNames(schemaMeta.getActiveLocale()));
+    ListSelectionDialog comboDialog = new ListSelectionDialog(shell, "Select the physical table you woud like to associate with this business table." ,
+        "Select Physical Table", schemaMeta.getTables().toArray());
     comboDialog.open();
-    String selection = comboDialog.getSelection();
-    if (selection == null){
+    physicalTable = (PhysicalTable)comboDialog.getSelection();
+    if (physicalTable == null){
       return null;
     }
-    physicalTable = schemaMeta.findPhysicalTable(schemaMeta.getActiveLocale(),selection); 
+   // physicalTable = schemaMeta.findPhysicalTable(schemaMeta.getActiveLocale(),selection); 
     // Ask a name for the business table.
     String tableName = ""; //$NON-NLS-1$
     if (physicalTable != null)
