@@ -1984,7 +1984,7 @@ public class MetaEditor {
     if (activeModel == null)
       return null;
     
-    ListSelectionDialog comboDialog = new ListSelectionDialog(shell, "Select the physical table you woud like to associate with this business table." ,
+    ListSelectionDialog comboDialog = new ListSelectionDialog(shell, "Select the physical table you would like to associate with this business table." ,
         "Select Physical Table", schemaMeta.getTables().toArray());
     comboDialog.open();
     physicalTable = (PhysicalTable)comboDialog.getSelection();
