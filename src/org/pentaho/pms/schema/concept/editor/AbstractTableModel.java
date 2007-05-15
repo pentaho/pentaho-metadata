@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 
 public abstract class AbstractTableModel implements ITableModel {
 
@@ -44,5 +45,14 @@ public abstract class AbstractTableModel implements ITableModel {
 
   public void removeTableModificationListener(ITableModificationListener tableModelListener) {
     eventSupport.removeListener(tableModelListener);
+  }
+
+  public String[] getColumnNames(final String locale) {
+    ConceptUtilityInterface[] columns = getColumns();
+    String[] names = new String[columns.length];
+    for (int i = 0; i < columns.length; i++) {
+      names[i] = columns[i].getDisplayName(locale);
+    }
+    return names;
   }
 }

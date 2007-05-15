@@ -72,4 +72,23 @@ public interface ITableModel {
    */
   void addAllColumns(ConceptUtilityInterface[] columns) throws ObjectAlreadyExistsException;
 
+  /**
+   * Sets the parent table of this table. (Not applicable to physical tables.)
+   */
+  void setParent(ConceptUtilityInterface parent);
+
+  /**
+   * Returns the column names given the locale.
+   */
+  String[] getColumnNames(String locale);
+
+  /**
+   * Returns the parent of this table.
+   */
+  ConceptUtilityInterface getParent();
+
+  /**
+   * Returns the parent of this table as an <code>ITableModel</code>.
+   */
+  ITableModel getParentAsTableModel();
 }

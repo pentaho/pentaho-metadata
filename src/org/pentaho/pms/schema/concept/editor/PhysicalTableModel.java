@@ -85,15 +85,33 @@ public class PhysicalTableModel extends AbstractTableModel implements Cloneable 
     // TODO mlowery should make this rollback on exception
     for (int i = 0; i < columns.length; i++) {
       table.addPhysicalColumn((PhysicalColumn) columns[i]);
+      fireTableModificationEvent(createAddColumnEvent(columns[i].getId()));
     }
   }
 
   public void removeAllColumns() {
-    table.removeAllPhysicalColumns();
+    String[] ids = table.getColumnIDs();
+    for (int i = 0; i < ids.length; i++) {
+      removeColumn(ids[i]);
+    }
   }
 
   public Object clone() throws CloneNotSupportedException {
     return new PhysicalTableModel((PhysicalTable) table.clone());
+  }
+
+  public void setParent(final ConceptUtilityInterface parent) {
+    // do nothing
+  }
+
+  public ITableModel getParentAsTableModel() {
+    // physical tables do not have parents
+    return null;
+  }
+
+  public ConceptUtilityInterface getParent() {
+    //  physical tables do not have parents
+    return null;
   }
 
 }

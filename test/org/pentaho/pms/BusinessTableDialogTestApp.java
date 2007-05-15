@@ -21,36 +21,37 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.pentaho.pms.locale.LocaleMeta;
 import org.pentaho.pms.locale.Locales;
-import org.pentaho.pms.schema.PhysicalColumn;
+import org.pentaho.pms.schema.BusinessColumn;
+import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.concept.Concept;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.DefaultPropertyID;
+import org.pentaho.pms.schema.concept.editor.BusinessTableModel;
 import org.pentaho.pms.schema.concept.editor.ConceptModel;
 import org.pentaho.pms.schema.concept.editor.ConceptModificationEvent;
 import org.pentaho.pms.schema.concept.editor.Constants;
 import org.pentaho.pms.schema.concept.editor.IConceptModel;
 import org.pentaho.pms.schema.concept.editor.IConceptModificationListener;
 import org.pentaho.pms.schema.concept.editor.ITableModel;
-import org.pentaho.pms.schema.concept.editor.PhysicalTableModel;
 import org.pentaho.pms.schema.concept.types.bool.ConceptPropertyBoolean;
 import org.pentaho.pms.schema.concept.types.columnwidth.ColumnWidth;
 import org.pentaho.pms.schema.concept.types.columnwidth.ConceptPropertyColumnWidth;
 import org.pentaho.pms.schema.concept.types.localstring.ConceptPropertyLocalizedString;
 import org.pentaho.pms.schema.concept.types.localstring.LocalizedStringSettings;
 import org.pentaho.pms.schema.concept.types.string.ConceptPropertyString;
-import org.pentaho.pms.schema.dialog.PhysicalTableDialog;
+import org.pentaho.pms.schema.dialog.BusinessTableDialog;
 import org.pentaho.pms.util.Const;
 
 import be.ibridge.kettle.core.Props;
 import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
 import be.ibridge.kettle.core.util.EnvUtil;
 
-public class PhysicalTableDialogTestApp extends ApplicationWindow {
+public class BusinessTableDialogTestApp extends ApplicationWindow {
   // ~ Static fields/initializers ======================================================================================
 
-  private static final Log logger = LogFactory.getLog(PhysicalTableDialogTestApp.class);
+  private static final Log logger = LogFactory.getLog(BusinessTableDialogTestApp.class);
 
   // ~ Instance fields =================================================================================================
 
@@ -60,7 +61,7 @@ public class PhysicalTableDialogTestApp extends ApplicationWindow {
 
   private Map context = new HashMap();
 
-  private PhysicalTable tab;
+  private BusinessTable tab;
 
   private SchemaMeta schemaMeta;
 
@@ -68,7 +69,7 @@ public class PhysicalTableDialogTestApp extends ApplicationWindow {
 
   // ~ Constructors ====================================================================================================
 
-  public PhysicalTableDialogTestApp() {
+  public BusinessTableDialogTestApp() {
     super(null);
     initModel();
   }
@@ -120,15 +121,15 @@ public class PhysicalTableDialogTestApp extends ApplicationWindow {
     schemaMeta.setLocales(locales);
     conceptModel.addConceptModificationListener(new IConceptModificationListener() {
       public void conceptModified(final ConceptModificationEvent e) {
-        PhysicalTableDialogTestApp.this.conceptModified(e);
+        BusinessTableDialogTestApp.this.conceptModified(e);
       }
     });
 
     context.put("locales", schemaMeta.getLocales());
 
-    tab = new PhysicalTable("PT_TEST_TABLE_1");
+    tab = new BusinessTable("PT_TEST_TABLE_1");
     try {
-      PhysicalColumn pc1 = new PhysicalColumn("COL_1");
+      BusinessColumn pc1 = new BusinessColumn("COL_1");
       Concept c1 = new Concept();
       LocalizedStringSettings s10 = new LocalizedStringSettings();
       s10.setLocaleString("en_US", "beans");
@@ -136,9 +137,9 @@ public class PhysicalTableDialogTestApp extends ApplicationWindow {
       c1.addProperty(new ConceptPropertyLocalizedString(DefaultPropertyID.NAME.getId(), s10));
       pc1.setConcept(c1);
 
-      tab.addPhysicalColumn(pc1);
-      //    tab.addPhysicalColumn(new PhysicalColumn("COL_2"));
-      //    tab.addPhysicalColumn(new PhysicalColumn("COL_3"));
+      tab.addBusinessColumn(pc1);
+      //    tab.addBusinessColumn(new BusinessColumn("COL_2"));
+      //    tab.addBusinessColumn(new BusinessColumn("COL_3"));
 
     } catch (ObjectAlreadyExistsException e1) {
       if (logger.isErrorEnabled()) {
@@ -147,12 +148,12 @@ public class PhysicalTableDialogTestApp extends ApplicationWindow {
       }
     }
 
-    PhysicalTable tab = new PhysicalTable("my_physical_table");
-    PhysicalColumn col1 = new PhysicalColumn("my_col1");
-    PhysicalColumn col2 = new PhysicalColumn("my_col2");
+    BusinessTable tab = new BusinessTable("my_Business_table");
+    BusinessColumn col1 = new BusinessColumn("my_col1");
+    BusinessColumn col2 = new BusinessColumn("my_col2");
     try {
-      tab.addPhysicalColumn(col1);
-      tab.addPhysicalColumn(col2);
+      tab.addBusinessColumn(col1);
+      tab.addBusinessColumn(col2);
     } catch (ObjectAlreadyExistsException e1) {
       if (logger.isErrorEnabled()) {
         // TODO Auto-generated catch block
@@ -160,7 +161,8 @@ public class PhysicalTableDialogTestApp extends ApplicationWindow {
       }
     }
 
-    tableModel = new PhysicalTableModel(tab);
+    tableModel = new BusinessTableModel(tab);
+    tableModel.setParent(new PhysicalTable("customers"));
 
   }
 
@@ -190,13 +192,13 @@ public class PhysicalTableDialogTestApp extends ApplicationWindow {
     c0.setLayout(new FormLayout());
 
     // let the table diag operate on copy of the original in case they cancel
-    ITableModel copy = new PhysicalTableModel((PhysicalTable) tab.clone());
+    ITableModel copy = new BusinessTableModel((BusinessTable) tab.clone());
 
     if (logger.isDebugEnabled()) {
       logger.debug("orig table model: " + tableModel);
     }
 
-    final PhysicalTableDialog diag = new PhysicalTableDialog(this.getShell(), SWT.NONE, copy, schemaMeta);
+    final BusinessTableDialog diag = new BusinessTableDialog(this.getShell(), SWT.NONE, copy, schemaMeta);
 
     if (logger.isDebugEnabled()) {
       logger.debug("mod'ed table model: " + copy);
@@ -247,12 +249,12 @@ public class PhysicalTableDialogTestApp extends ApplicationWindow {
   }
 
   public static void main(final String[] args) {
-    new PhysicalTableDialogTestApp().run();
+    new BusinessTableDialogTestApp().run();
   }
 
   protected void configureShell(final Shell shell) {
     super.configureShell(shell);
-    shell.setText("Physical Table Dialog Test Application");
+    shell.setText("Business Table Dialog Test Application");
     shell.setImage(Constants.getImageRegistry(Display.getCurrent()).get("concept-editor-app"));
   }
 
