@@ -40,17 +40,20 @@ public class TreeContentProvider implements ITreeContentProvider, ITreeNodeChang
       if (!parent.getChildren().contains(child)){
         parent.addChild(child);
       }else{
-        viewer.refresh(parent,true);        
+        if (viewer != null)
+          viewer.refresh(parent,true);        
       }
     }
 
     public void onDelete(ITreeNode node) {
       node.removeTreeNodeChangeListener(this);
-      viewer.remove(node);
+      if (viewer != null)
+        viewer.remove(node);
     }
 
     public void onUpdate(ITreeNode node) {
-      viewer.refresh(node,true);
+      if (viewer != null)
+        viewer.refresh(node,true);
       
     }
 
