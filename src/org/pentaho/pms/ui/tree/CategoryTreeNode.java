@@ -22,6 +22,7 @@ public class CategoryTreeNode extends ConceptTreeNode {
     
     this.category = category;
     this.locale = locale; 
+    getChildren();
   }
 
   protected void createChildren(List children) {

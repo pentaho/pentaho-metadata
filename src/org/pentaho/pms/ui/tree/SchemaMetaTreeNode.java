@@ -34,7 +34,8 @@ public class SchemaMetaTreeNode extends ConceptTreeNode {
     
   public SchemaMetaTreeNode(ITreeNode parent, SchemaMeta schemaMeta) {
     super(parent);
-    this.schemaMeta = schemaMeta;  
+    this.schemaMeta = schemaMeta;
+    getChildren();
   }
 
   /* (non-Javadoc)

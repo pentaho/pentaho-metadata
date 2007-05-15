@@ -12,6 +12,7 @@ public class LabelTreeNode extends ConceptTreeNode {
     super(parent);
     
     labelName = name; 
+    getChildren();
   }
 
   protected void createChildren(List children) {

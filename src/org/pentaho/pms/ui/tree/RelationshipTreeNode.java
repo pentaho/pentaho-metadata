@@ -14,6 +14,7 @@ public class RelationshipTreeNode extends ConceptTreeNode {
   public RelationshipTreeNode(ITreeNode parent, final RelationshipMeta relationship) {
     super(parent);
     this.relationship = relationship;
+    getChildren();
   }
 
   protected void createChildren(List children) {

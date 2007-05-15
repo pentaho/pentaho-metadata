@@ -20,6 +20,7 @@ public class BusinessTablesTreeNode extends ConceptTreeNode {
     super(parent);
     this.model = model;
     this.locale = locale; 
+    getChildren();
   }
 
   protected void createChildren(List children) {

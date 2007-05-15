@@ -45,6 +45,7 @@ public class PhysicalTableTreeNode extends ConceptTreeNode {
     
     this.physicalTable = physicalTable;
     this.locale = locale;
+    getChildren();
   }
 
   /* (non-Javadoc)

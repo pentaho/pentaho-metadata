@@ -42,6 +42,7 @@ public class ConnectionsTreeNode extends ConceptTreeNode {
     super(parent);
     
     this.schemaMeta = schemaMeta;
+    getChildren();
   }
   
   /* (non-Javadoc)

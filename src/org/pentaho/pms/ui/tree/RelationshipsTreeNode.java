@@ -19,6 +19,7 @@ public class RelationshipsTreeNode extends ConceptTreeNode {
   public RelationshipsTreeNode(ITreeNode parent, BusinessModel model) {
     super(parent);
     this.model = model;
+    getChildren();
   }
 
   protected void createChildren(List children) {

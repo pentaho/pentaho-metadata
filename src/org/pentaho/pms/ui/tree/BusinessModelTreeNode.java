@@ -24,7 +24,8 @@ public class BusinessModelTreeNode extends ConceptTreeNode {
   public BusinessModelTreeNode(ITreeNode parent, BusinessModel model, String locale) {
     super(parent);
     this.model = model;
-    this.locale = locale; 
+    this.locale = locale;
+    getChildren();
   }
 
   protected void createChildren(List children) {

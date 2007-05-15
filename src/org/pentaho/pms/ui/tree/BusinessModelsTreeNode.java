@@ -44,6 +44,7 @@ public class BusinessModelsTreeNode extends ConceptTreeNode {
     super(parent);
     
     this.schemaMeta = schemaMeta;
+    getChildren();
   }
 
   /* (non-Javadoc)

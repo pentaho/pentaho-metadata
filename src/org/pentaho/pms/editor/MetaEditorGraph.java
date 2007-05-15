@@ -857,7 +857,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
             selrect = null;
             int idx = model.indexOfRelationship(relationshipMeta);
             model.removeRelationship(idx);
-            metaEditor.refreshTree();
+            metaEditor.synchronize(relationshipMeta);
             metaEditor.refreshGraph();
           }
         });

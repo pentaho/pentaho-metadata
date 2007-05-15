@@ -46,6 +46,7 @@ public class DatabaseMetaTreeNode extends ConceptTreeNode {
     super(parent);
     this.schemaMeta = schemaMeta;
     this.databaseMeta = databaseMeta;
+    getChildren();
   }
 
   /* (non-Javadoc)

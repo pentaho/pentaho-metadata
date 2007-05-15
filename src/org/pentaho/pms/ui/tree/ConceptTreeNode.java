@@ -24,6 +24,12 @@ public abstract class ConceptTreeNode extends TreeNode {
    */
   public abstract void sync();
 
+  public String getName() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+
   /**
    * 
    * @return
@@ -55,6 +61,10 @@ public abstract class ConceptTreeNode extends TreeNode {
     
     ConceptTreeNode node = null;
 
+    // GEM - this if statement gets us around a bug where
+    // some Kettle objects equals() methods are overridden,
+    // and they are not able to compare two different classes
+    
     if (getDomainObject().getClass().equals(businessObject.getClass())){
       if (getDomainObject().equals(businessObject))
         node = this;
@@ -69,5 +79,5 @@ public abstract class ConceptTreeNode extends TreeNode {
     return node;
   }
 
-  
+    
 }
