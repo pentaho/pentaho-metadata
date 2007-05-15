@@ -12,7 +12,6 @@ public class LabelTreeNode extends ConceptTreeNode {
     super(parent);
     
     labelName = name; 
-    getChildren();
   }
 
   protected void createChildren(List children) {
@@ -20,7 +19,7 @@ public class LabelTreeNode extends ConceptTreeNode {
   }
 
   public void sync(){
-    
+    // intentionally do nothing here
   }
   
   public String getName() {

@@ -45,7 +45,6 @@ public class PhysicalTableTreeNode extends ConceptTreeNode {
     
     this.physicalTable = physicalTable;
     this.locale = locale;
-    getChildren();
   }
 
   /* (non-Javadoc)
@@ -83,8 +82,9 @@ public class PhysicalTableTreeNode extends ConceptTreeNode {
   }
 
   public void sync(){
-    if (fChildren == null)
-      return;
+    if (fChildren == null){
+      getChildren();
+    }
     
     
     // make copy of list so removals doesn't cause a problem

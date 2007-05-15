@@ -22,7 +22,6 @@ public class CategoryTreeNode extends ConceptTreeNode {
     
     this.category = category;
     this.locale = locale; 
-    getChildren();
   }
 
   protected void createChildren(List children) {
@@ -56,9 +55,9 @@ public class CategoryTreeNode extends ConceptTreeNode {
   }
 
   public void sync(){
-    if (fChildren == null)
-      return;
-    
+    if (fChildren == null){
+      getChildren();
+    }
     
     // make copy of list so removals doesn't cause a problem
     Iterator childIter = fChildren.iterator();

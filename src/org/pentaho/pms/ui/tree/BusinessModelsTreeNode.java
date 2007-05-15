@@ -44,7 +44,6 @@ public class BusinessModelsTreeNode extends ConceptTreeNode {
     super(parent);
     
     this.schemaMeta = schemaMeta;
-    getChildren();
   }
 
   /* (non-Javadoc)
@@ -82,8 +81,9 @@ public class BusinessModelsTreeNode extends ConceptTreeNode {
   }
   
   public void sync(){
-    if (fChildren == null)
-      return;
+    if (fChildren == null){
+      getChildren();
+    }
     
     // make copy of list so removals doesn't cause a problem
     Iterator childIter = fChildren.iterator();

@@ -35,7 +35,6 @@ public class SchemaMetaTreeNode extends ConceptTreeNode {
   public SchemaMetaTreeNode(ITreeNode parent, SchemaMeta schemaMeta) {
     super(parent);
     this.schemaMeta = schemaMeta;
-    getChildren();
   }
 
   /* (non-Javadoc)
@@ -57,6 +56,10 @@ public class SchemaMetaTreeNode extends ConceptTreeNode {
   }
   
   public void sync(){
+    if (fChildren == null){
+      getChildren();
+    }
+
     connectionsTreeNode.sync();
     businessModelsTreeNode.sync();
   }

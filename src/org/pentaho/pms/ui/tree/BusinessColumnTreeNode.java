@@ -18,7 +18,6 @@ public class BusinessColumnTreeNode extends ConceptTreeNode {
     super(parent);
     this.column = column;
     this.locale = locale; 
-    getChildren();
   }
 
   protected void createChildren(List children) {

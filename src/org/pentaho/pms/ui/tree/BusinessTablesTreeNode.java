@@ -20,7 +20,6 @@ public class BusinessTablesTreeNode extends ConceptTreeNode {
     super(parent);
     this.model = model;
     this.locale = locale; 
-    getChildren();
   }
 
   protected void createChildren(List children) {
@@ -54,9 +53,9 @@ public class BusinessTablesTreeNode extends ConceptTreeNode {
   }
 
   public void sync(){
-    if (fChildren == null)
-      return;
-    
+    if (fChildren == null){
+      getChildren();
+    }
     
     // make copy of list so removals doesn't cause a problem
     Iterator childIter = fChildren.iterator();

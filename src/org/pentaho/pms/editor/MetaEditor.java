@@ -2833,8 +2833,16 @@ public class MetaEditor {
   public void refreshTree() {
     mainTreeNode = new SchemaMetaTreeNode(null, schemaMeta);
     mainTreeNode.addTreeNodeChangeListener((ITreeNodeChangedListener) treeViewer.getContentProvider());
+    
+    // This next line is only necessary so that the nodes are realized ahead of time, in order for the tree to reflect 
+    // changes from the graph, regardless of whether the tree was expanded or not...
+    mainTreeNode.sync();
+    
     treeViewer.setInput(mainTreeNode);
+    
+    // And this line is to prevent a bug where the viewer will display duplicate nodes when setInput() is called
     treeViewer.refresh();
+    
     if (mainTreeNode.getBusinessModelsRoot().hasChildren())
       activeModelTreeNode = (BusinessModelTreeNode) mainTreeNode.getBusinessModelsRoot().getChildren().get(0);
   }

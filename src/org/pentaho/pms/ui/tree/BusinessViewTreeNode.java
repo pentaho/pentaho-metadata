@@ -47,8 +47,9 @@ public class BusinessViewTreeNode extends CategoryTreeNode {
   }
 
   public void sync(){
-    if (fChildren == null)
-      return;
+    if (fChildren == null){
+      getChildren();
+    }
     
     
     // make copy of list so removals doesn't cause a problem

@@ -46,7 +46,6 @@ public class DatabaseMetaTreeNode extends ConceptTreeNode {
     super(parent);
     this.schemaMeta = schemaMeta;
     this.databaseMeta = databaseMeta;
-    getChildren();
   }
 
   /* (non-Javadoc)
@@ -84,8 +83,9 @@ public class DatabaseMetaTreeNode extends ConceptTreeNode {
   }
 
   public void sync(){
-    if (fChildren == null)
-      return;
+    if (fChildren == null){
+      getChildren();
+    }
     
     
     // make copy of list so removals doesn't cause a problem

@@ -25,7 +25,6 @@ public class BusinessModelTreeNode extends ConceptTreeNode {
     super(parent);
     this.model = model;
     this.locale = locale;
-    getChildren();
   }
 
   protected void createChildren(List children) {
@@ -40,8 +39,8 @@ public class BusinessModelTreeNode extends ConceptTreeNode {
   }
   
   public void sync(){
-    if ((businessTablesNode==null) || (relationshipsNode==null) || (businessViewNode==null)){
-      return;
+    if (fChildren == null){
+      getChildren();
     }
     
     businessTablesNode.sync();

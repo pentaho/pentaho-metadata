@@ -14,7 +14,6 @@ public class RelationshipTreeNode extends ConceptTreeNode {
   public RelationshipTreeNode(ITreeNode parent, final RelationshipMeta relationship) {
     super(parent);
     this.relationship = relationship;
-    getChildren();
   }
 
   protected void createChildren(List children) {
@@ -22,7 +21,7 @@ public class RelationshipTreeNode extends ConceptTreeNode {
   }
   
   public void sync(){
-    
+    // Intentionally do nothing here
   }
   
   public Image getImage() {
@@ -31,7 +30,6 @@ public class RelationshipTreeNode extends ConceptTreeNode {
   }
 
   public String getName() {
-    // TODO Auto-generated method stub
     return relationship.toString();
   }
   

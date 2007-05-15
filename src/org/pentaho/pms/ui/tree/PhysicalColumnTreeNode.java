@@ -42,7 +42,6 @@ public class PhysicalColumnTreeNode extends ConceptTreeNode {
     
     this.physicalColumn = physicalColumn;
     this.locale = locale;
-    getChildren();
   }
 
   /* (non-Javadoc)
@@ -53,7 +52,7 @@ public class PhysicalColumnTreeNode extends ConceptTreeNode {
   }
   
   public void sync(){
-    
+   // Intentionally do nothing here 
   }
 
   /* (non-Javadoc)

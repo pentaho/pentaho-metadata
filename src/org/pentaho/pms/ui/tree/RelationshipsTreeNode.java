@@ -53,9 +53,9 @@ public class RelationshipsTreeNode extends ConceptTreeNode {
     }
   }
   public void sync(){
-    if (fChildren == null)
-      return;
-    
+    if (fChildren == null){
+      getChildren();
+    }
     
     // make copy of list so removals doesn't cause a problem
     Iterator childIter = fChildren.iterator();
