@@ -28,6 +28,13 @@ public class BusinessModelTreeNode extends ConceptTreeNode {
   }
 
   protected void createChildren(List children) {
+    String databaseName = "No database defined";
+    if (model.nrBusinessTables()>0){
+      databaseName = model.getBusinessTable(0).getPhysicalTable().getDatabaseMeta().getDatabaseName();
+    }
+    LabelTreeNode databaseNode = new LabelTreeNode(this, "Connection: " + databaseName);
+    addChild(databaseNode);
+
     businessTablesNode = new BusinessTablesTreeNode(this, model, locale);
     addChild(businessTablesNode);
     

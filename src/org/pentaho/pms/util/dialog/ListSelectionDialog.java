@@ -4,8 +4,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
-import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -97,8 +97,9 @@ public class ListSelectionDialog extends TitleAreaDialog {
   }
   
   protected void buttonPressed(int buttonId) {
+    returnSelection = null;
     if (buttonId == IDialogConstants.OK_ID){
-      returnSelection = selectionControl.getList().getItem(selectionControl.getList().getSelectionIndex());
+      returnSelection = ((IStructuredSelection)selectionControl.getSelection()).getFirstElement();
     }else{
       returnSelection = null;
     }
