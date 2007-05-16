@@ -3553,102 +3553,127 @@ public class MetaEditor {
    */
   public ConceptUtilityInterface[] getSelectedConceptUtilityInterfacesInMainTree() {
     List list = new ArrayList();
-
-    String locale = schemaMeta.getActiveLocale();
-
-    // The main tree
     TreeItem[] selection = treeViewer.getTree().getSelection();
+    
     for (int i = 0; i < selection.length; i++) {
       TreeItem treeItem = selection[i];
-      String[] path = Const.getTreeStrings(treeItem);
-      if (path[0].equals(STRING_CONNECTIONS)) {
-        switch (path.length) {
-          case 3: // physical table
-          {
-            PhysicalTable table = schemaMeta.findPhysicalTable(locale, path[2]);
-            if (table != null)
-              list.add(table);
-          }
-            break;
-          case 4: // Name of a physical column
-          {
-            PhysicalTable table = schemaMeta.findPhysicalTable(locale, path[2]);
-            if (table != null) {
-              PhysicalColumn column = table.findPhysicalColumn(locale, path[3]);
-              if (column != null)
-                list.add(column);
-            }
-          }
-            break;
-        }
-      } else if (path[0].equals(STRING_BUSINESS_MODELS)) {
-        switch (path.length) {
-          case 2: // Business model name
-          {
-            BusinessModel model = schemaMeta.findModel(locale, path[1]);
-            if (model != null) {
-              list.add(model);
-            }
-          }
-            break;
-          case 4: // Business Tables, BusinessView, or Relationships
-            if (path[2].equals(STRING_BUSINESS_TABLES)) {
-              BusinessModel model = schemaMeta.findModel(locale, path[1]);
-              if (model != null) {
-                BusinessTable table = model.findBusinessTable(locale, path[3]);
-                if (table != null)
-                  list.add(table);
-              }
-            } else if (path[2].equals(STRING_CATEGORIES)) {
-              BusinessModel model = schemaMeta.findModel(locale, path[1]);
-              String[] categoryPath = new String[path.length - 3];
-              for (int j = 0; j < path.length - 3; j++) {
-                categoryPath[j] = path[j + 3];
-              }
-              BusinessCategory category = model.findBusinessCategory(categoryPath, locale, true); // exact match
-              if (category != null) {
-                list.add(category);
-              } else {
-                String[] parentPath = new String[categoryPath.length - 1];
-                for (int x = 0; x < parentPath.length; x++) {
-                  parentPath[x] = categoryPath[x];
-                }
-
-                BusinessCategory parentCategory = model.getRootCategory();
-                if (parentPath.length > 0) {
-                  model.findBusinessCategory(parentPath, locale, true);
-                }
-                if (parentCategory != null) {
-                  // Now get the business column below that...
-                  BusinessColumn businessColumn = parentCategory.findBusinessColumn(treeItem.getText(), locale);
-                  if (businessColumn != null) {
-                    list.add(businessColumn);
-                  } else {
-                    list.add(parentCategory);
-                  }
-                }
-              }
-            }
-            break;
-          case 5: // Business Column
-            if (path[2].equals(STRING_BUSINESS_TABLES)) {
-              BusinessModel model = schemaMeta.findModel(locale, path[1]);
-              if (model != null) {
-                BusinessTable table = model.findBusinessTable(locale, path[3]);
-                if (table != null) {
-                  BusinessColumn column = table.findBusinessColumn(locale, path[4]);
-                  if (column != null)
-                    list.add(column);
-                }
-              }
-            }
-            break;
-        }
-      }
+      ConceptTreeNode node = (ConceptTreeNode) treeItem.getData();
+      if (node instanceof PhysicalTableTreeNode) {
+        list.add(((PhysicalTableTreeNode)node).getDomainObject());
+      } else if (node instanceof PhysicalColumnTreeNode) {
+        list.add(((PhysicalColumnTreeNode)node).getDomainObject());
+      } else if (node instanceof BusinessModelTreeNode) {
+        list.add(((BusinessModelTreeNode)node).getDomainObject());
+      } else if (node instanceof BusinessTableTreeNode) {
+        list.add(((BusinessTableTreeNode)node).getDomainObject());
+      } else if (node instanceof CategoryTreeNode) {
+        list.add(((CategoryTreeNode)node).getDomainObject());
+      } else if (node instanceof BusinessColumnTreeNode) {
+        list.add(((BusinessColumnTreeNode)node).getDomainObject());
+      } 
     }
 
     return (ConceptUtilityInterface[]) list.toArray(new ConceptUtilityInterface[list.size()]);
   }
+
+//  public ConceptUtilityInterface[] getSelectedConceptUtilityInterfacesInMainTree() {
+//    List list = new ArrayList();
+//
+//    String locale = schemaMeta.getActiveLocale();
+//
+//    // The main tree
+//    TreeItem[] selection = treeViewer.getTree().getSelection();
+//    for (int i = 0; i < selection.length; i++) {
+//      TreeItem treeItem = selection[i];
+//      String[] path = Const.getTreeStrings(treeItem);
+//      if (path[0].equals(STRING_CONNECTIONS)) {
+//        switch (path.length) {
+//          case 3: // physical table
+//          {
+//            PhysicalTable table = schemaMeta.findPhysicalTable(locale, path[2]);
+//            if (table != null)
+//              list.add(table);
+//          }
+//            break;
+//          case 4: // Name of a physical column
+//          {
+//            PhysicalTable table = schemaMeta.findPhysicalTable(locale, path[2]);
+//            if (table != null) {
+//              PhysicalColumn column = table.findPhysicalColumn(locale, path[3]);
+//              if (column != null)
+//                list.add(column);
+//            }
+//          }
+//            break;
+//        }
+//      } else if (path[0].equals(STRING_BUSINESS_MODELS)) {
+//        switch (path.length) {
+//          case 2: // Business model name
+//          {
+//            BusinessModel model = schemaMeta.findModel(locale, path[1]);
+//            if (model != null) {
+//              list.add(model);
+//            }
+//          }
+//            break;
+//          case 4: // Business Tables, BusinessView, or Relationships
+//            if (path[2].equals(STRING_BUSINESS_TABLES)) {
+//              BusinessModel model = schemaMeta.findModel(locale, path[1]);
+//              if (model != null) {
+//                BusinessTable table = model.findBusinessTable(locale, path[3]);
+//                if (table != null)
+//                  list.add(table);
+//              }
+//            } else if (path[2].equals(STRING_CATEGORIES)) {
+//              BusinessModel model = schemaMeta.findModel(locale, path[1]);
+//              String[] categoryPath = new String[path.length - 3];
+//              for (int j = 0; j < path.length - 3; j++) {
+//                categoryPath[j] = path[j + 3];
+//              }
+//              BusinessCategory category = model.findBusinessCategory(categoryPath, locale, true); // exact match
+//              if (category != null) {
+//                list.add(category);
+//              } else {
+//                String[] parentPath = new String[categoryPath.length - 1];
+//                for (int x = 0; x < parentPath.length; x++) {
+//                  parentPath[x] = categoryPath[x];
+//                }
+//
+//                BusinessCategory parentCategory = model.getRootCategory();
+//                if (parentPath.length > 0) {
+//                  model.findBusinessCategory(parentPath, locale, true);
+//                }
+//                if (parentCategory != null) {
+//                  // Now get the business column below that...
+//                  BusinessColumn businessColumn = parentCategory.findBusinessColumn(treeItem.getText(), locale);
+//                  if (businessColumn != null) {
+//                    list.add(businessColumn);
+//                  } else {
+//                    list.add(parentCategory);
+//                  }
+//                }
+//              }
+//            }
+//            break;
+//          case 5: // Business Column
+//            if (path[2].equals(STRING_BUSINESS_TABLES)) {
+//              BusinessModel model = schemaMeta.findModel(locale, path[1]);
+//              if (model != null) {
+//                BusinessTable table = model.findBusinessTable(locale, path[3]);
+//                if (table != null) {
+//                  BusinessColumn column = table.findBusinessColumn(locale, path[4]);
+//                  if (column != null)
+//                    list.add(column);
+//                }
+//              }
+//            }
+//            break;
+//        }
+//      }
+//    }
+//
+//    return (ConceptUtilityInterface[]) list.toArray(new ConceptUtilityInterface[list.size()]);
+//  }
 
   protected void setParentConcept(ConceptUtilityInterface[] utilityInterfaces) {
     String[] concepts = schemaMeta.getConceptNames();
