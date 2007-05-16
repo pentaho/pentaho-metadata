@@ -77,6 +77,10 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   private BusinessCategory rootCategory;
 
+  // TODO: Until support for multiple connections is implemented, identify the one connection 
+  // this model holds reference to. 
+  public DatabaseMeta connection = null;
+
   public BusinessModel() {
     super();
     this.businessTables = new UniqueArrayList();
@@ -1655,5 +1659,25 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   public TransAction viewThisUndo() {
     return null;
+  }
+  
+  public boolean hasConnection(){
+    return getConnection() != null;
+  }
+  
+  public DatabaseMeta getConnection(){
+    
+    // A bit cheap and fragile - use the connection reference from the first 
+    // business table to enforce this single connection on the rest of the tables added. 
+    
+    if ((connection == null) && (nrBusinessTables()>0)){
+      connection = getBusinessTable(0).getPhysicalTable().getDatabaseMeta();
+    }
+
+    return connection;
+  }
+  
+  public void clearConnection(){
+    connection = null;
   }
 }
