@@ -3423,7 +3423,7 @@ public class MetaEditor {
     businessTable.setConcept(copy.getConcept());
     businessTable.setPhysicalTable(copy.getPhysicalTable());
 
-    for (int i = 0; i < businessTable.nrBusinessColumns(); i++) {
+    for (int i = businessTable.nrBusinessColumns() - 1; i >= 0; i--) {
       businessTable.removeBusinessColumn(i);
     }
 
