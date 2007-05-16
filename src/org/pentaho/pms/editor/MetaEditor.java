@@ -3570,7 +3570,14 @@ public class MetaEditor {
         list.add(((CategoryTreeNode)node).getDomainObject());
       } else if (node instanceof BusinessColumnTreeNode) {
         list.add(((BusinessColumnTreeNode)node).getDomainObject());
-      } 
+      } else if (node instanceof BusinessViewTreeNode) {
+        BusinessModelTreeNode modelNode = (BusinessModelTreeNode) node.getParent();
+        BusinessModel model = (BusinessModel) modelNode.getDomainObject();
+        BusinessCategory category = model.getRootCategory();
+        if (category != null) {
+          list.add(category);
+        }
+      }
     }
 
     return (ConceptUtilityInterface[]) list.toArray(new ConceptUtilityInterface[list.size()]);
