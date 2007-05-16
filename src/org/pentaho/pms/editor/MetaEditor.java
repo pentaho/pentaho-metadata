@@ -444,10 +444,7 @@ public class MetaEditor {
     };
     lsBTableNew = new Listener() {
       public void handleEvent(Event e) {
-        BusinessTable table = newBusinessTable(null);
-        if ((activeModelTreeNode != null) && (table != null)){
-          activeModelTreeNode.getBusinessTablesRoot().addDomainChild(table);
-        }
+        newBusinessTable(null);
       }
     };
     lsBModelNew = new Listener() {
@@ -1697,10 +1694,7 @@ public class MetaEditor {
       miNew.setText(Messages.getString("MetaEditor.USER_NEW_BUSINESS_TABLE")); //$NON-NLS-1$
       miNew.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
-          BusinessTable table = newBusinessTable(null);
-          if ((activeModelTreeNode != null) && (null != table)){
-            activeModelTreeNode.getBusinessTablesRoot().addDomainChild(table);
-          }
+          newBusinessTable(null);
         }
       });
     } else if (node instanceof RelationshipsTreeNode) {
@@ -1726,10 +1720,7 @@ public class MetaEditor {
       miNew.setText(Messages.getString("MetaEditor.USER_NEW_BUSINESS_TABLE")); //$NON-NLS-1$
       miNew.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
-          BusinessTable table = newBusinessTable(null);
-          if ((activeModelTreeNode != null) && (null != table)){
-            activeModelTreeNode.getBusinessTablesRoot().addDomainChild(table);
-          }
+          newBusinessTable(null);
         }
       });
       MenuItem miEdit = new MenuItem(mainMenu, SWT.PUSH);
@@ -2078,7 +2069,7 @@ public class MetaEditor {
         businessTable.setConcept(copy.getConcept());
         businessTable.setPhysicalTable(copy.getPhysicalTable());
 
-        for (int i = 0; i < businessTable.nrBusinessColumns(); i++) {
+        for (int i = businessTable.nrBusinessColumns() - 1; i >= 0; i--) {
           businessTable.removeBusinessColumn(i);
         }
 
@@ -2298,10 +2289,7 @@ public class MetaEditor {
         BusinessModel businessModel = ((BusinessModelTreeNode) node).getBusinessModel();
         editBusinessModel(businessModel, node);
       } else if (node instanceof BusinessTablesTreeNode) {
-        BusinessTable table = newBusinessTable(null);
-        if ((activeModelTreeNode != null) && (table != null)){
-          activeModelTreeNode.getBusinessTablesRoot().addDomainChild(table);
-        }
+        newBusinessTable(null);
       } else if (node instanceof RelationshipsTreeNode) {
         newRelationship();
       } else if (node instanceof BusinessTableTreeNode) {
