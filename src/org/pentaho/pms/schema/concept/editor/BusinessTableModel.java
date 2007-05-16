@@ -26,7 +26,7 @@ public class BusinessTableModel extends AbstractTableModel {
   // ~ Constructors ====================================================================================================
 
   public BusinessTableModel(final BusinessTable table) {
-    this(table, null);
+    this(table, table.getPhysicalTable());
   }
 
   public BusinessTableModel(final BusinessTable table, final PhysicalTable physicalTable) {
