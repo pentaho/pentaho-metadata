@@ -158,9 +158,13 @@ public class PropertyWidgetManager2 extends Composite implements ISelectionChang
         }
         IPropertyEditorWidget widget = PropertyEditorWidgetFactory.getWidget(prop.getType(), widgetArea, SWT.NONE,
             conceptModel, prop.getId(), context);
-        addWidget((Control) widget);
-        widgets.put(prop.getId(), widget);
-        focusWidget(prop.getId());
+        if (widget != null) {
+          addWidget((Control) widget);
+          widgets.put(prop.getId(), widget);
+          focusWidget(prop.getId());
+        } else {
+          logger.error("failed to get widget " + propertyId);
+        }
         resizeWidgetArea();
       }
     }
