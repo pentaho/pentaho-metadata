@@ -1276,12 +1276,14 @@ public class MetaEditor {
           //
           // Where exactly did we drop in the tree?
           TreeItem treeItem = (TreeItem) event.item;
-          String path[] = Const.getTreeStrings(treeItem, 1);
 
-          // OK, So which BusinessCategory is this?
-          // If the category is null, we are talking about the root
-          BusinessCategory parentCategory = activeModel.findBusinessCategory(path, activeLocale);
-
+          BusinessCategory parentCategory;
+          if (treeItem.getData() instanceof CategoryTreeNode){
+            parentCategory = ((CategoryTreeNode)treeItem.getData()).getCategory();
+          }else{
+            parentCategory = activeModel.getRootCategory();
+          }
+            
           // We expect a Drag and Drop container... (encased in XML & Base64)
           //
           DragAndDropContainer container = (DragAndDropContainer) event.data;
@@ -1339,9 +1341,7 @@ public class MetaEditor {
                 // Add the category to the business model or category
                 //
                 parentCategory.addBusinessCategory(businessCategory);
-
-                // Expand the parent tree item
-                TreeMemory.getInstance().storeExpanded(STRING_MAIN_TREE, path, true);
+                activeModelTreeNode.getBusinessViewRoot().addDomainChild(businessCategory);
 
                 // Done!
                 //
@@ -1978,38 +1978,61 @@ public class MetaEditor {
   }
 
   public BusinessTable newBusinessTable(PhysicalTable physicalTable) {
+    
     BusinessModel activeModel = schemaMeta.getActiveModel();
+    if (activeModel == null){
+      return null;
+    }
+    // Make sure that we are not trying to add a physical table from a 
+    // different connection than the active model's connection
+    if ((physicalTable != null) && (activeModel.hasConnection())){
+      if (!(physicalTable.getDatabaseMeta().equals(activeModel.getConnection()))){
+        MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
+        mb.setText(Messages.getString("General.USER_TITLE_ERROR")); //$NON-NLS-1$
+        mb.setMessage("Cannot use physical table " + physicalTable.getName(schemaMeta.getActiveLocale()) + ". Model " + activeModel.getDisplayName(schemaMeta.getActiveLocale()) + 
+            " can only use physical tables from connection " + activeModel.getConnection().getName()+ "."); 
+        mb.open();
+        return null;
+      }
+    }
+    
     String activeLocale = schemaMeta.getActiveLocale();
     if (activeModel == null)
       return null;
 
-    ListSelectionDialog comboDialog = new ListSelectionDialog(shell, "Select the physical table you would like to associate with this business table." ,
-        "Select Physical Table", schemaMeta.getTables().toArray());
-    comboDialog.open();
-    physicalTable = (PhysicalTable)comboDialog.getSelection();
-    if (physicalTable == null){
-      return null;
+    if (physicalTable == null) {
+      ListSelectionDialog comboDialog = new ListSelectionDialog(shell,
+          "Select the physical table you would like to associate with this business table.", "Select Physical Table",
+          schemaMeta.getTables().toArray());
+      comboDialog.open();
+      physicalTable = (PhysicalTable) comboDialog.getSelection();
+      if (physicalTable == null) {
+        return null;
+      }
     }
-   // physicalTable = schemaMeta.findPhysicalTable(schemaMeta.getActiveLocale(),selection);
-    // Ask a name for the business table.
+
     String tableName = ""; //$NON-NLS-1$
-    if (physicalTable != null)
+    if (physicalTable != null) {
       tableName = physicalTable.getDisplayName(activeLocale);
-
-
-//    EnterStringDialog enterStringDialog = new EnterStringDialog(shell, tableName, Messages
-//        .getString("MetaEditor.USER_TITLE_ENTER_NAME"), Messages.getString("MetaEditor.USER_ENTER_NAME")); //$NON-NLS-1$ //$NON-NLS-2$
-//    tableName = enterStringDialog.open();
-//    if (tableName == null)
-//      return null;
+    }
 
     // Create a new ID based on this...
+
     String newId = null;
-//    if (physicalTable != null) {
+    if (physicalTable != null) {
       newId = Settings.getBusinessTableIDPrefix() + Const.toID(tableName);
       if (Settings.isAnIdUppercase())
         newId = newId.toUpperCase();
-//    }
+    }
+
+    // physicalTable = schemaMeta.findPhysicalTable(schemaMeta.getActiveLocale(),selection);
+    // Ask a name for the business table.
+
+    //    EnterStringDialog enterStringDialog = new EnterStringDialog(shell, tableName, Messages
+    //        .getString("MetaEditor.USER_TITLE_ENTER_NAME"), Messages.getString("MetaEditor.USER_ENTER_NAME")); //$NON-NLS-1$ //$NON-NLS-2$
+    //    tableName = enterStringDialog.open();
+    //    if (tableName == null)
+    //      return null;
 
     // Create a business table with the new ID and localized name
     BusinessTable businessTable = new BusinessTable(newId, physicalTable);
@@ -2042,7 +2065,6 @@ public class MetaEditor {
       }
     }
 
-
     if (businessTable != null) {
 
       BusinessTable copy = (BusinessTable) businessTable.clone();
@@ -2053,63 +2075,62 @@ public class MetaEditor {
 
       if (Window.OK == res) {
 
-    businessTable.setConcept(copy.getConcept());
-    businessTable.setPhysicalTable(copy.getPhysicalTable());
+        businessTable.setConcept(copy.getConcept());
+        businessTable.setPhysicalTable(copy.getPhysicalTable());
 
+        for (int i = 0; i < businessTable.nrBusinessColumns(); i++) {
+          businessTable.removeBusinessColumn(i);
+        }
 
-    for (int i = 0; i < businessTable.nrBusinessColumns(); i++) {
-      businessTable.removeBusinessColumn(i);
-    }
+        Iterator iter = copy.getBusinessColumns().iterator();
+        while (iter.hasNext()) {
+          BusinessColumn column = (BusinessColumn) iter.next();
+          try {
+            businessTable.addBusinessColumn(column);
+          } catch (ObjectAlreadyExistsException e) {
+            e.printStackTrace();
+            System.out.println("this should not happen as this exception would already have been caught earlier");
+          }
+        }
 
-    Iterator iter = copy.getBusinessColumns().iterator();
-    while (iter.hasNext()) {
-      BusinessColumn column = (BusinessColumn) iter.next();
-      try {
-        businessTable.addBusinessColumn(column);
-      } catch (ObjectAlreadyExistsException e) {
-        e.printStackTrace();
-        System.out.println("this should not happen as this exception would already have been caught earlier");
+        //      String tablename = td.getTablename();
+        //    if (tablename != null) {
+        try {
+          activeModel.addBusinessTable(businessTable);
+          if (activeModelTreeNode != null)
+            activeModelTreeNode.getBusinessTablesRoot().addDomainChild(businessTable);
+          refreshGraph();
+          return businessTable;
+        } catch (ObjectAlreadyExistsException e) {
+          new ErrorDialog(
+              shell,
+              Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_BUSINESS_TABLE_EXISTS", businessTable.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        //  }
       }
     }
+    return null;
 
-//      String tablename = td.getTablename();
-//    if (tablename != null) {
-    try {
-      activeModel.addBusinessTable(businessTable);
-      if (activeModelTreeNode != null)
-        activeModelTreeNode.getBusinessTablesRoot().addDomainChild(businessTable);
-      refreshGraph();
-      return businessTable;
-    } catch (ObjectAlreadyExistsException e) {
-      new ErrorDialog(
-          shell,
-          Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_BUSINESS_TABLE_EXISTS", businessTable.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$
-    }
-//  }
-  }
-    }
-      return null;
-
-//
-//    // Show it to the USER_..
-//    while (true) {
-//      BusinessTableDialog dialog = new BusinessTableDialog(shell, SWT.NONE, businessTable, schemaMeta);
-//      String name = dialog.open();
-//      if (name != null) {
-//        try {
-//          activeModel.addBusinessTable(businessTable);
-//          refreshAll();
-//          return businessTable;
-//        } catch (ObjectAlreadyExistsException e) {
-//          new ErrorDialog(
-//              shell,
-//              Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_BUSINESS_TABLE_EXISTS", businessTable.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$
-//        }
-//      } else {
-//        break;
-//      }
-//    }
-//    return null;
+    //
+    //    // Show it to the USER_..
+    //    while (true) {
+    //      BusinessTableDialog dialog = new BusinessTableDialog(shell, SWT.NONE, businessTable, schemaMeta);
+    //      String name = dialog.open();
+    //      if (name != null) {
+    //        try {
+    //          activeModel.addBusinessTable(businessTable);
+    //          refreshAll();
+    //          return businessTable;
+    //        } catch (ObjectAlreadyExistsException e) {
+    //          new ErrorDialog(
+    //              shell,
+    //              Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_BUSINESS_TABLE_EXISTS", businessTable.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$
+    //        }
+    //      } else {
+    //        break;
+    //      }
+    //    }
+    //    return null;
   }
 
   public void delBusinessTable(BusinessTable businessTable) {
@@ -3582,105 +3603,6 @@ public class MetaEditor {
 
     return (ConceptUtilityInterface[]) list.toArray(new ConceptUtilityInterface[list.size()]);
   }
-
-//  public ConceptUtilityInterface[] getSelectedConceptUtilityInterfacesInMainTree() {
-//    List list = new ArrayList();
-//
-//    String locale = schemaMeta.getActiveLocale();
-//
-//    // The main tree
-//    TreeItem[] selection = treeViewer.getTree().getSelection();
-//    for (int i = 0; i < selection.length; i++) {
-//      TreeItem treeItem = selection[i];
-//      String[] path = Const.getTreeStrings(treeItem);
-//      if (path[0].equals(STRING_CONNECTIONS)) {
-//        switch (path.length) {
-//          case 3: // physical table
-//          {
-//            PhysicalTable table = schemaMeta.findPhysicalTable(locale, path[2]);
-//            if (table != null)
-//              list.add(table);
-//          }
-//            break;
-//          case 4: // Name of a physical column
-//          {
-//            PhysicalTable table = schemaMeta.findPhysicalTable(locale, path[2]);
-//            if (table != null) {
-//              PhysicalColumn column = table.findPhysicalColumn(locale, path[3]);
-//              if (column != null)
-//                list.add(column);
-//            }
-//          }
-//            break;
-//        }
-//      } else if (path[0].equals(STRING_BUSINESS_MODELS)) {
-//        switch (path.length) {
-//          case 2: // Business model name
-//          {
-//            BusinessModel model = schemaMeta.findModel(locale, path[1]);
-//            if (model != null) {
-//              list.add(model);
-//            }
-//          }
-//            break;
-//          case 4: // Business Tables, BusinessView, or Relationships
-//            if (path[2].equals(STRING_BUSINESS_TABLES)) {
-//              BusinessModel model = schemaMeta.findModel(locale, path[1]);
-//              if (model != null) {
-//                BusinessTable table = model.findBusinessTable(locale, path[3]);
-//                if (table != null)
-//                  list.add(table);
-//              }
-//            } else if (path[2].equals(STRING_CATEGORIES)) {
-//              BusinessModel model = schemaMeta.findModel(locale, path[1]);
-//              String[] categoryPath = new String[path.length - 3];
-//              for (int j = 0; j < path.length - 3; j++) {
-//                categoryPath[j] = path[j + 3];
-//              }
-//              BusinessCategory category = model.findBusinessCategory(categoryPath, locale, true); // exact match
-//              if (category != null) {
-//                list.add(category);
-//              } else {
-//                String[] parentPath = new String[categoryPath.length - 1];
-//                for (int x = 0; x < parentPath.length; x++) {
-//                  parentPath[x] = categoryPath[x];
-//                }
-//
-//                BusinessCategory parentCategory = model.getRootCategory();
-//                if (parentPath.length > 0) {
-//                  model.findBusinessCategory(parentPath, locale, true);
-//                }
-//                if (parentCategory != null) {
-//                  // Now get the business column below that...
-//                  BusinessColumn businessColumn = parentCategory.findBusinessColumn(treeItem.getText(), locale);
-//                  if (businessColumn != null) {
-//                    list.add(businessColumn);
-//                  } else {
-//                    list.add(parentCategory);
-//                  }
-//                }
-//              }
-//            }
-//            break;
-//          case 5: // Business Column
-//            if (path[2].equals(STRING_BUSINESS_TABLES)) {
-//              BusinessModel model = schemaMeta.findModel(locale, path[1]);
-//              if (model != null) {
-//                BusinessTable table = model.findBusinessTable(locale, path[3]);
-//                if (table != null) {
-//                  BusinessColumn column = table.findBusinessColumn(locale, path[4]);
-//                  if (column != null)
-//                    list.add(column);
-//                }
-//              }
-//            }
-//            break;
-//        }
-//      }
-//    }
-//
-//    return (ConceptUtilityInterface[]) list.toArray(new ConceptUtilityInterface[list.size()]);
-//  }
 
   protected void setParentConcept(ConceptUtilityInterface[] utilityInterfaces) {
     String[] concepts = schemaMeta.getConceptNames();
