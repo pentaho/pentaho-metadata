@@ -444,11 +444,6 @@ public class MetaEditor {
     lsBTableNew = new Listener() {
       public void handleEvent(Event e) {
         BusinessTable table = newBusinessTable(null);
-
-//        if ((activeModelTreeNode != null) && (table != null)){
-//          activeModelTreeNode.getBusinessTablesRoot().addDomainChild(table);
-//        }
-
       }
     };
     lsBModelNew = new Listener() {
@@ -1337,7 +1332,7 @@ public class MetaEditor {
 
                 // add the business columns to the category
                 //
-                for (int i = 0; i < businessTable.nrBusinessColumns(); i++) {
+                for (int i = businessTable.nrBusinessColumns() - 1; i >= 0; i--) {
                   businessCategory.addBusinessColumn(businessTable.getBusinessColumn(i));
                 }
 
@@ -1949,7 +1944,8 @@ public class MetaEditor {
   }
 
   public BusinessTable newBusinessTable(PhysicalTable physicalTable) {
-    
+
+    String activeLocale = schemaMeta.getActiveLocale();
     BusinessModel activeModel = schemaMeta.getActiveModel();
     if (activeModel == null){
       return null;
@@ -1968,10 +1964,6 @@ public class MetaEditor {
       }
     }
     
-    String activeLocale = schemaMeta.getActiveLocale();
-    if (activeModel == null)
-      return null;
-
     if (physicalTable == null) {
       ListSelectionDialog comboDialog = new ListSelectionDialog(shell,
           "Select the physical table you would like to associate with this business table.", "Select Physical Table",
@@ -1991,20 +1983,18 @@ public class MetaEditor {
     // Create a new ID based on this...
 
     String newId = null;
+    int tableNr = 1;
     if (physicalTable != null) {
-      newId = Settings.getBusinessTableIDPrefix() + Const.toID(tableName);
+      String id = Settings.getBusinessTableIDPrefix() + Const.toID(tableName);
+      newId = id;
+      while (activeModel.findBusinessTable(newId) != null) {
+        tableNr++;
+        newId += "_" + tableNr; //$NON-NLS-1$
+      }
+
       if (Settings.isAnIdUppercase())
         newId = newId.toUpperCase();
     }
-
-    // physicalTable = schemaMeta.findPhysicalTable(schemaMeta.getActiveLocale(),selection);
-    // Ask a name for the business table.
-
-    //    EnterStringDialog enterStringDialog = new EnterStringDialog(shell, tableName, Messages
-    //        .getString("MetaEditor.USER_TITLE_ENTER_NAME"), Messages.getString("MetaEditor.USER_ENTER_NAME")); //$NON-NLS-1$ //$NON-NLS-2$
-    //    tableName = enterStringDialog.open();
-    //    if (tableName == null)
-    //      return null;
 
     // Create a business table with the new ID and localized name
     BusinessTable businessTable = new BusinessTable(newId, physicalTable);
@@ -2039,34 +2029,13 @@ public class MetaEditor {
 
     if (businessTable != null) {
 
-      BusinessTable copy = (BusinessTable) businessTable.clone();
-      BusinessTableModel tableModel = new BusinessTableModel(copy);
+      BusinessTableModel tableModel = new BusinessTableModel(businessTable);
 
       BusinessTableDialog td = new BusinessTableDialog(shell, SWT.NONE, tableModel, schemaMeta);
       int res = td.open();
 
       if (Window.OK == res) {
 
-        businessTable.setConcept(copy.getConcept());
-        businessTable.setPhysicalTable(copy.getPhysicalTable());
-
-        for (int i = businessTable.nrBusinessColumns() - 1; i >= 0; i--) {
-          businessTable.removeBusinessColumn(i);
-        }
-
-        Iterator iter = copy.getBusinessColumns().iterator();
-        while (iter.hasNext()) {
-          BusinessColumn column = (BusinessColumn) iter.next();
-          try {
-            businessTable.addBusinessColumn(column);
-          } catch (ObjectAlreadyExistsException e) {
-            e.printStackTrace();
-            System.out.println("this should not happen as this exception would already have been caught earlier");
-          }
-        }
-
-        //      String tablename = td.getTablename();
-        //    if (tablename != null) {
         try {
           activeModel.addBusinessTable(businessTable);
           if (activeModelTreeNode != null)
@@ -2078,31 +2047,10 @@ public class MetaEditor {
               shell,
               Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_BUSINESS_TABLE_EXISTS", businessTable.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$
         }
-        //  }
       }
     }
     return null;
 
-    //
-    //    // Show it to the USER_..
-    //    while (true) {
-    //      BusinessTableDialog dialog = new BusinessTableDialog(shell, SWT.NONE, businessTable, schemaMeta);
-    //      String name = dialog.open();
-    //      if (name != null) {
-    //        try {
-    //          activeModel.addBusinessTable(businessTable);
-    //          refreshAll();
-    //          return businessTable;
-    //        } catch (ObjectAlreadyExistsException e) {
-    //          new ErrorDialog(
-    //              shell,
-    //              Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_BUSINESS_TABLE_EXISTS", businessTable.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$
-    //        }
-    //      } else {
-    //        break;
-    //      }
-    //    }
-    //    return null;
   }
 
   public void delBusinessTable(BusinessTable businessTable) {
@@ -3399,7 +3347,7 @@ public class MetaEditor {
     businessTable.setConcept(copy.getConcept());
     businessTable.setPhysicalTable(copy.getPhysicalTable());
 
-    for (int i = 0; i < businessTable.nrBusinessColumns(); i++) {
+    for (int i = businessTable.nrBusinessColumns() - 1; i >= 0; i--) {
       businessTable.removeBusinessColumn(i);
     }
 
