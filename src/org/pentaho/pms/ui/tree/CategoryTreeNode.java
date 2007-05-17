@@ -9,7 +9,10 @@ import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.concept.ConceptInterface;
+import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
+
+import be.ibridge.kettle.core.DragAndDropContainer;
 
 
 public class CategoryTreeNode extends ConceptTreeNode {
@@ -113,7 +116,13 @@ public class CategoryTreeNode extends ConceptTreeNode {
     // TODO Auto-generated method stub
     return category.getDisplayName(locale);
   }
-  
+
+  public int getDragAndDropType() {
+    // TODO: Business categories have no draganddroptype; need to add
+    // this to the Kettle class DragAndDropContainer.
+    return 0;
+  }
+ 
   public Object getDomainObject(){
     return category;
   }

@@ -6,7 +6,10 @@ import org.eclipse.swt.graphics.Image;
 import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.concept.ConceptInterface;
+import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
+
+import be.ibridge.kettle.core.DragAndDropContainer;
 
 
 public class BusinessColumnTreeNode extends ConceptTreeNode {
@@ -34,6 +37,10 @@ public class BusinessColumnTreeNode extends ConceptTreeNode {
 
   public String getName() {
      return column.getDisplayName(locale);
+  }
+
+  public int getDragAndDropType() {
+    return DragAndDropContainer.TYPE_BUSINESS_COLUMN;
   }
 
   /* (non-Javadoc)

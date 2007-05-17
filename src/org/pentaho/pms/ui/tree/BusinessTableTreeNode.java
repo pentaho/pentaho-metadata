@@ -9,7 +9,10 @@ import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.concept.ConceptInterface;
+import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
+
+import be.ibridge.kettle.core.DragAndDropContainer;
 
 
 public class BusinessTableTreeNode extends ConceptTreeNode {
@@ -107,6 +110,10 @@ public class BusinessTableTreeNode extends ConceptTreeNode {
 
   public String getName() {
      return table.getDisplayName(locale);
+  }
+
+  public int getDragAndDropType() {
+    return DragAndDropContainer.TYPE_BUSINESS_TABLE;
   }
 
   public Object getDomainObject(){

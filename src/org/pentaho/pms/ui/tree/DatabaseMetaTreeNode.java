@@ -25,8 +25,10 @@ import java.util.List;
 import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.SchemaMeta;
+import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 
+import be.ibridge.kettle.core.DragAndDropContainer;
 import be.ibridge.kettle.core.database.DatabaseMeta;
 
 /**
@@ -125,6 +127,15 @@ public class DatabaseMetaTreeNode extends ConceptTreeNode {
 
   public DatabaseMeta getDatabaseMeta(){
     return databaseMeta;
+  }
+
+  public String getId() {
+    // DatabaseMeta names are unique, and PME searches them by name
+    return databaseMeta.getName();
+  }
+
+  public int getDragAndDropType() {
+    return DragAndDropContainer.TYPE_DATABASE_CONNECTION;
   }
   
   /* (non-Javadoc)

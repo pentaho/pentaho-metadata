@@ -22,7 +22,10 @@ import java.util.List;
 import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.schema.PhysicalColumn;
 import org.pentaho.pms.schema.concept.ConceptInterface;
+import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
+
+import be.ibridge.kettle.core.DragAndDropContainer;
 
 /**
  * @author wseyler
@@ -61,6 +64,10 @@ public class PhysicalColumnTreeNode extends ConceptTreeNode {
   public String getName() {
     // TODO Auto-generated method stub
     return physicalColumn.getName(locale);
+  }
+
+  public int getDragAndDropType() {
+    return DragAndDropContainer.TYPE_BUSINESS_COLUMN;
   }
 
   public Object getDomainObject(){

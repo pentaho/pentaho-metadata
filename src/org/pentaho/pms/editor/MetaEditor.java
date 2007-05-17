@@ -444,9 +444,11 @@ public class MetaEditor {
     lsBTableNew = new Listener() {
       public void handleEvent(Event e) {
         BusinessTable table = newBusinessTable(null);
-        if ((activeModelTreeNode != null) && (table != null)){
-          activeModelTreeNode.getBusinessTablesRoot().addDomainChild(table);
-        }
+
+//        if ((activeModelTreeNode != null) && (table != null)){
+//          activeModelTreeNode.getBusinessTablesRoot().addDomainChild(table);
+//        }
+
       }
     };
     lsBModelNew = new Listener() {
@@ -461,18 +463,7 @@ public class MetaEditor {
     };
     lsCategoryNew = new Listener() {
       public void handleEvent(Event e) {
-        BusinessModel activeModel = schemaMeta.getActiveModel();
-        if (activeModel != null) {
-          CategoryEditorDialog dialog = new CategoryEditorDialog(shell,activeModel, schemaMeta.getLocales(),
-              schemaMeta.getSecurityReference());
-            /*
-          BusinessCategoriesDialog dialog = new BusinessCategoriesDialog(shell, activeModel, schemaMeta.getLocales(),
-              schemaMeta.getSecurityReference());
-              */
-          dialog.open();
-          if(activeModelTreeNode != null)
-            activeModelTreeNode.getBusinessViewRoot().sync();
-        }
+        editBusinessCategories();
       }
     };
     lsFileOpen = new Listener() {
@@ -1455,95 +1446,22 @@ public class MetaEditor {
 
       public void dragSetData(DragSourceEvent event) {
         TreeItem ti[] = fTree.getSelection();
-
-        if (ti.length > 0) {
-          String data = null;
-          int type = 0;
-
-          String ts[] = Const.getTreeStrings(ti[0]);
-
-          if (ts != null && ts.length > 0) {
-            // Drop of physical table onto canvas?
-            if (ts[0].equals(STRING_CONNECTIONS)) {
-              PhysicalTable physicalTable = null;
-              PhysicalColumn physicalColumn = null;
-              if (ts.length > 2)
-                physicalTable = schemaMeta.findPhysicalTable(schemaMeta.getActiveLocale(), ts[2]);
-              if (ts.length > 3 && physicalTable != null)
-                physicalColumn = physicalTable.findPhysicalColumn(schemaMeta.getActiveLocale(), ts[3]);
-
-              switch (ts.length) {
-                case 1: // parent of connections tree
-                  break;
-                case 2: // 1 deep: a database connection
-                  type = DragAndDropContainer.TYPE_DATABASE_CONNECTION;
-                  data = ts[1]; // name of the connection.
-                  break;
-                case 3: // 2 deep: a physical table
-                  type = DragAndDropContainer.TYPE_PHYSICAL_TABLE;
-                  if (physicalTable != null)
-                    data = physicalTable.getId(); // ID of the table.
-                  break;
-                case 4: // 3 deep: a physical column
-                  type = DragAndDropContainer.TYPE_PHYSICAL_COLUMN;
-                  if (physicalColumn != null)
-                    data = physicalColumn.getId(); // ID of the column.
-                  break;
-                default:
-                  break;
-              }
-            } else {
-              if (ts[0].equalsIgnoreCase(STRING_BUSINESS_MODELS)) {
-                BusinessModel businessModel = null;
-                BusinessTable businessTable = null;
-                BusinessColumn businessColumn = null;
-                if (ts.length > 1)
-                  businessModel = schemaMeta.findModel(schemaMeta.getActiveLocale(), ts[1]);
-                if (ts.length > 3 && businessModel != null)
-                  businessTable = businessModel.findBusinessTable(schemaMeta.getActiveLocale(), ts[3]);
-                if (ts.length > 4 && businessTable != null)
-                  businessColumn = businessTable.findBusinessColumn(schemaMeta.getActiveLocale(), ts[4]);
-
-                switch (ts.length) {
-                  case 1: // parent of business models tree
-                    break;
-                  case 2: // Name of the business model
-                    type = DragAndDropContainer.TYPE_BUSINESS_VIEW;
-                    if (businessModel != null)
-                      data = businessModel.getId(); // the ID of the business
-                    // model
-                    break;
-                  case 3: // Business tables "title"
-                    break;
-                  case 4: // Name of the business table
-                    type = DragAndDropContainer.TYPE_BUSINESS_TABLE;
-                    if (businessTable != null)
-                      data = businessTable.getId(); // the ID of the
-                    // business table
-                    break;
-                  case 5: // Name of the business column
-                    type = DragAndDropContainer.TYPE_BUSINESS_COLUMN;
-                    if (businessColumn != null)
-                      data = businessColumn.getId(); // the ID of the
-                    // business column
-                    break;
-                  default:
-                    break;
-                }
-              }
-            }
-
-            if (type == 0 || Const.isEmpty(data)) {
-              event.doit = false;
-              return; // ignore anything else you drag.
-            }
-
-            DragAndDropContainer container = new DragAndDropContainer(type, data);
-            event.data = container;
+        String data = null;
+        int type = 0;
+        
+        if (ti.length == 1) { // ensure we've only got one thing selected
+          ConceptTreeNode node = (ConceptTreeNode)ti[0].getData();
+          data = node.getId();
+          type = node.getDragAndDropType();
+          if (type == 0 || Const.isEmpty(data)) {
+            event.doit = false;
+            return; // ignore anything else you drag.
           }
-        } else
+
+          DragAndDropContainer container = new DragAndDropContainer(type, data);
+          event.data = container;
+        } else {
         // Nothing got dragged, only can happen on OSX :-)
-        {
           event.doit = false;
           System.out.println(Messages.getString("MetaEditor.DEBUG_NOTHING_DRAGGED")); //$NON-NLS-1$
         }
@@ -1723,9 +1641,11 @@ public class MetaEditor {
       miNew.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
           BusinessTable table = newBusinessTable(null);
-          if ((activeModelTreeNode != null) && (null != table)){
-            activeModelTreeNode.getBusinessTablesRoot().addDomainChild(table);
-          }
+          
+//          if ((activeModelTreeNode != null) && (null != table)){
+//            activeModelTreeNode.getBusinessTablesRoot().addDomainChild(table);
+//          }
+
         }
       });
     } else if (node instanceof RelationshipsTreeNode) {
@@ -1752,9 +1672,11 @@ public class MetaEditor {
       miNew.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
           BusinessTable table = newBusinessTable(null);
-          if ((activeModelTreeNode != null) && (null != table)){
-            activeModelTreeNode.getBusinessTablesRoot().addDomainChild(table);
-          }
+
+//          if ((activeModelTreeNode != null) && (null != table)){
+//            activeModelTreeNode.getBusinessTablesRoot().addDomainChild(table);
+//          }
+          
         }
       });
       MenuItem miEdit = new MenuItem(mainMenu, SWT.PUSH);
@@ -1981,6 +1903,21 @@ public class MetaEditor {
         refreshAll();
     }
     
+  }
+
+  public void editBusinessCategories() {
+    BusinessModel activeModel = schemaMeta.getActiveModel();
+    if (activeModel != null) {
+      CategoryEditorDialog dialog = new CategoryEditorDialog(shell,activeModel, schemaMeta.getLocales(),
+          schemaMeta.getSecurityReference());
+        /*
+      BusinessCategoriesDialog dialog = new BusinessCategoriesDialog(shell, activeModel, schemaMeta.getLocales(),
+          schemaMeta.getSecurityReference());
+          */
+      dialog.open();
+      if(activeModelTreeNode != null)
+        activeModelTreeNode.getBusinessViewRoot().sync();
+    }
   }
 
   public void moveBusinessCategoryDown(BusinessCategory parentCategory, BusinessCategory businessCategory) {
@@ -2334,9 +2271,6 @@ public class MetaEditor {
         editBusinessModel(businessModel, node);
       } else if (node instanceof BusinessTablesTreeNode) {
         BusinessTable table = newBusinessTable(null);
-        if ((activeModelTreeNode != null) && (table != null)){
-          activeModelTreeNode.getBusinessTablesRoot().addDomainChild(table);
-        }
       } else if (node instanceof RelationshipsTreeNode) {
         newRelationship();
       } else if (node instanceof BusinessTableTreeNode) {
@@ -2348,6 +2282,13 @@ public class MetaEditor {
       } else if (node instanceof BusinessColumnTreeNode) {
         BusinessColumn businessColumn = ((BusinessColumnTreeNode) node).getBusinessColumn();
         editBusinessColumn(businessColumn.getBusinessTable(), businessColumn);
+      }else if (node instanceof CategoryTreeNode) {
+        BusinessCategory businessCategory = ((CategoryTreeNode) node).getCategory();
+        if (businessCategory.isRootCategory()){
+          editBusinessCategories();
+        }else{
+          editBusinessCategory(businessCategory);
+        }
       }
       treeViewer.update(node,null);
     }

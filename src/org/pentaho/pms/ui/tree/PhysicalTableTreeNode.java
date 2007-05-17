@@ -25,7 +25,10 @@ import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.schema.PhysicalColumn;
 import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.concept.ConceptInterface;
+import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
+
+import be.ibridge.kettle.core.DragAndDropContainer;
 
 /**
  * @author wseyler
@@ -120,6 +123,10 @@ public class PhysicalTableTreeNode extends ConceptTreeNode {
 
   public Object getDomainObject(){
     return physicalTable;
+  }
+
+  public int getDragAndDropType() {
+    return DragAndDropContainer.TYPE_PHYSICAL_TABLE;
   }
 
   /* (non-Javadoc)

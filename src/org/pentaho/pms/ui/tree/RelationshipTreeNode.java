@@ -5,6 +5,7 @@ import java.util.List;
 import org.eclipse.swt.graphics.Image;
 import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.schema.RelationshipMeta;
+import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 
 
 public class RelationshipTreeNode extends ConceptTreeNode {
@@ -38,6 +39,15 @@ public class RelationshipTreeNode extends ConceptTreeNode {
    */
   public boolean hasChildren() {
     return false;
+  }
+
+  public String getId() {
+    // No ids on relationships?
+    return relationship.toString();
+  }
+
+  public int getDragAndDropType() {
+    return 0;
   }
   
   public Object getDomainObject(){

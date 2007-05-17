@@ -6,7 +6,10 @@ import org.eclipse.swt.graphics.Image;
 import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.concept.ConceptInterface;
+import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
+
+import be.ibridge.kettle.core.DragAndDropContainer;
 
 
 public class BusinessModelTreeNode extends ConceptTreeNode {
@@ -28,13 +31,6 @@ public class BusinessModelTreeNode extends ConceptTreeNode {
   }
 
   protected void createChildren(List children) {
-    String databaseName = "No database defined";
-    if (model.hasConnection()){
-      databaseName = model.getConnection().getName();
-    }
-    LabelTreeNode databaseNode = new LabelTreeNode(this, "Connection: " + databaseName);
-    addChild(databaseNode);
-
     businessTablesNode = new BusinessTablesTreeNode(this, model, locale);
     addChild(businessTablesNode);
     
@@ -62,7 +58,15 @@ public class BusinessModelTreeNode extends ConceptTreeNode {
   }
 
   public String getName() {
-    return model.getDisplayName(locale);
+    String displayConnection = model.hasConnection() ? model.getConnection().getName() : "No Connection Defined" ; 
+    displayConnection = " (" + displayConnection + ")";
+    return model.getDisplayName(locale) + displayConnection;
+  }
+
+  public int getDragAndDropType() {
+    // TODO: This type is an artifact from before we renamed the terminology in 
+    // metadata - this needs to be changed int he Kettle codeline to TYPE_BUSINESS_MODEL
+    return DragAndDropContainer.TYPE_BUSINESS_VIEW;
   }
 
   public String getConceptName(){

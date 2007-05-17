@@ -6,6 +6,7 @@ import java.util.List;
 import org.eclipse.swt.graphics.Image;
 import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.jface.tree.TreeNode;
+import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 
 public abstract class ConceptTreeNode extends TreeNode {
 
@@ -24,11 +25,27 @@ public abstract class ConceptTreeNode extends TreeNode {
    */
   public abstract void sync();
 
+  
   public String getName() {
     return null;
   }
 
+  public String getId() {
 
+    // GEM - this if statement gets us around a bug where
+    // some Kettle objects equals() methods are overridden,
+    // and they are not able to compare two different classes
+    
+    if (getDomainObject()instanceof ConceptUtilityBase){
+      return ((ConceptUtilityBase)getDomainObject()).getId();
+    }
+    return null;
+  }
+
+  public int getDragAndDropType() {
+    return 0;
+  }
+  
   /**
    * 
    * @return
