@@ -1231,7 +1231,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
     for (int i = 0; i < nrBusinessTables(); i++) {
       BusinessTable businessTable = getBusinessTable(i);
       String id = businessTable.getId();
-      if (id != null && id.equals(tableID))
+      if (id != null && id.equalsIgnoreCase(tableID))
         return businessTable;
     }
     return null;

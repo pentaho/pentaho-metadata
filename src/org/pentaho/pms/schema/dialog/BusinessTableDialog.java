@@ -174,7 +174,7 @@ public class BusinessTableDialog extends AbstractTableDialog {
         logger.error("an exception occurred", e);
       }
       MessageDialog.openError(getShell(), Messages.getString("General.USER_TITLE_ERROR"), Messages.getString(
-          "PhysicalTableDialog.USER_ERROR_PHYSICAL_TABLE_ID_EXISTS", businessTableText.getText()));
+          "BusinessTableDialog.USER_ERROR_BUSINESS_TABLE_ID_EXISTS", businessTableText.getText()));
       return;
     }
 
