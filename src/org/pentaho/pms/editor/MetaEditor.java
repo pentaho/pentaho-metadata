@@ -1636,11 +1636,6 @@ public class MetaEditor {
       miNew.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
           BusinessTable table = newBusinessTable(null);
-          
-//          if ((activeModelTreeNode != null) && (null != table)){
-//            activeModelTreeNode.getBusinessTablesRoot().addDomainChild(table);
-//          }
-
         }
       });
     } else if (node instanceof RelationshipsTreeNode) {
@@ -1667,11 +1662,6 @@ public class MetaEditor {
       miNew.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
           BusinessTable table = newBusinessTable(null);
-
-//          if ((activeModelTreeNode != null) && (null != table)){
-//            activeModelTreeNode.getBusinessTablesRoot().addDomainChild(table);
-//          }
-          
         }
       });
       MenuItem miEdit = new MenuItem(mainMenu, SWT.PUSH);
@@ -1989,7 +1979,7 @@ public class MetaEditor {
       newId = id;
       while (activeModel.findBusinessTable(newId) != null) {
         tableNr++;
-        newId += "_" + tableNr; //$NON-NLS-1$
+        newId = id + "_" + tableNr; //$NON-NLS-1$
       }
 
       if (Settings.isAnIdUppercase())
@@ -2261,6 +2251,7 @@ public class MetaEditor {
         Messages.getString("MetaEditor.USER_ENTER_PROPERTIES"), message, utilityInterface, schemaMeta); //$NON-NLS-1$
     String id = dialog.open();
     if (id != null) {
+      mainTreeNode.sync();
       refreshAll();
     }
   }
