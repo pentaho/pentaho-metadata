@@ -1,5 +1,4 @@
-/*
- * Copyright 2006 Pentaho Corporation.  All rights reserved.
+/* Copyright 2006 Pentaho Corporation.  All rights reserved.
  * This software was developed by Pentaho Corporation and is provided under the terms
  * of the Mozilla Public License, Version 1.1, or any later version. You may not use
  * this file except in compliance with the license. If you need a copy of the license,
@@ -444,7 +443,10 @@ public class MetaEditor {
     };
     lsBTableNew = new Listener() {
       public void handleEvent(Event e) {
-        newBusinessTable(null);
+        BusinessTable table = newBusinessTable(null);
+        if ((activeModelTreeNode != null) && (table != null)){
+          activeModelTreeNode.getBusinessTablesRoot().addDomainChild(table);
+        }
       }
     };
     lsBModelNew = new Listener() {
@@ -1273,8 +1275,21 @@ public class MetaEditor {
           //
           // Where exactly did we drop in the tree?
           TreeItem treeItem = (TreeItem) event.item;
+          ConceptTreeNode node = (ConceptTreeNode)treeItem.getData();
+          
+          // Prevent the user from dropping nodes from a different model
+          if (activeModelTreeNode.findNode(node.getDomainObject()) == null){
+            MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
+            mb.setMessage("You are attempting to share a business object " + 
+                "from a different model. Sharing across models is not allowed. Try dropping " + 
+                "this business object within it's own model."); 
+            mb.setText(Messages.getString("General.USER_TITLE_ERROR")); //$NON-NLS-1$
+            mb.open();
+            return;
+          }
 
-          BusinessCategory parentCategory;
+          // Retrieve the category that the drop was aimed at.
+          BusinessCategory parentCategory = null;
           if (treeItem.getData() instanceof CategoryTreeNode){
             parentCategory = ((CategoryTreeNode)treeItem.getData()).getCategory();
           }else{
@@ -1350,6 +1365,18 @@ public class MetaEditor {
               String columnID = container.getData();
               BusinessColumn businessColumn = activeModel.findBusinessColumn(columnID);
               if (businessColumn != null) {
+
+              // Make sure that we are not trying to add a physical table from a 
+              // different connection than the active model's connection
+                if (!activeModel.verify(businessColumn.getPhysicalColumn())){
+                  MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
+                  mb.setText(Messages.getString("General.USER_TITLE_ERROR")); //$NON-NLS-1$
+                  mb.setMessage("Cannot use physical column " + businessColumn.getName(schemaMeta.getActiveLocale()) + ". Model " + activeModel.getDisplayName(schemaMeta.getActiveLocale()) + 
+                      " can only use physical columns from connection " + activeModel.getConnection().getName()+ "."); 
+                  mb.open();
+                  return;
+                }
+
                 BusinessColumn existing = activeModel.getRootCategory().findBusinessColumn(columnID); // search
                 // by
                 // ID
@@ -1364,6 +1391,7 @@ public class MetaEditor {
 
                 // Add the column to the parentCategory
                 parentCategory.addBusinessColumn(businessColumn);
+                synchronize(parentCategory);
                 refreshAll();
               }
             }
@@ -1694,7 +1722,10 @@ public class MetaEditor {
       miNew.setText(Messages.getString("MetaEditor.USER_NEW_BUSINESS_TABLE")); //$NON-NLS-1$
       miNew.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
-          newBusinessTable(null);
+          BusinessTable table = newBusinessTable(null);
+          if ((activeModelTreeNode != null) && (null != table)){
+            activeModelTreeNode.getBusinessTablesRoot().addDomainChild(table);
+          }
         }
       });
     } else if (node instanceof RelationshipsTreeNode) {
@@ -1720,7 +1751,10 @@ public class MetaEditor {
       miNew.setText(Messages.getString("MetaEditor.USER_NEW_BUSINESS_TABLE")); //$NON-NLS-1$
       miNew.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
-          newBusinessTable(null);
+          BusinessTable table = newBusinessTable(null);
+          if ((activeModelTreeNode != null) && (null != table)){
+            activeModelTreeNode.getBusinessTablesRoot().addDomainChild(table);
+          }
         }
       });
       MenuItem miEdit = new MenuItem(mainMenu, SWT.PUSH);
@@ -1898,8 +1932,11 @@ public class MetaEditor {
    * Add a new business category to the specified parent.
    */
   public void newBusinessCategory(BusinessCategory parentCategory) {
-    if (!parentCategory.isRootCategory())
-      return; // Block for now, until Ad-hoc & MDR follow
+
+    if ((!parentCategory.isRootCategory() && (schemaMeta.getActiveModel() != null))){
+      parentCategory = schemaMeta.getActiveModel().getRootCategory(); 
+    }
+    // Block for now, until Ad-hoc & MDR follow
 
     BusinessCategory businessCategory = new BusinessCategory();
     businessCategory.addIDChangedListener(ConceptUtilityBase.createIDChangedListener(parentCategory
@@ -1938,6 +1975,12 @@ public class MetaEditor {
   public void editBusinessCategory(BusinessCategory businessCategory) {
     BusinessCategoryDialog dialog = new BusinessCategoryDialog(shell, businessCategory, schemaMeta.getLocales(),
         schemaMeta.getSecurityReference());
+    if (dialog.open() != null)
+    {
+        // refresh it all...
+        refreshAll();
+    }
+    
   }
 
   public void moveBusinessCategoryDown(BusinessCategory parentCategory, BusinessCategory businessCategory) {
@@ -1976,13 +2019,14 @@ public class MetaEditor {
     }
     // Make sure that we are not trying to add a physical table from a 
     // different connection than the active model's connection
-    if ((physicalTable != null) && (activeModel.hasConnection())){
-      if (!(physicalTable.getDatabaseMeta().equals(activeModel.getConnection()))){
+    if (physicalTable != null){
+      if (!activeModel.verify(physicalTable)){
         MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
         mb.setText(Messages.getString("General.USER_TITLE_ERROR")); //$NON-NLS-1$
         mb.setMessage("Cannot use physical table " + physicalTable.getName(schemaMeta.getActiveLocale()) + ". Model " + activeModel.getDisplayName(schemaMeta.getActiveLocale()) + 
             " can only use physical tables from connection " + activeModel.getConnection().getName()+ "."); 
         mb.open();
+        
         return null;
       }
     }
@@ -2289,7 +2333,10 @@ public class MetaEditor {
         BusinessModel businessModel = ((BusinessModelTreeNode) node).getBusinessModel();
         editBusinessModel(businessModel, node);
       } else if (node instanceof BusinessTablesTreeNode) {
-        newBusinessTable(null);
+        BusinessTable table = newBusinessTable(null);
+        if ((activeModelTreeNode != null) && (table != null)){
+          activeModelTreeNode.getBusinessTablesRoot().addDomainChild(table);
+        }
       } else if (node instanceof RelationshipsTreeNode) {
         newRelationship();
       } else if (node instanceof BusinessTableTreeNode) {
@@ -3411,7 +3458,7 @@ public class MetaEditor {
     businessTable.setConcept(copy.getConcept());
     businessTable.setPhysicalTable(copy.getPhysicalTable());
 
-    for (int i = businessTable.nrBusinessColumns() - 1; i >= 0; i--) {
+    for (int i = 0; i < businessTable.nrBusinessColumns(); i++) {
       businessTable.removeBusinessColumn(i);
     }
 
@@ -3665,4 +3712,5 @@ public class MetaEditor {
       refreshAll();
     }
   }
+  
 }

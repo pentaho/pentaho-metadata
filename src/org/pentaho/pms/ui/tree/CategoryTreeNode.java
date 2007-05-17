@@ -21,6 +21,19 @@ public class CategoryTreeNode extends ConceptTreeNode {
     super(parent);
     
     this.category = category;
+    // TODO: GEM hack, root category ids are null, and 
+    // ConceptUtilityBase overrides the equals methods to compare ids,
+    // therefore id comparisons on root categories produce 
+    // unexpected results... This alleviates this problem in the tree,
+    // but we should investigate why root categories have no ids, and
+    // if that is where the problem should be resolved. 
+    if (category.getId()==null){
+      try {
+        category.setId(Integer.toString(this.hashCode()));
+      } catch (Exception e) {
+        // TODO: handle exception
+      }
+    }
     this.locale = locale; 
   }
 

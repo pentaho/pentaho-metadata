@@ -1666,7 +1666,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
   }
   
   public DatabaseMeta getConnection(){
-    
+   
     // A bit cheap and fragile - use the connection reference from the first 
     // business table to enforce this single connection on the rest of the tables added. 
     
@@ -1680,4 +1680,72 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
   public void clearConnection(){
     connection = null;
   }
+  
+  public boolean verify(ConceptUtilityBase base){
+    boolean verify  = false;
+    
+    //Connection hasn't been set yet - allow any table or column in
+    if ((getConnection()==null) && (base!=null)){
+      return true;
+    }
+    
+    if (base == null){
+      return false;
+    }
+    
+    if (base instanceof PhysicalTable){
+      
+      PhysicalTable physicalTable = (PhysicalTable)base; 
+      verify =  physicalTable.getDatabaseMeta().equals(getConnection());
+
+    } else if (base instanceof PhysicalColumn){
+      
+      PhysicalColumn physicalColumn = (PhysicalColumn)base;
+      verify =  physicalColumn.getTable().getDatabaseMeta().equals(getConnection());
+    }
+    return verify;
+  }
+  
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

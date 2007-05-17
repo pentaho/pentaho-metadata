@@ -300,7 +300,7 @@ public class BusinessCategory extends ConceptUtilityBase implements ChangedFlagI
         for (int i=0;i<nrBusinessCategories();i++)
         {
             BusinessCategory businessCategory = getBusinessCategory(i);
-            if (businessCategory.getId().equals(id)) return businessCategory;
+            if (businessCategory.getId().equalsIgnoreCase(id)) return businessCategory;
         }
         return null;
     }
