@@ -25,8 +25,6 @@ import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.schema.PhysicalColumn;
 import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.concept.ConceptInterface;
-import org.pentaho.pms.schema.concept.ConceptUtilityBase;
-import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 
 import be.ibridge.kettle.core.DragAndDropContainer;
 

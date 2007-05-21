@@ -9,7 +9,6 @@ import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
-import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 
 
 public class BusinessTablesTreeNode extends ConceptTreeNode {

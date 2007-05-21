@@ -41,11 +41,11 @@ import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.security.SecurityReference;
+import org.pentaho.pms.ui.tree.BusinessColumnTreeNode;
+import org.pentaho.pms.ui.tree.BusinessTableTreeNode;
 import org.pentaho.pms.ui.tree.BusinessTablesTreeNode;
 import org.pentaho.pms.ui.tree.BusinessViewTreeNode;
 import org.pentaho.pms.ui.tree.CategoryTreeNode;
-import org.pentaho.pms.ui.tree.BusinessColumnTreeNode;
-import org.pentaho.pms.ui.tree.BusinessTableTreeNode;
 import org.pentaho.pms.util.GUIResource;
 import org.pentaho.pms.util.Settings;
 

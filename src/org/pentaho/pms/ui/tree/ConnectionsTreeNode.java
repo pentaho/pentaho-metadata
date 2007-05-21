@@ -23,10 +23,8 @@ import java.util.List;
 
 import org.eclipse.swt.graphics.Image;
 import org.pentaho.pms.jface.tree.ITreeNode;
-import org.pentaho.pms.jface.tree.TreeNode;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.SchemaMeta;
-import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.util.GUIResource;
 
 import be.ibridge.kettle.core.database.DatabaseMeta;

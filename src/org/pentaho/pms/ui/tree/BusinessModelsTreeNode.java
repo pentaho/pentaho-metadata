@@ -26,7 +26,6 @@ import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.SchemaMeta;
-import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.util.GUIResource;
 
 /**
