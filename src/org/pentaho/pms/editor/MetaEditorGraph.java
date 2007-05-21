@@ -319,7 +319,6 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
               // int indexes[] = activeView.getTableIndexes(selected_items); 
             }
           }
-
           selected_items = null;
           redraw();
         }
