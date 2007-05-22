@@ -15,6 +15,7 @@ package org.pentaho.pms.schema;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
@@ -733,7 +734,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
    * @param locale the locale
    * @return a SQL query based on a column selection and locale
    */
-  public String getSQL(BusinessColumn selectedColumns[], String locale, boolean useDisplayNames) {
+  public String getSQL(SchemaMeta schemaMeta, BusinessColumn selectedColumns[], String locale, boolean useDisplayNames) throws PMSFormulaException {
     return getSQL(selectedColumns, (WhereCondition[]) null, (OrderBy[]) null, locale, useDisplayNames);
   }
 
@@ -743,8 +744,8 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
    * @param locale the locale
    * @return a SQL query based on a column selection, conditions and a locale
    */
-  public String getSQL(BusinessColumn selectedColumns[], WhereCondition conditions[], String locale,
-      boolean useDisplayNames) {
+  public String getSQL(SchemaMeta schemaMeta, BusinessColumn selectedColumns[], WhereCondition conditions[], String locale,
+      boolean useDisplayNames) throws PMSFormulaException {
     return getSQL(selectedColumns, conditions, (OrderBy[]) null, locale, useDisplayNames);
   }
 
@@ -756,7 +757,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
    * @return a SQL query based on a column selection, conditions and a locale
    */
   public String getSQL(BusinessColumn selectedColumns[], WhereCondition conditions[], OrderBy[] orderBy, String locale,
-      boolean useDisplayNames) {
+      boolean useDisplayNames) throws PMSFormulaException {
     String sql = null;
 
     // These are the tables involved in the field selection:
@@ -777,7 +778,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
   // Klair!
 
   public String getSQL(BusinessColumn selectedColumns[], Path path, WhereCondition conditions[], OrderBy[] orderBy,
-      String locale, boolean useDisplayNames) {
+      String locale, boolean useDisplayNames) throws PMSFormulaException {
     String sql = null;
 
     BusinessTable usedBusinessTables[] = path.getUsedTables();
@@ -813,7 +814,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
           sql += "         ,"; //$NON-NLS-1$
         else
           sql += "          "; //$NON-NLS-1$
-        sql += businessColumn.getFunctionTableAndColumnForSQL(locale);
+        sql += businessColumn.getFunctionTableAndColumnForSQL(this, locale);
         sql += " AS "; //$NON-NLS-1$
         if (useDisplayNames) {
           sql += databaseMeta.quoteField(businessColumn.getDisplayName(locale));
@@ -913,7 +914,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
             else
               sql += "          "; //$NON-NLS-1$
             first = false;
-            sql += businessColumn.getFunctionTableAndColumnForSQL(locale);
+            sql += businessColumn.getFunctionTableAndColumnForSQL(this, locale);
             sql += Const.CR;
           }
         }
@@ -937,7 +938,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
           else
             sql += "          "; //$NON-NLS-1$
           first = false;
-          sql += businessColumn.getFunctionTableAndColumnForSQL(locale);
+          sql += businessColumn.getFunctionTableAndColumnForSQL(this, locale);
           if (!orderBy[i].isAscending())
             sql += " DESC"; //$NON-NLS-1$
           sql += Const.CR;
@@ -972,8 +973,8 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
     return sql;
   }
 
-  public TransMeta getTransformationMeta(BusinessColumn selectedColumns[], WhereCondition conditions[],
-      OrderBy[] orderBy, String locale, boolean useDisplayNames) {
+  public TransMeta getTransformationMeta(SchemaMeta schemaMeta, BusinessColumn selectedColumns[], WhereCondition conditions[],
+      OrderBy[] orderBy, String locale, boolean useDisplayNames) throws PMSFormulaException  {
     if (selectedColumns == null || selectedColumns.length == 0)
       return null;
 
@@ -1001,8 +1002,13 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
       lookup.put(businessTable, "OK"); //$NON-NLS-1$
     }
     for (int i = 0; i < conditions.length; i++) {
-      BusinessTable businessTable = conditions[i].getField().getBusinessTable();
-      lookup.put(businessTable, "OK"); //$NON-NLS-1$
+      List cols = conditions[i].getBusinessColumns();
+      Iterator iter = cols.iterator();
+      while (iter.hasNext()) {
+        BusinessColumn col = (BusinessColumn)iter.next();
+        BusinessTable businessTable = col.getBusinessTable();
+        lookup.put(businessTable, "OK"); //$NON-NLS-1$
+      }
     }
 
     Set keySet = lookup.keySet();

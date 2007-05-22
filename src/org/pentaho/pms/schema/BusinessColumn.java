@@ -12,6 +12,8 @@
 */
 package org.pentaho.pms.schema;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
@@ -25,6 +27,9 @@ import be.ibridge.kettle.core.database.DatabaseMeta;
 
 public class BusinessColumn extends ConceptUtilityBase implements ChangedFlagInterface, ConceptUtilityInterface, Cloneable
 {
+  
+    private static final Log logger = LogFactory.getLog(BusinessColumn.class);
+  
     private PhysicalColumn physicalColumn;
     private boolean enabled;
     
@@ -147,19 +152,33 @@ public class BusinessColumn extends ConceptUtilityBase implements ChangedFlagInt
         this.businessTable = businessTable;
     }
     
-    public String getFunctionTableAndColumnForSQL(String locale)
+    public String getFunctionTableAndColumnForSQL(BusinessModel model, String locale)
     {
         DatabaseMeta databaseMeta = getBusinessTable().getPhysicalTable().getDatabaseMeta();
         
         if (isExact())
-        {
-            return getFormula();
+        { 
+          // convert to sql using libformula subsystem
+          try {
+            PMSFormula formula = new PMSFormula(model, getBusinessTable(), getFormula());
+            formula.parseAndValidate();
+            return formula.generateSQL(locale);
+          } catch (PMSFormulaException e) {
+            // this is for backwards compatibility.
+            // eventually throw any errors
+            logger.error(Messages.getErrorString("BusinessColumn.ERROR_0001_FAILED_TO_PARSE_FORMULA", getFormula()), e); //$NON-NLS-1$
+          }
+          return getFormula();
         }
         else
         {
             String tableColumn = ""; //$NON-NLS-1$
+            
+            // TODO: WPG: is this correct?  shouldn't we be getting an alias for the table vs. it's display name?
             tableColumn += databaseMeta.quoteField( getBusinessTable().getDisplayName(locale) );
             tableColumn += "."; //$NON-NLS-1$
+            
+            // TODO: WPG: instead of using formula, shouldn't we use the physical column's name?
             tableColumn += databaseMeta.quoteField( getFormula() );
             
             if (hasAggregate()) // For the having clause, for example: HAVING sum(turnover) > 100

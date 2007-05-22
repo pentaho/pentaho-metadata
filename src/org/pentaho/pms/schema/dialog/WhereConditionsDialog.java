@@ -54,7 +54,7 @@ public class WhereConditionsDialog extends Dialog
     private Props props;
     // private String locale;
     private TableView wFields;
-    // private BusinessModel businessView;
+    private BusinessModel businessModel;
     private WhereCondition[] whereConditions;
     private List businessColumnStrings;
     private String[] flatView;
@@ -65,7 +65,7 @@ public class WhereConditionsDialog extends Dialog
         // this.businessView = businessView;
         this.whereConditions = whereConditions; 
         // this.locale = locale;
-        
+        this.businessModel = businessModel;
         businessColumnStrings = businessModel.getFlatCategoriesView(locale);
         flatView = BusinessColumnString.getFlatRepresentations(businessColumnStrings);
 
@@ -163,6 +163,11 @@ public class WhereConditionsDialog extends Dialog
             WhereCondition whereCondition = whereConditions[i];
             TableItem item = wFields.table.getItem(i);
             
+            //
+            //  need to implement conversion if this is ever used
+            //
+            
+            /*
             // The operator?
             if (whereCondition.getOperator()!=null) item.setText(1, whereCondition.getOperator());
             
@@ -172,6 +177,7 @@ public class WhereConditionsDialog extends Dialog
             
             // The condition
             if (whereCondition.getCondition()!=null) item.setText(3, whereCondition.getCondition());
+            */
         }
         wFields.optWidth(true);
     }
@@ -204,8 +210,14 @@ public class WhereConditionsDialog extends Dialog
                 BusinessColumnString bcs = (BusinessColumnString)businessColumnStrings.get(idx);
                 BusinessColumn column = bcs.getBusinessColumn();
                 
-                WhereCondition whereCondition = new WhereCondition(operator, column, condition);
-                conditions.add(whereCondition);
+                // WhereCondition whereCondition = new WhereCondition(operator, column, condition);
+                // converted to new style
+                try { 
+                  WhereCondition whereCondition = new WhereCondition(businessModel, operator, "[" + column.getId() + "] " +  condition); //$NON-NLS-1$ //$NON-NLS-2$
+                  conditions.add(whereCondition);
+                } catch (Exception e) {
+                  e.printStackTrace();
+                }
             }
         }
         

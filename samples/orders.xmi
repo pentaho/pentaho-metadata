@@ -577,7 +577,7 @@
         <CWMRDB:Column xmi.idref = 'a122'/>
       </CWM:Description.modelElement>
     </CWM:Description>
-    <CWM:Description xmi.id = 'a125' name = 'formula' body = 'sum(QUANTITYORDERED*PRICEEACH)'
+    <CWM:Description xmi.id = 'a125' name = 'formula' body = 'SUM([QUANTITYORDERED]*[PRICEEACH])'
       type = 'String'>
       <CWM:Description.modelElement>
         <CWMRDB:Column xmi.idref = 'a122'/>

@@ -27,6 +27,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
 import org.pentaho.pms.messages.Messages;
@@ -34,6 +36,8 @@ import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.OrderBy;
+import org.pentaho.pms.schema.PMSFormula;
+import org.pentaho.pms.schema.PMSFormulaException;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.WhereCondition;
 import org.pentaho.pms.util.Const;
@@ -53,8 +57,11 @@ import be.ibridge.kettle.trans.Trans;
 import be.ibridge.kettle.trans.TransMeta;
 import be.ibridge.kettle.trans.step.RowListener;
 import be.ibridge.kettle.trans.step.StepInterface;
+
 public class MQLQuery {
 
+  private static final Log logger = LogFactory.getLog(PMSFormula.class);
+  
 	public static int DOMAIN_TYPE_RELATIONAL = 1;
 	public static int DOMAIN_TYPE_OLAP = 2; // NOT SUPPORTED YET
 
@@ -117,28 +124,18 @@ public class MQLQuery {
 		return null;
 	}
 	
-    public void addConstraint( String operator, String columnId, String condition) {
-    		BusinessColumn businessColumn = model.findBusinessColumn( columnId );
-        addConstraint( operator, businessColumn, condition );
+  public void addConstraint(String operator, String condition) throws PMSFormulaException {
+    WhereCondition where = new WhereCondition(model, operator, condition);
+    constraints.add(where);
+  }
+  
+  public void addOrderBy( String tableId, String columnId, boolean ascending) {
+    BusinessTable businessTable = model.findBusinessTable( tableId );
+    if (businessTable == null) {
+        // TODO need to raise an error here, the table does not exist
+        return;
     }
-	
-	public void addConstraint( String operator, BusinessColumn businessColumn, String condition ) {
-        
-        if( businessColumn == null ) {
-        		// TODO need to raise an error here, the table does not exist
-        		return;
-        }
-        WhereCondition where = new WhereCondition( operator, businessColumn, condition);
-        constraints.add( where );
-	}
-	
-    public void addOrderBy( String tableId, String columnId, boolean ascending) {
-        BusinessTable businessTable = model.findBusinessTable( tableId );
-        if (businessTable == null) {
-            // TODO need to raise an error here, the table does not exist
-            return;
-        }
-        addOrderBy( businessTable, columnId, ascending );
+    addOrderBy( businessTable, columnId, ascending );
 	}
 	
 	public void addOrderBy( BusinessTable businessTable, String columnId, boolean ascending ) {
@@ -153,7 +150,7 @@ public class MQLQuery {
         order.add( orderBy );
 	}
 	
-	public String getQuery( boolean useDisplayNames ) {
+	public String getQuery( boolean useDisplayNames ) throws PMSFormulaException  {
 		if( model == null || selections.size() == 0 ) {
 			return null;
 		}
@@ -164,7 +161,7 @@ public class MQLQuery {
 		return model.getSQL(selection, conditions, orderBy, locale, useDisplayNames);
 	}
 
-    public TransMeta getTransformation( boolean useDisplayNames ) {
+    public TransMeta getTransformation( boolean useDisplayNames ) throws PMSFormulaException  {
         if( model == null || selections.size() == 0 ) {
             return null;
         }
@@ -172,10 +169,10 @@ public class MQLQuery {
         WhereCondition conditions[] = (WhereCondition[])constraints.toArray(new WhereCondition[constraints.size()]);
         OrderBy orderBy[] = (OrderBy[]) order.toArray(new OrderBy[order.size()]);
         
-        return model.getTransformationMeta(selection, conditions, orderBy, locale, useDisplayNames);
+        return model.getTransformationMeta(schemaMeta, selection, conditions, orderBy, locale, useDisplayNames);
     }
     
-    public List getRowsUsingTransformation( boolean useDisplayNames, StringBuffer logBuffer ) throws KettleException
+    public List getRowsUsingTransformation( boolean useDisplayNames, StringBuffer logBuffer ) throws KettleException,  PMSFormulaException 
     {
         final List list = new ArrayList();
         TransMeta transMeta = getTransformation(useDisplayNames);
@@ -330,26 +327,18 @@ public class MQLQuery {
             	Element contraintsElement = doc.createElement( "constraints" ); //$NON-NLS-1$
             	mqlElement.appendChild( contraintsElement );
             	it = constraints.iterator();
-            Element constraintElement;
+              Element constraintElement;
             	while( it.hasNext() ) {
             		WhereCondition condition = (WhereCondition) it.next();
             		constraintElement = doc.createElement( "constraint" ); //$NON-NLS-1$
-
+                
             		element = doc.createElement( "operator" ); //$NON-NLS-1$
             		element.appendChild( doc.createTextNode( condition.getOperator()==null?"":condition.getOperator() ) ); //$NON-NLS-1$
             		constraintElement.appendChild( element );
-            		
-                    element = doc.createElement( "table_id" ); //$NON-NLS-1$
-                    element.appendChild( doc.createTextNode( condition.getField().getBusinessTable().getId() ) );
-                    constraintElement.appendChild( element );
-            		
-            		element = doc.createElement( "column_id" ); //$NON-NLS-1$
-            		element.appendChild( doc.createTextNode( condition.getField().getId() ) );
-            		constraintElement.appendChild( element );
-            		
-            		element = doc.createElement( "condition" ); //$NON-NLS-1$
-            		element.appendChild( doc.createTextNode( condition.getCondition() ) );
-            		constraintElement.appendChild( element );
+                
+                element = doc.createElement( "condition" ); //$NON-NLS-1$
+                element.appendChild( doc.createTextNode( condition.getCondition() ) );
+                constraintElement.appendChild( element );
             		
                     // Save the localized names...
                     /* 
@@ -444,8 +433,9 @@ public class MQLQuery {
             // get the domain id
             String domainId = getElementText( doc, "domain_id" ); //$NON-NLS-1$
             CWM cwm = CWM.getInstance(domainId);
-            if (null == cwmSchemaFactory)
+            if (null == cwmSchemaFactory) {
               cwmSchemaFactory = Settings.getCwmSchemaFactory();
+            }
             schemaMeta = cwmSchemaFactory.getSchemaMeta(cwm);
                         
             // get the Business View id
@@ -507,7 +497,7 @@ public class MQLQuery {
     
     NodeList nodes = orderElement.getElementsByTagName("direction"); //$NON-NLS-1$
     if (nodes.getLength() > 0) {
-      ascending = XMLHandler.getNodeValue(nodes.item(0)).equals("asc");
+      ascending = XMLHandler.getNodeValue(nodes.item(0)).equals("asc"); //$NON-NLS-1$
     }
     nodes = orderElement.getElementsByTagName("table_id"); //$NON-NLS-1$
     if (nodes.getLength() > 0) {
@@ -523,11 +513,18 @@ public class MQLQuery {
     }
 	}
 	
-	private void addConstraintFromXmlNode( Element constraintElement ) {
+	private void addConstraintFromXmlNode( Element constraintElement ) throws PMSFormulaException {
+    
     NodeList nodes = constraintElement.getElementsByTagName("operator"); //$NON-NLS-1$
     String operator = null;
     if (nodes.getLength() > 0) {
       operator = XMLHandler.getNodeValue(nodes.item(0));
+    }
+    
+    nodes = constraintElement.getElementsByTagName("condition"); //$NON-NLS-1$
+    String cond = null;
+    if (nodes.getLength() > 0) {
+      cond = XMLHandler.getNodeValue(nodes.item(0));
     }
     
     nodes = constraintElement.getElementsByTagName("table_id"); //$NON-NLS-1$
@@ -541,16 +538,22 @@ public class MQLQuery {
     if (nodes.getLength() > 0) {
       column_id = XMLHandler.getNodeValue(nodes.item(0));
     }
-
-    nodes = constraintElement.getElementsByTagName("condition"); //$NON-NLS-1$
-    String condition = null;
-    if (nodes.getLength() > 0) {
-      condition = XMLHandler.getNodeValue(nodes.item(0));
+    
+    if (cond == null) {
+      logger.error(Messages.getErrorString("MQLQuery.ERROR_0001_NULL_CONDITION")); //$NON-NLS-1$
     }
     
-		if( table_id != null && column_id != null && condition != null ) {
-			addConstraint( operator, column_id, condition );
-		}
+    if (cond != null) {
+      if (table_id == null || column_id == null) {
+        // new function support
+        addConstraint(operator, cond);
+      } else {
+        // backwards compatibility
+        if( table_id != null && column_id != null && cond != null ) {
+          addConstraint(operator, "[" + table_id + "." + column_id + "] " + cond ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        }
+      }
+    }
 	}
 	
 	private String getElementText( Document doc, String name ) {

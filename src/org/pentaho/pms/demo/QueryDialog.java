@@ -14,7 +14,11 @@ package org.pentaho.pms.demo;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -44,7 +48,9 @@ import org.pentaho.pms.mql.MQLQuery;
 import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
+import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.OrderBy;
+import org.pentaho.pms.schema.PMSFormulaException;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.WhereCondition;
 import org.pentaho.pms.util.Const;
@@ -58,7 +64,6 @@ import be.ibridge.kettle.core.database.DatabaseMeta;
 import be.ibridge.kettle.core.dialog.EnterTextDialog;
 import be.ibridge.kettle.core.dialog.ErrorDialog;
 import be.ibridge.kettle.core.dialog.PreviewRowsDialog;
-import be.ibridge.kettle.core.exception.KettleException;
 import be.ibridge.kettle.core.widget.TableView;
 import be.ibridge.kettle.core.widget.TreeMemory;
 import be.ibridge.kettle.trans.step.BaseStepDialog;
@@ -74,6 +79,8 @@ import be.ibridge.kettle.trans.step.BaseStepDialog;
  */
 public class QueryDialog extends Dialog
 {
+    private static final Log logger = LogFactory.getLog(QueryDialog.class);
+  
     private static final String STRING_ASCENDING = Messages.getString("QueryDialog.USER_ASCENDING"); //$NON-NLS-1$
     private static final String STRING_DESCENDING = Messages.getString("QueryDialog.USER_DESCENDING"); //$NON-NLS-1$
     
@@ -450,10 +457,10 @@ public class QueryDialog extends Dialog
 
         // Add listeners to the buttons
         //
-        wOK.addListener    (SWT.Selection, new Listener() { public void handleEvent(Event e) { cancel(); } });
+        wOK.addListener    (SWT.Selection, new Listener() { public void handleEvent(Event e) { ok(); } });
         wSQL.addListener   (SWT.Selection, new Listener() { public void handleEvent(Event e) { showSQL(); } });
         wTrans.addListener (SWT.Selection, new Listener() { public void handleEvent(Event e) { showTrans(); } });
-        wCancel.addListener(SWT.Selection, new Listener() { public void handleEvent(Event e) { ok();     } });
+        wCancel.addListener(SWT.Selection, new Listener() { public void handleEvent(Event e) { cancel(); } });
         wClear.addListener (SWT.Selection, new Listener() { public void handleEvent(Event e) { clearQuery(); } });
         
         // Detect [X] or ALT-F4 or something that kills this window...
@@ -592,7 +599,7 @@ public class QueryDialog extends Dialog
             
             if (businessColumn!=null)
             {
-                WhereCondition whereCondition = new WhereCondition(null, businessColumn, ""); //$NON-NLS-1$
+              DialogWhereCondition whereCondition = new DialogWhereCondition(null, businessColumn, ""); //$NON-NLS-1$
                 conditions.add(whereCondition);
                 indices.add(new Integer(conditions.size()-1));
             }
@@ -699,8 +706,8 @@ public class QueryDialog extends Dialog
     private void removeConditionsFromSelection()
     {
         int idxs[] = wConditions.getSelectionIndices();
-        WhereCondition[] conds = new WhereCondition[idxs.length];
-        for (int i=0;i<idxs.length;i++) conds[i] = (WhereCondition) conditions.get(idxs[i]);
+        DialogWhereCondition[] conds = new DialogWhereCondition[idxs.length];
+        for (int i=0;i<idxs.length;i++) conds[i] = (DialogWhereCondition) conditions.get(idxs[i]);
         for (int i=0;i<conds.length;i++) conditions.remove(conds[i]);
         updateConditions();
         wConditions.setFocus();
@@ -857,7 +864,7 @@ public class QueryDialog extends Dialog
         
         for (int i=0;i<conditions.size();i++)
         {
-            WhereCondition whereCondition = (WhereCondition) conditions.get(i);
+          DialogWhereCondition whereCondition = (DialogWhereCondition) conditions.get(i);
             TableItem tableItem = new TableItem(wConditions.table, SWT.NONE);
             
             tableItem.setText(1, Const.NVL(whereCondition.getOperator(), "")); //$NON-NLS-1$
@@ -948,7 +955,32 @@ public class QueryDialog extends Dialog
             clearSelection();
             for (int i=0;i<query.getOrder().size();i++) orders.add(query.getOrder().get(i));
             for (int i=0;i<query.getSelections().size();i++) columns.add(query.getSelections().get(i));
-            for (int i=0;i<query.getConstraints().size();i++) conditions.add(query.getConstraints().get(i));
+            
+            // convert new expressions to old format for backwards compatibility
+            for (int i=0;i<query.getConstraints().size();i++) {
+              WhereCondition wc = (WhereCondition)query.getConstraints().get(i);
+              String condition = wc.getCondition();
+              Pattern p = Pattern.compile("\\[([^\\]]*)\\.([^\\]]*)\\] (.*)"); //$NON-NLS-1$
+              Matcher m = p.matcher(condition);
+              if (m.find()) {
+                String tbl = m.group(1);
+                String col = m.group(2);
+                String cond = m.group(3);
+                BusinessTable biztbl = query.getModel().findBusinessTable(tbl);
+                if (biztbl != null) {
+                  BusinessColumn bizcol = biztbl.findBusinessColumn(col);
+                  if (bizcol != null) {
+                    conditions.add(new DialogWhereCondition(wc.getOperator(), bizcol, cond));
+                  } else {
+                    logger.error(Messages.getErrorString("QueryDialog.ERROR_0002_BUSINESS_COLUMN_NOT_FOUND", col, tbl)); //$NON-NLS-1$  
+                  }
+                } else {
+                  logger.error(Messages.getErrorString("QueryDialog.ERROR_0003_BUSINESS_TABLE_NOT_FOUND", tbl)); //$NON-NLS-1$
+                }
+              } else {
+                logger.error(Messages.getErrorString("QueryDialog.ERROR_0004_REG_EXPR_NOT_MATCHED", condition)); //$NON-NLS-1$
+              }
+            }
         }
         
         updateCategories();
@@ -957,21 +989,26 @@ public class QueryDialog extends Dialog
         updateConditions();
         updateOrders();
     }
-
-    private MQLQuery getQuery()
+    
+    private MQLQuery getQuery() throws PMSFormulaException
     {
         MQLQuery mqlQuery = new MQLQuery(schemaMeta, getModel(), locale);
-
+        ArrayList mqlQueryConditions = new ArrayList();
         // Get the conditions and operators.
-        for (int i=0;i<conditions.size();i++)
-        {
-            WhereCondition wc = (WhereCondition) conditions.get(i);
-            wc.setOperator(wConditions.getItem(i)[0]);
-            wc.setCondition(wConditions.getItem(i)[2]);
+        for (int i=0;i<conditions.size();i++) {
+          DialogWhereCondition wc = (DialogWhereCondition) conditions.get(i);
+          wc.setOperator(wConditions.getItem(i)[0]);
+          wc.setCondition(wConditions.getItem(i)[2]);
+          mqlQueryConditions.add(
+              new WhereCondition(getModel(), wc.getOperator(), 
+                   "[" + wc.getField().getBusinessTable().getId() + "." + wc.getField().getId() +"] " + wc.getCondition())); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
         
         mqlQuery.setSelections(columns);
-        mqlQuery.setConstraints(conditions);
+        // need new code to set conditions
+        
+        mqlQuery.setConstraints(mqlQueryConditions);
+        
         mqlQuery.setOrder(orders);
         
         return mqlQuery;
@@ -981,7 +1018,16 @@ public class QueryDialog extends Dialog
     { 
         if (getModel()!=null)
         {
+          try
+          {
             query = getQuery();
+          }
+          catch(Throwable e)
+          {
+            new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("QueryDialog.USER_ERROR_QUERY_GENERATION"), new Exception(e)); //$NON-NLS-1$ //$NON-NLS-2$
+            query = null;
+            return;
+          }
         }
         else
         {
@@ -1021,23 +1067,22 @@ public class QueryDialog extends Dialog
     
     public void showTrans()
     {
+      try
+      {
+        
         MQLQuery mqlQuery = getQuery();
-        if (mqlQuery!=null)
-        {
-            try
-            {
-                StringBuffer logBuffer = new StringBuffer();
-                java.util.List list = mqlQuery.getRowsUsingTransformation(true, logBuffer);
+        if (mqlQuery != null) {
+          StringBuffer logBuffer = new StringBuffer();
+          java.util.List list = mqlQuery.getRowsUsingTransformation(true, logBuffer);
 
-                PreviewRowsDialog prd =new PreviewRowsDialog(shell, SWT.NONE, Messages.getString("QueryDialog.USER_QUERY"), list, logBuffer.toString()); //$NON-NLS-1$
-                prd.open();
-
-            }
-            catch(KettleException e)
-            {
-                new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("QueryDialog.USER_ERROR_EXECUTE_QUERY"), e); //$NON-NLS-1$ //$NON-NLS-2$
-            }
+          PreviewRowsDialog prd =new PreviewRowsDialog(shell, SWT.NONE, Messages.getString("QueryDialog.USER_QUERY"), list, logBuffer.toString()); //$NON-NLS-1$
+          prd.open();
         }
+      }
+      catch(Exception e)
+      {
+          new ErrorDialog(shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("QueryDialog.USER_ERROR_EXECUTE_QUERY"), e); //$NON-NLS-1$ //$NON-NLS-2$
+      }
     }
 
     private void executeSQL(DatabaseMeta databaseMeta, String sql)
@@ -1088,5 +1133,37 @@ public class QueryDialog extends Dialog
         updateColumns();
         updateConditions();
         updateOrders();
+    }
+    
+    private static class DialogWhereCondition {
+      private String operator;       // AND
+      private BusinessColumn field;  // customer_name
+      private String condition;      // = 'Casters'
+    
+      public DialogWhereCondition(String operator, BusinessColumn field,  String condition) {
+        this.operator  = operator;
+        this.field     = field;
+        this.condition = condition;
+      }
+      
+      public String getOperator() {
+        return operator;
+      }
+      
+      public BusinessColumn getField() {
+        return field;
+      }
+        
+      public String getCondition() {
+        return condition;
+      }
+      
+      public void setCondition(String condition) {
+          this.condition = condition;
+      }
+      
+      public void setOperator(String operator) {
+        this.operator = operator;
+      }
     }
 }

@@ -388,7 +388,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         final Text key = new Text(compDynamic, SWT.LEFT | SWT.SINGLE | SWT.BORDER);
         props.setLook(key);
         BusinessColumn primaryKey = hierarchy.getPrimaryKey();
-        key.setText(primaryKey.getDisplayName(locale)+" : "+primaryKey.getFunctionTableAndColumnForSQL(locale)); //$NON-NLS-1$
+        key.setText(primaryKey.getDisplayName(locale)+" : "+primaryKey.getFunctionTableAndColumnForSQL(metaEditor.getSchemaMeta().getActiveModel(), locale)); //$NON-NLS-1$
         key.setToolTipText(Messages.getString("MetaEditorOlap.USER_SELECTED_PRIMARY_KEY_COLUMN")); //$NON-NLS-1$
         key.setEditable(false);
         FormData fdKey = new FormData();
@@ -488,7 +488,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         final Text refColumn = new Text(compDynamic, SWT.BORDER | SWT.LEFT | SWT.SINGLE);
         props.setLook(refColumn);
         BusinessColumn referenceColumn = level.getReferenceColumn(); 
-        refColumn.setText(referenceColumn.getDisplayName(locale)+" : "+referenceColumn.getFunctionTableAndColumnForSQL(locale)); //$NON-NLS-1$
+        refColumn.setText(referenceColumn.getDisplayName(locale)+" : "+referenceColumn.getFunctionTableAndColumnForSQL(metaEditor.getSchemaMeta().getActiveModel(), locale)); //$NON-NLS-1$
         refColumn.setEditable(false);
         refColumn.setToolTipText(Messages.getString("MetaEditorOlap.USER_REFERENCE_COLUMN_NAME")); //$NON-NLS-1$
         FormData fdRefColumn = new FormData();
