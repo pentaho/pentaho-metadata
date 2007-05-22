@@ -49,6 +49,9 @@ public class SecurityService extends ChangedFlag implements Cloneable
     public static final String USERNAME = "userid"; //$NON-NLS-1$
     public static final String PASSWORD = "password"; //$NON-NLS-1$
     
+    // This is a default to use if the service URL has never been set - gives the user a hint as to what URL we are asking for 
+    private static String defaultServiceURL = "http://localhost:8080/pentaho/ServiceAction";
+    
     private String serviceURL;
     
     // Default values for  these parameters..
@@ -159,6 +162,14 @@ public class SecurityService extends ChangedFlag implements Cloneable
         return serviceURL;
     }
 
+    /**
+     * @return the default serviceURL
+     */
+    public String getDefaultServiceURL()
+    {
+        return defaultServiceURL;
+    }
+    
     /**
      * @param serviceURL the serviceURL to set
      */

@@ -496,7 +496,7 @@ public class SecurityDialog extends TitleAreaDialog {
    * Copy information from the meta-data input to the dialog fields.
    */
   public void getData() {
-    wServiceURL.setText(Const.NVL(securityService.getServiceURL(), "")); //$NON-NLS-1$
+    wServiceURL.setText(Const.NVL(securityService.getServiceURL(), securityService.getDefaultServiceURL())); //$NON-NLS-1$
     wDetailType.select(securityService.getDetailServiceType());
     wUsername.setText(Const.NVL(securityService.getUsername(), "")); //$NON-NLS-1$
     wPassword.setText(Const.NVL(securityService.getPassword(), "")); //$NON-NLS-1$
