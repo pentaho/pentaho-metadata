@@ -801,7 +801,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
       // 
       // Add the fields...
       // 
-      boolean group = hasFactsInIt(selectedColumns);
+      boolean group = hasFactsInIt(selectedColumns, conditions);
 
       if (!group)
         sql += "DISTINCT "; //$NON-NLS-1$
@@ -1015,10 +1015,16 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
     return (BusinessTable[]) keySet.toArray(new BusinessTable[keySet.size()]);
   }
 
-  public boolean hasFactsInIt(BusinessColumn fields[]) {
+  public boolean hasFactsInIt(BusinessColumn fields[], WhereCondition conditions[]) {
     for (int i = 0; i < fields.length; i++) {
       if (fields[i].hasAggregate())
         return true;
+    }
+    if (conditions != null) {
+      for (int i = 0; i < conditions.length; i++) {
+        if (conditions[i].hasAggregate())
+          return true;
+      }
     }
     return false;
   }
