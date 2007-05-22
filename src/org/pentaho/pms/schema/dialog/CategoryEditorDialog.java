@@ -491,8 +491,6 @@ public class CategoryEditorDialog extends TitleAreaDialog {
     }
     rootCategory.addDomainChild(businessCategory);
 
-    // Expand the parent tree item
-    //TreeMemory.getInstance().storeExpanded(MetaEditor.STRING_CATEGORIES_TREE, parentPath, true);
   }
   protected void addSelection(){
     
