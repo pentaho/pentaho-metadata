@@ -64,7 +64,7 @@
 	<classpathentry kind="lib" path="libswt/jface.jar"/>
 	<classpathentry kind="lib" path="libswt/runtime.jar"/>
 	<classpathentry kind="lib" path="libext/pentaho/kettle.jar" sourcepath="E:/workspace_1.6/Kettle/src"/>
-	<classpathentry kind="lib" path="libext/pentaho/libformula-0.1.5.jar" sourcepath="libext-src/libformula-src-0.1.5.zip"/>
+	<classpathentry kind="lib" path="libext/pentaho/libformula-0.1.7.jar"/>
 	<classpathentry kind="lib" path="libext/pentaho/pentaho-core-1.5.2.jar"/>
 	<classpathentry kind="lib" path="libext/commons/commons-collections-3.2.jar"/>
 	<classpathentry kind="output" path="classes"/>
