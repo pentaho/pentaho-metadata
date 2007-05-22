@@ -50,8 +50,11 @@ public class SecurityService extends ChangedFlag implements Cloneable
     public static final String PASSWORD = "password"; //$NON-NLS-1$
     
     private String serviceURL;
-    private String detailsServiceName;
-    private String detailServiceName;
+    
+    // Default values for  these parameters..
+    private String detailsServiceName = "SecurityDetails"; //$NON-NLS-1$
+    private String detailServiceName = "details"; //$NON-NLS-1$
+    
     private int    detailServiceType;
     private String username;
     private String password;
