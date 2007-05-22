@@ -32,46 +32,101 @@
  */
 
 package org.pentaho.pms.schema;
+
+import java.util.Iterator;
+import java.util.List;
+
 import org.pentaho.pms.messages.Messages;
+
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.util.Const;
 
-public class WhereCondition extends ConceptUtilityBase implements ConceptUtilityInterface
-{
-    private String operator;       // AND
-	private BusinessColumn field;  // customer_name
-	private String condition;      // = 'Casters'
+public class WhereCondition extends ConceptUtilityBase implements ConceptUtilityInterface {
 
-    public static final String[] operators = new String[] { "AND", "OR", "AND NOT", "OR NOT" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-	public static final String[] comparators = new String[] { "=", "<>", "<", "<=", ">", ">=", "IS NULL", "IS NOT NULL", "IN", "NOT IN" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ //$NON-NLS-10$
-	
-	public WhereCondition(String operator, BusinessColumn field,  String condition)
-	{
-        this.operator  = operator;
-        this.field     = field;
-        this.condition = condition;
-	}
-	
-	public WhereCondition()
-	{
-		this(null, null, null);
-	}
-    
-    /**
-     * @return the description of the model element 
-     */
-    public String getModelElementDescription()
-    {
-        return Messages.getString("WhereCondition.USER_DESCRIPTION"); //$NON-NLS-1$
+  public static final String[] operators = new String[] { "AND", "OR", "AND NOT", "OR NOT" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+  public static final String[] comparators = new String[] { "=", "<>", "<", "<=", ">", ">="}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+
+  // we need to implement support for these functions in PMSFormula 
+  // , "IS NULL", "IS NOT NULL", "IN", "NOT IN"
+  
+  private String operator = null;
+  private String condition = null;
+  private Boolean hasAgg = null;
+  private PMSFormula formula = null;
+  
+  /**
+   * The WhereCondition now is based on LibFormula, so only a conditional string is necessary
+   */
+  public WhereCondition(BusinessModel model, String operator, String condition) throws PMSFormulaException {
+    this.operator = operator;
+    this.condition = condition;
+    this.formula = new PMSFormula(model, condition);
+    formula.parseAndValidate();
+  }
+  
+  /**
+   * return the condition operator for combining where conditions
+   * @return
+   */
+  public String getOperator() {
+    return operator;
+  }
+  
+  /**
+   * return the condition, ie "A = B"
+   * @return
+   */
+  public String getCondition() {
+    return condition;
+  }
+  
+  /**
+   * return a list of related business columns
+   * 
+   * @return list
+   */
+  public List getBusinessColumns() {
+    return formula.getBusinessColumns();
+  }
+  
+  /**
+   * traverse the field list and see if any of the fields are aggregate fields.
+   * we cache hasAgg for future calls
+   * 
+   * @return true if aggregate
+   */
+  public boolean hasAggregate() {
+    if (hasAgg == null) {
+      hasAgg = Boolean.FALSE;
+      Iterator iter = formula.getBusinessColumns().iterator();
+      while (iter.hasNext()) {
+        BusinessColumn col = (BusinessColumn)iter.next();
+        if (col.hasAggregate()) {
+          hasAgg = Boolean.TRUE;
+          return hasAgg.booleanValue();
+        }
+      }
     }
-
-	
-	public String getWhereClause(String locale, boolean useOperator)
-	{
-		String retval = ""; //$NON-NLS-1$
-		if (field!=null && condition!=null)
-		{
+    return hasAgg.booleanValue();
+  }
+  
+  
+  /**
+   * @return the description of the model element 
+   */
+  public String getModelElementDescription() {
+    return Messages.getString("WhereCondition.USER_DESCRIPTION"); //$NON-NLS-1$
+  }
+  
+  /**
+   * generate the SQL condition
+   * @param locale
+   * @return
+   */
+  public String getWhereClause(String locale, boolean useOperator) throws PMSFormulaException {
+    String retval = ""; //$NON-NLS-1$
+    if (condition!=null) {
             if (Const.isEmpty(operator) || !useOperator)
             {
                 retval+=Const.rightPad(" ", 9)+" "; //$NON-NLS-1$ //$NON-NLS-2$
@@ -80,93 +135,9 @@ public class WhereCondition extends ConceptUtilityBase implements ConceptUtility
             {
                 retval+=Const.rightPad(operator, 9)+" "; //$NON-NLS-1$
             }
-            // The field : use the table alias, the business table actually. (including possible functions for having clause)
-            retval += field.getFunctionTableAndColumnForSQL(locale);
-            retval += " "; //$NON-NLS-1$
-            
-            // The condition: just put it in there for the time being...
-            retval += condition;
-		}
-		return retval;
-	}
 
-	public String toString()
-	{
-		return getWhereClause("en_US", true); // TODO: take whatever default there is on the system later on. //$NON-NLS-1$
-	}
-	
-	public int hashCode()
-	{
-		return getId().hashCode();
-	}
-	
-	public boolean equals(Object obj)
-	{
-		WhereCondition rel = (WhereCondition)obj;
-        
-        if ( (operator==null && rel.operator!=null) || (operator!=null && rel.operator==null) || (operator!=null && rel.operator!=null && !operator.equals(rel.operator))) return false; 
-        if ( (condition==null && rel.condition!=null) || (condition!=null && rel.condition==null) || (condition!=null && rel.condition!=null && !condition.equals(rel.condition))) return false; 
-        if ( (field==null && rel.field!=null) || (field!=null && rel.field==null) || (field!=null && rel.field!=null && !field.equals(rel.field))) return false; 
-        
-		return true;
-	}
-
-    /**
-     * @return the condition
-     */
-    public String getCondition()
-    {
-        return condition;
+            retval += formula.generateSQL(locale);
     }
-
-    /**
-     * @param condition the condition to set
-     */
-    public void setCondition(String condition)
-    {
-        this.condition = condition;
-    }
-
-    /**
-     * @return the field
-     */
-    public BusinessColumn getField()
-    {
-        return field;
-    }
-
-    /**
-     * @param field the field to set
-     */
-    public void setField(BusinessColumn field)
-    {
-        this.field = field;
-    }
-
-    /**
-     * @return the operator
-     */
-    public String getOperator()
-    {
-        return operator;
-    }
-
-    /**
-     * @param operator the operator to set
-     */
-    public void setOperator(String operator)
-    {
-        this.operator = operator;
-    }
-
-    /**
-     *  
-     * @return true if the business column is an aggregate (sum() should go in the HAVING clause
-     */
-    public boolean hasAggregate()
-    {
-        return field.hasAggregate();
-    }
-    
-    
+    return retval;
+  }
 }
