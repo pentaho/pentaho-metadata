@@ -734,7 +734,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
    * @param locale the locale
    * @return a SQL query based on a column selection and locale
    */
-  public String getSQL(SchemaMeta schemaMeta, BusinessColumn selectedColumns[], String locale, boolean useDisplayNames) throws PMSFormulaException {
+  public String getSQL(BusinessColumn selectedColumns[], String locale, boolean useDisplayNames) throws PMSFormulaException {
     return getSQL(selectedColumns, (WhereCondition[]) null, (OrderBy[]) null, locale, useDisplayNames);
   }
 
@@ -744,7 +744,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
    * @param locale the locale
    * @return a SQL query based on a column selection, conditions and a locale
    */
-  public String getSQL(SchemaMeta schemaMeta, BusinessColumn selectedColumns[], WhereCondition conditions[], String locale,
+  public String getSQL(BusinessColumn selectedColumns[], WhereCondition conditions[], String locale,
       boolean useDisplayNames) throws PMSFormulaException {
     return getSQL(selectedColumns, conditions, (OrderBy[]) null, locale, useDisplayNames);
   }
@@ -973,7 +973,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
     return sql;
   }
 
-  public TransMeta getTransformationMeta(SchemaMeta schemaMeta, BusinessColumn selectedColumns[], WhereCondition conditions[],
+  public TransMeta getTransformationMeta(BusinessColumn selectedColumns[], WhereCondition conditions[],
       OrderBy[] orderBy, String locale, boolean useDisplayNames) throws PMSFormulaException  {
     if (selectedColumns == null || selectedColumns.length == 0)
       return null;

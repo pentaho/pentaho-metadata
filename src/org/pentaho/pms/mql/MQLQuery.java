@@ -169,7 +169,7 @@ public class MQLQuery {
         WhereCondition conditions[] = (WhereCondition[])constraints.toArray(new WhereCondition[constraints.size()]);
         OrderBy orderBy[] = (OrderBy[]) order.toArray(new OrderBy[order.size()]);
         
-        return model.getTransformationMeta(schemaMeta, selection, conditions, orderBy, locale, useDisplayNames);
+        return model.getTransformationMeta(selection, conditions, orderBy, locale, useDisplayNames);
     }
     
     public List getRowsUsingTransformation( boolean useDisplayNames, StringBuffer logBuffer ) throws KettleException,  PMSFormulaException 
