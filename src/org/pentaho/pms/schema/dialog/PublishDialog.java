@@ -101,37 +101,38 @@ public class PublishDialog extends Dialog {
     GridLayout gridLayout = new GridLayout(2, false);
     dialog.setLayout(gridLayout);
     
+    GridData fieldLayoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
     Label label = new Label(dialog, SWT.LEFT);
     label.setText(Messages.getString("PublishDialog.LABEL_USER")); //$NON-NLS-1$
     tUserId = new Text(dialog, SWT.LEFT | SWT.SINGLE);
-    tUserId.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+    tUserId.setLayoutData(fieldLayoutData);
     label = new Label(dialog, SWT.LEFT);
     label.setText(Messages.getString("PublishDialog.LABEL_PASSWORD")); //$NON-NLS-1$
     tUserPassword = new Text(dialog, SWT.LEFT | SWT.SINGLE | SWT.PASSWORD);
-    tUserPassword.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+    tUserPassword.setLayoutData(fieldLayoutData);
     label = new Label(dialog, SWT.LEFT);
     label.setText(Messages.getString("PublishDialog.LABEL_PUBLISH_PASSWORD")); //$NON-NLS-1$
     tPublishPassword = new Text(dialog, SWT.LEFT | SWT.SINGLE | SWT.PASSWORD);
-    tPublishPassword.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+    tPublishPassword.setLayoutData(fieldLayoutData);
     
     label = new Label(dialog, SWT.LEFT);
     label.setText(Messages.getString("PublishDialog.LABEL_SERVER")); //$NON-NLS-1$
     tServerURL = new Text(dialog, SWT.LEFT | SWT.SINGLE);
-    tServerURL.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+    tServerURL.setLayoutData(fieldLayoutData);
     label = new Label(dialog, SWT.LEFT);
     label.setText(Messages.getString("PublishDialog.LABEL_SOLUTION")); //$NON-NLS-1$
     tSolutionName = new Text(dialog, SWT.LEFT | SWT.SINGLE);
-    tSolutionName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+    tSolutionName.setLayoutData(fieldLayoutData);
     label = new Label(dialog, SWT.LEFT);
     label.setText(Messages.getString("PublishDialog.LABEL_FILENAME")); //$NON-NLS-1$
     tFileName = new Text(dialog, SWT.LEFT | SWT.SINGLE);
-    tFileName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+    tFileName.setLayoutData(fieldLayoutData);
 
     // The buttons...
-    wOK = new Button(dialog, SWT.PUSH);
-    wOK.setText(Messages.getString("General.USER_OK")); //$NON-NLS-1$
     wCancel = new Button(dialog, SWT.PUSH);
     wCancel.setText(Messages.getString("General.USER_CANCEL")); //$NON-NLS-1$  
+    wOK = new Button(dialog, SWT.PUSH);
+    wOK.setText(Messages.getString("General.USER_OK")); //$NON-NLS-1$
     
     lsCancel   = new Listener() { public void handleEvent(Event e) { cancel(); } };
     lsOK       = new Listener() { public void handleEvent(Event e) { ok();     } };
