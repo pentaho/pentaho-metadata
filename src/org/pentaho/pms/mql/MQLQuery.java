@@ -37,7 +37,6 @@ import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.OrderBy;
-import org.pentaho.pms.schema.PMSFormula;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.WhereCondition;
 import org.pentaho.pms.util.Const;
@@ -60,7 +59,7 @@ import be.ibridge.kettle.trans.step.StepInterface;
 
 public class MQLQuery {
 
-  private static final Log logger = LogFactory.getLog(PMSFormula.class);
+  private static final Log logger = LogFactory.getLog(MQLQuery.class);
   
 	public static int DOMAIN_TYPE_RELATIONAL = 1;
 	public static int DOMAIN_TYPE_OLAP = 2; // NOT SUPPORTED YET
@@ -129,21 +128,23 @@ public class MQLQuery {
     constraints.add(where);
   }
   
-  public void addOrderBy( String tableId, String columnId, boolean ascending) {
+  public void addOrderBy( String tableId, String columnId, boolean ascending) throws PentahoMetadataException {
     BusinessTable businessTable = model.findBusinessTable( tableId );
     if (businessTable == null) {
-        // TODO need to raise an error here, the table does not exist
-        return;
+      throw new PentahoMetadataException(Messages.getErrorString("MQLQuery.ERROR_0014_BUSINESS_TABLE_NOT_FOUND", tableId));  //$NON-NLS-1$ 
     }
     addOrderBy( businessTable, columnId, ascending );
 	}
 	
-	public void addOrderBy( BusinessTable businessTable, String columnId, boolean ascending ) {
+	public void addOrderBy( BusinessTable businessTable, String columnId, boolean ascending ) throws PentahoMetadataException {
         
+        if (businessTable == null) {
+          throw new PentahoMetadataException(Messages.getErrorString("MQLQuery.ERROR_0015_BUSINESS_TABLE_NULL"));  //$NON-NLS-1$ 
+        }   
+    
         BusinessColumn businessColumn = businessTable.findBusinessColumn(columnId);
         if (businessColumn == null) {
-            // TODO need to raise an error here, the column does not exist
-            return;
+          throw new PentahoMetadataException(Messages.getErrorString("MQLQuery.ERROR_0016_BUSINESS_COLUMN_NOT_FOUND", businessTable.getId(), columnId));  //$NON-NLS-1$ 
         }
             
         OrderBy orderBy = new OrderBy( businessColumn, ascending);
@@ -221,7 +222,7 @@ public class MQLQuery {
             		return stringWriter.getBuffer().toString();
         		}
         } catch (Exception e) {
-        		e.printStackTrace();
+          logger.error(Messages.getErrorString("MQLQuery.ERROR_0013_GET_XML_FAILED"), e); //$NON-NLS-1$
         }
         return null;
 	}
@@ -245,7 +246,7 @@ public class MQLQuery {
             		return null;
             }
         } catch (Exception e) {
-        		e.printStackTrace();
+          logger.error(Messages.getErrorString("MQLQuery.ERROR_0012_GET_DOCUMENT_FAILED"), e); //$NON-NLS-1$
         }
         return null;
 	}
@@ -255,13 +256,13 @@ public class MQLQuery {
         try {
 
 	    		if( schemaMeta == null ) {
-	        		System.err.println( Messages.getString("MQLQuery.ERROR_0002_META_SCHEMA_NULL") ); //$NON-NLS-1$
-	        		return false;
+            logger.error( Messages.getString("MQLQuery.ERROR_0002_META_SCHEMA_NULL") ); //$NON-NLS-1$
+        		return false;
 	    		}
 	    	
 	    		if( model == null ) {
-	        		System.err.println( Messages.getString("MQLQuery.ERROR_0003_BUSINESS_MODEL_NULL") ); //$NON-NLS-1$
-	        		return false;
+            logger.error( Messages.getString("MQLQuery.ERROR_0003_BUSINESS_MODEL_NULL") ); //$NON-NLS-1$
+        		return false;
 	    		}
 	    	
     			// insert the domain information
@@ -276,8 +277,8 @@ public class MQLQuery {
 	            	domainIdElement.appendChild( doc.createTextNode( data ) );
 	            	mqlElement.appendChild( domainIdElement );
             	} else {
-            		System.err.println( Messages.getString("MQLQuery.ERROR_0004_DOMAIN_ID_NULL") ); //$NON-NLS-1$
-	        		return false;
+                logger.error( Messages.getString("MQLQuery.ERROR_0004_DOMAIN_ID_NULL") ); //$NON-NLS-1$
+	        		 return false;
             	}
         	
             	// insert the model information
@@ -287,8 +288,8 @@ public class MQLQuery {
                 	modelIdElement.appendChild( doc.createTextNode( data ) );
                 	mqlElement.appendChild( modelIdElement );
             	} else {
-            		System.err.println( Messages.getString("MQLQuery.ERROR_0005_MODEL_ID_NULL") ); //$NON-NLS-1$
-	        		return false;
+                logger.error( Messages.getString("MQLQuery.ERROR_0005_MODEL_ID_NULL") ); //$NON-NLS-1$
+	        		  return false;
             	}
             
             	data = model.getDisplayName( locale );
@@ -297,7 +298,7 @@ public class MQLQuery {
                 	modelNameElement.appendChild( doc.createTextNode( data ) );
                 	mqlElement.appendChild( modelNameElement );
             	} else {
-            		System.err.println( Messages.getString("MQLQuery.ERROR_0006_MODEL_NAME_NULL") ); //$NON-NLS-1$
+                logger.error( Messages.getString("MQLQuery.ERROR_0006_MODEL_NAME_NULL") ); //$NON-NLS-1$
 	        		return false;
             	}
             
@@ -402,7 +403,7 @@ public class MQLQuery {
             	}
             
         	} catch (Exception e) {
-        		e.printStackTrace();
+            logger.error(Messages.getErrorString("MQLQuery.ERROR_0011_ADD_TO_DOCUMENT_FAILED"), e); //$NON-NLS-1$
         	}
     		return true;
 
@@ -428,11 +429,17 @@ public class MQLQuery {
             		domainType = DOMAIN_TYPE_OLAP;
             } else {
             		// need to throw an error
+                throw new PentahoMetadataException(Messages.getErrorString("MQLQuery.ERROR_0007_INVALID_DOMAIN_TYPE", domainTypeStr)); //$NON-NLS-1$
             }
 
             // get the domain id
             String domainId = getElementText( doc, "domain_id" ); //$NON-NLS-1$
             CWM cwm = CWM.getInstance(domainId);
+            if (cwm == null) {
+              // need to throw an error
+              throw new PentahoMetadataException(Messages.getErrorString("MQLQuery.ERROR_0008_CWM_DOMAIN_INSTANCE_NULL", domainId)); //$NON-NLS-1$
+            }
+            
             if (null == cwmSchemaFactory) {
               cwmSchemaFactory = Settings.getCwmSchemaFactory();
             }
@@ -444,8 +451,7 @@ public class MQLQuery {
             model = schemaMeta.findModel(modelId); // This is the business model that was selected.
 
             	if( model == null ) {
-            		// TODO log this
-            		return;
+                throw new PentahoMetadataException(Messages.getErrorString("MQLQuery.ERROR_0009_MODEL_NOT_FOUND", modelId)); //$NON-NLS-1$
             	}
             
             // process the selections
@@ -473,9 +479,8 @@ public class MQLQuery {
             }
             
         } catch (Exception e) {
-        		e.printStackTrace();
+          logger.error(Messages.getErrorString("MQLQuery.ERROR_0010_FAILED_FROM_XML"), e); //$NON-NLS-1$
         }
-
 	}
 	
 	private void addBusinessColumnFromXmlNode(Element selectionElement) {
@@ -490,7 +495,7 @@ public class MQLQuery {
   }
 	
 	
-	private void addOrderByFromXmlNode( Element orderElement ) {
+	private void addOrderByFromXmlNode( Element orderElement ) throws PentahoMetadataException {
     boolean ascending = true;
     String table_id = null;
     String column_id = null;
