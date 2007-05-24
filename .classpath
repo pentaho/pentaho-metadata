@@ -68,4 +68,5 @@
 	<classpathentry kind="lib" path="libext/meta/pentaho-cwm-1.5.4.jar"/>
 	<classpathentry kind="lib" path="libext/commons/commons-collections-3.2.jar"/>
 	<classpathentry kind="output" path="classes"/>
+	<classpathentry kind="lib" path="libext/test/junit.jar"/>
 </classpath>
