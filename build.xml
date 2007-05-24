@@ -1,266 +1,168 @@
-<project name="PentahoMetaData" default="default" basedir=".">
+<project name="PentahoMetaData" default="dist-metadata">
 
-	  <description>
+	<description>
 	      Pentaho Metadata build file.
 	    </description>
 
-	  <tstamp prefix="start"/>
+	<tstamp prefix="start" />
 
-	  <!-- system properties to use -->
-	  <property name="cr" value="${line.separator}"/> 
-	  <property name="version" value="1.5.3"/>      
+	<!-- system properties to use -->
+	<property file="override.properties" />
+	<property file="build.properties" />
+	<property file="src/build-res/version.properties" />
+	<property name="cr" value="${line.separator}" />
+
+	<!-- set global properties for this build -->
+
+	<property name="src" location="src" />
+	<property name="classes" location="${build.classes.dir}" />
+	<property name="bin" location="bin" />
+	<property name="lib" location="lib" />
+	<property name="libext" location="libext" />
+	<property name="libswt" location="libswt" />
+	<property name="distrib" location="distrib" />
+	<property name="docs" location="docs" />
+	<property name="cwm" location="cwm" />
+	<property name="jdbc" location="jdbc" />
+	<property name="simple-jndi" location="simple-jndi" />
+	<property name="api" location="${docs}/api" />
+
+	<property name="sourcezipfile" location="PentahoMetaData-src-${release.number}.zip" />
+
+	<target name="clean-all" depends="clean-build, clean-dist, clean-pentaho-metadata-javadoc" />
+
+	<target name="clean-build">
+		<delete dir="${build.dir}" />
+	</target>
+
+	<target name="clean-dist">
+		<delete dir="${dist.dir}" />
+	</target>
+
+	<target name="clean-pentaho-metadata-javadoc">
+		<delete dir="${build.javadoc.dir}" />
+	</target>
+	
+	<target name="init-metadata-classes">
+		<mkdir dir="${build.classes.dir}" />
+	</target>
+	
+	<target name="init-pentaho-metadata" depends="init-build, init-dist, init-metadata-classes" />
+	
+	<target name="init-build">
+		<mkdir dir="${build.dir}" />
+	</target>
+
+	<target name="init-dist">
+		<mkdir dir="${dist.dir}" />
+	</target>
+
+	<target name="init-pentaho-metadata-javadoc">
+		<mkdir dir="${build.javadoc.dir}" />
+	</target>
+
+	<target name="compile" depends="init-metadata-classes" description="compile the source ">
+		<echo>Compiling Pentaho Metadata...</echo>
+		<javac srcdir="${src}" destdir="${build.classes.dir}" target="1.4" source="1.4" deprecation="true" debug="true">
+
+			<classpath id="cp-meta">
+				<fileset dir="${libext}" includes="**/*.jar" />
+				<fileset dir="${libswt}" includes="*.jar" />
+				<fileset dir="${libswt}/win32/" includes="*.jar" />
+			</classpath>
+		</javac>
 		
-	  <!-- set global properties for this build -->
-	
-	  <property name="src"        			location="src"/> 
-	  <property name="classes"        		location="classes"/> 
-	  <property name="bin"    				location="bin"/>
-	  <property name="lib"        			location="lib"/>
-	  <property name="libext"     			location="libext"/>
-	  <property name="libswt"     			location="libswt"/>
-	  <property name="distrib"				location="distrib"/>
-	  <property name="docs"					location="docs"/>
-	  <property name="cwm"					location="cwm"/>
-	  <property name="jdbc"					location="jdbc"/>
-	  <property name="simple-jndi"			location="simple-jndi"/>
-	  <property name="api"					location="${docs}/api"/>
+		<echo>Copying images etc to classes directory...</echo>
+		<copy todir="${build.classes.dir}">
+			<fileset dir="${src}" includes="**/*.png **/*.xml **/*properties" />
+		</copy>
+	</target>
 
-	  <property name="sourcezipfile"        location="PentahoMetaData-src-${version}.zip"/>
-		  
-	  <target name="init" description="create timestamp and directories">
-    	<echo>Init...</echo>
-	  	
-	    <tstamp/>
-	    <mkdir dir="${classes}"/>
-	    <mkdir dir="${lib}"/>
-		<mkdir dir="${distrib}"/>
-		<mkdir dir="${docs}"/>
-		<mkdir dir="${api}"/>
-	  </target>
+	<target name="zip-pentaho-metadata-javadoc" depends="init-pentaho-metadata-javadoc, compile" description="compile the javadoc api">
+		<echo>Compiling the Pentaho Metadata API javadocs...</echo>
+		<javadoc destdir="${build.javadoc.dir}/docs/api" access="public" source="1.4" use="true" notree="false" nonavbar="false" noindex="false" splitindex="true" author="true" version="true" maxmemory="256M" nodeprecatedlist="false" nodeprecated="false" packagenames="org.pentaho.pms.*" sourcepath="${src}" doctitle="Pentaho Metadata API documentation">
+			<link href="http://java.sun.com/j2se/1.4.2/docs/api/" />
 
-	  <!--
-	       ==========================
-	            Compile the code
-	       ==========================
-	  -->
+			<classpath refid="cp-meta" />
+		</javadoc>
 
-	  <target name="compile" depends="init" description="compile the source " >
-	  	<echo>Compiling Pentaho Metadata...</echo>
-	    <javac srcdir="${src}" 
-	    	   destdir="${classes}"
-	    	   target="1.4"
-	    	   source="1.4"
-	           deprecation="true"
-	    	   debug="true"
-	    	>
+		<jar jarfile="${dist.dir}/PentahoMetaData-javadoc-${release.number}.zip" basedir="${build.javadoc.dir}" includes="**/*" excludes="**/Thumbs.db" />
+	</target>
 
-	    	<classpath id="cp-meta">
-				<fileset dir="${libext}" 		includes="**/*.jar"/>
-				<fileset dir="${libswt}" 		includes="*.jar"/>
-				<fileset dir="${libswt}/win32/" includes="*.jar"/>
-		  		</classpath>
-	    </javac>
-	  	
-	  </target>
-	
-	  <!--
-	       ==========================
-	          Copy additional files
-	       ==========================
-	  -->
+	<target name="jar-pentaho-metadata" depends="init-dist, compile" description="generate the Pentaho Meta library pentaho-meta.jar">
+		<echo>Generating the Pentaho Metadata library pentaho-meta.jar ...</echo>
+		<jar jarfile="${dist.dir}/pentaho-meta-${release.major.number}.${release.minor.number}.${release.milestone.number}.jar" basedir="${build.classes.dir}" includes="**/*" excludes="**/Thumbs.db">
+			<manifest>
+				<attribute name="Implementation-Title" value="${impl.title}" />
+				<attribute name="Implementation-Version" value="${impl.version}" />
+				<attribute name="Implementation-Vendor" value="${impl.vendor}" />
+			</manifest>
+		</jar>
+	</target>
 
-	  <target name="copy" depends="compile" description="copy images etc to classes directory" >
-	  	<echo>Copying images etc to classes directory...</echo>
-	    <copy todir="${classes}">
-	    	<fileset 
-	    		dir="${src}" 
-	    		includes="**/*.png **/*.xml **/*properties"/>
-	  	    </copy>
-	  </target>
-	
-	
-	  <!--
-	       ==========================
-	         javadoc of the source
-	       ==========================
-	  -->
+	<target name="distrib" depends="jar-pentaho-metadata" description="copy jar file to distribution directory">
+		<echo>Construct the distribution package...</echo>
 
-	  <target name="javadoc" depends="compile" description="compile the javadoc api" >
-	  	<echo>Compiling the Pentaho Metadata API javadocs...</echo>
-        <javadoc 
-        	destdir="${api}" 
-        	access="public" 
-        	source="1.4" 
-        	use="true" 
-        	notree="false" 
-        	nonavbar="false" 
-        	noindex="false" 
-        	splitindex="true" 
-        	author="true" 
-        	version="true" 
-        	maxmemory="256M"
-        	nodeprecatedlist="false" 
-        	nodeprecated="false" 
-        	packagenames ="org.pentaho.pms.*" 
-        	sourcepath="${src}" 
-        	doctitle="Pentaho Metadata API documentation">
-            <link href="http://java.sun.com/j2se/1.4.2/docs/api/"/>
+		<!-- root directory -->
+		<mkdir dir="${distrib}" />
 
-        	<classpath refid="cp-meta"/>
+		<copy todir="${distrib}">
+			<fileset dir="." includes="releasenotes.txt" />
+		</copy>
 
-        </javadoc>
-	  </target>
-	
-	  <target name="javadoc_zip" depends="javadoc" description="generate a zip file containing the Pentaho Metadata javadoc">
-	  	<echo>Generating the Pentaho Metadata javadoc zip file ...</echo>
-	  	<jar jarfile="PentahoMetaData-javadoc-${version}.zip" 
-	    	 basedir="${api}" 
-	    	 includes="**/*"
-	  	     excludes="**/Thumbs.db"
-	  		/>
-	  </target>
-	
-	
-	  <!--
-	       ================================
-	           Pentaho Metadata library
-	       ================================
-	  -->
+		<copy todir="${distrib}">
+			<fileset dir="${bin}" includes="**/*" excludes="**/.vpn .project .classpath" />
+		</copy>
+
+		<!-- base lib -->
+		<mkdir dir="${distrib}/lib" />
+		<copy todir="${distrib}/lib" file="${lib}/pentaho-meta-${release.major.number}.${release.minor.number}.${release.milestone.number}.jar" />
+
+		<!-- cwm model-->
+		<mkdir dir="${distrib}/cwm" />
+		<copy todir="${distrib}/cwm" file="${cwm}/PentahoCWM.xml" />
+
+		<!-- jdbc settings-->
+		<mkdir dir="${distrib}/jdbc" />
+		<copy todir="${distrib}/jdbc">
+			<fileset dir="${jdbc}" includes="*.*" excludes="**/.vpn" />
+		</copy>
+
+		<!-- jdbc settings-->
+		<mkdir dir="${distrib}/simple-jndi" />
+		<copy todir="${distrib}/simple-jndi">
+			<fileset dir="${simple-jndi}" includes="*.*" excludes="**/.vpn" />
+		</copy>
+
+		<!-- external libs (jdbc etc) -->
+		<mkdir dir="${distrib}/libext" />
+		<copy todir="${distrib}/libext">
+			<fileset dir="${libext}" includes="**/*.jar **/*.zip" excludes="**/.vpn" />
+		</copy>
+
+		<!-- swt libs (jdbc etc) -->
+		<mkdir dir="${distrib}/libswt" />
+		<copy todir="${distrib}/libswt">
+			<fileset dir="${libswt}" includes="**/*" excludes="**/.vpn **/sapjco*.dll" />
+		</copy>
+
+		<!-- documentation -->
+		<mkdir dir="${distrib}/docs" />
+		<copy todir="${distrib}/docs">
+			<fileset dir="${docs}" includes="**/*.pdf **/*.htm **/*.html **/*.png **/*.PNG **/*.swf **/cn_ZN.zip" excludes="**/*.dot **/*.doc **/*.sxw **/*.odt **/*.vpn **/*feature list*" />
+		</copy>
 		
-	  <target name="meta" depends="compile, copy" description="generate the Pentaho Meta library pentaho-meta.jar">
-	  	<echo>Generating the Pentaho Metadata library pentaho-meta.jar ...</echo>
-	  	<jar jarfile="${lib}/pentaho-meta.jar" 
-	    	 basedir="${classes}" 
-	    	 includes="**/*"
-	  	     excludes="**/Thumbs.db"
-	  		/>
+		<echo>Generating the Pentaho Metadata distribution package PentahoMetaData-${release.number}.zip ...</echo>
+		<jar jarfile="${dist.dir}/pentaho-metadata-${release.number}.zip" basedir="${distrib}" includes="**/*" excludes="**/Thumbs.db" />
+	</target>
 
-	  </target>
-	
-	
-	<!--
-	       ==========================
-	        Distribution jar package
-	       ==========================
-	  -->
-	  <target name="distrib" depends="meta" description="copy jar file to distribution directory" >
-	  	<echo>Construct the distribution package...</echo>
-	  	
-	        <!-- root directory -->
-	  		<mkdir dir="${distrib}"/>
-	  	
-  			<copy todir="${distrib}">
-  				<fileset dir="." includes="releasenotes.txt"/>
-  			</copy>
-	  	
-	  		<copy todir="${distrib}">
-	  			<fileset dir="${bin}" includes="**/*" excludes="**/.vpn .project .classpath"/>
-	  			</copy>
-
-	  		<!-- base lib -->
-	  		<mkdir dir="${distrib}/lib"/>
-	  		<copy todir="${distrib}/lib"  file="${lib}/pentaho-meta.jar"/>
-
-	  		<!-- cwm model-->
-	  		<mkdir dir="${distrib}/cwm"/>
-	  		<copy todir="${distrib}/cwm"  file="${cwm}/PentahoCWM.xml"/>
-
-	  		<!-- jdbc settings-->
-	  		<mkdir dir="${distrib}/jdbc"/>
-	  		<copy todir="${distrib}/jdbc">
-	  			<fileset dir="${jdbc}" includes="*.*" excludes="**/.vpn"/>
-	  	        </copy>
-
-  			<!-- jdbc settings-->
-  			<mkdir dir="${distrib}/simple-jndi"/>
-  			<copy todir="${distrib}/simple-jndi">
-  				<fileset dir="${simple-jndi}" includes="*.*" excludes="**/.vpn"/>
-  	        		</copy>
-
-  	        <!-- external libs (jdbc etc) -->
-	  		<mkdir dir="${distrib}/libext"/>
-	  		<copy todir="${distrib}/libext">
-	  			<fileset dir="${libext}" includes="**/*.jar **/*.zip" excludes="**/.vpn"/>
-	  			</copy>
-
-	        <!-- swt libs (jdbc etc) -->
-	  		<mkdir dir="${distrib}/libswt"/>
-	  		<copy todir="${distrib}/libswt">
-	  			<fileset dir="${libswt}" includes="**/*" excludes="**/.vpn **/sapjco*.dll"/>
-	  			</copy>
-
-	        <!-- documentation -->
-	  		<mkdir dir="${distrib}/docs"/>
-	  		<copy todir="${distrib}/docs">
-	  			<fileset dir="${docs}" 
-	  				     includes="**/*.pdf **/*.htm **/*.html **/*.png **/*.PNG **/*.swf **/cn_ZN.zip"
-	  			         excludes="**/*.dot **/*.doc **/*.sxw **/*.odt **/*.vpn **/*feature list*" />
-	  			</copy>
-
-	  </target>
-
-	  <!--
-	       ==========================
-	             zipfile
-	       ==========================
-	  -->
-		
-	  <target name="zip" depends="distrib" description="generate the PentahoMetaData-${version}.zip file">
-	  	<echo>Generating the Pentaho Metadata distribution package PentahoMetaData-${version}.zip ...</echo>
-	  	<jar jarfile="pentaho-metadata-${version}.zip" 
-	    	 basedir="${distrib}" 
-	    	 includes="**/*"
-	  	     excludes="**/Thumbs.db"
-	  		/>
-	  </target>
-
-	  <!--
-	       ==========================
-	             Source zipfile
-	       ==========================
-	  -->
-		
-	  <target name="sourcezip" depends="" description="generate the PentahoMetaData-src-${version}.zip file">
-	  	<echo>Generating the Pentaho Metadata source packge zip file (PentahoMetaData-src-${version}.zip) ...</echo>
-	  	
-		<zip destfile="pentaho-metadata-src-${version}.zip">
-			<zipfileset dir="." prefix="pentaho-metadata-src-${version}">
-				<exclude name=".settings"/>
-				<exclude name="*.zip"/>
-				<exclude name="classes/**"/>
-				<exclude name="distrib/**"/>
-				<exclude name="lib/**"/>
-			</zipfileset>
+	<target name="zip-pentaho-metadata-src" depends="init-dist" description="generate the PentahoMetaData-src-${release.number}.zip file">
+		<echo>Generating the Pentaho Metadata source packge zip file (PentahoMetaData-src-${release.number}.zip) ...</echo>
+		<zip destfile="${dist.dir}/pentaho-metadata-src-${release.number}.zip">
+			<zipfileset dir="src" prefix="pentaho-metadata-src-${release.number}" />
 		</zip>
-	  </target>
+	</target>
 
-	
-	<!--
-	       ==========================
-	              C L E A N
-	       ==========================
-	  -->
-
-	  <target name="clean" description="clean up generated files">
-	    <delete dir="${classes}"/>
-	    <delete dir="${lib}"/>
-	    <delete dir="${distrib}"/>
-	  	<delete dir="${api}"/>
-
-	  	<delete>
-	        <fileset dir=".">
-			  <include name="*.zip"/>
-	    	</fileset>
-	  	</delete>
-	  </target>
-
-	
-	<!--
-	       ==========================
-	          Default target: all
-	       ==========================
-	  -->
-
-	<target name="default" depends="distrib" description="default = build all"/>
+	<target name="dist-metadata" depends="jar-pentaho-metadata, zip-pentaho-metadata-src, zip-pentaho-metadata-javadoc" />
 
 </project>
