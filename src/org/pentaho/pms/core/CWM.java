@@ -498,6 +498,11 @@ public class CWM
 
     public synchronized static final CWM getInstance(String domainName, boolean autoCreate ) 
     {
+      
+        if (domainName == null) {
+            return null;
+        }
+      
         // Do we have the domain yet?
         CWM cwm = (CWM) domains.get(domainName);
         if (cwm!=null) return cwm;
