@@ -14,6 +14,7 @@ package org.pentaho.pms.schema;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
@@ -163,7 +164,7 @@ public class BusinessColumn extends ConceptUtilityBase implements ChangedFlagInt
             PMSFormula formula = new PMSFormula(model, getBusinessTable(), getFormula());
             formula.parseAndValidate();
             return formula.generateSQL(locale);
-          } catch (PMSFormulaException e) {
+          } catch (PentahoMetadataException e) {
             // this is for backwards compatibility.
             // eventually throw any errors
             logger.error(Messages.getErrorString("BusinessColumn.ERROR_0001_FAILED_TO_PARSE_FORMULA", getFormula()), e); //$NON-NLS-1$

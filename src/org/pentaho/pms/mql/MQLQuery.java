@@ -30,6 +30,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.pms.core.CWM;
+import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessColumn;
@@ -37,7 +38,6 @@ import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.OrderBy;
 import org.pentaho.pms.schema.PMSFormula;
-import org.pentaho.pms.schema.PMSFormulaException;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.WhereCondition;
 import org.pentaho.pms.util.Const;
@@ -124,7 +124,7 @@ public class MQLQuery {
 		return null;
 	}
 	
-  public void addConstraint(String operator, String condition) throws PMSFormulaException {
+  public void addConstraint(String operator, String condition) throws PentahoMetadataException {
     WhereCondition where = new WhereCondition(model, operator, condition);
     constraints.add(where);
   }
@@ -150,7 +150,7 @@ public class MQLQuery {
         order.add( orderBy );
 	}
 	
-	public String getQuery( boolean useDisplayNames ) throws PMSFormulaException  {
+	public String getQuery( boolean useDisplayNames ) throws PentahoMetadataException  {
 		if( model == null || selections.size() == 0 ) {
 			return null;
 		}
@@ -161,7 +161,7 @@ public class MQLQuery {
 		return model.getSQL(selection, conditions, orderBy, locale, useDisplayNames);
 	}
 
-    public TransMeta getTransformation( boolean useDisplayNames ) throws PMSFormulaException  {
+    public TransMeta getTransformation( boolean useDisplayNames ) throws PentahoMetadataException  {
         if( model == null || selections.size() == 0 ) {
             return null;
         }
@@ -172,7 +172,7 @@ public class MQLQuery {
         return model.getTransformationMeta(selection, conditions, orderBy, locale, useDisplayNames);
     }
     
-    public List getRowsUsingTransformation( boolean useDisplayNames, StringBuffer logBuffer ) throws KettleException,  PMSFormulaException 
+    public List getRowsUsingTransformation( boolean useDisplayNames, StringBuffer logBuffer ) throws KettleException,  PentahoMetadataException 
     {
         final List list = new ArrayList();
         TransMeta transMeta = getTransformation(useDisplayNames);
@@ -513,7 +513,7 @@ public class MQLQuery {
     }
 	}
 	
-	private void addConstraintFromXmlNode( Element constraintElement ) throws PMSFormulaException {
+	private void addConstraintFromXmlNode( Element constraintElement ) throws PentahoMetadataException {
     
     NodeList nodes = constraintElement.getElementsByTagName("operator"); //$NON-NLS-1$
     String operator = null;

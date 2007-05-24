@@ -1,3 +1,15 @@
+/*
+ * Copyright 2006 Pentaho Corporation.  All rights reserved. 
+ * This software was developed by Pentaho Corporation and is provided under the terms 
+ * of the Mozilla Public License, Version 1.1, or any later version. You may not use 
+ * this file except in compliance with the license. If you need a copy of the license, 
+ * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho 
+ * BI Platform.  The Initial Developer is Pentaho Corporation.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS" 
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to 
+ * the license for the specific language governing your rights and limitations.
+*/
 package org.pentaho.pms.schema;
 
 import java.util.ArrayList;
@@ -17,7 +29,12 @@ import org.jfree.formula.lvalues.Term;
 import org.jfree.formula.operators.InfixOperator;
 import org.jfree.formula.parser.ParseException;
 import org.jfree.formula.typing.coretypes.TextType;
+import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.messages.Messages;
+import org.pentaho.pms.schema.dialect.FormulaTraversalInterface;
+import org.pentaho.pms.schema.dialect.SQLDialectInterface;
+import org.pentaho.pms.schema.dialect.SQLFunctionGeneratorInterface;
+import org.pentaho.pms.schema.dialect.SQLOperatorGeneratorInterface;
 
 import be.ibridge.kettle.core.database.DatabaseMeta;
 
@@ -37,7 +54,7 @@ import be.ibridge.kettle.core.database.DatabaseMeta;
  * @see WhereCondition
  * @see BusinessColumn
  */
-public class PMSFormula {
+public class PMSFormula implements FormulaTraversalInterface {
   
   private static final Log logger = LogFactory.getLog(PMSFormula.class);
   
@@ -65,6 +82,7 @@ public class PMSFormula {
   
   /** reference to formulaContext singleton */
   private PMSFormulaContext formulaContext = PMSFormulaContext.getInstance();
+  private SQLDialectInterface sqlDialect = null;
   
   private boolean isValidated = false;
   
@@ -72,19 +90,52 @@ public class PMSFormula {
   private String formulaString;
   
   /**
+   * constructor, currently used for testing
+   * 
+   * @param model business model for business column lookup
+   * @param formulaString formula string
+   * @throws PentahoMetadataException throws an exception if we're missing anything important
+   */
+  public PMSFormula(BusinessModel model, DatabaseMeta databaseMeta, String formulaString) throws PentahoMetadataException {
+    
+    this.model = model;
+    this.formulaString = formulaString;
+    this.databaseMeta = databaseMeta;
+    
+    if (model == null) {
+      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0001_NO_BUSINESS_MODEL_PROVIDED")); //$NON-NLS-1$
+    }
+    
+    if (databaseMeta == null) {
+      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0002_NO_DATABASE_META_PROVIDED")); //$NON-NLS-1$
+    }
+    
+    this.sqlDialect = formulaContext.getSQLDialect(databaseMeta);
+    
+    if (sqlDialect == null) {
+      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0017_DATABASE_DIALECT_NOT_FOUND", databaseMeta.getDatabaseTypeDesc())); //$NON-NLS-1$
+    }
+    
+    if (formulaString == null) {
+      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0003_NO_FORMULA_STRING_PROVIDED")); //$NON-NLS-1$
+    }
+  }
+  
+  
+  /**
    * constructor
    * 
    * @param model business model for business column lookup
    * @param formulaString formula string
-   * @throws PMSFormulaException throws an exception if we're missing anything important
+   * @throws PentahoMetadataException throws an exception if we're missing anything important
    */
-  public PMSFormula(BusinessModel model, String formulaString) throws PMSFormulaException {
+  public PMSFormula(BusinessModel model, String formulaString) throws PentahoMetadataException {
     
     this.model = model;
     this.formulaString = formulaString;
     
     if (model == null) {
-      throw new PMSFormulaException(Messages.getErrorString("PMSFormula.ERROR_0001_NO_BUSINESS_MODEL_PROVIDED")); //$NON-NLS-1$
+      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0001_NO_BUSINESS_MODEL_PROVIDED")); //$NON-NLS-1$
     }
     
     if (model.nrBusinessTables() > 0) {
@@ -92,11 +143,17 @@ public class PMSFormula {
     }
     
     if (databaseMeta == null) {
-      throw new PMSFormulaException(Messages.getErrorString("PMSFormula.ERROR_0002_NO_DATABASE_META_PROVIDED")); //$NON-NLS-1$
+      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0002_NO_DATABASE_META_PROVIDED")); //$NON-NLS-1$
+    }
+    
+    this.sqlDialect = formulaContext.getSQLDialect(databaseMeta);
+    
+    if (sqlDialect == null) {
+      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0017_DATABASE_DIALECT_NOT_FOUND", databaseMeta.getDatabaseTypeDesc())); //$NON-NLS-1$
     }
     
     if (formulaString == null) {
-      throw new PMSFormulaException(Messages.getErrorString("PMSFormula.ERROR_0003_NO_FORMULA_STRING_PROVIDED")); //$NON-NLS-1$
+      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0003_NO_FORMULA_STRING_PROVIDED")); //$NON-NLS-1$
     }
   }
   
@@ -106,25 +163,25 @@ public class PMSFormula {
    * @param model business model for business column lookup
    * @param table business table for resolving fields
    * @param formulaString formula string
-   * @throws PMSFormulaException throws an exception if we're missing anything important
+   * @throws PentahoMetadataException throws an exception if we're missing anything important
    */
-  public PMSFormula(BusinessModel model, BusinessTable table, String formulaString) throws PMSFormulaException {
+  public PMSFormula(BusinessModel model, BusinessTable table, String formulaString) throws PentahoMetadataException {
     
     this(model, formulaString);
     
     this.table = table;
     
     if (table == null) {
-      throw new PMSFormulaException(Messages.getErrorString("PMSFormula.ERROR_0004_NO_BUSINESS_TABLE_PROVIDED")); //$NON-NLS-1$
+      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0004_NO_BUSINESS_TABLE_PROVIDED")); //$NON-NLS-1$
     }
   }
 
   /**
    * parse and validate formula, including resolving all fields
    * 
-   * @throws PMSFormulaException
+   * @throws PentahoMetadataException
    */
-  public void parseAndValidate() throws PMSFormulaException {
+  public void parseAndValidate() throws PentahoMetadataException {
     if (!isValidated) {
       // throws an error if failed to parse and validate condition
       try {
@@ -136,16 +193,16 @@ public class PMSFormula {
       } catch (ParseException e) {
         logger.error("an exception occurred", e); //$NON-NLS-1$
         // is it possible to provide more detail in this exception to the user?
-        throw new PMSFormulaException(Messages.getErrorString("PMSFormula.ERROR_0005_FAILED_TO_PARSE_FORMULA", formulaString)); //$NON-NLS-1$
+        throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0005_FAILED_TO_PARSE_FORMULA", formulaString)); //$NON-NLS-1$
       } catch (EvaluationException e) {
         logger.error("an exception occurred", e); //$NON-NLS-1$
-        throw new PMSFormulaException(Messages.getErrorString("PMSFormula.ERROR_0006_FAILED_TO_EVALUATE_FORMULA", formulaString)); //$NON-NLS-1$
+        throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0006_FAILED_TO_EVALUATE_FORMULA", formulaString)); //$NON-NLS-1$
       } catch (Throwable e) {
-        if (e instanceof PMSFormulaException) {
-          throw (PMSFormulaException)e;         
+        if (e instanceof PentahoMetadataException) {
+          throw (PentahoMetadataException)e;         
         } else {
           logger.error("an exception occurred", e); //$NON-NLS-1$
-          throw new PMSFormulaException(Messages.getErrorString("PMSFormula.ERROR_0007_UNKNOWN_ERROR", formulaString)); //$NON-NLS-1$
+          throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0007_UNKNOWN_ERROR", formulaString)); //$NON-NLS-1$
         }
       }
       // this should populate the fields object
@@ -159,12 +216,12 @@ public class PMSFormula {
    * 
    * @param fieldName name of field, either "<BUSINESS TABLE ID>.<BUSINESS COLUMN ID>" or "<PHYSICAL COLUMN>"
    * 
-   * @throws PMSFormulaException if field cannot be resolved
+   * @throws PentahoMetadataException if field cannot be resolved
    */
-  private void addField(String fieldName) throws PMSFormulaException {
+  private void addField(String fieldName) throws PentahoMetadataException {
     
     if (fieldName == null) {
-      throw new PMSFormulaException(Messages.getErrorString("PMSFormula.ERROR_0008_FIELDNAME_NULL", formulaString)); //$NON-NLS-1$
+      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0008_FIELDNAME_NULL", formulaString)); //$NON-NLS-1$
     }
     
     // we need to validate that "fieldName" actually maps to a field!
@@ -176,7 +233,7 @@ public class PMSFormula {
         // expecting <PHYSICAL COLUMN>
         
         if (table == null) {
-          throw new PMSFormulaException(Messages.getErrorString("PMSFormula.ERROR_0009_FIELDNAME_ERROR_NO_BUSINESS_TABLE", fieldName)); //$NON-NLS-1$
+          throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0009_FIELDNAME_ERROR_NO_BUSINESS_TABLE", fieldName)); //$NON-NLS-1$
         }
         
         // note, this column name is the "physical column name" vs. the "business column name"
@@ -197,23 +254,23 @@ public class PMSFormula {
             }
         }
         
-        throw new PMSFormulaException(Messages.getErrorString("PMSFormula.ERROR_0010_FIELDNAME_ERROR_COLUMN_NOT_FOUND", fieldName, fieldName ,table.getId()));//$NON-NLS-1$
+        throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0010_FIELDNAME_ERROR_COLUMN_NOT_FOUND", fieldName, fieldName ,table.getId()));//$NON-NLS-1$
         
       } else {
       
         // expecting <BUSINESS TABLE ID>.<BUSINESS COLUMN ID>
         String tblcol[] = fieldName.split("\\."); //$NON-NLS-1$
         if (tblcol.length != 2) {
-          throw new PMSFormulaException(Messages.getErrorString("PMSFormula.ERROR_0011_INVALID_FIELDNAME",fieldName)); //$NON-NLS-1$
+          throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0011_INVALID_FIELDNAME",fieldName)); //$NON-NLS-1$
         }
         
         BusinessTable bizTable = model.findBusinessTable(tblcol[0]);
         if (bizTable == null) {
-          throw new PMSFormulaException(Messages.getErrorString("PMSFormula.ERROR_0012_FIELDNAME_ERROR_TABLE_NOT_FOUND", fieldName, tblcol[0])); //$NON-NLS-1$
+          throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0012_FIELDNAME_ERROR_TABLE_NOT_FOUND", fieldName, tblcol[0])); //$NON-NLS-1$
         }
         BusinessColumn column = bizTable.findBusinessColumn(tblcol[1]);
         if (column == null) {
-          throw new PMSFormulaException(Messages.getErrorString("PMSFormula.ERROR_0010_FIELDNAME_ERROR_COLUMN_NOT_FOUND", fieldName, tblcol[1], tblcol[0])); //$NON-NLS-1$
+          throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0010_FIELDNAME_ERROR_COLUMN_NOT_FOUND", fieldName, tblcol[1], tblcol[0])); //$NON-NLS-1$
         }
         businessColumnMap.put(fieldName, column);
         businessColumnList.add(column);
@@ -247,7 +304,7 @@ public class PMSFormula {
    * 
    * @param val the root of the formula object model 
    */
-  private void validateAndResolveObjectModel(Object val) throws PMSFormulaException {
+  private void validateAndResolveObjectModel(Object val) throws PentahoMetadataException {
     if (val instanceof Term) {
       Term t = (Term)val;
       validateAndResolveObjectModel(t.getOptimizedHeadValue());
@@ -264,27 +321,32 @@ public class PMSFormula {
     } else if (val instanceof FormulaFunction) {
       
       FormulaFunction f = (FormulaFunction)val;
-      if (formulaContext.isSupportedFunction(f.getFunctionName())) {
+      if (sqlDialect.isSupportedFunction(f.getFunctionName())) {
+        SQLFunctionGeneratorInterface gen = sqlDialect.getFunctionSQLGenerator(f.getFunctionName());
+        gen.validateFunction(f);
         // note, if aggregator function, we should make sure it is part of the table formula vs. conditional formula
-        if (table == null && formulaContext.isAggregateFunction(f.getFunctionName())) {
-          throw new PMSFormulaException(Messages.getErrorString("PMSFormula.ERROR_0013_AGGREGATE_USAGE_ERROR", f.getFunctionName(), formulaString)); //$NON-NLS-1$
+        if (table == null && sqlDialect.isAggregateFunction(f.getFunctionName())) {
+          throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0013_AGGREGATE_USAGE_ERROR", f.getFunctionName(), formulaString)); //$NON-NLS-1$
         }
-        validateAndResolveObjectModel(f.getChildValues()[0]);
-        for (int i = 1; i < f.getChildValues().length; i++) {
-          validateAndResolveObjectModel(f.getChildValues()[i]);
+        // validate functions parameters
+        if (f.getChildValues() != null && f.getChildValues().length > 0) {
+          validateAndResolveObjectModel(f.getChildValues()[0]);
+          for (int i = 1; i < f.getChildValues().length; i++) {
+            validateAndResolveObjectModel(f.getChildValues()[i]);
+          }
         }
       } else {
-        throw new PMSFormulaException(Messages.getErrorString("PMSFormula.ERROR_0014_FUNCTION_NOT_SUPPORTED", f.getFunctionName())); //$NON-NLS-1$
+        throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0014_FUNCTION_NOT_SUPPORTED", f.getFunctionName())); //$NON-NLS-1$
       }
     } else if (val instanceof InfixOperator) {
-      if ( formulaContext.isSupportedInfixOperator(val.toString())) {
+      if ( sqlDialect.isSupportedInfixOperator(val.toString())) {
         // everything is fine
         return;
       } else {
-        throw new PMSFormulaException(Messages.getErrorString("PMSFormula.ERROR_0014_OPERATOR_NOT_SUPPORTED", val.toString())); //$NON-NLS-1$
+        throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0014_OPERATOR_NOT_SUPPORTED", val.toString())); //$NON-NLS-1$
       }
     } else {
-      throw new PMSFormulaException(Messages.getErrorString("PMSFormula.ERROR_0016_CLASS_TYPE_NOT_SUPPORTED", val.getClass().toString())); //$NON-NLS-1$
+      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0016_CLASS_TYPE_NOT_SUPPORTED", val.getClass().toString())); //$NON-NLS-1$
     }
   }
   
@@ -295,7 +357,7 @@ public class PMSFormula {
    * @param sb the string buffer to append the SQL to 
    * @param locale the current locale
    */
-  private void generateSQL(Object val, StringBuffer sb, String locale) throws PMSFormulaException {
+  public void generateSQL(Object val, StringBuffer sb, String locale) throws PentahoMetadataException {
     if (val instanceof Term) {
       Term t = (Term)val;
       sb.append("("); //$NON-NLS-1$
@@ -332,36 +394,25 @@ public class PMSFormula {
       StaticValue v = (StaticValue)val;
       
       if (v.getValueType() instanceof TextType) {
-        sb.append(formulaContext.quoteStringLiteral(databaseMeta, v.getValue()));
+        sb.append(sqlDialect.quoteStringLiteral(v.getValue()));
       } else {
         sb.append(v.getValue());
       }
     } else if (val instanceof FormulaFunction) {
       
       FormulaFunction f = (FormulaFunction)val;
-      SQLGeneratorInterface gen = formulaContext.getFunctionSQLGenerator(f.getFunctionName());
-      if (gen.getType() == SQLGeneratorInterface.INLINE_FUNCTION) {
-        generateSQL(f.getChildValues()[0], sb, locale);
-        for (int i = 1; i < f.getChildValues().length; i++) {
-          sb.append(" " + gen.getSQL(databaseMeta) + " "); //$NON-NLS-1$ //$NON-NLS-2$
-          generateSQL(f.getChildValues()[i], sb, locale);
-        }
-      } else if (gen.getType() == SQLGeneratorInterface.PARAM_FUNCTION || gen.getType() == SQLGeneratorInterface.PARAM_AGG_FUNCTION) {
-        sb.append(" " + gen.getSQL(databaseMeta) + " ( "); //$NON-NLS-1$ //$NON-NLS-2$
-        generateSQL(f.getChildValues()[0], sb, locale);
-        for (int i = 1; i < f.getChildValues().length; i++) {
-          sb.append(" " + gen.getFunctionParamSeparator(databaseMeta) + " "); //$NON-NLS-1$ //$NON-NLS-2$
-          generateSQL(f.getChildValues()[i], sb, locale);
-        }
-        sb.append(" ) "); //$NON-NLS-1$
-      }
+      SQLFunctionGeneratorInterface gen = sqlDialect.getFunctionSQLGenerator(f.getFunctionName());
+
+      // note that generateFunctionSQL calls back into this function for children params if necessary
+      gen.generateFunctionSQL(this, sb, locale, f);
+
     } else if (val instanceof InfixOperator) {
-      if ( formulaContext.isSupportedInfixOperator(val.toString())) {
-        SQLGeneratorInterface gen = formulaContext.getInfixOperatorSQLGenerator(val.toString());
-        sb.append(" " + gen.getSQL(databaseMeta) + " "); //$NON-NLS-1$ //$NON-NLS-2$
+      if ( sqlDialect.isSupportedInfixOperator(val.toString())) {
+        SQLOperatorGeneratorInterface gen = sqlDialect.getInfixOperatorSQLGenerator(val.toString());
+        sb.append(" " + gen.getOperatorSQL() + " "); //$NON-NLS-1$ //$NON-NLS-2$
       }
     } else {
-      throw new PMSFormulaException(Messages.getErrorString("PMSFormula.ERROR_0016_CLASS_TYPE_NOT_SUPPORTED", val.getClass().toString())); //$NON-NLS-1$
+      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0016_CLASS_TYPE_NOT_SUPPORTED", val.getClass().toString())); //$NON-NLS-1$
     }
   }
   
@@ -372,9 +423,9 @@ public class PMSFormula {
    * 
    * @return sql string
    */
-  public String generateSQL(String locale) throws PMSFormulaException {
+  public String generateSQL(String locale) throws PentahoMetadataException {
     if (!isValidated) {
-      throw new PMSFormulaException(Messages.getErrorString("PMSFormula.ERROR_0017_STATE_ERROR_NOT_VALIDATED")); //$NON-NLS-1$
+      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0017_STATE_ERROR_NOT_VALIDATED")); //$NON-NLS-1$
     }
     StringBuffer sb = new StringBuffer();
     generateSQL(formulaObject.getRootReference(), sb, locale);

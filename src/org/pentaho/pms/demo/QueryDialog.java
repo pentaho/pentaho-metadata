@@ -42,6 +42,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.editor.MetaEditor;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.mql.MQLQuery;
@@ -50,7 +51,6 @@ import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.OrderBy;
-import org.pentaho.pms.schema.PMSFormulaException;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.WhereCondition;
 import org.pentaho.pms.util.Const;
@@ -990,7 +990,7 @@ public class QueryDialog extends Dialog
         updateOrders();
     }
     
-    private MQLQuery getQuery() throws PMSFormulaException
+    private MQLQuery getQuery() throws PentahoMetadataException
     {
         MQLQuery mqlQuery = new MQLQuery(schemaMeta, getModel(), locale);
         ArrayList mqlQueryConditions = new ArrayList();

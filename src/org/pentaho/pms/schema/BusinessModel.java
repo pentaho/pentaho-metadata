@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.Vector;
 
+import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
@@ -734,7 +735,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
    * @param locale the locale
    * @return a SQL query based on a column selection and locale
    */
-  public String getSQL(BusinessColumn selectedColumns[], String locale, boolean useDisplayNames) throws PMSFormulaException {
+  public String getSQL(BusinessColumn selectedColumns[], String locale, boolean useDisplayNames) throws PentahoMetadataException {
     return getSQL(selectedColumns, (WhereCondition[]) null, (OrderBy[]) null, locale, useDisplayNames);
   }
 
@@ -745,7 +746,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
    * @return a SQL query based on a column selection, conditions and a locale
    */
   public String getSQL(BusinessColumn selectedColumns[], WhereCondition conditions[], String locale,
-      boolean useDisplayNames) throws PMSFormulaException {
+      boolean useDisplayNames) throws PentahoMetadataException {
     return getSQL(selectedColumns, conditions, (OrderBy[]) null, locale, useDisplayNames);
   }
 
@@ -757,7 +758,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
    * @return a SQL query based on a column selection, conditions and a locale
    */
   public String getSQL(BusinessColumn selectedColumns[], WhereCondition conditions[], OrderBy[] orderBy, String locale,
-      boolean useDisplayNames) throws PMSFormulaException {
+      boolean useDisplayNames) throws PentahoMetadataException {
     String sql = null;
 
     // These are the tables involved in the field selection:
@@ -778,7 +779,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
   // Klair!
 
   public String getSQL(BusinessColumn selectedColumns[], Path path, WhereCondition conditions[], OrderBy[] orderBy,
-      String locale, boolean useDisplayNames) throws PMSFormulaException {
+      String locale, boolean useDisplayNames) throws PentahoMetadataException {
     String sql = null;
 
     BusinessTable usedBusinessTables[] = path.getUsedTables();
@@ -974,7 +975,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
   }
 
   public TransMeta getTransformationMeta(BusinessColumn selectedColumns[], WhereCondition conditions[],
-      OrderBy[] orderBy, String locale, boolean useDisplayNames) throws PMSFormulaException  {
+      OrderBy[] orderBy, String locale, boolean useDisplayNames) throws PentahoMetadataException  {
     if (selectedColumns == null || selectedColumns.length == 0)
       return null;
 

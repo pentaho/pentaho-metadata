@@ -36,6 +36,7 @@ package org.pentaho.pms.schema;
 import java.util.Iterator;
 import java.util.List;
 
+import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.messages.Messages;
 
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
@@ -58,7 +59,7 @@ public class WhereCondition extends ConceptUtilityBase implements ConceptUtility
   /**
    * The WhereCondition now is based on LibFormula, so only a conditional string is necessary
    */
-  public WhereCondition(BusinessModel model, String operator, String condition) throws PMSFormulaException {
+  public WhereCondition(BusinessModel model, String operator, String condition) throws PentahoMetadataException {
     this.operator = operator;
     this.condition = condition;
     this.formula = new PMSFormula(model, condition);
@@ -124,7 +125,7 @@ public class WhereCondition extends ConceptUtilityBase implements ConceptUtility
    * @param locale
    * @return
    */
-  public String getWhereClause(String locale, boolean useOperator) throws PMSFormulaException {
+  public String getWhereClause(String locale, boolean useOperator) throws PentahoMetadataException {
     String retval = ""; //$NON-NLS-1$
     if (condition!=null) {
             if (Const.isEmpty(operator) || !useOperator)
