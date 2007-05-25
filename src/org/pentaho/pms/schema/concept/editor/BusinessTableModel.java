@@ -2,6 +2,7 @@ package org.pentaho.pms.schema.concept.editor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.PhysicalColumn;
@@ -102,10 +103,10 @@ public class BusinessTableModel extends AbstractTableModel {
       physicalTable = (PhysicalTable) parent;
       table.setPhysicalTable(physicalTable);
       if (logger.isDebugEnabled()) {
-        logger.debug("set parent table to " + physicalTable);
+        logger.debug(Messages.getString("BusinessTableModel.DEBUG_SET_PARENT_TABLE", physicalTable.toString())); //$NON-NLS-1$
       }
     } else {
-      throw new IllegalArgumentException("argument can only be instance of PhysicalTable");
+      throw new IllegalArgumentException(Messages.getString("BusinessTableModel.ERROR_0001_ARGUMENT_MUST_BE_PHYSICAL_TABLE")); //$NON-NLS-1$
     }
   }
 

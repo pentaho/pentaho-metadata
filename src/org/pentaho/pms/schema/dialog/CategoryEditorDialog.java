@@ -103,8 +103,8 @@ public class CategoryEditorDialog extends TitleAreaDialog {
 
   protected Control createContents(Composite parent) {
     Control contents = super.createContents(parent);
-    setMessage("Select an available table or column and use the arrow buttons to add a new category or column within a category. Create new, generic categories by clicking on the 'Add' button to the right.");
-    setTitle("Category Editor");
+    setMessage(Messages.getString("CategoryEditorDialog.USER_DIALOG_MESSAGE")); //$NON-NLS-1$
+    setTitle(Messages.getString("CategoryEditorDialog.USER_DIALOG_TITLE")); //$NON-NLS-1$
     return contents;
   }
 
@@ -164,7 +164,7 @@ public class CategoryEditorDialog extends TitleAreaDialog {
     parent.setLayout(gridLayout);
 
     Label label0 = new Label(parent, SWT.NONE);
-    label0.setText("Available Business Tables");
+    label0.setText(Messages.getString("CategoryEditorDialog.USER_AVAILABLE_BUSINESS_TABLES")); //$NON-NLS-1$
     label0.setBackground(GUIResource.getInstance().getColorWhite());
     GridData data = new GridData(GridData.FILL_HORIZONTAL);
     data.horizontalAlignment = GridData.FILL;
@@ -197,7 +197,7 @@ public class CategoryEditorDialog extends TitleAreaDialog {
     parent.setLayout(gridLayout);
 
     Label label0 = new Label(parent, SWT.NONE);
-    label0.setText("Business View Categories");
+    label0.setText(Messages.getString("CategoryEditorDialog.USER_BUSINESS_VIEW_CATEGORIES")); //$NON-NLS-1$
     label0.setBackground(GUIResource.getInstance().getColorWhite());
     GridData data = new GridData(GridData.FILL_HORIZONTAL);
     data.horizontalAlignment = GridData.FILL;
@@ -206,8 +206,8 @@ public class CategoryEditorDialog extends TitleAreaDialog {
     label0.setLayoutData(data);
 
     wNew = new Button(parent, SWT.PUSH);
-    wNew.setText("+");
-    wNew.setToolTipText("Add New Category...");
+    wNew.setText("+"); //$NON-NLS-1$
+    wNew.setToolTipText(Messages.getString("CategoryEditorDialog.USER_ADD_NEW_CATEGORY")); //$NON-NLS-1$
     data = new GridData();
     data.horizontalAlignment = GridData.END;
     wNew.setLayoutData(data);
@@ -218,8 +218,8 @@ public class CategoryEditorDialog extends TitleAreaDialog {
     });
 
     wDelSelection = new Button(parent, SWT.PUSH);
-    wDelSelection.setText("x");
-    wDelSelection.setToolTipText("Delete");
+    wDelSelection.setText("x"); //$NON-NLS-1$
+    wDelSelection.setToolTipText(Messages.getString("CategoryEditorDialog.USER_DELETE")); //$NON-NLS-1$
     data = new GridData();
     data.horizontalAlignment = GridData.END;
     wDelSelection.setLayoutData(data);
@@ -270,8 +270,8 @@ public class CategoryEditorDialog extends TitleAreaDialog {
     composite0.setBackground(GUIResource.getInstance().getColorWhite());
 
     wAddSelection = new Button(parent, SWT.PUSH);
-    wAddSelection.setText(">");
-    wAddSelection.setToolTipText("Add");
+    wAddSelection.setText(">"); //$NON-NLS-1$
+    wAddSelection.setToolTipText(Messages.getString("CategoryEditorDialog.USER_ADD")); //$NON-NLS-1$
     data = new GridData(GridData.FILL_HORIZONTAL);
     data.horizontalAlignment = GridData.CENTER;
     data.verticalAlignment = GridData.CENTER;
@@ -284,8 +284,8 @@ public class CategoryEditorDialog extends TitleAreaDialog {
     });
 
     wAddAll = new Button(parent, SWT.PUSH);
-    wAddAll.setText(">>");
-    wAddAll.setToolTipText("Add All");
+    wAddAll.setText(">>"); //$NON-NLS-1$
+    wAddAll.setToolTipText(Messages.getString("CategoryEditorDialog.USER_ADD_ALL")); //$NON-NLS-1$
     data = new GridData(GridData.FILL_HORIZONTAL);
     data.horizontalAlignment = GridData.CENTER;
     data.verticalAlignment = GridData.CENTER;
@@ -327,7 +327,7 @@ public class CategoryEditorDialog extends TitleAreaDialog {
 
   protected void configureShell(Shell shell) {
     super.configureShell(shell);
-    shell.setText("Category Editor");
+    shell.setText(Messages.getString("CategoryEditorDialog.USER_CATEGORY_EDITOR")); //$NON-NLS-1$
   }
 
   protected void setShellStyle(int newShellStyle) {
@@ -357,7 +357,7 @@ public class CategoryEditorDialog extends TitleAreaDialog {
         items[i].dispose();
     }
     MenuItem miNew = new MenuItem(categoryMenu, SWT.PUSH);
-    miNew.setText("Add New Category..."); 
+    miNew.setText(Messages.getString("CategoryEditorDialog.USER_ADD_NEW_CATEGORY"));  //$NON-NLS-1$
     miNew.addListener(SWT.Selection, new Listener() {
       public void handleEvent(Event evt) {
         newCategory();
@@ -525,14 +525,14 @@ public class CategoryEditorDialog extends TitleAreaDialog {
         // There are no categories selected in the category tree, so ... 
         if (!foundSelectedParent){
           MessageBox mb = new MessageBox(this.getShell(), SWT.OK | SWT.ICON_ERROR);
-          mb.setMessage("Select the category from the tree on the right that you want to add column(s) to.");  
-          mb.setText("No Category Selection Found");
+          mb.setMessage(Messages.getString("CategoryEditorDialog.USER_SELECT_CATEGORY_ON_RIGHT"));   //$NON-NLS-1$
+          mb.setText(Messages.getString("CategoryEditorDialog.USER_NO_SELECTION_FOUND")); //$NON-NLS-1$
           mb.open();
           break;
         }
         // Add the column to the category
         parentCategory.addBusinessColumn((BusinessColumn)((BusinessColumnTreeNode)domainObject).getDomainObject());
-        ((CategoryTreeNode)firstSelection).addDomainChild((BusinessColumn)((BusinessColumnTreeNode)domainObject).getDomainObject());
+        ((CategoryTreeNode)firstSelection).addDomainChild(((BusinessColumnTreeNode)domainObject).getDomainObject());
       }
     }
   }

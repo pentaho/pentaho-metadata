@@ -934,7 +934,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
             public void widgetSelected(SelectionEvent e) {
               selrect = null;
               // TODO implement setLocale
-              log.logError("Not Implemented", "Set Locale functionality not yet implemented");
+              log.logError("Not Implemented", "Set Locale functionality not yet implemented"); //$NON-NLS-1$ //$NON-NLS-2$
             }
           });
 
