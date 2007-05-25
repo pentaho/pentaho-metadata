@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -106,9 +107,9 @@ import org.pentaho.pms.schema.dialog.CategoryEditorDialog;
 import org.pentaho.pms.schema.dialog.PhysicalTableDialog;
 import org.pentaho.pms.schema.dialog.PublishDialog;
 import org.pentaho.pms.schema.dialog.RelationshipDialog;
+import org.pentaho.pms.schema.security.SecurityDialog;
 import org.pentaho.pms.schema.security.SecurityReference;
 import org.pentaho.pms.schema.security.SecurityService;
-import org.pentaho.pms.schema.security.SecurityServiceDialog;
 import org.pentaho.pms.ui.tree.BusinessColumnTreeNode;
 import org.pentaho.pms.ui.tree.BusinessModelTreeNode;
 import org.pentaho.pms.ui.tree.BusinessModelsTreeNode;
@@ -3495,11 +3496,11 @@ public class MetaEditor {
   }
 
   public void editSecurityService() {
-    SecurityServiceDialog dialog = new SecurityServiceDialog(shell, schemaMeta.getSecurityReference().getSecurityService());
+    SecurityDialog dialog = new SecurityDialog(shell, schemaMeta.getSecurityReference().getSecurityService());
  
 //    SecurityServiceDialog dialog = new SecurityServiceDialog(shell, schemaMeta.getSecurityReference()
 //        .getSecurityService());
-    if (dialog.open()) {
+    if (dialog.open() == IDialogConstants.OK_ID) {
       // try to grab it from the security service if it exists...
       SecurityService securityService = schemaMeta.getSecurityReference().getSecurityService();
       if (securityService != null) {

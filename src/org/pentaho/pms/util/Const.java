@@ -40,6 +40,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.TreeItem;
 import org.pentaho.pms.messages.Messages;
 
+import be.ibridge.kettle.core.Props;
 import be.ibridge.kettle.core.database.DatabaseMeta;
 import be.ibridge.kettle.core.exception.KettleException;
 import be.ibridge.kettle.job.entry.JobEntryCopy;
@@ -240,6 +241,22 @@ public class Const
 	 */
 	public static final String XML_ENCODING = "UTF-8"; //$NON-NLS-1$
 
+  /**
+   * Default server web service URL for retrieving security information
+   */
+  public static final String DEFAULT_SERVICE_URL = "http://localhost:8080/pentaho/ServiceAction"; //$NON-NLS-1$
+
+  /**
+   * Name of the service to retrieve security information
+   */
+  public static final String SECURITY_SERVICE_NAME = "SecurityDetails"; //$NON-NLS-1$
+
+  /**
+   * Name of the parameter passed to the service to retrieve security information
+   */
+  public static final String SECURITY_SERVICE_PARAMETER = "details"; //$NON-NLS-1$
+  
+  
     /**
      * The directory / path to load images from
      */
@@ -1609,4 +1626,13 @@ public class Const
        
        return id;
     }
+    
+    public static String getCustomParameter(Props props, String param, String defaultValue){
+        if (props.getCustomParameter(param, null)==null){
+          props.setCustomParameter(param, defaultValue);
+          props.saveProps();
+        }
+        return props.getCustomParameter(param, defaultValue);
+    }
+    
 }

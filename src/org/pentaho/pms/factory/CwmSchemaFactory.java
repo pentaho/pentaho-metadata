@@ -398,8 +398,8 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         CwmEvent cwmEvent = cwm.createEvent(CWM.EVENT_SECURITY_SERVICE);
         
         cwm.addTaggedValue(cwmEvent, CWM.TAG_SECURITY_SERVICE_URL, securityService.getServiceURL());
-        cwm.addTaggedValue(cwmEvent, CWM.TAG_SECURITY_DETAILS_NAME, securityService.getDetailsServiceName());
-        cwm.addTaggedValue(cwmEvent, CWM.TAG_SECURITY_DETAIL_NAME, securityService.getDetailServiceName());
+        cwm.addTaggedValue(cwmEvent, CWM.TAG_SECURITY_DETAILS_NAME, securityService.getServiceName());
+        cwm.addTaggedValue(cwmEvent, CWM.TAG_SECURITY_DETAIL_NAME, securityService.getDetailNameParameter());
         cwm.addTaggedValue(cwmEvent, CWM.TAG_SECURITY_DETAIL_TYPE, securityService.getServiceTypeDesc());
         cwm.addTaggedValue(cwmEvent, CWM.TAG_SECURITY_USERNAME, securityService.getUsername());
         cwm.addTaggedValue(cwmEvent, CWM.TAG_SECURITY_PASSWORD, securityService.getPassword());
@@ -427,8 +427,8 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         if (cwmEvent!=null)
         {
             securityService.setServiceURL(cwm.getFirstTaggedValue(cwmEvent, CWM.TAG_SECURITY_SERVICE_URL) );
-            securityService.setDetailsServiceName( cwm.getFirstTaggedValue(cwmEvent, CWM.TAG_SECURITY_DETAILS_NAME ) );
-            securityService.setDetailServiceName( cwm.getFirstTaggedValue(cwmEvent, CWM.TAG_SECURITY_DETAIL_NAME ) );
+            securityService.setServiceName( cwm.getFirstTaggedValue(cwmEvent, CWM.TAG_SECURITY_DETAILS_NAME ) );
+            securityService.setDetailNameParameter( cwm.getFirstTaggedValue(cwmEvent, CWM.TAG_SECURITY_DETAIL_NAME ) );
             securityService.setDetailServiceType( SecurityService.getServiceType( cwm.getFirstTaggedValue(cwmEvent, CWM.TAG_SECURITY_DETAIL_TYPE ) ) );
             securityService.setUsername( cwm.getFirstTaggedValue(cwmEvent, CWM.TAG_SECURITY_USERNAME ) );
             securityService.setPassword( cwm.getFirstTaggedValue(cwmEvent, CWM.TAG_SECURITY_PASSWORD ) );

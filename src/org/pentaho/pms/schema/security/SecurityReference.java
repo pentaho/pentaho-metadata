@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.util.Const;
 import org.w3c.dom.Node;
@@ -134,6 +135,10 @@ public class SecurityReference
                     acls.add(acl);
                 }
                 Collections.sort(acls); // sort by acl mask, from low to high
+            }
+            catch(PentahoMetadataException ex)
+            {
+                throw new Exception(ex.getMessage(), ex); //$NON-NLS-1$
             }
             catch(Exception e)
             {

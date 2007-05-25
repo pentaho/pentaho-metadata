@@ -18,7 +18,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -32,7 +31,7 @@ import org.eclipse.swt.widgets.Text;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.util.GUIResource;
 
-import be.ibridge.kettle.core.Const;
+import org.pentaho.pms.util.Const;
 import be.ibridge.kettle.core.Props;
 import be.ibridge.kettle.core.WindowProperty;
 import be.ibridge.kettle.core.dialog.EnterTextDialog;
@@ -66,10 +65,11 @@ public class SecurityDialog extends TitleAreaDialog {
   private List wDetailType;
 
   // Proxy
-  private Label wlProxyHost, wlProxyPort, wlNonProxyHosts;
+  private Label wlProxyHost, wlProxyPort;
 
-  private Text wProxyHost, wProxyPort, wNonProxyHosts;
+  private Text wProxyHost, wProxyPort;
 
+  // File
   private Label wlFile;
 
   private Text wFile;
@@ -89,20 +89,17 @@ public class SecurityDialog extends TitleAreaDialog {
 
   private SecurityService securityService;
 
-  private boolean reload;
-
   public SecurityDialog(Shell shell, SecurityService service) {
     super(shell);
     originalService = service;
     securityService = (SecurityService) originalService.clone();
     props = Props.getInstance();
-    reload = false;
   }
 
   protected Control createContents(Composite parent) {
     Control contents = super.createContents(parent);
-    setMessage("Retrieve the security information from the Pentaho server. Choose to set up a security service, or get the values from a local file.");
-    setTitle("Security Service");
+    setMessage(Messages.getString("SecurityDialog.USER_DIALOG_MESSAGE")); //$NON-NLS-1$
+    setTitle(Messages.getString("SecurityDialog.USER_DIALOG_TITLE")); //$NON-NLS-1$
     return contents;
   }
 
@@ -176,7 +173,7 @@ public class SecurityDialog extends TitleAreaDialog {
     // START OF DB TAB   ///
     //////////////////////////
     wServiceTab = new CTabItem(wTabFolder, SWT.NONE);
-    wServiceTab.setText(Messages.getString("SecurityServiceDialog.USER_SERVICE")); //$NON-NLS-1$
+    wServiceTab.setText(Messages.getString("SecurityDialog.USER_SERVICE")); //$NON-NLS-1$
 
     wServiceComp = new Composite(wTabFolder, SWT.NONE);
     props.setLook(wServiceComp);
@@ -189,7 +186,7 @@ public class SecurityDialog extends TitleAreaDialog {
     // What's the service URL?
     wlServiceURL = new Label(wServiceComp, SWT.RIGHT);
     props.setLook(wlServiceURL);
-    wlServiceURL.setText(Messages.getString("SecurityServiceDialog.USER_SERVICE_URL")); //$NON-NLS-1$
+    wlServiceURL.setText(Messages.getString("SecurityDialog.USER_SERVICE_URL")); //$NON-NLS-1$
     FormData fdlServiceURL = new FormData();
     fdlServiceURL.top = new FormAttachment(0, 0);
     fdlServiceURL.left = new FormAttachment(0, 0); // First one in the left top corner
@@ -205,12 +202,21 @@ public class SecurityDialog extends TitleAreaDialog {
     fdServiceURL.right = new FormAttachment(95, 0);
     wServiceURL.setLayoutData(fdServiceURL);
 
+    Label wlExampleServiceURL = new Label(wServiceComp, SWT.LEFT);
+    props.setLook(wlExampleServiceURL);
+    wlExampleServiceURL.setText("Example: " + Const.DEFAULT_SERVICE_URL); //$NON-NLS-1$
+    FormData fdlExampleServiceURL = new FormData();
+    fdlExampleServiceURL.top = new FormAttachment(wServiceURL, margin);
+    fdlExampleServiceURL.left = new FormAttachment(middle, margin); 
+    fdlExampleServiceURL.right = new FormAttachment(95, 0);
+    wlExampleServiceURL.setLayoutData(fdlExampleServiceURL);
+
     // Port
     wlDetailType = new Label(wServiceComp, SWT.RIGHT);
-    wlDetailType.setText(Messages.getString("SecurityServiceDialog.USER_DETAIL_TYPE")); //$NON-NLS-1$
+    wlDetailType.setText(Messages.getString("SecurityDialog.USER_DETAIL_TYPE")); //$NON-NLS-1$
     props.setLook(wlDetailType);
     FormData fdlDetailType = new FormData();
-    fdlDetailType.top = new FormAttachment(wServiceURL, margin);
+    fdlDetailType.top = new FormAttachment(wlExampleServiceURL, margin);
     fdlDetailType.left = new FormAttachment(0, 0);
     fdlDetailType.right = new FormAttachment(middle, -margin);
     wlDetailType.setLayoutData(fdlDetailType);
@@ -218,7 +224,7 @@ public class SecurityDialog extends TitleAreaDialog {
     wDetailType = new List(wServiceComp, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
     props.setLook(wDetailType);
     FormData fdDetailType = new FormData();
-    fdDetailType.top = new FormAttachment(wServiceURL, margin);
+    fdDetailType.top = new FormAttachment(wlExampleServiceURL, margin);
     fdDetailType.left = new FormAttachment(middle, margin);
     fdDetailType.right = new FormAttachment(95, 0);
     wDetailType.setLayoutData(fdDetailType);
@@ -231,7 +237,7 @@ public class SecurityDialog extends TitleAreaDialog {
 
     // Username
     wlUsername = new Label(wServiceComp, SWT.RIGHT);
-    wlUsername.setText(Messages.getString("SecurityServiceDialog.USER_USERNAME")); //$NON-NLS-1$
+    wlUsername.setText(Messages.getString("SecurityDialog.USER_USERNAME")); //$NON-NLS-1$
     props.setLook(wlUsername);
     FormData fdlUsername = new FormData();
     fdlUsername.top = new FormAttachment(wDetailType, margin);
@@ -250,7 +256,7 @@ public class SecurityDialog extends TitleAreaDialog {
 
     // Password
     wlPassword = new Label(wServiceComp, SWT.RIGHT);
-    wlPassword.setText(Messages.getString("SecurityServiceDialog.USER_PASSWORD")); //$NON-NLS-1$
+    wlPassword.setText(Messages.getString("SecurityDialog.USER_PASSWORD")); //$NON-NLS-1$
     props.setLook(wlPassword);
     FormData fdlPassword = new FormData();
     fdlPassword.top = new FormAttachment(wUsername, margin);
@@ -270,8 +276,8 @@ public class SecurityDialog extends TitleAreaDialog {
 
     wbTest = new Button(wServiceComp, SWT.PUSH | SWT.CENTER);
     props.setLook(wbTest);
-    wbTest.setText("Test");     
-    wbTest.setToolTipText("Test the Pentaho Security Service" ); 
+    wbTest.setText(Messages.getString("SecurityDialog.USER_TEST"));  //$NON-NLS-1$   
+    wbTest.setToolTipText(Messages.getString("SecurityDialog.USER_TEST_TOOLTIP") ); //$NON-NLS-1$
     FormData fdbFile = new FormData();
     fdbFile.top = new FormAttachment(wPassword, margin);
     fdbFile.left = new FormAttachment(middle, 0);
@@ -293,17 +299,12 @@ public class SecurityDialog extends TitleAreaDialog {
     wServiceComp.layout();
     wServiceTab.setControl(wServiceComp);
 
-    /////////////////////////////////////////////////////////////
-    /// END OF GEN TAB
-    /////////////////////////////////////////////////////////////
   }
 
   private void addProxyTab() {
-    //////////////////////////
-    // START OF POOL TAB///
-    ///
+
     wProxyTab = new CTabItem(wTabFolder, SWT.NONE);
-    wProxyTab.setText(Messages.getString("SecurityServiceDialog.USER_PROXY")); //$NON-NLS-1$
+    wProxyTab.setText(Messages.getString("SecurityDialog.USER_PROXY")); //$NON-NLS-1$
 
     FormLayout poolLayout = new FormLayout();
     poolLayout.marginWidth = Const.FORM_MARGIN;
@@ -316,7 +317,7 @@ public class SecurityDialog extends TitleAreaDialog {
     // What's the data tablespace name?
     wlProxyHost = new Label(wProxyComp, SWT.RIGHT);
     props.setLook(wlProxyHost);
-    wlProxyHost.setText(Messages.getString("SecurityServiceDialog.USER_PROXY_SERVER_HOSTNAME")); //$NON-NLS-1$
+    wlProxyHost.setText(Messages.getString("SecurityDialog.USER_PROXY_SERVER_HOSTNAME")); //$NON-NLS-1$
     FormData fdlProxyHost = new FormData();
     fdlProxyHost.top = new FormAttachment(0, 0);
     fdlProxyHost.left = new FormAttachment(0, 0); // First one in the left top corner
@@ -335,7 +336,7 @@ public class SecurityDialog extends TitleAreaDialog {
     // What's the initial pool size
     wlProxyPort = new Label(wProxyComp, SWT.RIGHT);
     props.setLook(wlProxyPort);
-    wlProxyPort.setText(Messages.getString("SecurityServiceDialog.USER_PROXY_SERVE_PORT")); //$NON-NLS-1$
+    wlProxyPort.setText(Messages.getString("SecurityDialog.USER_PROXY_SERVE_PORT")); //$NON-NLS-1$
     FormData fdlProxyPort = new FormData();
     fdlProxyPort.top = new FormAttachment(wProxyHost, margin);
     fdlProxyPort.left = new FormAttachment(0, 0); // First one in the left top corner
@@ -351,25 +352,6 @@ public class SecurityDialog extends TitleAreaDialog {
     fdProxyPort.right = new FormAttachment(95, 0);
     wProxyPort.setLayoutData(fdProxyPort);
 
-    // What's the maximum pool size
-    wlNonProxyHosts = new Label(wProxyComp, SWT.RIGHT);
-    props.setLook(wlNonProxyHosts);
-    wlNonProxyHosts.setText(Messages.getString("SecurityServiceDialog.USER_IGNORE_PRXY_FOR_HOSTS")); //$NON-NLS-1$
-    FormData fdlNonProxyHosts = new FormData();
-    fdlNonProxyHosts.top = new FormAttachment(wProxyPort, margin);
-    fdlNonProxyHosts.left = new FormAttachment(0, 0); // First one in the left top corner
-    fdlNonProxyHosts.right = new FormAttachment(middle, -margin);
-    wlNonProxyHosts.setLayoutData(fdlNonProxyHosts);
-
-    wNonProxyHosts = new Text(wProxyComp, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
-    props.setLook(wNonProxyHosts);
-    wNonProxyHosts.addModifyListener(lsMod);
-    FormData fdNonProxyHosts = new FormData();
-    fdNonProxyHosts.top = new FormAttachment(wProxyPort, margin);
-    fdNonProxyHosts.left = new FormAttachment(middle, margin); // To the right of the label
-    fdNonProxyHosts.right = new FormAttachment(95, 0);
-    wNonProxyHosts.setLayoutData(fdNonProxyHosts);
-
     fdProxyComp = new FormData();
     fdProxyComp.left = new FormAttachment(0, 0);
     fdProxyComp.top = new FormAttachment(0, 0);
@@ -382,11 +364,9 @@ public class SecurityDialog extends TitleAreaDialog {
   }
 
   private void addFileTab() {
-    //////////////////////////
-    // START OF POOL TAB///
-    ///
+
     wFileTab = new CTabItem(wTabFolder, SWT.NONE);
-    wFileTab.setText(Messages.getString("SecurityServiceDialog.USER_FILE")); //$NON-NLS-1$
+    wFileTab.setText(Messages.getString("SecurityDialog.USER_FILE")); //$NON-NLS-1$
 
     FormLayout poolLayout = new FormLayout();
     poolLayout.marginWidth = Const.FORM_MARGIN;
@@ -398,8 +378,8 @@ public class SecurityDialog extends TitleAreaDialog {
 
     Button wbbFile = new Button(wFileComp, SWT.PUSH | SWT.CENTER);
     props.setLook(wbbFile);
-    wbbFile.setText(Messages.getString("SecurityServiceDialog.USER_BROWSE")); //$NON-NLS-1$
-    wbbFile.setToolTipText(Messages.getString("SecurityServiceDialog.USER_SELECT_XML_FILE")); //$NON-NLS-1$
+    wbbFile.setText(Messages.getString("SecurityDialog.USER_BROWSE")); //$NON-NLS-1$
+    wbbFile.setToolTipText(Messages.getString("SecurityDialog.USER_SELECT_XML_FILE")); //$NON-NLS-1$
     FormData fdbFile = new FormData();
     fdbFile.right = new FormAttachment(95, 0);
     fdbFile.top = new FormAttachment(0, 0);
@@ -408,7 +388,7 @@ public class SecurityDialog extends TitleAreaDialog {
     // What's the data tablespace name?
     wlFile = new Label(wFileComp, SWT.RIGHT);
     props.setLook(wlFile);
-    wlFile.setText(Messages.getString("SecurityServiceDialog.USER_FILENAME")); //$NON-NLS-1$
+    wlFile.setText(Messages.getString("SecurityDialog.USER_FILENAME")); //$NON-NLS-1$
     FormData fdlFile = new FormData();
     fdlFile.top = new FormAttachment(0, 0);
     fdlFile.left = new FormAttachment(0, 0); // First one in the left top corner
@@ -432,9 +412,10 @@ public class SecurityDialog extends TitleAreaDialog {
         if (!Const.isEmpty(wFile.getText())) {
           dialog.setFileName(wFile.getText());
         }
-        dialog
-            .setFilterNames(new String[] {
-                Messages.getString("SecurityServiceDialog.USER_XML_FILES"), Messages.getString("SecurityServiceDialog.USER_ALL_FILES") }); //$NON-NLS-1$ //$NON-NLS-2$
+        dialog.setFilterNames(new String[] {
+                Messages.getString("SecurityDialog.USER_XML_FILES"), //$NON-NLS-1$
+                Messages.getString("SecurityDialog.USER_ALL_FILES") }); //$NON-NLS-1$ 
+        
         if (dialog.open() != null) {
           String str = dialog.getFilterPath() + System.getProperty("file.separator") + dialog.getFileName(); //$NON-NLS-1$
           wFile.setText(str);
@@ -460,7 +441,7 @@ public class SecurityDialog extends TitleAreaDialog {
 
   protected void configureShell(Shell shell) {
     super.configureShell(shell);
-    shell.setText("Security Service");
+    shell.setText(Messages.getString("SecurityDialog.USER_DIALOG_TITLE")); //$NON-NLS-1$
   }
 
   protected void setShellStyle(int newShellStyle) {
@@ -496,14 +477,13 @@ public class SecurityDialog extends TitleAreaDialog {
    * Copy information from the meta-data input to the dialog fields.
    */
   public void getData() {
-    wServiceURL.setText(Const.NVL(securityService.getServiceURL(), securityService.getDefaultServiceURL())); //$NON-NLS-1$
+    wServiceURL.setText(Const.NVL(securityService.getServiceURL(),"")); //$NON-NLS-1$
     wDetailType.select(securityService.getDetailServiceType());
     wUsername.setText(Const.NVL(securityService.getUsername(), "")); //$NON-NLS-1$
     wPassword.setText(Const.NVL(securityService.getPassword(), "")); //$NON-NLS-1$
 
     wProxyHost.setText(Const.NVL(securityService.getProxyHostname(), "")); //$NON-NLS-1$
     wProxyPort.setText(Const.NVL(securityService.getProxyPort(), "")); //$NON-NLS-1$
-    wNonProxyHosts.setText(Const.NVL(securityService.getNonProxyHosts(), "")); //$NON-NLS-1$
 
     wFile.setText(Const.NVL(securityService.getFilename(), "")); //$NON-NLS-1$
 
@@ -521,21 +501,14 @@ public class SecurityDialog extends TitleAreaDialog {
     originalService.setDetailServiceType(securityService.getDetailServiceType());
     originalService.setUsername(securityService.getUsername());
     originalService.setPassword(securityService.getPassword());
-
     originalService.setProxyHostname(securityService.getProxyHostname());
     originalService.setProxyPort(securityService.getProxyPort());
-    originalService.setNonProxyHosts(securityService.getNonProxyHosts());
-
     originalService.setFilename(securityService.getFilename());
-
+    originalService.setServiceName(securityService.getServiceName());
+    originalService.setDetailNameParameter(securityService.getDetailNameParameter());
     originalService.setChanged();
 
     dispose();
-  }
-
-  public void load() {
-    reload = true;
-    ok();
   }
 
   // Get dialog info in securityService
@@ -544,12 +517,11 @@ public class SecurityDialog extends TitleAreaDialog {
     securityService.setDetailServiceType(wDetailType.getSelectionIndex());
     securityService.setUsername(wUsername.getText());
     securityService.setPassword(wPassword.getText());
-
     securityService.setProxyHostname(wProxyHost.getText());
     securityService.setProxyPort(wProxyPort.getText());
-    securityService.setNonProxyHosts(wNonProxyHosts.getText());
-
     securityService.setFilename(wFile.getText());
+    securityService.setServiceName(Const.getCustomParameter(props, "security_service_name", Const.SECURITY_SERVICE_NAME)); //$NON-NLS-1$
+    securityService.setDetailNameParameter(Const.getCustomParameter(props, "security_service_parameter", Const.SECURITY_SERVICE_PARAMETER)); //$NON-NLS-1$
   }
 
   public void test() {
@@ -559,24 +531,30 @@ public class SecurityDialog extends TitleAreaDialog {
       // Load the security reference information...
       SecurityReference securityReference = new SecurityReference(securityService);
       String xml = securityReference.toXML();
-
-      String message = Messages.getString("SecurityServiceDialog.USER_CONNECTION_INFO"); //$NON-NLS-1$
-      if (securityService.hasService())
-        message += Messages.getString(
-            "SecurityServiceDialog.USER_FROM_SERVER_URL", securityService.getURL() + Const.CR + Const.CR); //$NON-NLS-1$
-      else
-        message += Messages.getString(
-            "SecurityServiceDialog.USER_FROM_FILE", securityService.getFilename() + Const.CR + Const.CR); //$NON-NLS-1$
-      message += xml;
+      
+      StringBuffer msg = new StringBuffer();
+      msg.append(Messages.getString("SecurityDialog.USER_CONNECTION_INFO")); //$NON-NLS-1$
+         
+      if (securityService.hasService()){
+        msg.append(Messages.getString("SecurityDialog.USER_FROM_SERVER_URL", securityService.getURL())); //$NON-NLS-1$
+      }else{
+        msg.append(Messages.getString("SecurityDialog.USER_FROM_FILE", securityService.getFilename())); //$NON-NLS-1$
+      }
+      msg.append(Const.CR).append(Const.CR).append(xml);  
+        
 
       EnterTextDialog dialog = new EnterTextDialog(
           getShell(),
-          Messages.getString("SecurityServiceDialog.USER_TITLE_XML"), Messages.getString("SecurityServiceDialog.USER_XML_RETURNED"), message); //$NON-NLS-1$ //$NON-NLS-2$
+          Messages.getString("SecurityDialog.USER_TITLE_XML"),  //$NON-NLS-1$
+          Messages.getString("SecurityDialog.USER_XML_RETURNED"), //$NON-NLS-1$
+          msg.toString()); 
+      
       dialog.open();
     } catch (Exception e) {
       new ErrorDialog(
           getShell(),
-          Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("SecurityServiceDialog.USER_ERROR_CANT_GET_SECURITY_INFO", securityService.getURL()), e); //$NON-NLS-1$ //$NON-NLS-2$ 
+          Messages.getString("General.USER_TITLE_ERROR"), //$NON-NLS-1$
+          Messages.getString("SecurityDialog.USER_ERROR_CANT_GET_SECURITY_INFO", securityService.getURL()), e); //$NON-NLS-1$ 
     }
   }
 }
