@@ -105,25 +105,25 @@ public class DefaultSQLDialect implements SQLDialectInterface {
     });   
 
     supportedFunctions.put("SUM", new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_AGG_FUNCTION) { //$NON-NLS-1$
-      public String getSQL(DatabaseMeta databaseMeta) { 
+      public String getSQL() { 
           return databaseMeta.getFunctionSum();
       }
     });
 
     supportedFunctions.put("AVG", new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_AGG_FUNCTION) { //$NON-NLS-1$
-      public String getSQL(DatabaseMeta databaseMeta) { 
+      public String getSQL() { 
           return databaseMeta.getFunctionAverage();
       }
     });
     
     supportedFunctions.put("MIN", new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_AGG_FUNCTION) { //$NON-NLS-1$
-      public String getSQL(DatabaseMeta databaseMeta) { 
+      public String getSQL() { 
           return databaseMeta.getFunctionMinimum();
       }
     });
     
     supportedFunctions.put("MAX", new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_AGG_FUNCTION) { //$NON-NLS-1$
-      public String getSQL(DatabaseMeta databaseMeta) { 
+      public String getSQL() { 
           return databaseMeta.getFunctionMaximum();
       }
     });

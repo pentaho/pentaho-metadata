@@ -22,6 +22,7 @@ import org.pentaho.pms.factory.CwmSchemaFactory;
 import org.pentaho.pms.mql.MQLQuery;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
+import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.OrderBy;
 import org.pentaho.pms.schema.PMSFormula;
 import org.pentaho.pms.schema.SchemaMeta;
@@ -87,6 +88,23 @@ public class MQLQueryTest extends TestCase {
     }
   }
   
+  
+  public void handleFormula(BusinessModel model, BusinessTable table, String databaseToTest, String mqlFormula, String expectedSql) {
+    // retrieve various databases here
+    DatabaseMeta databaseMeta = new DatabaseMeta("", databaseToTest, "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    try {
+      PMSFormula formula = new PMSFormula(model, table, databaseMeta, mqlFormula);
+      formula.parseAndValidate();
+      String sql = formula.generateSQL("en_US"); //$NON-NLS-1$
+      assertNotNull(sql);
+      sql = sql.trim();
+      assertEquals(expectedSql, sql);
+    } catch (Exception e) {
+      e.printStackTrace();
+      fail();
+    }
+  }
+  
   public void handleWhereCondition(BusinessModel model, String mqlFormula, String expectedSql) {
     try {
       WhereCondition cond = new WhereCondition(model, "", mqlFormula); //$NON-NLS-1$
@@ -98,6 +116,31 @@ public class MQLQueryTest extends TestCase {
       e.printStackTrace();
       fail();
     }
+  }
+  
+  public void testAggregationFormulas() {
+    BusinessTable table = ordersModel.findBusinessTable("BT_ORDER_DETAILS"); //$NON-NLS-1$
+    handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
+        "SUM([QUANTITYORDERED]*[PRICEEACH])", //$NON-NLS-1$
+        "SUM( \"Order Details\".QUANTITYORDERED  *  \"Order Details\".PRICEEACH )"); //$NON-NLS-1$
+    
+    handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
+        "COUNT([QUANTITYORDERED]*[PRICEEACH])", //$NON-NLS-1$
+        "COUNT( \"Order Details\".QUANTITYORDERED  *  \"Order Details\".PRICEEACH )"); //$NON-NLS-1$
+
+    handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
+        "AVG([QUANTITYORDERED]*[PRICEEACH])", //$NON-NLS-1$
+        "AVG( \"Order Details\".QUANTITYORDERED  *  \"Order Details\".PRICEEACH )"); //$NON-NLS-1$
+    
+    handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
+        "MIN([QUANTITYORDERED]*[PRICEEACH])", //$NON-NLS-1$
+        "MIN( \"Order Details\".QUANTITYORDERED  *  \"Order Details\".PRICEEACH )"); //$NON-NLS-1$
+    
+    handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
+        "MAX([QUANTITYORDERED]*[PRICEEACH])", //$NON-NLS-1$
+        "MAX( \"Order Details\".QUANTITYORDERED  *  \"Order Details\".PRICEEACH )"); //$NON-NLS-1$
+
+    
   }
   
   public void testDateFunctionNow() {

@@ -121,6 +121,43 @@ public class PMSFormula implements FormulaTraversalInterface {
     }
   }
   
+  /**
+   * constructor, currently used for testing
+   * 
+   * @param model business model for business column lookup
+   * @param formulaString formula string
+   * @throws PentahoMetadataException throws an exception if we're missing anything important
+   */
+  public PMSFormula(BusinessModel model, BusinessTable table, DatabaseMeta databaseMeta, String formulaString) throws PentahoMetadataException {
+    
+    this.model = model;
+    this.formulaString = formulaString;
+    this.databaseMeta = databaseMeta;
+    this.table = table;
+    
+    if (model == null) {
+      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0001_NO_BUSINESS_MODEL_PROVIDED")); //$NON-NLS-1$
+    }
+    
+    if (databaseMeta == null) {
+      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0002_NO_DATABASE_META_PROVIDED")); //$NON-NLS-1$
+    }
+    
+    if (table == null) {
+      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0004_NO_BUSINESS_TABLE_PROVIDED")); //$NON-NLS-1$
+    }
+    
+    this.sqlDialect = formulaContext.getSQLDialect(databaseMeta);
+    
+    if (sqlDialect == null) {
+      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0017_DATABASE_DIALECT_NOT_FOUND", databaseMeta.getDatabaseTypeDesc())); //$NON-NLS-1$
+    }
+    
+    if (formulaString == null) {
+      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0003_NO_FORMULA_STRING_PROVIDED")); //$NON-NLS-1$
+    }
+  }
+  
   
   /**
    * constructor
