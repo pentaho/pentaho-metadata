@@ -449,38 +449,11 @@ public class CategoryEditorDialog extends TitleAreaDialog {
   }
 
   private void addCategoryFromBusinessTable(BusinessCategory parentCategory, BusinessTable businessTable) {
-    // The id is the table name, prefixes etc.
-    String id = Settings.getBusinessCategoryIDPrefix() + businessTable.getTargetTable();
-    int catNr = 1;
-    String newId = id;
-    while (businessModel.getRootCategory().findBusinessCategory(newId) != null) {
-      catNr++;
-      newId = id + "_" + catNr; //$NON-NLS-1$
-    }
-    if (Settings.isAnIdUppercase())
-      newId = newId.toUpperCase();
 
     // Create a new category
-    //
-    BusinessCategory businessCategory = new BusinessCategory(newId);
-
-    // The name is the same as the table...
-    String categoryName = businessTable.getDisplayName(activeLocale);
-    catNr = 1;
-    while (businessModel.getRootCategory().findBusinessCategory(activeLocale, categoryName) != null) {
-      catNr++;
-      categoryName = businessTable.getDisplayName(activeLocale) + " " + catNr; //$NON-NLS-1$
-    }
-    businessCategory.setName(activeLocale, categoryName);
-
-    // add the business columns to the category
-    //
-    for (int c = 0; c < businessTable.nrBusinessColumns(); c++) {
-      businessCategory.addBusinessColumn(businessTable.getBusinessColumn(c));
-    }
+    BusinessCategory businessCategory = businessTable.generateCategory(activeLocale, businessModel.getRootCategory().getBusinessCategories());
 
     // Add the category to the business model or category
-    //
     try {
       parentCategory.addBusinessCategory(businessCategory);
     } catch (ObjectAlreadyExistsException e) {
@@ -531,8 +504,14 @@ public class CategoryEditorDialog extends TitleAreaDialog {
           break;
         }
         // Add the column to the category
-        parentCategory.addBusinessColumn((BusinessColumn)((BusinessColumnTreeNode)domainObject).getDomainObject());
-        ((CategoryTreeNode)firstSelection).addDomainChild(((BusinessColumnTreeNode)domainObject).getDomainObject());
+        try {
+          parentCategory.addBusinessColumn(((BusinessColumnTreeNode)domainObject).getBusinessColumn().cloneUnique(activeLocale, parentCategory.getBusinessColumns()));
+          ((CategoryTreeNode)firstSelection).addDomainChild(((BusinessColumnTreeNode)domainObject).getBusinessColumn());
+        } catch (ObjectAlreadyExistsException e) {
+          // Should not happen here, programmatically generating new ids.
+          logger.error(Messages.getErrorString("CategoryEditorDialog.ERROR_0001_COLUMN_SKIPPED_DUPLICATE_ID",((BusinessColumnTreeNode)domainObject).getBusinessColumn().getId()), e); //$NON-NLS-1$
+        }
+
       }
     }
   }

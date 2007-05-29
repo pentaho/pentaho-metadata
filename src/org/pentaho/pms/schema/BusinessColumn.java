@@ -12,6 +12,8 @@
 */
 package org.pentaho.pms.schema;
 
+import java.util.Iterator;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
@@ -25,6 +27,8 @@ import org.pentaho.pms.util.Settings;
 
 import be.ibridge.kettle.core.ChangedFlagInterface;
 import be.ibridge.kettle.core.database.DatabaseMeta;
+import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
+import be.ibridge.kettle.core.list.UniqueList;
 
 public class BusinessColumn extends ConceptUtilityBase implements ChangedFlagInterface, ConceptUtilityInterface, Cloneable
 {
@@ -81,6 +85,54 @@ public class BusinessColumn extends ConceptUtilityBase implements ChangedFlagInt
         {
             return null;
         }
+    }
+    
+    /**
+     * 
+     * @param columns List of columns to compare new column id against
+     * @return a new businessColumn, duplicate of this, with only the id changed to be unique in it's list
+     */
+    public BusinessColumn cloneUnique (String locale, UniqueList columns){
+      
+      BusinessColumn businessColumn  = (BusinessColumn)clone(); 
+      
+      boolean gotNew = false;
+      boolean found = false;
+      String id = proposeId(locale, businessTable, physicalColumn);
+      int catNr = 1;
+      String newId = id;
+      
+      
+      while (!gotNew) {
+        
+        for (Iterator iter = columns.iterator(); iter.hasNext();) {
+          ConceptUtilityBase element = (ConceptUtilityBase) iter.next();
+          if (element.getId().equalsIgnoreCase(newId)){
+            found = true;
+            break;
+          }
+        }
+        if (found){
+          catNr++;
+          newId = id + "_" + catNr; //$NON-NLS-1$
+          found = false;
+        }else{
+          gotNew = true;
+        }
+      }
+      
+      if (Settings.isAnIdUppercase())
+        newId = newId.toUpperCase();
+      
+      try {
+        businessColumn.setId(newId);
+      } catch (ObjectAlreadyExistsException e) {
+        logger.error(Messages.getErrorString("BusinessColumn.ERROR_0005_UNEXPECTED_ID_EXISTS", newId), e); //$NON-NLS-1$
+        return null;
+      }
+      
+      return businessColumn;
+      
     }
     
     public static final String proposeId(String locale, BusinessTable businessTable, PhysicalColumn physicalColumn)

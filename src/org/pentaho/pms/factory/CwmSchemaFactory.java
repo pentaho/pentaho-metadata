@@ -1326,7 +1326,14 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                 BusinessColumn businessColumn = businessModel.findBusinessColumn(cwmAttribute.getName());
                 if (businessColumn!=null) {
                   if (hasAccess(CwmSchemaFactoryInterface.ACCESS_TYPE_READ, businessColumn)) {
-                      businessCategory.addBusinessColumn(businessColumn);
+                      try {
+                        businessCategory.addBusinessColumn(businessColumn);
+                      } catch (ObjectAlreadyExistsException e) {
+                        // Ignore the duplicates for now.
+                        // TODO: figure out how to handle this error, the duplicate shouldn't be in the CWM in the first place!
+                        
+                      
+                      }
                   }
                 }
             }

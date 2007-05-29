@@ -12,13 +12,14 @@
 */
 package org.pentaho.pms.schema;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
+import org.pentaho.pms.util.Const;
+import org.pentaho.pms.util.Settings;
 
 import be.ibridge.kettle.core.ChangedFlagInterface;
 import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
@@ -34,7 +35,7 @@ import be.ibridge.kettle.core.list.UniqueList;
 public class BusinessCategory extends ConceptUtilityBase implements ChangedFlagInterface, ConceptUtilityInterface, Cloneable
 {
     private UniqueList businessCategories;
-    private List businessColumns;
+    private UniqueList businessColumns;
     
     private boolean rootCategory;
     
@@ -63,7 +64,7 @@ public class BusinessCategory extends ConceptUtilityBase implements ChangedFlagI
     {
         super(id);
         this.businessCategories = new UniqueArrayList();
-        this.businessColumns = new ArrayList();
+        this.businessColumns = new UniqueArrayList();
     }
     
     /**
@@ -86,13 +87,112 @@ public class BusinessCategory extends ConceptUtilityBase implements ChangedFlagI
             // should be OK
         }
         businessCategory.setRootCategory(rootCategory);
-        businessCategory.businessCategories = businessCategories;
-        businessCategory.businessColumns = businessColumns; 
 
+        businessCategory.getBusinessColumns().clear(); // clear the list of column
+        for (int i=0;i<nrBusinessColumns();i++)
+        {
+            try
+            {
+                businessCategory.addBusinessColumn((BusinessColumn) getBusinessColumn(i).clone());
+            }
+            catch (ObjectAlreadyExistsException e)
+            {
+                throw new RuntimeException(e); // This should not happen, but I don't like to swallow the error.
+            }
+        }
+        
+        businessCategory.getBusinessCategories().clear();
+        for (int i=0;i<nrBusinessCategories();i++)
+        {
+            try
+            {
+                businessCategory.addBusinessCategory((BusinessCategory) getBusinessCategory(i).clone());
+            }
+            catch (ObjectAlreadyExistsException e)
+            {
+                throw new RuntimeException(e); // This should not happen, but I don't like to swallow the error.
+            }
+        }
+        
         businessCategory.setConcept( (ConceptInterface) getConcept().clone() ); // deep copy
         
         return businessCategory;
     }
+    
+    /**
+     * 
+     * @param tables List of categories to compare new category id against
+     * @return a new BusinessCategory, duplicate of this, with only the id changed to be unique in it's list
+     */
+    public BusinessCategory cloneUnique (String locale, UniqueList categories){
+      
+      BusinessCategory businessCategory  = (BusinessCategory)clone(); 
+
+      businessCategory.getBusinessColumns().clear(); // clear the list of column
+      for (int i=0;i<nrBusinessColumns();i++)
+      {
+          try
+          {
+            businessCategory.addBusinessColumn(getBusinessColumn(i).cloneUnique(locale, businessColumns));
+          }
+          catch (ObjectAlreadyExistsException e)
+          {
+              throw new RuntimeException(e); // This should not happen, but I don't like to swallow the error.
+          }
+      }
+      
+      String newId = proposeId(locale, null, this, categories);
+      try {
+        businessCategory.setId(newId);
+      } catch (ObjectAlreadyExistsException e) {
+        return null;
+      }
+      
+      return businessCategory;
+      
+    }
+ 
+    public static final String proposeId(String locale, BusinessTable table, BusinessCategory category)
+    {
+        String baseID = (table != null) ? Const.toID( table.getTargetTable()): "";  //$NON-NLS-1$
+        String namePart = ((category !=null)&& (category.getDisplayName(locale)!=null)) ? Const.toID(category.getDisplayName(locale)) : "";  //$NON-NLS-1$
+        String id = Settings.getBusinessCategoryIDPrefix() + baseID+"_" + namePart; //$NON-NLS-1$
+        if (Settings.isAnIdUppercase()) id = id.toUpperCase();
+        return id;
+    }
+    
+    public static final String proposeId(String locale, BusinessTable businessTable, BusinessCategory category, UniqueList categories){
+      boolean gotNew = false;
+      boolean found = false;
+      String id = proposeId(locale, businessTable, category);
+      int catNr = 1;
+      String newId = id;
+      
+      
+      while (!gotNew) {
+        
+        for (Iterator iter = categories.iterator(); iter.hasNext();) {
+          ConceptUtilityBase element = (ConceptUtilityBase) iter.next();
+          if (element.getId().equalsIgnoreCase(newId)){
+            found = true;
+            break;
+          }
+        }
+        if (found){
+          catNr++;
+          newId = id + "_" + catNr; //$NON-NLS-1$
+          found = false;
+        }else{
+          gotNew = true;
+        }
+      }
+      
+      if (Settings.isAnIdUppercase())
+        newId = newId.toUpperCase();
+      
+      return newId;
+    }
+    
         
     public UniqueList getBusinessCategories()
     {
@@ -146,7 +246,7 @@ public class BusinessCategory extends ConceptUtilityBase implements ChangedFlagI
     /**
      * @return the businessColumns
      */
-    public List getBusinessColumns()
+    public UniqueList getBusinessColumns()
     {
         return businessColumns;
     }
@@ -154,7 +254,7 @@ public class BusinessCategory extends ConceptUtilityBase implements ChangedFlagI
     /**
      * @param businessColumns the businessColumns to set
      */
-    public void setBusinessColumns(List businessColumns)
+    public void setBusinessColumns(UniqueList businessColumns)
     {
         this.businessColumns = businessColumns;
     }
@@ -169,13 +269,13 @@ public class BusinessCategory extends ConceptUtilityBase implements ChangedFlagI
         return (BusinessColumn) businessColumns.get(i);
     }
 
-    public void addBusinessColumn(BusinessColumn businessColumn)
+    public void addBusinessColumn(BusinessColumn businessColumn) throws ObjectAlreadyExistsException
     {
         businessColumns.add(businessColumn);
         setChanged();
     }
     
-    public void addBusinessColumn(int i, BusinessColumn businessColumn)
+    public void addBusinessColumn(int i, BusinessColumn businessColumn)throws ObjectAlreadyExistsException
     {
         businessColumns.add(i, businessColumn);
         setChanged();

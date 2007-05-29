@@ -12,11 +12,14 @@
 */
 package org.pentaho.pms.schema;
 
+import java.util.Iterator;
+
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.util.Const;
+import org.pentaho.pms.util.Settings;
 import org.w3c.dom.Node;
 
 import be.ibridge.kettle.core.ChangedFlagInterface;
@@ -117,6 +120,130 @@ public class BusinessTable extends ConceptUtilityBase
             businessTable.setLocation( null );
         }
         return businessTable;
+    }
+    
+    /**
+     * 
+     * @param tables List of tables to compare new table id against
+     * @return a new BusinessTable, duplicate of this, with only the id changed to be unique in it's list
+     */
+    public BusinessTable cloneUnique (String locale, UniqueList tables){
+      
+      BusinessTable businessTable  = (BusinessTable)clone(); 
+
+      businessTable.getBusinessColumns().clear(); // clear the list of column
+      for (int i=0;i<nrBusinessColumns();i++)
+      {
+          try
+          {
+              businessTable.addBusinessColumn(getBusinessColumn(i).cloneUnique(locale, businessColumns));
+          }
+          catch (ObjectAlreadyExistsException e)
+          {
+              throw new RuntimeException(e); // This should not happen, but I don't like to swallow the error.
+          }
+      }
+      
+      String newId = proposeId(locale, this, physicalTable, tables);
+      try {
+        businessTable.setId(newId);
+      } catch (ObjectAlreadyExistsException e) {
+        return null;
+      }
+      
+      return businessTable;
+      
+    }
+ 
+    public static final String proposeId(String locale, BusinessTable businessTable, PhysicalTable physicalTable)
+    {
+        String baseID = Const.toID( businessTable.getDisplayName(locale) );
+        String namePart = Const.toID( Const.NVL(physicalTable.getName(locale), physicalTable.getFormula() ) );
+        String id = Settings.getBusinessTableIDPrefix() + baseID+"_" + namePart; //$NON-NLS-1$
+        if (Settings.isAnIdUppercase()) id = id.toUpperCase();
+        return id;
+    }
+    
+    public static final String proposeId(String locale, BusinessTable businessTable, PhysicalTable physicalTable, UniqueList tables){
+      boolean gotNew = false;
+      boolean found = false;
+      String id = proposeId(locale, businessTable, physicalTable);
+      int catNr = 1;
+      String newId = id;
+      
+      
+      while (!gotNew) {
+        
+        for (Iterator iter = tables.iterator(); iter.hasNext();) {
+          ConceptUtilityBase element = (ConceptUtilityBase) iter.next();
+          if (element.getId().equalsIgnoreCase(newId)){
+            found = true;
+            break;
+          }
+        }
+        if (found){
+          catNr++;
+          newId = id + "_" + catNr; //$NON-NLS-1$
+          found = false;
+        }else{
+          gotNew = true;
+        }
+      }
+      
+      if (Settings.isAnIdUppercase())
+        newId = newId.toUpperCase();
+      
+      return newId;
+    }
+    
+    public BusinessCategory generateCategory(String locale, UniqueList categories){
+
+      BusinessCategory businessCategory = new BusinessCategory();
+      try {
+        businessCategory.setId(BusinessCategory.proposeId(locale, this, businessCategory, categories));
+      } catch (ObjectAlreadyExistsException ex) {
+        throw new RuntimeException(ex); // This should not happen ...
+      }
+
+      // The name is the same as the table...
+      String categoryName = getDisplayName(locale);
+
+      boolean gotNew = false;
+      boolean found = false;
+      int catNr = 1;
+      String newName = categoryName;
+      
+      
+      while (!gotNew) {
+        
+        for (Iterator iter = categories.iterator(); iter.hasNext();) {
+          ConceptUtilityBase element = (ConceptUtilityBase) iter.next();
+          if (element.getName(locale).equalsIgnoreCase(newName)){
+            found = true;
+            break;
+          }
+        }
+        if (found){
+          catNr++;
+          newName = categoryName + "_" + catNr; //$NON-NLS-1$
+          found = false;
+        }else{
+          gotNew = true;
+        }
+      }
+      businessCategory.getConcept().setName(locale, newName);
+
+      // add the business columns to the category
+      //
+      for (int i = nrBusinessColumns() - 1; i >= 0; i--) {
+        try {
+          businessCategory.addBusinessColumn(getBusinessColumn(i).cloneUnique(locale, businessCategory.getBusinessColumns()));
+        } catch (ObjectAlreadyExistsException e) {
+          throw new RuntimeException(e); // This should not happen ...
+        }
+      }
+      
+      return businessCategory;
     }
     
     /**
