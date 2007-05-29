@@ -1327,7 +1327,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                 if (businessColumn!=null) {
                   if (hasAccess(CwmSchemaFactoryInterface.ACCESS_TYPE_READ, businessColumn)) {
                       try {
-                        businessCategory.addBusinessColumn(businessColumn);
+                        businessCategory.addBusinessColumn((BusinessColumn)businessColumn.clone());
                       } catch (ObjectAlreadyExistsException e) {
                         // Ignore the duplicates for now.
                         // TODO: figure out how to handle this error, the duplicate shouldn't be in the CWM in the first place!
