@@ -287,6 +287,13 @@ public class MQLQueryTest extends TestCase {
     );
   }
   
+  public void testLike() {
+    handleFormula(ordersModel, "Hypersonic", //$NON-NLS-1$ 
+        "LIKE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"%\")" //$NON-NLS-1$
+        ,"Customers.COUNTRY  LIKE '%'" //$NON-NLS-1$
+      );
+  }
+  
   public void testToFromXML() {
 
     CWM cwm = CWM.getInstance("Orders", false); //$NON-NLS-1$
