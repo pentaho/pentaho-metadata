@@ -83,6 +83,13 @@ public class DatabaseMetaTreeNode extends ConceptTreeNode {
   }
 
   public void sync(){
+
+    // TODO: GEM - Because all physical tables are held in a single list in the 
+    // schemaMeta, we can't persist the sort order of physical tables, so sort is not 
+    // in the Connection tree; hence, the logic for preserving indexes is absent from this 
+    // ConceptTreeNode subclass. We should probably fix up the model so that we 
+    // can oversome this limitation in the future. 
+    
     if (fChildren == null){
       getChildren();
     }
@@ -123,6 +130,8 @@ public class DatabaseMetaTreeNode extends ConceptTreeNode {
 
   }
 
+
+   
   public DatabaseMeta getDatabaseMeta(){
     return databaseMeta;
   }

@@ -9,6 +9,10 @@ import org.pentaho.pms.schema.RelationshipMeta;
 
 public class RelationshipTreeNode extends ConceptTreeNode {
 
+  public void addDomainChild(Object obj) {
+    // Nothing to do here
+  }
+
   protected RelationshipMeta relationship = null;
   
   public RelationshipTreeNode(ITreeNode parent, final RelationshipMeta relationship) {

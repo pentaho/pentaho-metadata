@@ -10,7 +10,6 @@ import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.RelationshipMeta;
 
-
 public class RelationshipsTreeNode extends ConceptTreeNode {
 
   protected BusinessModel model = null;
@@ -50,6 +49,7 @@ public class RelationshipsTreeNode extends ConceptTreeNode {
         }
     }
   }
+
   public void sync(){
     if (fChildren == null){
       getChildren();
@@ -61,13 +61,20 @@ public class RelationshipsTreeNode extends ConceptTreeNode {
     while ( childIter.hasNext() )
       children.add(childIter.next());
     
+    RelationshipTreeNode element = null;
+
+    // Check the business model for additions, add children if they exist
     for (int c = 0; c < model.nrRelationships(); c++) {
       boolean found = false;
       for (Iterator iter = children.iterator(); iter.hasNext();) {
-        RelationshipTreeNode element = (RelationshipTreeNode) iter.next();
-        if (element.getDomainObject().equals(model.getRelationship(c)))
+        element = (RelationshipTreeNode) iter.next();
+        if (element.getDomainObject().equals(model.getRelationship(c))){
           found = true;
+          break;
+        }
       }
+
+      // if not found, then add it to the node...
       if (!found){
         addDomainChild(model.getRelationship(c));
       }
@@ -87,14 +94,13 @@ public class RelationshipsTreeNode extends ConceptTreeNode {
 
   }
 
+ 
   public Image getImage() {
-    // TODO Auto-generated method stub
     return super.getImage();
   }
 
   public String getName() {
-    // TODO Auto-generated method stub
-    return Messages.getString("MetaEditor.USER_RELATIONSHIPS");
+    return Messages.getString("MetaEditor.USER_RELATIONSHIPS"); //$NON-NLS-1$
   }
 
   public Object getDomainObject(){

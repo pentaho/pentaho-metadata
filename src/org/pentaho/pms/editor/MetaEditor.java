@@ -1527,12 +1527,26 @@ public class MetaEditor {
           clearDBCache();
         }
       });
+      MenuItem miSort = new MenuItem(mainMenu, SWT.PUSH);
+      miSort.setText(Messages.getString("MetaEditor.SORT_CHILDREN_ASCENDING"));  //$NON-NLS-1$
+      miSort.addListener(SWT.Selection, new Listener() {
+        public void handleEvent(Event evt) {
+          node.sortChildrenAscending();
+        }
+      });
     } else if (node instanceof BusinessModelsTreeNode) {
       MenuItem miNew = new MenuItem(mainMenu, SWT.PUSH);
       miNew.setText(Messages.getString("MetaEditor.USER_NEW_MODEL_TEXT")); //$NON-NLS-1$
       miNew.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
           newBusinessModel();
+        }
+      });
+      MenuItem miSort = new MenuItem(mainMenu, SWT.PUSH);
+      miSort.setText(Messages.getString("MetaEditor.SORT_CHILDREN_ASCENDING"));  //$NON-NLS-1$
+      miSort.addListener(SWT.Selection, new Listener() {
+        public void handleEvent(Event evt) {
+          node.sortChildrenAscending();
         }
       });
     } else if (node instanceof DatabaseMetaTreeNode) { // We clicked on a database node
@@ -1597,6 +1611,13 @@ public class MetaEditor {
           exploreDB();
         }
       });
+      MenuItem miSort = new MenuItem(mainMenu, SWT.PUSH);
+      miSort.setText(Messages.getString("MetaEditor.SORT_CHILDREN_ASCENDING"));  //$NON-NLS-1$
+      miSort.addListener(SWT.Selection, new Listener() {
+        public void handleEvent(Event evt) {
+          node.sortChildrenAscending();
+        }
+      });
     } else if (node instanceof PhysicalTableTreeNode) { // We clicked on a physical table
       final PhysicalTable physicalTable = (PhysicalTable) ((PhysicalTableTreeNode) node).getDomainObject();
       MenuItem miNew = new MenuItem(mainMenu, SWT.PUSH);
@@ -1620,6 +1641,13 @@ public class MetaEditor {
       miDel.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
           delPhysicalTable(physicalTable);
+        }
+      });
+      MenuItem miSort = new MenuItem(mainMenu, SWT.PUSH);
+      miSort.setText(Messages.getString("MetaEditor.SORT_CHILDREN_ASCENDING"));  //$NON-NLS-1$
+      miSort.addListener(SWT.Selection, new Listener() {
+        public void handleEvent(Event evt) {
+          node.sortChildrenAscending();
         }
       });
     } else if (node instanceof PhysicalColumnTreeNode) {
@@ -1655,12 +1683,26 @@ public class MetaEditor {
           deleteBusinessModel(businessModel);
         }
       });
+      MenuItem miSort = new MenuItem(mainMenu, SWT.PUSH);
+      miSort.setText(Messages.getString("MetaEditor.SORT_CHILDREN_ASCENDING"));  //$NON-NLS-1$
+      miSort.addListener(SWT.Selection, new Listener() {
+        public void handleEvent(Event evt) {
+          node.sortChildrenAscending();
+        }
+      });
     } else if (node instanceof BusinessTablesTreeNode) {
       MenuItem miNew = new MenuItem(mainMenu, SWT.PUSH);
       miNew.setText(Messages.getString("MetaEditor.USER_NEW_BUSINESS_TABLE")); //$NON-NLS-1$
       miNew.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
           newBusinessTable(null);
+        }
+      });
+      MenuItem miSort = new MenuItem(mainMenu, SWT.PUSH);
+      miSort.setText(Messages.getString("MetaEditor.SORT_CHILDREN_ASCENDING"));  //$NON-NLS-1$
+      miSort.addListener(SWT.Selection, new Listener() {
+        public void handleEvent(Event evt) {
+          node.sortChildrenAscending();
         }
       });
     } else if (node instanceof RelationshipsTreeNode) {
@@ -1671,6 +1713,13 @@ public class MetaEditor {
           newRelationship();
         }
       });
+      MenuItem miSort = new MenuItem(mainMenu, SWT.PUSH);
+      miSort.setText(Messages.getString("MetaEditor.SORT_CHILDREN_ASCENDING"));  //$NON-NLS-1$
+      miSort.addListener(SWT.Selection, new Listener() {
+        public void handleEvent(Event evt) {
+          node.sortChildrenAscending();
+        }
+      });
     } else if (node instanceof BusinessViewTreeNode) {
       final BusinessCategory businessCategory = ((BusinessViewTreeNode) node).getCategory();
       MenuItem miNew = new MenuItem(mainMenu, SWT.PUSH);
@@ -1678,6 +1727,13 @@ public class MetaEditor {
       miNew.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event ev) {
           newBusinessCategory(businessCategory);
+        }
+      });
+      MenuItem miSort = new MenuItem(mainMenu, SWT.PUSH);
+      miSort.setText(Messages.getString("MetaEditor.SORT_CHILDREN_ASCENDING"));  //$NON-NLS-1$
+      miSort.addListener(SWT.Selection, new Listener() {
+        public void handleEvent(Event evt) {
+          node.sortChildrenAscending();
         }
       });
     } else if (node instanceof BusinessTableTreeNode) {
@@ -1708,6 +1764,13 @@ public class MetaEditor {
       miDel.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
           delBusinessTable(businessTable);
+        }
+      });
+      MenuItem miSort = new MenuItem(mainMenu, SWT.PUSH);
+      miSort.setText(Messages.getString("MetaEditor.SORT_CHILDREN_ASCENDING"));  //$NON-NLS-1$
+      miSort.addListener(SWT.Selection, new Listener() {
+        public void handleEvent(Event evt) {
+          node.sortChildrenAscending();
         }
       });
     } else if (node instanceof RelationshipTreeNode) {
@@ -1790,6 +1853,13 @@ public class MetaEditor {
         public void handleEvent(Event ev) {
           moveBusinessCategoryDown(parentCategory, currentCategory);
           //          treeViewer.getTree().setSelection(ti);
+        }
+      });
+      MenuItem miSort = new MenuItem(mainMenu, SWT.PUSH);
+      miSort.setText(Messages.getString("MetaEditor.SORT_CHILDREN_ASCENDING"));  //$NON-NLS-1$
+      miSort.addListener(SWT.Selection, new Listener() {
+        public void handleEvent(Event evt) {
+          node.sortChildrenAscending();
         }
       });
     }

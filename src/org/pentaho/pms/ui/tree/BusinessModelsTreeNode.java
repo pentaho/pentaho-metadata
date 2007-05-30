@@ -28,6 +28,7 @@ import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.util.GUIResource;
 
+
 /**
  * @author wseyler
  *
@@ -78,47 +79,16 @@ public class BusinessModelsTreeNode extends ConceptTreeNode {
         }
     }
   }
-  
+
   public void sync(){
-    if (fChildren == null){
-      getChildren();
-    }
-    
-    // make copy of list so removals doesn't cause a problem
-    Iterator childIter = fChildren.iterator();
-    List children = new ArrayList();
-    while ( childIter.hasNext() )
-      children.add(childIter.next());
-    
-    for (int c = 0; c < schemaMeta.nrBusinessModels(); c++) {
-      boolean found = false;
-      for (Iterator iter = children.iterator(); iter.hasNext();) {
-        BusinessModelTreeNode element = (BusinessModelTreeNode) iter.next();
-        if (element.getDomainObject().equals(schemaMeta.getBusinessModels().get(c)))
-          found = true;
-      }
-      if (!found){
-        addDomainChild(schemaMeta.getBusinessModels().get(c));
-      }
-    }
-    
-    for (int c = 0; c < children.size(); c++) {
-      ConceptTreeNode node = (ConceptTreeNode)children.get(c);
-      if (!schemaMeta.getBusinessModels().contains(node.getDomainObject())){
-        removeChild(node);
-      }else{
-        node.sync();
-      }
-    }
-    // update this node
-    fireTreeNodeUpdated();
+    sync(schemaMeta.getBusinessModels());
   }
-   
+  
   /* (non-Javadoc)
    * @see org.pentaho.pms.jface.tree.ITreeNode#getName()
    */
   public String getName() {
-    return Messages.getString("MetaEditor.USER_BUSINESS_MODELS");
+    return Messages.getString("MetaEditor.USER_BUSINESS_MODELS"); //$NON-NLS-1$
   }
 
   public Image getImage(){

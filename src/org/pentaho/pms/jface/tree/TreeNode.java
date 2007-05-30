@@ -55,6 +55,16 @@ public abstract class TreeNode implements ITreeNode
     }
     this.fireChildAdded(node);
   }
+
+  public void addChild(int index, ITreeNode node){
+    if (fChildren == null)
+      fChildren = new ArrayList();
+
+    if (!fChildren.contains(node)){
+      fChildren.add(index, node);
+    }
+    this.fireChildAdded(node);
+  }
  
 
   public void removeChild(ITreeNode node){

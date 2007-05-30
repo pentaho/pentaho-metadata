@@ -11,6 +11,7 @@ import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
 
 
+
 public class BusinessTablesTreeNode extends ConceptTreeNode {
   protected BusinessModel model = null;
   protected String locale = null;
@@ -52,47 +53,15 @@ public class BusinessTablesTreeNode extends ConceptTreeNode {
   }
 
   public void sync(){
-    if (fChildren == null){
-      getChildren();
-    }
-    
-    // make copy of list so removals doesn't cause a problem
-    Iterator childIter = fChildren.iterator();
-    List children = new ArrayList();
-    while ( childIter.hasNext() )
-      children.add(childIter.next());
-    
-    for (int c = 0; c < model.nrBusinessTables(); c++) {
-      boolean found = false;
-      for (Iterator iter = children.iterator(); iter.hasNext();) {
-        BusinessTableTreeNode element = (BusinessTableTreeNode) iter.next();
-        if (element.getDomainObject().equals(model.getBusinessTable(c)))
-          found = true;
-      }
-      if (!found){
-        addDomainChild(model.getBusinessTable(c));
-      }
-    }
-    
-    for (int c = 0; c < children.size(); c++) {
-      ConceptTreeNode node = (ConceptTreeNode)children.get(c);
-
-      if (!model.getBusinessTables().contains(node.getDomainObject())){
-        removeChild(node);
-      }else{
-        node.sync();
-      }
-    }      
-    // update this node
-    fireTreeNodeUpdated();
+    sync(model.getBusinessTables());
   }
-
+  
   public Image getImage() {
     return super.getImage();
   }
 
   public String getName() {
-    return Messages.getString("MetaEditor.USER_BUSINESS_TABLES");
+    return Messages.getString("MetaEditor.USER_BUSINESS_TABLES");  //$NON-NLS-1$
   }
 
   public Object getDomainObject(){

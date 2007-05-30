@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.eclipse.swt.graphics.Image;
 import org.pentaho.pms.jface.tree.ITreeNode;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 
@@ -56,8 +57,9 @@ public class BusinessModelTreeNode extends ConceptTreeNode {
   }
 
   public String getName() {
-    String displayConnection = model.hasConnection() ? model.getConnection().getName() : "No Connection Defined" ; 
-    displayConnection = " (" + displayConnection + ")";
+    String displayConnection = model.hasConnection() ? 
+        model.getConnection().getName() : Messages.getString("BusinessModeltreeNode.NO_CONNECTION_DEFINED"); //$NON-NLS-1$ 
+    displayConnection = " (" + displayConnection + ")";  //$NON-NLS-1$ //$NON-NLS-2$
     return model.getDisplayName(locale) + displayConnection;
   }
 
@@ -103,5 +105,10 @@ public class BusinessModelTreeNode extends ConceptTreeNode {
       businessViewNode = new BusinessViewTreeNode(this, model.getRootCategory(), locale);
     }
     return businessViewNode;
+  }
+
+  public void addDomainChild(Object obj) {
+    // no children allowed here, this is a manuallsy built branch
+    
   }
 }

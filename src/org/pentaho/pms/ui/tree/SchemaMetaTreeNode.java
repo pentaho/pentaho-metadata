@@ -28,6 +28,10 @@ import org.pentaho.pms.schema.SchemaMeta;
  */
 public class SchemaMetaTreeNode extends ConceptTreeNode {
 
+  public void addDomainChild(Object obj) {
+    // Nothing to do here, this is a manually built branch
+  }
+
   protected SchemaMeta schemaMeta = null;
   private ConnectionsTreeNode connectionsTreeNode;
   private BusinessModelsTreeNode businessModelsTreeNode;

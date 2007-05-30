@@ -12,6 +12,11 @@ import be.ibridge.kettle.core.DragAndDropContainer;
 
 public class BusinessColumnTreeNode extends ConceptTreeNode {
 
+  public void addDomainChild(Object obj) {
+    // No children, nothing to do here
+    
+  }
+
   protected BusinessColumn column = null;
   protected String locale = null;
   

@@ -30,6 +30,11 @@ import be.ibridge.kettle.core.DragAndDropContainer;
  *
  */
 public class PhysicalColumnTreeNode extends ConceptTreeNode {
+  
+  public void addDomainChild(Object obj) {
+    // physical columns have no children
+  }
+
   protected PhysicalColumn physicalColumn = null;
   protected String locale = null;
 

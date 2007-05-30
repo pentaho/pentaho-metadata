@@ -27,6 +27,7 @@ import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 
 import be.ibridge.kettle.core.DragAndDropContainer;
+import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
 
 /**
  * @author wseyler
@@ -82,43 +83,12 @@ public class PhysicalTableTreeNode extends ConceptTreeNode {
     }
   }
 
+
   public void sync(){
-    if (fChildren == null){
-      getChildren();
-    }
-    
-    
-    // make copy of list so removals doesn't cause a problem
-    Iterator childIter = fChildren.iterator();
-    List children = new ArrayList();
-    while ( childIter.hasNext() )
-      children.add(childIter.next());
-    
-    for (int c = 0; c < physicalTable.nrPhysicalColumns(); c++) {
-      boolean found = false;
-      for (Iterator iter = children.iterator(); iter.hasNext();) {
-        PhysicalColumnTreeNode element = (PhysicalColumnTreeNode) iter.next();
-        if (element.getDomainObject().equals(physicalTable.getPhysicalColumn(c)))
-          found = true;
-      }
-      if (!found){
-        addDomainChild(physicalTable.getPhysicalColumn(c));
-      }
-    }
-    
-    for (int c = 0; c < children.size(); c++) {
-      ConceptTreeNode node = (ConceptTreeNode)children.get(c);
-
-      if (!physicalTable.getPhysicalColumns().contains(node.getDomainObject())){
-        removeChild(node);
-      }else{
-        node.sync();
-      }
-    }  
-    // update this node
-    fireTreeNodeUpdated(); 
+    sync(physicalTable.getPhysicalColumns());
   }
-
+  
+  
   public Object getDomainObject(){
     return physicalTable;
   }

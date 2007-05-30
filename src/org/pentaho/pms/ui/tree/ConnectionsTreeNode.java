@@ -77,47 +77,14 @@ public class ConnectionsTreeNode extends ConceptTreeNode {
   }
 
   public void sync(){
-    if (fChildren == null){
-      getChildren();
-    }
-    
-    // make copy of list so removals doesn't cause a problem
-    Iterator childIter = fChildren.iterator();
-    List children = new ArrayList();
-    while ( childIter.hasNext() )
-      children.add(childIter.next());
-    
-    for (int c = 0; c < schemaMeta.nrDatabases(); c++) {
-      boolean found = false;
-      for (Iterator iter = children.iterator(); iter.hasNext();) {
-        DatabaseMetaTreeNode element = (DatabaseMetaTreeNode) iter.next();
-        if (element.getDomainObject().equals(schemaMeta.getDatabase(c)))
-          found = true;
-      }
-      if (!found){
-        addDomainChild(schemaMeta.getDatabase(c));
-      }
-    }
-    
-    for (int c = 0; c < children.size(); c++) {
-      ConceptTreeNode node = (ConceptTreeNode)children.get(c);
-
-      if (!schemaMeta.getDatabases().contains(node.getDomainObject())){
-        removeChild(node);
-      }else{
-        node.sync();
-      }
-    } 
-    // update this node
-    fireTreeNodeUpdated();
-
+    sync(schemaMeta.getDatabases());
   }
-
+  
   /* (non-Javadoc)
    * @see org.pentaho.pms.jface.tree.ITreeNode#getName()
    */
   public String getName() {
-    return Messages.getString("MetaEditor.USER_CONNECTIONS");
+    return Messages.getString("MetaEditor.USER_CONNECTIONS"); //$NON-NLS-1$
   }
   
   public Image getImage(){
