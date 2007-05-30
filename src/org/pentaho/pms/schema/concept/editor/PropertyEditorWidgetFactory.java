@@ -46,7 +46,7 @@ public class PropertyEditorWidgetFactory {
     propertyEditors.put(ConceptPropertyType.LOCALIZED_STRING, LocalizedStringPropertyEditorWidget.class);
     propertyEditors.put(ConceptPropertyType.TABLETYPE, TableTypePropertyEditorWidget.class);
     //  propertyEditors.put(ConceptPropertyType.PROPERTY_TYPE_URL, .class);
-    //  propertyEditors.put(ConceptPropertyType.PROPERTY_TYPE_SECURITY, .class);
+    propertyEditors.put(ConceptPropertyType.SECURITY, SecurityPropertyEditorWidget.class);
     propertyEditors.put(ConceptPropertyType.ALIGNMENT, AlignmentPropertyEditorWidget.class);
     propertyEditors.put(ConceptPropertyType.COLUMN_WIDTH, ColumnWidthPropertyEditorWidget.class);
     propertyEditorMap = Collections.unmodifiableMap(propertyEditors);
