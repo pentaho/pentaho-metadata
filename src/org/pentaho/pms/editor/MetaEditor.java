@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -1367,7 +1368,7 @@ public class MetaEditor {
               BusinessColumn businessColumn = activeModel.findBusinessColumn(columnID);
               if (businessColumn != null) {
 
-                // Make sure that we are not trying to add a physical table from a 
+                // Make sure that we are not trying to add a physical table from a
                 // different connection than the active model's connection
                 if (!activeModel.verify(businessColumn.getPhysicalColumn())) {
                   MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
@@ -1955,13 +1956,13 @@ public class MetaEditor {
     if (activeModel == null) {
       return null;
     }
-    // Make sure that we are not trying to add a physical table from a 
+    // Make sure that we are not trying to add a physical table from a
     // different connection than the active model's connection
     if (physicalTable != null) {
       if (!activeModel.verify(physicalTable)) {
         MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
         mb.setText(Messages.getString("General.USER_TITLE_ERROR")); //$NON-NLS-1$
-        mb.setMessage(Messages.getString("MetaEditor.USER_ERROR_CANNOT_USE_TABLE", //$NON-NLS-1$ 
+        mb.setMessage(Messages.getString("MetaEditor.USER_ERROR_CANNOT_USE_TABLE", //$NON-NLS-1$
             physicalTable.getName(schemaMeta.getActiveLocale()), activeModel.getDisplayName(schemaMeta
                 .getActiveLocale()), activeModel.getConnection().getName()));
         mb.open();
@@ -1995,7 +1996,7 @@ public class MetaEditor {
     } catch (ObjectAlreadyExistsException e1) {
       // No listeners yet, nothing to catch
     }
-    
+
     // Add a unique ID enforcer...
     businessTable.addIDChangedListener(ConceptUtilityBase.createIDChangedListener(activeModel.getBusinessTables()));
 
@@ -2271,16 +2272,33 @@ public class MetaEditor {
     businessModel.addIDChangedListener(ConceptUtilityBase.createIDChangedListener(schemaMeta.getBusinessModels()));
     businessModel.getConcept().setName(schemaMeta.getActiveLocale(), "Model " + nr); //$NON-NLS-1$
 
-    while (true) {
-      BusinessModelDialog dialog = new BusinessModelDialog(shell, businessModel, schemaMeta.getLocales(), schemaMeta
-          .getSecurityReference());
-      String modelName = dialog.open();
-      if (modelName != null) {
+    BusinessModel newBusModel = (BusinessModel) businessModel.clone();
+    BusinessModelDialog dialog = new BusinessModelDialog(shell, SWT.NONE, newBusModel, schemaMeta);
+    int res = dialog.open();
+
+    if (Window.OK == res) {
+
+      // Clear the properties
+      businessModel.getConcept().clearChildProperties();
+
+      // Copy concept changes
+      businessModel.getConcept().getChildPropertyInterfaces().putAll(newBusModel.getConcept().getChildPropertyInterfaces());
+
+      try {
+        businessModel.setId(newBusModel.getId());
+      } catch (ObjectAlreadyExistsException e) {
+        MessageDialog.openError(this.shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString(
+            "The id '{0}' is already in use.",newBusModel.getId()));
+      }
+
+    }
+
+
         try {
           schemaMeta.addModel(businessModel);
           mainTreeNode.getBusinessModelsRoot().addDomainChild(businessModel);
           schemaMeta.setActiveModel(businessModel);
-          activeModelTreeNode = (BusinessModelTreeNode) mainTreeNode.getBusinessModelsRoot().findNode(businessModel);
+          activeModelTreeNode = (BusinessModelTreeNode)mainTreeNode.getBusinessModelsRoot().findNode(businessModel);
           refreshAll();
 
           return businessModel;
@@ -2289,10 +2307,7 @@ public class MetaEditor {
               shell,
               Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_BUSINESS_MODEL_NAME_EXISTS"), e); //$NON-NLS-1$ //$NON-NLS-2$
         }
-      } else {
-        break;
-      }
-    }
+
     return null;
   }
 
@@ -2302,17 +2317,33 @@ public class MetaEditor {
 
   public void editBusinessModel(BusinessModel businessModel, ConceptTreeNode node) {
     if (businessModel != null) {
-      BusinessModelDialog dialog = new BusinessModelDialog(shell, businessModel, schemaMeta.getLocales(), schemaMeta
-          .getSecurityReference());
-      String modelName = dialog.open();
-      if (modelName != null) {
-        if (node != null) {
-          node.sync();
-        } else {
-          synchronize(businessModel);
+      BusinessModel newBusModel = (BusinessModel) businessModel.clone();
+      BusinessModelDialog dialog = new BusinessModelDialog(shell, SWT.NONE, newBusModel, schemaMeta);
+      int res = dialog.open();
+
+      if (Window.OK == res) {
+
+        // Clear the properties
+        businessModel.getConcept().clearChildProperties();
+
+        // Copy concept changes
+        businessModel.getConcept().getChildPropertyInterfaces().putAll(newBusModel.getConcept().getChildPropertyInterfaces());
+
+        try {
+          businessModel.setId(newBusModel.getId());
+        } catch (ObjectAlreadyExistsException e) {
+          MessageDialog.openError(this.shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString(
+              "The id '{0}' is already in use.",newBusModel.getId()));
         }
-        refreshAll();
+
       }
+
+      if (node != null){
+        node.sync();
+      } else{
+        synchronize(businessModel);
+      }
+      refreshAll();
     }
   }
 
@@ -2392,9 +2423,9 @@ public class MetaEditor {
 
       if (Window.OK == res) {
 
-        // It's important to preserve the ConceptInterface instances (rather 
-        // than replacing them), as the instance references are important to  
-        // the inheritance chain among the concept business objects. 
+        // It's important to preserve the ConceptInterface instances (rather
+        // than replacing them), as the instance references are important to
+        // the inheritance chain among the concept business objects.
 
         ConceptInterface originalInterface = physicalTable.getConcept();
         originalInterface.clearChildProperties();
@@ -3339,9 +3370,9 @@ public class MetaEditor {
 
       if (Window.OK == res) {
 
-        // It's important to preserve the ConceptInterface instances (rather 
-        // than replacing them), as the instance references are important to  
-        // the inheritance chain among the concept business objects. 
+        // It's important to preserve the ConceptInterface instances (rather
+        // than replacing them), as the instance references are important to
+        // the inheritance chain among the concept business objects.
 
         ConceptInterface originalInterface = businessTable.getConcept();
         originalInterface.clearChildProperties();
@@ -3392,7 +3423,7 @@ public class MetaEditor {
 
         new ErrorDialog(
             shell,
-            Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_BUSINESS_TABLE_NAME_EXISTS"), e); //$NON-NLS-1$ //$NON-NLS-2$      
+            Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_BUSINESS_TABLE_NAME_EXISTS"), e); //$NON-NLS-1$ //$NON-NLS-2$
 
       }
 
