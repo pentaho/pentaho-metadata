@@ -1045,14 +1045,20 @@ public class MetaEditor {
     final Image imFileSaveAs = new Image(disp, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "saveas.png")); //$NON-NLS-1$
     final Image imFilePrint = new Image(disp, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "print.png")); //$NON-NLS-1$
     final Image imSQL = new Image(disp, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "SQLbutton.png")); //$NON-NLS-1$
-    final Image imConceptEdit = new Image(disp, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "concept-editor.png")); //$NON-NLS-1$
-    final Image imLocaleEdit = new Image(disp, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "locale-editor.png")); //$NON-NLS-1$
-    final Image imCategoryEdit = new Image(disp, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "category-editor.png")); //$NON-NLS-1$
-    final Image imPropertyEdit = new Image(disp, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "property-editor.png")); //$NON-NLS-1$
+    final Image imConceptEdit = new Image(disp, getClass().getResourceAsStream(
+        Const.IMAGE_DIRECTORY + "concept-editor.png")); //$NON-NLS-1$
+    final Image imLocaleEdit = new Image(disp, getClass().getResourceAsStream(
+        Const.IMAGE_DIRECTORY + "locale-editor.png")); //$NON-NLS-1$
+    final Image imCategoryEdit = new Image(disp, getClass().getResourceAsStream(
+        Const.IMAGE_DIRECTORY + "category-editor.png")); //$NON-NLS-1$
+    final Image imPropertyEdit = new Image(disp, getClass().getResourceAsStream(
+        Const.IMAGE_DIRECTORY + "property-editor.png")); //$NON-NLS-1$
     final Image imAlignLeft = new Image(disp, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "align-left.png")); //$NON-NLS-1$
-    final Image imAlignRight = new Image(disp, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "align-right.png")); //$NON-NLS-1$
+    final Image imAlignRight = new Image(disp, getClass()
+        .getResourceAsStream(Const.IMAGE_DIRECTORY + "align-right.png")); //$NON-NLS-1$
     final Image imAlignTop = new Image(disp, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "align-top.png")); //$NON-NLS-1$
-    final Image imAlignBottom = new Image(disp, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "align-bottom.png")); //$NON-NLS-1$
+    final Image imAlignBottom = new Image(disp, getClass().getResourceAsStream(
+        Const.IMAGE_DIRECTORY + "align-bottom.png")); //$NON-NLS-1$
 
     // Can't seem to get the transparency correct for this image!
     ImageData idSQL = imSQL.getImageData();
@@ -1350,7 +1356,8 @@ public class MetaEditor {
               BusinessTable businessTable = activeModel.findBusinessTable(container.getData()); // search by
               // ID!
               if (businessTable != null) {
-                BusinessCategory businessCategory = businessTable.generateCategory(schemaMeta.getActiveLocale(),activeModel.getRootCategory().getBusinessCategories());
+                BusinessCategory businessCategory = businessTable.generateCategory(schemaMeta.getActiveLocale(),
+                    activeModel.getRootCategory().getBusinessCategories());
 
                 // Add the category to the business model or category
                 //
@@ -1393,7 +1400,8 @@ public class MetaEditor {
                 }
 
                 // Add the column to the parentCategory
-                parentCategory.addBusinessColumn(businessColumn.cloneUnique(activeLocale, parentCategory.getBusinessColumns()));
+                parentCategory.addBusinessColumn(businessColumn.cloneUnique(activeLocale, parentCategory
+                    .getBusinessColumns()));
                 synchronize(parentCategory);
                 refreshAll();
               }
@@ -1992,7 +2000,8 @@ public class MetaEditor {
     BusinessTable businessTable = new BusinessTable(null, physicalTable);
     businessTable.getConcept().setName(activeLocale, tableName);
     try {
-      businessTable.setId(BusinessTable.proposeId(activeLocale, businessTable, physicalTable, activeModel.getBusinessTables()));
+      businessTable.setId(BusinessTable.proposeId(activeLocale, businessTable, physicalTable, activeModel
+          .getBusinessTables()));
     } catch (ObjectAlreadyExistsException e1) {
       // No listeners yet, nothing to catch
     }
@@ -2282,31 +2291,31 @@ public class MetaEditor {
       businessModel.getConcept().clearChildProperties();
 
       // Copy concept changes
-      businessModel.getConcept().getChildPropertyInterfaces().putAll(newBusModel.getConcept().getChildPropertyInterfaces());
+      businessModel.getConcept().getChildPropertyInterfaces().putAll(
+          newBusModel.getConcept().getChildPropertyInterfaces());
 
       try {
         businessModel.setId(newBusModel.getId());
       } catch (ObjectAlreadyExistsException e) {
         MessageDialog.openError(this.shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString(
-            "The id '{0}' is already in use.",newBusModel.getId()));
+            "The id '{0}' is already in use.", newBusModel.getId()));
       }
 
     }
 
+    try {
+      schemaMeta.addModel(businessModel);
+      mainTreeNode.getBusinessModelsRoot().addDomainChild(businessModel);
+      schemaMeta.setActiveModel(businessModel);
+      activeModelTreeNode = (BusinessModelTreeNode) mainTreeNode.getBusinessModelsRoot().findNode(businessModel);
+      refreshAll();
 
-        try {
-          schemaMeta.addModel(businessModel);
-          mainTreeNode.getBusinessModelsRoot().addDomainChild(businessModel);
-          schemaMeta.setActiveModel(businessModel);
-          activeModelTreeNode = (BusinessModelTreeNode)mainTreeNode.getBusinessModelsRoot().findNode(businessModel);
-          refreshAll();
-
-          return businessModel;
-        } catch (ObjectAlreadyExistsException e) {
-          new ErrorDialog(
-              shell,
-              Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_BUSINESS_MODEL_NAME_EXISTS"), e); //$NON-NLS-1$ //$NON-NLS-2$
-        }
+      return businessModel;
+    } catch (ObjectAlreadyExistsException e) {
+      new ErrorDialog(
+          shell,
+          Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_BUSINESS_MODEL_NAME_EXISTS"), e); //$NON-NLS-1$ //$NON-NLS-2$
+    }
 
     return null;
   }
@@ -2327,20 +2336,21 @@ public class MetaEditor {
         businessModel.getConcept().clearChildProperties();
 
         // Copy concept changes
-        businessModel.getConcept().getChildPropertyInterfaces().putAll(newBusModel.getConcept().getChildPropertyInterfaces());
+        businessModel.getConcept().getChildPropertyInterfaces().putAll(
+            newBusModel.getConcept().getChildPropertyInterfaces());
 
         try {
           businessModel.setId(newBusModel.getId());
         } catch (ObjectAlreadyExistsException e) {
           MessageDialog.openError(this.shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString(
-              "The id '{0}' is already in use.",newBusModel.getId()));
+              "The id '{0}' is already in use.", newBusModel.getId()));
         }
 
       }
 
-      if (node != null){
+      if (node != null) {
         node.sync();
-      } else{
+      } else {
         synchronize(businessModel);
       }
       refreshAll();
