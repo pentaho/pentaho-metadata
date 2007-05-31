@@ -34,6 +34,12 @@ public class LocalizedStringPropertyEditorWidget extends AbstractPropertyEditorW
 
   protected void createContents(final Composite parent) {
     Locales locales = (Locales) getContext().get("locales");
+    if (null == locales) {
+      if (logger.isWarnEnabled()) {
+        logger.warn("missing required context attribute 'locales'; continuing anyway");
+      }
+      locales = new Locales();
+    }
     table = new LocalizedStringTableWidget(parent, SWT.NONE, getConceptModel(), getPropertyId(), locales);
 
     FormData fdTable = new FormData();
