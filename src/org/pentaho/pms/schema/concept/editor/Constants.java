@@ -66,6 +66,7 @@ public class Constants {
 
     imageRegistry.put("column", createImage(display, "column.png")); //$NON-NLS-1$ //$NON-NLS-2$
     imageRegistry.put("table", createImage(display, "table.png")); //$NON-NLS-1$ //$NON-NLS-2$
+    imageRegistry.put("concept", createImage(display, "concept.png")); //$NON-NLS-1$ //$NON-NLS-2$
 
   }
 
