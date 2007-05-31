@@ -766,6 +766,9 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
     // Now get the shortest path between these tables.
     Path path = getShortestPathBetween(tabs);
+    if (path == null) {
+      throw new PentahoMetadataException(Messages.getErrorString("BusinessModel.ERROR_0001_FAILED_TO_FIND_PATH")); //$NON-NLS-1$
+    }
 
     sql = getSQL(selectedColumns, path, conditions, orderBy, locale, useDisplayNames);
 
