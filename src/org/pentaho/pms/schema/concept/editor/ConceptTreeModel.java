@@ -135,14 +135,16 @@ public class ConceptTreeModel implements IConceptTreeModel {
     Validate.notNull(concept);
     // TODO cleanup children of children, etc.
     ConceptInterface parent = concept.getParentInterface();
-    if (null != parent) {
-      Collection children = (Collection) parentToChildrenMap.get(parent);
-      children.remove(concept);
-    }
+    Collection children = (Collection) parentToChildrenMap.get(parent);
+    children.remove(concept);
+
     ConceptInterface orig = (ConceptInterface) origModBidiMap.remove(concept);
     if (null != orig) {
       // if this concept exists in schema meta, it needs to be marked for removal
       markForRemoval(orig);
+    } else {
+      // concept has been added since last save; simply remove it from the list of concepts to be added
+      newConcepts.remove(concept);
     }
     fireConceptTreeModificationEvent(new ConceptTreeModificationEvent(this));
   }
