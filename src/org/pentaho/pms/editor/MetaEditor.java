@@ -95,6 +95,9 @@ import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.schema.concept.DefaultPropertyID;
 import org.pentaho.pms.schema.concept.dialog.ConceptDialog;
 import org.pentaho.pms.schema.concept.editor.BusinessTableModel;
+import org.pentaho.pms.schema.concept.editor.ConceptEditorDialog;
+import org.pentaho.pms.schema.concept.editor.ConceptTreeModel;
+import org.pentaho.pms.schema.concept.editor.IConceptTreeModel;
 import org.pentaho.pms.schema.concept.editor.PhysicalTableModel;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.schema.concept.types.datatype.ConceptPropertyDataType;
@@ -182,7 +185,7 @@ public class MetaEditor {
 
   private MetaEditorLog metaEditorLog;
 
-  private MetaEditorConcepts metaEditorConcept;
+//  private MetaEditorConcepts metaEditorConcept;
 
   private MetaEditorOlap metaEditorOlap;
 
@@ -541,7 +544,9 @@ public class MetaEditor {
     };
     lsEditConcepts = new Listener() {
       public void handleEvent(Event e) {
-        tabfolder.setSelection(1);
+        IConceptTreeModel conceptTreeModel = new ConceptTreeModel(schemaMeta);
+        ConceptEditorDialog diag = new ConceptEditorDialog(Display.getCurrent().getActiveShell(), conceptTreeModel);
+        diag.open();
       }
     };
     lsEditCategories = new Listener() {
@@ -592,6 +597,11 @@ public class MetaEditor {
         helpAbout();
       }
     };
+  }
+
+  protected void editConcepts() {
+    // TODO Auto-generated method stub
+
   }
 
   private void initMainForm() {
@@ -2165,9 +2175,9 @@ public class MetaEditor {
     tiTabsGraph.setText(Messages.getString("MetaEditor.USER_GRAPHICAL_VIEW")); //$NON-NLS-1$
     tiTabsGraph.setToolTipText(Messages.getString("MetaEditor.USER_GRAPHICAL_VIEW_TEXT")); //$NON-NLS-1$
 
-    CTabItem tiTabsConcept = new CTabItem(tabfolder, SWT.NULL);
-    tiTabsConcept.setText(Messages.getString("MetaEditor.USER_CONCEPTS")); //$NON-NLS-1$
-    tiTabsConcept.setToolTipText(Messages.getString("MetaEditor.USER_CONCEPTS_TEXT")); //$NON-NLS-1$
+//    CTabItem tiTabsConcept = new CTabItem(tabfolder, SWT.NULL);
+//    tiTabsConcept.setText(Messages.getString("MetaEditor.USER_CONCEPTS")); //$NON-NLS-1$
+//    tiTabsConcept.setToolTipText(Messages.getString("MetaEditor.USER_CONCEPTS_TEXT")); //$NON-NLS-1$
 
     CTabItem tiTabsLocale = new CTabItem(tabfolder, SWT.NULL);
     tiTabsLocale.setText(Messages.getString("MetaEditor.USER_LOCALES")); //$NON-NLS-1$
@@ -2179,12 +2189,12 @@ public class MetaEditor {
 
     metaEditorGraph = new MetaEditorGraph(tabfolder, SWT.V_SCROLL | SWT.H_SCROLL | SWT.NO_BACKGROUND, this);
     metaEditorGraph.addListener(SWT.MouseExit, getMainListener());
-    metaEditorConcept = new MetaEditorConcepts(tabfolder, SWT.NONE, this);
+//    metaEditorConcept = new MetaEditorConcepts(tabfolder, SWT.NONE, this);
     metaEditorLocales = new MetaEditorLocales(tabfolder, SWT.NONE, this);
     metaEditorLog = new MetaEditorLog(tabfolder, SWT.NONE, null);
 
     tiTabsGraph.setControl(metaEditorGraph);
-    tiTabsConcept.setControl(metaEditorConcept);
+//    tiTabsConcept.setControl(metaEditorConcept);
     tiTabsLocale.setControl(metaEditorLocales);
     tiTabsLog.setControl(metaEditorLog);
 
@@ -2904,8 +2914,8 @@ public class MetaEditor {
 
   public void refreshAll() {
     refreshGraph();
-    metaEditorConcept.refreshTree();
-    metaEditorConcept.refreshScreen();
+//    metaEditorConcept.refreshTree();
+//    metaEditorConcept.refreshScreen();
     metaEditorLocales.refreshScreen();
     if (metaEditorOlap != null) {
       metaEditorOlap.refreshScreen();

@@ -6,9 +6,11 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StackLayout;
@@ -23,7 +25,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
+
+import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
 
 public class ConceptEditorDialog extends Dialog {
 
@@ -134,6 +139,8 @@ public class ConceptEditorDialog extends Dialog {
             //                  delButton.setEnabled(false);
             //                }
             swapCard(cu);
+          } else {
+            swapCard(null);
           }
         }
       }
@@ -193,6 +200,15 @@ public class ConceptEditorDialog extends Dialog {
   //  }
 
   protected void okPressed() {
+    try {
+      conceptTreeModel.save();
+    } catch (ObjectAlreadyExistsException e) {
+      if (logger.isErrorEnabled()) {
+      	logger.error("an exception occurred", e);
+      }
+      MessageDialog.openError(getShell(), "Error", "There was an error during save.");
+
+    }
     cleanup();
     super.okPressed();
   }

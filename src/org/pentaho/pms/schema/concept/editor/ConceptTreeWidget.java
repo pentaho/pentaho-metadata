@@ -10,6 +10,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -30,8 +31,6 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.pentaho.pms.schema.concept.Concept;
 import org.pentaho.pms.schema.concept.ConceptInterface;
-
-import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
 
 public class ConceptTreeWidget extends Composite implements ISelectionProvider {
 
@@ -102,7 +101,7 @@ public class ConceptTreeWidget extends Composite implements ISelectionProvider {
       }
 
     });
-    ToolItem delButton = new ToolItem(tb3, SWT.PUSH);
+    final ToolItem delButton = new ToolItem(tb3, SWT.PUSH);
     delButton.setImage(Constants.getImageRegistry(Display.getCurrent()).get("concept-del-button"));
     delButton.addSelectionListener(new SelectionListener() {
       public void widgetDefaultSelected(final SelectionEvent e) {
@@ -113,11 +112,17 @@ public class ConceptTreeWidget extends Composite implements ISelectionProvider {
       }
     });
 
-    //    treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-    //      public void selectionChanged(final SelectionChangedEvent e) {
-    //
-    //      }
-    //    });
+        treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+          public void selectionChanged(final SelectionChangedEvent e) {
+            TreeSelection sel = (TreeSelection) e.getSelection();
+            Object selectedObject = sel.getFirstElement();
+            if (selectedObject instanceof ConceptInterface) {
+              delButton.setEnabled(true);
+            } else {
+              delButton.setEnabled(false);
+            }
+          }
+        });
 
     FormData fd1 = new FormData();
     fd1.bottom = new FormAttachment(tree2, -10);
@@ -167,7 +172,11 @@ public class ConceptTreeWidget extends Composite implements ISelectionProvider {
     String name = dialog.getValue();
     if (null != name) {
       TreeSelection treeSelection = (TreeSelection) treeViewer.getSelection();
-      ConceptInterface selected = (ConceptInterface) treeSelection.getFirstElement();
+      Object selectedObject = treeSelection.getFirstElement();
+      ConceptInterface selected = null;
+      if (selectedObject instanceof ConceptInterface) {
+        selected = (ConceptInterface) treeSelection.getFirstElement();
+      }
       ConceptInterface newConcept = new Concept(name, selected);
       conceptTreeModel.addConcept(selected, newConcept);
     }
@@ -204,6 +213,9 @@ public class ConceptTreeWidget extends Composite implements ISelectionProvider {
         if (null != children && children.length > 0) {
           return true;
         }
+      } else if (element instanceof String) {
+        // this is the root
+        return true;
       }
       return false;
     }
@@ -229,6 +241,9 @@ public class ConceptTreeWidget extends Composite implements ISelectionProvider {
       }
       if (parentElement instanceof ConceptInterface) {
         return conceptTreeModel.getChildren((ConceptInterface) parentElement);
+      } else if (parentElement instanceof String) {
+        // this is the root
+        return conceptTreeModel.getChildren(null);
       }
       return null;
     }
@@ -237,7 +252,7 @@ public class ConceptTreeWidget extends Composite implements ISelectionProvider {
       if (logger.isDebugEnabled()) {
         logger.debug("getElements arg is " + inputElement);
       }
-      return conceptTreeModel.getChildren(null);
+      return new String[] { "Concepts" };
     }
 
   }
@@ -260,7 +275,8 @@ public class ConceptTreeWidget extends Composite implements ISelectionProvider {
       }
       if (element instanceof ConceptInterface) {
         return ((ConceptInterface) element).getName();
-
+      } else if (element instanceof String) {
+        return (String) element;
       }
       return null;
     }
