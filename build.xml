@@ -107,7 +107,7 @@
 		<mkdir dir="${distrib}" />
 
 		<copy todir="${distrib}">
-			<fileset dir="." includes="releasenotes.txt" />
+			<fileset dir="." includes="releasenotes.txt" excludes="**/build, **/dist"/>
 		</copy>
 
 		<copy todir="${distrib}">
@@ -116,7 +116,7 @@
 
 		<!-- base lib -->
 		<mkdir dir="${distrib}/lib" />
-		<copy todir="${distrib}/lib" file="${lib}/pentaho-meta-${release.major.number}.${release.minor.number}.${release.milestone.number}.jar" />
+		<copy todir="${distrib}/lib" file="${dist.dir}/pentaho-meta-${release.major.number}.${release.minor.number}.${release.milestone.number}.jar" />
 
 		<!-- cwm model-->
 		<mkdir dir="${distrib}/cwm" />
