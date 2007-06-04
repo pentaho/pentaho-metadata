@@ -12,7 +12,9 @@ set CLASSPATH=.
 REM ******************
 REM   Core Library
 REM ******************
-set CLASSPATH=%CLASSPATH%;lib\pentaho-meta.jar
+REM This will get the versioned pentaho-meta.jar
+FOR %%F IN (lib\*.jar) DO call :addcp %%F
+REM set CLASSPATH=%CLASSPATH%;lib\pentaho-meta.jar
 
 REM **********************
 REM   External Libraries

@@ -14,7 +14,12 @@ export LD_LIBRARY_PATH=/usr/local/mozilla
 # **************************************************
 
 CLASSPATH=.
-CLASSPATH=$CLASSPATH:lib/pentaho-meta.jar
+
+# This will get the versioned pentaho-meta.jar
+for i in `ls ./lib/*.jar`
+do
+  CLASSPATH=${CLASSPATH}:${i}
+done
 
 CLASSPATH=$CLASSPATH:libswt/commands.jar
 CLASSPATH=$CLASSPATH:libswt/common.jar
