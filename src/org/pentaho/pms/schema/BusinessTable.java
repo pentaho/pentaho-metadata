@@ -196,11 +196,11 @@ public class BusinessTable extends ConceptUtilityBase
       return newId;
     }
     
-    public BusinessCategory generateCategory(String locale, UniqueList categories){
+    public BusinessCategory generateCategory(String locale, BusinessCategory rootCat){
 
       BusinessCategory businessCategory = new BusinessCategory();
       try {
-        businessCategory.setId(BusinessCategory.proposeId(locale, this, businessCategory, categories));
+        businessCategory.setId(BusinessCategory.proposeId(locale, this, businessCategory, rootCat.getBusinessCategories()));
       } catch (ObjectAlreadyExistsException ex) {
         throw new RuntimeException(ex); // This should not happen ...
       }
@@ -216,7 +216,7 @@ public class BusinessTable extends ConceptUtilityBase
       
       while (!gotNew) {
         
-        for (Iterator iter = categories.iterator(); iter.hasNext();) {
+        for (Iterator iter = rootCat.getBusinessCategories().iterator(); iter.hasNext();) {
           ConceptUtilityBase element = (ConceptUtilityBase) iter.next();
           if (element.getName(locale).equalsIgnoreCase(newName)){
             found = true;
@@ -237,7 +237,7 @@ public class BusinessTable extends ConceptUtilityBase
       //
       for (int i = nrBusinessColumns() - 1; i >= 0; i--) {
         try {
-          businessCategory.addBusinessColumn(getBusinessColumn(i).cloneUnique(locale, businessCategory.getBusinessColumns()));
+          businessCategory.addBusinessColumn(getBusinessColumn(i).cloneUnique(locale, rootCat.getAllBusinessColumns()));
         } catch (ObjectAlreadyExistsException e) {
           throw new RuntimeException(e); // This should not happen ...
         }

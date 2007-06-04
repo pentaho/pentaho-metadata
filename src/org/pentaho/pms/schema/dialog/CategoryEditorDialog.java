@@ -47,7 +47,6 @@ import org.pentaho.pms.ui.tree.BusinessTablesTreeNode;
 import org.pentaho.pms.ui.tree.BusinessViewTreeNode;
 import org.pentaho.pms.ui.tree.CategoryTreeNode;
 import org.pentaho.pms.util.GUIResource;
-import org.pentaho.pms.util.Settings;
 
 import be.ibridge.kettle.core.dialog.ErrorDialog;
 import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
@@ -451,7 +450,7 @@ public class CategoryEditorDialog extends TitleAreaDialog {
   private void addCategoryFromBusinessTable(BusinessCategory parentCategory, BusinessTable businessTable) {
 
     // Create a new category
-    BusinessCategory businessCategory = businessTable.generateCategory(activeLocale, businessModel.getRootCategory().getBusinessCategories());
+    BusinessCategory businessCategory = businessTable.generateCategory(activeLocale, businessModel.getRootCategory());
 
     // Add the category to the business model or category
     try {
@@ -505,7 +504,7 @@ public class CategoryEditorDialog extends TitleAreaDialog {
         }
         // Add the column to the category
         try {
-          parentCategory.addBusinessColumn(((BusinessColumnTreeNode)domainObject).getBusinessColumn().cloneUnique(activeLocale, parentCategory.getBusinessColumns()));
+          parentCategory.addBusinessColumn(((BusinessColumnTreeNode)domainObject).getBusinessColumn().cloneUnique(activeLocale, businessModel.getRootCategory().getAllBusinessColumns()));
           ((CategoryTreeNode)firstSelection).addDomainChild(((BusinessColumnTreeNode)domainObject).getBusinessColumn());
         } catch (ObjectAlreadyExistsException e) {
           // Should not happen here, programmatically generating new ids.

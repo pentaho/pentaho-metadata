@@ -1367,7 +1367,7 @@ public class MetaEditor {
               // ID!
               if (businessTable != null) {
                 BusinessCategory businessCategory = businessTable.generateCategory(schemaMeta.getActiveLocale(),
-                    activeModel.getRootCategory().getBusinessCategories());
+                    activeModel.getRootCategory());
 
                 // Add the category to the business model or category
                 //
@@ -1410,8 +1410,8 @@ public class MetaEditor {
                 }
 
                 // Add the column to the parentCategory
-                parentCategory.addBusinessColumn(businessColumn.cloneUnique(activeLocale, parentCategory
-                    .getBusinessColumns()));
+                
+                parentCategory.addBusinessColumn(businessColumn.cloneUnique(activeLocale, activeModel.getRootCategory().getAllBusinessColumns()));
                 synchronize(parentCategory);
                 refreshAll();
               }
