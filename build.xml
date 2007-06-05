@@ -163,6 +163,6 @@
 		</zip>
 	</target>
 
-	<target name="dist-metadata" depends="jar-pentaho-metadata, zip-pentaho-metadata-src, zip-pentaho-metadata-javadoc" />
+	<target name="dist-metadata" depends="jar-pentaho-metadata, zip-pentaho-metadata-src, zip-pentaho-metadata-javadoc, distrib" />
 
 </project>
