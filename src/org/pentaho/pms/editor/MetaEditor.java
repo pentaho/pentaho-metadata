@@ -1367,7 +1367,7 @@ public class MetaEditor {
               // ID!
               if (businessTable != null) {
                 BusinessCategory businessCategory = businessTable.generateCategory(schemaMeta.getActiveLocale(),
-                    activeModel.getRootCategory());
+                    activeModel.getRootCategory().getBusinessCategories());
 
                 // Add the category to the business model or category
                 //
@@ -1410,8 +1410,7 @@ public class MetaEditor {
                 }
 
                 // Add the column to the parentCategory
-                
-                parentCategory.addBusinessColumn(businessColumn.cloneUnique(activeLocale, activeModel.getRootCategory().getAllBusinessColumns()));
+                parentCategory.addBusinessColumn(businessColumn);
                 synchronize(parentCategory);
                 refreshAll();
               }
@@ -2044,6 +2043,19 @@ public class MetaEditor {
     if (activeModel == null) {
       return null;
     }
+
+    if (physicalTable == null) {
+      ListSelectionDialog comboDialog = new ListSelectionDialog(
+          shell,
+          Messages.getString("MetaEditor.USER_SELECT_PHYSICAL_TABLE_MESSAGE"), Messages.getString("MetaEditor.USER_TITLE_SELECT_PHYSICAL_TABLE"), //$NON-NLS-1$ //$NON-NLS-2$
+          schemaMeta.getTables().toArray());
+      comboDialog.open();
+      physicalTable = (PhysicalTable) comboDialog.getSelection();
+      if (physicalTable == null) {
+        return null;
+      }
+    }
+
     // Make sure that we are not trying to add a physical table from a
     // different connection than the active model's connection
     if (physicalTable != null) {
@@ -2055,18 +2067,6 @@ public class MetaEditor {
                 .getActiveLocale()), activeModel.getConnection().getName()));
         mb.open();
 
-        return null;
-      }
-    }
-
-    if (physicalTable == null) {
-      ListSelectionDialog comboDialog = new ListSelectionDialog(
-          shell,
-          Messages.getString("MetaEditor.USER_SELECT_PHYSICAL_TABLE_MESSAGE"), Messages.getString("MetaEditor.USER_TITLE_SELECT_PHYSICAL_TABLE"), //$NON-NLS-1$ //$NON-NLS-2$
-          schemaMeta.getTables().toArray());
-      comboDialog.open();
-      physicalTable = (PhysicalTable) comboDialog.getSelection();
-      if (physicalTable == null) {
         return null;
       }
     }
@@ -2103,7 +2103,7 @@ public class MetaEditor {
         // We're done, add the business column.
         try {
           // Propose a new ID
-          businessColumn.setId(BusinessColumn.proposeId(activeLocale, businessTable, physicalColumn));
+          businessColumn.setId(BusinessColumn.proposeId(activeLocale, businessTable, physicalColumn, activeModel.getAllBusinessColumns()));
           businessTable.addBusinessColumn(businessColumn);
         } catch (ObjectAlreadyExistsException e) {
           new ErrorDialog(
@@ -2115,7 +2115,7 @@ public class MetaEditor {
 
     if (businessTable != null) {
 
-      BusinessTableModel tableModel = new BusinessTableModel(businessTable);
+      BusinessTableModel tableModel = new BusinessTableModel(businessTable, activeModel);
 
       BusinessTableDialog td = new BusinessTableDialog(shell, SWT.NONE, tableModel, schemaMeta);
       int res = td.open();
@@ -3453,7 +3453,7 @@ public class MetaEditor {
     if (businessTable != null) {
 
       BusinessTable copy = (BusinessTable) businessTable.clone();
-      BusinessTableModel tableModel = new BusinessTableModel(copy);
+      BusinessTableModel tableModel = new BusinessTableModel(copy, schemaMeta.getActiveModel());
 
       BusinessTableDialog td = new BusinessTableDialog(shell, SWT.NONE, tableModel, schemaMeta);
       int res = td.open();
@@ -3503,7 +3503,10 @@ public class MetaEditor {
       log.logDebug(APPLICATION_NAME, Messages.getString("MetaEditor.DEBUG_DUPLICATE_TABLE", businessTable.getId())); //$NON-NLS-1$
 
       BusinessModel activeModel = schemaMeta.getActiveModel();
-      BusinessTable newTable = businessTable.cloneUnique(schemaMeta.getActiveLocale(), activeModel.getBusinessTables());
+      
+      // This should be a unique clone of the business table AND it's columns...
+      BusinessTable newTable = businessTable.cloneUnique(schemaMeta.getActiveLocale(), activeModel.getBusinessTables(), 
+          activeModel.getAllBusinessColumns());
 
       try {
 

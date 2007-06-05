@@ -93,7 +93,7 @@ public class BusinessCategory extends ConceptUtilityBase implements ChangedFlagI
         {
             try
             {
-                businessCategory.addBusinessColumn((BusinessColumn) getBusinessColumn(i).clone());
+                businessCategory.addBusinessColumn(getBusinessColumn(i));
             }
             catch (ObjectAlreadyExistsException e)
             {
@@ -124,16 +124,18 @@ public class BusinessCategory extends ConceptUtilityBase implements ChangedFlagI
      * @param tables List of categories to compare new category id against
      * @return a new BusinessCategory, duplicate of this, with only the id changed to be unique in it's list
      */
-    public BusinessCategory cloneUnique (String locale, BusinessCategory rootCat){
+    public BusinessCategory cloneUnique (String locale, UniqueList categories){
       
       BusinessCategory businessCategory  = (BusinessCategory)clone(); 
 
       businessCategory.getBusinessColumns().clear(); // clear the list of column
       for (int i=0;i<nrBusinessColumns();i++)
       {
-          try
-          {
-            businessCategory.addBusinessColumn(getBusinessColumn(i).cloneUnique(locale, rootCat.getAllBusinessColumns()));
+          try{
+            // Do NOT clone business columns in a category; business columns must 
+            // have a representative id under the business tables, cannot stand on 
+            // their own under the categories...
+            businessCategory.addBusinessColumn(getBusinessColumn(i));
           }
           catch (ObjectAlreadyExistsException e)
           {
@@ -141,7 +143,7 @@ public class BusinessCategory extends ConceptUtilityBase implements ChangedFlagI
           }
       }
       
-      String newId = proposeId(locale, null, this, rootCat.getBusinessCategories());
+      String newId = proposeId(locale, null, this, categories);
       try {
         businessCategory.setId(newId);
       } catch (ObjectAlreadyExistsException e) {
@@ -332,39 +334,6 @@ public class BusinessCategory extends ConceptUtilityBase implements ChangedFlagI
         }
         
         return null;
-    }
-
-    /**
-     * Return all business columns from all categories; this method will only return a list
-     * if the category is a root category; otherwise, returns null. This method is added so that we can 
-     * determine unique ids across ALL category business columns, a requirement for WAQR.
-     * 
-     * @return allColumns allcolumns in all categories for this model;
-     */
-    public UniqueList getAllBusinessColumns(){
-
-      if (!isRootCategory())
-        return null;
-      
-      UniqueList allColumns = new UniqueArrayList();
-
-      try {
-        for (int i=0;i<nrBusinessCategories();i++)
-          {
-              BusinessCategory businessCategory = getBusinessCategory(i);
-              for (Iterator iter = businessCategory.getBusinessColumns().iterator(); iter.hasNext();) {
-                allColumns.add(iter.next());
-              }
-          }
-
-        for (Iterator iter = getBusinessColumns().iterator(); iter.hasNext();) {
-          allColumns.add(iter.next());
-        }
-      } catch (ObjectAlreadyExistsException e) {
-        throw new RuntimeException(e); // This should not happen, but I don't like to swallow the error.      
-      }
-      
-      return allColumns;
     }
 
     /**

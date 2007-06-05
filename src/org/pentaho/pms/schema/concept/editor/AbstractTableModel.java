@@ -15,12 +15,13 @@ public abstract class AbstractTableModel implements ITableModel {
   // ~ Instance fields =================================================================================================
 
   private EventSupport eventSupport = new EventSupport();
-
+  
   // ~ Constructors ====================================================================================================
 
   public AbstractTableModel() {
     super();
   }
+
 
   // ~ Methods =========================================================================================================
 

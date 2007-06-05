@@ -4,6 +4,7 @@ import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 
 import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
+import be.ibridge.kettle.core.list.UniqueList;
 
 /**
  * An abstraction of a <code>PhysicalTable</code> and <code>BusinessTable</code>.

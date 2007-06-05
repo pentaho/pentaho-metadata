@@ -4,13 +4,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessColumn;
+import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.PhysicalColumn;
 import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.concept.ConceptInterface;
+import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 
 import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
+import be.ibridge.kettle.core.list.UniqueList;
 
 public class BusinessTableModel extends AbstractTableModel {
 
@@ -23,17 +26,20 @@ public class BusinessTableModel extends AbstractTableModel {
   private BusinessTable table;
 
   private PhysicalTable physicalTable;
+  
+  private BusinessModel businessModel;
 
   // ~ Constructors ====================================================================================================
 
-  public BusinessTableModel(final BusinessTable table) {
-    this(table, table.getPhysicalTable());
+  public BusinessTableModel(final BusinessTable table, final BusinessModel businessModel) {
+    this(table, table.getPhysicalTable(), businessModel);
   }
 
-  public BusinessTableModel(final BusinessTable table, final PhysicalTable physicalTable) {
+  public BusinessTableModel(final BusinessTable table, final PhysicalTable physicalTable, final BusinessModel businessModel) {
     super();
     this.table = table;
     setParent(physicalTable);
+    this.businessModel=businessModel;
   }
 
   // ~ Methods =========================================================================================================
@@ -54,6 +60,13 @@ public class BusinessTableModel extends AbstractTableModel {
       PhysicalColumn physicalColumn = physicalTable.findPhysicalColumn(localeCode, id);
       String newBusinessColumnId = BusinessColumn.proposeId(localeCode, table, physicalColumn);
       BusinessColumn businessColumn = new BusinessColumn(newBusinessColumnId, physicalColumn, table);
+      
+      // TODO: HACK to force new unique ID on new columns; this can still be a problem, because 
+      // business column ids need to be unique across all columns in the model... this 
+      // only guarantees that they are unique to this table.
+      UniqueList columns = businessModel != null ? businessModel.getAllBusinessColumns() : table.getBusinessColumns();
+      businessColumn = businessColumn.cloneUnique(localeCode, columns);
+      businessColumn.addIDChangedListener(ConceptUtilityBase.createIDChangedListener(table.getBusinessColumns()));
       table.addBusinessColumn(businessColumn);
       fireTableModificationEvent(createAddColumnEvent(newBusinessColumnId));
     }
@@ -111,7 +124,7 @@ public class BusinessTableModel extends AbstractTableModel {
   }
 
   public Object clone() throws CloneNotSupportedException {
-    return new BusinessTableModel((BusinessTable) table.clone(), (PhysicalTable) physicalTable.clone());
+    return new BusinessTableModel((BusinessTable) table.clone(), (PhysicalTable) physicalTable.clone(), businessModel);
   }
 
   public ITableModel getParentAsTableModel() {

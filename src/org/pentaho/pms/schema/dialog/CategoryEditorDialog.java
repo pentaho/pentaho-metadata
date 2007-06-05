@@ -450,7 +450,7 @@ public class CategoryEditorDialog extends TitleAreaDialog {
   private void addCategoryFromBusinessTable(BusinessCategory parentCategory, BusinessTable businessTable) {
 
     // Create a new category
-    BusinessCategory businessCategory = businessTable.generateCategory(activeLocale, businessModel.getRootCategory());
+    BusinessCategory businessCategory = businessTable.generateCategory(activeLocale, businessModel.getRootCategory().getBusinessCategories());
 
     // Add the category to the business model or category
     try {
@@ -504,7 +504,7 @@ public class CategoryEditorDialog extends TitleAreaDialog {
         }
         // Add the column to the category
         try {
-          parentCategory.addBusinessColumn(((BusinessColumnTreeNode)domainObject).getBusinessColumn().cloneUnique(activeLocale, businessModel.getRootCategory().getAllBusinessColumns()));
+          parentCategory.addBusinessColumn(((BusinessColumnTreeNode)domainObject).getBusinessColumn());
           ((CategoryTreeNode)firstSelection).addDomainChild(((BusinessColumnTreeNode)domainObject).getBusinessColumn());
         } catch (ObjectAlreadyExistsException e) {
           // Should not happen here, programmatically generating new ids.

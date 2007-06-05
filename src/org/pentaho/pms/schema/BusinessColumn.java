@@ -96,6 +96,30 @@ public class BusinessColumn extends ConceptUtilityBase implements ChangedFlagInt
       
       BusinessColumn businessColumn  = (BusinessColumn)clone(); 
       
+      String newId = proposeId(locale, businessTable, physicalColumn, columns); 
+
+      try {
+        businessColumn.setId(newId);
+      } catch (ObjectAlreadyExistsException e) {
+        logger.error(Messages.getErrorString("BusinessColumn.ERROR_0005_UNEXPECTED_ID_EXISTS", newId), e); //$NON-NLS-1$
+        return null;
+      }
+      
+      return businessColumn;
+      
+    }
+    
+    public static final String proposeId(String locale, BusinessTable businessTable, PhysicalColumn physicalColumn)
+    {
+        String baseID = Const.toID( businessTable.getDisplayName(locale) );
+        String namePart = Const.toID( Const.NVL(physicalColumn.getName(locale), physicalColumn.getFormula() ) );
+        String id = Settings.getBusinessColumnIDPrefix() + baseID+"_" + namePart; //$NON-NLS-1$
+        if (Settings.isAnIdUppercase()) id = id.toUpperCase();
+        return id;
+    }
+
+    public static final String proposeId(String locale, BusinessTable businessTable, PhysicalColumn physicalColumn, UniqueList columns)
+    {
       boolean gotNew = false;
       boolean found = false;
       String id = proposeId(locale, businessTable, physicalColumn);
@@ -124,24 +148,7 @@ public class BusinessColumn extends ConceptUtilityBase implements ChangedFlagInt
       if (Settings.isAnIdUppercase())
         newId = newId.toUpperCase();
       
-      try {
-        businessColumn.setId(newId);
-      } catch (ObjectAlreadyExistsException e) {
-        logger.error(Messages.getErrorString("BusinessColumn.ERROR_0005_UNEXPECTED_ID_EXISTS", newId), e); //$NON-NLS-1$
-        return null;
-      }
-      
-      return businessColumn;
-      
-    }
-    
-    public static final String proposeId(String locale, BusinessTable businessTable, PhysicalColumn physicalColumn)
-    {
-        String baseID = Const.toID( businessTable.getDisplayName(locale) );
-        String namePart = Const.toID( Const.NVL(physicalColumn.getName(locale), physicalColumn.getFormula() ) );
-        String id = Settings.getBusinessColumnIDPrefix() + baseID+"_" + namePart; //$NON-NLS-1$
-        if (Settings.isAnIdUppercase()) id = id.toUpperCase();
-        return id;
+      return newId;
     }
 
     public String toString()

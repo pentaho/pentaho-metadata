@@ -260,14 +260,14 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
   }
 
   public BusinessTable[] getSelected() {
-    BusinessTable[] businessTables = new BusinessTable[nrSelected()];
+    BusinessTable[] bTables = new BusinessTable[nrSelected()];
     for (int i = 0, j = 0; i < nrBusinessTables(); i++) {
       BusinessTable aTable = getBusinessTable(i);
       if (aTable.isSelected()) {
-        businessTables[j++] = aTable;
+        bTables[j++] = aTable;
       }
     }
-    return businessTables;
+    return bTables;
   }
 
   public BusinessTable getSelected(int nr) {
@@ -1378,6 +1378,27 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
       // Not on the right path, don't persue anymore...
       return null;
     }
+  }
+
+  /**
+   * Returns all business columns
+   * 
+   * @return a UniqueList of all business columns in this model
+   */
+  public UniqueList getAllBusinessColumns() {
+    UniqueList columns = new UniqueArrayList();
+    
+    for (int i = 0; i < nrBusinessTables(); i++) {
+      BusinessTable businessTable = getBusinessTable(i);
+      for (int j = 0; j < businessTable.nrBusinessColumns(); j++) {
+        try {
+          columns.add(businessTable.getBusinessColumn(j));
+        } catch (ObjectAlreadyExistsException e) {
+          throw new RuntimeException(e);
+        }
+      }
+    }
+    return columns;
   }
 
   /**
