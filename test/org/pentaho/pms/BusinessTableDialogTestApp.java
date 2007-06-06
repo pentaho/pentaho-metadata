@@ -161,7 +161,7 @@ public class BusinessTableDialogTestApp extends ApplicationWindow {
       }
     }
 
-    tableModel = new BusinessTableModel(tab);
+    tableModel = new BusinessTableModel(tab, schemaMeta.getActiveModel());
     tableModel.setParent(new PhysicalTable("customers"));
 
   }
@@ -192,7 +192,7 @@ public class BusinessTableDialogTestApp extends ApplicationWindow {
     c0.setLayout(new FormLayout());
 
     // let the table diag operate on copy of the original in case they cancel
-    ITableModel copy = new BusinessTableModel((BusinessTable) tab.clone());
+    ITableModel copy = new BusinessTableModel((BusinessTable) tab.clone(), schemaMeta.getActiveModel());
 
     if (logger.isDebugEnabled()) {
       logger.debug("orig table model: " + tableModel);
