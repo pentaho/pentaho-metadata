@@ -29,7 +29,7 @@
 
 	<property name="sourcezipfile" location="PentahoMetaData-src-${release.number}.zip" />
 
-	<target name="clean-all" depends="clean-build, clean-dist, clean-pentaho-metadata-javadoc" />
+	<target name="clean-all" depends="clean-build, clean-dist, clean-pentaho-metadata-javadoc, clean-distrib" />
 
 	<target name="clean-build">
 		<delete dir="${build.dir}" />
@@ -37,6 +37,10 @@
 
 	<target name="clean-dist">
 		<delete dir="${dist.dir}" />
+	</target>
+	
+	<target name="clean-distrib">
+		<delete dir="${distrib}" />
 	</target>
 
 	<target name="clean-pentaho-metadata-javadoc">
@@ -153,7 +157,22 @@
 		</copy>
 		
 		<echo>Generating the Pentaho Metadata distribution package PentahoMetaData-${release.number}.zip ...</echo>
-		<jar jarfile="${dist.dir}/pentaho-metadata-${release.number}.zip" basedir="${distrib}" includes="**/*" excludes="**/Thumbs.db" />
+		<zip destfile="${dist.dir}/pentaho-metadata-${release.number}.zip">
+			<zipfileset dir="${distrib}" prefix="pentaho-metadata-${release.number}" includes="**/*" excludes="**/Thumbs.db" />
+		</zip>
+		
+		<tar destfile="${dist.dir}/pentaho-metadata-${release.number}.tar">
+			<tarfileset dir="${distrib}" prefix="pentaho-metadata-${release.number}" mode="755">
+				<include name="**/*.sh"/>
+			</tarfileset>
+			<tarfileset dir="${distrib}" prefix="pentaho-metadata-${release.number}">
+				<include name="**/*" />
+				<exclude name="**/*.bat"/>
+				<exclude name="**/*.sh" />
+			</tarfileset>
+		</tar>
+		
+		<gzip src="${dist.dir}/pentaho-metadata-${release.number}.tar" zipfile="${dist.dir}/pentaho-metadata-${release.number}.tar.gz"/>
 	</target>
 
 	<target name="zip-pentaho-metadata-src" depends="init-dist" description="generate the PentahoMetaData-src-${release.number}.zip file">
