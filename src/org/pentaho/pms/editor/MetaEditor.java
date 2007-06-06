@@ -539,7 +539,7 @@ public class MetaEditor {
     };
     lsEditLocales = new Listener() {
       public void handleEvent(Event e) {
-        tabfolder.setSelection(2);
+        tabfolder.setSelection(1);
       }
     };
     lsEditConcepts = new Listener() {
@@ -961,7 +961,7 @@ public class MetaEditor {
 
     miLogging.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(SelectionEvent e) {
-        tabfolder.setSelection(3);
+        tabfolder.setSelection(2);
       }
     });
 
