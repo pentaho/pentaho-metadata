@@ -33,9 +33,9 @@ import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
 import org.pentaho.pms.messages.Messages;
+import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
-import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.OrderBy;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.WhereCondition;
@@ -128,23 +128,25 @@ public class MQLQuery {
     constraints.add(where);
   }
   
-  public void addOrderBy( String tableId, String columnId, boolean ascending) throws PentahoMetadataException {
-    BusinessTable businessTable = model.findBusinessTable( tableId );
-    if (businessTable == null) {
-      throw new PentahoMetadataException(Messages.getErrorString("MQLQuery.ERROR_0014_BUSINESS_TABLE_NOT_FOUND", tableId));  //$NON-NLS-1$ 
+  public void addOrderBy( String categoryId, String columnId, boolean ascending) throws PentahoMetadataException {
+    BusinessCategory rootCat = model.getRootCategory();
+    BusinessCategory businessCategory = rootCat.findBusinessCategory(categoryId);
+    // BusinessCategory businessCategory = model.findBusinessTable( tableId );
+    if (businessCategory == null) {
+      throw new PentahoMetadataException(Messages.getErrorString("MQLQuery.ERROR_0014_BUSINESS_CATEGORY_NOT_FOUND", categoryId));  //$NON-NLS-1$ 
     }
-    addOrderBy( businessTable, columnId, ascending );
+    addOrderBy( businessCategory, columnId, ascending );
 	}
 	
-	public void addOrderBy( BusinessTable businessTable, String columnId, boolean ascending ) throws PentahoMetadataException {
+	public void addOrderBy( BusinessCategory businessCategory, String columnId, boolean ascending ) throws PentahoMetadataException {
         
-        if (businessTable == null) {
-          throw new PentahoMetadataException(Messages.getErrorString("MQLQuery.ERROR_0015_BUSINESS_TABLE_NULL"));  //$NON-NLS-1$ 
+        if (businessCategory == null) {
+          throw new PentahoMetadataException(Messages.getErrorString("MQLQuery.ERROR_0015_BUSINESS_CATEGORY_NULL"));  //$NON-NLS-1$ 
         }   
     
-        BusinessColumn businessColumn = businessTable.findBusinessColumn(columnId);
+        BusinessColumn businessColumn = businessCategory.findBusinessColumn(columnId);
         if (businessColumn == null) {
-          throw new PentahoMetadataException(Messages.getErrorString("MQLQuery.ERROR_0016_BUSINESS_COLUMN_NOT_FOUND", businessTable.getId(), columnId));  //$NON-NLS-1$ 
+          throw new PentahoMetadataException(Messages.getErrorString("MQLQuery.ERROR_0016_BUSINESS_COLUMN_NOT_FOUND", businessCategory.getId(), columnId));  //$NON-NLS-1$ 
         }
             
         OrderBy orderBy = new OrderBy( businessColumn, ascending);
@@ -313,8 +315,15 @@ public class MQLQuery {
             		if( column.getBusinessTable() != null ) {
                 		selectionElement = doc.createElement( "selection" ); //$NON-NLS-1$
                 		
-                		element = doc.createElement( "table" ); //$NON-NLS-1$
-                		element.appendChild( doc.createTextNode( column.getBusinessTable().getId() ) );
+                		element = doc.createElement( "view" ); //$NON-NLS-1$
+                    
+                		// element.appendChild( doc.createTextNode( column.getBusinessTable().getId() ) );
+                    //
+                    // Work-around for PMD-93 - not using BusinessView in the MQL.
+                    BusinessCategory rootCat = model.getRootCategory();
+                    BusinessCategory businessCategory = rootCat.findBusinessCategoryForBusinessColumn(column);
+                    element.appendChild( doc.createTextNode( businessCategory.getId() ) );
+                    
                 		selectionElement.appendChild( element );
                 		
                 		element = doc.createElement( "column" ); //$NON-NLS-1$
@@ -390,8 +399,12 @@ public class MQLQuery {
             		element.appendChild( doc.createTextNode( orderBy.isAscending() ? "asc" : "desc" ) ); //$NON-NLS-1$ //$NON-NLS-2$
             		orderElement.appendChild( element );
             		
-                    element = doc.createElement( "table_id" ); //$NON-NLS-1$
-                    element.appendChild( doc.createTextNode( orderBy.getBusinessColumn().getBusinessTable().getId() ) );
+                // Work-around for PMD-93 - Need this to be better into the future...
+                    element = doc.createElement( "view_id" ); //$NON-NLS-1$
+                    BusinessCategory rootCat = model.getRootCategory();
+                    BusinessCategory businessView = rootCat.findBusinessCategoryForBusinessColumn(orderBy.getBusinessColumn());
+                    element.appendChild( doc.createTextNode( businessView.getId() ) );
+                    
                     orderElement.appendChild( element );
             		
             		element = doc.createElement( "column_id" ); //$NON-NLS-1$
@@ -497,24 +510,24 @@ public class MQLQuery {
 	
 	private void addOrderByFromXmlNode( Element orderElement ) throws PentahoMetadataException {
     boolean ascending = true;
-    String table_id = null;
+    String view_id = null;
     String column_id = null;
     
     NodeList nodes = orderElement.getElementsByTagName("direction"); //$NON-NLS-1$
     if (nodes.getLength() > 0) {
       ascending = XMLHandler.getNodeValue(nodes.item(0)).equals("asc"); //$NON-NLS-1$
     }
-    nodes = orderElement.getElementsByTagName("table_id"); //$NON-NLS-1$
+    nodes = orderElement.getElementsByTagName("view_id"); //$NON-NLS-1$
     if (nodes.getLength() > 0) {
-      table_id = XMLHandler.getNodeValue(nodes.item(0));
+      view_id = XMLHandler.getNodeValue(nodes.item(0));
     }
     nodes = orderElement.getElementsByTagName("column_id"); //$NON-NLS-1$
     if (nodes.getLength() > 0) {
       column_id = XMLHandler.getNodeValue(nodes.item(0));
     }
     
-    if ((table_id != null) && (column_id != null)) {
-      addOrderBy( table_id, column_id, ascending );
+    if ((view_id != null) && (column_id != null)) {
+      addOrderBy( view_id, column_id, ascending );
     }
 	}
 	
@@ -532,10 +545,10 @@ public class MQLQuery {
       cond = XMLHandler.getNodeValue(nodes.item(0));
     }
     
-    nodes = constraintElement.getElementsByTagName("table_id"); //$NON-NLS-1$
-    String table_id = null;
+    nodes = constraintElement.getElementsByTagName("view_id"); //$NON-NLS-1$
+    String view_id = null;
     if (nodes.getLength() > 0) {
-      table_id = XMLHandler.getNodeValue(nodes.item(0));
+      view_id = XMLHandler.getNodeValue(nodes.item(0));
     }
     
     nodes = constraintElement.getElementsByTagName("column_id"); //$NON-NLS-1$
@@ -549,13 +562,13 @@ public class MQLQuery {
     }
     
     if (cond != null) {
-      if (table_id == null || column_id == null) {
+      if (view_id == null || column_id == null) {
         // new function support
         addConstraint(operator, cond);
       } else {
         // backwards compatibility
-        if( table_id != null && column_id != null && cond != null ) {
-          addConstraint(operator, "[" + table_id + "." + column_id + "] " + cond ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        if( view_id != null && column_id != null && cond != null ) {
+          addConstraint(operator, "[" + view_id + "." + column_id + "] " + cond ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
       }
     }

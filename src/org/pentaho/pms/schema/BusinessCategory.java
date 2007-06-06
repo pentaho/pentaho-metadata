@@ -422,5 +422,41 @@ public class BusinessCategory extends ConceptUtilityBase implements ChangedFlagI
         }
         return findBusinessCategory(categoryName);
     }       
+    
+    /**
+     * Temporary fix for finding a businessCategory for a business column.
+     * This assumes that the current requirement for one-level of categories
+     * is in place. That is, if categories become hierarchical, this method
+     * will no longer work. This must be called on the root category.
+     * @param id id of the business column
+     * @return the first business category that contains the business column
+     */
+    public BusinessCategory findBusinessCategoryForBusinessColumn(String id) {
+      if (!isRootCategory()) {
+        return null;
+      }
+      UniqueList subCats = getBusinessCategories();
+      BusinessCategory cat = null;
+      BusinessColumn bc = null;
+      UniqueList bcList = null;
+      for (int i=0; i<subCats.size(); i++) {
+        cat = (BusinessCategory)subCats.get(i);
+        if ((cat != null) && (cat.findBusinessColumn(id) != null) ) {
+          return cat;
+        }
+      }
+      return null;
+    }
+    
+    /**
+     * Temporary fix for finding a businessCategory for a business column.
+     * @param id
+     * @return
+     */
+    public BusinessCategory findBusinessCategoryForBusinessColumn(BusinessColumn businessColumn) {
+      return ( (isRootCategory()) && (businessColumn != null) ) ? findBusinessCategoryForBusinessColumn(businessColumn.getId()) : null;
+    }
+    
+    
 }
  
