@@ -25,6 +25,7 @@
 	<property name="cwm" location="cwm" />
 	<property name="jdbc" location="jdbc" />
 	<property name="simple-jndi" location="simple-jndi" />
+	<property name="samples" location="samples" />
 	<property name="api" location="${docs}/api" />
 
 	<property name="sourcezipfile" location="PentahoMetaData-src-${release.number}.zip" />
@@ -136,6 +137,12 @@
 		<mkdir dir="${distrib}/simple-jndi" />
 		<copy todir="${distrib}/simple-jndi">
 			<fileset dir="${simple-jndi}" includes="*.*" excludes="**/.vpn" />
+		</copy>
+		
+		<!-- samples settings-->
+		<mkdir dir="${distrib}/samples" />
+		<copy todir="${distrib}/samples">
+			<fileset dir="${samples}" includes="*.*" />
 		</copy>
 
 		<!-- external libs (jdbc etc) -->
