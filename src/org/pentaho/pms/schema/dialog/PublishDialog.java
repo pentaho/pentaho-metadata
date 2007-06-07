@@ -58,7 +58,7 @@ public class PublishDialog extends Dialog {
   
   private String serverURL;
   private String solutionName;
-  private String fileName;
+  private String fileName = "metadata.xmi"; //$NON-NLS-1$
   
   private String userId;
   private String userPassword;
@@ -66,7 +66,7 @@ public class PublishDialog extends Dialog {
   
   private Text tServerURL;
   private Text tSolutionName;
-  private Text tFileName;
+//  private Text tFileName;
   
   private Text tUserId;
   private Text tUserPassword;
@@ -123,10 +123,10 @@ public class PublishDialog extends Dialog {
     label.setText(Messages.getString("PublishDialog.LABEL_SOLUTION")); //$NON-NLS-1$
     tSolutionName = new Text(dialog, SWT.LEFT | SWT.SINGLE);
     tSolutionName.setLayoutData(fieldLayoutData);
-    label = new Label(dialog, SWT.LEFT);
-    label.setText(Messages.getString("PublishDialog.LABEL_FILENAME")); //$NON-NLS-1$
-    tFileName = new Text(dialog, SWT.LEFT | SWT.SINGLE);
-    tFileName.setLayoutData(fieldLayoutData);
+//    label = new Label(dialog, SWT.LEFT);
+//    label.setText(Messages.getString("PublishDialog.LABEL_FILENAME")); //$NON-NLS-1$
+//    tFileName = new Text(dialog, SWT.LEFT | SWT.SINGLE);
+//    tFileName.setLayoutData(fieldLayoutData);
 
     // The buttons...
     wCancel = new Button(dialog, SWT.PUSH);
@@ -173,7 +173,7 @@ public class PublishDialog extends Dialog {
       if (result == ISolutionRepository.FILE_EXISTS) {
         MessageBox mb = new MessageBox(dialog, SWT.NO | SWT.YES | SWT.ICON_WARNING);
         mb.setText(Messages.getString("PublishDialog.FILE_EXISTS")); //$NON-NLS-1$
-        mb.setMessage(Messages.getString("PublishDialog.FILE_OVERWRITE", fileName)); //$NON-NLS-1$
+        mb.setMessage(Messages.getString("PublishDialog.FILE_OVERWRITE")); //$NON-NLS-1$
         if (mb.open() == SWT.YES) {
           result = PublisherUtil.publish(serverURL + "RepositoryFilePublisher", solutionName, files, publishPassword, userId, userPassword, true); //$NON-NLS-1$
         } else {
@@ -203,18 +203,18 @@ public class PublishDialog extends Dialog {
    */
   private void populateStrings() {
     String seperator = "/"; //$NON-NLS-1$
-    String suffix = ".xmi"; //$NON-NLS-1$
+//    String suffix = ".xmi"; //$NON-NLS-1$
     
     serverURL = tServerURL.getText();
     if (!serverURL.endsWith(seperator)) {
       serverURL += seperator;
     }
     solutionName = tSolutionName.getText();
-    fileName = tFileName.getText();
-    
-    if (!fileName.endsWith(suffix)) {
-      fileName += suffix;
-    }
+//    fileName = tFileName.getText();
+//    
+//    if (!fileName.endsWith(suffix)) {
+//      fileName += suffix;
+//    }
     
     userId = tUserId.getText();
     userPassword = tUserPassword.getText();
