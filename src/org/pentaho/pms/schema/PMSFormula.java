@@ -113,7 +113,7 @@ public class PMSFormula implements FormulaTraversalInterface {
     this.sqlDialect = formulaContext.getSQLDialect(databaseMeta);
     
     if (sqlDialect == null) {
-      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0017_DATABASE_DIALECT_NOT_FOUND", databaseMeta.getDatabaseTypeDesc())); //$NON-NLS-1$
+      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0018_DATABASE_DIALECT_NOT_FOUND", databaseMeta.getDatabaseTypeDesc())); //$NON-NLS-1$
     }
     
     if (formulaString == null) {
@@ -301,20 +301,43 @@ public class PMSFormula implements FormulaTraversalInterface {
           throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0011_INVALID_FIELDNAME",fieldName)); //$NON-NLS-1$
         }
         
-        BusinessTable bizTable = model.findBusinessTable(tblcol[0]);
-        if (bizTable == null) {
-          throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0012_FIELDNAME_ERROR_TABLE_NOT_FOUND", fieldName, tblcol[0])); //$NON-NLS-1$
+        // first lookup the category, and if not present, look up the business table that the column belongs to.
+        // finally check to see if the column exists in its parent, if no column is found, throw an exception.
+
+        BusinessCategory category = model.getRootCategory().findBusinessCategory(tblcol[0]);
+        BusinessColumn column = null;
+
+        if (category != null) {
+
+          // note, this lookup assumes that business categories are one level, not hierarchial
+          column = category.findBusinessColumn(tblcol[1]);
+          if (column == null) {
+            throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0019_FIELDNAME_ERROR_CAT_COLUMN_NOT_FOUND", fieldName, tblcol[1], tblcol[0])); //$NON-NLS-1$
+          }
+
+        } else {
+          
+          // trying for backward compatibility of business tables, which was the old way of doing things
+          
+          BusinessTable bizTable = model.findBusinessTable(tblcol[0]);
+
+          if (bizTable == null) {
+            throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0012_FIELDNAME_ERROR_PARENT_NOT_FOUND", fieldName, tblcol[0])); //$NON-NLS-1$
+          }
+
+          column = bizTable.findBusinessColumn(tblcol[1]);
+          if (column == null) {
+            throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0010_FIELDNAME_ERROR_COLUMN_NOT_FOUND", fieldName, tblcol[1], tblcol[0])); //$NON-NLS-1$
+          }
         }
-        BusinessColumn column = bizTable.findBusinessColumn(tblcol[1]);
-        if (column == null) {
-          throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0010_FIELDNAME_ERROR_COLUMN_NOT_FOUND", fieldName, tblcol[1], tblcol[0])); //$NON-NLS-1$
-        }
+
         businessColumnMap.put(fieldName, column);
         businessColumnList.add(column);
-        
       }
     }
   }
+  
+
   
   /*
    *  there should be 3 passes over the formula object model:
@@ -380,7 +403,7 @@ public class PMSFormula implements FormulaTraversalInterface {
         // everything is fine
         return;
       } else {
-        throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0014_OPERATOR_NOT_SUPPORTED", val.toString())); //$NON-NLS-1$
+        throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0021_OPERATOR_NOT_SUPPORTED", val.toString())); //$NON-NLS-1$
       }
     } else {
       throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0016_CLASS_TYPE_NOT_SUPPORTED", val.getClass().toString())); //$NON-NLS-1$
