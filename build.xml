@@ -11,6 +11,15 @@
 	<property file="build.properties" />
 	<property file="src/build-res/version.properties" />
 	<property name="cr" value="${line.separator}" />
+	
+	<!-- =======================================================
+		we need this due to the following:
+		http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6226858
+		
+		You should overwrite this value. The nightly build will pass
+		the appropriate value as a property.
+		=================================================== -->
+	<property name="javacbootclasspath" value="/build/jre/lib/rt.jar" />
 
 	<!-- set global properties for this build -->
 
@@ -68,7 +77,7 @@
 
 	<target name="compile" depends="init-metadata-classes" description="compile the source ">
 		<echo>Compiling Pentaho Metadata...</echo>
-		<javac srcdir="${src}" destdir="${build.classes.dir}" target="1.4" source="1.4" deprecation="true" debug="true">
+		<javac srcdir="${src}" destdir="${build.classes.dir}" bootclasspath="${javacbootclasspath}" target="1.4" source="1.4" deprecation="true" debug="true">
 
 			<classpath id="cp-meta">
 				<fileset dir="${libext}" includes="**/*.jar" />
