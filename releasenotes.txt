@@ -9,6 +9,14 @@ for review and testing. A production quality build of the current Pentaho BI Sui
 
 Release History
 ===============
+Milestone 4 (version 1.5.4)
+  - Added ability to publish metadata to Pentaho BI Server
+  - Usability improvements to the Metadata Editor 
+     
+  Notes:
+    Although this release has several usability improvements around the editing of properties,
+    there are several usability issues that will be addressed in coming milestones\release candidates.    
+
 Milestone 3 (version 1.5.3)
   - Usability improvements to the Metadata Editor
 
