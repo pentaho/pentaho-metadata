@@ -679,11 +679,31 @@ public class MetaEditor {
       }
     }
     if (goAhead) {
+      if (!validateBusinessModels()) {
+        MessageBox mb = new MessageBox(shell, SWT.NO | SWT.YES | SWT.ICON_WARNING);
+        mb.setMessage(Messages.getString("MetaEditor.USER_MODEL_MALFORMED"));
+        mb.setText(Messages.getString("MetaEditor.USER_MODEL_VALIDATION_ERROR"));
+        goAhead = mb.open() == SWT.YES;
+      }
+    }
+    if (goAhead) {
       PublishDialog publishDialog = new PublishDialog(shell, schemaMeta);
       publishDialog.open();
     }
   }
 
+  public boolean validateBusinessModels() {
+    boolean value = true;
+    Iterator iter = schemaMeta.getBusinessModels().iterator();
+    while(iter.hasNext()  && value) {
+      BusinessModel bm = (BusinessModel) iter.next();
+      if (bm.getBusinessTables().size() > 1) {
+        value = bm.getRelationships().size() > 0;
+      }
+    }
+    return value;
+  }
+  
   public void importFromXMI() {
     if (showChangedWarning()) {
       FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
@@ -2376,27 +2396,20 @@ public class MetaEditor {
 
       try {
         businessModel.setId(newBusModel.getId());
+        schemaMeta.addModel(businessModel);
+        mainTreeNode.getBusinessModelsRoot().addDomainChild(businessModel);
+        schemaMeta.setActiveModel(businessModel);
+        activeModelTreeNode = (BusinessModelTreeNode) mainTreeNode.getBusinessModelsRoot().findNode(businessModel);
+        refreshAll();
+  
+        return businessModel;
       } catch (ObjectAlreadyExistsException e) {
-        MessageDialog.openError(this.shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString(
-            "The id '{0}' is already in use.", newBusModel.getId()));
+        new ErrorDialog(
+            shell,
+            Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_BUSINESS_MODEL_NAME_EXISTS"), e); //$NON-NLS-1$ //$NON-NLS-2$
       }
-
     }
-
-    try {
-      schemaMeta.addModel(businessModel);
-      mainTreeNode.getBusinessModelsRoot().addDomainChild(businessModel);
-      schemaMeta.setActiveModel(businessModel);
-      activeModelTreeNode = (BusinessModelTreeNode) mainTreeNode.getBusinessModelsRoot().findNode(businessModel);
-      refreshAll();
-
-      return businessModel;
-    } catch (ObjectAlreadyExistsException e) {
-      new ErrorDialog(
-          shell,
-          Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_BUSINESS_MODEL_NAME_EXISTS"), e); //$NON-NLS-1$ //$NON-NLS-2$
-    }
-
+    
     return null;
   }
 
