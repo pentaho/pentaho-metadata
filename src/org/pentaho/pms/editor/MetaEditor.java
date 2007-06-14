@@ -693,15 +693,17 @@ public class MetaEditor {
   }
 
   public boolean validateBusinessModels() {
-    boolean value = true;
+    boolean valid = true;
+    
     Iterator iter = schemaMeta.getBusinessModels().iterator();
-    while(iter.hasNext()  && value) {
+    while(iter.hasNext()  && valid) {
       BusinessModel bm = (BusinessModel) iter.next();
       if (bm.getBusinessTables().size() > 1) {
-        value = bm.getRelationships().size() > 0;
-      }
+        valid = bm.getRelationships().size() > 0 && bm.getFlatCategoriesView(schemaMeta.getActiveLocale()).size() > 1;
+      } 
     }
-    return value;
+
+    return valid;
   }
   
   public void importFromXMI() {
