@@ -25,6 +25,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
@@ -777,7 +778,11 @@ public class MetaEditor {
   }
 
   public boolean readAndDispatch() {
-    return disp.readAndDispatch();
+    try {
+      return disp.readAndDispatch();
+    } catch (SWTException e) {
+      return false;
+    }
   }
 
   public void dispose() {
