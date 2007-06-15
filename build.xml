@@ -199,5 +199,29 @@
 	</target>
 
 	<target name="dist-metadata" depends="jar-pentaho-metadata, zip-pentaho-metadata-src, zip-pentaho-metadata-javadoc, distrib" />
+	
+    <!-- =========================================================== 
+          target: ftp-metadata
+              
+          Sends files to an ftp site. You can disable
+          the ftp actions by setting the ftp.metadata.false property.
+          
+          You must set a number of properties in an override properties
+          file in order for this to work.                
+         =========================================================== -->
+    <target name="ftp-metadata" unless="ftp.metadata.false">
+		<ftp action="mkdir" server="${ftp.server}" remotedir="${ftp.remote.dir}" userid="${ftp.user}" password="${ftp.user.passwd}"/>
+
+		<ftp server="${ftp.server}" remotedir="${ftp.remote.dir}" userid="${ftp.user}" password="${ftp.user.passwd}">
+			<fileset dir="${ftp.source.dir}">
+				<exclude name="*.tar"/>
+			</fileset>
+		</ftp>
+
+		<mail mailhost="${ftp.mailhost}" mailport="${ftp.mailport}" subject="${ftp.mail.subject}" messagemimetype="text/html" charset="us-ascii" tolist="${distribution.list}">
+			<from address="${ftp.mail.from.address}"/>
+			<replyto address="${ftp.mail.replyto.address}"/>
+		</mail>	
+    </target>
 
 </project>
