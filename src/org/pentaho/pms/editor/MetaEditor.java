@@ -853,6 +853,7 @@ public class MetaEditor {
 
     miFileOpen = new MenuItem(msFile, SWT.CASCADE);
     miFileOpen.setText(Messages.getString("MetaEditor.USER_OPEN")); //$NON-NLS-1$
+    miFileOpen.setAccelerator(SWT.MOD1 | 'o');
     miFileOpen.addListener(SWT.Selection, lsFileOpen);
 
     miFileSave = new MenuItem(msFile, SWT.CASCADE);
@@ -1048,7 +1049,7 @@ public class MetaEditor {
     for (int i = 0; i < lf.length; i++) {
       MenuItem miFileLast = new MenuItem(msFile, SWT.CASCADE);
       char chr = (char) ('1' + i);
-      int accel = SWT.CTRL | chr;
+      int accel = SWT.MOD1 | chr;
       miFileLast.setText("&" + chr + "  " + lf[i] + " \tCTRL-" + chr); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       miFileLast.setAccelerator(accel);
       final String fn = lf[i];
