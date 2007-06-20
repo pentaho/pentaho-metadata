@@ -858,6 +858,7 @@ public class MetaEditor {
 
     miFileSave = new MenuItem(msFile, SWT.CASCADE);
     miFileSave.setText(Messages.getString("MetaEditor.USER_SAVE")); //$NON-NLS-1$
+    miFileSave.setAccelerator(SWT.MOD1 | 'p');
     miFileSave.addListener(SWT.Selection, lsFileSave);
 
     miFileSaveAs = new MenuItem(msFile, SWT.CASCADE);
@@ -867,10 +868,12 @@ public class MetaEditor {
     new MenuItem(msFile, SWT.SEPARATOR);
     miFileImport = new MenuItem(msFile, SWT.CASCADE);
     miFileImport.setText(Messages.getString("MetaEditor.USER_IMPORT")); //$NON-NLS-1$
+    miFileImport.setAccelerator(SWT.MOD1 | 'i');
     miFileImport.addListener(SWT.Selection, lsFileImport);
 
     miFileExport = new MenuItem(msFile, SWT.CASCADE);
     miFileExport.setText(Messages.getString("MetaEditor.USER_EXPORT")); //$NON-NLS-1$
+    miFileExport.setAccelerator(SWT.MOD1 | 'e');
     miFileExport.addListener(SWT.Selection, lsFileExport);
 
     miPublish = new MenuItem(msFile, SWT.CASCADE);
@@ -885,6 +888,7 @@ public class MetaEditor {
     new MenuItem(msFile, SWT.SEPARATOR);
     miFilePrint = new MenuItem(msFile, SWT.CASCADE);
     miFilePrint.setText(Messages.getString("MetaEditor.USER_PRINT")); //$NON-NLS-1$
+    miFilePrint.setAccelerator(SWT.MOD1 | 'p');
     miFilePrint.addListener(SWT.Selection, lsFilePrint);
 
     new MenuItem(msFile, SWT.SEPARATOR);
@@ -908,15 +912,18 @@ public class MetaEditor {
     new MenuItem(msEdit, SWT.SEPARATOR);
     miEditUnselectAll = new MenuItem(msEdit, SWT.CASCADE);
     miEditUnselectAll.setText(Messages.getString("MetaEditor.USER_CLEAR_SELECTION")); //$NON-NLS-1$
+    miEditUnselectAll.setAccelerator(SWT.ESC);
     miEditUnselectAll.addListener(SWT.Selection, lsEditUnselectAll);
 
     miEditSelectAll = new MenuItem(msEdit, SWT.CASCADE);
     miEditSelectAll.setText(Messages.getString("MetaEditor.USER_SELECT_ALL_STEPS")); //$NON-NLS-1$
+    miEditSelectAll.setAccelerator(SWT.MOD1 | 'a');
     miEditSelectAll.addListener(SWT.Selection, lsEditSelectAll);
 
     new MenuItem(msEdit, SWT.SEPARATOR);
     miEditRefresh = new MenuItem(msEdit, SWT.CASCADE);
     miEditRefresh.setText(Messages.getString("MetaEditor.USER_REFRESH")); //$NON-NLS-1$
+    miEditRefresh.setAccelerator(SWT.F5);
     miEditRefresh.addListener(SWT.Selection, lsEditRefresh);
 
     // Tools
