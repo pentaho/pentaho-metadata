@@ -126,6 +126,8 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
   private Rectangle selrect;
 
   private Props props;
+  
+  private Menu mPop;
 
   public MetaEditorGraph(Composite par, int style, MetaEditor pm) {
     super(par, style);
@@ -238,7 +240,9 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
         // Clear the tooltip!
         setToolTipText(null);
 
-        setMenu(real.x, real.y);
+        if (last_button == 3) {
+          createPopup(real.x, real.y);
+        }
 
         // Did we click on a step?
         BusinessTable ti = activeModel.getTable(real.x, real.y, iconsize);
@@ -288,7 +292,6 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
           candidate = null;
           selected_items = null;
           last_button = 0;
-          redraw();
         }
         // Did we select a region on the screen? Mark steps in region as selected
         //
@@ -299,7 +302,6 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
           activeModel.unselectAll();
           activeModel.selectInRect(selrect);
           selrect = null;
-          redraw();
         }
         // Clicked on an icon?
         //
@@ -320,7 +322,6 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
             }
           }
           selected_items = null;
-          redraw();
         }
 
         // Notes?
@@ -333,6 +334,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
           }
           selected_note = null;
         }
+        redraw();
       }
     });
 
@@ -630,7 +632,13 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
     return angle;
   }
 
-  private void setMenu(int x, int y) {
+  private void createPopup(int x, int y) {
+    if (mPop != null) {
+      mPop.dispose();
+    }
+    setMenu(null);
+    mPop = new Menu(this);
+    
     final BusinessModel activeModel = metaEditor.getSchemaMeta().getActiveModel();
     if (activeModel == null)
       return;
@@ -641,8 +649,6 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
     final BusinessTable bTable = activeModel.getTable(x, y, iconsize);
     if (bTable != null) // We clicked on a Step!
     {
-      Menu mPop = new Menu(this);
-
       int sels = activeModel.nrSelected();
       if (sels == 1) {
         MenuItem miNewBTable = new MenuItem(mPop, SWT.CASCADE);
@@ -832,14 +838,12 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
           }
         });
       }
-      setMenu(mPop);
     } else {
       final RelationshipMeta relationshipMeta = findRelationship(x, y);
       if (relationshipMeta != null) // We clicked on a relationship!
       {
         final BusinessModel model = metaEditor.getSchemaMeta().getActiveModel(); // not null because we found a relationship
 
-        Menu mPop = new Menu(this);
         MenuItem miEditHop = new MenuItem(mPop, SWT.CASCADE);
         miEditHop.setText(Messages.getString("MetaEditorGraph.USER_EDIT_RELATIONSHIP")); //$NON-NLS-1$
         miEditHop.addSelectionListener(new SelectionAdapter() {
@@ -860,15 +864,13 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
             metaEditor.refreshGraph();
           }
         });
-        setMenu(mPop);
       } else {
         // Clicked on the background: maybe we hit a note?
         final NotePadMeta ni = activeModel.getNote(x, y);
         if (ni != null) {
           // Delete note
           // Edit note
-          Menu mPop = new Menu(this);
-
+ 
           MenuItem miNoteEdit = new MenuItem(mPop, SWT.CASCADE);
           miNoteEdit.setText(Messages.getString("MetaEditorGraph.USER_EDIT_NOTE")); //$NON-NLS-1$
           MenuItem miNoteDel = new MenuItem(mPop, SWT.CASCADE);
@@ -891,11 +893,8 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
             }
           });
 
-          setMenu(mPop);
         } else {
           // New note
-          Menu mPop = new Menu(this);
-
           MenuItem miNoteNew = new MenuItem(mPop, SWT.CASCADE);
           miNoteNew.setText(Messages.getString("MetaEditorGraph.USER_NEW_NOTE")); //$NON-NLS-1$
           miNoteNew.addSelectionListener(new SelectionAdapter() {
@@ -937,11 +936,11 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
               log.logError("Not Implemented", "Set Locale functionality not yet implemented"); //$NON-NLS-1$ //$NON-NLS-2$
             }
           });
-
-          setMenu(mPop);
         }
       }
     }
+    setMenu(mPop);
+    mPop.setVisible(true);
   }
 
   private void setToolTip(int x, int y) {
