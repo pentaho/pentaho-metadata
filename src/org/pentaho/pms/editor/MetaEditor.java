@@ -341,7 +341,7 @@ public class MetaEditor {
   private void initGlobalKeyBindings() {
     defKeys = new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
-        boolean control = (e.stateMask & SWT.CONTROL) != 0;
+        boolean control = (e.stateMask & SWT.MOD1) != 0;
         boolean alt = (e.stateMask & SWT.ALT) != 0;
 
         BusinessModel activeModel = schemaMeta.getActiveModel();
@@ -419,14 +419,14 @@ public class MetaEditor {
       public void keyPressed(KeyEvent e) {
         if (e.keyCode == SWT.SHIFT)
           metaEditorGraph.shift = true;
-        if (e.keyCode == SWT.CONTROL)
+        if (e.keyCode == SWT.MOD1)
           metaEditorGraph.control = true;
       }
 
       public void keyReleased(KeyEvent e) {
         if (e.keyCode == SWT.SHIFT)
           metaEditorGraph.shift = false;
-        if (e.keyCode == SWT.CONTROL)
+        if (e.keyCode == SWT.MOD1)
           metaEditorGraph.control = false;
       }
     };

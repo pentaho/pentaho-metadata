@@ -519,19 +519,19 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
         }
 
         // CTRL-UP : allignTop();
-        if (e.keyCode == SWT.ARROW_UP && (e.stateMask & SWT.CONTROL) != 0) {
+        if (e.keyCode == SWT.ARROW_UP && (e.stateMask & SWT.MOD1) != 0) {
           alligntop();
         }
         // CTRL-DOWN : allignBottom();
-        if (e.keyCode == SWT.ARROW_DOWN && (e.stateMask & SWT.CONTROL) != 0) {
+        if (e.keyCode == SWT.ARROW_DOWN && (e.stateMask & SWT.MOD1) != 0) {
           allignbottom();
         }
         // CTRL-LEFT : allignleft();
-        if (e.keyCode == SWT.ARROW_LEFT && (e.stateMask & SWT.CONTROL) != 0) {
+        if (e.keyCode == SWT.ARROW_LEFT && (e.stateMask & SWT.MOD1) != 0) {
           allignleft();
         }
         // CTRL-RIGHT : allignRight();
-        if (e.keyCode == SWT.ARROW_RIGHT && (e.stateMask & SWT.CONTROL) != 0) {
+        if (e.keyCode == SWT.ARROW_RIGHT && (e.stateMask & SWT.MOD1) != 0) {
           allignright();
         }
         // ALT-RIGHT : distributeHorizontal();
