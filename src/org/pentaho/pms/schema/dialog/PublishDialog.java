@@ -213,7 +213,7 @@ public class PublishDialog extends Dialog {
       serverURL += seperatorFwd;
     }
     solutionName = tSolutionName.getText();
-    if (solutionName.contains(seperatorFwd) || solutionName.contains(seperatorBck)) {
+    if (solutionName.indexOf(seperatorFwd) >= 0 || solutionName.indexOf(seperatorBck) >= 0) {
       MessageBox mb = new MessageBox(dialog, SWT.OK | SWT.ICON_ERROR);
       mb.setText(Messages.getString("PublishDialog.LOCATION_ERROR"));
       mb.setMessage(Messages.getString("PublishDialog.LOCATION_ERROR_INFO"));
