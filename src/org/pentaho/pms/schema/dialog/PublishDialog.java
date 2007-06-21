@@ -159,7 +159,10 @@ public class PublishDialog extends Dialog {
   }
   
   private void ok() {
-    populateStrings();
+    if (!populateStrings()) {
+      return;
+    }
+    
     CWM cwmInstance = CWM.getInstance(schemaMeta.getDomainName());
     try {
       String xmi = cwmInstance.getXMI();
@@ -201,15 +204,22 @@ public class PublishDialog extends Dialog {
   /**
    * 
    */
-  private void populateStrings() {
-    String seperator = "/"; //$NON-NLS-1$
-//    String suffix = ".xmi"; //$NON-NLS-1$
+  private boolean populateStrings() {
+    String seperatorFwd = "/"; //$NON-NLS-1$
+    String seperatorBck = "\\"; //$NON-NLS-1$
     
     serverURL = tServerURL.getText();
-    if (!serverURL.endsWith(seperator)) {
-      serverURL += seperator;
+    if (!serverURL.endsWith(seperatorFwd)) {
+      serverURL += seperatorFwd;
     }
     solutionName = tSolutionName.getText();
+    if (solutionName.contains(seperatorFwd) || solutionName.contains(seperatorBck)) {
+      MessageBox mb = new MessageBox(dialog, SWT.OK | SWT.ICON_ERROR);
+      mb.setText(Messages.getString("PublishDialog.LOCATION_ERROR"));
+      mb.setMessage(Messages.getString("PublishDialog.LOCATION_ERROR_INFO"));
+      mb.open();
+      return false;
+    }
 //    fileName = tFileName.getText();
 //    
 //    if (!fileName.endsWith(suffix)) {
@@ -219,6 +229,7 @@ public class PublishDialog extends Dialog {
     userId = tUserId.getText();
     userPassword = tUserPassword.getText();
     publishPassword = tPublishPassword.getText();
+    return true;
   }
 
   private void cancel() {
