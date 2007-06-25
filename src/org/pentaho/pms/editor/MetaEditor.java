@@ -1358,30 +1358,63 @@ public class MetaEditor {
         try {
           //
           // Where exactly did we drop in the tree?
-          TreeItem treeItem = (TreeItem) event.item;
-          ConceptTreeNode node = (ConceptTreeNode) treeItem.getData();
+          ConceptTreeNode targetNode = (ConceptTreeNode) event.item.getData();
+          // We expect a Drag and Drop container... (encased in XML & Base64)
+          DragAndDropContainer container = (DragAndDropContainer) event.data;
 
           // Prevent the user from dropping nodes from a different model
-          if (activeModelTreeNode.findNode(node.getDomainObject()) == null) {
+          if (activeModelTreeNode.findNode(targetNode.getDomainObject()) == null) {
             MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
             mb.setMessage(Messages.getString("MetaEditor.USER_ERROR_SHARING_ACROSS_MODELS")); //$NON-NLS-1$
             mb.setText(Messages.getString("General.USER_TITLE_ERROR")); //$NON-NLS-1$
             mb.open();
             return;
           }
+          
+          // Prevent the user from dropping a business table or column into
+          // any other branch than the business view branch
+          boolean isAppropriateForBusinessView = 
+            ((container.getType() == DragAndDropContainer.TYPE_BUSINESS_TABLE) 
+            || (container.getType() == DragAndDropContainer.TYPE_BUSINESS_COLUMN));
+          
+          if (isAppropriateForBusinessView && (!(targetNode instanceof CategoryTreeNode) && !(targetNode instanceof BusinessViewTreeNode))){
+            MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
+            mb.setMessage(Messages.getString("MetaEditor.USER_ERROR_DRAG_TO_VIEW")); //$NON-NLS-1$
+            mb.setText(Messages.getString("General.USER_TITLE_ERROR")); //$NON-NLS-1$
+            mb.open();
+            return;            
+          }
+
+          // Prevent the user from dropping a business table or column into
+          // any other branch than the business view branch
+          boolean isAppropriateForBusinessModel = 
+            (container.getType() == DragAndDropContainer.TYPE_PHYSICAL_TABLE);
+          
+          if (isAppropriateForBusinessModel && !(targetNode instanceof BusinessTablesTreeNode)){
+            MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
+            mb.setMessage(Messages.getString("MetaEditor.USER_ERROR_DRAG_TO_MODEL")); //$NON-NLS-1$
+            mb.setText(Messages.getString("General.USER_TITLE_ERROR")); //$NON-NLS-1$
+            mb.open();
+            return;            
+          }
+          
+          //Prevent the user from dropping physical columns...
+          if (container.getType()==DragAndDropContainer.TYPE_PHYSICAL_COLUMN){
+            MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
+            mb.setMessage(Messages.getString("MetaEditor.USER_ERROR_CANT_DROP_PHYSICAL_COLUMN")); //$NON-NLS-1$
+            mb.setText(Messages.getString("General.USER_TITLE_ERROR")); //$NON-NLS-1$
+            mb.open();
+            return;                        
+          }
 
           // Retrieve the category that the drop was aimed at.
           BusinessCategory parentCategory = null;
-          if (treeItem.getData() instanceof CategoryTreeNode) {
-            parentCategory = ((CategoryTreeNode) treeItem.getData()).getCategory();
+          if (targetNode instanceof CategoryTreeNode) {
+            parentCategory = ((CategoryTreeNode) targetNode).getCategory();
           } else {
             parentCategory = activeModel.getRootCategory();
           }
-
-          // We expect a Drag and Drop container... (encased in XML & Base64)
-          //
-          DragAndDropContainer container = (DragAndDropContainer) event.data;
-
+          
           // Block sub-categories & columns in the root for now, until Ad-hoc & MDR follow
           //
           if ((container.getType() == DragAndDropContainer.TYPE_BUSINESS_TABLE && !parentCategory.isRootCategory())
@@ -1394,23 +1427,40 @@ public class MetaEditor {
           }
 
           switch (container.getType()) {
+            // Drag physical table onto metaEditorGraph:
+            //  0) Look up the referenced Physical Table name, if it exists continue
+            //  1) If there is an active business model use that one, if not ask name, create one, edit it
+            //  2) Create the business table based on the physical table, edit
+            //  3) Place the business table on the selected coordinates.
+            //
+            case DragAndDropContainer.TYPE_PHYSICAL_TABLE: {
+              PhysicalTable physicalTable = getSchemaMeta().findPhysicalTable(container.getData()); // 0)
+              if (physicalTable != null) {
+                BusinessModel businessModel = getSchemaMeta().getActiveModel();
+                if (businessModel == null)
+                  businessModel = newBusinessModel(); // 1)
+
+                if (businessModel != null) {
+                  BusinessTable businessTable = newBusinessTable(physicalTable); // 2)
+                  if (businessTable != null) {
+                    refreshAll();
+                  }
+                }
+              }
+            }
+              break;
             //
             // Drag business table in categories: make business table name a new category
-            //
             case DragAndDropContainer.TYPE_BUSINESS_TABLE: {
-              BusinessTable businessTable = activeModel.findBusinessTable(container.getData()); // search by
-              // ID!
+              BusinessTable businessTable = activeModel.findBusinessTable(container.getData()); 
               if (businessTable != null) {
                 BusinessCategory businessCategory = businessTable.generateCategory(schemaMeta.getActiveLocale(),
                     activeModel.getRootCategory().getBusinessCategories());
 
                 // Add the category to the business model or category
-                //
                 parentCategory.addBusinessCategory(businessCategory);
                 activeModelTreeNode.getBusinessViewRoot().addDomainChild(businessCategory);
 
-                // Done!
-                //
                 refreshAll();
               }
             }
@@ -1432,9 +1482,7 @@ public class MetaEditor {
                   return;
                 }
 
-                BusinessColumn existing = activeModel.getRootCategory().findBusinessColumn(columnID); // search
-                // by
-                // ID
+                BusinessColumn existing = activeModel.getRootCategory().findBusinessColumn(columnID); // search by id
                 if (existing != null && businessColumn.equals(existing)) {
                   MessageBox mb = new MessageBox(shell, SWT.YES | SWT.NO | SWT.ICON_WARNING);
                   mb.setMessage(Messages.getString("MetaEditor.USER_BUSINESS_COLUMN_EXISTS")); //$NON-NLS-1$
@@ -1457,7 +1505,7 @@ public class MetaEditor {
             //
             default: {
               MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
-              mb.setMessage(Messages.getString("MetaEditor.USER_CANT_PUT_IN_CATEGORIES_TREE", container.getTypeCode())); //$NON-NLS-1$
+              mb.setMessage(Messages.getString("MetaEditor.USER_CANT_PUT_IN_CATEGORIES_TREE", container.getData().toString())); //$NON-NLS-1$
               mb.setText(Messages.getString("MetaEditor.USER_SORRY")); //$NON-NLS-1$
               mb.open();
               return;

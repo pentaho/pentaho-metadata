@@ -70,7 +70,7 @@ public class PhysicalColumnTreeNode extends ConceptTreeNode {
   }
 
   public int getDragAndDropType() {
-    return DragAndDropContainer.TYPE_BUSINESS_COLUMN;
+    return DragAndDropContainer.TYPE_PHYSICAL_COLUMN;
   }
 
   public Object getDomainObject(){
