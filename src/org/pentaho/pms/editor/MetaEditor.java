@@ -2159,8 +2159,9 @@ public class MetaEditor {
 
         try {
           activeModel.addBusinessTable(businessTable);
-          if (activeModelTreeNode != null)
+          if (activeModelTreeNode != null){
             activeModelTreeNode.getBusinessTablesRoot().addDomainChild(businessTable);
+          }
           refreshGraph();
           return businessTable;
         } catch (ObjectAlreadyExistsException e) {
@@ -3010,6 +3011,10 @@ public class MetaEditor {
 
   public void refreshGraph() {
     metaEditorGraph.redraw();
+    // Update the active model node, as the connection info
+    // can dynamically change depending on the addition or 
+    // removal of business tables, changing the label on this node ...
+    treeViewer.update(activeModelTreeNode, null);
     setShellText();
   }
 

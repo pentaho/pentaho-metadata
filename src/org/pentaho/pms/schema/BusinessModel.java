@@ -1710,6 +1710,10 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
     if ((connection == null) && (nrBusinessTables()>0)){
       connection = getBusinessTable(0).getPhysicalTable().getDatabaseMeta();
     }
+    
+    if (nrBusinessTables()<=0){
+      connection = null;
+    }
 
     return connection;
   }
