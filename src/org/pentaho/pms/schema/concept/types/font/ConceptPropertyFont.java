@@ -14,17 +14,21 @@ package org.pentaho.pms.schema.concept.types.font;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
-public class ConceptPropertyFont extends ConceptPropertyBase implements ConceptPropertyInterface, Cloneable
+public class ConceptPropertyFont extends ConceptPropertyBase implements Cloneable
 {
     private FontSettings value;
 
     public ConceptPropertyFont(String name, FontSettings value)
     {
-        super(name);
+        this(name, value, false);
+    }
+
+    public ConceptPropertyFont(String name, FontSettings value, boolean required)
+    {
+        super(name, required);
         this.value = value;
     }
 

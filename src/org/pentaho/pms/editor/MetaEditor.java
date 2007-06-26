@@ -695,18 +695,18 @@ public class MetaEditor {
 
   public boolean validateBusinessModels() {
     boolean valid = true;
-    
+
     Iterator iter = schemaMeta.getBusinessModels().iterator();
     while(iter.hasNext()  && valid) {
       BusinessModel bm = (BusinessModel) iter.next();
       if (bm.getBusinessTables().size() > 1) {
         valid = bm.getRelationships().size() > 0 && bm.getFlatCategoriesView(schemaMeta.getActiveLocale()).size() > 1;
-      } 
+      }
     }
 
     return valid;
   }
-  
+
   public void importFromXMI() {
     if (showChangedWarning()) {
       FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
@@ -1370,41 +1370,41 @@ public class MetaEditor {
             mb.open();
             return;
           }
-          
+
           // Prevent the user from dropping a business table or column into
           // any other branch than the business view branch
-          boolean isAppropriateForBusinessView = 
-            ((container.getType() == DragAndDropContainer.TYPE_BUSINESS_TABLE) 
+          boolean isAppropriateForBusinessView =
+            ((container.getType() == DragAndDropContainer.TYPE_BUSINESS_TABLE)
             || (container.getType() == DragAndDropContainer.TYPE_BUSINESS_COLUMN));
-          
+
           if (isAppropriateForBusinessView && (!(targetNode instanceof CategoryTreeNode) && !(targetNode instanceof BusinessViewTreeNode))){
             MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
             mb.setMessage(Messages.getString("MetaEditor.USER_ERROR_DRAG_TO_VIEW")); //$NON-NLS-1$
             mb.setText(Messages.getString("General.USER_TITLE_ERROR")); //$NON-NLS-1$
             mb.open();
-            return;            
+            return;
           }
 
           // Prevent the user from dropping a business table or column into
           // any other branch than the business view branch
-          boolean isAppropriateForBusinessModel = 
+          boolean isAppropriateForBusinessModel =
             (container.getType() == DragAndDropContainer.TYPE_PHYSICAL_TABLE);
-          
+
           if (isAppropriateForBusinessModel && !(targetNode instanceof BusinessTablesTreeNode)){
             MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
             mb.setMessage(Messages.getString("MetaEditor.USER_ERROR_DRAG_TO_MODEL")); //$NON-NLS-1$
             mb.setText(Messages.getString("General.USER_TITLE_ERROR")); //$NON-NLS-1$
             mb.open();
-            return;            
+            return;
           }
-          
+
           //Prevent the user from dropping physical columns...
           if (container.getType()==DragAndDropContainer.TYPE_PHYSICAL_COLUMN){
             MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
             mb.setMessage(Messages.getString("MetaEditor.USER_ERROR_CANT_DROP_PHYSICAL_COLUMN")); //$NON-NLS-1$
             mb.setText(Messages.getString("General.USER_TITLE_ERROR")); //$NON-NLS-1$
             mb.open();
-            return;                        
+            return;
           }
 
           // Retrieve the category that the drop was aimed at.
@@ -1414,7 +1414,7 @@ public class MetaEditor {
           } else {
             parentCategory = activeModel.getRootCategory();
           }
-          
+
           // Block sub-categories & columns in the root for now, until Ad-hoc & MDR follow
           //
           if ((container.getType() == DragAndDropContainer.TYPE_BUSINESS_TABLE && !parentCategory.isRootCategory())
@@ -1452,7 +1452,7 @@ public class MetaEditor {
             //
             // Drag business table in categories: make business table name a new category
             case DragAndDropContainer.TYPE_BUSINESS_TABLE: {
-              BusinessTable businessTable = activeModel.findBusinessTable(container.getData()); 
+              BusinessTable businessTable = activeModel.findBusinessTable(container.getData());
               if (businessTable != null) {
                 BusinessCategory businessCategory = businessTable.generateCategory(schemaMeta.getActiveLocale(),
                     activeModel.getRootCategory().getBusinessCategories());
@@ -1978,14 +1978,14 @@ public class MetaEditor {
         }
       });
 
-      MenuItem miRemoveProperty = new MenuItem(mainMenu, SWT.PUSH);
-      miRemoveProperty.setText(Messages.getString("MetaEditor.USER_REMOVE_CHILD_PROPERTIES")); //$NON-NLS-1$
-      miRemoveProperty.addListener(SWT.Selection, new Listener() {
-        public void handleEvent(Event evt) {
-          removeChildProperties(utilityInterfaces);
-          treeViewer.refresh(mainTreeNode);
-        }
-      });
+//      MenuItem miRemoveProperty = new MenuItem(mainMenu, SWT.PUSH);
+//      miRemoveProperty.setText(Messages.getString("MetaEditor.USER_REMOVE_CHILD_PROPERTIES")); //$NON-NLS-1$
+//      miRemoveProperty.addListener(SWT.Selection, new Listener() {
+//        public void handleEvent(Event evt) {
+//          removeChildProperties(utilityInterfaces);
+//          treeViewer.refresh(mainTreeNode);
+//        }
+//      });
 
     }
 
@@ -2441,7 +2441,7 @@ public class MetaEditor {
       id = id.toUpperCase();
     BusinessModel businessModel = new BusinessModel(id);
     businessModel.addIDChangedListener(ConceptUtilityBase.createIDChangedListener(schemaMeta.getBusinessModels()));
-    businessModel.getConcept().setName(schemaMeta.getActiveLocale(), "Model " + nr); //$NON-NLS-1$
+    businessModel.setName(schemaMeta.getActiveLocale(), "Model " + nr);
 
     BusinessModel newBusModel = (BusinessModel) businessModel.clone();
     BusinessModelDialog dialog = new BusinessModelDialog(shell, SWT.NONE, newBusModel, schemaMeta);
@@ -2463,7 +2463,7 @@ public class MetaEditor {
         schemaMeta.setActiveModel(businessModel);
         activeModelTreeNode = (BusinessModelTreeNode) mainTreeNode.getBusinessModelsRoot().findNode(businessModel);
         refreshAll();
-  
+
         return businessModel;
       } catch (ObjectAlreadyExistsException e) {
         new ErrorDialog(
@@ -2471,7 +2471,7 @@ public class MetaEditor {
             Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_BUSINESS_MODEL_NAME_EXISTS"), e); //$NON-NLS-1$ //$NON-NLS-2$
       }
     }
-    
+
     return null;
   }
 
@@ -3060,7 +3060,7 @@ public class MetaEditor {
   public void refreshGraph() {
     metaEditorGraph.redraw();
     // Update the active model node, as the connection info
-    // can dynamically change depending on the addition or 
+    // can dynamically change depending on the addition or
     // removal of business tables, changing the label on this node ...
     treeViewer.update(activeModelTreeNode, null);
     setShellText();
@@ -3330,9 +3330,7 @@ public class MetaEditor {
 
     // The data type...
     DataTypeSettings dataTypeSettings = getDataTypeSettings(v);
-    ConceptPropertyInterface dataTypeProperty = new ConceptPropertyDataType(DefaultPropertyID.DATA_TYPE.getId(),
-        dataTypeSettings);
-    physicalColumn.getConcept().addProperty(dataTypeProperty);
+    physicalColumn.setDataType(dataTypeSettings);
 
     // It this a key field? If yes: set the appropriate parent concept...
     if (fieldType.equals(FieldTypeSettings.KEY)) {
@@ -3584,9 +3582,9 @@ public class MetaEditor {
       log.logDebug(APPLICATION_NAME, Messages.getString("MetaEditor.DEBUG_DUPLICATE_TABLE", businessTable.getId())); //$NON-NLS-1$
 
       BusinessModel activeModel = schemaMeta.getActiveModel();
-      
+
       // This should be a unique clone of the business table AND it's columns...
-      BusinessTable newTable = businessTable.cloneUnique(schemaMeta.getActiveLocale(), activeModel.getBusinessTables(), 
+      BusinessTable newTable = businessTable.cloneUnique(schemaMeta.getActiveLocale(), activeModel.getBusinessTables(),
           activeModel.getAllBusinessColumns());
 
       try {

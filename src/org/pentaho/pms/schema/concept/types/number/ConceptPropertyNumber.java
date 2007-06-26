@@ -16,39 +16,42 @@ import java.math.BigDecimal;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
-public class ConceptPropertyNumber extends ConceptPropertyBase implements ConceptPropertyInterface, Cloneable
+public class ConceptPropertyNumber extends ConceptPropertyBase implements Cloneable
 {
     private BigDecimal value;
 
     public ConceptPropertyNumber(String name, BigDecimal value)
     {
-        super(name);
-        this.value = value;
+        this(name, value, false);
     }
 
     public ConceptPropertyNumber(String name, double value)
     {
-        super(name);
-        this.value = new BigDecimal(value);
+        this(name, new BigDecimal(value), false);
     }
 
     public ConceptPropertyNumber(String name, long value)
     {
-        this(name, (double)value);
+        this(name, new BigDecimal(value), false);
     }
 
     public ConceptPropertyNumber(String name, int value)
     {
-        this(name, (double)value);
+        this(name, new BigDecimal(value), false);
     }
 
     public ConceptPropertyNumber(String name, byte value)
     {
-        this(name, (double)value);
+        this(name, new BigDecimal(value), false);
+    }
+
+    public ConceptPropertyNumber(String name, BigDecimal value, boolean required)
+    {
+      super(name, required);
+      this.value = value;
     }
 
     public String toString()

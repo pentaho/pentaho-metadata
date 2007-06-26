@@ -346,11 +346,15 @@ public class ConceptModel implements IConceptModel {
    * property.
    */
   public boolean canOverride(final String id) {
+
+    ConceptPropertyInterface propFromThis = this.getProperty(id, IConceptModel.REL_THIS);
     ConceptPropertyInterface propFromSecurity = this.getProperty(id, IConceptModel.REL_SECURITY);
     ConceptPropertyInterface propFromInherited = this.getProperty(id, IConceptModel.REL_INHERITED);
     ConceptPropertyInterface propFromParent = this.getProperty(id, IConceptModel.REL_PARENT);
 
-    if (null != propFromInherited || null != propFromParent) {
+    if (null != propFromThis && propFromThis.isRequired()) {
+      return false;
+    } else if (null != propFromInherited || null != propFromParent) {
       return true;
     } else if (null != propFromSecurity && DefaultPropertyID.SECURITY.getId().equals(id)) {
       return true;

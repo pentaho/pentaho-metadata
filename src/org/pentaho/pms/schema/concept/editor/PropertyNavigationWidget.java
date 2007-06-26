@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.DefaultPropertyID;
 
 public class PropertyNavigationWidget extends Composite implements ISelectionProvider {
@@ -104,9 +105,14 @@ public class PropertyNavigationWidget extends Composite implements ISelectionPro
             delButton.setEnabled(false);
           } else {
             // we're dealing with a property
-            if (null != conceptModel.getProperty(sel.getName(), IConceptModel.REL_THIS)) {
+            ConceptPropertyInterface prop = conceptModel.getProperty(sel.getName(), IConceptModel.REL_THIS);
+            if (null != prop) {
               // it's a child property; allow it to be deleted
-              delButton.setEnabled(true);
+              if (prop.isRequired()) {
+                delButton.setEnabled(false);
+              } else {
+                delButton.setEnabled(true);
+              }
             } else {
               // it's a parent/inherited/security property; it cannot be deleted on this concept
               delButton.setEnabled(false);

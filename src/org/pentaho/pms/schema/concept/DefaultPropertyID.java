@@ -1,13 +1,13 @@
 /*
- * Copyright 2006 Pentaho Corporation.  All rights reserved. 
- * This software was developed by Pentaho Corporation and is provided under the terms 
- * of the Mozilla Public License, Version 1.1, or any later version. You may not use 
- * this file except in compliance with the license. If you need a copy of the license, 
- * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho 
+ * Copyright 2006 Pentaho Corporation.  All rights reserved.
+ * This software was developed by Pentaho Corporation and is provided under the terms
+ * of the Mozilla Public License, Version 1.1, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho
  * BI Platform.  The Initial Developer is Pentaho Corporation.
  *
- * Software distributed under the Mozilla Public License is distributed on an "AS IS" 
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to 
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
  * the license for the specific language governing your rights and limitations.
 */
 package org.pentaho.pms.schema.concept;
@@ -45,8 +45,8 @@ public class DefaultPropertyID
     private String id;
     private String description;
     private ConceptPropertyInterface defaultValue;
-    
-    public static final DefaultPropertyID defaults[] = new DefaultPropertyID[] 
+
+    public static final DefaultPropertyID defaults[] = new DefaultPropertyID[]
          {
             new DefaultPropertyID("name",              Messages.getString("DefaultPropertyID.USER_NAME_DESC"), ConceptPropertyType.LOCALIZED_STRING, new ConceptPropertyLocalizedString("name", new LocalizedStringSettings())), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             new DefaultPropertyID("description",       Messages.getString("DefaultPropertyID.USER_DESCRIPTION_DESC"), ConceptPropertyType.LOCALIZED_STRING, new ConceptPropertyLocalizedString("description", new LocalizedStringSettings())), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -69,7 +69,7 @@ public class DefaultPropertyID
             new DefaultPropertyID("column_width",      Messages.getString("DefaultPropertyID.USER_COLUMN_WIDTH_DESC"), ConceptPropertyType.COLUMN_WIDTH, new ConceptPropertyColumnWidth("column_width", ColumnWidth.PIXELS)), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             new DefaultPropertyID("security",          Messages.getString("DefaultPropertyID.USER_SECURITY_INFORMATION_DESC"), ConceptPropertyType.SECURITY, new ConceptPropertySecurity("security", new Security())), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
          };
-    
+
     public static final DefaultPropertyID NAME            = defaults[ 0];
     public static final DefaultPropertyID DESCRIPTION     = defaults[ 1];
     public static final DefaultPropertyID COMMENTS        = defaults[ 2];
@@ -167,7 +167,7 @@ public class DefaultPropertyID
     {
         this.description = description;
     }
-    
+
     /**
      * @return an array containing the default proposed (recognized) property id's
      */
@@ -180,7 +180,7 @@ public class DefaultPropertyID
         }
         return ids;
     }
-    
+
     /**
      * @return an array containing the default proposed (recognized) property types corresponding with the ID's array
      */
@@ -195,7 +195,7 @@ public class DefaultPropertyID
     }
 
     /**
-     * Create a new 
+     * Create a new
      * @param conceptPropertyType the property type to generate a default for.
      * @return
      */
@@ -209,13 +209,14 @@ public class DefaultPropertyID
         case ConceptPropertyType.PROPERTY_TYPE_NUMBER           : property = new ConceptPropertyNumber(name, null); break;
         case ConceptPropertyType.PROPERTY_TYPE_COLOR            : property = new ConceptPropertyColor(name, null); break;
         case ConceptPropertyType.PROPERTY_TYPE_FONT             : property = new ConceptPropertyFont(name, null); break;
-        case ConceptPropertyType.PROPERTY_TYPE_FIELDTYPE        : property = new ConceptPropertyFieldType(name, null); break; 
+        case ConceptPropertyType.PROPERTY_TYPE_FIELDTYPE        : property = new ConceptPropertyFieldType(name, null); break;
         case ConceptPropertyType.PROPERTY_TYPE_AGGREGATION      : property = new ConceptPropertyAggregation(name, null); break;
         case ConceptPropertyType.PROPERTY_TYPE_BOOLEAN          : property = new ConceptPropertyBoolean(name, null); break;
-        case ConceptPropertyType.PROPERTY_TYPE_DATATYPE         : property = new ConceptPropertyDataType(name, null); break; 
+        case ConceptPropertyType.PROPERTY_TYPE_DATATYPE         : property = new ConceptPropertyDataType(name, null); break;
         case ConceptPropertyType.PROPERTY_TYPE_LOCALIZED_STRING : property = new ConceptPropertyLocalizedString(name, null); break;
         case ConceptPropertyType.PROPERTY_TYPE_TABLETYPE        : property = new ConceptPropertyTableType(name, null); break;
         case ConceptPropertyType.PROPERTY_TYPE_URL              : property = new ConceptPropertyURL(name, null); break;
+        case ConceptPropertyType.PROPERTY_TYPE_SECURITY         : property = new ConceptPropertySecurity(name, null); break;
         }
         return property;
     }
@@ -243,6 +244,6 @@ public class DefaultPropertyID
         {
             if (defaults[i].getId().equals(id)) return i;
         }
-        return defaults.length; // put non-default properties always at the back 
+        return defaults.length; // put non-default properties always at the back
     }
 }

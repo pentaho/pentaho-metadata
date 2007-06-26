@@ -22,7 +22,11 @@ public class ConceptPropertyString extends ConceptPropertyBase implements Concep
     private static final String EMPTY_STRING = "";
 
     public ConceptPropertyString(String name, String value) {
-      super(name);
+      this(name, value, false);
+    }
+
+    public ConceptPropertyString(String name, String value, boolean required) {
+      super(name, required);
       setValue(value);
     }
 

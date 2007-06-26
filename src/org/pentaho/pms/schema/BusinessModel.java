@@ -1,13 +1,13 @@
 /*
- * Copyright 2006 Pentaho Corporation.  All rights reserved. 
- * This software was developed by Pentaho Corporation and is provided under the terms 
- * of the Mozilla Public License, Version 1.1, or any later version. You may not use 
- * this file except in compliance with the license. If you need a copy of the license, 
- * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho 
+ * Copyright 2006 Pentaho Corporation.  All rights reserved.
+ * This software was developed by Pentaho Corporation and is provided under the terms
+ * of the Mozilla Public License, Version 1.1, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho
  * BI Platform.  The Initial Developer is Pentaho Corporation.
  *
- * Software distributed under the Mozilla Public License is distributed on an "AS IS" 
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to 
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
  * the license for the specific language governing your rights and limitations.
  */
 package org.pentaho.pms.schema;
@@ -28,7 +28,6 @@ import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.schema.olap.OlapCube;
 import org.pentaho.pms.schema.olap.OlapDimension;
-import org.pentaho.pms.schema.security.Security;
 import org.pentaho.pms.util.Const;
 
 import be.ibridge.kettle.core.ChangedFlagInterface;
@@ -79,8 +78,8 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   private BusinessCategory rootCategory;
 
-  // TODO: Until support for multiple connections is implemented, identify the one connection 
-  // this model holds reference to. 
+  // TODO: Until support for multiple connections is implemented, identify the one connection
+  // this model holds reference to.
   public DatabaseMeta connection = null;
 
   public BusinessModel() {
@@ -95,7 +94,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
     businessCategory.setRootCategory(true);
     setRootCategory(businessCategory); // also takes care of the security hierarchy
 
-    setSecurity(new Security()); // empty by default so that all columns "see" this property.
+
   }
 
   public BusinessModel(String id) {
@@ -166,7 +165,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Finds the relationship with the specified origin and destination table.
-   * 
+   *
    * @param from The id of the physical origin table
    * @param to The id of the physical destination table
    * @return The relationship or null if nothing was found
@@ -182,7 +181,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Finds the relationship with the specified id
-   * 
+   *
    * @param id The id of the relationship (compares with toString())
    * @return The relationship or null if nothing was found
    */
@@ -437,7 +436,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Search for a relationship starting with a given starting point
-   * 
+   *
    * @param id The physical table id (ID) to start from
    * @return The relationship if any could be found or null if nothing could be found.
    */
@@ -454,7 +453,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Search for a relationship starting with a given termination point
-   * 
+   *
    * @param id The physical table id (ID) to look for as an ending point
    * @return The relationship if any could be found or null if nothing could be found.
    */
@@ -471,7 +470,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Is the physical table with the specified id used in a relationship in this business model?
-   * 
+   *
    * @param id The physical table id to look out for
    * @return true if the physical table with the specified id is used in this business model in one or more
    * relationships. False if this is not the case.
@@ -628,7 +627,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
         }
 
         // We need to have (n-1) relationships for n tables, otherwise we will not connect everything.
-        // 
+        //
         if (path.size() == selectedTables.size() - 1) {
           // This is a valid path, the first we find here is probably the shortest
           paths.add(path);
@@ -802,9 +801,9 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
       //
       sql = "SELECT "; //$NON-NLS-1$
 
-      // 
+      //
       // Add the fields...
-      // 
+      //
       boolean group = hasFactsInIt(selectedColumns, conditions);
 
       if (!group)
@@ -1118,18 +1117,18 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * QuickSort.java by Henk Jan Nootenboom, 9 Sep 2002 Copyright 2002-2003 SUMit. All Rights Reserved.
-   * 
+   *
    * Algorithm designed by prof C. A. R. Hoare, 1962 See http://www.sum-it.nl/en200236.html for algorithm improvement
    * by Henk Jan Nootenboom, 2002.
-   * 
+   *
    * Recursive Quicksort, sorts (part of) a Vector by 1. Choose a pivot, an element used for comparison 2. dividing
    * into two parts: - less than-equal pivot - and greater than-equal to pivot. A element that is equal to the pivot
    * may end up in any part. See www.sum-it.nl/en200236.html for the theory behind this. 3. Sort the parts recursively
    * until there is only one element left.
-   * 
+   *
    * www.sum-it.nl/QuickSort.java this source code www.sum-it.nl/quicksort.php3 demo of this quicksort in a java
    * applet
-   * 
+   *
    * Permission to use, copy, modify, and distribute this java source code and its documentation for NON-COMMERCIAL or
    * COMMERCIAL purposes and without fee is hereby granted. See http://www.sum-it.nl/security/index.html for copyright
    * laws.
@@ -1157,11 +1156,11 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
     /**
      * Split the Vector in two parts.
-     * 
+     *
      * The lower part will be lowIndex - newHighIndex, containing elements <= pivot Value
-     * 
+     *
      * The higher part will be newLowIndex - highIndex, containting elements >= pivot Value
-     * 
+     *
      */
     newLowIndex = highIndex + 1;
     newHighIndex = lowIndex - 1;
@@ -1216,7 +1215,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Finds a business table using the display name and locale or the ID
-   * 
+   *
    * @param locale The locale to use
    * @param tablename The name of the table or the ID if the table name
    * @return
@@ -1239,7 +1238,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Finds a business table using the table's ID
-   * 
+   *
    * @param tableID The ID of the table to look for
    * @return The business table of null if nothing could be found.
    */
@@ -1255,7 +1254,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Get an array of all the selected job entries
-   * 
+   *
    * @return A list containing all the selected & drawn job entries.
    */
   public List getSelectedDrawnBusinessTableList() {
@@ -1273,7 +1272,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Get an array of the locations of an array of business tables
-   * 
+   *
    * @param steps An array of business tables
    * @return an array of the indices of an array of business tables
    */
@@ -1289,7 +1288,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * This method deletes all objects in the business model that reference the given physical table
-   * 
+   *
    * @param physicalTable The physical table to which all references have to be deleted.
    */
   public void deletePhysicalTableReferences(PhysicalTable physicalTable) {
@@ -1311,7 +1310,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Find the business category using a path (array) with the names
-   * 
+   *
    * @param path the path to the business category
    * @param locale The locale to look for. If the locale is not found, we try the ID
    * @return The business category when one is found or the best match possible using the path. If nothing matches, we
@@ -1323,7 +1322,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Find the business category using a path (array) with the names
-   * 
+   *
    * @param path the path to the business category
    * @param locale The locale to look for. If the locale is not found, we try the ID
    * @param exact if true, we do an exact match and don't return the closest match nor root category. In that case we
@@ -1382,12 +1381,12 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Returns all business columns
-   * 
+   *
    * @return a UniqueList of all business columns in this model
    */
   public UniqueList getAllBusinessColumns() {
     UniqueList columns = new UniqueArrayList();
-    
+
     for (int i = 0; i < nrBusinessTables(); i++) {
       BusinessTable businessTable = getBusinessTable(i);
       for (int j = 0; j < businessTable.nrBusinessColumns(); j++) {
@@ -1403,7 +1402,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Finds a column using the id
-   * 
+   *
    * @param columnId the id of the column to look for
    * @return a business column in this model with the specified id or null if nothing was found.
    */
@@ -1419,7 +1418,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Finds a column name using a localized name
-   * 
+   *
    * @param locale the locale to search for
    * @param name the displayed name of the column to look for or the ID of the column if no localized name was found
    * @return a business column in this model with the specified id or null if nothing was found.
@@ -1499,7 +1498,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Find the business table containing the business column
-   * 
+   *
    * @param businessColumn
    * @return
    */
@@ -1697,56 +1696,56 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
   public TransAction viewThisUndo() {
     return null;
   }
-  
+
   public boolean hasConnection(){
     return getConnection() != null;
   }
-  
+
   public DatabaseMeta getConnection(){
-   
-    // A bit cheap and fragile - use the connection reference from the first 
-    // business table to enforce this single connection on the rest of the tables added. 
-    
+
+    // A bit cheap and fragile - use the connection reference from the first
+    // business table to enforce this single connection on the rest of the tables added.
+
     if ((connection == null) && (nrBusinessTables()>0)){
       connection = getBusinessTable(0).getPhysicalTable().getDatabaseMeta();
     }
-    
+
     if (nrBusinessTables()<=0){
       connection = null;
     }
 
     return connection;
   }
-  
+
   public void clearConnection(){
     connection = null;
   }
-  
+
   public boolean verify(ConceptUtilityBase base){
     boolean verify  = false;
-    
+
     //Connection hasn't been set yet - allow any table or column in
     if ((getConnection()==null) && (base!=null)){
       return true;
     }
-    
+
     if (base == null){
       return false;
     }
-    
+
     if (base instanceof PhysicalTable){
-      
-      PhysicalTable physicalTable = (PhysicalTable)base; 
+
+      PhysicalTable physicalTable = (PhysicalTable)base;
       verify =  physicalTable.getDatabaseMeta().equals(getConnection());
 
     } else if (base instanceof PhysicalColumn){
-      
+
       PhysicalColumn physicalColumn = (PhysicalColumn)base;
       verify =  physicalColumn.getTable().getDatabaseMeta().equals(getConnection());
     }
     return verify;
   }
-  
+
 }
 
 

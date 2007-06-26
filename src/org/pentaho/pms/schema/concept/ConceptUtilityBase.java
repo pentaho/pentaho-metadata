@@ -19,6 +19,8 @@ import java.util.List;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.pentaho.pms.messages.Messages;
+import org.pentaho.pms.schema.DefaultProperties;
+import org.pentaho.pms.schema.DefaultProperty;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.schema.concept.types.aggregation.ConceptPropertyAggregation;
 import org.pentaho.pms.schema.concept.types.bool.ConceptPropertyBoolean;
@@ -50,14 +52,16 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
 
     public ConceptUtilityBase()
     {
-        concept = new Concept();
-        idChangedListeners = new ArrayList();
+      this(null);
     }
 
     public ConceptUtilityBase(String id)
     {
-        this();
+        super();
+        this.concept = new Concept();
+        this.idChangedListeners = new ArrayList();
         this.id = id;
+        addDefaultProperties();
     }
 
     public boolean equals(Object obj) {
@@ -213,7 +217,12 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
 
     public void setTargetSchema(String targetSchema)
     {
+      ConceptPropertyInterface property = concept.getChildProperty(DefaultPropertyID.TARGET_SCHEMA.getId());
+      if (null != property) {
+        property.setValue(targetSchema);
+      } else {
         concept.addProperty(new ConceptPropertyString(DefaultPropertyID.TARGET_SCHEMA.getId(), targetSchema));
+      }
     }
 
     public String getTargetTable()
@@ -225,7 +234,12 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
 
     public void setTargetTable(String targetTable)
     {
+      ConceptPropertyInterface property = concept.getChildProperty(DefaultPropertyID.TARGET_TABLE.getId());
+      if (null != property) {
+        property.setValue(targetTable);
+      } else {
         concept.addProperty(new ConceptPropertyString(DefaultPropertyID.TARGET_TABLE.getId(), targetTable));
+      }
     }
 
     public String getMask()
@@ -237,7 +251,12 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
 
     public void setMask(String mask)
     {
+      ConceptPropertyInterface property = concept.getChildProperty(DefaultPropertyID.MASK.getId());
+      if (null != property) {
+        property.setValue(mask);
+      } else {
         concept.addProperty(new ConceptPropertyString(DefaultPropertyID.MASK.getId(), mask));
+      }
     }
 
 
@@ -256,9 +275,20 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
 
     public void setTableType(TableTypeSettings type)
     {
-        ConceptPropertyInterface property = new ConceptPropertyTableType(DefaultPropertyID.TABLE_TYPE.getId(), type);
-        concept.addProperty(property);
+      ConceptPropertyInterface property = concept.getChildProperty(DefaultPropertyID.TABLE_TYPE.getId());
+      if (null != property) {
+        property.setValue(type);
+      } else {
+        concept.addProperty(new ConceptPropertyTableType(DefaultPropertyID.TABLE_TYPE.getId(), type));
+      }
     }
+
+//    ConceptPropertyInterface property = concept.getChildProperty(DefaultPropertyID..getId());
+//    if (null != property) {
+//      property.setValue(type);
+//    } else {
+//      concept.addProperty(new (DefaultPropertyID..getId(), type));
+//    }
 
     public boolean isDimensionTable()
     {
@@ -283,7 +313,12 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
 
     public void setRelativeSize(int size)
     {
+      ConceptPropertyInterface property = concept.getChildProperty(DefaultPropertyID.RELATIVE_SIZE.getId());
+      if (null != property) {
+        property.setValue(new BigDecimal(size));
+      } else {
         concept.addProperty(new ConceptPropertyNumber(DefaultPropertyID.RELATIVE_SIZE.getId(), size));
+      }
     }
 
 
@@ -296,7 +331,12 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
 
     public void setFormula(String formula)
     {
+      ConceptPropertyInterface property = concept.getChildProperty(DefaultPropertyID.FORMULA.getId());
+      if (null != property) {
+        property.setValue(formula);
+      } else {
         concept.addProperty(new ConceptPropertyString(DefaultPropertyID.FORMULA.getId(), formula));
+      }
     }
 
     public FieldTypeSettings getFieldType()
@@ -311,7 +351,12 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
      */
     public void setFieldType(FieldTypeSettings fieldType)
     {
+      ConceptPropertyInterface property = concept.getChildProperty(DefaultPropertyID.FIELD_TYPE.getId());
+      if (null != property) {
+        property.setValue(fieldType);
+      } else {
         concept.addProperty(new ConceptPropertyFieldType(DefaultPropertyID.FIELD_TYPE.getId(), fieldType));
+      }
     }
 
     public String getFieldTypeDesc()
@@ -321,7 +366,12 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
 
     public void setAggregationType(AggregationSettings aggregationType)
     {
+      ConceptPropertyInterface property = concept.getChildProperty(DefaultPropertyID.AGGREGATION.getId());
+      if (null != property) {
+        property.setValue(aggregationType);
+      } else {
         concept.addProperty(new ConceptPropertyAggregation(DefaultPropertyID.AGGREGATION.getId(), aggregationType));
+      }
     }
 
     public AggregationSettings getAggregationType()
@@ -338,7 +388,12 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
 
     public void setHidden(boolean hidden)
     {
+      ConceptPropertyInterface property = concept.getChildProperty(DefaultPropertyID.HIDDEN.getId());
+      if (null != property) {
+        property.setValue(new Boolean(hidden));
+      } else {
         concept.addProperty(new ConceptPropertyBoolean(DefaultPropertyID.HIDDEN.getId(), hidden));
+      }
     }
 
     public void flipHidden()
@@ -362,7 +417,12 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
 
     public void setExact(boolean exact)
     {
+      ConceptPropertyInterface property = concept.getChildProperty(DefaultPropertyID.EXACT.getId());
+      if (null != property) {
+        property.setValue(new Boolean(exact));
+      } else {
         concept.addProperty(new ConceptPropertyBoolean(DefaultPropertyID.EXACT.getId(), exact));
+      }
     }
 
     public void flipExact()
@@ -400,7 +460,12 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
 
     public void setDataType(DataTypeSettings dataType)
     {
+      ConceptPropertyInterface property = concept.getChildProperty(DefaultPropertyID.DATA_TYPE.getId());
+      if (null != property) {
+        property.setValue(dataType);
+      } else {
         concept.addProperty(new ConceptPropertyDataType(DefaultPropertyID.DATA_TYPE.getId(), dataType));
+      }
     }
 
     public Security getSecurity()
@@ -412,7 +477,12 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
 
     public void setSecurity(Security security)
     {
+      ConceptPropertyInterface property = concept.getChildProperty(DefaultPropertyID.SECURITY.getId());
+      if (null != property) {
+        property.setValue(security);
+      } else {
         concept.addProperty(new ConceptPropertySecurity(DefaultPropertyID.SECURITY.getId(), security));
+      }
     }
 
     public void addIDChangedListener(IDChangedListener listener)
@@ -450,4 +520,18 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
             }
         };
     }
+
+   protected void addDefaultProperties() {
+      java.util.List list = new DefaultProperties().getDefaultProperties(getClass());
+      if (null != list) {
+        for (int i=0; i < list.size(); i++) {
+          DefaultProperty defaultProperty = (DefaultProperty) list.get(i);
+          ConceptPropertyInterface prop = DefaultPropertyID.getDefaultEmptyProperty(
+              defaultProperty.getConceptPropertyType(), defaultProperty.getName());
+          prop.setRequired(true);
+          concept.addProperty(prop);
+        }
+      }
+    }
+
 }

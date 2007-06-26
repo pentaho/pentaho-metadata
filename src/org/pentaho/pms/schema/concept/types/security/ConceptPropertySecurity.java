@@ -1,13 +1,13 @@
 /*
- * Copyright 2006 Pentaho Corporation.  All rights reserved. 
- * This software was developed by Pentaho Corporation and is provided under the terms 
- * of the Mozilla Public License, Version 1.1, or any later version. You may not use 
- * this file except in compliance with the license. If you need a copy of the license, 
- * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho 
+ * Copyright 2006 Pentaho Corporation.  All rights reserved.
+ * This software was developed by Pentaho Corporation and is provided under the terms
+ * of the Mozilla Public License, Version 1.1, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho
  * BI Platform.  The Initial Developer is Pentaho Corporation.
  *
- * Software distributed under the Mozilla Public License is distributed on an "AS IS" 
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to 
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
  * the license for the specific language governing your rights and limitations.
 */
 package org.pentaho.pms.schema.concept.types.security;
@@ -20,11 +20,20 @@ import org.pentaho.pms.schema.security.Security;
 public class ConceptPropertySecurity extends ConceptPropertyBase implements ConceptPropertyInterface, Cloneable
 {
     private Security value;
-    
+
     public ConceptPropertySecurity(String name, Security value)
     {
-        super(name);
-        this.value = value;
+        this(name, value, false);
+    }
+
+    public ConceptPropertySecurity(String name, Security value, boolean required)
+    {
+        super(name, required);
+        if (null != value) {
+          this.value = value;
+        } else {
+          this.value = new Security();
+        }
     }
 
     public String toString()
@@ -32,10 +41,12 @@ public class ConceptPropertySecurity extends ConceptPropertyBase implements Conc
         if (value==null) return null;
         return value.toString();
     }
-    
-    public Object clone() throws CloneNotSupportedException 
+
+    public Object clone() throws CloneNotSupportedException
     {
-        return new ConceptPropertySecurity(getId(), (Security) value.clone());
+      ConceptPropertySecurity clone = (ConceptPropertySecurity) super.clone();
+      clone.setValue(value.clone());
+      return clone;
     }
 
     public ConceptPropertyType getType()
@@ -52,7 +63,7 @@ public class ConceptPropertySecurity extends ConceptPropertyBase implements Conc
     {
         this.value = (Security) value;
     }
-    
+
     public boolean equals(Object obj)
     {
         return value.equals(obj);

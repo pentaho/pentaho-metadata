@@ -32,6 +32,7 @@
  */
 
 package org.pentaho.pms.schema;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.pentaho.pms.messages.Messages;
@@ -198,14 +199,14 @@ public class PhysicalColumn extends ConceptUtilityBase implements ConceptUtility
 		return getId()==null?"NULL":getId(); //$NON-NLS-1$
 	}
 
-    /**
-     * @param aggregationType the aggregationType to set
-     */
-    public void setAggregationType(AggregationSettings aggregationType)
-    {
-        getConcept().addProperty(new ConceptPropertyAggregation(DefaultPropertyID.AGGREGATION.getId(), aggregationType));
-        setChanged();
-    }
+//    /**
+//     * @param aggregationType the aggregationType to set
+//     */
+//    public void setAggregationType(AggregationSettings aggregationType)
+//    {
+//        super.setAggregationType(aggregationType);
+//        setChanged();
+//    }
 
     public void setAggregationType(String aggregationTypeDesc)
     {

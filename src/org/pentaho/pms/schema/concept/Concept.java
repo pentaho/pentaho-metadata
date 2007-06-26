@@ -25,6 +25,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.pentaho.pms.messages.Messages;
+import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 import org.pentaho.pms.schema.concept.types.localstring.ConceptPropertyLocalizedString;
 import org.pentaho.pms.schema.concept.types.localstring.LocalizedStringSettings;
@@ -98,7 +99,7 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
                 ConceptPropertyInterface property = getChildProperty(ids[i]);
                 if (property!=null)
                 {
-                    concept.addProperty((ConceptPropertyInterface) property.clone());
+                    concept.addProperty((ConceptPropertyInterface) ((ConceptPropertyBase) property).clone());
                 }
                 else
                 {

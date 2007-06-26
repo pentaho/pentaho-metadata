@@ -30,8 +30,17 @@ public class ConceptPropertyTableType extends ConceptPropertyBase implements Con
 
     public ConceptPropertyTableType(String name, TableTypeSettings value)
     {
-        super(name);
-        this.value = value;
+        this(name, value, false);
+    }
+
+    public ConceptPropertyTableType(String name, TableTypeSettings value, boolean required)
+    {
+        super(name, required);
+        if (null != value) {
+          this.value = value;
+        } else {
+          this.value = TableTypeSettings.OTHER;
+        }
     }
 
     public Object clone() throws CloneNotSupportedException
