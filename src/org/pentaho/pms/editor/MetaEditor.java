@@ -1888,8 +1888,6 @@ public class MetaEditor {
       miDel.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
           delRelationship(relationshipMeta);
-          if (activeModelTreeNode != null)
-            activeModelTreeNode.getRelationshipsRoot().removeDomainChild(relationshipMeta);
         }
       });
     } else if (node instanceof CategoryTreeNode) {
@@ -2696,6 +2694,8 @@ public class MetaEditor {
     if (activeModel == null)
       return;
     activeModel.removeRelationship(relationship);
+    if (activeModelTreeNode != null)
+      activeModelTreeNode.getRelationshipsRoot().removeDomainChild(relationship);
     refreshGraph();
   }
 

@@ -504,35 +504,62 @@ public class RelationshipDialog extends Dialog {
       
       // Is there a problem with the chosen table name, or did the user not choose a table at all?
       if (wFrom.getText().equals(Messages.getString("RelationshipDialog.USER_SELECT_SOURCE_TABLE")))
-        mb.setMessage("Select a source table for this relationship."); //$NON-NLS-1$ 
+        mb.setMessage(Messages.getString("RelationshipDialog.USER_SELECT_SOURCE_TABLE")); //$NON-NLS-1$ 
       else
         mb.setMessage(Messages.getString("RelationshipDialog.USER_WARNING_TABLE_DOESNT_EXIST", wFrom.getText())); //$NON-NLS-1$ 
       
       mb.setText(Messages.getString("General.USER_TITLE_WARNING")); //$NON-NLS-1$
       mb.open();
-    } else {
-      if (relationshipMeta.getTableTo() == null) {
-        MessageBox mb = new MessageBox(shell, SWT.YES | SWT.ICON_WARNING);
+      return;
+    } 
 
-        // Is there a problem with the chosen table name, or did the user not choose a table at all?
-        if (wTo.getText().equals(Messages.getString("RelationshipDialog.USER_SELECT_DESTINATION_TABLE")))
-          mb.setMessage("Select a destination table for this relationship."); //$NON-NLS-1$ 
-        else
-          mb.setMessage(Messages.getString("RelationshipDialog.USER_WARNING_TABLE_DOESNT_EXIST", wTo.getText())); //$NON-NLS-1$ 
+    if (relationshipMeta.getTableTo() == null) {
+      MessageBox mb = new MessageBox(shell, SWT.YES | SWT.ICON_WARNING);
 
-        mb.setText(Messages.getString("General.USER_TITLE_WARNING")); //$NON-NLS-1$
-        mb.open();
-      } else {
-        if (relationshipMeta.getTableFrom().getId().equalsIgnoreCase(relationshipMeta.getTableTo().getId())) {
-          MessageBox mb = new MessageBox(shell, SWT.YES | SWT.ICON_WARNING);
-          mb.setMessage(Messages.getString("RelationshipDialog.USER_WARNING_RELATIONSHIP_SAME_TABLE_NOT_ALLOWED")); //$NON-NLS-1$
-          mb.setText(Messages.getString("General.USER_TITLE_WARNING")); //$NON-NLS-1$
-          mb.open();
-        } else {
-          dispose();
-        }
-      }
+      // Is there a problem with the chosen table name, or did the user not choose a table at all?
+      if (wTo.getText().equals(Messages.getString("RelationshipDialog.USER_SELECT_DESTINATION_TABLE")))
+        mb.setMessage(Messages.getString("RelationshipDialog.USER_SELECT_DESTINATION_TABLE")); //$NON-NLS-1$ 
+      else
+        mb.setMessage(Messages.getString("RelationshipDialog.USER_WARNING_TABLE_DOESNT_EXIST", wTo.getText())); //$NON-NLS-1$ 
+
+      mb.setText(Messages.getString("General.USER_TITLE_WARNING")); //$NON-NLS-1$
+      mb.open();
+      return;
+    } 
+    
+    if (relationshipMeta.getTableFrom().getId().equalsIgnoreCase(relationshipMeta.getTableTo().getId())) {
+      MessageBox mb = new MessageBox(shell, SWT.YES | SWT.ICON_WARNING);
+      mb.setMessage(Messages.getString("RelationshipDialog.USER_WARNING_RELATIONSHIP_SAME_TABLE_NOT_ALLOWED")); //$NON-NLS-1$
+      mb.setText(Messages.getString("General.USER_TITLE_WARNING")); //$NON-NLS-1$
+      mb.open();
+      return;
     }
+    
+    if(relationshipMeta.getFieldFrom()==null){
+      MessageBox mb = new MessageBox(shell, SWT.YES | SWT.ICON_WARNING);
+      mb.setMessage(Messages.getString("RelationshipDialog.USER_WARNING_FROM_FIELD_NOT_DEFINED")); //$NON-NLS-1$
+      mb.setText(Messages.getString("General.USER_TITLE_WARNING")); //$NON-NLS-1$
+      mb.open();
+      return;      
+    }
+    
+    if(relationshipMeta.getFieldTo()==null){
+      MessageBox mb = new MessageBox(shell, SWT.YES | SWT.ICON_WARNING);
+      mb.setMessage(Messages.getString("RelationshipDialog.USER_WARNING_TO_FIELD_NOT_DEFINED")); //$NON-NLS-1$
+      mb.setText(Messages.getString("General.USER_TITLE_WARNING")); //$NON-NLS-1$
+      mb.open();
+      return;      
+    }
+
+    if(relationshipMeta.getType()<=0){
+      MessageBox mb = new MessageBox(shell, SWT.YES | SWT.ICON_WARNING);
+      mb.setMessage(Messages.getString("RelationshipDialog.USER_WARNING_TYPE_NOT_DEFINED")); //$NON-NLS-1$
+      mb.setText(Messages.getString("General.USER_TITLE_WARNING")); //$NON-NLS-1$
+      mb.open();
+      return;      
+    }
+
+    dispose();
   }
 
   // Try to find fields with the same name in both tables...
