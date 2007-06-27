@@ -256,4 +256,12 @@ public class PhysicalTable extends ConceptUtilityBase implements Cloneable, Chan
 
         return names;
     }
+    
+    public void clearChanged()
+    {
+        super.clearChanged();
+        
+        for (int i=0;i<nrPhysicalColumns();i++) getPhysicalColumn(i).clearChanged();
+    }
+   
 }

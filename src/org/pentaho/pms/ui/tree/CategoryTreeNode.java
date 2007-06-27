@@ -30,6 +30,9 @@ public class CategoryTreeNode extends ConceptTreeNode {
     if (category.getId()==null){
       try {
         category.setId(Integer.toString(this.hashCode()));
+        // Clear the changed flag, as we don't care if this id gets saved...
+        //it's only important at runtime. 
+        category.clearChanged();
       } catch (Exception e) {
         // TODO: handle exception
       }
