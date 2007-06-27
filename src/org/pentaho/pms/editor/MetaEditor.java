@@ -101,7 +101,6 @@ import org.pentaho.pms.schema.concept.editor.ConceptTreeModel;
 import org.pentaho.pms.schema.concept.editor.IConceptTreeModel;
 import org.pentaho.pms.schema.concept.editor.PhysicalTableModel;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
-import org.pentaho.pms.schema.concept.types.datatype.ConceptPropertyDataType;
 import org.pentaho.pms.schema.concept.types.datatype.DataTypeSettings;
 import org.pentaho.pms.schema.concept.types.fieldtype.FieldTypeSettings;
 import org.pentaho.pms.schema.concept.types.tabletype.TableTypeSettings;
@@ -552,14 +551,7 @@ public class MetaEditor {
     };
     lsEditCategories = new Listener() {
       public void handleEvent(Event e) {
-        BusinessModel activeModel = schemaMeta.getActiveModel();
-        if (activeModel != null) {
-          CategoryEditorDialog dialog = new CategoryEditorDialog(shell, activeModel, schemaMeta.getLocales(),
-              schemaMeta.getSecurityReference());
-          dialog.open();
-          if (activeModelTreeNode != null)
-            activeModelTreeNode.getBusinessViewRoot().sync();
-        }
+        editBusinessCategories();
       }
     };
     lsAlignLeft = new Listener() {
@@ -1821,6 +1813,15 @@ public class MetaEditor {
           newBusinessCategory(businessCategory);
         }
       });
+      
+      MenuItem miCategoryEditor = new MenuItem(mainMenu, SWT.PUSH);
+      miCategoryEditor.setText(Messages.getString("MetaEditor.USER_CONFIGURE_CATEGORYS")); //$NON-NLS-1$ 
+      miCategoryEditor.addListener(SWT.Selection, new Listener() {
+        public void handleEvent(Event ev) {
+          editBusinessCategories();
+        }
+      });
+
       MenuItem miSort = new MenuItem(mainMenu, SWT.PUSH);
       miSort.setText(Messages.getString("MetaEditor.SORT_CHILDREN_ASCENDING"));  //$NON-NLS-1$
       miSort.addListener(SWT.Selection, new Listener() {
@@ -1909,6 +1910,14 @@ public class MetaEditor {
         }
       });
 
+      MenuItem miCategoryEditor = new MenuItem(mainMenu, SWT.PUSH);
+      miCategoryEditor.setText(Messages.getString("MetaEditor.USER_CONFIGURE_CATEGORYS")); //$NON-NLS-1$ 
+      miCategoryEditor.addListener(SWT.Selection, new Listener() {
+        public void handleEvent(Event ev) {
+          editBusinessCategories();
+        }
+      });
+
       MenuItem miEdit = new MenuItem(mainMenu, SWT.PUSH);
       miEdit.setText(Messages.getString("MetaEditor.USER_EDIT_CATEGORY")); //$NON-NLS-1$
       miEdit.addListener(SWT.Selection, new Listener() {
@@ -1952,6 +1961,17 @@ public class MetaEditor {
           node.sortChildrenAscending();
         }
       });
+    }else if ((node instanceof BusinessColumnTreeNode) 
+        && (node.getParent() instanceof CategoryTreeNode)) {
+
+      MenuItem miCategoryEditor = new MenuItem(mainMenu, SWT.PUSH);
+      miCategoryEditor.setText(Messages.getString("MetaEditor.USER_CONFIGURE_CATEGORYS")); //$NON-NLS-1$ 
+      miCategoryEditor.addListener(SWT.Selection, new Listener() {
+        public void handleEvent(Event ev) {
+          editBusinessCategories();
+        }
+      });
+      
     }
 
     final ConceptUtilityInterface[] utilityInterfaces = getSelectedConceptUtilityInterfacesInMainTree();
@@ -1992,34 +2012,6 @@ public class MetaEditor {
     treeViewer.getTree().setMenu(mainMenu);
   }
 
-  /*
-   public void delColumnFromCategory(BusinessCategory businessCategory, BusinessColumn businessColumn) {
-   int idx = businessCategory.indexOfBusinessColumn(businessColumn);
-   if (idx >= 0) {
-   businessCategory.removeBusinessColumn(idx);
-   refreshTree();
-   }
-   }
-
-   public void moveBusinessColumnDown(BusinessCategory businessCategory, BusinessColumn businessColumn) {
-   int index = businessCategory.indexOfBusinessColumn(businessColumn);
-   if (index < businessCategory.nrBusinessColumns() - 1) {
-   businessCategory.removeBusinessColumn(index);
-   businessCategory.addBusinessColumn(index + 1, businessColumn);
-   refreshTree();
-   }
-
-   }
-
-   public void moveBusinessColumnUp(BusinessCategory businessCategory, BusinessColumn businessColumn) {
-   int index = businessCategory.indexOfBusinessColumn(businessColumn);
-   if (index > 0) {
-   businessCategory.removeBusinessColumn(index);
-   businessCategory.addBusinessColumn(index - 1, businessColumn);
-   refreshTree();
-   }
-   }
-   */
   /**
    * Add a new business category to the specified parent.
    */
@@ -2076,13 +2068,10 @@ public class MetaEditor {
 
   public void editBusinessCategories() {
     BusinessModel activeModel = schemaMeta.getActiveModel();
+   
     if (activeModel != null) {
       CategoryEditorDialog dialog = new CategoryEditorDialog(shell, activeModel, schemaMeta.getLocales(), schemaMeta
           .getSecurityReference());
-      /*
-       BusinessCategoriesDialog dialog = new BusinessCategoriesDialog(shell, activeModel, schemaMeta.getLocales(),
-       schemaMeta.getSecurityReference());
-       */
       dialog.open();
       if (activeModelTreeNode != null)
         activeModelTreeNode.getBusinessViewRoot().sync();
