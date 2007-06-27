@@ -3062,7 +3062,9 @@ public class MetaEditor {
     // Update the active model node, as the connection info
     // can dynamically change depending on the addition or
     // removal of business tables, changing the label on this node ...
-    treeViewer.update(activeModelTreeNode, null);
+    if (activeModelTreeNode!=null){
+      treeViewer.update(activeModelTreeNode, null);
+    }
     setShellText();
   }
 
