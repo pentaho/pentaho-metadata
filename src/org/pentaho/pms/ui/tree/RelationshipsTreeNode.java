@@ -9,6 +9,7 @@ import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.RelationshipMeta;
+import org.pentaho.pms.util.GUIResource;
 
 public class RelationshipsTreeNode extends ConceptTreeNode {
 
@@ -95,9 +96,9 @@ public class RelationshipsTreeNode extends ConceptTreeNode {
   }
 
  
-  public Image getImage() {
-    return super.getImage();
-  }
+  public Image getImage(){
+    return GUIResource.getInstance().getImageRelationshipsParent();
+  }   
 
   public String getName() {
     return Messages.getString("MetaEditor.USER_RELATIONSHIPS"); //$NON-NLS-1$

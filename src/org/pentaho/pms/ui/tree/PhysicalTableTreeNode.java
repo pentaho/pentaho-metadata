@@ -21,10 +21,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.swt.graphics.Image;
 import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.schema.PhysicalColumn;
 import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.concept.ConceptInterface;
+import org.pentaho.pms.util.GUIResource;
 
 import be.ibridge.kettle.core.DragAndDropContainer;
 import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
@@ -111,6 +113,10 @@ public class PhysicalTableTreeNode extends ConceptTreeNode {
       return tableConcept.findFirstParentConcept().getName();
     }
     return null;
+  }
+
+  public Image getImage() {
+    return GUIResource.getInstance().getImagePhysicalTable();
   }
   
 }

@@ -9,6 +9,7 @@ import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
+import org.pentaho.pms.util.GUIResource;
 
 
 
@@ -56,9 +57,9 @@ public class BusinessTablesTreeNode extends ConceptTreeNode {
     sync(model.getBusinessTables());
   }
   
-  public Image getImage() {
-    return super.getImage();
-  }
+  public Image getImage(){
+    return GUIResource.getInstance().getImageBusinessTablesParent();
+  }   
 
   public String getName() {
     return Messages.getString("MetaEditor.USER_BUSINESS_TABLES");  //$NON-NLS-1$

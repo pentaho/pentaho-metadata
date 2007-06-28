@@ -9,6 +9,7 @@ import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.concept.ConceptInterface;
+import org.pentaho.pms.util.GUIResource;
 
 import be.ibridge.kettle.core.DragAndDropContainer;
 
@@ -68,7 +69,7 @@ public class BusinessTableTreeNode extends ConceptTreeNode {
   }
   
   public Image getImage() {
-    return super.getImage();
+    return GUIResource.getInstance().getImageBusinessTable();
   }
 
   public String getName() {

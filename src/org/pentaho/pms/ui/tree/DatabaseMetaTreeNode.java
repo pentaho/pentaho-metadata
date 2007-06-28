@@ -22,9 +22,11 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.swt.graphics.Image;
 import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.SchemaMeta;
+import org.pentaho.pms.util.GUIResource;
 
 import be.ibridge.kettle.core.DragAndDropContainer;
 import be.ibridge.kettle.core.database.DatabaseMeta;
@@ -154,5 +156,9 @@ public class DatabaseMetaTreeNode extends ConceptTreeNode {
 
   public Object getDomainObject(){
     return databaseMeta;
+  }
+  
+  public Image getImage() {
+    return GUIResource.getInstance().getImageConnection();
   }
 }

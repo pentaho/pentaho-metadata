@@ -88,7 +88,7 @@ public class ConnectionsTreeNode extends ConceptTreeNode {
   }
   
   public Image getImage(){
-    return GUIResource.getInstance().getImageConnection();
+    return GUIResource.getInstance().getImageConnectionsParent();
   }
 
   public Object getDomainObject(){

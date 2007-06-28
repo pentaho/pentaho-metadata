@@ -8,6 +8,7 @@ import org.eclipse.swt.graphics.Image;
 import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessCategory;
+import org.pentaho.pms.util.GUIResource;
 
 public class BusinessViewTreeNode extends CategoryTreeNode {
 
@@ -49,9 +50,9 @@ public class BusinessViewTreeNode extends CategoryTreeNode {
     sync(category.getBusinessCategories());
   }
   
-  public Image getImage() {
-    return super.getImage();
-  }
+  public Image getImage(){
+    return GUIResource.getInstance().getImageBusinessView();
+  }   
 
   public String getName() {
     // TODO Auto-generated method stub

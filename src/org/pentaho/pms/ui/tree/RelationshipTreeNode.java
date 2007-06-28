@@ -5,6 +5,7 @@ import java.util.List;
 import org.eclipse.swt.graphics.Image;
 import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.schema.RelationshipMeta;
+import org.pentaho.pms.util.GUIResource;
 
 
 public class RelationshipTreeNode extends ConceptTreeNode {
@@ -29,8 +30,7 @@ public class RelationshipTreeNode extends ConceptTreeNode {
   }
   
   public Image getImage() {
-    // TODO Auto-generated method stub
-    return super.getImage();
+    return GUIResource.getInstance().getImageRelationship();
   }
 
   public String getName() {

@@ -68,7 +68,18 @@ public class GUIResource
     private ManagedFont fontLarge;
 
     private Image     imageMetaSplash;
+    private Image     imageConnectionsParent;
+    private Image     imageBusinessView;
     private Image     imageConnection;
+    private Image     imagePhysicalTable;
+    private Image     imageCatagory;
+    private Image     imageBusinessColumn;
+    private Image     imageRelationship;
+    private Image     imageRelationshipsParent;
+    private Image     imageBusinessTable;
+    private Image     imageBusinessTablesParent;
+    private Image     imagePhysicalColumn;
+    private Image     imageBusinessModel;
     private Image     imageBol;
     private Image     imageIcon;
 
@@ -200,7 +211,18 @@ public class GUIResource
         if (!skipImages)
         {
             if (!imageMetaSplash.isDisposed()) imageMetaSplash.dispose();
+            if (!imageConnectionsParent.isDisposed()) imageConnectionsParent.dispose();
             if (!imageConnection.isDisposed()) imageConnection.dispose();
+            if (!imagePhysicalTable.isDisposed()) imagePhysicalTable.dispose();
+            if (!imageBusinessView.isDisposed()) imageBusinessView.dispose();
+            if (!imageCatagory.isDisposed()) imageCatagory.dispose();
+            if (!imageBusinessColumn.isDisposed()) imageBusinessColumn.dispose();
+            if (!imageRelationship.isDisposed()) imageRelationship.dispose();
+            if (!imageRelationshipsParent.isDisposed()) imageRelationshipsParent.dispose();
+            if (!imageBusinessTable.isDisposed()) imageBusinessTable.dispose();
+            if (!imageBusinessTablesParent.isDisposed()) imageBusinessTablesParent.dispose();
+            if (!imagePhysicalColumn.isDisposed()) imagePhysicalColumn.dispose();
+            if (!imageBusinessModel.isDisposed()) imageBusinessModel.dispose();
             if (!imageBol.isDisposed()) imageBol.dispose();
             if (!imageIcon.isDisposed()) imageIcon.dispose();
         }
@@ -209,7 +231,18 @@ public class GUIResource
     private void loadImages()
     {
         imageMetaSplash  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "splash_metadata_editor.png")); //$NON-NLS-1$
+        imageConnectionsParent  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "folder_connection.png")); //$NON-NLS-1$
         imageConnection  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "connection.png")); //$NON-NLS-1$
+        imagePhysicalTable  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "connection_table.png")); //$NON-NLS-1$
+        imageBusinessView  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "business_view.png")); //$NON-NLS-1$
+        imageCatagory  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "category.png")); //$NON-NLS-1$
+        imageBusinessColumn  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "column.png")); //$NON-NLS-1$
+        imageRelationship  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "relationship.png")); //$NON-NLS-1$
+        imageRelationshipsParent  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "folder_relationship.png")); //$NON-NLS-1$
+        imageBusinessTable  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "business_table.png")); //$NON-NLS-1$
+        imageBusinessTablesParent  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "folder_business_table.png")); //$NON-NLS-1$
+        imagePhysicalColumn  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "connection_column.png")); //$NON-NLS-1$
+        imageBusinessModel  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "business_model.png")); //$NON-NLS-1$
         imageBol         = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "bol.png")); //$NON-NLS-1$
         imageIcon        = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "icon.png")); //$NON-NLS-1$
     }
@@ -434,19 +467,128 @@ public class GUIResource
     /**
      * @return the imageConnection
      */
+    public Image getImageConnectionsParent()
+    {
+        return imageConnectionsParent;
+    }
+
     public Image getImageConnection()
     {
         return imageConnection;
     }
-
+    
+    public Image getImagePhysicalTable()
+    {
+        return imagePhysicalTable;
+    }
+    
+    public Image getImageBusinessView()
+    {
+        return imageBusinessView;
+    }
+    
+    public Image getImageCatagory()
+    {
+        return imageCatagory;
+    }
+    
+    public Image getImageBusinessColumn()
+    {
+        return imageBusinessColumn;
+    }
+    
+    public Image getImageRelationship()
+    {
+        return imageRelationship;
+    }
+    
+    public Image getImageRelationshipsParent()
+    {
+        return imageRelationshipsParent;
+    }
+    
+    public Image getImageBusinessTable()
+    {
+        return imageBusinessTable;
+    }
+    
+    public Image getImageBusinessTablesParent()
+    {
+        return imageBusinessTablesParent;
+    }
+    
+    public Image getImagePhysicalColumn()
+    {
+        return imagePhysicalColumn;
+    }
+    
+    public Image getImageBusinessModel()
+    {
+        return imageBusinessModel;
+    }
+    
     /**
      * @param imageConnection the imageConnection to set
      */
+    public void setImageConnectionsParent(Image imageConnectionParent)
+    {
+        this.imageConnectionsParent = imageConnectionParent;
+    }
+
     public void setImageConnection(Image imageConnection)
     {
         this.imageConnection = imageConnection;
     }
-
+    
+    public void setImagePhysicalTable(Image imagePhysicalTable)
+    {
+        this.imagePhysicalTable = imagePhysicalTable;
+    }
+    
+    public void setImageBusinessView(Image imageBusinessView)
+    {
+        this.imageBusinessView = imageBusinessView;
+    }
+    
+    public void setImageCatagory(Image imageCatagory)
+    {
+        this.imageCatagory = imageCatagory;
+    }
+    
+    public void setImageBusinessColumn(Image imageBusinessColumn)
+    {
+        this.imageBusinessColumn = imageBusinessColumn;
+    }
+    
+    public void setImageRelationship(Image imageRelationship)
+    {
+        this.imageRelationship = imageRelationship;
+    }
+    
+    public void setImageRelationshipsParent(Image imageRelationshipsParent)
+    {
+        this.imageRelationshipsParent = imageRelationshipsParent;
+    }
+    
+    public void setImageBusinessTable(Image imageBusinessTable)
+    {
+        this.imageBusinessTable = imageBusinessTable;
+    }
+    
+    public void setImageBusinessTablesParent(Image imageBusinessTablesParent)
+    {
+        this.imageBusinessTablesParent = imageBusinessTablesParent;
+    }
+    
+    public void setImagePhysicalColumn(Image imagePhysicalColumn)
+    {
+        this.imagePhysicalColumn = imagePhysicalColumn;
+    }
+    
+    public void setImageBusinessModel(Image imageBusinessModel)
+    {
+        this.imageBusinessModel = imageBusinessModel;
+    }
     /**
      * @return the imageBol
      */

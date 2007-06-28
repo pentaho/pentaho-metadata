@@ -19,9 +19,11 @@ package org.pentaho.pms.ui.tree;
 
 import java.util.List;
 
+import org.eclipse.swt.graphics.Image;
 import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.schema.PhysicalColumn;
 import org.pentaho.pms.schema.concept.ConceptInterface;
+import org.pentaho.pms.util.GUIResource;
 
 import be.ibridge.kettle.core.DragAndDropContainer;
 
@@ -86,4 +88,7 @@ public class PhysicalColumnTreeNode extends ConceptTreeNode {
     return null;
   }
 
+  public Image getImage() {
+    return GUIResource.getInstance().getImagePhysicalColumn();
+  }
 }

@@ -9,6 +9,7 @@ import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.concept.ConceptInterface;
+import org.pentaho.pms.util.GUIResource;
 
 public class CategoryTreeNode extends ConceptTreeNode {
 
@@ -152,8 +153,7 @@ public class CategoryTreeNode extends ConceptTreeNode {
   }
   
   public Image getImage() {
-    // TODO Auto-generated method stub
-    return super.getImage();
+    return GUIResource.getInstance().getImageCatagory();
   }
 
   public String getName() {
