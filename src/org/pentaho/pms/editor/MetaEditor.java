@@ -775,7 +775,7 @@ public class MetaEditor {
   public boolean readAndDispatch() {
     try {
       return disp.readAndDispatch();
-    } catch (SWTException e) {
+    } catch (Exception e) {
       return false;
     }
   }
