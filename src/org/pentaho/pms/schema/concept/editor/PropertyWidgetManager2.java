@@ -113,8 +113,9 @@ public class PropertyWidgetManager2 extends Composite implements ISelectionChang
       logger.debug("widgets.keySet()=" + widgets.keySet());
     }
     for (Iterator widgetIter = widgets.keySet().iterator(); widgetIter.hasNext();) {
-      Control control = (Control) widgets.get(widgetIter.next());
-      control.dispose();
+      IPropertyEditorWidget control = (IPropertyEditorWidget) widgets.get(widgetIter.next());
+      control.cleanup();
+      ((Control) control).dispose();
     }
     widgets.clear();
     // throw out all the group name widgets
@@ -205,6 +206,7 @@ public class PropertyWidgetManager2 extends Composite implements ISelectionChang
       setLayout(new FormLayout());
       Label nameLabel = new Label(this, SWT.NONE);
       nameLabel.setText(groupName);
+      nameLabel.setFont(Constants.getFontRegistry(getDisplay()).get("group-name"));
       FormData fdNameLabel = new FormData();
       fdNameLabel.top = new FormAttachment(0, 0);
       fdNameLabel.left = new FormAttachment(0, 0);

@@ -57,9 +57,12 @@ public class ColorPropertyEditorWidget extends AbstractPropertyEditorWidget {
     });
     Label colorLabel = new Label(parent, SWT.NONE);
     colorLabel.setText("Color:");
+    colorLabel.setEnabled(isEditable());
 
     button = new Button(parent, SWT.PUSH);
     button.setText("      ");
+    button.setEnabled(isEditable());
+
     FormData fdButton = new FormData();
     fdButton.left = new FormAttachment(colorLabel, 10);
     fdButton.top = new FormAttachment(0, 0);

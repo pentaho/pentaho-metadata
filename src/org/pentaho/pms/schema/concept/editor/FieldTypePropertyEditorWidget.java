@@ -54,7 +54,10 @@ public class FieldTypePropertyEditorWidget extends AbstractPropertyEditorWidget 
     });
     Label typeLabel = new Label(parent, SWT.NONE);
     typeLabel.setText("Field Type:");
+    typeLabel.setEnabled(isEditable());
+
     Combo type = new Combo(parent, SWT.READ_ONLY | SWT.BORDER);
+    type.setEnabled(isEditable());
 
     typeComboViewer = new ComboViewer(type);
 

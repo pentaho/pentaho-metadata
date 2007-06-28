@@ -93,6 +93,11 @@ public class LocalizedStringTableWidget extends Composite {
     tableViewer.setInput(getLocalizedStringSettings());
   }
 
+  public void setEnabled(boolean enabled) {
+    super.setEnabled(enabled);
+    table.setEnabled(enabled);
+  }
+
   /**
    * Create the Table
    */

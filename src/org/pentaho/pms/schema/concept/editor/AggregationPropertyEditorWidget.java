@@ -55,8 +55,9 @@ public class AggregationPropertyEditorWidget extends AbstractPropertyEditorWidge
     });
     Label typeLabel = new Label(parent, SWT.NONE);
     typeLabel.setText("Aggregation Type:");
+    typeLabel.setEnabled(isEditable());
     Combo type = new Combo(parent, SWT.READ_ONLY | SWT.BORDER);
-
+    type.setEnabled(isEditable());
     typeComboViewer = new ComboViewer(type);
 
     typeComboViewer.setContentProvider(new IStructuredContentProvider() {

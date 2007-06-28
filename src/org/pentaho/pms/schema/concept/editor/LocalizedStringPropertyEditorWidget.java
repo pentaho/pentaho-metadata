@@ -42,6 +42,8 @@ public class LocalizedStringPropertyEditorWidget extends AbstractPropertyEditorW
     }
     table = new LocalizedStringTableWidget(parent, SWT.NONE, getConceptModel(), getPropertyId(), locales);
 
+    table.setEnabled(isEditable());
+
     FormData fdTable = new FormData();
     fdTable.left = new FormAttachment(0, 0);
     fdTable.top = new FormAttachment(0, 0);

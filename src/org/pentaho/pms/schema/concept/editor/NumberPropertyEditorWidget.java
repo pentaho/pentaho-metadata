@@ -54,6 +54,8 @@ public class NumberPropertyEditorWidget extends AbstractPropertyEditorWidget {
 
     final DecoratedField field = new DecoratedField(parent, SWT.BORDER, new TextControlCreator());
     numberField = (Text) field.getControl();
+    numberField.setEnabled(isEditable());
+
     final FieldDecorationRegistry registry = FieldDecorationRegistry.getDefault();
     field
         .addFieldDecoration(registry.getFieldDecoration(FieldDecorationRegistry.DEC_ERROR), SWT.TOP | SWT.RIGHT, false);
@@ -61,6 +63,7 @@ public class NumberPropertyEditorWidget extends AbstractPropertyEditorWidget {
 
     Label numberLabel = new Label(parent, SWT.NONE);
     numberLabel.setText("Value:");
+    numberLabel.setEnabled(isEditable());
 
     FormData fd2 = new FormData();
     fd2.left = new FormAttachment(numberLabel, 10);

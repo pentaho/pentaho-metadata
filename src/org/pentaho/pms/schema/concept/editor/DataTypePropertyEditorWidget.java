@@ -65,7 +65,10 @@ public class DataTypePropertyEditorWidget extends AbstractPropertyEditorWidget {
 
     Label typeLabel = new Label(parent, SWT.NONE);
     typeLabel.setText("Data Type:");
+    typeLabel.setEnabled(isEditable());
+
     Combo type = new Combo(parent, SWT.READ_ONLY | SWT.BORDER);
+    type.setEnabled(isEditable());
 
     typeComboViewer = new ComboViewer(type);
 
@@ -106,7 +109,10 @@ public class DataTypePropertyEditorWidget extends AbstractPropertyEditorWidget {
 
     // Length
     Label lengthLabel = new Label(parent, SWT.NONE);
+    lengthLabel.setEnabled(isEditable());
     length = new Text(parent, SWT.BORDER);
+    setEnabled(isEditable());
+
     lengthLabel.setText("Length:");
     //    lengthLabel.setText(Messages.getString("ConceptPropertyDataTypeWidget.USER_LENGTH"));  //$NON-NLS-1$
     FormData fdLengthLabel = new FormData();
@@ -122,7 +128,10 @@ public class DataTypePropertyEditorWidget extends AbstractPropertyEditorWidget {
 
     // Precision
     Label precisionLabel = new Label(parent, SWT.NONE);
+    precisionLabel.setEnabled(isEditable());
     precision = new Text(parent, SWT.BORDER);
+    precisionLabel.setEnabled(isEditable());
+
     //    precisionLabel.setText(Messages.getString("ConceptPropertyDataTypeWidget.USER_PRECISION")); //$NON-NLS-1$
     precisionLabel.setText("Precision:");
     FormData fdPrecisionLabel = new FormData();

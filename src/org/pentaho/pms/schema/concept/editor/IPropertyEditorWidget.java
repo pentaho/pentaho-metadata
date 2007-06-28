@@ -15,4 +15,9 @@ public interface IPropertyEditorWidget {
    * set the focus on one of the wrapped widgets.
    */
 //  void focus();
+
+  /**
+   * Called just before disposal. Typically used to remove listeners set on child controls.
+   */
+  void cleanup();
 }

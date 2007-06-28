@@ -64,7 +64,9 @@ public class FontPropertyEditorWidget extends AbstractPropertyEditorWidget {
 
     Label fontStringLabel = new Label(parent, SWT.NONE);
     fontStringLabel.setText("Font:");
+    fontStringLabel.setEnabled(isEditable());
     fontString = new Label(parent, SWT.NONE);
+    fontString.setEnabled(isEditable());
     fontString.setText(getFontAsUserString());
 
     FormData fdFontLabel = new FormData();
@@ -78,8 +80,10 @@ public class FontPropertyEditorWidget extends AbstractPropertyEditorWidget {
     fontString.setLayoutData(fdFont);
 
     Label previewLabel = new Label(parent, SWT.NONE);
+    previewLabel.setEnabled(isEditable());
     previewLabel.setText("Preview:");
     preview = new Text(parent, SWT.BORDER);
+    preview.setEnabled(isEditable());
 
     FormData fdPreviewLabel = new FormData();
     fdPreviewLabel.left = new FormAttachment(0, 0);
@@ -93,6 +97,7 @@ public class FontPropertyEditorWidget extends AbstractPropertyEditorWidget {
     preview.setLayoutData(fdPreview);
 
     fontButton = new Button(parent, SWT.PUSH);
+    fontButton.setEnabled(isEditable());
     FormData fdButton = new FormData();
     fdButton.left = new FormAttachment(0, 0);
     fdButton.top = new FormAttachment(preview, 10);

@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.DateTime;
 /**
  * TODO mlowery can't find where this widget is actually used
  * @author mlowery
+ * @deprecated can't find where this widget is actually used
  */
 public class DatePropertyEditorWidget extends AbstractPropertyEditorWidget {
 

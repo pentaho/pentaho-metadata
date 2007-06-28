@@ -8,8 +8,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.ModifyEvent;
@@ -80,11 +78,11 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
     createTitleLabel();
     createContents(createWidgetArea());
     addModificationListeners();
-    addDisposeListener(new DisposeListener() {
-      public void widgetDisposed(final DisposeEvent e) {
-        removeModificationListeners();
-      }
-    });
+    //    addDisposeListener(new DisposeListener() {
+    //      public void widgetDisposed(final DisposeEvent e) {
+    //        removeModificationListeners();
+    //      }
+    //    });
   }
 
   protected final Composite createWidgetArea() {
@@ -296,6 +294,10 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
 
   protected Map getContext() {
     return context;
+  }
+
+  public void cleanup() {
+    removeModificationListeners();
   }
 
 }

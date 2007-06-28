@@ -48,6 +48,7 @@ public class SecurityPropertyEditorWidget extends AbstractPropertyEditorWidget {
 
     Label label = new Label(parent, SWT.CENTER);
     label.setText("Not implemented yet.");
+    label.setEnabled(isEditable());
 
     FormData fdLabel = new FormData();
     fdLabel.left = new FormAttachment(0, 0);

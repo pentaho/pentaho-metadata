@@ -61,8 +61,10 @@ public class ColumnWidthPropertyEditorWidget extends AbstractPropertyEditorWidge
     });
     Label typeLabel = new Label(parent, SWT.NONE);
     typeLabel.setText("Column Width Type:"); //$NON-NLS-1$
+    typeLabel.setEnabled(isEditable());
 
     Combo type = new Combo(parent, SWT.READ_ONLY | SWT.BORDER);
+    type.setEnabled(isEditable());
 
     typeComboViewer = new ComboViewer(type);
 
@@ -103,8 +105,10 @@ public class ColumnWidthPropertyEditorWidget extends AbstractPropertyEditorWidge
 
     Label widthLabel = new Label(parent, SWT.NONE);
     widthLabel.setText("Column Width:"); //$NON-NLS-1$
+    widthLabel.setEnabled(isEditable());
 
     width = new Text(parent, SWT.BORDER | SWT.SINGLE | SWT.LEFT);
+    width.setEnabled(isEditable());
 
     // only allow digits
     width.addListener(SWT.Verify, new Listener() {

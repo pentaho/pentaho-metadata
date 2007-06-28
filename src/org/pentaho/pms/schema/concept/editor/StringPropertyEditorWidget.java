@@ -7,7 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Composite;
@@ -25,7 +25,7 @@ public class StringPropertyEditorWidget extends AbstractPropertyEditorWidget {
 
   private Label stringLabel;
 
-  private FocusListener focusListener;
+  private ModifyListener modifyListener;
 
   // ~ Constructors ====================================================================================================
 
@@ -50,6 +50,8 @@ public class StringPropertyEditorWidget extends AbstractPropertyEditorWidget {
     stringLabel = new Label(parent, SWT.NONE);
     stringLabel.setText("Value:");
 
+    stringLabel.setEnabled(isEditable());
+
     string = new Text(parent, SWT.BORDER);
 
     FormData fd1 = new FormData();
@@ -63,7 +65,7 @@ public class StringPropertyEditorWidget extends AbstractPropertyEditorWidget {
     fd2.right = new FormAttachment(100, 0);
     string.setLayoutData(fd2);
 
-    string.setEditable(isEditable());
+    string.setEnabled(isEditable());
   }
 
   protected void widgetDisposed(final DisposeEvent e) {
@@ -78,14 +80,14 @@ public class StringPropertyEditorWidget extends AbstractPropertyEditorWidget {
   }
 
   protected void addModificationListeners() {
-    if (null == focusListener) {
-      focusListener = new PropertyEditorWidgetFocusListener();
-      string.addFocusListener(focusListener);
+    if (null == modifyListener) {
+      modifyListener = new PropertyEditorWidgetModifyListener();
+      string.addModifyListener(modifyListener);
     }
   }
 
   protected void removeModificationListeners() {
-    string.removeFocusListener(focusListener);
+    string.removeModifyListener(modifyListener);
   }
 
   protected boolean isValid() {

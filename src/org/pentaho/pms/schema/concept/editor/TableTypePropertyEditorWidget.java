@@ -55,7 +55,10 @@ public class TableTypePropertyEditorWidget extends AbstractPropertyEditorWidget 
     });
     Label typeLabel = new Label(parent, SWT.NONE);
     typeLabel.setText("Table Type:");
+    typeLabel.setEnabled(isEditable());
+
     Combo type = new Combo(parent, SWT.READ_ONLY | SWT.BORDER);
+    type.setEnabled(isEditable());
 
     typeComboViewer = new ComboViewer(type);
 
