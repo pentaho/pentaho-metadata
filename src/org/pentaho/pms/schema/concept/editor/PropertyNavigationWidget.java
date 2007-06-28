@@ -18,6 +18,8 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -59,13 +61,15 @@ public class PropertyNavigationWidget extends Composite implements ISelectionPro
       }
     });
 
-    setLayout(new FormLayout());
+    setLayout(new GridLayout(2, false));
 
     Label lab1 = new Label(this, SWT.NONE);
-    lab1.setFont(Constants.getFontRegistry(getDisplay()).get("prop-mgmt-title"));
-    lab1.setText("Properties");
+    lab1.setText("Available");
 
     ToolBar tb3 = new ToolBar(this, SWT.FLAT);
+    GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+    gridData.horizontalAlignment = SWT.END;
+    tb3.setLayoutData(gridData);
 
     ToolItem ti4 = new ToolItem(tb3, SWT.PUSH);
     ti4.setImage(Constants.getImageRegistry(Display.getCurrent()).get("add-button"));
@@ -94,6 +98,9 @@ public class PropertyNavigationWidget extends Composite implements ISelectionPro
     });
 
     propertyTree = new PropertyTreeWidget(this, SWT.NONE, conceptModel, PropertyTreeWidget.SHOW_USED, true);
+    gridData = new GridData(GridData.FILL_BOTH);
+    gridData.horizontalSpan = 2;
+    propertyTree.setLayoutData(gridData);
 
     propertyTree.addSelectionChangedListener(new ISelectionChangedListener() {
       public void selectionChanged(final SelectionChangedEvent e) {
@@ -111,7 +118,7 @@ public class PropertyNavigationWidget extends Composite implements ISelectionPro
               if (prop.isRequired()) {
                 delButton.setEnabled(false);
               } else {
-                delButton.setEnabled(true);
+              delButton.setEnabled(true);
               }
             } else {
               // it's a parent/inherited/security property; it cannot be deleted on this concept
@@ -123,24 +130,6 @@ public class PropertyNavigationWidget extends Composite implements ISelectionPro
         }
       }
     });
-
-    FormData fd1 = new FormData();
-    fd1.bottom = new FormAttachment(propertyTree, -10);
-    fd1.left = new FormAttachment(0, 0);
-    lab1.setLayoutData(fd1);
-
-    FormData fd6 = new FormData();
-    fd6.top = new FormAttachment(0, 38);
-    fd6.left = new FormAttachment(0, 0);
-    fd6.right = new FormAttachment(100, 0);
-    fd6.bottom = new FormAttachment(100, 0);
-    propertyTree.setLayoutData(fd6);
-
-    FormData fd3 = new FormData();
-    fd3.top = new FormAttachment(0, 0);
-    fd3.right = new FormAttachment(100, 0);
-    tb3.setLayoutData(fd3);
-
   }
 
   protected void deleteButtonPressed(final SelectionEvent e) {

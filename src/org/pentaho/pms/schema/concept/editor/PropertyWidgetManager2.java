@@ -73,33 +73,21 @@ public class PropertyWidgetManager2 extends Composite implements ISelectionChang
         PropertyWidgetManager2.this.widgetDisposed(e);
       }
     });
-    setLayout(new FormLayout());
+    setLayout(new GridLayout());
 
     Label title = new Label(this, SWT.NONE);
-    title.setText("Property Editor");
-    title.setFont(Constants.getFontRegistry(getDisplay()).get("card-title"));
+    title.setText("Settings");
+    GridData gridData = new GridData();
+    gridData.heightHint = 22;
+    title.setLayoutData(gridData);
 
     widgetAreaWrapper = new ScrolledComposite(this, SWT.V_SCROLL | SWT.BORDER);
     widgetAreaWrapper.setAlwaysShowScrollBars(true);
     widgetAreaWrapper.setExpandHorizontal(true);
     widgetAreaWrapper.setMinWidth(50);
-//    widgetAreaWrapper.setBackground(new Color(Display.getDefault(), 5, 5, 5));
-//    widgetAreaWrapper.setLayout(new FillLayout());
-
-    FormData fd9 = new FormData();
-    fd9.top = new FormAttachment(0, 38);
-    fd9.left = new FormAttachment(0, 0);
-    fd9.right = new FormAttachment(100, 0);
-    fd9.bottom = new FormAttachment(100, 0);
-    widgetAreaWrapper.setLayoutData(fd9);
+    widgetAreaWrapper.setLayoutData(new GridData(GridData.FILL_BOTH));
 
     widgetArea = new Composite(widgetAreaWrapper, SWT.NONE);
-
-    FormData fd10 = new FormData();
-    fd10.bottom = new FormAttachment(widgetAreaWrapper, -10);
-    fd10.left = new FormAttachment(0, 0);
-    title.setLayoutData(fd10);
-
     layout = new GridLayout(1, true);
     ((GridLayout) layout).verticalSpacing = 20;
 
@@ -217,7 +205,6 @@ public class PropertyWidgetManager2 extends Composite implements ISelectionChang
       setLayout(new FormLayout());
       Label nameLabel = new Label(this, SWT.NONE);
       nameLabel.setText(groupName);
-      nameLabel.setFont(Constants.getFontRegistry(getDisplay()).get("group-name"));
       FormData fdNameLabel = new FormData();
       fdNameLabel.top = new FormAttachment(0, 0);
       fdNameLabel.left = new FormAttachment(0, 0);

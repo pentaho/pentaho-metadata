@@ -6,23 +6,19 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 
-public class TableColumnTreeWidget extends Composite implements ISelectionProvider, ITableModificationListener {
+public class TableColumnTreeWidget extends TreeViewer implements ISelectionProvider, ITableModificationListener {
 
   // ~ Static fields/initializers ======================================================================================
 
@@ -31,8 +27,6 @@ public class TableColumnTreeWidget extends Composite implements ISelectionProvid
   // ~ Instance fields =================================================================================================
 
   private ITableModel tableModel;
-
-  private TreeViewer treeViewer;
 
   private boolean decorate = true;
 
@@ -44,7 +38,7 @@ public class TableColumnTreeWidget extends Composite implements ISelectionProvid
    */
   public TableColumnTreeWidget(final Composite parent, final int style, final ITableModel tableModel,
       final boolean decorate) {
-    super(parent, style);
+    super(new Tree(parent, style));
     this.tableModel = tableModel;
 
     this.tableModel.addTableModificationListener(this);
@@ -60,27 +54,22 @@ public class TableColumnTreeWidget extends Composite implements ISelectionProvid
       logger.debug("heard tableModel modification event: " + e);
     }
     // tree is small enough that we don't need to be smart about painting only changed nodes; paint everything
-    treeViewer.refresh(true);
-    treeViewer.expandAll();
+    refresh(true);
+    expandAll();
   }
 
   protected void createContents() {
-    addDisposeListener(new DisposeListener() {
+    getTree().addDisposeListener(new DisposeListener() {
       public void widgetDisposed(DisposeEvent e) {
         TableColumnTreeWidget.this.widgetDisposed(e);
       }
     });
-    setLayout(new FillLayout());
-    Tree tree2 = new Tree(this, SWT.SINGLE | SWT.BORDER); // single selection at a time
-    treeViewer = new TreeViewer(tree2);
-    ITreeContentProvider contentProvider = null;
-    contentProvider = new TableColumnTreeContentProvider();
-    treeViewer.setContentProvider(contentProvider);
-    treeViewer.setLabelProvider(new TableColumnTreeLabelProvider());
+    setContentProvider(new TableColumnTreeContentProvider());
+    setLabelProvider(new TableColumnTreeLabelProvider());
 
-    treeViewer.setInput("ignored");
+    setInput("ignored");
 
-    treeViewer.expandAll();
+    expandAll();
   }
 
   protected void widgetDisposed(final DisposeEvent e) {
@@ -206,20 +195,5 @@ public class TableColumnTreeWidget extends Composite implements ISelectionProvid
     }
   }
 
-  public void addSelectionChangedListener(final ISelectionChangedListener listener) {
-    treeViewer.addSelectionChangedListener(listener);
-  }
-
-  public ISelection getSelection() {
-    return treeViewer.getSelection();
-  }
-
-  public void removeSelectionChangedListener(final ISelectionChangedListener listener) {
-    treeViewer.removeSelectionChangedListener(listener);
-  }
-
-  public void setSelection(final ISelection selection) {
-    treeViewer.setSelection(selection);
-  }
 
 }

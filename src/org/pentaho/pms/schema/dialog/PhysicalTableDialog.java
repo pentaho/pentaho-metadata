@@ -47,6 +47,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.SchemaMeta;
+import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.schema.concept.editor.ITableModel;
 import org.pentaho.pms.util.Settings;
 
@@ -58,10 +59,14 @@ public class PhysicalTableDialog extends AbstractTableDialog {
 
   private Text wId;
 
-  public PhysicalTableDialog(final Shell parent, final int style, final ITableModel tableModel,
-      final SchemaMeta schemaMeta) {
-    super(parent, style, tableModel, schemaMeta);
+  public PhysicalTableDialog(Shell parent, int style, ITableModel tableModel, SchemaMeta schemaMeta) {   
+    this(parent, style, tableModel, schemaMeta, null);
   }
+  
+  public PhysicalTableDialog(Shell parent, int style, ITableModel tableModel, SchemaMeta schemaMeta, ConceptUtilityInterface selectedTableOrColumn) {
+    super(parent, style, tableModel, schemaMeta, selectedTableOrColumn);
+  }
+  
 
   protected void configureShell(final Shell shell) {
     super.configureShell(shell);
@@ -112,7 +117,9 @@ public class PhysicalTableDialog extends AbstractTableDialog {
 
     if (tableModel.getId() != null) {
       wId.setText(tableModel.getId());
-      wId.selectAll();
+      if (initialTableOrColumnSelection == null) {
+        wId.selectAll();
+      }
     }
     return c0;
   }

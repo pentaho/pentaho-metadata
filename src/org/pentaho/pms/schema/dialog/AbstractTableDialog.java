@@ -36,6 +36,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -94,14 +95,21 @@ public abstract class AbstractTableDialog extends Dialog {
   protected ISelectionChangedListener tableColumTreeSelectionChangedListener;
 
   private static final Log logger = LogFactory.getLog(AbstractTableDialog.class);
+  
+  protected ConceptUtilityInterface initialTableOrColumnSelection;
 
-  public AbstractTableDialog(final Shell parent, final int style, final ITableModel tableModel, final SchemaMeta schemaMeta) {
+  public AbstractTableDialog(Shell parent, int style, ITableModel tableModel, SchemaMeta schemaMeta) {
+    this(parent, style, tableModel, schemaMeta, null);
+  }
+  
+  public AbstractTableDialog(Shell parent, int style, ITableModel tableModel, SchemaMeta schemaMeta, ConceptUtilityInterface selectedTableOrColumn) {
     super(parent);
     this.tableModel = tableModel;
     this.schemaMeta = schemaMeta;
     Locales locales = schemaMeta.getLocales();
     activeLocale = locales.getActiveLocale();
     propertyEditorContext.put("locales", locales);
+    initialTableOrColumnSelection = selectedTableOrColumn;
   }
 
   protected void setShellStyle(int newShellStyle) {
@@ -116,62 +124,33 @@ public abstract class AbstractTableDialog extends Dialog {
     Composite c0 = (Composite) super.createDialogArea(parent);
 
     Composite container = new Composite(c0, SWT.NONE);
-    container.setLayout(new FormLayout());
-    GridData gdContainer = new GridData(GridData.FILL_BOTH);
-    container.setLayoutData(gdContainer);
+    container.setLayout(new GridLayout(2, true));
+    GridData gridData = new GridData(GridData.FILL_BOTH);
+    container.setLayoutData(gridData);
 
     Control top = createTop(container);
 
-    FormData fdTop = new FormData();
-    fdTop.left = new FormAttachment(0, 0);
-    fdTop.top = new FormAttachment(0, 0);
-    fdTop.right = new FormAttachment(100, 0);
-    top.setLayoutData(fdTop);
+    gridData = new GridData(GridData.FILL_HORIZONTAL);
+    gridData.horizontalSpan = 2;
+    top.setLayoutData(gridData);
 
     SashForm s0 = new SashForm(container, SWT.HORIZONTAL);
-    FormData fdSash = new FormData();
-    fdSash.left = new FormAttachment(0, 0);
-    fdSash.top = new FormAttachment(top, 10);
-    fdSash.right = new FormAttachment(100, 0);
-    fdSash.bottom = new FormAttachment(100, 0);
-    s0.setLayoutData(fdSash);
+    gridData = new GridData(GridData.FILL_BOTH);
+    gridData.horizontalSpan = 2;
+    gridData.heightHint = 20;
+    s0.setLayoutData(gridData);
 
-    Composite c12 = new Composite(s0, SWT.NONE);
-    c12.setLayout(new FormLayout());
 
-    detailsComposite = new Composite(c12, SWT.NONE);
-    FormData fdDetailsComposite = new FormData();
-    fdDetailsComposite.top = new FormAttachment(0, 0);
-    fdDetailsComposite.left = new FormAttachment(0, 0);
-    fdDetailsComposite.right = new FormAttachment(100, -5);
-    fdDetailsComposite.bottom = new FormAttachment(100, 0);
-    detailsComposite.setLayoutData(fdDetailsComposite);
-
-    detailsComposite.setLayout(new FormLayout());
+    detailsComposite = new Composite(s0, SWT.NONE);
+    detailsComposite.setLayout(new GridLayout(2, false));
 
     Label wlList = new Label(detailsComposite, SWT.NONE);
     wlList.setText(Messages.getString("PhysicalTableDialog.USER_SUBJECT")); //$NON-NLS-1$
-    wlList.setFont(Constants.getFontRegistry(Display.getCurrent()).get("prop-mgmt-title"));
-
-    tableColumnTree = new TableColumnTreeWidget(detailsComposite, SWT.NONE, tableModel, true);
-
-    FormData fdList = new FormData();
-    fdList.top = new FormAttachment(0, 38);
-    fdList.left = new FormAttachment(0, 0);
-    fdList.right = new FormAttachment(100, 0);
-    fdList.bottom = new FormAttachment(100, 0);
-    tableColumnTree.setLayoutData(fdList);
-
-    FormData fdlList = new FormData();
-    fdlList.left = new FormAttachment(0, 0);
-    fdlList.bottom = new FormAttachment(tableColumnTree, -10);
-    wlList.setLayoutData(fdlList);
-
+    
     ToolBar tb = new ToolBar(detailsComposite, SWT.FLAT);
-    FormData fdToolBar = new FormData();
-    fdToolBar.top = new FormAttachment(0, 0);
-    fdToolBar.right = new FormAttachment(100, 0);
-    tb.setLayoutData(fdToolBar);
+    gridData = new GridData(GridData.FILL_HORIZONTAL);
+    gridData.horizontalAlignment = SWT.END;
+    tb.setLayoutData(gridData);
 
     ToolItem addButton = new ToolItem(tb, SWT.PUSH);
 
@@ -191,6 +170,13 @@ public abstract class AbstractTableDialog extends Dialog {
         delColumnPressed();
       }
     });
+    
+//    wlList.setFont(Constants.getFontRegistry(Display.getCurrent()).get("prop-mgmt-title"));
+
+    tableColumnTree = new TableColumnTreeWidget(detailsComposite, SWT.SINGLE | SWT.BORDER, tableModel, true);
+    gridData = new GridData(GridData.FILL_BOTH);
+    gridData.horizontalSpan = 2;
+    tableColumnTree.getTree().setLayoutData(gridData);
 
     tableColumTreeSelectionChangedListener = new ISelectionChangedListener() {
       public void selectionChanged(SelectionChangedEvent e) {
@@ -215,18 +201,7 @@ public abstract class AbstractTableDialog extends Dialog {
 
     tableColumnTree.addSelectionChangedListener(tableColumTreeSelectionChangedListener);
 
-    Composite spacer = new Composite(s0, SWT.NONE);
-    spacer.setLayout(new FormLayout());
-
-    cardComposite = new Composite(spacer, SWT.NONE);
-
-    FormData fdCardComposite = new FormData();
-    fdCardComposite.top = new FormAttachment(0, 0);
-    fdCardComposite.left = new FormAttachment(0, 5);
-    fdCardComposite.right = new FormAttachment(100, 0);
-    fdCardComposite.bottom = new FormAttachment(100, 0);
-    cardComposite.setLayoutData(fdCardComposite);
-
+    cardComposite = new Composite(s0, SWT.NONE);
     stackLayout = new StackLayout();
     cardComposite.setLayout(stackLayout);
 
@@ -235,6 +210,11 @@ public abstract class AbstractTableDialog extends Dialog {
     swapCard(null);
 
     s0.setWeights(new int[] { 1, 3 });
+    
+    if (initialTableOrColumnSelection != null) {
+      tableColumnTree.setSelection(new StructuredSelection(initialTableOrColumnSelection));
+      tableColumnTree.getTree().forceFocus();
+    }
 
     return c0;
   }
@@ -310,5 +290,4 @@ public abstract class AbstractTableDialog extends Dialog {
     }
 
   }
-
 }

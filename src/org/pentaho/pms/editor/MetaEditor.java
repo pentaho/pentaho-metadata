@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -71,8 +72,10 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
+import org.pentaho.commons.mql.ui.mqldesigner.MQLQueryBuilderDialog;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.core.exception.CWMException;
+import org.pentaho.pms.demo.QueryBuilderDialog;
 import org.pentaho.pms.demo.QueryDialog;
 import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
 import org.pentaho.pms.factory.SchemaSaveProgressDialog;
@@ -687,18 +690,18 @@ public class MetaEditor {
 
   public boolean validateBusinessModels() {
     boolean valid = true;
-
+    
     Iterator iter = schemaMeta.getBusinessModels().iterator();
     while(iter.hasNext()  && valid) {
       BusinessModel bm = (BusinessModel) iter.next();
       if (bm.getBusinessTables().size() > 1) {
         valid = bm.getRelationships().size() > 0 && bm.getFlatCategoriesView(schemaMeta.getActiveLocale()).size() > 1;
-      }
+      } 
     }
 
     return valid;
   }
-
+  
   public void importFromXMI() {
     if (showChangedWarning()) {
       FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
@@ -1740,7 +1743,7 @@ public class MetaEditor {
       miEdit.setText(Messages.getString("MetaEditor.USER_EDIT_TEXT")); //$NON-NLS-1$
       miEdit.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
-          editPhysicalTable(physicalColumn.getTable());
+          editPhysicalColumn(physicalColumn);
           treeViewer.update(node.getParent(), null);
         }
       });
@@ -1864,6 +1867,16 @@ public class MetaEditor {
       miSort.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
           node.sortChildrenAscending();
+        }
+      });
+    } else if (node instanceof BusinessColumnTreeNode) {
+      final BusinessColumn physicalColumn = (BusinessColumn) ((BusinessColumnTreeNode) node).getDomainObject();
+      MenuItem miEdit = new MenuItem(mainMenu, SWT.PUSH);
+      miEdit.setText(Messages.getString("MetaEditor.USER_EDIT_TEXT")); //$NON-NLS-1$
+      miEdit.addListener(SWT.Selection, new Listener() {
+        public void handleEvent(Event evt) {
+          editBusinessColumn(physicalColumn, (BusinessColumnTreeNode) node);
+          treeViewer.update(node.getParent(), null);
         }
       });
     } else if (node instanceof RelationshipTreeNode) {
@@ -2386,7 +2399,7 @@ public class MetaEditor {
         editRelationship(relationship);
       } else if (node instanceof BusinessColumnTreeNode) {
         BusinessColumn businessColumn = ((BusinessColumnTreeNode) node).getBusinessColumn();
-        editBusinessColumn(businessColumn.getBusinessTable(), businessColumn);
+        editBusinessColumn(businessColumn, (BusinessColumnTreeNode) node);
       } else if (node instanceof CategoryTreeNode) {
         BusinessCategory businessCategory = ((CategoryTreeNode) node).getCategory();
         if (businessCategory.isRootCategory()) {
@@ -2396,20 +2409,6 @@ public class MetaEditor {
         }
       }
       treeViewer.update(node, null);
-    }
-  }
-
-  private void editBusinessColumn(BusinessTable businessTable, BusinessColumn businessColumn) {
-    String columnName = businessColumn.getDisplayName(schemaMeta.getActiveLocale());
-    String tableName = businessTable.getDisplayName(schemaMeta.getActiveLocale());
-    editProperties(Messages.getString("MetaEditor.USER_ENTER_COLUMN_PROPERTIES", columnName, tableName), businessColumn); //$NON-NLS-1$
-  }
-
-  private void editPhysicalColumn(PhysicalColumn physicalColumn) {
-    if (physicalColumn != null) {
-      String activeLocale = schemaMeta.getActiveLocale();
-      editProperties(Messages.getString(
-          "MetaEditor.USER_PHYSICAL_COLUMN_PROPERTIES", physicalColumn.getName(activeLocale)), physicalColumn); //$NON-NLS-1$
     }
   }
 
@@ -2452,7 +2451,7 @@ public class MetaEditor {
         schemaMeta.setActiveModel(businessModel);
         activeModelTreeNode = (BusinessModelTreeNode) mainTreeNode.getBusinessModelsRoot().findNode(businessModel);
         refreshAll();
-
+  
         return businessModel;
       } catch (ObjectAlreadyExistsException e) {
         new ErrorDialog(
@@ -2460,7 +2459,7 @@ public class MetaEditor {
             Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_BUSINESS_MODEL_NAME_EXISTS"), e); //$NON-NLS-1$ //$NON-NLS-2$
       }
     }
-
+    
     return null;
   }
 
@@ -2566,42 +2565,69 @@ public class MetaEditor {
     setShellText();
   }
 
+//  private void editPhysicalColumn(PhysicalColumn physicalColumn) {
+//    if (physicalColumn != null) {
+//      String activeLocale = schemaMeta.getActiveLocale();
+//      editProperties(Messages.getString(
+//          "MetaEditor.USER_PHYSICAL_COLUMN_PROPERTIES", physicalColumn.getName(activeLocale)), physicalColumn); //$NON-NLS-1$
+//    }
+//  }
+
+  private void editPhysicalColumn(PhysicalColumn physicalColumn) {
+    if (physicalColumn != null) {
+      PhysicalTable originalPhysicalTable = physicalColumn.getTable();
+      PhysicalTable newPhysicalTable = (PhysicalTable) originalPhysicalTable.clone();
+      PhysicalTableModel tableModel = new PhysicalTableModel(newPhysicalTable);
+      if (originalPhysicalTable != null) {
+        PhysicalTableDialog td = new PhysicalTableDialog(shell, SWT.NONE, tableModel, schemaMeta, physicalColumn);
+        int res = td.open();
+        if (Window.OK == res) {
+          syncPhysicalTable(originalPhysicalTable, newPhysicalTable);
+        }
+      }
+    }
+  }
+  
+  
+  private void syncPhysicalTable(PhysicalTable origPhysicalTable, PhysicalTable newPhysicalTable) {
+
+    // It's important to preserve the ConceptInterface instances (rather
+    // than replacing them), as the instance references are important to
+    // the inheritance chain among the concept business objects.
+
+    ConceptInterface originalInterface = origPhysicalTable.getConcept();
+    originalInterface.clearChildProperties();
+    originalInterface.getChildPropertyInterfaces().putAll(newPhysicalTable.getConcept().getChildPropertyInterfaces());
+
+    origPhysicalTable.removeAllPhysicalColumns();
+    Iterator iter = newPhysicalTable.getPhysicalColumns().iterator();
+    while (iter.hasNext()) {
+      PhysicalColumn column = (PhysicalColumn) iter.next();
+      try {
+        origPhysicalTable.addPhysicalColumn(column);
+      } catch (ObjectAlreadyExistsException e) {
+        e.printStackTrace();
+        log.logDebug(APPLICATION_NAME,
+            "This should not happen as this exception would already have been caught earlier..."); //$NON-NLS-1$
+      }
+    }
+
+    refreshGraph();
+    mainTreeNode.sync();
+    setShellText();
+  }
+  
   public void editPhysicalTable(PhysicalTable physicalTable) {
     if (physicalTable != null) {
 
       PhysicalTable copy = (PhysicalTable) physicalTable.clone();
       PhysicalTableModel tableModel = new PhysicalTableModel(copy);
 
-      PhysicalTableDialog td = new PhysicalTableDialog(shell, SWT.NONE, tableModel, schemaMeta);
+      PhysicalTableDialog td = new PhysicalTableDialog(shell, SWT.NONE, tableModel, schemaMeta, copy);
       int res = td.open();
 
       if (Window.OK == res) {
-
-        // It's important to preserve the ConceptInterface instances (rather
-        // than replacing them), as the instance references are important to
-        // the inheritance chain among the concept business objects.
-
-        ConceptInterface originalInterface = physicalTable.getConcept();
-        originalInterface.clearChildProperties();
-        originalInterface.getChildPropertyInterfaces().putAll(copy.getConcept().getChildPropertyInterfaces());
-
-        physicalTable.removeAllPhysicalColumns();
-        Iterator iter = copy.getPhysicalColumns().iterator();
-        while (iter.hasNext()) {
-          PhysicalColumn column = (PhysicalColumn) iter.next();
-          try {
-            physicalTable.addPhysicalColumn(column);
-          } catch (ObjectAlreadyExistsException e) {
-            e.printStackTrace();
-            log.logDebug(APPLICATION_NAME,
-                "This should not happen as this exception would already have been caught earlier..."); //$NON-NLS-1$
-          }
-        }
-
-        refreshGraph();
-        mainTreeNode.sync();
-        setShellText();
-        return;
+        syncPhysicalTable(physicalTable, copy);
       }
     }
   }
@@ -3514,10 +3540,65 @@ public class MetaEditor {
     editBusinessTable(businessTable, null);
   }
 
+//  private void editBusinessColumn(BusinessColumn businessColumn) {
+//    BusinessTable businessTable = businessColumn.getBusinessTable();
+//    String columnName = businessColumn.getDisplayName(schemaMeta.getActiveLocale());
+//    String tableName = businessTable.getDisplayName(schemaMeta.getActiveLocale());
+//    editProperties(Messages.getString("MetaEditor.USER_ENTER_COLUMN_PROPERTIES", columnName, tableName), businessColumn); //$NON-NLS-1$
+//  }
+
+  private void editBusinessColumn(BusinessColumn businessColumn, BusinessColumnTreeNode node) {
+    if (businessColumn != null) {
+      BusinessTable originalBusinessTable = businessColumn.getBusinessTable();
+      if (originalBusinessTable != null) {
+        BusinessTable newBusinessTable = (BusinessTable) originalBusinessTable.clone();
+        BusinessTableModel tableModel = new BusinessTableModel(newBusinessTable, schemaMeta.getActiveModel());
+        BusinessTableDialog td = new BusinessTableDialog(shell, SWT.NONE, tableModel, schemaMeta, businessColumn);
+        int res = td.open();
+        if (Window.OK == res) {
+          syncBusinessTables(originalBusinessTable, newBusinessTable);
+          if (node != null) {
+            node.sync();
+          } else {
+            synchronize(businessColumn);
+          }
+          refreshAll();
+        }
+      }
+    }
+  }
+  
+  private void syncBusinessTables(BusinessTable origBusinessTable, BusinessTable newBusinessTable) {
+    // It's important to preserve the ConceptInterface instances (rather
+    // than replacing them), as the instance references are important to
+    // the inheritance chain among the concept business objects.
+
+    ConceptInterface originalInterface = origBusinessTable.getConcept();
+    originalInterface.clearChildProperties();
+    originalInterface.getChildPropertyInterfaces().putAll(newBusinessTable.getConcept().getChildPropertyInterfaces());
+
+    origBusinessTable.setPhysicalTable(newBusinessTable.getPhysicalTable());
+
+    for (int i = origBusinessTable.nrBusinessColumns() - 1; i >= 0; i--) {
+      origBusinessTable.removeBusinessColumn(i);
+    }
+
+    Iterator iter = newBusinessTable.getBusinessColumns().iterator();
+    while (iter.hasNext()) {
+      BusinessColumn column = (BusinessColumn) iter.next();
+      try {
+        origBusinessTable.addBusinessColumn(column);
+      } catch (ObjectAlreadyExistsException e) {
+        e.printStackTrace();
+        log.logDebug(APPLICATION_NAME,
+            "This should not happen as this exception would already have been caught earlier..."); //$NON-NLS-1$
+      }
+    }
+  }
+  
   /**
    * TODO mlowery move this business save logic to a method for reuse
    */
-
   private void editBusinessTable(BusinessTable businessTable, ConceptTreeNode node) {
 
     if (businessTable != null) {
@@ -3525,36 +3606,11 @@ public class MetaEditor {
       BusinessTable copy = (BusinessTable) businessTable.clone();
       BusinessTableModel tableModel = new BusinessTableModel(copy, schemaMeta.getActiveModel());
 
-      BusinessTableDialog td = new BusinessTableDialog(shell, SWT.NONE, tableModel, schemaMeta);
+      BusinessTableDialog td = new BusinessTableDialog(shell, SWT.NONE, tableModel, schemaMeta, copy);
       int res = td.open();
 
       if (Window.OK == res) {
-
-        // It's important to preserve the ConceptInterface instances (rather
-        // than replacing them), as the instance references are important to
-        // the inheritance chain among the concept business objects.
-
-        ConceptInterface originalInterface = businessTable.getConcept();
-        originalInterface.clearChildProperties();
-        originalInterface.getChildPropertyInterfaces().putAll(copy.getConcept().getChildPropertyInterfaces());
-
-        businessTable.setPhysicalTable(copy.getPhysicalTable());
-
-        for (int i = businessTable.nrBusinessColumns() - 1; i >= 0; i--) {
-          businessTable.removeBusinessColumn(i);
-        }
-
-        Iterator iter = copy.getBusinessColumns().iterator();
-        while (iter.hasNext()) {
-          BusinessColumn column = (BusinessColumn) iter.next();
-          try {
-            businessTable.addBusinessColumn(column);
-          } catch (ObjectAlreadyExistsException e) {
-            e.printStackTrace();
-            log.logDebug(APPLICATION_NAME,
-                "This should not happen as this exception would already have been caught earlier..."); //$NON-NLS-1$
-          }
-        }
+        syncBusinessTables(businessTable, copy);
 
         if (node != null) {
           node.sync();
@@ -3573,9 +3629,9 @@ public class MetaEditor {
       log.logDebug(APPLICATION_NAME, Messages.getString("MetaEditor.DEBUG_DUPLICATE_TABLE", businessTable.getId())); //$NON-NLS-1$
 
       BusinessModel activeModel = schemaMeta.getActiveModel();
-
+      
       // This should be a unique clone of the business table AND it's columns...
-      BusinessTable newTable = businessTable.cloneUnique(schemaMeta.getActiveLocale(), activeModel.getBusinessTables(),
+      BusinessTable newTable = businessTable.cloneUnique(schemaMeta.getActiveLocale(), activeModel.getBusinessTables(), 
           activeModel.getAllBusinessColumns());
 
       try {
@@ -3604,21 +3660,43 @@ public class MetaEditor {
    */
   protected void testQR() {
     try {
-      QueryDialog queryDialog = new QueryDialog(shell, schemaMeta, query);
-      MQLQuery lastQuery = queryDialog.open();
-      if (lastQuery != null) {
-        query = lastQuery;
+      // If the domain is not the same as the previous: clear the previous query.
+      // Just as a precaution.
+      //
+      QueryBuilderDialog queryBuilderDialog = null;
+      if (query==null || query.getSchemaMeta()==null || query.getSchemaMeta().getDomainName()==null || !query.getSchemaMeta().getDomainName().equals(schemaMeta.getDomainName()))
+      {
+        queryBuilderDialog = new QueryBuilderDialog(shell, schemaMeta);
+      } else {
+        queryBuilderDialog = new QueryBuilderDialog(shell, query);
+      }
+      if (queryBuilderDialog.open() == Window.OK) {
+        query = queryBuilderDialog.getMqlQuery();
         saveQuery();
       }
-      /*
-       * query = MakeSelectionDemo.executeDemo(shell, props, query, false); // Don't shut down, let it be. if
-       * (query!=null) { saveQuery(); }
-       */
     } catch (Exception e) {
       new ErrorDialog(shell,
           Messages.getString("MetaEditor.USER_TITLE_DEMO_ERROR"), Messages.getString("MetaEditor.USER_DEMO_ERROR"), e); //$NON-NLS-1$ //$NON-NLS-2$
     }
   }
+  
+//  protected void testQR() {
+//    try {
+//      QueryDialog queryDialog = new QueryDialog(shell, schemaMeta, query);
+//      MQLQuery lastQuery = queryDialog.open();
+//      if (lastQuery != null) {
+//        query = lastQuery;
+//        saveQuery();
+//      }
+//      /*
+//       * query = MakeSelectionDemo.executeDemo(shell, props, query, false); // Don't shut down, let it be. if
+//       * (query!=null) { saveQuery(); }
+//       */
+//    } catch (Exception e) {
+//      new ErrorDialog(shell,
+//          Messages.getString("MetaEditor.USER_TITLE_DEMO_ERROR"), Messages.getString("MetaEditor.USER_DEMO_ERROR"), e); //$NON-NLS-1$ //$NON-NLS-2$
+//    }
+//  }
 
   private void saveQuery() {
     try {

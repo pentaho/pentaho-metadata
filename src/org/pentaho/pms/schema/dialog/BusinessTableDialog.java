@@ -51,6 +51,7 @@ import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.SchemaMeta;
+import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.schema.concept.editor.ITableModel;
 
 import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
@@ -70,10 +71,13 @@ public class BusinessTableDialog extends AbstractTableDialog {
     shell.setText(Messages.getString("BusinessTableDialog.USER_BUSINESS_TABLE_PROPERTIES"));
   }
 
-  public BusinessTableDialog(final Shell parent, final int style, final ITableModel tableModel,
-      final SchemaMeta schemaMeta) {
-    super(parent, style, tableModel, schemaMeta);
+  public BusinessTableDialog(Shell parent, int style, ITableModel tableModel, SchemaMeta schemaMeta, ConceptUtilityInterface selectedTableOrColumn) {
+    super(parent, style, tableModel, schemaMeta, selectedTableOrColumn);
     businessTable = (BusinessTable) tableModel.getWrappedTable();
+  }
+  
+  public BusinessTableDialog(Shell parent, int style, ITableModel tableModel, SchemaMeta schemaMeta) {
+    this(parent, style, tableModel, schemaMeta, null);
   }
 
   protected void addColumnPressed() {
@@ -133,7 +137,9 @@ public class BusinessTableDialog extends AbstractTableDialog {
 
     if (tableModel.getId() != null) {
       businessTableText.setText(tableModel.getId());
-      businessTableText.selectAll();
+      if (initialTableOrColumnSelection == null) {
+        businessTableText.selectAll();
+      }
     }
 
     int selectedIndex = -1;

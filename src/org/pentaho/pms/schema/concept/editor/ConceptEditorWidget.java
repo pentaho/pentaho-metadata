@@ -2,14 +2,12 @@ package org.pentaho.pms.schema.concept.editor;
 
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 
 /**
  * Given an <code>IConceptModel</code> instance, this graphical control provides a user interface for modifying the
@@ -18,74 +16,21 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class ConceptEditorWidget extends Composite {
 
-  // ~ Static fields/initializers ======================================================================================
-
-  private static final Log logger = LogFactory.getLog(ConceptEditorWidget.class);
-
-  // ~ Instance fields =================================================================================================
-
-  private IConceptModel conceptModel;
-
-  private PropertyNavigationWidget propertyManagementWidget;
-
-  private PropertyWidgetManager2 propertyWidgetManager;
-
-  private Map context;
-
-  // ~ Constructors ====================================================================================================
 
   public ConceptEditorWidget(final Composite parent, final int style, final IConceptModel conceptModel,
       final Map context) {
     super(parent, style);
-    this.context = context;
-    this.conceptModel = conceptModel;
-    createContents();
-  }
+    setLayout(new FillLayout());
 
-  // ~ Methods =========================================================================================================
-
-  protected void createContents() {
-    setLayout(new FormLayout());
-
-    // sash form
-    SashForm s0 = new SashForm(this, SWT.HORIZONTAL);
-    FormData fd0 = new FormData();
-    fd0.top = new FormAttachment(0, 0);
-    fd0.bottom = new FormAttachment(100, 0);
-    fd0.left = new FormAttachment(0, 0);
-    fd0.right = new FormAttachment(100, 0);
-    s0.setLayoutData(fd0);
-
-    // left side of sash
-    Composite c1 = new Composite(s0, SWT.NONE);
-    c1.setLayout(new FormLayout());
-
-    // right side of sash
-    Composite c3 = new Composite(s0, SWT.NONE);
-    c3.setLayout(new FormLayout());
-
-    // widget for left side of sash
-    PropertyNavigationWidget w5 = new PropertyNavigationWidget(c1, SWT.NONE, conceptModel);
-    FormData fd5 = new FormData();
-    fd5.top = new FormAttachment(0, 0);
-    fd5.bottom = new FormAttachment(100, 0);
-    fd5.left = new FormAttachment(0, 0);
-    fd5.right = new FormAttachment(100, -5);
-    w5.setLayoutData(fd5);
-    this.propertyManagementWidget = w5;
-
-    // widget for right side of sash
-    PropertyWidgetManager2 m7 = new PropertyWidgetManager2(c3, SWT.NONE, conceptModel, context);
-    FormData fd7 = new FormData();
-    fd7.top = new FormAttachment(0, 0);
-    fd7.bottom = new FormAttachment(100, 0);
-    fd7.left = new FormAttachment(0, 5);
-    fd7.right = new FormAttachment(100, 0);
-    m7.setLayoutData(fd7);
-    this.propertyWidgetManager = m7;
-
+    Group group = new Group(this, SWT.SHADOW_OUT);
+//    group.setBackground(new Color(parent.getDisplay(), 0, 0 , 0 ));
+    group.setText("Properties");
+    group.setLayout(new FillLayout());
+    SashForm s0 = new SashForm(group, SWT.HORIZONTAL);
+    s0.SASH_WIDTH = 10;
+    PropertyNavigationWidget propertyManagementWidget = new PropertyNavigationWidget(s0, SWT.NONE, conceptModel);
+    PropertyWidgetManager2 propertyWidgetManager = new PropertyWidgetManager2(s0, SWT.NONE, conceptModel, context);
     propertyManagementWidget.addSelectionChangedListener(propertyWidgetManager);
-
     s0.setWeights(new int[] { 1, 2 });
   }
 }
