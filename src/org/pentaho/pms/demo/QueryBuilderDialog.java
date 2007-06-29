@@ -13,6 +13,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -39,6 +40,7 @@ import be.ibridge.kettle.core.dialog.PreviewRowsDialog;
 
 public class QueryBuilderDialog extends MQLQueryBuilderDialog {
 
+  
   class TextDialog extends Dialog {
     String textMsg;
     String title;
@@ -95,9 +97,18 @@ public class QueryBuilderDialog extends MQLQueryBuilderDialog {
   }
 
   private ToolBar createToolBar() {
+    Image imFileNew = new Image(getShell().getDisplay(), getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "new.png")); //$NON-NLS-1$
+    Image imFileOpen = new Image(getShell().getDisplay(), getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "open.png")); //$NON-NLS-1$
+    Image imFileSave = new Image(getShell().getDisplay(), getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "save.png")); //$NON-NLS-1$
+    Image imFileSaveAs = new Image(getShell().getDisplay(), getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "saveas.png")); //$NON-NLS-1$
+    Image imViewMQL = new Image(getShell().getDisplay(), getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "view_mql.png")); //$NON-NLS-1$
+    Image imViewSQL = new Image(getShell().getDisplay(), getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "view_sql.png")); //$NON-NLS-1$
+    Image imExecute = new Image(getShell().getDisplay(), getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "execute.png")); //$NON-NLS-1$
+    Image imReset = new Image(getShell().getDisplay(), getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "reset.png")); //$NON-NLS-1$
+    
     ToolBar toolBar = new ToolBar(getShell(), SWT.FLAT);
     ToolItem toolItem = new ToolItem(toolBar, SWT.PUSH);
-    toolItem.setText("New");
+    toolItem.setImage(imFileNew);
     toolItem.addSelectionListener(new SelectionListener() {
       public void widgetDefaultSelected(SelectionEvent arg0) {
       }
@@ -107,7 +118,7 @@ public class QueryBuilderDialog extends MQLQueryBuilderDialog {
       }
     });
     toolItem = new ToolItem(toolBar, SWT.PUSH);
-    toolItem.setText("Open");
+    toolItem.setImage(imFileOpen);
     toolItem.addSelectionListener(new SelectionListener() {
       public void widgetDefaultSelected(SelectionEvent arg0) {
       }
@@ -117,7 +128,7 @@ public class QueryBuilderDialog extends MQLQueryBuilderDialog {
       }
     });
     toolItem = new ToolItem(toolBar, SWT.PUSH);
-    toolItem.setText("Save");
+    toolItem.setImage(imFileSave);
     toolItem.addSelectionListener(new SelectionListener() {
       public void widgetDefaultSelected(SelectionEvent arg0) {
       }
@@ -127,7 +138,7 @@ public class QueryBuilderDialog extends MQLQueryBuilderDialog {
       }
     });
     toolItem = new ToolItem(toolBar, SWT.PUSH);
-    toolItem.setText("Save As");
+    toolItem.setImage(imFileSaveAs);
     toolItem.addSelectionListener(new SelectionListener() {
       public void widgetDefaultSelected(SelectionEvent arg0) {
       }
@@ -138,7 +149,7 @@ public class QueryBuilderDialog extends MQLQueryBuilderDialog {
     });
     toolItem = new ToolItem(toolBar, SWT.SEPARATOR);
     toolItem = new ToolItem(toolBar, SWT.PUSH);
-    toolItem.setText("View MQL");
+    toolItem.setImage(imViewMQL);
     toolItem.addSelectionListener(new SelectionListener() {
       public void widgetDefaultSelected(SelectionEvent arg0) {
       }
@@ -148,7 +159,7 @@ public class QueryBuilderDialog extends MQLQueryBuilderDialog {
       }
     });
     toolItem = new ToolItem(toolBar, SWT.PUSH);
-    toolItem.setText("View SQL");
+    toolItem.setImage(imViewSQL);
     toolItem.addSelectionListener(new SelectionListener() {
       public void widgetDefaultSelected(SelectionEvent arg0) {
       }
@@ -158,7 +169,7 @@ public class QueryBuilderDialog extends MQLQueryBuilderDialog {
       }
     });
     toolItem = new ToolItem(toolBar, SWT.PUSH);
-    toolItem.setText("Execute");
+    toolItem.setImage(imExecute);
     toolItem.addSelectionListener(new SelectionListener() {
       public void widgetDefaultSelected(SelectionEvent arg0) {
       }
@@ -168,7 +179,7 @@ public class QueryBuilderDialog extends MQLQueryBuilderDialog {
       }
     });
     toolItem = new ToolItem(toolBar, SWT.PUSH);
-    toolItem.setText("Reset");
+    toolItem.setImage(imReset);
     toolItem.addSelectionListener(new SelectionListener() {
       public void widgetDefaultSelected(SelectionEvent arg0) {
       }
