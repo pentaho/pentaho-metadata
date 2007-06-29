@@ -94,6 +94,8 @@ public abstract class AbstractTableDialog extends Dialog {
 
   protected ISelectionChangedListener tableColumTreeSelectionChangedListener;
 
+  protected ToolItem viewButton;
+
   private static final Log logger = LogFactory.getLog(AbstractTableDialog.class);
   
   protected ConceptUtilityInterface initialTableOrColumnSelection;
@@ -101,7 +103,7 @@ public abstract class AbstractTableDialog extends Dialog {
   public AbstractTableDialog(Shell parent, int style, ITableModel tableModel, SchemaMeta schemaMeta) {
     this(parent, style, tableModel, schemaMeta, null);
   }
-  
+
   public AbstractTableDialog(Shell parent, int style, ITableModel tableModel, SchemaMeta schemaMeta, ConceptUtilityInterface selectedTableOrColumn) {
     super(parent);
     this.tableModel = tableModel;
@@ -146,11 +148,23 @@ public abstract class AbstractTableDialog extends Dialog {
 
     Label wlList = new Label(detailsComposite, SWT.NONE);
     wlList.setText(Messages.getString("PhysicalTableDialog.USER_SUBJECT")); //$NON-NLS-1$
-    
+
     ToolBar tb = new ToolBar(detailsComposite, SWT.FLAT);
     gridData = new GridData(GridData.FILL_HORIZONTAL);
     gridData.horizontalAlignment = SWT.END;
     tb.setLayoutData(gridData);
+
+    viewButton = new ToolItem(tb, SWT.CHECK);
+
+    viewButton.setToolTipText("Show IDs");
+    viewButton.setImage(Constants.getImageRegistry(Display.getCurrent()).get("show-id-button"));
+    viewButton.addSelectionListener(new SelectionAdapter() {
+      public void widgetSelected(SelectionEvent e) {
+        changeViewPressed();
+      }
+    });
+
+    ToolItem sep = new ToolItem(tb, SWT.SEPARATOR);
 
     ToolItem addButton = new ToolItem(tb, SWT.PUSH);
 
@@ -170,7 +184,7 @@ public abstract class AbstractTableDialog extends Dialog {
         delColumnPressed();
       }
     });
-    
+
 //    wlList.setFont(Constants.getFontRegistry(Display.getCurrent()).get("prop-mgmt-title"));
 
     tableColumnTree = new TableColumnTreeWidget(detailsComposite, SWT.SINGLE | SWT.BORDER, tableModel, true);
@@ -210,7 +224,7 @@ public abstract class AbstractTableDialog extends Dialog {
     swapCard(null);
 
     s0.setWeights(new int[] { 1, 3 });
-    
+
     if (initialTableOrColumnSelection != null) {
       tableColumnTree.setSelection(new StructuredSelection(initialTableOrColumnSelection));
       tableColumnTree.getTree().forceFocus();
@@ -232,7 +246,7 @@ public abstract class AbstractTableDialog extends Dialog {
   }
 
   protected void cleanup() {
-      tableColumnTree.removeSelectionChangedListener(tableColumTreeSelectionChangedListener);
+    tableColumnTree.removeSelectionChangedListener(tableColumTreeSelectionChangedListener);
   }
 
   protected void delColumnPressed() {
@@ -243,6 +257,15 @@ public abstract class AbstractTableDialog extends Dialog {
         "Are you sure you want to delete the column with id '" + conceptHolder.getId() + "'?");
     if (delete) {
       tableModel.removeColumn(conceptHolder.getId());
+    }
+  }
+
+  protected void changeViewPressed() {
+    tableColumnTree.showId(viewButton.getSelection());
+    if (viewButton.getSelection()) {
+      viewButton.setToolTipText("Show Names");
+    } else {
+      viewButton.setToolTipText("Show IDs");
     }
   }
 
@@ -290,4 +313,5 @@ public abstract class AbstractTableDialog extends Dialog {
     }
 
   }
+
 }

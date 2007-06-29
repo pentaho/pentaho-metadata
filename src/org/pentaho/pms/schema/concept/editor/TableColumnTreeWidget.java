@@ -30,6 +30,8 @@ public class TableColumnTreeWidget extends TreeViewer implements ISelectionProvi
 
   private boolean decorate = true;
 
+  private boolean showId = false;
+
   // ~ Constructors ====================================================================================================
 
   /**
@@ -45,9 +47,19 @@ public class TableColumnTreeWidget extends TreeViewer implements ISelectionProvi
 
     this.decorate = decorate;
     createContents();
+    showId(showId);
   }
 
   // ~ Methods =========================================================================================================
+
+  /**
+   * Used to toggle the display of IDs vs. localized names. Tree is refreshed as part of this call.
+   */
+  public void showId(final boolean showId) {
+    this.showId = showId;
+    refresh(true);
+    expandAll();
+  }
 
   public void tableModified(final TableModificationEvent e) {
     if (logger.isDebugEnabled()) {
@@ -169,8 +181,8 @@ public class TableColumnTreeWidget extends TreeViewer implements ISelectionProvi
         logger.debug("getText arg is " + element);
       }
       ConceptUtilityInterface conceptHolder = (ConceptUtilityInterface) element;
-      String name =conceptHolder.getConcept().getName(Locale.getDefault().getDisplayName());
-      if (null == name) {
+      String name = conceptHolder.getConcept().getName(Locale.getDefault().toString());
+      if (showId || null == name) {
         return conceptHolder.getId();
       } else {
         return name;

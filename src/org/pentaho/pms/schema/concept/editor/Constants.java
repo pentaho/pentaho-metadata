@@ -63,6 +63,7 @@ public class Constants {
 
     imageRegistry.put("column-add-button", createImage(display, "column-add.png")); //$NON-NLS-1$ //$NON-NLS-2$
     imageRegistry.put("column-del-button", createImage(display, "column-delete.png")); //$NON-NLS-1$ //$NON-NLS-2$
+    imageRegistry.put("show-id-button", createImage(display, "show-id.png")); //$NON-NLS-1$ //$NON-NLS-2$
 
     imageRegistry.put("concept-add-button", createImage(display, "concept-add.png")); //$NON-NLS-1$ //$NON-NLS-2$
     imageRegistry.put("concept-del-button", createImage(display, "concept-delete.png")); //$NON-NLS-1$ //$NON-NLS-2$
