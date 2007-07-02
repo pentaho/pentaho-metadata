@@ -1,5 +1,7 @@
 package org.pentaho.pms.schema.dialog;
 
+import java.util.ArrayList;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -14,9 +16,13 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
+import org.pentaho.pms.schema.BusinessColumn;
+import org.pentaho.pms.schema.BusinessTable;
+import org.pentaho.pms.schema.PhysicalColumn;
+import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.schema.concept.editor.ITableModel;
+import org.pentaho.pms.util.Const;
 
 import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
 
@@ -28,7 +34,7 @@ public class AddBusinessColumnDialog extends TitleAreaDialog {
 
   // ~ Instance fields =================================================================================================
 
-  private List businessColumnList;
+  private org.eclipse.swt.widgets.List businessColumnList;
 
   private ITableModel tableModel;
 
@@ -64,7 +70,7 @@ public class AddBusinessColumnDialog extends TitleAreaDialog {
     GridData gdContainer = new GridData(GridData.FILL_BOTH);
     container.setLayoutData(gdContainer);
 
-    businessColumnList = new List(container, SWT.MULTI | SWT.BORDER);
+    businessColumnList = new org.eclipse.swt.widgets.List(container, SWT.MULTI | SWT.BORDER);
 
     businessColumnList.setItems(tableModel.getParentAsTableModel().getColumnNames(activeLocale));
 
@@ -93,58 +99,45 @@ public class AddBusinessColumnDialog extends TitleAreaDialog {
     super.createButtonsForButtonBar(parent);
   }
 
-  /**
-   * TODO mlowery needs to be implemented; was copied from old BusinessTableDialog
-   */
   private void addUnusedColumns() {
-    //    PhysicalTable physicalTable = schemaMeta.findPhysicalTable(physicalTableText.getText());
-    //    if (physicalTable != null) {
-    //      businessTable.setPhysicalTable(physicalTable);
-    //
-    //      if (!Const.isEmpty(wName.getText())) {
-    //        try {
-    //          businessTable.setId(wName.getText());
-    //        } catch (ObjectAlreadyExistsException e) {
-    //          new ErrorDialog(
-    //              shell,
-    //              Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_BUSINESS_TABLE_ID_EXISTS", wName.getText()), e); //$NON-NLS-1$ //$NON-NLS-2$
-    //          return;
-    //        }
-    //      }
-    //
-    //      // The pysical column IDs?
-    //      //String used[] = physicalTable.getColumnIDs();
-    //      String used[] = businessTable.getColumnIDs();
-    //
-    //      for (int i = 0; i < physicalTable.nrPhysicalColumns(); i++) {
-    //        PhysicalColumn column = physicalTable.getPhysicalColumn(i);
-    //
-    //        // TODO We are trying to determine if the column is already in play. Our two logical options are to
-    //        // test the id of the physical column, and the proposed id of the physical column, to see
-    //        // if those values exist in our "used" list. If the user has re-named the id, this logic will
-    //        // not catch the duplicate. We may want to revisit this and make the logic more robust.
-    //
-    //        String newId = BusinessColumn.proposeId(schemaMeta.getActiveLocale(), businessTable, column);
-    //
-    //        if ((Const.indexOfString(column.getId(), used) < 0) && (Const.indexOfString(newId, used) < 0)) {
-    //          BusinessColumn businessColumn = new BusinessColumn(newId, column, businessTable);
-    //
-    //          try {
-    //            businessTable.addBusinessColumn(businessColumn);
-    //          } catch (ObjectAlreadyExistsException e) {
-    //            new ErrorDialog(
-    //                shell,
-    //                Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("BusinessTableDialog.USER_ERROR_ID_EXISTS_NOT_ADDED", businessColumn.getId()), e); //$NON-NLS-1$ //$NON-NLS-2$
-    //          }
-    //        }
-    //      }
-    //
-    //    } else {
-    //      MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
-    //      mb.setMessage(Messages.getString("BusinessTableDialog.USER_ERROR_CANT_FIND_PHYSICAL_TABLE")); //$NON-NLS-1$
-    //      mb.setText(Messages.getString("General.USER_TITLE_ERROR")); //$NON-NLS-1$
-    //      mb.open();
-    //    }
+    ConceptUtilityInterface busCols[] = tableModel.getColumns();
+
+    java.util.List busColIds = new ArrayList();
+    for (int i = 0; i < busCols.length; i++) {
+      busColIds.add(busCols[i].getId());
+    }
+    String used[] = (String[]) busColIds.toArray(new String[0]);
+
+    ConceptUtilityInterface[] phyCols = tableModel.getParentAsTableModel().getColumns();
+
+    java.util.List newBusCols = new ArrayList();
+    for (int i = 0; i < phyCols.length; i++) {
+      PhysicalColumn column = (PhysicalColumn) phyCols[i];
+
+      // TODO We are trying to determine if the column is already in play. Our two logical options are to
+      // test the id of the physical column, and the proposed id of the physical column, to see
+      // if those values exist in our "used" list. If the user has re-named the id, this logic will
+      // not catch the duplicate. We may want to revisit this and make the logic more robust.
+
+      String newId = BusinessColumn.proposeId(activeLocale, (BusinessTable) tableModel.getWrappedTable(), column);
+
+      if ((Const.indexOfString(column.getId(), used) < 0) && (Const.indexOfString(newId, used) < 0)) {
+        BusinessColumn businessColumn = new BusinessColumn(newId, column, (BusinessTable) tableModel.getWrappedTable());
+
+        newBusCols.add(businessColumn);
+      }
+    }
+    try {
+      tableModel.addAllColumns((ConceptUtilityInterface[]) newBusCols.toArray(new ConceptUtilityInterface[0]));
+    } catch (ObjectAlreadyExistsException e) {
+      if (logger.isErrorEnabled()) {
+        logger.error("an exception occurred", e);
+      }
+      MessageDialog.openError(getShell(), "Column Add Error", "A column with an already existing id cannot be added.");
+    }
+
+    // treat this button similar to OK button
+    super.okPressed();
   }
 
   protected void okPressed() {
