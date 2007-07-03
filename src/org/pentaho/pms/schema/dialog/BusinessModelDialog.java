@@ -13,19 +13,29 @@
 
 package org.pentaho.pms.schema.dialog;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -33,12 +43,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.pentaho.pms.locale.Locales;
 import org.pentaho.pms.messages.Messages;
+import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.schema.concept.editor.ConceptEditorWidget;
 import org.pentaho.pms.schema.concept.editor.ConceptModel;
 import org.pentaho.pms.schema.concept.editor.IConceptModel;
 
+import be.ibridge.kettle.core.database.DatabaseMeta;
 import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
 
 /***
@@ -57,11 +69,26 @@ public class BusinessModelDialog extends Dialog {
 
   private Text wId;
 
+  private Combo conField;
+
   private IConceptModel conceptModel;
 
   private ConceptUtilityInterface conceptUtil;
 
   private Locales locales;
+
+  private SchemaMeta schemaMeta;
+
+  private ComboViewer comboViewer;
+
+  private static final String DUMMY_CON_NAME = "^never^going^to^use^this";
+
+  /**
+   * mlowery: hack. DatabaseMeta.equals has a bug (PDI-9) which prevents adding a simple string to the comboviewer's
+   * input that would serve as a "no selection" option. This dummy instance when detected in the label provider simply
+   * returns empty string.
+   */
+  private DatabaseMeta dummyConInstance = new DatabaseMeta(DUMMY_CON_NAME, "Oracle", "Native", "", "", "1521", "", "");
 
   public BusinessModelDialog(final Shell parent, final int style, final ConceptUtilityInterface conceptUtil,
       final SchemaMeta schemaMeta) {
@@ -71,6 +98,7 @@ public class BusinessModelDialog extends Dialog {
     Locales locales = schemaMeta.getLocales();
     activeLocale = locales.getActiveLocale();
     propertyEditorContext.put("locales", locales);
+    this.schemaMeta = schemaMeta;
   }
 
   protected void setShellStyle(int newShellStyle) {
@@ -125,15 +153,79 @@ public class BusinessModelDialog extends Dialog {
 
     FormData fdlId = new FormData();
     fdlId.left = new FormAttachment(0, 0);
-
     fdlId.top = new FormAttachment(wId, 0, SWT.CENTER);
     wlId.setLayoutData(fdlId);
+
+    Label conLabel = new Label(c0, SWT.RIGHT);
+    conLabel.setText("Connection:");
+
+    conField = new Combo(c0, SWT.BORDER | SWT.READ_ONLY | SWT.V_SCROLL | SWT.H_SCROLL);
+
+    comboViewer = new ComboViewer(conField);
+
+    comboViewer.setContentProvider(new IStructuredContentProvider() {
+      public Object[] getElements(final Object inputElement) {
+        List ul = (List) inputElement;
+        return ul.toArray();
+      }
+
+      public void dispose() {
+        if (logger.isDebugEnabled()) {
+          logger.debug("Disposing ...");
+        }
+      }
+
+      public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+        if (logger.isDebugEnabled()) {
+          logger.debug("Input changed: old=" + oldInput + ", new=" + newInput);
+        }
+      }
+    });
+
+    List list2 = new ArrayList();
+    list2.add(dummyConInstance);
+    list2.addAll(schemaMeta.getDatabases().getList());
+
+    comboViewer.setInput(list2);
+
+    comboViewer.setLabelProvider(new LabelProvider() {
+      public Image getImage(Object element) {
+        return null;
+      }
+
+      public String getText(Object element) {
+        DatabaseMeta meta = (DatabaseMeta) element;
+        if (DUMMY_CON_NAME.equals(meta.getName())) {
+          return "";
+        } else {
+          return ((DatabaseMeta) element).getName();
+        }
+      }
+    });
+
+    BusinessModel busModel = (BusinessModel) conceptUtil;
+    if (null != busModel.getConnection()) {
+      comboViewer.setSelection(new StructuredSelection(busModel.getConnection()));
+    } else {
+      comboViewer.setSelection(new StructuredSelection(dummyConInstance));
+    }
 
     FormData fdId = new FormData();
     fdId.left = new FormAttachment(wlId, 10);
     fdId.top = new FormAttachment(0, 0);
-    fdId.right = new FormAttachment(100, 0);
+    fdId.right = new FormAttachment(conLabel, -10);
     wId.setLayoutData(fdId);
+
+    FormData fdConLabel = new FormData();
+    fdConLabel.left = new FormAttachment(50, 0);
+    fdConLabel.top = new FormAttachment(conField, 0, SWT.CENTER);
+    conLabel.setLayoutData(fdConLabel);
+
+    FormData fdConField = new FormData();
+    fdConField.left = new FormAttachment(conLabel, 10);
+    fdConField.top = new FormAttachment(0, 0);
+    fdConField.right = new FormAttachment(100, 0);
+    conField.setLayoutData(fdConField);
 
     if (conceptUtil.getId() != null) {
       wId.setText(conceptUtil.getId());
@@ -147,12 +239,23 @@ public class BusinessModelDialog extends Dialog {
       conceptUtil.setId(wId.getText());
     } catch (ObjectAlreadyExistsException e) {
       if (logger.isErrorEnabled()) {
-      	logger.error("an exception occurred", e);
+        logger.error("an exception occurred", e);
       }
       MessageDialog.openError(getShell(), Messages.getString("General.USER_TITLE_ERROR"), Messages.getString(
           "PhysicalTableDialog.USER_ERROR_PHYSICAL_TABLE_ID_EXISTS", wId.getText()));
       return;
     }
+
+    // attempt to set the connection
+    IStructuredSelection selection = (IStructuredSelection) comboViewer.getSelection();
+    DatabaseMeta con = (DatabaseMeta) selection.getFirstElement();
+    BusinessModel busModel = (BusinessModel) conceptUtil;
+    if (!DUMMY_CON_NAME.equals(con.getName())) {
+      busModel.setConnection((DatabaseMeta) con);
+    } else {
+      busModel.clearConnection();
+    }
+
     super.okPressed();
   }
 

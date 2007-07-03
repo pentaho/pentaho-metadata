@@ -690,18 +690,18 @@ public class MetaEditor {
 
   public boolean validateBusinessModels() {
     boolean valid = true;
-    
+
     Iterator iter = schemaMeta.getBusinessModels().iterator();
     while(iter.hasNext()  && valid) {
       BusinessModel bm = (BusinessModel) iter.next();
       if (bm.getBusinessTables().size() > 1) {
         valid = bm.getRelationships().size() > 0 && bm.getFlatCategoriesView(schemaMeta.getActiveLocale()).size() > 1;
-      } 
+      }
     }
 
     return valid;
   }
-  
+
   public void importFromXMI() {
     if (showChangedWarning()) {
       FileDialog fileDialog = new FileDialog(shell, SWT.OPEN);
@@ -1816,9 +1816,9 @@ public class MetaEditor {
           newBusinessCategory(businessCategory);
         }
       });
-      
+
       MenuItem miCategoryEditor = new MenuItem(mainMenu, SWT.PUSH);
-      miCategoryEditor.setText(Messages.getString("MetaEditor.USER_CONFIGURE_CATEGORYS")); //$NON-NLS-1$ 
+      miCategoryEditor.setText(Messages.getString("MetaEditor.USER_CONFIGURE_CATEGORYS")); //$NON-NLS-1$
       miCategoryEditor.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event ev) {
           editBusinessCategories();
@@ -1924,7 +1924,7 @@ public class MetaEditor {
       });
 
       MenuItem miCategoryEditor = new MenuItem(mainMenu, SWT.PUSH);
-      miCategoryEditor.setText(Messages.getString("MetaEditor.USER_CONFIGURE_CATEGORYS")); //$NON-NLS-1$ 
+      miCategoryEditor.setText(Messages.getString("MetaEditor.USER_CONFIGURE_CATEGORYS")); //$NON-NLS-1$
       miCategoryEditor.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event ev) {
           editBusinessCategories();
@@ -1974,17 +1974,17 @@ public class MetaEditor {
           node.sortChildrenAscending();
         }
       });
-    }else if ((node instanceof BusinessColumnTreeNode) 
+    }else if ((node instanceof BusinessColumnTreeNode)
         && (node.getParent() instanceof CategoryTreeNode)) {
 
       MenuItem miCategoryEditor = new MenuItem(mainMenu, SWT.PUSH);
-      miCategoryEditor.setText(Messages.getString("MetaEditor.USER_CONFIGURE_CATEGORYS")); //$NON-NLS-1$ 
+      miCategoryEditor.setText(Messages.getString("MetaEditor.USER_CONFIGURE_CATEGORYS")); //$NON-NLS-1$
       miCategoryEditor.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event ev) {
           editBusinessCategories();
         }
       });
-      
+
     }
 
     final ConceptUtilityInterface[] utilityInterfaces = getSelectedConceptUtilityInterfacesInMainTree();
@@ -2081,7 +2081,7 @@ public class MetaEditor {
 
   public void editBusinessCategories() {
     BusinessModel activeModel = schemaMeta.getActiveModel();
-   
+
     if (activeModel != null) {
       CategoryEditorDialog dialog = new CategoryEditorDialog(shell, activeModel, schemaMeta.getLocales(), schemaMeta
           .getSecurityReference());
@@ -2451,7 +2451,7 @@ public class MetaEditor {
         schemaMeta.setActiveModel(businessModel);
         activeModelTreeNode = (BusinessModelTreeNode) mainTreeNode.getBusinessModelsRoot().findNode(businessModel);
         refreshAll();
-  
+
         return businessModel;
       } catch (ObjectAlreadyExistsException e) {
         new ErrorDialog(
@@ -2459,7 +2459,7 @@ public class MetaEditor {
             Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("MetaEditor.USER_ERROR_BUSINESS_MODEL_NAME_EXISTS"), e); //$NON-NLS-1$ //$NON-NLS-2$
       }
     }
-    
+
     return null;
   }
 
@@ -2488,6 +2488,8 @@ public class MetaEditor {
           MessageDialog.openError(this.shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString(
               "The id '{0}' is already in use.", newBusModel.getId()));
         }
+
+        businessModel.setConnection(newBusModel.getConnection());
 
       }
 
@@ -2587,8 +2589,8 @@ public class MetaEditor {
       }
     }
   }
-  
-  
+
+
   private void syncPhysicalTable(PhysicalTable origPhysicalTable, PhysicalTable newPhysicalTable) {
 
     // It's important to preserve the ConceptInterface instances (rather
@@ -2616,7 +2618,7 @@ public class MetaEditor {
     mainTreeNode.sync();
     setShellText();
   }
-  
+
   public void editPhysicalTable(PhysicalTable physicalTable) {
     if (physicalTable != null) {
 
@@ -3567,7 +3569,7 @@ public class MetaEditor {
       }
     }
   }
-  
+
   private void syncBusinessTables(BusinessTable origBusinessTable, BusinessTable newBusinessTable) {
     // It's important to preserve the ConceptInterface instances (rather
     // than replacing them), as the instance references are important to
@@ -3595,7 +3597,7 @@ public class MetaEditor {
       }
     }
   }
-  
+
   /**
    * TODO mlowery move this business save logic to a method for reuse
    */
@@ -3629,9 +3631,9 @@ public class MetaEditor {
       log.logDebug(APPLICATION_NAME, Messages.getString("MetaEditor.DEBUG_DUPLICATE_TABLE", businessTable.getId())); //$NON-NLS-1$
 
       BusinessModel activeModel = schemaMeta.getActiveModel();
-      
+
       // This should be a unique clone of the business table AND it's columns...
-      BusinessTable newTable = businessTable.cloneUnique(schemaMeta.getActiveLocale(), activeModel.getBusinessTables(), 
+      BusinessTable newTable = businessTable.cloneUnique(schemaMeta.getActiveLocale(), activeModel.getBusinessTables(),
           activeModel.getAllBusinessColumns());
 
       try {
@@ -3679,7 +3681,7 @@ public class MetaEditor {
           Messages.getString("MetaEditor.USER_TITLE_DEMO_ERROR"), Messages.getString("MetaEditor.USER_DEMO_ERROR"), e); //$NON-NLS-1$ //$NON-NLS-2$
     }
   }
-  
+
 //  protected void testQR() {
 //    try {
 //      QueryDialog queryDialog = new QueryDialog(shell, schemaMeta, query);

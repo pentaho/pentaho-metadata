@@ -1701,6 +1701,26 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
     return getConnection() != null;
   }
 
+  public void setConnection(DatabaseMeta connection) {
+    this.connection = connection;
+
+    for (int i = 0; i < nrBusinessTables(); i++) {
+      BusinessTable bt = getBusinessTable(i);
+
+      if (null == bt) {
+        continue;
+      }
+
+      PhysicalTable pt = bt.getPhysicalTable();
+
+      if (null == pt) {
+        continue;
+      }
+
+      pt.setDatabaseMeta(connection);
+    }
+  }
+
   public DatabaseMeta getConnection(){
 
     // A bit cheap and fragile - use the connection reference from the first
@@ -1710,9 +1730,9 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
       connection = getBusinessTable(0).getPhysicalTable().getDatabaseMeta();
     }
 
-    if (nrBusinessTables()<=0){
-      connection = null;
-    }
+//    if (nrBusinessTables()<=0){
+//      connection = null;
+//    }
 
     return connection;
   }
