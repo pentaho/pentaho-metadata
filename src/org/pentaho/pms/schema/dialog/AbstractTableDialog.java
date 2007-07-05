@@ -137,6 +137,7 @@ public abstract class AbstractTableDialog extends Dialog {
     gridData = new GridData(GridData.FILL_BOTH);
     gridData.horizontalSpan = 2;
     gridData.heightHint = 20;
+    gridData.minimumWidth = 500;
     s0.setLayoutData(gridData);
 
 
