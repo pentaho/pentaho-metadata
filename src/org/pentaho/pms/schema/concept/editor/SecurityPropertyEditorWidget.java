@@ -100,7 +100,7 @@ public class SecurityPropertyEditorWidget extends AbstractPropertyEditorWidget {
     
     securityTablePermEditor = new SecurityTablePermEditor(parent, SWT.BORDER, securityTableViewer);
     securityTablePermEditor.setLayoutData(gridData);
-    securityTablePermEditor.setEnabled(isEditable());
+    securityTablePermEditor.setAllowEditing(isEditable());
   }
 
   protected void widgetDisposed(final DisposeEvent e) {

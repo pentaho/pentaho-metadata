@@ -5,6 +5,7 @@ import java.util.Iterator;
 
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionEvent;
@@ -25,6 +26,7 @@ public class SecurityTablePermEditor extends ScrolledComposite implements ISelec
   SecurityReference securityReference;
   ArrayList buttons = new ArrayList();
   Composite nestedComposite;
+  boolean allowEditing = true;
   
   static final int UNSELECTED_PERM = 0;
   static final int SEMI_SELECTED_PERM = 1;
@@ -49,6 +51,8 @@ public class SecurityTablePermEditor extends ScrolledComposite implements ISelec
     nestedComposite.setBackground(securityTableViewer.getTable().getBackground());
     setSecurityReference(securityReference);
     securityTableViewer.addSelectionChangedListener(this);
+    
+    setEnabled(((StructuredSelection)securityTableViewer.getSelection()).size() > 0);
   }
   
   public void setSecurityReference(SecurityReference securityReference) {
@@ -88,6 +92,9 @@ public class SecurityTablePermEditor extends ScrolledComposite implements ISelec
   }
   
   public void selectionChanged(SelectionChangedEvent arg0) {
+    if (allowEditing) {
+      setEnabled(((StructuredSelection)securityTableViewer.getSelection()).size() > 0);
+    }
     refresh();
   }
   
@@ -189,10 +196,18 @@ public class SecurityTablePermEditor extends ScrolledComposite implements ISelec
   }
   
   public void setEnabled(boolean enabled) {
-//    setEnabled(enabled);
     nestedComposite.setEnabled(enabled);
     for (Iterator iterator = buttons.iterator(); iterator.hasNext();) {
       ((Button)iterator.next()).setEnabled(enabled);
+    }
+  }
+  
+  public void setAllowEditing(boolean allow) {
+    allowEditing = allow;
+    if (!allow) {
+      setEnabled(false);
+    } else {
+      setEnabled(((StructuredSelection)securityTableViewer.getSelection()).size() > 0);
     }
   }
 }
