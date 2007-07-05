@@ -76,7 +76,7 @@ public class BusinessModelDialog extends Dialog {
   private ConceptUtilityInterface conceptUtil;
 
   private Locales locales;
-
+  
   private SchemaMeta schemaMeta;
 
   private ComboViewer comboViewer;
@@ -95,8 +95,9 @@ public class BusinessModelDialog extends Dialog {
     super(parent);
     this.conceptModel = new ConceptModel(conceptUtil.getConcept());
     this.conceptUtil = conceptUtil;
+    this.schemaMeta = schemaMeta;
     Locales locales = schemaMeta.getLocales();
-    activeLocale = locales.getActiveLocale();
+    activeLocale = schemaMeta.getLocales().getActiveLocale();
     propertyEditorContext.put("locales", locales);
     this.schemaMeta = schemaMeta;
   }
@@ -111,7 +112,7 @@ public class BusinessModelDialog extends Dialog {
   }
 
   protected Point getInitialSize() {
-    return new Point(600, 500);
+    return new Point(1000, 800);
   }
 
   protected final Control createDialogArea(final Composite parent) {
@@ -131,7 +132,7 @@ public class BusinessModelDialog extends Dialog {
     top.setLayoutData(fdTop);
 
     ConceptEditorWidget conceptEditor = new ConceptEditorWidget(container, SWT.NONE, conceptModel,
-        propertyEditorContext);
+        propertyEditorContext, schemaMeta.getSecurityReference());
 
     FormData fdConcept = new FormData();
     fdConcept.left = new FormAttachment(0, 0);
@@ -153,6 +154,7 @@ public class BusinessModelDialog extends Dialog {
 
     FormData fdlId = new FormData();
     fdlId.left = new FormAttachment(0, 0);
+
     fdlId.top = new FormAttachment(wId, 0, SWT.CENTER);
     wlId.setLayoutData(fdlId);
 
@@ -239,7 +241,7 @@ public class BusinessModelDialog extends Dialog {
       conceptUtil.setId(wId.getText());
     } catch (ObjectAlreadyExistsException e) {
       if (logger.isErrorEnabled()) {
-        logger.error("an exception occurred", e);
+      	logger.error("an exception occurred", e);
       }
       MessageDialog.openError(getShell(), Messages.getString("General.USER_TITLE_ERROR"), Messages.getString(
           "PhysicalTableDialog.USER_ERROR_PHYSICAL_TABLE_ID_EXISTS", wId.getText()));

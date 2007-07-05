@@ -130,7 +130,7 @@ public class ConceptEditorTestApp extends ApplicationWindow {
   }
 
   protected Control createContents(final Composite parent) {
-    return new ConceptEditorWidget(parent, SWT.NONE, conceptModel, context);
+    return new ConceptEditorWidget(parent, SWT.NONE, conceptModel, context, null);
   }
 
   public static void main(final String[] args) {

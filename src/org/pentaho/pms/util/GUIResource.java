@@ -75,11 +75,17 @@ public class GUIResource
     private Image     imageCatagory;
     private Image     imageBusinessColumn;
     private Image     imageRelationship;
+    private Image     imageArrowRight;
+    private Image     imageArrowLeft;
     private Image     imageRelationshipsParent;
     private Image     imageBusinessTable;
     private Image     imageBusinessTablesParent;
     private Image     imagePhysicalColumn;
+    private Image     imageUser;
+    private Image     imageRole;
     private Image     imageBusinessModel;
+    private Image     imageGenericAdd;
+    private Image     imageGenericDelete;
     private Image     imageBol;
     private Image     imageIcon;
 
@@ -218,10 +224,16 @@ public class GUIResource
             if (!imageCatagory.isDisposed()) imageCatagory.dispose();
             if (!imageBusinessColumn.isDisposed()) imageBusinessColumn.dispose();
             if (!imageRelationship.isDisposed()) imageRelationship.dispose();
+            if (!imageArrowRight.isDisposed()) imageArrowRight.dispose();
+            if (!imageArrowLeft.isDisposed()) imageArrowLeft.dispose();
             if (!imageRelationshipsParent.isDisposed()) imageRelationshipsParent.dispose();
             if (!imageBusinessTable.isDisposed()) imageBusinessTable.dispose();
             if (!imageBusinessTablesParent.isDisposed()) imageBusinessTablesParent.dispose();
             if (!imagePhysicalColumn.isDisposed()) imagePhysicalColumn.dispose();
+            if (!imageUser.isDisposed()) imageUser.dispose();
+            if (!imageRole.isDisposed()) imageRole.dispose();
+            if (!imageGenericAdd.isDisposed()) imageGenericAdd.dispose();
+            if (!imageGenericDelete.isDisposed()) imageGenericDelete.dispose();
             if (!imageBusinessModel.isDisposed()) imageBusinessModel.dispose();
             if (!imageBol.isDisposed()) imageBol.dispose();
             if (!imageIcon.isDisposed()) imageIcon.dispose();
@@ -234,14 +246,20 @@ public class GUIResource
         imageConnectionsParent  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "folder_connection.png")); //$NON-NLS-1$
         imageConnection  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "connection.png")); //$NON-NLS-1$
         imagePhysicalTable  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "connection_table.png")); //$NON-NLS-1$
+        imageGenericAdd  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "generic_add.png")); //$NON-NLS-1$
+        imageGenericDelete  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "generic_delete.png")); //$NON-NLS-1$
         imageBusinessView  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "business_view.png")); //$NON-NLS-1$
         imageCatagory  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "category.png")); //$NON-NLS-1$
         imageBusinessColumn  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "column.png")); //$NON-NLS-1$
         imageRelationship  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "relationship.png")); //$NON-NLS-1$
+        imageArrowLeft  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "arrow_left.gif")); //$NON-NLS-1$
+        imageArrowRight  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "arrow_right.gif")); //$NON-NLS-1$
         imageRelationshipsParent  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "folder_relationship.png")); //$NON-NLS-1$
         imageBusinessTable  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "business_table.png")); //$NON-NLS-1$
         imageBusinessTablesParent  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "folder_business_table.png")); //$NON-NLS-1$
         imagePhysicalColumn  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "connection_column.png")); //$NON-NLS-1$
+        imageUser  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "user.gif")); //$NON-NLS-1$
+        imageRole  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "role.gif")); //$NON-NLS-1$
         imageBusinessModel  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "business_model.png")); //$NON-NLS-1$
         imageBol         = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "bol.png")); //$NON-NLS-1$
         imageIcon        = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "icon.png")); //$NON-NLS-1$
@@ -502,6 +520,16 @@ public class GUIResource
         return imageRelationship;
     }
     
+    public Image getImageArrowLeft()
+    {
+        return imageArrowLeft;
+    }
+    
+    public Image getImageArrowRight()
+    {
+        return imageArrowRight;
+    }
+    
     public Image getImageRelationshipsParent()
     {
         return imageRelationshipsParent;
@@ -520,6 +548,26 @@ public class GUIResource
     public Image getImagePhysicalColumn()
     {
         return imagePhysicalColumn;
+    }
+    
+    public Image getImageUser()
+    {
+        return imageUser;
+    }
+
+    public Image getImageRole()
+    {
+        return imageRole;
+    }
+
+    public Image getImageGenericAdd()
+    {
+        return imageGenericAdd;
+    }
+    
+    public Image getImageGenericDelete()
+    {
+        return imageGenericDelete;
     }
     
     public Image getImageBusinessModel()
@@ -560,9 +608,14 @@ public class GUIResource
         this.imageBusinessColumn = imageBusinessColumn;
     }
     
-    public void setImageRelationship(Image imageRelationship)
+    public void setImageArrowLeft(Image imageMoveLeft)
     {
-        this.imageRelationship = imageRelationship;
+        this.imageArrowLeft = imageMoveLeft;
+    }
+    
+    public void setImageArrowRight(Image imageMoveRight)
+    {
+        this.imageArrowRight = imageMoveRight;
     }
     
     public void setImageRelationshipsParent(Image imageRelationshipsParent)
@@ -583,6 +636,26 @@ public class GUIResource
     public void setImagePhysicalColumn(Image imagePhysicalColumn)
     {
         this.imagePhysicalColumn = imagePhysicalColumn;
+    }
+    
+    public void setImageUser (Image imageUser)
+    {
+        this.imageUser = imageUser;
+    }
+    
+    public void setImageRoleImage (Image imageRole)
+    {
+        this.imageRole = imageRole;
+    }
+    
+    public void setImageGenericAdd(Image imageGenericAdd)
+    {
+        this.imageGenericAdd = imageGenericAdd;
+    }
+    
+    public void setImageGenericDelete(Image imageGenericDelete)
+    {
+        this.imageGenericDelete = imageGenericDelete;
     }
     
     public void setImageBusinessModel(Image imageBusinessModel)

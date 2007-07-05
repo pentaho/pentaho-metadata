@@ -99,8 +99,12 @@ public class SecurityOwner implements Cloneable
 
     public boolean equals(Object obj)
     {
-        SecurityOwner set = (SecurityOwner) obj;
-        return ownerType == set.ownerType && ownerName.equals(set.ownerName); // I WANT this to NPE if ownerName is null :-)
+        boolean result = false;
+        if (obj instanceof SecurityOwner) {
+          SecurityOwner set = (SecurityOwner) obj;
+          result = (ownerType == set.ownerType && ownerName.equals(set.ownerName)); // I WANT this to NPE if ownerName is null :-)
+        }
+        return result;
     }
     
     public int hashCode()
