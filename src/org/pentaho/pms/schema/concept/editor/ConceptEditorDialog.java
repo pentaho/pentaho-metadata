@@ -10,7 +10,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeSelection;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StackLayout;
@@ -25,8 +24,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
+import org.pentaho.pms.schema.security.SecurityReference;
 
 import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
 
@@ -61,7 +60,7 @@ public class ConceptEditorDialog extends Dialog {
   private ISelectionChangedListener conceptTreeSelectionChangedListener;
 
   private ConceptTreeWidget conceptTree;
-
+  
   // ~ Constructors ====================================================================================================
 
   public ConceptEditorDialog(final Shell parent, final IConceptTreeModel conceptTreeModel) {
@@ -81,7 +80,7 @@ public class ConceptEditorDialog extends Dialog {
   }
 
   protected Point getInitialSize() {
-    return new Point(800, 500);
+    return new Point(1000, 800);
   }
 
   protected final Control createDialogArea(final Composite parent) {
@@ -224,7 +223,7 @@ public class ConceptEditorDialog extends Dialog {
       if (null == cards.get(concept)) {
         IConceptModel conceptModel = conceptModelRegistry.getConceptModel(concept);
         ConceptEditorWidget conceptEditor = new ConceptEditorWidget(cardComposite, SWT.NONE, conceptModel,
-            propertyEditorContext);
+            propertyEditorContext, conceptTreeModel.getSchemaMeta().getSecurityReference());
         cards.put(concept, conceptEditor);
       }
       stackLayout.topControl = (Control) cards.get(concept);

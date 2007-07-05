@@ -1,5 +1,6 @@
 package org.pentaho.pms.schema.concept.editor;
 
+import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 
 import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
@@ -31,6 +32,8 @@ public interface IConceptTreeModel {
    * Returns the parent of the concept.
    */
   ConceptInterface getParent(ConceptInterface concept);
+  
+  public SchemaMeta getSchemaMeta();
 
   /**
    * Write the changes made since instantiation into the schema meta.

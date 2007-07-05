@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
+import org.pentaho.pms.schema.security.SecurityReference;
 
 public class PropertyWidgetManager2 extends Composite implements ISelectionChangedListener {
 
@@ -47,14 +48,17 @@ public class PropertyWidgetManager2 extends Composite implements ISelectionChang
   private ScrolledComposite widgetAreaWrapper;
 
   private Map groupNameWidgets = new HashMap();
+  
+  private SecurityReference securityReference;
 
   // ~ Constructors ====================================================================================================
 
   public PropertyWidgetManager2(final Composite parent, final int style,
-      final IConceptModel conceptModel, final Map context) {
+      final IConceptModel conceptModel, final Map context, SecurityReference securityReference) {
     super(parent, style);
     this.context = context;
     this.conceptModel = conceptModel;
+    this.securityReference = securityReference;
     conceptModel.addConceptModificationListener(new IConceptModificationListener() {
       public void conceptModified(final ConceptModificationEvent e) {
         if (e instanceof PropertyExistenceModificationEvent) {
@@ -143,7 +147,7 @@ public class PropertyWidgetManager2 extends Composite implements ISelectionChang
           logger.debug("creating widget for property with id \"" + propertyId + "\"");
         }
         IPropertyEditorWidget widget = PropertyEditorWidgetFactory.getWidget(prop.getType(), widgetArea, SWT.NONE,
-            conceptModel, prop.getId(), context);
+            conceptModel, prop.getId(), context, securityReference);
         if (widget != null) {
           addWidget((Control) widget);
           widgets.put(prop.getId(), widget);

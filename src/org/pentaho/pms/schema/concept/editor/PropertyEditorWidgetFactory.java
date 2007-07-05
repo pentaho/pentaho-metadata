@@ -2,6 +2,8 @@ package org.pentaho.pms.schema.concept.editor;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,6 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.widgets.Composite;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
+import org.pentaho.pms.schema.security.SecurityReference;
 
 /**
  * Instantiates <code>PropertyEditorWidget</code> objects based on property type.
@@ -22,7 +25,7 @@ public class PropertyEditorWidgetFactory {
   private static final Log logger = LogFactory.getLog(PropertyEditorWidgetFactory.class);
 
   private static final Map propertyEditorMap;
-
+  
   private static final Class[] constructorParamTypes = { Composite.class, Integer.TYPE, IConceptModel.class,
       String.class, Map.class };
 
@@ -53,7 +56,7 @@ public class PropertyEditorWidgetFactory {
   }
 
   public static IPropertyEditorWidget getWidget(final ConceptPropertyType propertyType, final Composite parent,
-      final int style, final IConceptModel conceptModel, final String propertyId, final Map context) {
+      final int style, final IConceptModel conceptModel, final String propertyId, final Map context, SecurityReference securityReference) {
 
     Class clazz = (Class) propertyEditorMap.get(propertyType);
     if (null == clazz) {
@@ -61,7 +64,11 @@ public class PropertyEditorWidgetFactory {
     }
     Constructor cons = null;
     try {
-      cons = clazz.getConstructor(constructorParamTypes);
+      ArrayList constParams = new ArrayList(Arrays.asList(constructorParamTypes));
+      if (clazz == SecurityPropertyEditorWidget.class) {
+        constParams.add(SecurityReference.class);
+      }
+      cons = clazz.getConstructor((Class[])constParams.toArray(new Class[0]));
     } catch (SecurityException e) {
       if (logger.isErrorEnabled()) {
         logger.error("an exception occurred", e);
@@ -82,8 +89,17 @@ public class PropertyEditorWidgetFactory {
         logger.debug("conceptModel = " + conceptModel);
         logger.debug("propertyId = " + propertyId);
       }
-      widget = (IPropertyEditorWidget) cons.newInstance(makeConstructorArgs(parent, style, conceptModel, propertyId,
-          context));
+      ArrayList constructorArgs = new ArrayList();
+      constructorArgs.add(parent);
+      constructorArgs.add(new Integer(style));
+      constructorArgs.add(conceptModel);
+      constructorArgs.add(propertyId);
+      constructorArgs.add(context);
+      if (clazz == SecurityPropertyEditorWidget.class) {
+        constructorArgs.add(securityReference);
+      }
+
+      widget = (IPropertyEditorWidget) cons.newInstance(constructorArgs.toArray(new Object[constructorArgs.size()]));
     } catch (IllegalArgumentException e) {
       if (logger.isErrorEnabled()) {
         logger.error("an exception occurred", e);
@@ -106,17 +122,6 @@ public class PropertyEditorWidgetFactory {
       return null;
     }
     return widget;
-  }
-
-  private static Object[] makeConstructorArgs(final Composite parent, final int style,
-      final IConceptModel conceptModel, final String propertyId, final Map context) {
-    Object[] args = new Object[5];
-    args[0] = parent;
-    args[1] = new Integer(style);
-    args[2] = conceptModel;
-    args[3] = propertyId;
-    args[4] = context;
-    return args;
   }
 
 }

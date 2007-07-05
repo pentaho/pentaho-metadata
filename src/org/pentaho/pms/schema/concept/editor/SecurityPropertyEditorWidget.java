@@ -1,42 +1,46 @@
 package org.pentaho.pms.schema.concept.editor;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.pentaho.pms.schema.security.Security;
+import org.pentaho.pms.schema.security.SecurityOwner;
+import org.pentaho.pms.schema.security.SecurityReference;
+import org.pentaho.pms.util.GUIResource;
 
 public class SecurityPropertyEditorWidget extends AbstractPropertyEditorWidget {
 
-  // ~ Static fields/initializers ======================================================================================
-
   private static final Log logger = LogFactory.getLog(SecurityPropertyEditorWidget.class);
-
-  // ~ Instance fields =================================================================================================
-
-  // ~ Constructors ====================================================================================================
+  SecurityTableViewer securityTableViewer;
+  SecurityTablePermEditor securityTablePermEditor;
+  SecurityReference securityReference;
 
   public SecurityPropertyEditorWidget(final Composite parent, final int style, final IConceptModel conceptModel,
-      final String propertyId, final Map context) {
+      final String propertyId, final Map context, SecurityReference securityReference) {
     super(parent, style, conceptModel, propertyId, context);
+    this.securityReference = securityReference;
+    securityTablePermEditor.setSecurityReference(securityReference);
     setValue(getProperty().getValue());
     if (logger.isDebugEnabled()) {
       logger.debug("created SecurityPropertyEditorWidget");
     }
   }
 
-  // ~ Methods =========================================================================================================
-
-
   protected void addModificationListeners() {
-    // TODO Auto-generated method stub
-
   }
 
   protected void createContents(final Composite parent) {
@@ -46,16 +50,57 @@ public class SecurityPropertyEditorWidget extends AbstractPropertyEditorWidget {
       }
     });
 
-    Label label = new Label(parent, SWT.CENTER);
-    label.setText("Not implemented yet.");
-    label.setEnabled(isEditable());
+    parent.setLayout(new GridLayout(3, false));
+    
+    Label label = new Label(parent, SWT.NONE);
+    label.setText("Selected Users/Groups");
+    
+    ToolBar toolBar = new ToolBar(parent, SWT.FLAT);
+    GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+    gridData.horizontalAlignment = SWT.END;
+    toolBar.setLayoutData(gridData);
+    
+    ToolItem toolItem = new ToolItem(toolBar, SWT.NULL);
+    toolItem.setImage(GUIResource.getInstance().getImageGenericAdd());
+    toolItem.setToolTipText("Add New Users/Groups");
+    toolItem.addSelectionListener(new SelectionListener() {
+      public void widgetDefaultSelected(SelectionEvent e) {
+      }
 
-    FormData fdLabel = new FormData();
-    fdLabel.left = new FormAttachment(0, 0);
-    fdLabel.right = new FormAttachment(100, 0);
-    fdLabel.top = new FormAttachment(0, 0);
-    label.setLayoutData(fdLabel);
+      public void widgetSelected(SelectionEvent e) {
+        addNewUsersOrGroups();
+      }
+    });
+    toolItem.setEnabled(isEditable());
 
+    toolItem = new ToolItem(toolBar, SWT.NULL);
+    toolItem.setImage(GUIResource.getInstance().getImageGenericDelete());
+    toolItem.setToolTipText("Remove All Permissions From Selected Users/Groups");
+    toolItem.addSelectionListener(new SelectionListener() {
+      public void widgetDefaultSelected(SelectionEvent e) {
+      }
+
+      public void widgetSelected(SelectionEvent e) {
+        removeSelectedUsersAndGroups();
+      }
+    });
+    toolItem.setEnabled(isEditable());
+    
+    label = new Label(parent, SWT.NONE);
+    label.setText("Permissions");
+    
+    securityTableViewer = new SecurityTableViewer(parent, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI);
+    gridData = new GridData(GridData.FILL_HORIZONTAL);
+    gridData.heightHint = 100;
+    gridData.horizontalSpan = 2;
+    securityTableViewer.getTable().setLayoutData(gridData);
+    gridData = new GridData(GridData.FILL_HORIZONTAL);
+    gridData.verticalAlignment = SWT.FILL;
+    gridData.heightHint = 100;
+    
+    securityTablePermEditor = new SecurityTablePermEditor(parent, SWT.BORDER, securityTableViewer);
+    securityTablePermEditor.setLayoutData(gridData);
+    securityTablePermEditor.setEnabled(isEditable());
   }
 
   protected void widgetDisposed(final DisposeEvent e) {
@@ -73,10 +118,28 @@ public class SecurityPropertyEditorWidget extends AbstractPropertyEditorWidget {
   }
 
   public Object getValue() {
-    // TODO Auto-generated method stub
-    return null;
+    return securityTableViewer.getSecuritySettings();
   }
 
   protected void setValue(final Object value) {
+    securityTableViewer.setSecuritySettings((Security)value);
   }
+  
+  protected void addNewUsersOrGroups() {
+    AddSecurityPermsDialog addSecurityPermsDialog = new AddSecurityPermsDialog(securityTableViewer.getTable().getShell(), securityReference, securityTableViewer.getSecuritySettings());
+    if (addSecurityPermsDialog.open() == Window.OK) {
+      Security security = addSecurityPermsDialog.getSecurity();
+      java.util.List owners = security.getOwners();
+      for (Iterator iter = owners.iterator(); iter.hasNext();) {
+        SecurityOwner element = (SecurityOwner) iter.next();
+        securityTableViewer.addOwner(element, security.getOwnerRights(element));
+      }
+    }
+  }
+  
+  protected void removeSelectedUsersAndGroups() {
+    securityTableViewer.removeSelectedOwners();   
+  }
+  
+  
 }

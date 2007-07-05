@@ -295,4 +295,8 @@ public class ConceptTreeModel implements IConceptTreeModel {
     eventSupport.removeListener(listener);
   }
 
+  public SchemaMeta getSchemaMeta() {
+    return schemaMeta;
+  }
+
 }

@@ -210,7 +210,7 @@ public class PropertyWidgetManager extends Composite implements ISelectionChange
 
   protected void addWidget(final ConceptPropertyInterface prop) {
     IPropertyEditorWidget widget = PropertyEditorWidgetFactory.getWidget(prop.getType(), stack, SWT.NONE,
-        conceptModel, prop.getId(), Collections.EMPTY_MAP);
+        conceptModel, prop.getId(), Collections.EMPTY_MAP, schemaMeta.getSecurityReference());
     widgets.put(prop.getId(), widget);
     swapWidget(prop.getId());
   }
