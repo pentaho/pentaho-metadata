@@ -2200,7 +2200,7 @@ public class MetaEditor {
 
       BusinessTableModel tableModel = new BusinessTableModel(businessTable, activeModel);
 
-      BusinessTableDialog td = new BusinessTableDialog(shell, SWT.NONE, tableModel, schemaMeta);
+      BusinessTableDialog td = new BusinessTableDialog(shell, SWT.NONE, tableModel, schemaMeta, businessTable);
       int res = td.open();
 
       if (Window.OK == res) {
