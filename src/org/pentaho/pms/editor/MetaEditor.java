@@ -22,11 +22,9 @@ import java.util.Set;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
@@ -72,11 +70,9 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
-import org.pentaho.commons.mql.ui.mqldesigner.MQLQueryBuilderDialog;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.core.exception.CWMException;
 import org.pentaho.pms.demo.QueryBuilderDialog;
-import org.pentaho.pms.demo.QueryDialog;
 import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
 import org.pentaho.pms.factory.SchemaSaveProgressDialog;
 import org.pentaho.pms.jface.tree.ITreeNode;
@@ -2746,6 +2742,8 @@ public class MetaEditor {
       try {
         schemaMeta.addDatabase(db);
         mainTreeNode.getConnectionsRoot().addDomainChild(db);
+        importMultipleTables(db);
+        synchronize(db);
       } catch (ObjectAlreadyExistsException e) {
         new ErrorDialog(
             shell,
