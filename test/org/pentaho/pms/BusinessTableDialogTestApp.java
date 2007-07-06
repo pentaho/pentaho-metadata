@@ -198,7 +198,7 @@ public class BusinessTableDialogTestApp extends ApplicationWindow {
       logger.debug("orig table model: " + tableModel);
     }
 
-    final BusinessTableDialog diag = new BusinessTableDialog(this.getShell(), SWT.NONE, copy, schemaMeta);
+    final BusinessTableDialog diag = new BusinessTableDialog(this.getShell(), tab, schemaMeta);
 
     if (logger.isDebugEnabled()) {
       logger.debug("mod'ed table model: " + copy);

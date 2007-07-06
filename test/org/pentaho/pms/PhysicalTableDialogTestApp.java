@@ -189,17 +189,14 @@ public class PhysicalTableDialogTestApp extends ApplicationWindow {
     Composite c0 = new Composite(parent, SWT.NONE);
     c0.setLayout(new FormLayout());
 
-    // let the table diag operate on copy of the original in case they cancel
-    ITableModel copy = new PhysicalTableModel((PhysicalTable) tab.clone());
-
     if (logger.isDebugEnabled()) {
       logger.debug("orig table model: " + tableModel);
     }
 
-    final PhysicalTableDialog diag = new PhysicalTableDialog(this.getShell(), SWT.NONE, copy, schemaMeta);
+    final PhysicalTableDialog diag = new PhysicalTableDialog(this.getShell(), tab, schemaMeta);
 
     if (logger.isDebugEnabled()) {
-      logger.debug("mod'ed table model: " + copy);
+      logger.debug("mod'ed table model: " + tableModel);
     }
 
     //    final TableColumnTreeWidget t = new TableColumnTreeWidget(c0, SWT.NONE, tableModel, true);

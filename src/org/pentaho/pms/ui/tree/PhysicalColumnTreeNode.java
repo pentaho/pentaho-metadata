@@ -60,6 +60,7 @@ public class PhysicalColumnTreeNode extends ConceptTreeNode {
   }
   
   public void sync(){
+    fireTreeNodeUpdated();
    // Intentionally do nothing here 
   }
 

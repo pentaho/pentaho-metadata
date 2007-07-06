@@ -93,11 +93,9 @@ import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.schema.concept.dialog.ConceptDialog;
-import org.pentaho.pms.schema.concept.editor.BusinessTableModel;
 import org.pentaho.pms.schema.concept.editor.ConceptEditorDialog;
 import org.pentaho.pms.schema.concept.editor.ConceptTreeModel;
 import org.pentaho.pms.schema.concept.editor.IConceptTreeModel;
-import org.pentaho.pms.schema.concept.editor.PhysicalTableModel;
 import org.pentaho.pms.schema.concept.editor.PredefinedVsCustomPropertyHelper;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.schema.concept.types.datatype.DataTypeSettings;
@@ -1740,7 +1738,6 @@ public class MetaEditor {
       miEdit.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
           editPhysicalColumn(physicalColumn);
-          treeViewer.update(node.getParent(), null);
         }
       });
     } else if (node instanceof BusinessModelTreeNode) {
@@ -2193,10 +2190,7 @@ public class MetaEditor {
     }
 
     if (businessTable != null) {
-
-      BusinessTableModel tableModel = new BusinessTableModel(businessTable, activeModel);
-
-      BusinessTableDialog td = new BusinessTableDialog(shell, SWT.NONE, tableModel, schemaMeta, businessTable);
+      BusinessTableDialog td = new BusinessTableDialog(shell, businessTable, schemaMeta);
       int res = td.open();
 
       if (Window.OK == res) {
@@ -2563,25 +2557,14 @@ public class MetaEditor {
     setShellText();
   }
 
-//  private void editPhysicalColumn(PhysicalColumn physicalColumn) {
-//    if (physicalColumn != null) {
-//      String activeLocale = schemaMeta.getActiveLocale();
-//      editProperties(Messages.getString(
-//          "MetaEditor.USER_PHYSICAL_COLUMN_PROPERTIES", physicalColumn.getName(activeLocale)), physicalColumn); //$NON-NLS-1$
-//    }
-//  }
-
   private void editPhysicalColumn(PhysicalColumn physicalColumn) {
     if (physicalColumn != null) {
-      PhysicalTable originalPhysicalTable = physicalColumn.getTable();
-      PhysicalTable newPhysicalTable = (PhysicalTable) originalPhysicalTable.clone();
-      PhysicalTableModel tableModel = new PhysicalTableModel(newPhysicalTable);
-      if (originalPhysicalTable != null) {
-        PhysicalTableDialog td = new PhysicalTableDialog(shell, SWT.NONE, tableModel, schemaMeta, physicalColumn);
-        int res = td.open();
-        if (Window.OK == res) {
-          syncPhysicalTable(originalPhysicalTable, newPhysicalTable);
-        }
+      PhysicalTableDialog td = new PhysicalTableDialog(shell, physicalColumn, schemaMeta);
+      int res = td.open();
+      if (Window.OK == res) {
+        refreshGraph();
+        mainTreeNode.sync();
+        setShellText();
       }
     }
   }
@@ -2597,18 +2580,19 @@ public class MetaEditor {
     originalInterface.clearChildProperties();
     originalInterface.getChildPropertyInterfaces().putAll(newPhysicalTable.getConcept().getChildPropertyInterfaces());
 
-    origPhysicalTable.removeAllPhysicalColumns();
-    Iterator iter = newPhysicalTable.getPhysicalColumns().iterator();
-    while (iter.hasNext()) {
-      PhysicalColumn column = (PhysicalColumn) iter.next();
+    for (int i = 0; i < origPhysicalTable.nrPhysicalColumns(); i++) {
+      PhysicalColumn newColumn = newPhysicalTable.getPhysicalColumn(i);
+      PhysicalColumn oldColumn = origPhysicalTable.getPhysicalColumn(i);
       try {
-        origPhysicalTable.addPhysicalColumn(column);
+        oldColumn.setId(newColumn.getId());
       } catch (ObjectAlreadyExistsException e) {
-        e.printStackTrace();
         log.logDebug(APPLICATION_NAME,
-            "This should not happen as this exception would already have been caught earlier..."); //$NON-NLS-1$
+        "This should not happen as this exception would already have been caught earlier..."); //$NON-NLS-1$
       }
-    }
+      ConceptInterface originalInt = oldColumn.getConcept();
+      originalInt.clearChildProperties();
+      originalInt.getChildPropertyInterfaces().putAll(newColumn.getConcept().getChildPropertyInterfaces());
+    }      
 
     refreshGraph();
     mainTreeNode.sync();
@@ -2617,15 +2601,11 @@ public class MetaEditor {
 
   public void editPhysicalTable(PhysicalTable physicalTable) {
     if (physicalTable != null) {
-
-      PhysicalTable copy = (PhysicalTable) physicalTable.clone();
-      PhysicalTableModel tableModel = new PhysicalTableModel(copy);
-
-      PhysicalTableDialog td = new PhysicalTableDialog(shell, SWT.NONE, tableModel, schemaMeta, copy);
-      int res = td.open();
-
-      if (Window.OK == res) {
-        syncPhysicalTable(physicalTable, copy);
+      PhysicalTableDialog td = new PhysicalTableDialog(shell, physicalTable, schemaMeta);
+      if (td.open() == Window.OK) {
+        refreshGraph();
+        mainTreeNode.sync();
+        setShellText();
       }
     }
   }
@@ -3540,30 +3520,17 @@ public class MetaEditor {
     editBusinessTable(businessTable, null);
   }
 
-//  private void editBusinessColumn(BusinessColumn businessColumn) {
-//    BusinessTable businessTable = businessColumn.getBusinessTable();
-//    String columnName = businessColumn.getDisplayName(schemaMeta.getActiveLocale());
-//    String tableName = businessTable.getDisplayName(schemaMeta.getActiveLocale());
-//    editProperties(Messages.getString("MetaEditor.USER_ENTER_COLUMN_PROPERTIES", columnName, tableName), businessColumn); //$NON-NLS-1$
-//  }
-
   private void editBusinessColumn(BusinessColumn businessColumn, BusinessColumnTreeNode node) {
     if (businessColumn != null) {
-      BusinessTable originalBusinessTable = businessColumn.getBusinessTable();
-      if (originalBusinessTable != null) {
-        BusinessTable newBusinessTable = (BusinessTable) originalBusinessTable.clone();
-        BusinessTableModel tableModel = new BusinessTableModel(newBusinessTable, schemaMeta.getActiveModel());
-        BusinessTableDialog td = new BusinessTableDialog(shell, SWT.NONE, tableModel, schemaMeta, businessColumn);
-        int res = td.open();
-        if (Window.OK == res) {
-          syncBusinessTables(originalBusinessTable, newBusinessTable);
-          if (node != null) {
-            node.sync();
-          } else {
-            synchronize(businessColumn);
-          }
-          refreshAll();
+      BusinessTableDialog td = new BusinessTableDialog(shell, businessColumn, schemaMeta);
+      int res = td.open();
+      if (Window.OK == res) {
+        if (node != null) {
+          node.sync();
+        } else {
+          synchronize(businessColumn);
         }
+        refreshAll();
       }
     }
   }
@@ -3603,15 +3570,10 @@ public class MetaEditor {
 
     if (businessTable != null) {
 
-      BusinessTable copy = (BusinessTable) businessTable.clone();
-      BusinessTableModel tableModel = new BusinessTableModel(copy, schemaMeta.getActiveModel());
-
-      BusinessTableDialog td = new BusinessTableDialog(shell, SWT.NONE, tableModel, schemaMeta, copy);
+      BusinessTableDialog td = new BusinessTableDialog(shell, businessTable, schemaMeta);
       int res = td.open();
 
       if (Window.OK == res) {
-        syncBusinessTables(businessTable, copy);
-
         if (node != null) {
           node.sync();
         } else {

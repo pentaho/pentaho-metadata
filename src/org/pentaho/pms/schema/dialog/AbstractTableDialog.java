@@ -65,7 +65,7 @@ import org.pentaho.pms.schema.concept.editor.IConceptModel;
 import org.pentaho.pms.schema.concept.editor.ITableModel;
 import org.pentaho.pms.schema.concept.editor.TableColumnTreeWidget;
 
-public abstract class AbstractTableDialog extends Dialog {
+public abstract class AbstractTableDialog extends Dialog implements ISelectionChangedListener {
 
   protected ITableModel tableModel;
 
@@ -89,20 +89,21 @@ public abstract class AbstractTableDialog extends Dialog {
 
   protected SchemaMeta schemaMeta;
 
-  protected ISelectionChangedListener tableColumTreeSelectionChangedListener;
-
   protected ToolItem viewButton;
 
   private static final Log logger = LogFactory.getLog(AbstractTableDialog.class);
   
   protected ConceptUtilityInterface initialTableOrColumnSelection;
 
-  public AbstractTableDialog(Shell parent, int style, ITableModel tableModel, SchemaMeta schemaMeta) {
-    this(parent, style, tableModel, schemaMeta, null);
+  protected ToolItem delButton;
+  
+  protected ConceptUtilityInterface lastSelection;
+  
+  public AbstractTableDialog(Shell parent) {
+    super(parent);
   }
 
-  public AbstractTableDialog(Shell parent, int style, ITableModel tableModel, SchemaMeta schemaMeta, ConceptUtilityInterface selectedTableOrColumn) {
-    super(parent);
+  protected void init(ITableModel tableModel, SchemaMeta schemaMeta, ConceptUtilityInterface selectedTableOrColumn) {
     this.tableModel = tableModel;
     this.schemaMeta = schemaMeta;
     Locales locales = schemaMeta.getLocales();
@@ -110,7 +111,7 @@ public abstract class AbstractTableDialog extends Dialog {
     propertyEditorContext.put("locales", locales);
     initialTableOrColumnSelection = selectedTableOrColumn;
   }
-
+  
   protected void setShellStyle(int newShellStyle) {
     super.setShellStyle(newShellStyle | SWT.RESIZE);
   }
@@ -174,7 +175,7 @@ public abstract class AbstractTableDialog extends Dialog {
       }
     });
 
-    final ToolItem delButton = new ToolItem(tb, SWT.PUSH);
+    delButton = new ToolItem(tb, SWT.PUSH);
     delButton.setToolTipText(Messages.getString("PhysicalTableDialog.USER_DELETE_COLUMN")); //$NON-NLS-1$
     delButton.setImage(Constants.getImageRegistry(Display.getCurrent()).get("column-del-button"));
     delButton.addSelectionListener(new SelectionAdapter() {
@@ -190,28 +191,7 @@ public abstract class AbstractTableDialog extends Dialog {
     gridData.horizontalSpan = 2;
     tableColumnTree.getTree().setLayoutData(gridData);
 
-    tableColumTreeSelectionChangedListener = new ISelectionChangedListener() {
-      public void selectionChanged(SelectionChangedEvent e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug("heard tableColumnTree selection changed event: " + e);
-          logger.debug("attempting to swap cards");
-        }
-        if (!e.getSelection().isEmpty()) {
-          TreeSelection treeSel = (TreeSelection) e.getSelection();
-          if (treeSel.getFirstElement() instanceof ConceptUtilityInterface) {
-            ConceptUtilityInterface cu = (ConceptUtilityInterface) treeSel.getFirstElement();
-            if (tableModel.isColumn(cu)) {
-              delButton.setEnabled(true);
-            } else {
-              delButton.setEnabled(false);
-            }
-            swapCard(cu.getConcept());
-          }
-        }
-      }
-    };
-
-    tableColumnTree.addSelectionChangedListener(tableColumTreeSelectionChangedListener);
+    tableColumnTree.addSelectionChangedListener(this);
 
     cardComposite = new Composite(s0, SWT.NONE);
     stackLayout = new StackLayout();
@@ -244,7 +224,7 @@ public abstract class AbstractTableDialog extends Dialog {
   }
 
   protected void cleanup() {
-    tableColumnTree.removeSelectionChangedListener(tableColumTreeSelectionChangedListener);
+    tableColumnTree.removeSelectionChangedListener(this);
   }
 
   protected void delColumnPressed() {
@@ -312,4 +292,26 @@ public abstract class AbstractTableDialog extends Dialog {
 
   }
 
+  protected abstract void showId(String id);
+  
+  public void selectionChanged(SelectionChangedEvent e) {
+    if (!e.getSelection().isEmpty()) {
+      TreeSelection treeSel = (TreeSelection) e.getSelection();
+      if (treeSel.getFirstElement() instanceof ConceptUtilityInterface) {
+        ConceptUtilityInterface cu = (ConceptUtilityInterface) treeSel.getFirstElement();
+        if (tableModel.isColumn(cu)) {
+          delButton.setEnabled(true);
+        } else {
+          delButton.setEnabled(false);
+        }
+        swapCard(cu.getConcept());
+        showId(cu.getId());
+        lastSelection = cu;
+      } else {
+        lastSelection = null;
+      }
+    } else {
+      lastSelection = null;
+    }
+  }
 }
