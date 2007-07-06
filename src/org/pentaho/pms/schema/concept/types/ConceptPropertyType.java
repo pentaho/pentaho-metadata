@@ -1,23 +1,27 @@
 /*
- * Copyright 2006 Pentaho Corporation.  All rights reserved. 
- * This software was developed by Pentaho Corporation and is provided under the terms 
- * of the Mozilla Public License, Version 1.1, or any later version. You may not use 
- * this file except in compliance with the license. If you need a copy of the license, 
- * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho 
+ * Copyright 2006 Pentaho Corporation.  All rights reserved.
+ * This software was developed by Pentaho Corporation and is provided under the terms
+ * of the Mozilla Public License, Version 1.1, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho
  * BI Platform.  The Initial Developer is Pentaho Corporation.
  *
- * Software distributed under the Mozilla Public License is distributed on an "AS IS" 
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to 
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
  * the license for the specific language governing your rights and limitations.
 */
 package org.pentaho.pms.schema.concept.types;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.pentaho.pms.messages.Messages;
 
 public class ConceptPropertyType
 {
-    public static final int PROPERTY_TYPE_STRING           =  0;  
-    public static final int PROPERTY_TYPE_DATE             =  1; 
+    public static final int PROPERTY_TYPE_STRING           =  0;
+    public static final int PROPERTY_TYPE_DATE             =  1;
     public static final int PROPERTY_TYPE_NUMBER           =  2;
     public static final int PROPERTY_TYPE_COLOR            =  3;
     public static final int PROPERTY_TYPE_FONT             =  4;
@@ -35,7 +39,7 @@ public class ConceptPropertyType
     /**
      * These are the core property types to bootstrap the property system.
      */
-    private static final ConceptPropertyType[] propertyTypes = 
+    public static final ConceptPropertyType[] propertyTypes =
         {
             new ConceptPropertyType( PROPERTY_TYPE_STRING,           "String",      Messages.getString("ConceptPropertyType.USER_STRING_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
             new ConceptPropertyType( PROPERTY_TYPE_DATE,             "Date",        Messages.getString("ConceptPropertyType.USER_DATE_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
@@ -53,13 +57,13 @@ public class ConceptPropertyType
             new ConceptPropertyType( PROPERTY_TYPE_ALIGNMENT,        "Alignment",   Messages.getString("ConceptPropertyType.USER_ALIGNMENT_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
             new ConceptPropertyType( PROPERTY_TYPE_COLUMN_WIDTH,     "ColumnWidth", Messages.getString("ConceptPropertyType.USER_COLUMN_WIDTH_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
         };
-    
-    public static final ConceptPropertyType STRING           = propertyTypes[ PROPERTY_TYPE_STRING ];  
-    public static final ConceptPropertyType DATE             = propertyTypes[ PROPERTY_TYPE_DATE ];  
-    public static final ConceptPropertyType NUMBER           = propertyTypes[ PROPERTY_TYPE_NUMBER ];  
-    public static final ConceptPropertyType COLOR            = propertyTypes[ PROPERTY_TYPE_COLOR ];  
-    public static final ConceptPropertyType FONT             = propertyTypes[ PROPERTY_TYPE_FONT ];  
-    public static final ConceptPropertyType FIELDTYPE        = propertyTypes[ PROPERTY_TYPE_FIELDTYPE ];  
+
+    public static final ConceptPropertyType STRING           = propertyTypes[ PROPERTY_TYPE_STRING ];
+    public static final ConceptPropertyType DATE             = propertyTypes[ PROPERTY_TYPE_DATE ];
+    public static final ConceptPropertyType NUMBER           = propertyTypes[ PROPERTY_TYPE_NUMBER ];
+    public static final ConceptPropertyType COLOR            = propertyTypes[ PROPERTY_TYPE_COLOR ];
+    public static final ConceptPropertyType FONT             = propertyTypes[ PROPERTY_TYPE_FONT ];
+    public static final ConceptPropertyType FIELDTYPE        = propertyTypes[ PROPERTY_TYPE_FIELDTYPE ];
     public static final ConceptPropertyType AGGREGATION      = propertyTypes[ PROPERTY_TYPE_AGGREGATION ];
     public static final ConceptPropertyType BOOLEAN          = propertyTypes[ PROPERTY_TYPE_BOOLEAN ];
     public static final ConceptPropertyType DATATYPE         = propertyTypes[ PROPERTY_TYPE_DATATYPE ];
@@ -69,9 +73,9 @@ public class ConceptPropertyType
     public static final ConceptPropertyType SECURITY         = propertyTypes[ PROPERTY_TYPE_SECURITY ];
     public static final ConceptPropertyType ALIGNMENT        = propertyTypes[ PROPERTY_TYPE_ALIGNMENT ];
     public static final ConceptPropertyType COLUMN_WIDTH     = propertyTypes[ PROPERTY_TYPE_COLUMN_WIDTH];
-    
+
     public static final String ISO_DATE_FORMAT = "yyyy/MM/dd'T'HH:mm:ss"; //$NON-NLS-1$
-    
+
     /**
      * @return an array of the core concept property type descriptions
      */
@@ -84,7 +88,7 @@ public class ConceptPropertyType
         }
         return types;
     }
-    
+
     /**
      * @return an array of the core concept property type codes
      */
@@ -101,7 +105,7 @@ public class ConceptPropertyType
     private int type;
     private String code;
     private String description;
-    
+
     /**
      * @param type
      * @param code
@@ -113,17 +117,33 @@ public class ConceptPropertyType
         this.code = code;
         this.description = description;
     }
-    
+
     public String toString()
     {
-        return description;
+      return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).
+      append(type).
+      append(code).
+      append(description).
+      toString();
     }
-    
+
     public boolean equals(Object obj)
     {
-        if (obj==null) return false;
-        ConceptPropertyType propertyType = (ConceptPropertyType) obj;
-        return type==propertyType.getType();
+      if (obj instanceof ConceptPropertyType == false) {
+        return false;
+      }
+      if (this == obj) {
+        return true;
+      }
+      ConceptPropertyType rhs = (ConceptPropertyType) obj;
+      return new EqualsBuilder().append(type, rhs.type).append(code, rhs.code).append(description, rhs.description)
+        .isEquals();
+    }
+
+
+
+    public int hashCode() {
+      return new HashCodeBuilder(97, 269).append(type).append(code).append(description).toHashCode();
     }
 
     /**
@@ -186,5 +206,5 @@ public class ConceptPropertyType
             if (propertyTypes[i].getCode().equals(typeDesc)) return propertyTypes[i];
         }
         return null;
-    }   
+    }
 }
