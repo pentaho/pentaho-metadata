@@ -148,7 +148,7 @@ public class PropertyNavigationWidget extends Composite implements ISelectionPro
     }
 
     boolean delete = MessageDialog.openConfirm(getShell(), "Confirm", "Are you sure you want to remove the property '"
-        + DefaultPropertyID.findDefaultPropertyID(propertyId).getDescription() + "'?");
+        + PredefinedVsCustomPropertyHelper.getDescription(propertyId) + "'?");
 
     if (delete) {
       conceptModel.removeProperty(propertyId);

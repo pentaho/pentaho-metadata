@@ -46,7 +46,7 @@ public class BooleanPropertyEditorWidget extends AbstractPropertyEditorWidget {
       }
     });
     button = new Button(parent, SWT.CHECK);
-    button.setText(DefaultPropertyID.findDefaultPropertyID(getPropertyId()).getDescription());
+    button.setText(PredefinedVsCustomPropertyHelper.getDescription(getPropertyId()));
 
     FormData fdCheck = new FormData();
     fdCheck.left = new FormAttachment(0, 0);

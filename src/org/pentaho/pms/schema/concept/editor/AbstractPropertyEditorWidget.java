@@ -138,7 +138,7 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
    */
   protected final void createTitleLabel() {
     Label titleLabel = new Label(this, SWT.NONE);
-    titleLabel.setText(DefaultPropertyID.findDefaultPropertyID(propertyId).getDescription());
+    titleLabel.setText(PredefinedVsCustomPropertyHelper.getDescription(propertyId));
     Label sep = new Label(this, SWT.SEPARATOR | SWT.HORIZONTAL);
     topControl = sep;
 
@@ -282,13 +282,15 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
     if (null != conceptModel.getProperty(propertyId, IConceptModel.REL_THIS)) {
       boolean delete = MessageDialog.openConfirm(getShell(), "Confirm",
           "Are you sure you want to stop overriding the property '"
-              + DefaultPropertyID.findDefaultPropertyID(propertyId).getDescription() + "'?");
+              + PredefinedVsCustomPropertyHelper.getDescription(propertyId) + "'?");
       if (delete) {
         // no need to update override button selection status; concept mod event will do that
         conceptModel.removeProperty(propertyId);
       }
     } else {
-      conceptModel.setProperty(DefaultPropertyID.findDefaultPropertyID(propertyId).getDefaultValue());
+      ConceptPropertyInterface effectiveProperty = conceptModel.getEffectiveProperty(propertyId);
+      conceptModel.setProperty(PredefinedVsCustomPropertyHelper.createEmptyProperty(propertyId, effectiveProperty
+          .getType()));
     }
   }
 

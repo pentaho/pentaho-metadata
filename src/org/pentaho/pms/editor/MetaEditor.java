@@ -92,13 +92,13 @@ import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
-import org.pentaho.pms.schema.concept.DefaultPropertyID;
 import org.pentaho.pms.schema.concept.dialog.ConceptDialog;
 import org.pentaho.pms.schema.concept.editor.BusinessTableModel;
 import org.pentaho.pms.schema.concept.editor.ConceptEditorDialog;
 import org.pentaho.pms.schema.concept.editor.ConceptTreeModel;
 import org.pentaho.pms.schema.concept.editor.IConceptTreeModel;
 import org.pentaho.pms.schema.concept.editor.PhysicalTableModel;
+import org.pentaho.pms.schema.concept.editor.PredefinedVsCustomPropertyHelper;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.schema.concept.types.datatype.DataTypeSettings;
 import org.pentaho.pms.schema.concept.types.fieldtype.FieldTypeSettings;
@@ -3844,11 +3844,7 @@ public class MetaEditor {
 
     // Get the descriptions to show...
     for (int i = 0; i < ids.length; i++) {
-      DefaultPropertyID propertyID = DefaultPropertyID.findDefaultPropertyID(ids[i]);
-      if (propertyID != null)
-        names[i] = propertyID.getDescription();
-      else
-        names[i] = ids[i];
+      names[i] = PredefinedVsCustomPropertyHelper.getDescription(ids[i]);
     }
 
     // Ask the user to pick the child properties to delete...

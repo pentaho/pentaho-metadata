@@ -376,7 +376,7 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
         return n.getGroupName();
       } else if (element instanceof PropertyNode) {
         PropertyNode n = (PropertyNode) element;
-        return DefaultPropertyID.findDefaultPropertyID(n.getId()).getDescription();
+        return PredefinedVsCustomPropertyHelper.getDescription(n.getId());
       } else {
         return "";
       }
@@ -424,6 +424,11 @@ public class PropertyTreeWidget extends Composite implements ISelectionProvider 
   public void setSelection(ISelection selection) {
     //  not currently supported
     throw new UnsupportedOperationException();
+  }
+
+  public void setEnabled(boolean enable) {
+    super.setEnabled(enable);
+    treeViewer.getTree().setEnabled(enable);
   }
 
 }

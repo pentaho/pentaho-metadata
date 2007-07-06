@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.OrderedMap;
@@ -44,6 +45,8 @@ public class PropertyGroupHelper {
   public static final String GROUP_CALCULATION = "Calculation";
 
   public static final String GROUP_MISC = "Miscellaneous";
+
+  public static final String GROUP_CUSTOM = "Custom";
 
   /**
    * Do not directly access groupMapping or propertyMapping. Instead, use add method. The order that the groups
@@ -116,7 +119,11 @@ public class PropertyGroupHelper {
    * @return group name
    */
   public static String getGroupForProperty(final String id) {
-    return (String) groupMapping.get(id);
+    if (null != groupMapping.get(id)) {
+      return (String) groupMapping.get(id);
+    } else {
+      return GROUP_CUSTOM;
+    }
   }
 
   /**
@@ -127,6 +134,18 @@ public class PropertyGroupHelper {
    * @return a set of property IDs
    */
   public static List getUsedPropertiesForGroup(final String group, final IConceptModel conceptModel) {
+    if (GROUP_CUSTOM.equals(group)) {
+      Map effectivePropertyMap = conceptModel.getEffectivePropertyMap();
+      Iterator keyIter = effectivePropertyMap.keySet().iterator();
+      List customProperties = new ArrayList();
+      while (keyIter.hasNext()) {
+        String id = (String) keyIter.next();
+        if (GROUP_CUSTOM.equals(getGroupForProperty(id))) {
+          customProperties.add(id);
+        }
+      }
+      return customProperties;
+    }
     final List allProperties = getPropertiesForGroup(group);
     List usedProperties = new ArrayList();
     for (Iterator iter = allProperties.iterator(); iter.hasNext();) {
@@ -146,13 +165,19 @@ public class PropertyGroupHelper {
    * @return a set of property IDs
    */
   public static List getUnusedPropertiesForGroup(final String group, final IConceptModel conceptModel) {
+    if (GROUP_CUSTOM.equals(group)) {
+      return Collections.EMPTY_LIST;
+    }
     final List allProperties = getPropertiesForGroup(group);
     final List usedProperties = getUsedPropertiesForGroup(group, conceptModel);
     return new ArrayList(CollectionUtils.subtract(allProperties, usedProperties));
   }
 
   private static List getOrderedGroups() {
-    return wrappedPropertyMap.keyList();
+    List groups = new ArrayList();
+    groups.addAll(wrappedPropertyMap.keyList());
+    groups.add(GROUP_CUSTOM);
+    return groups;
   }
 
   public static List getGroups() {
