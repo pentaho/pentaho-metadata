@@ -62,4 +62,12 @@ REM ***************
 
 start javaw %OPT% org.pentaho.pms.editor.MetaEditor %1 %2 %3 %4 %5 %6 %7 %8 %9
 
+REM *****************************************************************************
+REM If you are having trouble launching the application, comment out the 
+REM "start javaw..."  line above, and uncomment the next 2 lines below . 
+REM This will allow you to see any exceptions that may be preventing the 
+REM application from starting successfully ...
 
+REM java %OPT% org.pentaho.pms.editor.MetaEditor %1 %2 %3 %4 %5 %6 %7 %8 %9
+REM pause
+REM ******************************************************************************
