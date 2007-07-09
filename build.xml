@@ -88,18 +88,18 @@
 		
 		<echo>Copying images etc to classes directory...</echo>
 		<copy todir="${build.classes.dir}">
-			<fileset dir="${src}" includes="**/*.png **/*.xml **/*properties" />
+			<fileset dir="${src}" includes="**/*.gif **/*.png **/*.xml **/*properties" />
 		</copy>
 	</target>
 
 	<target name="zip-pentaho-metadata-javadoc" depends="init-pentaho-metadata-javadoc, compile" description="compile the javadoc api">
 		<echo>Compiling the Pentaho Metadata API javadocs...</echo>
+		
 		<javadoc destdir="${build.javadoc.dir}/docs/api" access="public" source="1.4" use="true" notree="false" nonavbar="false" noindex="false" splitindex="true" author="true" version="true" maxmemory="256M" nodeprecatedlist="false" nodeprecated="false" packagenames="org.pentaho.pms.*" sourcepath="${src}" doctitle="Pentaho Metadata API documentation">
 			<link href="http://java.sun.com/j2se/1.4.2/docs/api/" />
 
 			<classpath refid="cp-meta" />
 		</javadoc>
-
 		<jar jarfile="${dist.dir}/PentahoMetaData-javadoc-${release.number}.zip" basedir="${build.javadoc.dir}" includes="**/*" excludes="**/Thumbs.db" />
 	</target>
 
