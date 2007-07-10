@@ -1,14 +1,44 @@
-04/26/2007
-Pentaho metadata Release Notes for: 1.5.3
+07/10/2007
+Pentaho metadata Release Notes for: 1.5.5
 
 This is a milestone\development build of the Pentaho metadata layer and the Metadata Editor. 
-As a snapshot of the progress towards the first official version of Pentaho metadata, this build
-is intended to present the new features, improvements, and fixes to the community 
-for review and testing. A production quality build of the current Pentaho BI Suite
-1.2 can be found at http://www.pentaho.org/download/.
+All major features are complete.  Many usability improvements and bugs have been fixed since 
+Milestone 4.  This milestone build is not production ready.
 
 Release History
 ===============
+Milestone 5 (version 1.5.5)
+
+   Resolved issues for this release:
+	PMD-132	User reported NPE in 1.5M3
+	PMD-131	The new column/table properties editor dialog does not allow users to create new custom properties.
+	PMD-127	Change UI to allow setting and changing the connection on a business model
+	PMD-126	MQL Generation needs quoted Tables and Columns
+	PMD-125	Publish allows you to publish to a folder other than a solution
+	PMD-124	New models should have a description property by default
+	PMD-117	The process of overriding column properties is unintuitive and prone to error.
+	PMD-116	Unable to initialize Pentaho metadata - error in Design Studio
+	PMD-115	Dragging a Relationship Instance into its parent "Relationships" causes MetaEditor to freeze in Linux
+	PMD-113	Add unused columns button click handler not implemented in Add New Column dialog.
+	PMD-112	PME allows user to remove child properties of a column that are integral to SQL execution.
+	PMD-110	Tree View in Properties Editor inconsistent with Tree View in main window
+	PMD-107	Creating new business model requires the name to be entered twice for proper display.
+	PMD-98	Metadata Editor - Cancel doesn't work in New Business Model dialog
+	PMD-86	Listeners for ID change events could be static members of the ConceptUtilityBase Class
+	PMD-63	Business View Properties dialog has layout problems
+	PMD-60	right-click menu on Linux does not populate with all options
+	PMD-59	cannot use command-click to multi-select objects in graphical view on osx
+	PMD-53	Subject field overlaps new column button
+	PMD-49	"PMD-47Publish UI for MetaData Editor"
+	PMD-36	Deleting business view doesn't completely remove it
+	PMD-32	Present and Review CWM and MDR
+	PMD-29	After saving model in metaeditor client application cannot list models
+	PMD-11	PMD Service: Server component for supporting MQL clients
+	PMD-7	Apply security to Business Views
+	PMD-6	Publish Business View to Pentaho Server
+	PMD-3	Review persistence and security of metadata repository     
+
+
 Milestone 4 (version 1.5.4)
   - Added ability to publish metadata to Pentaho BI Server
   - Usability improvements to the Metadata Editor 
