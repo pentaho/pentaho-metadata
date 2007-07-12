@@ -14,6 +14,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -21,6 +22,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -222,8 +224,19 @@ public class ConceptEditorDialog extends Dialog {
     } else {
       if (null == cards.get(concept)) {
         IConceptModel conceptModel = conceptModelRegistry.getConceptModel(concept);
-        ConceptEditorWidget conceptEditor = new ConceptEditorWidget(cardComposite, SWT.NONE, conceptModel,
-            propertyEditorContext, conceptTreeModel.getSchemaMeta().getSecurityReference());
+        
+        Composite conceptEditor = new Composite(cardComposite, SWT.NONE);
+        conceptEditor.setLayout(new FillLayout());
+
+        Group group = new Group(conceptEditor, SWT.SHADOW_OUT);
+        group.setText("Properties");
+        group.setLayout(new FillLayout());
+        SashForm s0 = new SashForm(group, SWT.HORIZONTAL);
+        s0.SASH_WIDTH = 10;
+        PropertyNavigationWidget propertyNavigationWidget = new PropertyNavigationWidget(s0, SWT.NONE, conceptModel);
+        PropertyWidgetManager2 propertyWidgetManager = new PropertyWidgetManager2(s0, SWT.NONE, conceptModel, propertyEditorContext, conceptTreeModel.getSchemaMeta().getSecurityReference());
+        propertyNavigationWidget.addSelectionChangedListener(propertyWidgetManager);
+        s0.setWeights(new int[] { 1, 2 });
         cards.put(concept, conceptEditor);
       }
       stackLayout.topControl = (Control) cards.get(concept);
