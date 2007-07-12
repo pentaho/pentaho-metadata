@@ -46,11 +46,17 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -58,8 +64,12 @@ import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.PhysicalColumn;
 import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.SchemaMeta;
+import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
+import org.pentaho.pms.schema.concept.editor.IConceptModel;
 import org.pentaho.pms.schema.concept.editor.PhysicalTableModel;
+import org.pentaho.pms.schema.concept.editor.PropertyNavigationWidget;
+import org.pentaho.pms.schema.concept.editor.PropertyWidgetManager2;
 import org.pentaho.pms.util.Settings;
 
 import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
@@ -68,8 +78,6 @@ public class PhysicalTableDialog extends AbstractTableDialog {
 
   private static final Log logger = LogFactory.getLog(PhysicalTableDialog.class);
 
-  private Text wId;
-  
   HashMap modificationsMap = new HashMap();
 
   public PhysicalTableDialog(Shell parent, PhysicalColumn origPhysicalColumn, SchemaMeta schemaMeta) {
@@ -130,49 +138,17 @@ public class PhysicalTableDialog extends AbstractTableDialog {
     }
   }
 
-  protected Control createTop(final Composite parent) {
-    Composite c0 = new Composite(parent, SWT.NONE);
-    c0.setLayout(new FormLayout());
-
-    Label wlId = new Label(c0, SWT.RIGHT);
-    wlId.setText(Messages.getString("PhysicalTableDialog.USER_NAME_ID")); //$NON-NLS-1$
-    wId = new Text(c0, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
-
-    FormData fdlId = new FormData();
-    fdlId.left = new FormAttachment(0, 0);
-
-    fdlId.top = new FormAttachment(wId, 0, SWT.CENTER);
-    wlId.setLayoutData(fdlId);
-
-    wId.setText(""); //$NON-NLS-1$
-
-    //    wId.addModifyListener(lsMod);
-    FormData fdId = new FormData();
-    fdId.left = new FormAttachment(wlId, 10);
-    fdId.top = new FormAttachment(0, 0);
-    fdId.right = new FormAttachment(100, 0);
-    wId.setLayoutData(fdId);
-
-    if (tableModel.getId() != null) {
-      wId.setText(tableModel.getId());
-      if (initialTableOrColumnSelection == null) {
-        wId.selectAll();
-      }
-    }
-    return c0;
-  }
-
   protected void okPressed() {
     try {
       if (lastSelection != null) {
-        String id = wId.getText();
+        String id = conceptIdText.getText();
         if (id.trim().length() == 0) {
-          MessageDialog.openError(getShell(), Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("PhysicalTableDialog.USER_ERROR_INVALID_ID", wId.getText()));
+          MessageDialog.openError(getShell(), Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("PhysicalTableDialog.USER_ERROR_INVALID_ID", conceptIdText.getText()));
           tableColumnTree.setSelection(new StructuredSelection(lastSelection));
-          wId.forceFocus();
-          wId.selectAll();
+          conceptIdText.forceFocus();
+          conceptIdText.selectAll();
         } else {
-          lastSelection.setId(wId.getText());
+          lastSelection.setId(conceptIdText.getText());
           updateOriginalPhysicalTable();
           super.okPressed();
         }
@@ -184,26 +160,22 @@ public class PhysicalTableDialog extends AbstractTableDialog {
       if (logger.isErrorEnabled()) {
         logger.error("an exception occurred", e);
       }
-      MessageDialog.openError(getShell(), Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("PhysicalTableDialog.USER_ERROR_PHYSICAL_TABLE_ID_EXISTS", wId.getText()));
+      MessageDialog.openError(getShell(), Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("PhysicalTableDialog.USER_ERROR_PHYSICAL_TABLE_ID_EXISTS", conceptIdText.getText()));
     }
   }
-  
-  protected void showId(String id) {
-    wId.setText(id);
-  }
-  
+    
   public void selectionChanged(SelectionChangedEvent e) {
     if (lastSelection != null) {
       try {
-        String id = wId.getText();
+        String id = conceptIdText.getText();
         if (id.trim().length() == 0) {
           MessageDialog.openError(getShell(), Messages.getString("General.USER_TITLE_ERROR"), Messages.getString(
-              "PhysicalTableDialog.USER_ERROR_INVALID_ID", wId.getText()));
+              "PhysicalTableDialog.USER_ERROR_INVALID_ID", conceptIdText.getText()));
           tableColumnTree.setSelection(new StructuredSelection(lastSelection));
-          wId.forceFocus();
-          wId.selectAll();
+          conceptIdText.forceFocus();
+          conceptIdText.selectAll();
         } else {
-          lastSelection.setId(wId.getText());
+          lastSelection.setId(conceptIdText.getText());
           super.selectionChanged(e);
         }
       } catch (ObjectAlreadyExistsException e1) {
@@ -211,7 +183,7 @@ public class PhysicalTableDialog extends AbstractTableDialog {
           logger.error("an exception occurred", e1);
         }
         MessageDialog.openError(getShell(), Messages.getString("General.USER_TITLE_ERROR"), Messages.getString(
-            "PhysicalTableDialog.USER_ERROR_PHYSICAL_TABLE_ID_EXISTS", wId.getText()));
+            "PhysicalTableDialog.USER_ERROR_PHYSICAL_TABLE_ID_EXISTS", conceptIdText.getText()));
       }
     } else {
       super.selectionChanged(e);
@@ -279,4 +251,51 @@ public class PhysicalTableDialog extends AbstractTableDialog {
       }
     }
   }
+  
+  protected Composite createConceptEditor(ConceptUtilityInterface cu) {
+    ConceptInterface concept = cu.getConcept();
+    IConceptModel conceptModel = conceptModelRegistry.getConceptModel(concept);
+    Composite conceptEditor = new Composite(cardComposite, SWT.NONE);
+    conceptEditor.setLayout(new FillLayout());
+
+    Group group = new Group(conceptEditor, SWT.SHADOW_OUT);
+    group.setText("Properties");
+    group.setLayout(new GridLayout());
+    
+    SashForm s0 = new SashForm(group, SWT.HORIZONTAL);
+    s0.SASH_WIDTH = 10;
+    Composite leftComposite = new Composite(s0, SWT.NONE);
+    leftComposite.setLayout(new GridLayout());
+    Label wlId = new Label(leftComposite, SWT.RIGHT);
+    wlId.setText(Messages.getString("PhysicalTableDialog.USER_NAME_ID")); //$NON-NLS-1$
+    conceptIdText = new Text(leftComposite, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
+    conceptIdText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+    PropertyNavigationWidget propertyNavigationWidget = new PropertyNavigationWidget(leftComposite, SWT.NONE, conceptModel);
+    propertyNavigationWidget.setLayoutData(new GridData(GridData.FILL_BOTH));
+    
+    Composite rightComposite = new Composite(s0, SWT.NONE);
+    rightComposite.setLayout(new GridLayout());
+    new Label(rightComposite, SWT.RIGHT);
+    Combo fillerCombo = new Combo(rightComposite, SWT.NONE);
+    fillerCombo.setVisible(false);
+    
+    PropertyWidgetManager2 propertyWidgetManager = new PropertyWidgetManager2(rightComposite, SWT.NONE, conceptModel, propertyEditorContext, schemaMeta.getSecurityReference());
+    propertyWidgetManager.setLayoutData(new GridData(GridData.FILL_BOTH));
+    propertyNavigationWidget.addSelectionChangedListener(propertyWidgetManager);
+    GridData gridData = new GridData(GridData.FILL_BOTH);
+    gridData.heightHint = 20;
+    s0.setLayoutData(gridData);
+    s0.setWeights(new int[] { 1, 2 });
+    
+    if (tableModel.getId() != null) {
+      conceptIdText.setText(tableModel.getId());
+      if (initialTableOrColumnSelection == null) {
+        conceptIdText.selectAll();
+      }
+    }
+
+    return conceptEditor;
+  }
+
+
 }

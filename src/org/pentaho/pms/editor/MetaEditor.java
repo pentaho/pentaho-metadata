@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -92,7 +93,6 @@ import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
-import org.pentaho.pms.schema.concept.dialog.ConceptDialog;
 import org.pentaho.pms.schema.concept.editor.ConceptEditorDialog;
 import org.pentaho.pms.schema.concept.editor.ConceptTreeModel;
 import org.pentaho.pms.schema.concept.editor.IConceptTreeModel;
@@ -169,7 +169,7 @@ import be.ibridge.kettle.trans.StepLoader;
  *
  * @since 16-may-2003
  */
-public class MetaEditor {
+public class MetaEditor implements SelectionListener{
   private CWM cwm;
 
   private LogWriter log;
@@ -225,9 +225,11 @@ public class MetaEditor {
 
   private Menu mPopAD;
 
-  private MenuItem miEditSelectAll, miEditUnselectAll, miEditOptions, miEditRefresh;
+  private MenuItem miEditSelectAll, miEditUnselectAll, miEditProperties, miEditOptions, miEditRefresh;
 
-  private Listener lsEditSelectAll, lsEditUnselectAll, lsEditOptions, lsEditRefresh;
+  private Listener lsEditSelectAll, lsEditUnselectAll, lsEditOptions, lsEditProperties, lsEditRefresh;
+  
+  private ToolItem tiEditProperties;
 
   private MenuItem mHelp;
 
@@ -236,8 +238,6 @@ public class MetaEditor {
   private MenuItem miHelpAbout;
 
   private Listener lsHelpAbout;
-
-  private SelectionAdapter lsEditDef, lsEditMainSel;
 
   public static final String STRING_CONNECTIONS = Messages.getString("MetaEditor.USER_CONNECTIONS"); //$NON-NLS-1$
 
@@ -522,6 +522,11 @@ public class MetaEditor {
     lsEditOptions = new Listener() {
       public void handleEvent(Event e) {
         editOptions();
+      }
+    };
+    lsEditProperties = new Listener() {
+      public void handleEvent(Event e) {
+        editSelectedProperties();
       }
     };
     lsEditRefresh = new Listener() {
@@ -894,10 +899,15 @@ public class MetaEditor {
     msEdit = new Menu(shell, SWT.DROP_DOWN);
     mEdit.setMenu(msEdit);
 
-    miEditOptions = new MenuItem(msEdit, SWT.CASCADE);
-    miEditOptions.setText(Messages.getString("MetaEditor.USER_EDIT_PROPS")); //$NON-NLS-1$
-    miEditOptions.addListener(SWT.Selection, lsEditOptions);
+    miEditProperties = new MenuItem(msEdit, SWT.CASCADE);
+    miEditProperties.setText(Messages.getString("MetaEditor.USER_EDIT_PROPS")); //$NON-NLS-1$
+    miEditProperties.addListener(SWT.Selection, lsEditProperties);
+    miEditProperties.setEnabled(false);
 
+    miEditOptions = new MenuItem(msEdit, SWT.CASCADE);
+    miEditOptions.setText(Messages.getString("MetaEditor.USER_EDIT_OPTIONS")); //$NON-NLS-1$
+    miEditOptions.addListener(SWT.Selection, lsEditOptions);
+    
     new MenuItem(msEdit, SWT.SEPARATOR);
     miEditUnselectAll = new MenuItem(msEdit, SWT.CASCADE);
     miEditUnselectAll.setText(Messages.getString("MetaEditor.USER_CLEAR_SELECTION")); //$NON-NLS-1$
@@ -1197,9 +1207,10 @@ public class MetaEditor {
     tiCategoryEdit.addListener(SWT.Selection, lsEditCategories);
 
     new ToolItem(tBar, SWT.SEPARATOR);
-    final ToolItem tiProperties = new ToolItem(tBar, SWT.PUSH);
-    tiProperties.setImage(imPropertyEdit);
-    tiProperties.addListener(SWT.Selection, lsEditOptions);
+    tiEditProperties = new ToolItem(tBar, SWT.PUSH);
+    tiEditProperties.setImage(imPropertyEdit);
+    tiEditProperties.addListener(SWT.Selection, lsEditProperties);
+    tiEditProperties.setEnabled(false);
 
     new ToolItem(tBar, SWT.SEPARATOR);
     tiAlignLeft = new ToolItem(tBar, SWT.PUSH);
@@ -1281,29 +1292,7 @@ public class MetaEditor {
 
     treeViewer.getTree().setBackground(GUIResource.getInstance().getColorBackground());
 
-    // Default selection (double-click, enter)
-    lsEditDef = new SelectionAdapter() {
-      public void widgetDefaultSelected(SelectionEvent e) {
-        doubleClickedMain();
-      }
-    };
-    treeViewer.getTree().addSelectionListener(lsEditDef); // double click somewhere in the tree...
-
-    // Normal selection: right click
-    lsEditMainSel = new SelectionAdapter() {
-      public void widgetSelected(SelectionEvent e) {
-        setMenuMain(e);
-      }
-    };
-    treeViewer.getTree().addSelectionListener(lsEditMainSel);
-
-    // Normal selection: left click to select business model
-    SelectionListener lsSelBusinessModel = new SelectionAdapter() {
-      public void widgetSelected(SelectionEvent e) {
-        setActiveBusinessModel(e);
-      }
-    };
-    treeViewer.getTree().addSelectionListener(lsSelBusinessModel);
+    treeViewer.getTree().addSelectionListener(this); // double click somewhere in the tree...
 
     addDragSourceToTree(treeViewer.getTree());
     addDropTargetToTree(treeViewer.getTree());
@@ -1366,7 +1355,7 @@ public class MetaEditor {
             ((container.getType() == DragAndDropContainer.TYPE_BUSINESS_TABLE)
             || (container.getType() == DragAndDropContainer.TYPE_BUSINESS_COLUMN));
 
-          if (isAppropriateForBusinessView && (!(targetNode instanceof CategoryTreeNode) && !(targetNode instanceof BusinessViewTreeNode))){
+          if (isAppropriateForBusinessView && (!(targetNode instanceof CategoryTreeNode) && !(targetNode instanceof BusinessViewTreeNode) && !(targetNode instanceof BusinessViewTreeNode))){
             MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_ERROR);
             mb.setMessage(Messages.getString("MetaEditor.USER_ERROR_DRAG_TO_VIEW")); //$NON-NLS-1$
             mb.setText(Messages.getString("General.USER_TITLE_ERROR")); //$NON-NLS-1$
@@ -1400,6 +1389,8 @@ public class MetaEditor {
           BusinessCategory parentCategory = null;
           if (targetNode instanceof CategoryTreeNode) {
             parentCategory = ((CategoryTreeNode) targetNode).getCategory();
+          } else if (targetNode instanceof BusinessViewTreeNode) {
+            parentCategory = ((BusinessViewTreeNode) targetNode).getRootCategory();
           } else {
             parentCategory = activeModel.getRootCategory();
           }
@@ -1579,7 +1570,7 @@ public class MetaEditor {
    *
    * @param e
    */
-  private void setMenuMain(SelectionEvent e) {
+  private void updateMenusAndToolbars(SelectionEvent e) {
     final TreeItem ti = (TreeItem) e.item;
     final ConceptTreeNode node = (ConceptTreeNode) ti.getData();
 
@@ -1593,6 +1584,16 @@ public class MetaEditor {
         items[i].dispose();
     }
 
+    boolean enableProperties = ((node instanceof BusinessColumnTreeNode)
+        || (node instanceof BusinessModelTreeNode)
+        || (node instanceof BusinessTableTreeNode)
+        || (node instanceof CategoryTreeNode)
+        || (node instanceof PhysicalColumnTreeNode)
+        || (node instanceof DatabaseMetaTreeNode)
+        || (node instanceof PhysicalTableTreeNode));
+    tiEditProperties.setEnabled(enableProperties);
+    miEditProperties.setEnabled(enableProperties);
+    
     if (node instanceof ConnectionsTreeNode) {
       MenuItem miNew = new MenuItem(mainMenu, SWT.PUSH);
       miNew.setText(Messages.getString("MetaEditor.USER_NEW_TEXT")); //$NON-NLS-1$
@@ -1801,7 +1802,7 @@ public class MetaEditor {
         }
       });
     } else if (node instanceof BusinessViewTreeNode) {
-      final BusinessCategory businessCategory = ((BusinessViewTreeNode) node).getCategory();
+      final BusinessCategory businessCategory = ((BusinessViewTreeNode) node).getRootCategory();
       MenuItem miNew = new MenuItem(mainMenu, SWT.PUSH);
       miNew.setText(Messages.getString("MetaEditor.USER_NEW_CATEGORY")); //$NON-NLS-1$
       miNew.addListener(SWT.Selection, new Listener() {
@@ -1863,12 +1864,12 @@ public class MetaEditor {
         }
       });
     } else if (node instanceof BusinessColumnTreeNode) {
-      final BusinessColumn physicalColumn = (BusinessColumn) ((BusinessColumnTreeNode) node).getDomainObject();
+      final BusinessColumn businessColumn = (BusinessColumn) ((BusinessColumnTreeNode) node).getDomainObject();
       MenuItem miEdit = new MenuItem(mainMenu, SWT.PUSH);
       miEdit.setText(Messages.getString("MetaEditor.USER_EDIT_TEXT")); //$NON-NLS-1$
       miEdit.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event evt) {
-          editBusinessColumn(physicalColumn, (BusinessColumnTreeNode) node);
+          editBusinessColumn(businessColumn, (BusinessColumnTreeNode) node);
           treeViewer.update(node.getParent(), null);
         }
       });
@@ -1903,9 +1904,15 @@ public class MetaEditor {
         return;
       }
 
-      final CategoryTreeNode parentNode = (CategoryTreeNode) node.getParent();
+      Object parentNode = node.getParent();
       final BusinessCategory currentCategory = ((CategoryTreeNode) node).getCategory();
-      final BusinessCategory parentCategory = parentNode.getCategory();
+      BusinessCategory tmpCategory = null;
+      if (parentNode instanceof CategoryTreeNode) {
+        tmpCategory = ((CategoryTreeNode)parentNode).getCategory();
+      } else {
+        tmpCategory = ((BusinessViewTreeNode)parentNode).getRootCategory();
+      }
+      final BusinessCategory parentCategory = tmpCategory;
 
       // Get the actual parent and current category
       MenuItem miNew = new MenuItem(mainMenu, SWT.PUSH);
@@ -1925,10 +1932,10 @@ public class MetaEditor {
       });
 
       MenuItem miEdit = new MenuItem(mainMenu, SWT.PUSH);
-      miEdit.setText(Messages.getString("MetaEditor.USER_EDIT_CATEGORY")); //$NON-NLS-1$
+      miEdit.setText(Messages.getString("MetaEditor.USER_EDIT_TEXT")); //$NON-NLS-1$
       miEdit.addListener(SWT.Selection, new Listener() {
         public void handleEvent(Event ev) {
-          editBusinessCategory(currentCategory);
+          editBusinessCategory(currentCategory, node);
           treeViewer.update(node, null);
         }
       });
@@ -1968,7 +1975,8 @@ public class MetaEditor {
         }
       });
     }else if ((node instanceof BusinessColumnTreeNode)
-        && (node.getParent() instanceof CategoryTreeNode)) {
+        && (node.getParent() instanceof CategoryTreeNode)
+        && (node.getParent() instanceof BusinessViewTreeNode)) {
 
       MenuItem miCategoryEditor = new MenuItem(mainMenu, SWT.PUSH);
       miCategoryEditor.setText(Messages.getString("MetaEditor.USER_CONFIGURE_CATEGORYS")); //$NON-NLS-1$
@@ -2033,9 +2041,8 @@ public class MetaEditor {
         .getBusinessCategories()));
 
     while (true) {
-      BusinessCategoryDialog dialog = new BusinessCategoryDialog(shell, businessCategory, schemaMeta.getLocales(),
-          schemaMeta.getSecurityReference());
-      if (dialog.open() != null) {
+      BusinessCategoryDialog dialog = new BusinessCategoryDialog(shell, businessCategory, schemaMeta);
+      if (dialog.open() == Window.OK) {
         // Add this to the parent.
         try {
           parentCategory.addBusinessCategory(businessCategory);
@@ -2062,13 +2069,43 @@ public class MetaEditor {
     }
   }
 
-  public void editBusinessCategory(BusinessCategory businessCategory) {
-    BusinessCategoryDialog dialog = new BusinessCategoryDialog(shell, businessCategory, schemaMeta.getLocales(),
-        schemaMeta.getSecurityReference());
-    if (dialog.open() != null) {
-      // refresh it all...
+  public void editBusinessCategory(BusinessCategory businessCategory, ConceptTreeNode node) {
+    if (businessCategory != null) {
+      BusinessCategory newBusCategory = (BusinessCategory) businessCategory.clone();
+      BusinessCategoryDialog dialog = new BusinessCategoryDialog(shell, newBusCategory, schemaMeta);
+      int res = dialog.open();
+
+      if (Window.OK == res) {
+
+        // Clear the properties
+        businessCategory.getConcept().clearChildProperties();
+
+        // Copy concept changes
+        businessCategory.getConcept().getChildPropertyInterfaces().putAll(
+            newBusCategory.getConcept().getChildPropertyInterfaces());
+
+        try {
+          businessCategory.setId(newBusCategory.getId());
+        } catch (ObjectAlreadyExistsException e) {
+          MessageDialog.openError(this.shell, Messages.getString("General.USER_TITLE_ERROR"), Messages.getString(
+              "The id '{0}' is already in use.", newBusCategory.getId()));
+        }
+
+      }
+
+      if (node != null) {
+        node.sync();
+      } else {
+        synchronize(businessCategory);
+      }
       refreshAll();
     }
+//    BusinessCategoryDialog dialog = new BusinessCategoryDialog(shell, businessCategory, schemaMeta.getLocales(),
+//        schemaMeta.getSecurityReference());
+//    if (dialog.open() != null) {
+//      // refresh it all...
+//      refreshAll();
+//    }
 
   }
 
@@ -2076,8 +2113,7 @@ public class MetaEditor {
     BusinessModel activeModel = schemaMeta.getActiveModel();
 
     if (activeModel != null) {
-      CategoryEditorDialog dialog = new CategoryEditorDialog(shell, activeModel, schemaMeta.getLocales(), schemaMeta
-          .getSecurityReference());
+      CategoryEditorDialog dialog = new CategoryEditorDialog(shell, activeModel, schemaMeta);
       dialog.open();
       if (activeModelTreeNode != null)
         activeModelTreeNode.getBusinessViewRoot().sync();
@@ -2395,20 +2431,17 @@ public class MetaEditor {
         if (businessCategory.isRootCategory()) {
           editBusinessCategories();
         } else {
-          editBusinessCategory(businessCategory);
+          editBusinessCategory(businessCategory, node);
+        }
+      } else if (node instanceof BusinessViewTreeNode) {
+        BusinessCategory businessCategory = ((BusinessViewTreeNode) node).getRootCategory();
+        if (businessCategory.isRootCategory()) {
+          editBusinessCategories();
+        } else {
+          editBusinessCategory(businessCategory, node);
         }
       }
       treeViewer.update(node, null);
-    }
-  }
-
-  private void editProperties(String message, ConceptUtilityInterface utilityInterface) {
-    ConceptDialog dialog = new ConceptDialog(shell,
-        Messages.getString("MetaEditor.USER_ENTER_PROPERTIES"), message, utilityInterface, schemaMeta); //$NON-NLS-1$
-    String id = dialog.open();
-    if (id != null) {
-      mainTreeNode.sync();
-      refreshAll();
     }
   }
 
@@ -2972,6 +3005,33 @@ public class MetaEditor {
     }
   }
 
+  public void editSelectedProperties() {
+    Object selectedItem = ((StructuredSelection)treeViewer.getSelection()).getFirstElement();
+    if (selectedItem instanceof BusinessColumnTreeNode) {
+      BusinessColumnTreeNode businessColumnTreeNode = (BusinessColumnTreeNode)selectedItem;
+      editBusinessColumn(businessColumnTreeNode.getBusinessColumn(), businessColumnTreeNode);
+    } else if (selectedItem instanceof BusinessModelTreeNode) {
+      BusinessModelTreeNode businessModelTreeNode = (BusinessModelTreeNode)selectedItem;
+      editBusinessModel(businessModelTreeNode.getBusinessModel());
+    } else if (selectedItem instanceof BusinessTableTreeNode) {
+      BusinessTableTreeNode businessTableTreeNode = (BusinessTableTreeNode)selectedItem;
+      editBusinessTable((BusinessTable)businessTableTreeNode.getDomainObject());
+    } else if (selectedItem instanceof CategoryTreeNode) {
+      CategoryTreeNode categoryTreeNode = (CategoryTreeNode)selectedItem;
+      editBusinessCategory(categoryTreeNode.getCategory(), (CategoryTreeNode)selectedItem);
+    } else if (selectedItem instanceof PhysicalColumnTreeNode) {
+      PhysicalColumnTreeNode physicalColumnTreeNode = (PhysicalColumnTreeNode)selectedItem;
+      editPhysicalColumn((PhysicalColumn)physicalColumnTreeNode.getDomainObject());
+    } else if (selectedItem instanceof PhysicalTableTreeNode) {
+      PhysicalTableTreeNode physicalTableTreeNode = (PhysicalTableTreeNode)selectedItem;
+          editPhysicalTable((PhysicalTable)physicalTableTreeNode.getDomainObject());
+    } else if (selectedItem instanceof DatabaseMetaTreeNode) { // We clicked on a database node
+      DatabaseMeta databaseMeta = ((DatabaseMetaTreeNode) selectedItem).getDatabaseMeta();
+      editConnection(databaseMeta);
+      treeViewer.update(selectedItem, null);
+    }
+  }
+  
   public int getTreePosition(TreeItem ti, String item) {
     if (ti != null) {
       TreeItem items[] = ti.getItems();
@@ -3503,19 +3563,6 @@ public class MetaEditor {
     this.schemaMeta = schemaMeta;
   }
 
-  /*
-   public void editBusinessTable(String businessTableName) {
-   BusinessModel activeModel = schemaMeta.getActiveModel();
-   if (activeModel == null)
-   return;
-
-   BusinessTable businessTable = activeModel.findBusinessTable(schemaMeta.getActiveLocale(), businessTableName);
-   if (businessTable != null) {
-   editBusinessTable(businessTable);
-   }
-   }
-   */
-
   public void editBusinessTable(BusinessTable businessTable) {
     editBusinessTable(businessTable, null);
   }
@@ -3830,6 +3877,19 @@ public class MetaEditor {
 
       refreshAll();
     }
+  }
+
+  public void widgetDefaultSelected(SelectionEvent e) {
+    if (e.getSource() == treeViewer.getTree()) {
+      doubleClickedMain();
+    }
+  }
+
+  public void widgetSelected(SelectionEvent e) {
+    if (e.getSource() == treeViewer.getTree()) {
+      updateMenusAndToolbars(e);
+      setActiveBusinessModel(e);
+    }    
   }
 
 }

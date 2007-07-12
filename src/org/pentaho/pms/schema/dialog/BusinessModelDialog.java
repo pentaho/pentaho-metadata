@@ -29,8 +29,10 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -38,6 +40,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -46,9 +49,10 @@ import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
-import org.pentaho.pms.schema.concept.editor.ConceptEditorWidget;
 import org.pentaho.pms.schema.concept.editor.ConceptModel;
 import org.pentaho.pms.schema.concept.editor.IConceptModel;
+import org.pentaho.pms.schema.concept.editor.PropertyNavigationWidget;
+import org.pentaho.pms.schema.concept.editor.PropertyWidgetManager2;
 
 import be.ibridge.kettle.core.database.DatabaseMeta;
 import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
@@ -131,9 +135,19 @@ public class BusinessModelDialog extends Dialog {
     fdTop.right = new FormAttachment(100, 0);
     top.setLayoutData(fdTop);
 
-    ConceptEditorWidget conceptEditor = new ConceptEditorWidget(container, SWT.NONE, conceptModel,
-        propertyEditorContext, schemaMeta.getSecurityReference());
+    Composite conceptEditor = new Composite(container, SWT.NONE);
+    conceptEditor.setLayout(new FillLayout());
 
+    Group group = new Group(conceptEditor, SWT.SHADOW_OUT);
+    group.setText("Properties");
+    group.setLayout(new FillLayout());
+    SashForm s0 = new SashForm(group, SWT.HORIZONTAL);
+    s0.SASH_WIDTH = 10;
+    PropertyNavigationWidget propertyNavigationWidget = new PropertyNavigationWidget(s0, SWT.NONE, conceptModel);
+    PropertyWidgetManager2 propertyWidgetManager = new PropertyWidgetManager2(s0, SWT.NONE, conceptModel, propertyEditorContext, schemaMeta.getSecurityReference());
+    propertyNavigationWidget.addSelectionChangedListener(propertyWidgetManager);
+    s0.setWeights(new int[] { 1, 2 });
+    
     FormData fdConcept = new FormData();
     fdConcept.left = new FormAttachment(0, 0);
     fdConcept.top = new FormAttachment(top, 10);

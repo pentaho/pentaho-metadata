@@ -14,6 +14,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -34,18 +35,18 @@ import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.jface.tree.ITreeNodeChangedListener;
 import org.pentaho.pms.jface.tree.TreeContentProvider;
 import org.pentaho.pms.jface.tree.TreeLabelProvider;
-import org.pentaho.pms.locale.Locales;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
-import org.pentaho.pms.schema.security.SecurityReference;
+import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.ui.tree.BusinessColumnTreeNode;
 import org.pentaho.pms.ui.tree.BusinessTableTreeNode;
 import org.pentaho.pms.ui.tree.BusinessTablesTreeNode;
 import org.pentaho.pms.ui.tree.BusinessViewTreeNode;
 import org.pentaho.pms.ui.tree.CategoryTreeNode;
+import org.pentaho.pms.ui.tree.ConceptTreeNode;
 import org.pentaho.pms.util.GUIResource;
 
 import be.ibridge.kettle.core.dialog.ErrorDialog;
@@ -66,12 +67,8 @@ public class CategoryEditorDialog extends TitleAreaDialog {
 
   private BusinessModel businessModel;
 
-  private Locales locales;
-
-  private String activeLocale;
-
-  private SecurityReference securityReference;
-
+  private SchemaMeta schemaMeta;
+  
   private TreeViewer wTables;
 
   private TreeViewer wCategories;
@@ -89,14 +86,10 @@ public class CategoryEditorDialog extends TitleAreaDialog {
   private Menu categoryMenu;
 
   
-  public CategoryEditorDialog(Shell shell, BusinessModel businessModel, Locales locales,
-      SecurityReference securityReference) {
+  public CategoryEditorDialog(Shell shell, BusinessModel businessModel, SchemaMeta schemaMeta) {
     super(shell);
     this.businessModel = businessModel;
-    this.locales = locales;
-    this.securityReference = securityReference;
-
-    activeLocale = locales.getActiveLocale();
+    this.schemaMeta = schemaMeta;
 
   }
 
@@ -244,7 +237,7 @@ public class CategoryEditorDialog extends TitleAreaDialog {
         }
         if(event.getSelection() instanceof IStructuredSelection) {
             IStructuredSelection selection = (IStructuredSelection)event.getSelection();
-            if (selection.getFirstElement() instanceof CategoryTreeNode){
+            if ((selection.getFirstElement() instanceof CategoryTreeNode) || (selection.getFirstElement() instanceof BusinessViewTreeNode)) {
               setCategoryMenu();
             }else{
               wCategories.getTree().setMenu(null);
@@ -378,7 +371,7 @@ public class CategoryEditorDialog extends TitleAreaDialog {
 
     wCategories.setContentProvider(new TreeContentProvider());
     wCategories.setLabelProvider(new TreeLabelProvider());
-    rootCategory = new BusinessViewTreeNode(null, businessModel.getRootCategory(), activeLocale);
+    rootCategory = new BusinessViewTreeNode(null, businessModel.getRootCategory(), schemaMeta.getActiveLocale());
     rootCategory.addTreeNodeChangeListener((ITreeNodeChangedListener) wCategories.getContentProvider());
     wCategories.setInput(rootCategory);
     
@@ -391,7 +384,7 @@ public class CategoryEditorDialog extends TitleAreaDialog {
 
     wTables.setContentProvider(new TreeContentProvider());
     wTables.setLabelProvider(new TreeLabelProvider());
-    ITreeNode root = new BusinessTablesTreeNode(null, businessModel, activeLocale);
+    ITreeNode root = new BusinessTablesTreeNode(null, businessModel, schemaMeta.getActiveLocale());
     root.addTreeNodeChangeListener((ITreeNodeChangedListener) wTables.getContentProvider());
     wTables.setInput(root);
     wTables.refresh();
@@ -403,9 +396,8 @@ public class CategoryEditorDialog extends TitleAreaDialog {
 
     while (true) {
       BusinessCategory businessCategory = new BusinessCategory();
-      BusinessCategoryDialog dialog = new BusinessCategoryDialog(this.getShell(), businessCategory, locales,
-          securityReference);
-      if (dialog.open() != null) {
+      BusinessCategoryDialog dialog = new BusinessCategoryDialog(this.getShell(), businessCategory, schemaMeta);
+      if (dialog.open() == Window.OK) {
         // Add this to the parent.
         try {
           businessModel.getRootCategory().addBusinessCategory(businessCategory);
@@ -450,7 +442,7 @@ public class CategoryEditorDialog extends TitleAreaDialog {
   private void addCategoryFromBusinessTable(BusinessCategory parentCategory, BusinessTable businessTable) {
 
     // Create a new category
-    BusinessCategory businessCategory = businessTable.generateCategory(activeLocale, businessModel.getRootCategory().getBusinessCategories());
+    BusinessCategory businessCategory = businessTable.generateCategory(schemaMeta.getActiveLocale(), businessModel.getRootCategory().getBusinessCategories());
 
     // Add the category to the business model or category
     try {
@@ -475,7 +467,7 @@ public class CategoryEditorDialog extends TitleAreaDialog {
     IStructuredSelection categorySelection = (IStructuredSelection) wCategories.getSelection();
     for (Iterator iterator = categorySelection.iterator(); iterator.hasNext();) {
       firstSelection = iterator.next();
-      if (firstSelection instanceof CategoryTreeNode){
+      if ((firstSelection instanceof CategoryTreeNode) || (firstSelection instanceof BusinessViewTreeNode)){
         parentCategory = (BusinessCategory)((CategoryTreeNode)firstSelection).getDomainObject();
         foundSelectedParent = true;
         break;
@@ -505,7 +497,7 @@ public class CategoryEditorDialog extends TitleAreaDialog {
         // Add the column to the category
         try {
           parentCategory.addBusinessColumn(((BusinessColumnTreeNode)domainObject).getBusinessColumn());
-          ((CategoryTreeNode)firstSelection).addDomainChild(((BusinessColumnTreeNode)domainObject).getBusinessColumn());
+          ((ConceptTreeNode)firstSelection).addDomainChild(((BusinessColumnTreeNode)domainObject).getBusinessColumn());
         } catch (ObjectAlreadyExistsException e) {
           // Should not happen here, programmatically generating new ids.
           logger.error(Messages.getErrorString("CategoryEditorDialog.ERROR_0001_COLUMN_SKIPPED_DUPLICATE_ID",((BusinessColumnTreeNode)domainObject).getBusinessColumn().getId()), e); //$NON-NLS-1$

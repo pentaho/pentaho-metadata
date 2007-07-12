@@ -7,10 +7,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 import org.pentaho.pms.locale.LocaleMeta;
 import org.pentaho.pms.locale.Locales;
@@ -24,12 +27,15 @@ import org.pentaho.pms.schema.concept.editor.ConceptModificationEvent;
 import org.pentaho.pms.schema.concept.editor.Constants;
 import org.pentaho.pms.schema.concept.editor.IConceptModel;
 import org.pentaho.pms.schema.concept.editor.IConceptModificationListener;
+import org.pentaho.pms.schema.concept.editor.PropertyNavigationWidget;
+import org.pentaho.pms.schema.concept.editor.PropertyWidgetManager2;
 import org.pentaho.pms.schema.concept.types.bool.ConceptPropertyBoolean;
 import org.pentaho.pms.schema.concept.types.columnwidth.ColumnWidth;
 import org.pentaho.pms.schema.concept.types.columnwidth.ConceptPropertyColumnWidth;
 import org.pentaho.pms.schema.concept.types.localstring.ConceptPropertyLocalizedString;
 import org.pentaho.pms.schema.concept.types.localstring.LocalizedStringSettings;
 import org.pentaho.pms.schema.concept.types.string.ConceptPropertyString;
+import org.pentaho.pms.schema.security.SecurityReference;
 import org.pentaho.pms.util.Const;
 
 import be.ibridge.kettle.core.Props;
@@ -130,7 +136,19 @@ public class ConceptEditorTestApp extends ApplicationWindow {
   }
 
   protected Control createContents(final Composite parent) {
-    return new ConceptEditorWidget(parent, SWT.NONE, conceptModel, context, null);
+    Composite composite = new Composite(parent, SWT.NONE);
+    composite.setLayout(new FillLayout());
+
+    Group group = new Group(composite, SWT.SHADOW_OUT);
+    group.setText("Properties");
+    group.setLayout(new FillLayout());
+    SashForm s0 = new SashForm(group, SWT.HORIZONTAL);
+    s0.SASH_WIDTH = 10;
+    PropertyNavigationWidget propertyNavigationWidget = new PropertyNavigationWidget(s0, SWT.NONE, conceptModel);
+    PropertyWidgetManager2 propertyWidgetManager = new PropertyWidgetManager2(s0, SWT.NONE, conceptModel, context, null);
+    propertyNavigationWidget.addSelectionChangedListener(propertyWidgetManager);
+    s0.setWeights(new int[] { 1, 2 });
+    return composite;
   }
 
   public static void main(final String[] args) {
@@ -142,5 +160,6 @@ public class ConceptEditorTestApp extends ApplicationWindow {
     shell.setText("Concept Editor");
     shell.setImage(Constants.getImageRegistry(Display.getCurrent()).get("concept-editor-app"));
   }
+  
 
 }

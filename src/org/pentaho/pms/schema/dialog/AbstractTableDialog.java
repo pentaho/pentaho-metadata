@@ -44,13 +44,16 @@ import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.pentaho.pms.locale.Locales;
@@ -63,6 +66,8 @@ import org.pentaho.pms.schema.concept.editor.ConceptModelRegistry;
 import org.pentaho.pms.schema.concept.editor.Constants;
 import org.pentaho.pms.schema.concept.editor.IConceptModel;
 import org.pentaho.pms.schema.concept.editor.ITableModel;
+import org.pentaho.pms.schema.concept.editor.PropertyNavigationWidget;
+import org.pentaho.pms.schema.concept.editor.PropertyWidgetManager2;
 import org.pentaho.pms.schema.concept.editor.TableColumnTreeWidget;
 
 public abstract class AbstractTableDialog extends Dialog implements ISelectionChangedListener {
@@ -90,6 +95,8 @@ public abstract class AbstractTableDialog extends Dialog implements ISelectionCh
   protected SchemaMeta schemaMeta;
 
   protected ToolItem viewButton;
+  
+  protected Text conceptIdText;
 
   private static final Log logger = LogFactory.getLog(AbstractTableDialog.class);
   
@@ -127,12 +134,6 @@ public abstract class AbstractTableDialog extends Dialog implements ISelectionCh
     container.setLayout(new GridLayout(2, true));
     GridData gridData = new GridData(GridData.FILL_BOTH);
     container.setLayoutData(gridData);
-
-    Control top = createTop(container);
-
-    gridData = new GridData(GridData.FILL_HORIZONTAL);
-    gridData.horizontalSpan = 2;
-    top.setLayoutData(gridData);
 
     SashForm s0 = new SashForm(container, SWT.HORIZONTAL);
     gridData = new GridData(GridData.FILL_BOTH);
@@ -211,11 +212,6 @@ public abstract class AbstractTableDialog extends Dialog implements ISelectionCh
     return c0;
   }
 
-  /**
-   * Creates the top of the dialog area. Below this will be the columns and property editors.
-   */
-  protected abstract Control createTop(final Composite parent);
-
   protected abstract void addColumnPressed();
 
   protected void okPressed() {
@@ -247,21 +243,21 @@ public abstract class AbstractTableDialog extends Dialog implements ISelectionCh
     }
   }
 
-  private void swapCard(final ConceptInterface concept) {
-    if (null == concept) {
+  private void swapCard(final ConceptUtilityInterface cu) {
+    if (null == cu) {
       stackLayout.topControl = defaultCard;
     } else {
+      ConceptInterface concept = cu.getConcept();
       if (null == cards.get(concept)) {
-        IConceptModel conceptModel = conceptModelRegistry.getConceptModel(concept);
-        ConceptEditorWidget conceptEditor = new ConceptEditorWidget(cardComposite, SWT.NONE, conceptModel,
-            propertyEditorContext, schemaMeta.getSecurityReference());
-        cards.put(concept, conceptEditor);
+        cards.put(concept, createConceptEditor(cu));
       }
       stackLayout.topControl = (Control) cards.get(concept);
     }
     cardComposite.layout();
   }
 
+  protected abstract Composite createConceptEditor(ConceptUtilityInterface cu);
+  
   protected void cancelPressed() {
     cleanup();
     super.cancelPressed();
@@ -292,7 +288,9 @@ public abstract class AbstractTableDialog extends Dialog implements ISelectionCh
 
   }
 
-  protected abstract void showId(String id);
+  protected void showId(String id) {
+    conceptIdText.setText(id);
+  }
   
   public void selectionChanged(SelectionChangedEvent e) {
     if (!e.getSelection().isEmpty()) {
@@ -304,7 +302,7 @@ public abstract class AbstractTableDialog extends Dialog implements ISelectionCh
         } else {
           delButton.setEnabled(false);
         }
-        swapCard(cu.getConcept());
+        swapCard(cu);
         showId(cu.getId());
         lastSelection = cu;
       } else {
