@@ -41,6 +41,7 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -185,7 +186,8 @@ public class MetaEditor implements SelectionListener{
 //  private MetaEditorConcepts metaEditorConcept;
 
   private MetaEditorOlap metaEditorOlap;
-
+  CTabItem tiTabsOlap;
+  
   private SashForm sashform;
 
   private CTabFolder tabfolder;
@@ -329,9 +331,18 @@ public class MetaEditor implements SelectionListener{
     int weights[] = props.getSashWeights();
     sashform.setWeights(weights);
     sashform.setVisible(true);
+    
 
     shell.layout();
     getMainListener().handleEvent(null); // Force everything to match the current state
+    disp.addFilter(SWT.KeyDown, new Listener(){
+      public void handleEvent(Event arg0) {
+        if ((arg0.keyCode == 'o') 
+            && (arg0.stateMask == (SWT.ALT | SWT.CTRL))) {
+          toggleOlapTab();
+        }    
+      }  
+    });
   }
 
   private void initGlobalKeyBindings() {
@@ -2312,19 +2323,23 @@ public class MetaEditor implements SelectionListener{
 
     sashform.addKeyListener(defKeys);
     sashform.addKeyListener(modKeys);
-
-    addOlapTab();
   }
 
-  public void addOlapTab() {
-    CTabItem tiTabsOlap = new CTabItem(tabfolder, SWT.NULL);
-    tiTabsOlap.setText(Messages.getString("MetaEditor.USER_OLAP")); //$NON-NLS-1$
-    tiTabsOlap.setToolTipText(Messages.getString("MetaEditor.USER_OLAP_TEXT")); //$NON-NLS-1$
-    metaEditorOlap = new MetaEditorOlap(tabfolder, SWT.NONE, this);
-
-    tiTabsOlap.setControl(metaEditorOlap);
+  private void toggleOlapTab() {
+    if (metaEditorOlap == null) {
+      tiTabsOlap = new CTabItem(tabfolder, SWT.NULL);
+      tiTabsOlap.setText(Messages.getString("MetaEditor.USER_OLAP")); //$NON-NLS-1$
+      tiTabsOlap.setToolTipText(Messages.getString("MetaEditor.USER_OLAP_TEXT")); //$NON-NLS-1$
+      metaEditorOlap = new MetaEditorOlap(tabfolder, SWT.NONE, this);
+      tiTabsOlap.setControl(metaEditorOlap);
+    } else {
+      tiTabsOlap.setControl(null);
+      tiTabsOlap.dispose();
+      metaEditorOlap.dispose();
+      metaEditorOlap = null;
+    }
   }
-
+  
   private boolean readData(String domainName) {
     try {
       props.addLastFile(LastUsedFile.FILE_TYPE_SCHEMA, domainName, "", false, ""); //$NON-NLS-1$ //$NON-NLS-2$
