@@ -50,7 +50,7 @@ public class DefaultSQLDialect implements SQLDialectInterface {
     // logical functions
     supportedFunctions.put("AND", new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.INLINE_FUNCTION, "AND")); //$NON-NLS-1$ //$NON-NLS-2$
     supportedFunctions.put("OR",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.INLINE_FUNCTION, "OR"));  //$NON-NLS-1$ //$NON-NLS-2$
-    
+
     // infix operators
     supportedInfixOperators.put("+",  new DefaultSQLOperatorGenerator("+")); //$NON-NLS-1$ //$NON-NLS-2$
     supportedInfixOperators.put("-",  new DefaultSQLOperatorGenerator("-")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -175,6 +175,56 @@ public class DefaultSQLDialect implements SQLDialectInterface {
         super.validateFunction(f);
         // check to make sure all three params are of static number type
         verifyAllStaticStrings(f);
+      }
+    });
+    
+    
+    // case function
+    
+    supportedFunctions.put("CASE",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_FUNCTION, "CASE") { //$NON-NLS-1$ //$NON-NLS-2$
+      
+      /**
+       * make sure there are at least two params
+       */
+      public void validateFunction(FormulaFunction f) throws PentahoMetadataException {
+          if (f.getChildValues() == null || f.getChildValues().length < 2) {
+            throw new PentahoMetadataException(Messages.getErrorString("PMSFormulaContext.ERROR_0002_INVALID_NUMBER_PARAMS", f.getFunctionName(), "2")); //$NON-NLS-1$ //$NON-NLS-2$
+          }
+      }
+      
+      /**
+       * render the necessary sql
+       */
+      public void generateFunctionSQL(FormulaTraversalInterface formula, StringBuffer sb, String locale, FormulaFunction f) throws PentahoMetadataException {
+        sb.append(" CASE "); //$NON-NLS-1$
+
+        for (int i = 1; i < f.getChildValues().length; i+=2) {
+          sb.append(" WHEN "); //$NON-NLS-1$
+          formula.generateSQL(f.getChildValues()[i-1], sb, locale);
+          sb.append(" THEN "); //$NON-NLS-1$
+          formula.generateSQL(f.getChildValues()[i], sb, locale);
+        }
+        
+        if (f.getChildValues().length % 2 == 1) {
+          sb.append(" ELSE "); //$NON-NLS-1$
+          formula.generateSQL(f.getChildValues()[f.getChildValues().length - 1], sb, locale);
+        }
+        
+        sb.append(" END "); //$NON-NLS-1$
+      }
+    });
+
+    
+    // coalesce
+    supportedFunctions.put("COALESCE",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_FUNCTION, "COALESCE", true) { //$NON-NLS-1$ //$NON-NLS-2$
+      
+      /**
+       * make sure there are at least two params
+       */
+      public void validateFunction(FormulaFunction f) throws PentahoMetadataException {
+          if (f.getChildValues() == null || f.getChildValues().length < 1) {
+            throw new PentahoMetadataException(Messages.getErrorString("PMSFormulaContext.ERROR_0002_INVALID_NUMBER_PARAMS", f.getFunctionName(), "1")); //$NON-NLS-1$ //$NON-NLS-2$
+          }
       }
     });
     

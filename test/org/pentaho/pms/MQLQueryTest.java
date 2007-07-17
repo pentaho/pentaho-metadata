@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.pentaho.pms.core.CWM;
+import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.factory.CwmSchemaFactory;
 import org.pentaho.pms.mql.MQLQuery;
 import org.pentaho.pms.schema.BusinessColumn;
@@ -88,6 +89,18 @@ public class MQLQueryTest extends TestCase {
     }
   }
   
+  public void handleFormulaFailure(BusinessModel model, String databaseToTest, String mqlFormula, String expectedException) {
+    // retrieve various databases here
+    DatabaseMeta databaseMeta = new DatabaseMeta("", databaseToTest, "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    try {
+      PMSFormula formula = new PMSFormula(model, databaseMeta, mqlFormula);
+      formula.parseAndValidate();
+      formula.generateSQL("en_US"); //$NON-NLS-1$
+      fail();
+    } catch (Exception e) {
+      assertEquals(e.getMessage(), expectedException);
+    }
+  }
   
   public void handleFormula(BusinessModel model, BusinessTable table, String databaseToTest, String mqlFormula, String expectedSql) {
     // retrieve various databases here
@@ -265,6 +278,19 @@ public class MQLQueryTest extends TestCase {
     );
   }
   
+  
+  public void testExpectedExceptionCategoryNotFound() {
+    String mqlFormula = "[blah_CUSTOMERS.BC_CUSTOMERS_CUSTOMERNAME] = \"EuroCars\")"; //$NON-NLS-1$
+    try {
+      WhereCondition cond = new WhereCondition(ordersModel, "", mqlFormula); //$NON-NLS-1$
+      String sql = cond.getWhereClause("en_US", false); //$NON-NLS-1$
+      fail();
+    } catch (Exception e) {
+      assertTrue(e instanceof PentahoMetadataException);
+      assertTrue(e.getMessage().indexOf("blah_CUSTOMERS") >= 0); //$NON-NLS-1$
+    }
+  }
+  
   public void testWhereConditionWithIN() {
     handleWhereCondition(ordersModel,
       // mql formula
@@ -294,6 +320,56 @@ public class MQLQueryTest extends TestCase {
       );
   }
   
+  
+  public void testCase() {
+    handleFormula(ordersModel, "Hypersonic", //$NON-NLS-1$ 
+        "CASE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]=\"US\"; \"USA\";[BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]=\"JAPAN\"; \"Japan\")" //$NON-NLS-1$
+        ,"CASE  WHEN ( Customers.COUNTRY  = 'US') THEN 'USA' WHEN ( Customers.COUNTRY  = 'JAPAN') THEN 'Japan' END" //$NON-NLS-1$
+      );
+    handleFormula(ordersModel, "Hypersonic", //$NON-NLS-1$ 
+        "CASE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]=\"US\"; \"USA\";[BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]=\"JAPAN\"; \"Japan\"; \"Canada\")" //$NON-NLS-1$
+        ,"CASE  WHEN ( Customers.COUNTRY  = 'US') THEN 'USA' WHEN ( Customers.COUNTRY  = 'JAPAN') THEN 'Japan' ELSE 'Canada' END" //$NON-NLS-1$
+      );
+    handleFormulaFailure(ordersModel, "Hypersonic", //$NON-NLS-1$ 
+        "CASE()" //$NON-NLS-1$
+        ,"PMSFormulaContext.ERROR_0002 - Invalid number of parameters for function CASE, expecting 2 params" //$NON-NLS-1$
+      );
+    handleFormulaFailure(ordersModel, "Hypersonic", //$NON-NLS-1$ 
+        "CASE(\"\")" //$NON-NLS-1$
+        ,"PMSFormulaContext.ERROR_0002 - Invalid number of parameters for function CASE, expecting 2 params" //$NON-NLS-1$
+      );
+  }
+  
+  public void testCoalesce() {
+    handleFormula(ordersModel, "Hypersonic", //$NON-NLS-1$ 
+        "COALESCE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]; \"USA\")" //$NON-NLS-1$
+        ,"COALESCE( Customers.COUNTRY  , 'USA')" //$NON-NLS-1$
+      );
+    handleFormula(ordersModel, "Hypersonic", //$NON-NLS-1$ 
+        "COALESCE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY])" //$NON-NLS-1$
+        ,"COALESCE( Customers.COUNTRY )" //$NON-NLS-1$
+      );
+    handleFormulaFailure(ordersModel, "Hypersonic", //$NON-NLS-1$ 
+        "COALESCE()" //$NON-NLS-1$
+        ,"PMSFormulaContext.ERROR_0002 - Invalid number of parameters for function COALESCE, expecting 1 params" //$NON-NLS-1$
+      );
+  }
+
+  
+  public void testNoFunction() {
+    handleFormula(ordersModel, "Hypersonic", //$NON-NLS-1$ 
+        "[BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]" //$NON-NLS-1$
+        ,"Customers.COUNTRY" //$NON-NLS-1$
+      );
+  }
+  
+//  public void testSingleQuotes() {
+//    handleFormula(ordersModel, "Hypersonic", //$NON-NLS-1$ 
+//        "[BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]=\"JAP'AN\"" //$NON-NLS-1$
+//        ,"Customers.COUNTRY  LIKE '%'" //$NON-NLS-1$
+//      );
+//  }
+  
   public void testToFromXML() {
 
     CWM cwm = CWM.getInstance("Orders", false); //$NON-NLS-1$
@@ -310,7 +386,7 @@ public class MQLQueryTest extends TestCase {
     
     String mqldata = loadXmlFile(mqlfile);
     assertNotNull(mqldata);
-    MQLQuery mqlquery = new MQLQuery(mqldata, null, cwmSchemaFactory );
+    MQLQuery mqlquery = new MQLQuery(mqldata, "en_US", cwmSchemaFactory );
     
     assertNotNull(mqlquery);
     assertNotNull(mqlquery.getSchemaMeta());
@@ -362,6 +438,5 @@ public class MQLQueryTest extends TestCase {
       e.printStackTrace();
       fail();
     }
-    
 	}
 }

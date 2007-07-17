@@ -6,11 +6,11 @@
 	<model_name>Orders</model_name>
 	<selections>
 		<selection>
-			<table>BT_CUSTOMERS</table>
+			<view>bc_CUSTOMER_W_TER</view>
 			<column>BC_CUSTOMERS_CUSTOMERNAME</column>
 		</selection>
 		<selection>
-			<table>BT_CUSTOMERS</table>
+			<view>bc_CUSTOMER_W_TER</view>
 			<column>BC_CUSTOMERS_COUNTRY</column>
 		</selection>
 	</selections>
@@ -18,7 +18,7 @@
 	<orders>
 		<order>
 			<direction>asc</direction>
-			<table_id>BT_CUSTOMERS</table_id>
+			<view_id>bc_CUSTOMER_W_TER</view_id>
 			<column_id>BC_CUSTOMERS_COUNTRY</column_id>
 		</order>
 	</orders>
