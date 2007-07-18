@@ -923,6 +923,30 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
         }
       }
 
+      // HAVING
+      //
+      if (group && conditions != null) {
+        boolean havingAdded = false;
+        boolean justOpened = false;
+        // boolean first=true;
+        for (int i = 0; i < conditions.length; i++, nr++) {
+          WhereCondition condition = conditions[i];
+
+          if (condition.hasAggregate()) {
+            if (!havingAdded) {
+              sql += "HAVING " + Const.CR; //$NON-NLS-1$
+              havingAdded = true;
+              justOpened = true;
+            }
+            // if (!first) sql+=" AND "; else sql+=" ";
+            // first=false;
+            sql += conditions[i].getWhereClause(locale, !justOpened);
+            sql += Const.CR;
+            justOpened = false;
+          }
+        }
+      }
+      
       // ORDER BY
       //
       if (orderBy != null) {
@@ -945,30 +969,6 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
           if (!orderBy[i].isAscending())
             sql += " DESC"; //$NON-NLS-1$
           sql += Const.CR;
-        }
-      }
-
-      // HAVING
-      //
-      if (group && conditions != null) {
-        boolean havingAdded = false;
-        boolean justOpened = false;
-        // boolean first=true;
-        for (int i = 0; i < conditions.length; i++, nr++) {
-          WhereCondition condition = conditions[i];
-
-          if (condition.hasAggregate()) {
-            if (!havingAdded) {
-              sql += "HAVING " + Const.CR; //$NON-NLS-1$
-              havingAdded = true;
-              justOpened = true;
-            }
-            // if (!first) sql+=" AND "; else sql+=" ";
-            // first=false;
-            sql += conditions[i].getWhereClause(locale, !justOpened);
-            sql += Const.CR;
-            justOpened = false;
-          }
         }
       }
     }
