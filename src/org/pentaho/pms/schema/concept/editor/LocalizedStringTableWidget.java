@@ -119,25 +119,11 @@ public class LocalizedStringTableWidget extends Composite {
     TableColumn column = new TableColumn(table, SWT.LEFT, 0);
     column.setText(columnNames[0]);
     column.setWidth(100);
-    // Add listener to column so tasks are sorted by description when clicked
-    column.addSelectionListener(new SelectionAdapter() {
-
-      public void widgetSelected(SelectionEvent e) {
-        //        tableViewer.setSorter(new ExampleTaskSorter(ExampleTaskSorter.LOCALE_NAME));
-      }
-    });
 
     // 3rd column with task Owner
     column = new TableColumn(table, SWT.LEFT, 1);
     column.setText(columnNames[1]);
     column.setWidth(300);
-    // Add listener to column so tasks are sorted by owner when clicked
-    column.addSelectionListener(new SelectionAdapter() {
-
-      public void widgetSelected(SelectionEvent e) {
-        //        tableViewer.setSorter(new ExampleTaskSorter(ExampleTaskSorter.VALUE_FOR_PROPERTY_FOR_LOCALE));
-      }
-    });
 
   }
 
@@ -310,6 +296,10 @@ public class LocalizedStringTableWidget extends Composite {
 
   }
 
+  public void refresh() {
+    tableViewer.refresh();
+  }
+  
   protected String getValue(final LocalizedStringEntry entry) {
     String result = getLocalizedStringSettings().getString(entry.getName());
     return null != result ? result : "";

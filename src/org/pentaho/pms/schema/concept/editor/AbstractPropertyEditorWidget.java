@@ -77,7 +77,6 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
     createToolBar();
     createTitleLabel();
     createContents(createWidgetArea());
-    addModificationListeners();
     //    addDisposeListener(new DisposeListener() {
     //      public void widgetDisposed(final DisposeEvent e) {
     //        removeModificationListeners();
@@ -97,17 +96,6 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
     return parent;
   }
 
-  /**
-   * Subclasses should add listeners (e.g. focus, modify, selectionChanged) to each of their child widgets so that
-   * modifications to property values can be captured and saved to the model. Note that there is no listener type as a
-   * parameter to this method. It exists to enforce listener addition in subclasses.
-   */
-  protected abstract void addModificationListeners();
-
-  /**
-   * Removes the listeners added in <code>addModificationListeners</code>.
-   */
-  protected abstract void removeModificationListeners();
 
   /**
    * Returns whether or not the value encapsulated by this widget is valid so that it can be saved.
@@ -188,65 +176,6 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
     }
   }
 
-  protected class PropertyEditorWidgetFocusListener implements FocusListener {
-
-    private Object oldValue;
-
-    protected boolean isModified() {
-      return !getValue().equals(oldValue);
-    }
-
-    protected void resetModified() {
-      oldValue = getValue();
-    }
-
-    public void focusLost(final FocusEvent e) {
-      if (logger.isDebugEnabled()) {
-        logger.debug("focus lost on control for property with id \"" + propertyId + "\"");
-      }
-      if (logger.isDebugEnabled()) {
-        logger.debug("control value = " + getValue());
-      }
-      synchronized (this) {
-        if (isModified()) {
-          if (logger.isDebugEnabled()) {
-            logger.debug("control's value has been modified");
-          }
-          putPropertyValue();
-          resetModified();
-        } else {
-          if (logger.isDebugEnabled()) {
-            logger.debug("control's value has not been modified");
-          }
-        }
-      }
-    }
-
-    public void focusGained(final FocusEvent e) {
-      synchronized (this) {
-        resetModified();
-      }
-      if (logger.isDebugEnabled()) {
-        logger.debug("focus gained on control for property with id \"" + propertyId + "\"");
-      }
-    }
-
-  }
-
-  protected class PropertyEditorWidgetModifyListener implements ModifyListener {
-
-    public void modifyText(final ModifyEvent e) {
-      putPropertyValue();
-    }
-
-  }
-
-  protected class PropertyEditorWidgetSelectionChangedListener implements ISelectionChangedListener {
-    public void selectionChanged(final SelectionChangedEvent e) {
-      putPropertyValue();
-    }
-  }
-
   protected final void createToolBar() {
     if (null != toolBar) {
       toolBar.dispose();
@@ -262,13 +191,7 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
       // override button
       if (conceptModel.canOverride(propertyId)) {
         overrideButton = new ToolItem(toolBar, SWT.PUSH);
-        if (conceptModel.isOverridden(propertyId)) {
-          overrideButton.setImage(Constants.getImageRegistry(Display.getCurrent()).get("stop-override-button"));
-          overrideButton.setToolTipText("Stop Override");
-        } else {
-          overrideButton.setImage(Constants.getImageRegistry(Display.getCurrent()).get("override-button"));
-          overrideButton.setToolTipText("Override");
-        }
+        overrideButton.setImage(Constants.getImageRegistry(Display.getCurrent()).get("stop-override-button"));
         overrideButton.addSelectionListener(new SelectionAdapter() {
           public void widgetSelected(final SelectionEvent e) {
             overridePressed();
@@ -289,17 +212,32 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
       }
     } else {
       ConceptPropertyInterface effectiveProperty = conceptModel.getEffectiveProperty(propertyId);
-      conceptModel.setProperty(PredefinedVsCustomPropertyHelper.createEmptyProperty(propertyId, effectiveProperty
-          .getType()));
+      try {
+        conceptModel.setProperty((ConceptPropertyInterface)PredefinedVsCustomPropertyHelper.createEmptyProperty(propertyId, effectiveProperty
+            .getType()).clone());
+      } catch (CloneNotSupportedException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     }
+    refresh();
   }
 
   protected Map getContext() {
     return context;
   }
 
-  public void cleanup() {
-    removeModificationListeners();
+  protected void refreshOverrideButton() {
+    if (conceptModel.isOverridden(propertyId)) {
+      overrideButton.setImage(Constants.getImageRegistry(Display.getCurrent()).get("stop-override-button"));
+      overrideButton.setToolTipText("Stop Override");
+    } else {
+      overrideButton.setImage(Constants.getImageRegistry(Display.getCurrent()).get("override-button"));
+      overrideButton.setToolTipText("Override");
+    }
   }
+  
+  public abstract void cleanup();
 
+  public abstract void refresh();
 }

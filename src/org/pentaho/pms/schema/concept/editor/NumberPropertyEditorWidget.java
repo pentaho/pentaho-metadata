@@ -11,6 +11,7 @@ import org.eclipse.jface.fieldassist.TextControlCreator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -20,7 +21,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
-public class NumberPropertyEditorWidget extends AbstractPropertyEditorWidget {
+public class NumberPropertyEditorWidget extends AbstractPropertyEditorWidget implements FocusListener{ 
 
   // ~ Static fields/initializers ======================================================================================
 
@@ -32,12 +33,14 @@ public class NumberPropertyEditorWidget extends AbstractPropertyEditorWidget {
 
   private FocusListener focusListener;
 
+  Label numberLabel;
+  
   // ~ Constructors ====================================================================================================
 
   public NumberPropertyEditorWidget(final Composite parent, final int style, final IConceptModel conceptModel,
       final String propertyId, final Map context) {
     super(parent, style, conceptModel, propertyId, context);
-    setValue(getProperty().getValue());
+    refresh();
     if (logger.isDebugEnabled()) {
       logger.debug("created NumberPropertyEditorWidget");
     }
@@ -54,16 +57,14 @@ public class NumberPropertyEditorWidget extends AbstractPropertyEditorWidget {
 
     final DecoratedField field = new DecoratedField(parent, SWT.BORDER, new TextControlCreator());
     numberField = (Text) field.getControl();
-    numberField.setEnabled(isEditable());
 
     final FieldDecorationRegistry registry = FieldDecorationRegistry.getDefault();
     field
         .addFieldDecoration(registry.getFieldDecoration(FieldDecorationRegistry.DEC_ERROR), SWT.TOP | SWT.RIGHT, false);
     field.hideDecoration(registry.getFieldDecoration(FieldDecorationRegistry.DEC_ERROR));
 
-    Label numberLabel = new Label(parent, SWT.NONE);
+    numberLabel = new Label(parent, SWT.NONE);
     numberLabel.setText("Value:");
-    numberLabel.setEnabled(isEditable());
 
     FormData fd2 = new FormData();
     fd2.left = new FormAttachment(numberLabel, 10);
@@ -102,6 +103,8 @@ public class NumberPropertyEditorWidget extends AbstractPropertyEditorWidget {
     numberField.addListener(SWT.MouseUp, listener);
     numberField.addListener(SWT.KeyDown, listener);
     numberField.addListener(SWT.KeyUp, listener);
+    
+    numberField.addFocusListener(this);
   }
 
   protected void widgetDisposed(final DisposeEvent e) {
@@ -121,17 +124,6 @@ public class NumberPropertyEditorWidget extends AbstractPropertyEditorWidget {
     }
   }
 
-  protected void addModificationListeners() {
-    if (null == focusListener) {
-      focusListener = new PropertyEditorWidgetFocusListener();
-      numberField.addFocusListener(focusListener);
-    }
-  }
-
-  protected void removeModificationListeners() {
-    numberField.removeFocusListener(focusListener);
-  }
-
   protected boolean isValid() {
     try {
       new BigDecimal(numberField.getText());
@@ -139,5 +131,27 @@ public class NumberPropertyEditorWidget extends AbstractPropertyEditorWidget {
       return false;
     }
     return true;
+  }
+
+  public void focusGained(FocusEvent arg0) {
+    // Do nothing
+    
+  }
+
+  public void focusLost(FocusEvent arg0) {
+    if (!getValue().equals(getProperty().getValue())) {
+      putPropertyValue();
+    }
+  }
+
+  public void refresh() {
+    refreshOverrideButton();
+    numberField.setEnabled(isEditable());
+    numberLabel.setEnabled(isEditable());
+    setValue(getProperty().getValue());
+  }
+
+  public void cleanup() {
+    numberField.removeFocusListener(this);
   }
 }

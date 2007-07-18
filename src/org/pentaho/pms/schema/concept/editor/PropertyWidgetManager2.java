@@ -9,6 +9,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ControlAdapter;
@@ -53,19 +55,10 @@ public class PropertyWidgetManager2 extends Composite implements ISelectionChang
 
   // ~ Constructors ====================================================================================================
 
-  public PropertyWidgetManager2(final Composite parent, final int style,
-      final IConceptModel conceptModel, final Map context, SecurityReference securityReference) {
+  public PropertyWidgetManager2(final Composite parent, final int style, final Map context, SecurityReference securityReference) {
     super(parent, style);
     this.context = context;
-    this.conceptModel = conceptModel;
     this.securityReference = securityReference;
-    conceptModel.addConceptModificationListener(new IConceptModificationListener() {
-      public void conceptModified(final ConceptModificationEvent e) {
-        if (e instanceof PropertyExistenceModificationEvent) {
-          refreshMe();
-        }
-      }
-    });
     createContents();
   }
 
@@ -107,8 +100,6 @@ public class PropertyWidgetManager2 extends Composite implements ISelectionChang
         resizeWidgetArea();
       }
     });
-
-    refreshMe();
   }
 
   protected void refreshMe() {
@@ -131,35 +122,43 @@ public class PropertyWidgetManager2 extends Composite implements ISelectionChang
       control.dispose();
     }
     groupNameWidgets.clear();
-    // put all the widgets back
-    List usedGroups = PropertyGroupHelper.getUsedGroups(conceptModel);
-    for (Iterator groupIter = usedGroups.iterator(); groupIter.hasNext();) {
-      String groupName = (String) groupIter.next();
-      Control groupNameWidget = new GroupNameWidget(widgetArea, SWT.NONE, groupName);
-      addWidget(groupNameWidget);
-      groupNameWidgets.put(groupName, groupNameWidget);
-      List usedPropertiesForGroup = PropertyGroupHelper.getUsedPropertiesForGroup(groupName, conceptModel);
-      for (Iterator propIter = usedPropertiesForGroup.iterator(); propIter.hasNext();) {
-        String propertyId = (String) propIter.next();
-        ConceptPropertyInterface prop = (ConceptPropertyInterface) conceptModel.getEffectiveProperty(propertyId);
-        // add widget
-        if (logger.isDebugEnabled()) {
-          logger.debug("creating widget for property with id \"" + propertyId + "\"");
+    
+    if (conceptModel != null) {
+      // put all the widgets back
+      List usedGroups = PropertyGroupHelper.getUsedGroups(conceptModel);
+      for (Iterator groupIter = usedGroups.iterator(); groupIter.hasNext();) {
+        String groupName = (String) groupIter.next();
+        Control groupNameWidget = new GroupNameWidget(widgetArea, SWT.NONE, groupName);
+        addWidget(groupNameWidget);
+        groupNameWidgets.put(groupName, groupNameWidget);
+        List usedPropertiesForGroup = PropertyGroupHelper.getUsedPropertiesForGroup(groupName, conceptModel);
+        for (Iterator propIter = usedPropertiesForGroup.iterator(); propIter.hasNext();) {
+          String propertyId = (String) propIter.next();
+          ConceptPropertyInterface prop = (ConceptPropertyInterface) conceptModel.getEffectiveProperty(propertyId);
+          // add widget
+          if (logger.isDebugEnabled()) {
+            logger.debug("creating widget for property with id \"" + propertyId + "\"");
+          }
+          IPropertyEditorWidget widget = PropertyEditorWidgetFactory.getWidget(prop.getType(), widgetArea, SWT.NONE,
+              conceptModel, prop.getId(), context, securityReference);
+          if (widget != null) {
+            addWidget((Control) widget);
+            widgets.put(prop.getId(), widget);
+            focusWidget(prop.getId());
+          } else {
+            logger.error("failed to get widget " + propertyId);
+          }
+          resizeWidgetArea();
         }
-        IPropertyEditorWidget widget = PropertyEditorWidgetFactory.getWidget(prop.getType(), widgetArea, SWT.NONE,
-            conceptModel, prop.getId(), context, securityReference);
-        if (widget != null) {
-          addWidget((Control) widget);
-          widgets.put(prop.getId(), widget);
-          focusWidget(prop.getId());
-        } else {
-          logger.error("failed to get widget " + propertyId);
-        }
-        resizeWidgetArea();
       }
     }
   }
 
+  public void setConceptModel(IConceptModel cm) {
+    conceptModel = cm;
+    refreshMe();
+  }
+  
   protected void addWidget(final Control widget) {
     GridData gdWidget = new GridData();
     gdWidget.grabExcessHorizontalSpace = true;
@@ -173,13 +172,12 @@ public class PropertyWidgetManager2 extends Composite implements ISelectionChang
   public void selectionChanged(final SelectionChangedEvent e) {
     // TODO mlowery this class should not be coupled to property "tree" selection;
     // TODO mlowery maybe just property selection
-    if (null != e && e.getSelection() instanceof PropertyTreeSelection) {
-      PropertyTreeSelection sel = (PropertyTreeSelection) e.getSelection();
-      if (!sel.isGroup()) {
-        focusWidget(sel.getName());
-      } else {
-        focusWidget(null);
-      }
+    TreeSelection treeSelection = (TreeSelection)e.getSelection();
+    Object selectedObject = treeSelection.getFirstElement();
+    if (selectedObject instanceof PropertyTreeWidget.PropertyNode) {
+      focusWidget(((PropertyTreeWidget.PropertyNode)selectedObject).getId());
+    } else {
+      focusWidget(null);
     }
   }
 

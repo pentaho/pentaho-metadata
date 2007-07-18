@@ -9,11 +9,13 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormAttachment;
@@ -24,7 +26,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.pentaho.pms.schema.concept.types.datatype.DataTypeSettings;
 
-public class DataTypePropertyEditorWidget extends AbstractPropertyEditorWidget {
+public class DataTypePropertyEditorWidget extends AbstractPropertyEditorWidget implements FocusListener, ISelectionChangedListener {
   // ~ Static fields/initializers ======================================================================================
 
   private static final Log logger = LogFactory.getLog(DataTypePropertyEditorWidget.class);
@@ -36,19 +38,17 @@ public class DataTypePropertyEditorWidget extends AbstractPropertyEditorWidget {
   private Text length;
 
   private Text precision;
-
-  private FocusListener lengthFocusListener;
-
-  private FocusListener precisionFocusListener;
-
-  private ISelectionChangedListener selectionChangedListener;
-
+  Label typeLabel;
+  Combo type;
+  Label lengthLabel;
+  Label precisionLabel;
+  
   // ~ Constructors ====================================================================================================
 
   public DataTypePropertyEditorWidget(final Composite parent, final int style, final IConceptModel conceptModel,
       final String propertyId, final Map context) {
     super(parent, style, conceptModel, propertyId, context);
-    setValue(getProperty().getValue());
+    refresh();
     if (logger.isDebugEnabled()) {
       logger.debug("created DataTypePropertyEditorWidget");
     }
@@ -63,12 +63,10 @@ public class DataTypePropertyEditorWidget extends AbstractPropertyEditorWidget {
       }
     });
 
-    Label typeLabel = new Label(parent, SWT.NONE);
+    typeLabel = new Label(parent, SWT.NONE);
     typeLabel.setText("Data Type:");
-    typeLabel.setEnabled(isEditable());
 
-    Combo type = new Combo(parent, SWT.READ_ONLY | SWT.BORDER);
-    type.setEnabled(isEditable());
+    type = new Combo(parent, SWT.READ_ONLY | SWT.BORDER);
 
     typeComboViewer = new ComboViewer(type);
 
@@ -108,10 +106,8 @@ public class DataTypePropertyEditorWidget extends AbstractPropertyEditorWidget {
     typeLabel.setLayoutData(fdTypeLabel);
 
     // Length
-    Label lengthLabel = new Label(parent, SWT.NONE);
-    lengthLabel.setEnabled(isEditable());
+    lengthLabel = new Label(parent, SWT.NONE);
     length = new Text(parent, SWT.BORDER);
-    setEnabled(isEditable());
 
     lengthLabel.setText("Length:");
     //    lengthLabel.setText(Messages.getString("ConceptPropertyDataTypeWidget.USER_LENGTH"));  //$NON-NLS-1$
@@ -127,10 +123,8 @@ public class DataTypePropertyEditorWidget extends AbstractPropertyEditorWidget {
     length.setLayoutData(fdLength);
 
     // Precision
-    Label precisionLabel = new Label(parent, SWT.NONE);
-    precisionLabel.setEnabled(isEditable());
+    precisionLabel = new Label(parent, SWT.NONE);
     precision = new Text(parent, SWT.BORDER);
-    precisionLabel.setEnabled(isEditable());
 
     //    precisionLabel.setText(Messages.getString("ConceptPropertyDataTypeWidget.USER_PRECISION")); //$NON-NLS-1$
     precisionLabel.setText("Precision:");
@@ -145,6 +139,9 @@ public class DataTypePropertyEditorWidget extends AbstractPropertyEditorWidget {
     fdPrecision.right = new FormAttachment(100, 0);
     precision.setLayoutData(fdPrecision);
 
+    typeComboViewer.addSelectionChangedListener(this);
+    length.addFocusListener(this);
+    precision.addFocusListener(this);
   }
 
   protected void widgetDisposed(final DisposeEvent e) {
@@ -182,23 +179,6 @@ public class DataTypePropertyEditorWidget extends AbstractPropertyEditorWidget {
     }
   }
 
-  protected void addModificationListeners() {
-    if (null == selectionChangedListener) {
-      selectionChangedListener = new PropertyEditorWidgetSelectionChangedListener();
-      lengthFocusListener = new PropertyEditorWidgetFocusListener();
-      precisionFocusListener = new PropertyEditorWidgetFocusListener();
-      typeComboViewer.addSelectionChangedListener(selectionChangedListener);
-      length.addFocusListener(lengthFocusListener);
-      precision.addFocusListener(precisionFocusListener);
-    }
-  }
-
-  protected void removeModificationListeners() {
-    typeComboViewer.removeSelectionChangedListener(selectionChangedListener);
-    length.removeFocusListener(lengthFocusListener);
-    precision.removeFocusListener(precisionFocusListener);
-  }
-
   protected boolean isValid() {
     try {
       new Integer(precision.getText());
@@ -207,5 +187,37 @@ public class DataTypePropertyEditorWidget extends AbstractPropertyEditorWidget {
       return false;
     }
     return true;
+  }
+
+  public void focusGained(FocusEvent arg0) {
+  }
+
+  public void focusLost(FocusEvent arg0) {
+    if (!getValue().equals(getProperty().getValue())) {
+      putPropertyValue();
+    }  
+  }
+
+  public void selectionChanged(SelectionChangedEvent arg0) {
+    putPropertyValue();
+  }
+
+  public void refresh() {
+    refreshOverrideButton();
+    typeComboViewer.removeSelectionChangedListener(this);
+    precisionLabel.setEnabled(isEditable());
+    precision.setEnabled(isEditable());
+    typeLabel.setEnabled(isEditable());
+    type.setEnabled(isEditable());
+    lengthLabel.setEnabled(isEditable());
+    length.setEnabled(isEditable());
+    setValue(getProperty().getValue());
+    typeComboViewer.addSelectionChangedListener(this);
+  }
+
+  public void cleanup() {
+    typeComboViewer.removeSelectionChangedListener(this);
+    length.removeFocusListener(this);
+    precision.removeFocusListener(this);
   }
 }

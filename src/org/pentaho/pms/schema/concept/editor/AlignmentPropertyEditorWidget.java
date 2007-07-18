@@ -9,6 +9,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -22,7 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.pentaho.pms.schema.concept.types.alignment.AlignmentSettings;
 
-public class AlignmentPropertyEditorWidget extends AbstractPropertyEditorWidget {
+public class AlignmentPropertyEditorWidget extends AbstractPropertyEditorWidget implements ISelectionChangedListener {
   // ~ Static fields/initializers ======================================================================================
 
   private static final Log logger = LogFactory.getLog(AlignmentPropertyEditorWidget.class);
@@ -30,15 +31,15 @@ public class AlignmentPropertyEditorWidget extends AbstractPropertyEditorWidget 
   // ~ Instance fields =================================================================================================
 
   private ComboViewer typeComboViewer;
-
-  private ISelectionChangedListener selectionChangedListener;
-
+  Label typeLabel;
+  Combo type;
+  
   // ~ Constructors ====================================================================================================
 
   public AlignmentPropertyEditorWidget(final Composite parent, final int style, final IConceptModel conceptModel,
       final String propertyId, final Map context) {
     super(parent, style, conceptModel, propertyId, context);
-    setValue(getProperty().getValue());
+    refresh();
     if (logger.isDebugEnabled()) {
       logger.debug("created AlignmentPropertyEditorWidget");
     }
@@ -52,11 +53,9 @@ public class AlignmentPropertyEditorWidget extends AbstractPropertyEditorWidget 
         AlignmentPropertyEditorWidget.this.widgetDisposed(e);
       }
     });
-    Label typeLabel = new Label(parent, SWT.NONE);
+    typeLabel = new Label(parent, SWT.NONE);
     typeLabel.setText("Alignment Type:");
-    typeLabel.setEnabled(isEditable());
-    Combo type = new Combo(parent, SWT.READ_ONLY | SWT.BORDER);
-    type.setEnabled(isEditable());
+    type = new Combo(parent, SWT.READ_ONLY | SWT.BORDER);
     typeComboViewer = new ComboViewer(type);
 
     typeComboViewer.setContentProvider(new IStructuredContentProvider() {
@@ -93,6 +92,8 @@ public class AlignmentPropertyEditorWidget extends AbstractPropertyEditorWidget 
     fdTypeLabel.left = new FormAttachment(0, 0);
     fdTypeLabel.top = new FormAttachment(type, 0, SWT.CENTER);
     typeLabel.setLayoutData(fdTypeLabel);
+    
+    typeComboViewer.addSelectionChangedListener(this);
   }
 
   protected void widgetDisposed(final DisposeEvent e) {
@@ -112,19 +113,24 @@ public class AlignmentPropertyEditorWidget extends AbstractPropertyEditorWidget 
     }
   }
 
-  protected void addModificationListeners() {
-    if (null == selectionChangedListener) {
-      selectionChangedListener = new PropertyEditorWidgetSelectionChangedListener();
-      typeComboViewer.addSelectionChangedListener(selectionChangedListener);
-    }
-  }
-
-  protected void removeModificationListeners() {
-    typeComboViewer.removeSelectionChangedListener(selectionChangedListener);
-  }
-
   protected boolean isValid() {
     return true;
   }
 
+  public void selectionChanged(SelectionChangedEvent arg0) {
+    putPropertyValue();
+  }
+
+  public void refresh() {
+    refreshOverrideButton();
+    typeComboViewer.removeSelectionChangedListener(this);
+    typeLabel.setEnabled(isEditable());
+    type.setEnabled(isEditable());
+    setValue(getProperty().getValue());
+    typeComboViewer.addSelectionChangedListener(this);
+  }
+  
+  public void cleanup() {
+    typeComboViewer.removeSelectionChangedListener(this);
+  }
 }

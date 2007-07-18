@@ -10,11 +10,13 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormAttachment;
@@ -27,7 +29,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.pentaho.pms.schema.concept.types.columnwidth.ColumnWidth;
 
-public class ColumnWidthPropertyEditorWidget extends AbstractPropertyEditorWidget {
+public class ColumnWidthPropertyEditorWidget extends AbstractPropertyEditorWidget implements FocusListener, ISelectionChangedListener {
 
   // ~ Static fields/initializers ======================================================================================
 
@@ -38,17 +40,16 @@ public class ColumnWidthPropertyEditorWidget extends AbstractPropertyEditorWidge
   private ComboViewer typeComboViewer;
 
   private Text width;
-
-  private FocusListener focusListener;
-
-  private ISelectionChangedListener selectionChangedListener;
-
+  Label typeLabel;
+  Combo type;
+  Label widthLabel;
+  
   // ~ Constructors ====================================================================================================
 
   public ColumnWidthPropertyEditorWidget(final Composite parent, final int style, final IConceptModel conceptModel,
       final String propertyId, final Map context) {
     super(parent, style, conceptModel, propertyId, context);
-    setValue(getProperty().getValue());
+    refresh();
   }
 
   // ~ Methods =========================================================================================================
@@ -59,12 +60,10 @@ public class ColumnWidthPropertyEditorWidget extends AbstractPropertyEditorWidge
         ColumnWidthPropertyEditorWidget.this.widgetDisposed(e);
       }
     });
-    Label typeLabel = new Label(parent, SWT.NONE);
+    typeLabel = new Label(parent, SWT.NONE);
     typeLabel.setText("Column Width Type:"); //$NON-NLS-1$
-    typeLabel.setEnabled(isEditable());
 
-    Combo type = new Combo(parent, SWT.READ_ONLY | SWT.BORDER);
-    type.setEnabled(isEditable());
+    type = new Combo(parent, SWT.READ_ONLY | SWT.BORDER);
 
     typeComboViewer = new ComboViewer(type);
 
@@ -103,12 +102,10 @@ public class ColumnWidthPropertyEditorWidget extends AbstractPropertyEditorWidge
     fdTypeLabel.top = new FormAttachment(type, 0, SWT.CENTER);
     typeLabel.setLayoutData(fdTypeLabel);
 
-    Label widthLabel = new Label(parent, SWT.NONE);
+    widthLabel = new Label(parent, SWT.NONE);
     widthLabel.setText("Column Width:"); //$NON-NLS-1$
-    widthLabel.setEnabled(isEditable());
 
     width = new Text(parent, SWT.BORDER | SWT.SINGLE | SWT.LEFT);
-    width.setEnabled(isEditable());
 
     // only allow digits
     width.addListener(SWT.Verify, new Listener() {
@@ -136,7 +133,10 @@ public class ColumnWidthPropertyEditorWidget extends AbstractPropertyEditorWidge
     fdWidthLabel.left = new FormAttachment(0, 0);
     fdWidthLabel.top = new FormAttachment(width, 0, SWT.CENTER);
     widthLabel.setLayoutData(fdWidthLabel);
-  }
+    
+    typeComboViewer.addSelectionChangedListener(this);
+    width.addFocusListener(this);
+}
 
   protected void widgetDisposed(final DisposeEvent e) {
   }
@@ -167,20 +167,6 @@ public class ColumnWidthPropertyEditorWidget extends AbstractPropertyEditorWidge
     }
   }
 
-  protected void addModificationListeners() {
-    if (null == selectionChangedListener) {
-      selectionChangedListener = new PropertyEditorWidgetSelectionChangedListener();
-      focusListener = new PropertyEditorWidgetFocusListener();
-      typeComboViewer.addSelectionChangedListener(selectionChangedListener);
-      width.addFocusListener(focusListener);
-    }
-  }
-
-  protected void removeModificationListeners() {
-    typeComboViewer.removeSelectionChangedListener(selectionChangedListener);
-    width.removeFocusListener(focusListener);
-  }
-
   protected boolean isValid() {
     try {
       new BigDecimal(width.getText());
@@ -188,6 +174,37 @@ public class ColumnWidthPropertyEditorWidget extends AbstractPropertyEditorWidge
       return false;
     }
     return true;
+  }
+
+  public void refresh() {
+    refreshOverrideButton();
+    typeComboViewer.removeSelectionChangedListener(this);
+    width.setEnabled(isEditable());
+    widthLabel.setEnabled(isEditable());
+    typeLabel.setEnabled(isEditable());
+    type.setEnabled(isEditable());
+    setValue(getProperty().getValue());
+    typeComboViewer.addSelectionChangedListener(this);
+  }
+
+  public void focusGained(FocusEvent arg0) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  public void focusLost(FocusEvent arg0) {
+    if (!getValue().equals(getProperty().getValue())) {
+      putPropertyValue();
+    }
+  }
+
+  public void selectionChanged(SelectionChangedEvent arg0) {
+    putPropertyValue();
+  }
+
+  public void cleanup() {
+    typeComboViewer.removeSelectionChangedListener(this);
+    width.removeFocusListener(this);
   }
 
 }

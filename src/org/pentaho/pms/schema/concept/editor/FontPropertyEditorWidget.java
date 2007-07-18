@@ -42,12 +42,16 @@ public class FontPropertyEditorWidget extends AbstractPropertyEditorWidget {
 
   private Text preview;
 
+  Label fontStringLabel;
+  
+  Label previewLabel;
+  
   // ~ Constructors ====================================================================================================
 
   public FontPropertyEditorWidget(final Composite parent, final int style, final IConceptModel conceptModel,
       final String propertyId, final Map context) {
     super(parent, style, conceptModel, propertyId, context);
-    setValue(getProperty().getValue());
+    refresh();
     if (logger.isDebugEnabled()) {
       logger.debug("created FontPropertyEditorWidget");
     }
@@ -62,11 +66,9 @@ public class FontPropertyEditorWidget extends AbstractPropertyEditorWidget {
       }
     });
 
-    Label fontStringLabel = new Label(parent, SWT.NONE);
+    fontStringLabel = new Label(parent, SWT.NONE);
     fontStringLabel.setText("Font:");
-    fontStringLabel.setEnabled(isEditable());
     fontString = new Label(parent, SWT.NONE);
-    fontString.setEnabled(isEditable());
     fontString.setText(getFontAsUserString());
 
     FormData fdFontLabel = new FormData();
@@ -79,11 +81,9 @@ public class FontPropertyEditorWidget extends AbstractPropertyEditorWidget {
     fdFont.top = new FormAttachment(0, 0);
     fontString.setLayoutData(fdFont);
 
-    Label previewLabel = new Label(parent, SWT.NONE);
-    previewLabel.setEnabled(isEditable());
+    previewLabel = new Label(parent, SWT.NONE);
     previewLabel.setText("Preview:");
-    preview = new Text(parent, SWT.BORDER);
-    preview.setEnabled(isEditable());
+    preview = new Text(parent, SWT.BORDER | SWT.READ_ONLY);
 
     FormData fdPreviewLabel = new FormData();
     fdPreviewLabel.left = new FormAttachment(0, 0);
@@ -97,7 +97,6 @@ public class FontPropertyEditorWidget extends AbstractPropertyEditorWidget {
     preview.setLayoutData(fdPreview);
 
     fontButton = new Button(parent, SWT.PUSH);
-    fontButton.setEnabled(isEditable());
     FormData fdButton = new FormData();
     fdButton.left = new FormAttachment(0, 0);
     fdButton.top = new FormAttachment(preview, 10);
@@ -136,21 +135,10 @@ public class FontPropertyEditorWidget extends AbstractPropertyEditorWidget {
   protected void setValue(final Object value) {
     if (value instanceof FontSettings) {
       fontSettings = (FontSettings) value;
-      preview.setEnabled(true);
       preview.setFont(getValueAsFont());
       preview.setText("abcdefghijk ABCDEFGHIJK");
-    } else {
-      preview.setEnabled(false);
     }
     fontString.setText(getFontAsUserString());
-  }
-
-  protected void addModificationListeners() {
-    // nothing to do
-  }
-
-  protected void removeModificationListeners() {
-    // nothing to do
   }
 
   /**
@@ -192,5 +180,18 @@ public class FontPropertyEditorWidget extends AbstractPropertyEditorWidget {
 
   protected boolean isValid() {
     return true;
+  }
+
+  public void refresh() {
+    refreshOverrideButton();
+    fontStringLabel.setEnabled(isEditable());
+    fontString.setEnabled(isEditable());
+    previewLabel.setEnabled(isEditable());
+    preview.setEnabled(isEditable());
+    fontButton.setEnabled(isEditable());
+    setValue(getProperty().getValue()); 
+  }
+
+  public void cleanup() {
   }
 }

@@ -25,9 +25,6 @@ public class LocalizedStringPropertyEditorWidget extends AbstractPropertyEditorW
   public LocalizedStringPropertyEditorWidget(final Composite parent, final int style, final IConceptModel conceptModel,
       final String propertyId, final Map context) {
     super(parent, style, conceptModel, propertyId, context);
-    if (logger.isDebugEnabled()) {
-      logger.debug("created LocalizedStringPropertyEditorWidget");
-    }
   }
 
   // ~ Methods =========================================================================================================
@@ -42,7 +39,6 @@ public class LocalizedStringPropertyEditorWidget extends AbstractPropertyEditorW
     }
     table = new LocalizedStringTableWidget(parent, SWT.NONE, getConceptModel(), getPropertyId(), locales);
 
-    table.setEnabled(isEditable());
 
     FormData fdTable = new FormData();
     fdTable.left = new FormAttachment(0, 0);
@@ -58,16 +54,17 @@ public class LocalizedStringPropertyEditorWidget extends AbstractPropertyEditorW
     throw new UnsupportedOperationException();
   }
 
-  protected void addModificationListeners() {
-    // nothing to do
-  }
-
-  protected void removeModificationListeners() {
-    // nothing to do
-  }
-
   protected boolean isValid() {
     return true;
+  }
+
+  public void cleanup() {
+  }
+
+  public void refresh() {
+    refreshOverrideButton();
+    table.setEnabled(isEditable());
+    table.refresh();
   }
 
 }

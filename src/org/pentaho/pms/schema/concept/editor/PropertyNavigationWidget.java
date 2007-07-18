@@ -5,11 +5,14 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -46,12 +49,16 @@ public class PropertyNavigationWidget extends Composite implements ISelectionPro
 
   // ~ Constructors ====================================================================================================
 
-  public PropertyNavigationWidget(final Composite parent, final int style, final IConceptModel conceptModel) {
+  public PropertyNavigationWidget(final Composite parent, final int style) {
     super(parent, style);
-    this.conceptModel = conceptModel;
     createContents();
   }
 
+  public void setConceptModel(IConceptModel conceptModel) {
+    propertyTree.setConceptModel(conceptModel);
+    this.conceptModel = conceptModel;
+  }
+  
   // ~ Methods =========================================================================================================
 
   protected void createContents() {
@@ -97,33 +104,31 @@ public class PropertyNavigationWidget extends Composite implements ISelectionPro
       }
     });
 
-    propertyTree = new PropertyTreeWidget(this, SWT.NONE, conceptModel, PropertyTreeWidget.SHOW_USED, true);
+    propertyTree = new PropertyTreeWidget(this, PropertyTreeWidget.SHOW_USED, true);
+    propertyTree.setConceptModel(conceptModel);
     gridData = new GridData(GridData.FILL_BOTH);
     gridData.horizontalSpan = 2;
-    propertyTree.setLayoutData(gridData);
+    propertyTree.getTree().setLayoutData(gridData);
 
     propertyTree.addSelectionChangedListener(new ISelectionChangedListener() {
       public void selectionChanged(final SelectionChangedEvent e) {
-        if (e.getSelection() instanceof PropertyTreeSelection) {
+        IStructuredSelection structuredSelection = (StructuredSelection) propertyTree.getSelection();
+        Object objectSelected = structuredSelection.getFirstElement();
+        if (objectSelected instanceof PropertyTreeWidget.PropertyNode) {
           fireSelectionChangedEvent(e);
-          PropertyTreeSelection sel = (PropertyTreeSelection) e.getSelection();
-          if (sel.isGroup()) {
-            // we're dealing with a property group
-            delButton.setEnabled(false);
-          } else {
-            // we're dealing with a property
-            ConceptPropertyInterface prop = conceptModel.getProperty(sel.getName(), IConceptModel.REL_THIS);
-            if (null != prop) {
-              // it's a child property; allow it to be deleted
-              if (prop.isRequired()) {
-                delButton.setEnabled(false);
-              } else {
-              delButton.setEnabled(true);
-              }
-            } else {
-              // it's a parent/inherited/security property; it cannot be deleted on this concept
+          // we're dealing with a property
+          ConceptPropertyInterface prop = conceptModel.getProperty(((PropertyTreeWidget.PropertyNode) objectSelected).getId(), IConceptModel.REL_THIS);
+          if (null != prop) {
+            // it's a child property; allow it to be deleted
+            if (prop.isRequired()) {
               delButton.setEnabled(false);
+            } else {
+              delButton.setEnabled(true);
             }
+          } else {
+            // it's a parent/inherited/security property; it cannot be deleted
+            // on this concept
+            delButton.setEnabled(false);
           }
         } else {
           delButton.setEnabled(false);
@@ -134,19 +139,20 @@ public class PropertyNavigationWidget extends Composite implements ISelectionPro
 
   protected void deleteButtonPressed(final SelectionEvent e) {
     String propertyId = null;
-    ISelection sel = propertyTree.getSelection();
-    if (sel instanceof PropertyTreeSelection) {
-      PropertyTreeSelection treeSel = (PropertyTreeSelection) sel;
-      propertyId = treeSel.getName();
-
-      // event should now fire from the model
-    } else {
+    
+    Object selectedObject = ((StructuredSelection)propertyTree.getSelection()).getFirstElement();
+    if (selectedObject instanceof PropertyTreeWidget.PropertyNode) {
+      propertyId = ((PropertyTreeWidget.PropertyNode)selectedObject).getId();
+    } else if (selectedObject instanceof PropertyTreeWidget.GroupNode) {
+      propertyId = ((PropertyTreeWidget.GroupNode)selectedObject).getGroupName();
+    }
+    else {
       if (logger.isWarnEnabled()) {
         logger.warn("unknown node selected in property tree");
       }
       return;
     }
-
+    
     boolean delete = MessageDialog.openConfirm(getShell(), "Confirm", "Are you sure you want to remove the property '"
         + PredefinedVsCustomPropertyHelper.getDescription(propertyId) + "'?");
 

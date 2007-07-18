@@ -18,11 +18,7 @@ public class DatePropertyEditorWidget extends AbstractPropertyEditorWidget {
   public DatePropertyEditorWidget(final Composite parent, final int style, final IConceptModel conceptModel,
       final String propertyId, final Map context) {
     super(parent, style, conceptModel, propertyId, context);
-  }
-
-  protected void addModificationListeners() {
-    // TODO Auto-generated method stub
-
+    refresh();
   }
 
   protected void createContents(final Composite parent) {
@@ -43,11 +39,6 @@ public class DatePropertyEditorWidget extends AbstractPropertyEditorWidget {
 
   }
 
-  protected void removeModificationListeners() {
-    // TODO Auto-generated method stub
-
-  }
-
   public Object getValue() {
     // TODO Auto-generated method stub
     return null;
@@ -58,4 +49,14 @@ public class DatePropertyEditorWidget extends AbstractPropertyEditorWidget {
     return false;
   }
 
+  protected void setValue(final Object value) {
+  }
+  
+  public void refresh() {
+    refreshOverrideButton();
+    setValue(getProperty().getValue());
+  }
+
+  public void cleanup() {
+  }
 }

@@ -48,14 +48,10 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -64,9 +60,7 @@ import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.PhysicalColumn;
 import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.SchemaMeta;
-import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
-import org.pentaho.pms.schema.concept.editor.IConceptModel;
 import org.pentaho.pms.schema.concept.editor.PhysicalTableModel;
 import org.pentaho.pms.schema.concept.editor.PropertyNavigationWidget;
 import org.pentaho.pms.schema.concept.editor.PropertyWidgetManager2;
@@ -252,9 +246,7 @@ public class PhysicalTableDialog extends AbstractTableDialog {
     }
   }
   
-  protected Composite createConceptEditor(ConceptUtilityInterface cu) {
-    ConceptInterface concept = cu.getConcept();
-    IConceptModel conceptModel = conceptModelRegistry.getConceptModel(concept);
+  protected Composite createConceptEditor() {
     Composite conceptEditor = new Composite(cardComposite, SWT.NONE);
     conceptEditor.setLayout(new FillLayout());
 
@@ -270,7 +262,7 @@ public class PhysicalTableDialog extends AbstractTableDialog {
     wlId.setText(Messages.getString("PhysicalTableDialog.USER_NAME_ID")); //$NON-NLS-1$
     conceptIdText = new Text(leftComposite, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
     conceptIdText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-    PropertyNavigationWidget propertyNavigationWidget = new PropertyNavigationWidget(leftComposite, SWT.NONE, conceptModel);
+    propertyNavigationWidget = new PropertyNavigationWidget(leftComposite, SWT.NONE);
     propertyNavigationWidget.setLayoutData(new GridData(GridData.FILL_BOTH));
     
     Composite rightComposite = new Composite(s0, SWT.NONE);
@@ -279,23 +271,19 @@ public class PhysicalTableDialog extends AbstractTableDialog {
     Combo fillerCombo = new Combo(rightComposite, SWT.NONE);
     fillerCombo.setVisible(false);
     
-    PropertyWidgetManager2 propertyWidgetManager = new PropertyWidgetManager2(rightComposite, SWT.NONE, conceptModel, propertyEditorContext, schemaMeta.getSecurityReference());
+    propertyWidgetManager = new PropertyWidgetManager2(rightComposite, SWT.NONE, propertyEditorContext, schemaMeta.getSecurityReference());
     propertyWidgetManager.setLayoutData(new GridData(GridData.FILL_BOTH));
-    propertyNavigationWidget.addSelectionChangedListener(propertyWidgetManager);
+    
     GridData gridData = new GridData(GridData.FILL_BOTH);
     gridData.heightHint = 20;
     s0.setLayoutData(gridData);
     s0.setWeights(new int[] { 1, 2 });
-    
-    if (tableModel.getId() != null) {
-      conceptIdText.setText(tableModel.getId());
-      if (initialTableOrColumnSelection == null) {
-        conceptIdText.selectAll();
-      }
-    }
-
     return conceptEditor;
   }
+  
+
+
+
 
 
 }

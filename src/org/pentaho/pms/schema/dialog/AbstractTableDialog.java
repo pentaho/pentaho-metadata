@@ -44,13 +44,11 @@ import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -61,7 +59,6 @@ import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
-import org.pentaho.pms.schema.concept.editor.ConceptEditorWidget;
 import org.pentaho.pms.schema.concept.editor.ConceptModelRegistry;
 import org.pentaho.pms.schema.concept.editor.Constants;
 import org.pentaho.pms.schema.concept.editor.IConceptModel;
@@ -105,6 +102,11 @@ public abstract class AbstractTableDialog extends Dialog implements ISelectionCh
   protected ToolItem delButton;
   
   protected ConceptUtilityInterface lastSelection;
+  
+  protected Composite conceptEditor;
+  
+  PropertyWidgetManager2 propertyWidgetManager;
+  PropertyNavigationWidget propertyNavigationWidget;
   
   public AbstractTableDialog(Shell parent) {
     super(parent);
@@ -185,8 +187,6 @@ public abstract class AbstractTableDialog extends Dialog implements ISelectionCh
       }
     });
 
-//    wlList.setFont(Constants.getFontRegistry(Display.getCurrent()).get("prop-mgmt-title"));
-
     tableColumnTree = new TableColumnTreeWidget(detailsComposite, SWT.SINGLE | SWT.BORDER, tableModel, true);
     gridData = new GridData(GridData.FILL_BOTH);
     gridData.horizontalSpan = 2;
@@ -199,14 +199,16 @@ public abstract class AbstractTableDialog extends Dialog implements ISelectionCh
     cardComposite.setLayout(stackLayout);
 
     defaultCard = new DefaultCard(cardComposite, SWT.NONE);
+    conceptEditor = createConceptEditor();
 
-    swapCard(null);
+    showConceptUtility(null);
 
     s0.setWeights(new int[] { 1, 3 });
 
     if (initialTableOrColumnSelection != null) {
       tableColumnTree.setSelection(new StructuredSelection(initialTableOrColumnSelection));
-      tableColumnTree.getTree().forceFocus();
+      conceptIdText.forceFocus();
+      conceptIdText.selectAll();
     }
 
     return c0;
@@ -243,26 +245,28 @@ public abstract class AbstractTableDialog extends Dialog implements ISelectionCh
     }
   }
 
-  private void swapCard(final ConceptUtilityInterface cu) {
-    if (null == cu) {
-      stackLayout.topControl = defaultCard;
-    } else {
-      ConceptInterface concept = cu.getConcept();
-      if (null == cards.get(concept)) {
-        cards.put(concept, createConceptEditor(cu));
+  protected void showConceptUtility(ConceptUtilityInterface cu) {
+    if (cu == null) {
+      if (stackLayout.topControl != defaultCard) {
+        stackLayout.topControl = defaultCard;
+        cardComposite.layout();
       }
-      stackLayout.topControl = (Control) cards.get(concept);
+    } else {
+      if (stackLayout.topControl == defaultCard){
+        stackLayout.topControl = conceptEditor;
+        cardComposite.layout();
+      }
+      editConcept(cu);
     }
-    cardComposite.layout();
+    lastSelection = cu;
   }
-
-  protected abstract Composite createConceptEditor(ConceptUtilityInterface cu);
+  
+  protected abstract Composite createConceptEditor();
   
   protected void cancelPressed() {
     cleanup();
     super.cancelPressed();
   }
-
 
   /**
    * The card that shows when there is no selection in the table-column tree.
@@ -288,10 +292,6 @@ public abstract class AbstractTableDialog extends Dialog implements ISelectionCh
 
   }
 
-  protected void showId(String id) {
-    conceptIdText.setText(id);
-  }
-  
   public void selectionChanged(SelectionChangedEvent e) {
     if (!e.getSelection().isEmpty()) {
       TreeSelection treeSel = (TreeSelection) e.getSelection();
@@ -302,14 +302,32 @@ public abstract class AbstractTableDialog extends Dialog implements ISelectionCh
         } else {
           delButton.setEnabled(false);
         }
-        swapCard(cu);
-        showId(cu.getId());
-        lastSelection = cu;
+        showConceptUtility(cu);
       } else {
-        lastSelection = null;
+        showConceptUtility(null);
       }
     } else {
-      lastSelection = null;
+      showConceptUtility(null);
     }
+  }
+
+  protected void configureShell(Shell arg0) {
+    // TODO Auto-generated method stub
+    super.configureShell(arg0);
+    arg0.setImage(null);
+  }
+  
+  protected void editConcept(ConceptUtilityInterface cu) {
+    ConceptInterface concept = cu.getConcept();
+    IConceptModel conceptModel = conceptModelRegistry.getConceptModel(concept);
+    
+    propertyNavigationWidget.removeSelectionChangedListener(propertyWidgetManager);
+    
+    propertyNavigationWidget.setConceptModel(conceptModel);
+    propertyWidgetManager.setConceptModel(conceptModel);
+    
+    propertyNavigationWidget.addSelectionChangedListener(propertyWidgetManager);
+    
+    conceptIdText.setText(cu.getId());
   }
 }

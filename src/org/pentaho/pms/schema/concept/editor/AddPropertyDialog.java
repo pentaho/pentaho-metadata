@@ -16,6 +16,7 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -28,7 +29,6 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -36,7 +36,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.DefaultPropertyID;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
@@ -81,14 +80,7 @@ public class AddPropertyDialog extends TitleAreaDialog {
   }
 
   protected Control createDialogArea(final Composite parent) {
-    // composite below (from framework) uses GridLayout
     Composite c0 = (Composite) super.createDialogArea(parent);
-//    Composite c3 = new Composite(c0, SWT.BORDER);
-//    c3.setLayoutData(new GridData(GridData.FILL_BOTH));
-//    GridLayout gl3 = new GridLayout();
-//    gl3.marginHeight = 10;
-//    gl3.marginWidth = 10;
-//    c3.setLayout(new FormLayout());
     Composite c1 = new Composite(c0, SWT.NONE);
     c1.setLayoutData(new GridData(GridData.FILL_BOTH));
     c1.setLayout(new FormLayout());
@@ -102,7 +94,8 @@ public class AddPropertyDialog extends TitleAreaDialog {
 
     predefinedButton.setText("Add a pre-defined property");
     predefinedButton.addSelectionListener(new DisableFieldsListener());
-    propertyTree = new PropertyTreeWidget(c1, SWT.NONE, conceptModel, PropertyTreeWidget.SHOW_UNUSED, false);
+    propertyTree = new PropertyTreeWidget(c1, PropertyTreeWidget.SHOW_UNUSED, false);
+    propertyTree.setConceptModel(conceptModel);
     propertyTree.addSelectionChangedListener(new ISelectionChangedListener() {
       public void selectionChanged(final SelectionChangedEvent e) {
         validatePredefined();
@@ -117,11 +110,11 @@ public class AddPropertyDialog extends TitleAreaDialog {
     fdTree.top = new FormAttachment(predefinedButton, 10);
     fdTree.right = new FormAttachment(100, -10);
     fdTree.bottom = new FormAttachment(65, 0);
-    propertyTree.setLayoutData(fdTree);
+    propertyTree.getTree().setLayoutData(fdTree);
 
     FormData fdCustomButton = new FormData();
     fdCustomButton.left = new FormAttachment(0, 10);
-    fdCustomButton.top = new FormAttachment(propertyTree, 10);
+    fdCustomButton.top = new FormAttachment(propertyTree.getTree(), 10);
     customButton.setLayoutData(fdCustomButton);
 
     customButton.setText("Add a custom property");
@@ -135,8 +128,6 @@ public class AddPropertyDialog extends TitleAreaDialog {
     c2.setLayoutData(fdC2);
 
     c2.setLayout(new FormLayout());
-    //    GridData gd2 = new GridData(GridData.FILL_BOTH);
-    //    c2.setLayoutData(gd2);
 
     Label lab1 = new Label(c2, SWT.RIGHT);
     idField = new Text(c2, SWT.BORDER);
@@ -238,19 +229,15 @@ public class AddPropertyDialog extends TitleAreaDialog {
   }
 
   private void validatePredefined() {
-    if (logger.isDebugEnabled()) {
-      logger.debug("prop tree sel: " + propertyTree.getSelection());
+    IStructuredSelection structuredSelection = (StructuredSelection)propertyTree.getSelection();
+    Object objectSelected = structuredSelection.getFirstElement();
+    if (!(objectSelected instanceof PropertyTreeWidget.GroupNode)) {
+      setErrorMessage(null);
+      getButton(IDialogConstants.OK_ID).setEnabled(true);
+    } else {
+      setErrorMessage("Please select a property within a group.");
+      getButton(IDialogConstants.OK_ID).setEnabled(false);
     }
-    if (propertyTree.getSelection() instanceof PropertyTreeSelection) {
-      PropertyTreeSelection sel = (PropertyTreeSelection) propertyTree.getSelection();
-      if (!sel.isGroup()) {
-        setErrorMessage(null);
-        getButton(IDialogConstants.OK_ID).setEnabled(true);
-        return;
-      }
-    }
-    setErrorMessage("Please select a property within a group.");
-    getButton(IDialogConstants.OK_ID).setEnabled(false);
   }
 
   private void validateCustom() {
@@ -306,11 +293,13 @@ public class AddPropertyDialog extends TitleAreaDialog {
     ConceptPropertyType type = null;
     if (predefinedButton.getSelection()) {
       // might be null
-      ISelection sel = propertyTree.getSelection();
-      if (sel instanceof PropertyTreeSelection) {
-        PropertyTreeSelection treeSel = (PropertyTreeSelection) sel;
-        propertyId = treeSel.getName();
-      } else {
+      Object selectedObject = ((StructuredSelection)propertyTree.getSelection()).getFirstElement();
+      if (selectedObject instanceof PropertyTreeWidget.PropertyNode) {
+        propertyId = ((PropertyTreeWidget.PropertyNode)selectedObject).getId();
+      } else if (selectedObject instanceof PropertyTreeWidget.GroupNode) {
+        propertyId = ((PropertyTreeWidget.GroupNode)selectedObject).getGroupName();
+      }
+      else {
         if (logger.isWarnEnabled()) {
           logger.warn("unknown node selected in property tree");
         }
@@ -342,12 +331,12 @@ public class AddPropertyDialog extends TitleAreaDialog {
 
     public void widgetSelected(SelectionEvent e) {
       if (predefinedButton.getSelection()) {
-        propertyTree.setEnabled(true);
+        propertyTree.getTree().setEnabled(true);
         idField.setEnabled(false);
         typeField.setEnabled(false);
         validatePredefined();
       } else {
-        propertyTree.setEnabled(false);
+        propertyTree.getTree().setEnabled(false);
         idField.setEnabled(true);
         typeField.setEnabled(true);
         validateCustom();

@@ -143,8 +143,10 @@ public class BusinessModelDialog extends Dialog {
     group.setLayout(new FillLayout());
     SashForm s0 = new SashForm(group, SWT.HORIZONTAL);
     s0.SASH_WIDTH = 10;
-    PropertyNavigationWidget propertyNavigationWidget = new PropertyNavigationWidget(s0, SWT.NONE, conceptModel);
-    PropertyWidgetManager2 propertyWidgetManager = new PropertyWidgetManager2(s0, SWT.NONE, conceptModel, propertyEditorContext, schemaMeta.getSecurityReference());
+    PropertyNavigationWidget propertyNavigationWidget = new PropertyNavigationWidget(s0, SWT.NONE);
+    propertyNavigationWidget.setConceptModel(conceptModel);
+    PropertyWidgetManager2 propertyWidgetManager = new PropertyWidgetManager2(s0, SWT.NONE, propertyEditorContext, schemaMeta.getSecurityReference());
+    propertyWidgetManager.setConceptModel(conceptModel);
     propertyNavigationWidget.addSelectionChangedListener(propertyWidgetManager);
     s0.setWeights(new int[] { 1, 2 });
     

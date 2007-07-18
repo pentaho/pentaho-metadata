@@ -27,8 +27,10 @@ public class ConceptEditorWidget extends Composite {
     group.setLayout(new FillLayout());
     SashForm s0 = new SashForm(group, SWT.HORIZONTAL);
     s0.SASH_WIDTH = 10;
-    PropertyNavigationWidget propertyNavigationWidget = new PropertyNavigationWidget(s0, SWT.NONE, conceptModel);
-    PropertyWidgetManager2 propertyWidgetManager = new PropertyWidgetManager2(s0, SWT.NONE, conceptModel, context, securityReference);
+    PropertyNavigationWidget propertyNavigationWidget = new PropertyNavigationWidget(s0, SWT.NONE);
+    propertyNavigationWidget.setConceptModel(conceptModel);
+    PropertyWidgetManager2 propertyWidgetManager = new PropertyWidgetManager2(s0, SWT.NONE, context, securityReference);
+    propertyWidgetManager.setConceptModel(conceptModel);
     propertyNavigationWidget.addSelectionChangedListener(propertyWidgetManager);
     s0.setWeights(new int[] { 1, 2 });
   }

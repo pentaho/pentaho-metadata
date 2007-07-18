@@ -53,7 +53,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -63,25 +62,26 @@ import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.SchemaMeta;
-import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.schema.concept.editor.BusinessTableModel;
-import org.pentaho.pms.schema.concept.editor.IConceptModel;
 import org.pentaho.pms.schema.concept.editor.PropertyNavigationWidget;
 import org.pentaho.pms.schema.concept.editor.PropertyWidgetManager2;
 
 import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
 
-public class BusinessTableDialog extends AbstractTableDialog {
+public class BusinessTableDialog extends AbstractTableDialog implements SelectionListener {
 
   private static final Log logger = LogFactory.getLog(BusinessTableDialog.class);
 
   private Combo physicalTableText;
+  
+  private Label physicalTableLabel;
 
   private BusinessTable businessTable;
 
   HashMap modificationsMap = new HashMap();
 
+  
   protected void configureShell(final Shell shell) {
     super.configureShell(shell);
     shell.setText(Messages.getString("BusinessTableDialog.USER_BUSINESS_TABLE_PROPERTIES"));
@@ -249,9 +249,20 @@ public class BusinessTableDialog extends AbstractTableDialog {
     }
   }
   
-  protected Composite createConceptEditor(ConceptUtilityInterface cu) {
-    ConceptInterface concept = cu.getConcept();
-    IConceptModel conceptModel = conceptModelRegistry.getConceptModel(concept);
+  protected void editConcept(ConceptUtilityInterface cu) {
+    if (cu instanceof BusinessTable) {
+      physicalTableLabel.setVisible(true);
+      physicalTableText.setVisible(true);
+    } else {
+      physicalTableLabel.setVisible(false);
+      physicalTableText.setVisible(false);
+    }
+    
+    super.editConcept(cu);
+  }
+  
+  protected Composite createConceptEditor() {
+    
     Composite conceptEditor = new Composite(cardComposite, SWT.NONE);
     conceptEditor.setLayout(new FillLayout());
 
@@ -268,48 +279,32 @@ public class BusinessTableDialog extends AbstractTableDialog {
     wlId.setText(Messages.getString("PhysicalTableDialog.USER_NAME_ID")); //$NON-NLS-1$
     conceptIdText = new Text(leftComposite, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
     conceptIdText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-    PropertyNavigationWidget propertyNavigationWidget = new PropertyNavigationWidget(leftComposite, SWT.NONE, conceptModel);
+    propertyNavigationWidget = new PropertyNavigationWidget(leftComposite, SWT.NONE);
     propertyNavigationWidget.setLayoutData(new GridData(GridData.FILL_BOTH));
     
     Composite rightComposite = new Composite(s0, SWT.NONE);
     rightComposite.setLayout(new GridLayout());
-    if (cu instanceof BusinessTable) {
-      Label physicalTableLabel = new Label(rightComposite, SWT.RIGHT);
-      physicalTableLabel.setText(Messages.getString("BusinessTableDialog.USER_PHYSICAL_TABLE")); //$NON-NLS-1$
-      physicalTableText = new Combo(rightComposite, SWT.BORDER | SWT.READ_ONLY | SWT.V_SCROLL | SWT.H_SCROLL);
-      physicalTableText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-      int selectedIndex = -1;
-      for (int i = 0; i < schemaMeta.nrTables(); i++) {
-        physicalTableText.add(schemaMeta.getTable(i).getId());
-        if (null != businessTable.getPhysicalTable()
-            && businessTable.getPhysicalTable().getId().equals(schemaMeta.getTable(i).getId())) {
-          selectedIndex = i;
-        }
+    physicalTableLabel = new Label(rightComposite, SWT.RIGHT);
+    physicalTableLabel.setText(Messages.getString("BusinessTableDialog.USER_PHYSICAL_TABLE")); //$NON-NLS-1$
+    physicalTableText = new Combo(rightComposite, SWT.BORDER | SWT.READ_ONLY | SWT.V_SCROLL | SWT.H_SCROLL);
+    physicalTableText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        
+    int selectedIndex = -1;
+    for (int i = 0; i < schemaMeta.nrTables(); i++) {
+      physicalTableText.add(schemaMeta.getTable(i).getId());
+      if (null != businessTable.getPhysicalTable()
+          && businessTable.getPhysicalTable().getId().equals(schemaMeta.getTable(i).getId())) {
+        selectedIndex = i;
       }
-      if (-1 != selectedIndex) {
-        physicalTableText.select(selectedIndex);
-      }
-
-      physicalTableText.addSelectionListener(new SelectionListener() {
-        public void widgetDefaultSelected(final SelectionEvent e) {
-        }
-
-        public void widgetSelected(final SelectionEvent e) {
-          tableModel.setParent(schemaMeta.findPhysicalTable(physicalTableText.getText()));
-        }
-
-      });
-    } else {
-      new Label(rightComposite, SWT.RIGHT);
-      Combo fillerCombo = new Combo(rightComposite, SWT.NONE);
-      fillerCombo.setVisible(false);
+    }
+    if (-1 != selectedIndex) {
+      physicalTableText.select(selectedIndex);
     }
     
+    physicalTableText.addSelectionListener(this);
     
-    PropertyWidgetManager2 propertyWidgetManager = new PropertyWidgetManager2(rightComposite, SWT.NONE, conceptModel, propertyEditorContext, schemaMeta.getSecurityReference());
+    propertyWidgetManager = new PropertyWidgetManager2(rightComposite, SWT.NONE, propertyEditorContext, schemaMeta.getSecurityReference());
     propertyWidgetManager.setLayoutData(new GridData(GridData.FILL_BOTH));
-    
-    propertyNavigationWidget.addSelectionChangedListener(propertyWidgetManager);
     
     GridData gridData = new GridData(GridData.FILL_BOTH);
     gridData.heightHint = 20;
@@ -324,5 +319,14 @@ public class BusinessTableDialog extends AbstractTableDialog {
     }
     
     return conceptEditor;
+  }
+
+  public void widgetDefaultSelected(SelectionEvent arg0) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  public void widgetSelected(SelectionEvent arg0) {
+    tableModel.setParent(schemaMeta.findPhysicalTable(physicalTableText.getText()));
   }
 }

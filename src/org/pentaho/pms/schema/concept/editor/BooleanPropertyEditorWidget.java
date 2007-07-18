@@ -7,6 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -14,15 +15,13 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.pentaho.pms.schema.concept.DefaultPropertyID;
 
-public class BooleanPropertyEditorWidget extends AbstractPropertyEditorWidget {
+public class BooleanPropertyEditorWidget extends AbstractPropertyEditorWidget implements FocusListener {
 
   // ~ Static fields/initializers ======================================================================================
 
   private static final Log logger = LogFactory.getLog(BooleanPropertyEditorWidget.class);
 
   // ~ Instance fields =================================================================================================
-
-  private FocusListener focusListener;
 
   private Button button;
 
@@ -31,7 +30,7 @@ public class BooleanPropertyEditorWidget extends AbstractPropertyEditorWidget {
   public BooleanPropertyEditorWidget(final Composite parent, final int style, final IConceptModel conceptModel,
       final String propertyId, final Map context) {
     super(parent, style, conceptModel, propertyId, context);
-    setValue(getProperty().getValue());
+    refresh();
     if (logger.isDebugEnabled()) {
       logger.debug("created BooleanPropertyEditorWidget");
     }
@@ -53,9 +52,7 @@ public class BooleanPropertyEditorWidget extends AbstractPropertyEditorWidget {
     fdCheck.top = new FormAttachment(0, 0);
     button.setLayoutData(fdCheck);
 
-
-
-    button.setEnabled(isEditable());
+    button.addFocusListener(this);
   }
 
   protected void widgetDisposed(final DisposeEvent e) {
@@ -69,19 +66,28 @@ public class BooleanPropertyEditorWidget extends AbstractPropertyEditorWidget {
     button.setSelection(((Boolean) value).booleanValue());
   }
 
-  protected void addModificationListeners() {
-    if (null == focusListener) {
-      focusListener = new PropertyEditorWidgetFocusListener();
-    button.addFocusListener(focusListener);
-    }
-
-  }
-
-  protected void removeModificationListeners() {
-    button.removeFocusListener(focusListener);
-  }
-
   protected boolean isValid() {
     return true;
+  }
+
+  public void focusGained(FocusEvent arg0) {
+    // Do nothing
+    
+  }
+
+  public void focusLost(FocusEvent arg0) {
+    if (!getProperty().getValue().equals(new Boolean(button.getSelection()))) {
+      putPropertyValue();
+    }
+  }
+
+  public void refresh() {
+    refreshOverrideButton();
+    button.setEnabled(isEditable());
+    setValue(getProperty().getValue());
+  }
+  
+  public void cleanup() {
+    button.removeFocusListener(this);
   }
 }

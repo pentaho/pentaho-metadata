@@ -28,19 +28,15 @@ public class SecurityPropertyEditorWidget extends AbstractPropertyEditorWidget {
   SecurityTableViewer securityTableViewer;
   SecurityTablePermEditor securityTablePermEditor;
   SecurityReference securityReference;
-
+  ToolItem addPermsToolItem;
+  ToolItem removePermsToolItem;
+  
   public SecurityPropertyEditorWidget(final Composite parent, final int style, final IConceptModel conceptModel,
       final String propertyId, final Map context, SecurityReference securityReference) {
     super(parent, style, conceptModel, propertyId, context);
     this.securityReference = securityReference;
     securityTablePermEditor.setSecurityReference(securityReference);
-    setValue(getProperty().getValue());
-    if (logger.isDebugEnabled()) {
-      logger.debug("created SecurityPropertyEditorWidget");
-    }
-  }
-
-  protected void addModificationListeners() {
+    refresh();
   }
 
   protected void createContents(final Composite parent) {
@@ -60,10 +56,10 @@ public class SecurityPropertyEditorWidget extends AbstractPropertyEditorWidget {
     gridData.horizontalAlignment = SWT.END;
     toolBar.setLayoutData(gridData);
     
-    ToolItem toolItem = new ToolItem(toolBar, SWT.NULL);
-    toolItem.setImage(GUIResource.getInstance().getImageGenericAdd());
-    toolItem.setToolTipText("Add New Users/Groups");
-    toolItem.addSelectionListener(new SelectionListener() {
+    addPermsToolItem = new ToolItem(toolBar, SWT.NULL);
+    addPermsToolItem.setImage(GUIResource.getInstance().getImageGenericAdd());
+    addPermsToolItem.setToolTipText("Add New Users/Groups");
+    addPermsToolItem.addSelectionListener(new SelectionListener() {
       public void widgetDefaultSelected(SelectionEvent e) {
       }
 
@@ -71,12 +67,11 @@ public class SecurityPropertyEditorWidget extends AbstractPropertyEditorWidget {
         addNewUsersOrGroups();
       }
     });
-    toolItem.setEnabled(isEditable());
 
-    toolItem = new ToolItem(toolBar, SWT.NULL);
-    toolItem.setImage(GUIResource.getInstance().getImageGenericDelete());
-    toolItem.setToolTipText("Remove All Permissions From Selected Users/Groups");
-    toolItem.addSelectionListener(new SelectionListener() {
+    removePermsToolItem = new ToolItem(toolBar, SWT.NULL);
+    removePermsToolItem.setImage(GUIResource.getInstance().getImageGenericDelete());
+    removePermsToolItem.setToolTipText("Remove All Permissions From Selected Users/Groups");
+    removePermsToolItem.addSelectionListener(new SelectionListener() {
       public void widgetDefaultSelected(SelectionEvent e) {
       }
 
@@ -84,7 +79,6 @@ public class SecurityPropertyEditorWidget extends AbstractPropertyEditorWidget {
         removeSelectedUsersAndGroups();
       }
     });
-    toolItem.setEnabled(isEditable());
     
     label = new Label(parent, SWT.NONE);
     label.setText("Permissions");
@@ -113,10 +107,6 @@ public class SecurityPropertyEditorWidget extends AbstractPropertyEditorWidget {
     return false;
   }
 
-  protected void removeModificationListeners() {
-    // TODO Auto-generated method stub
-  }
-
   public Object getValue() {
     return securityTableViewer.getSecuritySettings();
   }
@@ -141,5 +131,13 @@ public class SecurityPropertyEditorWidget extends AbstractPropertyEditorWidget {
     securityTableViewer.removeSelectedOwners();   
   }
   
-  
+  public void refresh() {
+    refreshOverrideButton();
+    addPermsToolItem.setEnabled(isEditable());
+    removePermsToolItem.setEnabled(isEditable());
+    setValue(getProperty().getValue());
+  }
+
+  public void cleanup() {
+  }
 }

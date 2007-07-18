@@ -33,13 +33,14 @@ public class ColorPropertyEditorWidget extends AbstractPropertyEditorWidget {
   private Color color = new Color(Display.getCurrent(), 255, 0, 0);
 
   private Button button;
-
+  Label colorLabel;
+  
   // ~ Constructors ====================================================================================================
 
   public ColorPropertyEditorWidget(final Composite parent, final int style, final IConceptModel conceptModel,
       final String propertyId, final Map context) {
     super(parent, style, conceptModel, propertyId, context);
-    setValue(getProperty().getValue());
+    refresh();
     if (logger.isDebugEnabled()) {
       logger.debug("created AggregationPropertyEditorWidget");
     }
@@ -55,13 +56,11 @@ public class ColorPropertyEditorWidget extends AbstractPropertyEditorWidget {
         }
       }
     });
-    Label colorLabel = new Label(parent, SWT.NONE);
+    colorLabel = new Label(parent, SWT.NONE);
     colorLabel.setText("Color:");
-    colorLabel.setEnabled(isEditable());
 
     button = new Button(parent, SWT.PUSH);
     button.setText("      ");
-    button.setEnabled(isEditable());
 
     FormData fdButton = new FormData();
     fdButton.left = new FormAttachment(colorLabel, 10);
@@ -126,17 +125,20 @@ public class ColorPropertyEditorWidget extends AbstractPropertyEditorWidget {
     }
   }
 
-  protected void addModificationListeners() {
-    // nothing to do
+  public void refresh() {
+    refreshOverrideButton();
+    colorLabel.setEnabled(isEditable());
+    button.setEnabled(isEditable());
+    setValue(getProperty().getValue());
   }
-
-  protected void removeModificationListeners() {
-    // nothing to do
-
-  }
-
+  
   protected boolean isValid() {
     return true;
+  }
+
+  public void cleanup() {
+    // TODO Auto-generated method stub
+    
   }
 
 }

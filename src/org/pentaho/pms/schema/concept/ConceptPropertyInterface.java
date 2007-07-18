@@ -19,7 +19,7 @@ import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
  *
  * @author Matt
  */
-public interface ConceptPropertyInterface
+public interface ConceptPropertyInterface extends Cloneable
 {
     /** @return the concept property type */
     public ConceptPropertyType getType();
@@ -41,6 +41,7 @@ public interface ConceptPropertyInterface
 
     public boolean equals(Object obj);
     public int hashCode();
+    public Object clone() throws CloneNotSupportedException;
 
 //    /**
 //     * @return a copy of the concept property
