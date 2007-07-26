@@ -258,8 +258,8 @@ public class GUIResource
         imageBusinessTable  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "business_table.png")); //$NON-NLS-1$
         imageBusinessTablesParent  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "folder_business_table.png")); //$NON-NLS-1$
         imagePhysicalColumn  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "connection_column.png")); //$NON-NLS-1$
-        imageUser  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "user.gif")); //$NON-NLS-1$
-        imageRole  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "role.gif")); //$NON-NLS-1$
+        imageUser  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "user.png")); //$NON-NLS-1$
+        imageRole  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "group.png")); //$NON-NLS-1$
         imageBusinessModel  = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "business_model.png")); //$NON-NLS-1$
         imageBol         = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "bol.png")); //$NON-NLS-1$
         imageIcon        = new Image(display, getClass().getResourceAsStream(Const.IMAGE_DIRECTORY + "icon.png")); //$NON-NLS-1$
