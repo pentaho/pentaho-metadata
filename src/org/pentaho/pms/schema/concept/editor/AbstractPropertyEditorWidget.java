@@ -228,12 +228,14 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
   }
 
   protected void refreshOverrideButton() {
-    if (conceptModel.isOverridden(propertyId)) {
-      overrideButton.setImage(Constants.getImageRegistry(Display.getCurrent()).get("stop-override-button"));
-      overrideButton.setToolTipText("Stop Override");
-    } else {
-      overrideButton.setImage(Constants.getImageRegistry(Display.getCurrent()).get("override-button"));
-      overrideButton.setToolTipText("Override");
+    if (overrideButton != null) {
+      if (conceptModel.isOverridden(propertyId)) {
+        overrideButton.setImage(Constants.getImageRegistry(Display.getCurrent()).get("stop-override-button"));
+        overrideButton.setToolTipText("Stop Override");
+      } else {
+        overrideButton.setImage(Constants.getImageRegistry(Display.getCurrent()).get("override-button"));
+        overrideButton.setToolTipText("Override");
+      }
     }
   }
   
