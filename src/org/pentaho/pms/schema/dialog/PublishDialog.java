@@ -22,17 +22,17 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Dialog;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -50,10 +50,10 @@ import be.ibridge.kettle.core.WindowProperty;
  * @author wseyler
  *
  */
-public class PublishDialog extends Dialog {
+public class PublishDialog extends TitleAreaDialog {
   private SchemaMeta schemaMeta;
   
-  private LogWriter    log;
+  private LogWriter log;
   private Props props;
   
   private String serverURL;
@@ -66,96 +66,156 @@ public class PublishDialog extends Dialog {
   
   private Text tServerURL;
   private Text tSolutionName;
-//  private Text tFileName;
   
   private Text tUserId;
   private Text tUserPassword;
   private Text tPublishPassword;
   
-  private Button wOK, wCancel;
-  private Listener lsOK, lsCancel;
 
-  Shell dialog;
   /**
    * @param parent
    */
   public PublishDialog(Shell parent, SchemaMeta schemaMeta) {
-    super(parent, SWT.NONE);
+    super(parent);
     
     this.schemaMeta = schemaMeta;
-    
     log = LogWriter.getInstance();
     props = Props.getInstance();
   }
 
-  public void open()
-  {
-    log.logDebug(this.getClass().getName(), Messages.getString("General.DEBUG_OPENING_DIALOG")); //$NON-NLS-1$
+  protected Control createContents(Composite parent) {
+    Control contents = super.createContents(parent);
+    setMessage(Messages.getString("PublishDialog.USER_DIALOG_MESSAGE")); //$NON-NLS-1$
+    setTitle(Messages.getString("PublishDialog.USER_DIALOG_TITLE")); //$NON-NLS-1$
+    return contents;
+  }
 
-    Shell parent = getParent();
-    Display display = parent.getDisplay();
+  protected Control createDialogArea(final Composite parent) {
     
-    dialog = new Shell(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.MIN);
-    dialog.setText(Messages.getString("PublishDialog.TITLE")); //$NON-NLS-1$
+    Composite c0 = (Composite) super.createDialogArea(parent);
+    Composite c1 = new Composite(c0, SWT.NONE);
+    
+    GridLayout gridLayout = new GridLayout ();
+    
+    c1.setLayout(gridLayout);
+    props.setLook(c1);
 
-    GridLayout gridLayout = new GridLayout(2, false);
-    dialog.setLayout(gridLayout);
+    GridData data = new GridData();
+    data.grabExcessHorizontalSpace = true;
+    data.minimumWidth = 470;
     
-    GridData fieldLayoutData = new GridData(SWT.FILL, SWT.FILL, true, false);
-    Label label = new Label(dialog, SWT.LEFT);
-    label.setText(Messages.getString("PublishDialog.LABEL_USER")); //$NON-NLS-1$
-    tUserId = new Text(dialog, SWT.LEFT | SWT.SINGLE);
-    tUserId.setLayoutData(fieldLayoutData);
-    label = new Label(dialog, SWT.LEFT);
-    label.setText(Messages.getString("PublishDialog.LABEL_PASSWORD")); //$NON-NLS-1$
-    tUserPassword = new Text(dialog, SWT.LEFT | SWT.SINGLE | SWT.PASSWORD);
-    tUserPassword.setLayoutData(fieldLayoutData);
-    label = new Label(dialog, SWT.LEFT);
-    label.setText(Messages.getString("PublishDialog.LABEL_PUBLISH_PASSWORD")); //$NON-NLS-1$
-    tPublishPassword = new Text(dialog, SWT.LEFT | SWT.SINGLE | SWT.PASSWORD);
-    tPublishPassword.setLayoutData(fieldLayoutData);
-    
-    label = new Label(dialog, SWT.LEFT);
-    label.setText(Messages.getString("PublishDialog.LABEL_SERVER")); //$NON-NLS-1$
-    tServerURL = new Text(dialog, SWT.LEFT | SWT.SINGLE);
-    tServerURL.setLayoutData(fieldLayoutData);
-    label = new Label(dialog, SWT.LEFT);
-    label.setText(Messages.getString("PublishDialog.LABEL_SOLUTION")); //$NON-NLS-1$
-    tSolutionName = new Text(dialog, SWT.LEFT | SWT.SINGLE);
-    tSolutionName.setLayoutData(fieldLayoutData);
-//    label = new Label(dialog, SWT.LEFT);
-//    label.setText(Messages.getString("PublishDialog.LABEL_FILENAME")); //$NON-NLS-1$
-//    tFileName = new Text(dialog, SWT.LEFT | SWT.SINGLE);
-//    tFileName.setLayoutData(fieldLayoutData);
 
-    // The buttons...
-    wCancel = new Button(dialog, SWT.PUSH);
-    wCancel.setText(Messages.getString("General.USER_CANCEL")); //$NON-NLS-1$  
-    wOK = new Button(dialog, SWT.PUSH);
-    wOK.setText(Messages.getString("General.USER_OK")); //$NON-NLS-1$
+    Label label0 = new Label (c1, SWT.NONE);
+    label0.setText (Messages.getString("PublishDialog.LABEL_SOLUTION"));
+    label0.setLayoutData (data);
     
-    lsCancel   = new Listener() { public void handleEvent(Event e) { cancel(); } };
-    lsOK       = new Listener() { public void handleEvent(Event e) { ok();     } };
-    
-    wOK.addListener    (SWT.Selection, lsOK     );
-    wCancel.addListener(SWT.Selection, lsCancel );
-    
-    // Detect [X] or ALT-F4 or something that kills this window...
-    dialog.addShellListener( new ShellAdapter() { public void shellClosed(ShellEvent e) { cancel(); } } );
+    c0.setBackground(label0.getBackground());
+    c1.setBackground(label0.getBackground());
 
-    WindowProperty winprop = props.getScreen(dialog.getText());
-    if (winprop!=null) {
-      winprop.setShell(dialog);
-    } else {
-      dialog.pack();
+    tSolutionName = new Text (c1, SWT.BORDER);
+    data = new GridData();
+    data.grabExcessHorizontalSpace = true;
+    data.minimumWidth = 470;
+    tSolutionName.setText("samples"); //default 
+    tSolutionName.setLayoutData (data);
+
+    Label label2 = new Label (c1, SWT.NONE);
+    label2.setText (Messages.getString("PublishDialog.LABEL_SERVER"));
+    data = new GridData();
+    data.grabExcessHorizontalSpace = true;
+    data.minimumWidth = 470;
+    label2.setLayoutData (data);
+
+    tServerURL = new Text (c1, SWT.BORDER);
+    data = new GridData();
+    data.grabExcessHorizontalSpace = true;
+    data.minimumWidth = 470;
+    tServerURL.setText("http://localhost:8080/pentaho/RepositoryFilePublisher"); //default 
+    tServerURL.setLayoutData (data);
+
+    Label label4 = new Label (c1, SWT.NONE);
+    label4.setText (Messages.getString("PublishDialog.LABEL_PUBLISH_PASSWORD"));
+    data = new GridData();
+    data.grabExcessHorizontalSpace = true;
+    data.minimumWidth = 300;
+    label4.setLayoutData (data);
+
+    data = new GridData();
+    data.grabExcessHorizontalSpace = true;
+    data.minimumWidth = 300;
+    
+    tPublishPassword = new Text (c1, SWT.BORDER | SWT.PASSWORD);
+    data = new GridData();
+    data.grabExcessHorizontalSpace = true;
+    data.minimumWidth = 300;
+    tPublishPassword.setLayoutData (data);
+
+    Label label6 = new Label (c1, SWT.NONE);
+    label6.setText (Messages.getString("PublishDialog.LABEL_USER"));
+    data = new GridData();
+    data.grabExcessHorizontalSpace = true;
+    data.minimumWidth = 300;
+    label6.setLayoutData (data);
+
+    tUserId = new Text (c1, SWT.BORDER);
+    data = new GridData();
+    data.grabExcessHorizontalSpace = true;
+    data.minimumWidth = 300;
+    tUserId.setLayoutData (data);
+
+    Label label8 = new Label (c1, SWT.NONE);
+    label8.setText (Messages.getString("PublishDialog.LABEL_PASSWORD"));
+    data = new GridData();
+    data.grabExcessHorizontalSpace = true;
+    data.minimumWidth = 300;
+    label8.setLayoutData (data);
+
+    tUserPassword = new Text (c1, SWT.BORDER | SWT.PASSWORD);
+    data = new GridData();
+    data.grabExcessHorizontalSpace = true;
+    data.minimumWidth = 300;
+    tUserPassword.setLayoutData (data);
+
+    return c0;
+
+  }
+
+  public void dispose() {
+    props.setScreen(new WindowProperty(getShell()));
+    getShell().dispose();
+  }
+
+  protected void configureShell(Shell shell) {
+    super.configureShell(shell);
+    shell.setText(Messages.getString("PublishDialog.TITLE")); //$NON-NLS-1$
+  }
+
+  protected void setShellStyle(int newShellStyle) {
+    super.setShellStyle(newShellStyle | SWT.RESIZE);
+  }
+
+  protected Point getInitialSize() {
+    return new Point(524, 400);
+  }
+
+  protected void createButtonsForButtonBar(Composite parent) {
+    createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+    createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+  }
+
+  protected void buttonPressed(int buttonId) {
+
+    switch (buttonId) {
+      case IDialogConstants.OK_ID:
+        ok();
+        break;
+      case IDialogConstants.CANCEL_ID:
+        cancel();
+        break;
     }
-    
-    dialog.open();
-    while (!dialog.isDisposed())
-    {
-            if (!display.readAndDispatch()) display.sleep();
-    }
 
+    setReturnCode(buttonId);
+    close();
   }
   
   private void ok() {
@@ -172,24 +232,24 @@ public class PublishDialog extends Dialog {
       File file = new File(fileName);
       file.deleteOnExit();
       File[] files = {file};
-      int result = PublisherUtil.publish(serverURL + "RepositoryFilePublisher", solutionName, files, publishPassword, userId, userPassword, false); //$NON-NLS-1$
+      int result = PublisherUtil.publish(serverURL , solutionName, files, publishPassword, userId, userPassword, false); //$NON-NLS-1$
       if (result == ISolutionRepository.FILE_EXISTS) {
-        MessageBox mb = new MessageBox(dialog, SWT.NO | SWT.YES | SWT.ICON_WARNING);
+        MessageBox mb = new MessageBox(getShell(), SWT.NO | SWT.YES | SWT.ICON_WARNING);
         mb.setText(Messages.getString("PublishDialog.FILE_EXISTS")); //$NON-NLS-1$
         mb.setMessage(Messages.getString("PublishDialog.FILE_OVERWRITE")); //$NON-NLS-1$
         if (mb.open() == SWT.YES) {
-          result = PublisherUtil.publish(serverURL + "RepositoryFilePublisher", solutionName, files, publishPassword, userId, userPassword, true); //$NON-NLS-1$
+          result = PublisherUtil.publish(serverURL, solutionName, files, publishPassword, userId, userPassword, true); //$NON-NLS-1$
         } else {
           return;
         }
       }
       if (result != ISolutionRepository.FILE_ADD_SUCCESSFUL) {
-        MessageBox mb = new MessageBox(dialog, SWT.OK | SWT.ICON_ERROR);
+        MessageBox mb = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
         mb.setText(Messages.getString("PublishDialog.ACTION_FAILED")); //$NON-NLS-1$
         mb.setMessage(Messages.getString("PublishDialog.FILE_SAVE_FAILED", fileName)); //$NON-NLS-1$
         mb.open();
       } else {  // We did it!
-        MessageBox mb = new MessageBox(dialog, SWT.OK | SWT.ICON_INFORMATION);
+        MessageBox mb = new MessageBox(getShell(), SWT.OK | SWT.ICON_INFORMATION);
         mb.setText(Messages.getString("PublishDialog.ACTION_SUCCEEDED")); //$NON-NLS-1$
         mb.setMessage(Messages.getString("PublishDialog.FILE_SAVE_SUCCEEDED", fileName)); //$NON-NLS-1$
         mb.open();
@@ -209,23 +269,18 @@ public class PublishDialog extends Dialog {
     String seperatorBck = "\\"; //$NON-NLS-1$
     
     serverURL = tServerURL.getText();
-    if (!serverURL.endsWith(seperatorFwd)) {
-      serverURL += seperatorFwd;
-    }
+//    if (!serverURL.endsWith(seperatorFwd)) {
+//      serverURL += seperatorFwd;
+//    }
     solutionName = tSolutionName.getText();
     if (solutionName.indexOf(seperatorFwd) >= 0 || solutionName.indexOf(seperatorBck) >= 0) {
-      MessageBox mb = new MessageBox(dialog, SWT.OK | SWT.ICON_ERROR);
+      MessageBox mb = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
       mb.setText(Messages.getString("PublishDialog.LOCATION_ERROR"));
       mb.setMessage(Messages.getString("PublishDialog.LOCATION_ERROR_INFO"));
       mb.open();
       return false;
     }
-//    fileName = tFileName.getText();
-//    
-//    if (!fileName.endsWith(suffix)) {
-//      fileName += suffix;
-//    }
-    
+   
     userId = tUserId.getText();
     userPassword = tUserPassword.getText();
     publishPassword = tPublishPassword.getText();
@@ -236,8 +291,4 @@ public class PublishDialog extends Dialog {
       dispose();
   }
 
-  public void dispose() {
-      props.setScreen(new WindowProperty(dialog));
-      dialog.dispose();
-  }
 }
