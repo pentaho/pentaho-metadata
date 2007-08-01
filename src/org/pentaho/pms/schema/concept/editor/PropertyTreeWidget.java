@@ -179,7 +179,7 @@ public class PropertyTreeWidget extends TreeViewer implements ISelectionProvider
         } else if ((visibility == SHOW_USED) && (conceptModel != null)) {
           children =  this.makeTreeNodesFromPropertyIds(PropertyGroupHelper.getUsedPropertiesForGroup(n.getGroupName(),
               conceptModel).toArray());
-        } else if ((visibility == SHOW_USED) && (conceptModel != null)) {
+        } else if ((visibility == SHOW_UNUSED) && (conceptModel != null)) {
           children = this.makeTreeNodesFromPropertyIds(PropertyGroupHelper.getUnusedPropertiesForGroup(n.getGroupName(),
               conceptModel).toArray());
 
@@ -194,7 +194,7 @@ public class PropertyTreeWidget extends TreeViewer implements ISelectionProvider
         elements = makeTreeNodesFromGroupNames(PropertyGroupHelper.getGroups().toArray());
       } else if ((visibility == SHOW_USED) && (conceptModel != null)) {
         elements = makeTreeNodesFromGroupNames(PropertyGroupHelper.getUsedGroups(conceptModel).toArray());
-      } else if ((visibility == SHOW_USED) && (conceptModel != null)) {
+      } else if ((visibility == SHOW_UNUSED) && (conceptModel != null)) {
         elements = makeTreeNodesFromGroupNames(PropertyGroupHelper.getUnusedGroups(conceptModel).toArray());
       }
       return elements;
