@@ -32,6 +32,8 @@ Issues resolved since last release:
     * [PMD-109] - Business Column ID generation
     * [PMD-118] - The process of adding/removing colums to a catagory in PME is extremely unintuitive.
     * [PMD-135] - Provide a custom property editor which will allow the user to define re-usable custom properties.
+    * [PMD-164] - No properties show up in the add properties dialog in the concept editor
+    
 
 ** Task
     * [PMD-89] - Needed Icons for PME    
