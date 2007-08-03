@@ -7,6 +7,38 @@ Milestone 4.  This milestone build is not production ready.
 
 Release History
 ===============
+Release Candidate 1 (version 1.6 RC1)
+
+Issues resolved since last release: 
+
+** Bug
+    * [PMD-62] - Alignment issues on the Business Tables Properties dialog
+    * [PMD-63] - Business View Properties dialog has layout problems
+    * [PMD-95] - Save doesn't clear "Changed" flag
+    * [PMD-98] - Metadata Editor - Cancel doesn't work in New Business Model dialog
+    * [PMD-108] - No Connection Defined Inconsistency
+    * [PMD-114] - Dragging a Business Table to the Business Tables Tree Element results in a new Category
+    * [PMD-115] - Dragging a Relationship Instance into its parent "Relationships" causes MetaEditor to freeze in Linux
+    * [PMD-126] - MQL Generation needs quoted Tables and Columns
+    * [PMD-132] - User reported NPE in 1.5M3
+    * [PMD-138] - SQL generation for AS400
+    * [PMD-148] - Locale: should be removed from the graphical view
+
+** Improvement
+    * [PMD-43] - Color coding of business tables
+    * [PMD-46] - Create Sample Model that will ship with MetaData Editor.
+    * [PMD-100] - PME Import Tables dialog should automatically pop up after adding a new connection
+    * [PMD-105] - UI doesn't validate Formula attribute
+    * [PMD-109] - Business Column ID generation
+    * [PMD-118] - The process of adding/removing colums to a catagory in PME is extremely unintuitive.
+    * [PMD-135] - Provide a custom property editor which will allow the user to define re-usable custom properties.
+
+** Task
+    * [PMD-89] - Needed Icons for PME    
+
+** Known issues 
+    * See http://jira.pentaho.org/browse/PMD?report=com.atlassian.jira.plugin.system.project:roadmap-panel
+    
 Milestone 5 (version 1.5.5)
 
    Closed issues this release:
