@@ -76,7 +76,7 @@
 	</target>
 
 	<target name="compile" depends="init-metadata-classes" description="compile the source ">
-		<echo>Compiling Pentaho Metadata...</echo>
+		<echo>Compiling Pentaho Metadata... ${javacbootclasspath}</echo>
 		<javac srcdir="${src}" destdir="${build.classes.dir}" bootclasspath="${javacbootclasspath}" target="1.4" source="1.4" deprecation="true" debug="true">
 
 			<classpath id="cp-meta">

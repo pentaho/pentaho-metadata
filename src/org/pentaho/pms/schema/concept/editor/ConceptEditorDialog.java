@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.pentaho.pms.schema.concept.ConceptInterface;
-import org.pentaho.pms.schema.security.SecurityReference;
 
 import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
 

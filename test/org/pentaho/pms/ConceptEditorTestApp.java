@@ -21,7 +21,6 @@ import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.concept.Concept;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.DefaultPropertyID;
-import org.pentaho.pms.schema.concept.editor.ConceptEditorWidget;
 import org.pentaho.pms.schema.concept.editor.ConceptModel;
 import org.pentaho.pms.schema.concept.editor.ConceptModificationEvent;
 import org.pentaho.pms.schema.concept.editor.Constants;
@@ -35,7 +34,6 @@ import org.pentaho.pms.schema.concept.types.columnwidth.ConceptPropertyColumnWid
 import org.pentaho.pms.schema.concept.types.localstring.ConceptPropertyLocalizedString;
 import org.pentaho.pms.schema.concept.types.localstring.LocalizedStringSettings;
 import org.pentaho.pms.schema.concept.types.string.ConceptPropertyString;
-import org.pentaho.pms.schema.security.SecurityReference;
 import org.pentaho.pms.util.Const;
 
 import be.ibridge.kettle.core.Props;

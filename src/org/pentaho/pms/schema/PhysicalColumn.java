@@ -39,9 +39,7 @@ import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
-import org.pentaho.pms.schema.concept.DefaultPropertyID;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
-import org.pentaho.pms.schema.concept.types.aggregation.ConceptPropertyAggregation;
 import org.pentaho.pms.schema.concept.types.fieldtype.FieldTypeSettings;
 
 import be.ibridge.kettle.core.database.DatabaseMeta;

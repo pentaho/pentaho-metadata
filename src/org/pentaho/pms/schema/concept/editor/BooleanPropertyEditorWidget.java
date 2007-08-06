@@ -13,7 +13,6 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.pentaho.pms.schema.concept.DefaultPropertyID;
 
 public class BooleanPropertyEditorWidget extends AbstractPropertyEditorWidget implements FocusListener {
 

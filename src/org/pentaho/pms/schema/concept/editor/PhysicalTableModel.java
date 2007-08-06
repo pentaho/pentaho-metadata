@@ -2,7 +2,6 @@ package org.pentaho.pms.schema.concept.editor;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.PhysicalColumn;
 import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.concept.ConceptInterface;
@@ -11,7 +10,6 @@ import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.Settings;
 
 import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
-import be.ibridge.kettle.core.list.UniqueList;
 
 public class PhysicalTableModel extends AbstractTableModel implements Cloneable {
 

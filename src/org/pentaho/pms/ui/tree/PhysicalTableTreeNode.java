@@ -29,7 +29,6 @@ import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.util.GUIResource;
 
 import be.ibridge.kettle.core.DragAndDropContainer;
-import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
 
 /**
  * @author wseyler
