@@ -386,7 +386,13 @@ public class MQLQueryTest extends TestCase {
     
     String mqldata = loadXmlFile(mqlfile);
     assertNotNull(mqldata);
-    MQLQuery mqlquery = new MQLQuery(mqldata, "en_US", cwmSchemaFactory );
+    MQLQuery mqlquery = null;
+    try {
+      mqlquery = new MQLQuery(mqldata, "en_US", cwmSchemaFactory );
+    } catch (PentahoMetadataException e) {
+      e.printStackTrace();
+      fail();
+    }
     
     assertNotNull(mqlquery);
     assertNotNull(mqlquery.getSchemaMeta());
