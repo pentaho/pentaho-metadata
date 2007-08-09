@@ -21,7 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Hashtable;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -322,7 +323,7 @@ public class CWM
 
 
     
-    private static Hashtable domains = new Hashtable();
+    private static Map domains = Collections.synchronizedMap( new HashMap() );
     
     private String domainName;
     
@@ -492,23 +493,38 @@ public class CWM
         }
     }
 
-    public synchronized static final CWM getInstance(String domainName ) {
+    public static final CWM getInstance(String domainName ) {
     		return getInstance( domainName, true );
     }
 
-    public synchronized static final CWM getInstance(String domainName, boolean autoCreate ) 
+    /**
+     * Get (and create if necessary) the instance of CWM associated with domainName. This
+     * class is a per-domain name singleton. It lazy loads/creates the CWM instance on demand.
+     * 
+     * NOTE: this method is synchronized to prevent multiple threads from simultaneously
+     * doing a domain.get( x ), having the get() return null, and having multiple threads
+     * do a "new CWM()", and a domain.put, thus overwriting each other. Also note that 
+     * the member "domains" is a synchronized collection, so it is fine if other threads
+     * are manipulating "domains" simultaneously.
+     *  
+     * @param domainName
+     * @param autoCreate
+     * @return CWM the CWM instance associated with domainName
+     * @throws IllegalArgumentException
+     */
+    public static final synchronized CWM getInstance(String domainName, boolean autoCreate ) throws IllegalArgumentException
     {
-      
         if (domainName == null) {
-            return null;
+            throw new IllegalArgumentException( Messages.getErrorString( "CWM.ERROR_0005_DOMAIN_NAME_CANNOT_BE_NULL" ) );
         }
-      
-        // Do we have the domain yet?
-        CWM cwm = (CWM) domains.get(domainName);
-        if (cwm!=null) return cwm;
-        
-        cwm = new CWM(domainName, autoCreate);
-        domains.put(domainName, cwm);
+
+        CWM cwm = null;
+        cwm = (CWM) domains.get(domainName);
+        if ( null == cwm )
+        {
+          cwm = new CWM(domainName, autoCreate);
+          domains.put(domainName, cwm);
+        }
         
         return cwm;
     }
@@ -587,8 +603,10 @@ public class CWM
     
     /**
      * Remove the domain from the domains in memory to cause the domain to be re-loaded the next time around.
+     * NOTE: removeFromList() does not need to be synchronized. The only member variable removeFromList 
+     * manipulates is domains. domains is a synchronized map, and is already protected.
      */
-    public synchronized void removeFromList()
+    public void removeFromList()
     {
         // repository.shutdown();
         domains.remove(domainName); // removing it from the list causes it to be re-opened next time around. 
