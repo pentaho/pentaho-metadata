@@ -29,6 +29,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.core.util.XmlW3CHelper;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
@@ -44,7 +45,6 @@ import org.pentaho.pms.util.Settings;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 
 import be.ibridge.kettle.core.LogWriter;
 import be.ibridge.kettle.core.Row;
@@ -80,14 +80,14 @@ public class MQLQuery {
 		this.locale = locale;
 	}
 	
-	public MQLQuery( String XML, String locale, CwmSchemaFactoryInterface factory ) {
+	public MQLQuery( String XML, String locale, CwmSchemaFactoryInterface factory ) throws PentahoMetadataException {
 		// this.schemaMeta = schemaMeta;
 		this.locale = locale;
     this.cwmSchemaFactory = factory;
 		fromXML( XML );
 	}
 	
-    public MQLQuery( String filename ) throws IOException
+    public MQLQuery( String filename ) throws IOException, PentahoMetadataException
     {
         File file = new File(filename);
         FileInputStream fileInputStream = new FileInputStream(file);
@@ -422,79 +422,73 @@ public class MQLQuery {
 
 	}
 	
-	public void fromXML( String XML ) {
-        DocumentBuilderFactory dbf;
-        DocumentBuilder db;
-        Document doc;
+	public void fromXML(String XML) throws PentahoMetadataException {
+    DocumentBuilderFactory dbf;
+    DocumentBuilder db;
+    Document doc;
 
-        try {
-            // Check and open XML document
-            dbf = DocumentBuilderFactory.newInstance();
-            db = dbf.newDocumentBuilder();
-            doc = db.parse(new InputSource(new java.io.StringReader(XML)));
+    // Check and open XML document
+    doc = XmlW3CHelper.getDomFromString(XML);
 
-            // get the domain type
-            String domainTypeStr = getElementText( doc, "domain_type" ); //$NON-NLS-1$
-            if( "relational".equals( domainTypeStr ) ) { //$NON-NLS-1$
-            		domainType = DOMAIN_TYPE_RELATIONAL;
-            }
-            else if( "olap".equals( domainTypeStr ) ) { //$NON-NLS-1$
-            		domainType = DOMAIN_TYPE_OLAP;
-            } else {
-            		// need to throw an error
-                throw new PentahoMetadataException(Messages.getErrorString("MQLQuery.ERROR_0007_INVALID_DOMAIN_TYPE", domainTypeStr)); //$NON-NLS-1$
-            }
+    // get the domain type
+    String domainTypeStr = getElementText(doc, "domain_type"); //$NON-NLS-1$
+    if ("relational".equals(domainTypeStr)) { //$NON-NLS-1$
+      domainType = DOMAIN_TYPE_RELATIONAL;
+    } else if ("olap".equals(domainTypeStr)) { //$NON-NLS-1$
+      domainType = DOMAIN_TYPE_OLAP;
+    } else {
+      // need to throw an error
+      throw new PentahoMetadataException(Messages.getErrorString(
+          "MQLQuery.ERROR_0007_INVALID_DOMAIN_TYPE", domainTypeStr)); //$NON-NLS-1$
+    }
 
-            // get the domain id
-            String domainId = getElementText( doc, "domain_id" ); //$NON-NLS-1$
-            CWM cwm = CWM.getInstance(domainId);
-            if (cwm == null) {
-              // need to throw an error
-              throw new PentahoMetadataException(Messages.getErrorString("MQLQuery.ERROR_0008_CWM_DOMAIN_INSTANCE_NULL", domainId)); //$NON-NLS-1$
-            }
-            
-            if (null == cwmSchemaFactory) {
-              cwmSchemaFactory = Settings.getCwmSchemaFactory();
-            }
-            schemaMeta = cwmSchemaFactory.getSchemaMeta(cwm);
-                        
-            // get the Business View id
-            String modelId = getElementText( doc, "model_id" ); //$NON-NLS-1$
-            System.out.println( modelId );  
-            model = schemaMeta.findModel(modelId); // This is the business model that was selected.
+    // get the domain id
+    String domainId = getElementText(doc, "domain_id"); //$NON-NLS-1$
+    CWM cwm = CWM.getInstance(domainId);
+    if (cwm == null) {
+      // need to throw an error
+      throw new PentahoMetadataException(Messages.getErrorString(
+          "MQLQuery.ERROR_0008_CWM_DOMAIN_INSTANCE_NULL", domainId)); //$NON-NLS-1$
+    }
 
-            	if( model == null ) {
-                throw new PentahoMetadataException(Messages.getErrorString("MQLQuery.ERROR_0009_MODEL_NOT_FOUND", modelId)); //$NON-NLS-1$
-            	}
-            
-            // process the selections
-            NodeList nodes = doc.getElementsByTagName( "selection" ); //$NON-NLS-1$
-            Element selectionElement;
-            for( int idx=0; idx<nodes.getLength(); idx++ ) {
-            		selectionElement = (Element)nodes.item( idx );
-            		addBusinessColumnFromXmlNode( selectionElement );
-            }
-            
-            // process the constraints
-            nodes = doc.getElementsByTagName( "constraint" ); //$NON-NLS-1$
-            Element constraintElement;
-            for( int idx=0; idx<nodes.getLength(); idx++ ) {
-              constraintElement = (Element)nodes.item( idx );
-            		addConstraintFromXmlNode( constraintElement );
-            }
-            
-            // process the constraints
-            nodes = doc.getElementsByTagName( "order" ); //$NON-NLS-1$
-            Element orderElement;
-            for( int idx=0; idx<nodes.getLength(); idx++ ) {
-            		orderElement = (Element)nodes.item( idx );
-            		addOrderByFromXmlNode( orderElement );
-            }
-            
-        } catch (Exception e) {
-          logger.error(Messages.getErrorString("MQLQuery.ERROR_0010_FAILED_FROM_XML"), e); //$NON-NLS-1$
-        }
-	}
+    if (null == cwmSchemaFactory) {
+      cwmSchemaFactory = Settings.getCwmSchemaFactory();
+    }
+    schemaMeta = cwmSchemaFactory.getSchemaMeta(cwm);
+
+    // get the Business View id
+    String modelId = getElementText(doc, "model_id"); //$NON-NLS-1$
+    System.out.println(modelId);
+    model = schemaMeta.findModel(modelId); // This is the business model that was selected.
+
+    if (model == null) {
+      throw new PentahoMetadataException(Messages.getErrorString("MQLQuery.ERROR_0009_MODEL_NOT_FOUND", modelId)); //$NON-NLS-1$
+    }
+
+    // process the selections
+    NodeList nodes = doc.getElementsByTagName("selection"); //$NON-NLS-1$
+    Element selectionElement;
+    for (int idx = 0; idx < nodes.getLength(); idx++) {
+      selectionElement = (Element) nodes.item(idx);
+      addBusinessColumnFromXmlNode(selectionElement);
+    }
+
+    // process the constraints
+    nodes = doc.getElementsByTagName("constraint"); //$NON-NLS-1$
+    Element constraintElement;
+    for (int idx = 0; idx < nodes.getLength(); idx++) {
+      constraintElement = (Element) nodes.item(idx);
+      addConstraintFromXmlNode(constraintElement);
+    }
+
+    // process the constraints
+    nodes = doc.getElementsByTagName("order"); //$NON-NLS-1$
+    Element orderElement;
+    for (int idx = 0; idx < nodes.getLength(); idx++) {
+      orderElement = (Element) nodes.item(idx);
+      addOrderByFromXmlNode(orderElement);
+    }
+  }
 	
 	private void addBusinessColumnFromXmlNode(Element selectionElement) {
     NodeList nodes = selectionElement.getElementsByTagName("column"); //$NON-NLS-1$
