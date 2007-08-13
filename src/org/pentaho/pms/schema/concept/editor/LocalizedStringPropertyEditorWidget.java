@@ -45,6 +45,7 @@ public class LocalizedStringPropertyEditorWidget extends AbstractPropertyEditorW
     fdTable.top = new FormAttachment(0, 0);
     fdTable.right = new FormAttachment(100, 0);
     table.setLayoutData(fdTable);
+    table.setEnabled(isEditable());
   }
 
   /**
