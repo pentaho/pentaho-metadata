@@ -184,7 +184,13 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
       // override button
       if (conceptModel.canOverride(propertyId)) {
         overrideButton = new ToolItem(toolBar, SWT.PUSH);
-        overrideButton.setImage(Constants.getImageRegistry(Display.getCurrent()).get("stop-override-button"));
+        if (conceptModel.isOverridden(propertyId)) {
+          overrideButton.setImage(Constants.getImageRegistry(Display.getCurrent()).get("stop-override-button"));
+          overrideButton.setToolTipText("Stop Override");
+        } else {
+          overrideButton.setImage(Constants.getImageRegistry(Display.getCurrent()).get("override-button"));
+          overrideButton.setToolTipText("Override");
+        }
         overrideButton.addSelectionListener(new SelectionAdapter() {
           public void widgetSelected(final SelectionEvent e) {
             overridePressed();
@@ -231,7 +237,7 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
       }
     }
   }
-  
+
   public abstract void cleanup();
 
   public abstract void refresh();
