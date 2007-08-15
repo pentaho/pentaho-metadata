@@ -27,10 +27,11 @@ public interface FormulaTraversalInterface {
   /**
    * this method traverses the libformula object model recursively
    * 
+   * @param parent current object's parent in libformula object model
    * @param val current object in libformula object model
    * @param sb string buffer to append sql to
    * @param locale specific locale of the sql
    * @throws PentahoMetadataException if a problem occurs during the generation of sql
    */
-  public void generateSQL(Object val, StringBuffer sb, String locale) throws PentahoMetadataException;
+  public void generateSQL(Object parent, Object val, StringBuffer sb, String locale) throws PentahoMetadataException;
 }

@@ -411,22 +411,60 @@ public class PMSFormula implements FormulaTraversalInterface {
   }
   
   /**
+   * Determines whether or not child val needs to be wrapped with parens.
+   * The determining factor is if both the current object and the parent are sql infix operators
+   * @param parent object
+   * @param val current object
+   * @return true if parens are required
+   */
+  public boolean requiresParens(Object parent, Object val) {
+    // first see if parent may required children parens
+    boolean parentMatch = false;
+    if (parent instanceof Term) {
+      parentMatch = true;
+    } else if (parent instanceof FormulaFunction) {
+      FormulaFunction parentFunction = (FormulaFunction)parent;
+      SQLFunctionGeneratorInterface parentGen = sqlDialect.getFunctionSQLGenerator(parentFunction.getFunctionName());
+      parentMatch = (parentGen.getType() == SQLFunctionGeneratorInterface.INLINE_FUNCTION);
+    }
+    if (!parentMatch) {
+      return false;
+    }
+    // second see if child needs parens
+    if (val instanceof InfixOperator) {
+      return true;
+    } else if (val instanceof FormulaFunction) {
+      FormulaFunction f = (FormulaFunction)val;
+      SQLFunctionGeneratorInterface gen = sqlDialect.getFunctionSQLGenerator(f.getFunctionName());
+      return (gen.getType() == SQLFunctionGeneratorInterface.INLINE_FUNCTION);
+    } else {
+      return false;
+    }
+  }
+  
+  /**
    * Recursive function that executes any preprocessing and generates the correct SQL
    * 
    * @param val the root of the formula object model
    * @param sb the string buffer to append the SQL to 
    * @param locale the current locale
    */
-  public void generateSQL(Object val, StringBuffer sb, String locale) throws PentahoMetadataException {
+  public void generateSQL(Object parent, Object val, StringBuffer sb, String locale) throws PentahoMetadataException {
     if (val instanceof Term) {
       Term t = (Term)val;
-      sb.append("("); //$NON-NLS-1$
-      generateSQL(t.getOptimizedHeadValue(), sb, locale);
-      for (int i = 0; i < t.getOptimizedOperators().length; i++) {
-        generateSQL(t.getOptimizedOperators()[i], sb, locale);
-        generateSQL(t.getOptimizedOperands()[i], sb, locale);
+      // parens are required if both parent and current are sql infix
+      boolean addParens = (t.getOptimizedOperators().length > 1 || requiresParens(parent, t.getOptimizedOperators()[0]));
+      if (addParens) {
+        sb.append("("); //$NON-NLS-1$
       }
-      sb.append(")"); //$NON-NLS-1$
+      generateSQL(t, t.getOptimizedHeadValue(), sb, locale);
+      for (int i = 0; i < t.getOptimizedOperators().length; i++) {
+        generateSQL(t, t.getOptimizedOperators()[i], sb, locale);
+        generateSQL(t, t.getOptimizedOperands()[i], sb, locale);
+      }
+      if (addParens) {
+        sb.append(")"); //$NON-NLS-1$
+      }
     } else if (val instanceof ContextLookup) {
       ContextLookup l = (ContextLookup)val;
       BusinessColumn column = (BusinessColumn)businessColumnMap.get(l.getName());
@@ -464,8 +502,15 @@ public class PMSFormula implements FormulaTraversalInterface {
       SQLFunctionGeneratorInterface gen = sqlDialect.getFunctionSQLGenerator(f.getFunctionName());
 
       // note that generateFunctionSQL calls back into this function for children params if necessary
+      // may need to be wrapped
+      boolean addParens = requiresParens(parent, f);
+      if (addParens) {
+        sb.append("("); //$NON-NLS-1$
+      }
       gen.generateFunctionSQL(this, sb, locale, f);
-
+      if (addParens) {
+        sb.append(")"); //$NON-NLS-1$
+      }
     } else if (val instanceof InfixOperator) {
       if ( sqlDialect.isSupportedInfixOperator(val.toString())) {
         SQLOperatorGeneratorInterface gen = sqlDialect.getInfixOperatorSQLGenerator(val.toString());
@@ -488,7 +533,7 @@ public class PMSFormula implements FormulaTraversalInterface {
       throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0017_STATE_ERROR_NOT_VALIDATED")); //$NON-NLS-1$
     }
     StringBuffer sb = new StringBuffer();
-    generateSQL(formulaObject.getRootReference(), sb, locale);
+    generateSQL(null, formulaObject.getRootReference(), sb, locale);
     return sb.toString();
   }
   

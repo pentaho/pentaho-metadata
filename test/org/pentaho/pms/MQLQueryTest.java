@@ -39,7 +39,9 @@ public class MQLQueryTest extends TestCase {
   BusinessModel ordersModel = null;
   
   public void setUp() {
-    ordersModel = getOrdersModel();
+    if (ordersModel == null) {
+      ordersModel = getOrdersModel();
+    }
   }
   
   public String loadXmlFile(String filename) {
@@ -62,7 +64,7 @@ public class MQLQueryTest extends TestCase {
     CWM cwm = null;
     try {
       cwm = CWM.getInstance("Orders", true); //$NON-NLS-1$
-      cwm.importFromXMI("samples/orders.xmi"); //$NON-NLS-1$
+      cwm.importFromXMI("samples/orders.xmi"); //$NON-NLS-1$      
     } catch (Exception e) {
       e.printStackTrace();
       fail();
@@ -136,24 +138,66 @@ public class MQLQueryTest extends TestCase {
     handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
         "SUM([QUANTITYORDERED]*[PRICEEACH])", //$NON-NLS-1$
         "SUM( \"Order Details\".QUANTITYORDERED  *  \"Order Details\".PRICEEACH )"); //$NON-NLS-1$
-    
+
+    handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
+        "SUM([QUANTITYORDERED])", //$NON-NLS-1$
+        "SUM( \"Order Details\".QUANTITYORDERED )"); //$NON-NLS-1$
+
     handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
         "COUNT([QUANTITYORDERED]*[PRICEEACH])", //$NON-NLS-1$
         "COUNT( \"Order Details\".QUANTITYORDERED  *  \"Order Details\".PRICEEACH )"); //$NON-NLS-1$
 
     handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
+        "COUNT([PRICEEACH])", //$NON-NLS-1$
+        "COUNT( \"Order Details\".PRICEEACH )"); //$NON-NLS-1$
+    
+    handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
         "AVG([QUANTITYORDERED]*[PRICEEACH])", //$NON-NLS-1$
         "AVG( \"Order Details\".QUANTITYORDERED  *  \"Order Details\".PRICEEACH )"); //$NON-NLS-1$
+
+    handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
+        "AVG([QUANTITYORDERED])", //$NON-NLS-1$
+        "AVG( \"Order Details\".QUANTITYORDERED )"); //$NON-NLS-1$
     
     handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
         "MIN([QUANTITYORDERED]*[PRICEEACH])", //$NON-NLS-1$
         "MIN( \"Order Details\".QUANTITYORDERED  *  \"Order Details\".PRICEEACH )"); //$NON-NLS-1$
     
     handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
+        "MIN([PRICEEACH])", //$NON-NLS-1$
+        "MIN( \"Order Details\".PRICEEACH )"); //$NON-NLS-1$
+    
+    handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
         "MAX([QUANTITYORDERED]*[PRICEEACH])", //$NON-NLS-1$
         "MAX( \"Order Details\".QUANTITYORDERED  *  \"Order Details\".PRICEEACH )"); //$NON-NLS-1$
 
+    handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
+        "MAX([QUANTITYORDERED])", //$NON-NLS-1$
+        "MAX( \"Order Details\".QUANTITYORDERED )"); //$NON-NLS-1$
+
+  }
+  
+  public void testNestedAndOrs() {
+    handleFormula(ordersModel, "Oracle", //$NON-NLS-1$
+        "AND(1 <> 2; OR(2<> 3; 3<>4); 4<>5)" //$NON-NLS-1$
+        ,"(1 <> 2) AND ((2 <> 3) OR (3 <> 4)) AND (4 <> 5)" //$NON-NLS-1$
+      );
+  }
+  
+  public void testNotFunction() {
+    handleFormula(ordersModel, "Oracle", //$NON-NLS-1$
+        "NOT(1 <> 2)" //$NON-NLS-1$
+        ,"NOT(1 <> 2)" //$NON-NLS-1$
+      );
+    handleFormula(ordersModel, "Oracle", //$NON-NLS-1$
+        "NOT(AND(1 <> 2; 2<>3))" //$NON-NLS-1$
+        ,"NOT((1 <> 2) AND (2 <> 3))" //$NON-NLS-1$
+      );
     
+    handleFormulaFailure(ordersModel, "Oracle", //$NON-NLS-1$
+        "NOT (1 <> 2; 2  <> 3)", //$NON-NLS-1$
+        "PMSFormulaContext.ERROR_0002 - Invalid number of parameters for function NOT, expecting 1 params" //$NON-NLS-1$
+      );
   }
   
   public void testDateFunctionNow() {
@@ -319,16 +363,15 @@ public class MQLQueryTest extends TestCase {
         ,"Customers.COUNTRY  LIKE '%'" //$NON-NLS-1$
       );
   }
-  
-  
+
   public void testCase() {
     handleFormula(ordersModel, "Hypersonic", //$NON-NLS-1$ 
         "CASE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]=\"US\"; \"USA\";[BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]=\"JAPAN\"; \"Japan\")" //$NON-NLS-1$
-        ,"CASE  WHEN ( Customers.COUNTRY  = 'US') THEN 'USA' WHEN ( Customers.COUNTRY  = 'JAPAN') THEN 'Japan' END" //$NON-NLS-1$
+        ,"CASE  WHEN  Customers.COUNTRY  = 'US' THEN 'USA' WHEN  Customers.COUNTRY  = 'JAPAN' THEN 'Japan' END" //$NON-NLS-1$
       );
     handleFormula(ordersModel, "Hypersonic", //$NON-NLS-1$ 
         "CASE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]=\"US\"; \"USA\";[BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]=\"JAPAN\"; \"Japan\"; \"Canada\")" //$NON-NLS-1$
-        ,"CASE  WHEN ( Customers.COUNTRY  = 'US') THEN 'USA' WHEN ( Customers.COUNTRY  = 'JAPAN') THEN 'Japan' ELSE 'Canada' END" //$NON-NLS-1$
+        ,"CASE  WHEN  Customers.COUNTRY  = 'US' THEN 'USA' WHEN  Customers.COUNTRY  = 'JAPAN' THEN 'Japan' ELSE 'Canada' END" //$NON-NLS-1$
       );
     handleFormulaFailure(ordersModel, "Hypersonic", //$NON-NLS-1$ 
         "CASE()" //$NON-NLS-1$
@@ -388,7 +431,7 @@ public class MQLQueryTest extends TestCase {
     assertNotNull(mqldata);
     MQLQuery mqlquery = null;
     try {
-      mqlquery = new MQLQuery(mqldata, "en_US", cwmSchemaFactory );
+      mqlquery = new MQLQuery(mqldata, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
     } catch (PentahoMetadataException e) {
       e.printStackTrace();
       fail();

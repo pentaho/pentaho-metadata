@@ -32,7 +32,7 @@ public class DefaultSQLFunctionGenerator implements SQLFunctionGeneratorInterfac
   protected int type;
   protected int paramCount = -1;
   protected String sql;
-  protected boolean parens = false;
+  protected boolean parens = true;
   
   /**
    * constructor
@@ -65,6 +65,20 @@ public class DefaultSQLFunctionGenerator implements SQLFunctionGeneratorInterfac
   public DefaultSQLFunctionGenerator(int type, String sql, boolean parens) {
     this(type);
     this.sql = sql;
+    this.parens = parens;
+  }
+  
+  /**
+   * constructor
+   * 
+   * @param type the type of function
+   * @param sql sql to return
+   * @param paramCount expected number of parameters
+   * @param parens include parenthesis when rendering sql
+   */
+  public DefaultSQLFunctionGenerator(int type, String sql, int paramCount, boolean parens) {
+    this(type, sql);
+    this.paramCount = paramCount;
     this.parens = parens;
   }
   
@@ -152,24 +166,28 @@ public class DefaultSQLFunctionGenerator implements SQLFunctionGeneratorInterfac
   public void generateFunctionSQL(FormulaTraversalInterface formula, StringBuffer sb, String locale, FormulaFunction f) throws PentahoMetadataException {
     if (type == INLINE_FUNCTION) {
       if (f.getChildValues() != null && f.getChildValues().length > 0) {
-        formula.generateSQL(f.getChildValues()[0], sb, locale);
+        formula.generateSQL(f, f.getChildValues()[0], sb, locale);
         for (int i = 1; i < f.getChildValues().length; i++) {
           sb.append(" " + getSQL() + " "); //$NON-NLS-1$ //$NON-NLS-2$
-          formula.generateSQL(f.getChildValues()[i], sb, locale);
+          formula.generateSQL(f, f.getChildValues()[i], sb, locale);
         }
       }
     } else if (type == PARAM_FUNCTION || type == PARAM_AGG_FUNCTION) {
       sb.append(" " + getSQL()); //$NON-NLS-1$
-      if (parens) sb.append( "("); //$NON-NLS-1$
+      if (parens) {
+        sb.append("("); //$NON-NLS-1$
+      }
       
       if (f.getChildValues() != null && f.getChildValues().length > 0) {
-        formula.generateSQL(f.getChildValues()[0], sb, locale);
+        formula.generateSQL(f, f.getChildValues()[0], sb, locale);
         for (int i = 1; i < f.getChildValues().length; i++) {
           sb.append(" , "); //$NON-NLS-1$
-          formula.generateSQL(f.getChildValues()[i], sb, locale);
+          formula.generateSQL(f, f.getChildValues()[i], sb, locale);
         }
       }
-      if (parens) sb.append( ")"); //$NON-NLS-1$
+      if (parens) {
+        sb.append(")"); //$NON-NLS-1$
+      }
     }
   }
 }

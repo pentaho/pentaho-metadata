@@ -50,6 +50,7 @@ public class DefaultSQLDialect implements SQLDialectInterface {
     // logical functions
     supportedFunctions.put("AND", new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.INLINE_FUNCTION, "AND")); //$NON-NLS-1$ //$NON-NLS-2$
     supportedFunctions.put("OR",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.INLINE_FUNCTION, "OR"));  //$NON-NLS-1$ //$NON-NLS-2$
+    supportedFunctions.put("NOT",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_FUNCTION, "NOT", 1));  //$NON-NLS-1$ //$NON-NLS-2$
 
     // infix operators
     supportedInfixOperators.put("+",  new DefaultSQLOperatorGenerator("+")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -67,8 +68,8 @@ public class DefaultSQLDialect implements SQLDialectInterface {
     //
     // comparison functions
     //
-    supportedFunctions.put("LIKE",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.INLINE_FUNCTION, "LIKE", 2)); //$NON-NLS-1$ //$NON-NLS-2$
-    supportedFunctions.put("IN",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_FUNCTION, "IN") { //$NON-NLS-1$ //$NON-NLS-2$
+    supportedFunctions.put("LIKE",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.INLINE_FUNCTION, "LIKE", 2, false)); //$NON-NLS-1$ //$NON-NLS-2$
+    supportedFunctions.put("IN",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_FUNCTION, "IN", 2) { //$NON-NLS-1$ //$NON-NLS-2$
       
       /**
        * make sure there are at least two params
@@ -83,12 +84,12 @@ public class DefaultSQLDialect implements SQLDialectInterface {
        * render the necessary sql
        */
       public void generateFunctionSQL(FormulaTraversalInterface formula, StringBuffer sb, String locale, FormulaFunction f) throws PentahoMetadataException {
-        formula.generateSQL(f.getChildValues()[0], sb, locale);
+        formula.generateSQL(f, f.getChildValues()[0], sb, locale);
         sb.append(" IN ( "); //$NON-NLS-1$
-        formula.generateSQL(f.getChildValues()[1], sb, locale);
+        formula.generateSQL(f, f.getChildValues()[1], sb, locale);
         for (int i = 2; i < f.getChildValues().length; i++) {
           sb.append(" , "); //$NON-NLS-1$
-          formula.generateSQL(f.getChildValues()[i], sb, locale);
+          formula.generateSQL(f, f.getChildValues()[i], sb, locale);
         }
         sb.append(" ) "); //$NON-NLS-1$
       }
@@ -200,14 +201,14 @@ public class DefaultSQLDialect implements SQLDialectInterface {
 
         for (int i = 1; i < f.getChildValues().length; i+=2) {
           sb.append(" WHEN "); //$NON-NLS-1$
-          formula.generateSQL(f.getChildValues()[i-1], sb, locale);
+          formula.generateSQL(f, f.getChildValues()[i-1], sb, locale);
           sb.append(" THEN "); //$NON-NLS-1$
-          formula.generateSQL(f.getChildValues()[i], sb, locale);
+          formula.generateSQL(f, f.getChildValues()[i], sb, locale);
         }
         
         if (f.getChildValues().length % 2 == 1) {
           sb.append(" ELSE "); //$NON-NLS-1$
-          formula.generateSQL(f.getChildValues()[f.getChildValues().length - 1], sb, locale);
+          formula.generateSQL(f, f.getChildValues()[f.getChildValues().length - 1], sb, locale);
         }
         
         sb.append(" END "); //$NON-NLS-1$
@@ -216,7 +217,7 @@ public class DefaultSQLDialect implements SQLDialectInterface {
 
     
     // coalesce
-    supportedFunctions.put("COALESCE",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_FUNCTION, "COALESCE", true) { //$NON-NLS-1$ //$NON-NLS-2$
+    supportedFunctions.put("COALESCE",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_FUNCTION, "COALESCE") { //$NON-NLS-1$ //$NON-NLS-2$
       
       /**
        * make sure there are at least two params
