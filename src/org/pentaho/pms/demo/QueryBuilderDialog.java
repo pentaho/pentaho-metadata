@@ -313,7 +313,7 @@ public class QueryBuilderDialog extends MQLQueryBuilderDialog {
     try {
       MQLQuery mqlQuery = getMqlQuery();
       if (mqlQuery != null) {
-        String sql = mqlQuery.getQuery(true);
+        String sql = mqlQuery.getQuery(false);
         if (sql != null) {
           EnterTextDialog showSQL = new EnterTextDialog(getShell(), Messages.getString("QueryDialog.USER_TITLE_GENERATED_SQL"), Messages.getString("QueryDialog.USER_GENERATED_SQL"), sql, true); //$NON-NLS-1$ //$NON-NLS-2$
           sql = showSQL.open();
@@ -384,7 +384,7 @@ public class QueryBuilderDialog extends MQLQueryBuilderDialog {
     try {
       MQLQuery mqlQuery = getMqlQuery();
       if (mqlQuery != null) {
-        String sql = mqlQuery.getQuery(true);
+        String sql = mqlQuery.getQuery(false);
         DatabaseMeta databaseMeta = ((BusinessColumn) mqlQuery.getSelections().get(0)).getPhysicalColumn().getTable().getDatabaseMeta();
         executeSQL(databaseMeta, sql);
       }
@@ -410,7 +410,7 @@ public class QueryBuilderDialog extends MQLQueryBuilderDialog {
     try {
       MQLQuery mqlQuery = getMqlQuery();
       if (mqlQuery != null) {
-        String sql = mqlQuery.getQuery(true);
+        String sql = mqlQuery.getQuery(false);
         if (sql != null) {
           TextDialog textDialog = new TextDialog(getShell(), "SQL Query", sql); //$NON-NLS-1$ //$NON-NLS-2$
           textDialog.open();
