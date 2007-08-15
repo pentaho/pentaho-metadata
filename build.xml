@@ -12,15 +12,6 @@
 	<property file="src/build-res/version.properties" />
 	<property name="cr" value="${line.separator}" />
 	
-	<!-- =======================================================
-		we need this due to the following:
-		http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6226858
-		
-		You should overwrite this value. The nightly build will pass
-		the appropriate value as a property.
-		=================================================== -->
-	<property name="javacbootclasspath" value="/build/jre/lib/rt.jar" />
-
 	<!-- set global properties for this build -->
 
 	<property name="src" location="src" />
@@ -75,8 +66,40 @@
 		<mkdir dir="${build.javadoc.dir}" />
 	</target>
 
-	<target name="compile" depends="init-metadata-classes" description="compile the source ">
-		<echo>Compiling Pentaho Metadata... ${javacbootclasspath}</echo>
+	<target name="compile" depends="init-metadata-classes, compile-out-of-box, compiled-with-1.5-to-run-in-1.4" />
+	
+	<target name="compile-out-of-box" unless="javacbootclasspath" description="compile the source ">
+		<echo>Compiling Pentaho Metadata...</echo>
+		<javac srcdir="${src}" destdir="${build.classes.dir}" target="1.4" source="1.4" deprecation="true" debug="true">
+
+			<classpath id="cp-meta">
+				<fileset dir="${libext}" includes="**/*.jar" />
+				<fileset dir="${libswt}" includes="*.jar" />
+				<fileset dir="${libswt}/win32/" includes="*.jar" />
+			</classpath>
+		</javac>
+		
+		<echo>Copying images etc to classes directory...</echo>
+		<copy todir="${build.classes.dir}">
+			<fileset dir="${src}" includes="**/*.gif **/*.png **/*.xml **/*properties" />
+		</copy>
+	</target>
+	
+	<!-- =======================================================
+		If you want to compile this code using a JDK 1.5 compiler,
+		but you also want this code to have the ability to run in
+		JDK1.4, you need to tell the compiler where the 1.4
+		rt.jar is located. To do this, simply set the property:
+		
+		javacbootclasspath
+		
+		For details, see the following:		
+		http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6226858		
+		
+		=================================================== -->
+	
+	<target name="compiled-with-1.5-to-run-in-1.4" if="javacbootclasspath" description="compile the source ">
+		<echo>Compiling Pentaho Metadata...bootclasspath=${javacbootclasspath}</echo>
 		<javac srcdir="${src}" destdir="${build.classes.dir}" bootclasspath="${javacbootclasspath}" target="1.4" source="1.4" deprecation="true" debug="true">
 
 			<classpath id="cp-meta">
