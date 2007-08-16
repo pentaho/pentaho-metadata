@@ -34,7 +34,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.pentaho.core.repository.ISolutionRepository;
 import org.pentaho.core.util.PublisherUtil;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.messages.Messages;
@@ -231,7 +230,7 @@ public class PublishDialog extends TitleAreaDialog {
       file.deleteOnExit();
       File[] files = {file};
       int result = PublisherUtil.publish(serverURL , solutionName, files, publishPassword, userId, userPassword, false); //$NON-NLS-1$
-      if (result == ISolutionRepository.FILE_EXISTS) {
+      if (result == PublisherUtil.FILE_EXISTS) {
         MessageBox mb = new MessageBox(getShell(), SWT.NO | SWT.YES | SWT.ICON_WARNING);
         mb.setText(Messages.getString("PublishDialog.FILE_EXISTS")); //$NON-NLS-1$
         mb.setMessage(Messages.getString("PublishDialog.FILE_OVERWRITE")); //$NON-NLS-1$
@@ -241,7 +240,7 @@ public class PublishDialog extends TitleAreaDialog {
           return;
         }
       }
-      if (result != ISolutionRepository.FILE_ADD_SUCCESSFUL) {
+      if (result != PublisherUtil.FILE_ADD_SUCCESSFUL) {
         MessageBox mb = new MessageBox(getShell(), SWT.OK | SWT.ICON_ERROR);
         mb.setText(Messages.getString("PublishDialog.ACTION_FAILED")); //$NON-NLS-1$
         mb.setMessage(Messages.getString("PublishDialog.FILE_SAVE_FAILED", fileName)); //$NON-NLS-1$
