@@ -1159,7 +1159,7 @@ public class MetaEditor implements SelectionListener{
     final ToolItem tiFileNew = new ToolItem(tBar, SWT.DROP_DOWN);
 
     tiFileNew.setImage(imFileNew);
-    tiFileNew.setToolTipText(Messages.getString("MetaEditorUSER_NEW_FILE_CLEAR_SETTINGS")); //$NON-NLS-1$
+    tiFileNew.setToolTipText(Messages.getString("MetaEditor.USER_NEW")); //$NON-NLS-1$
     // Handles creating a drop down on top of the button if the user clicks on the drop down arrow
     tiFileNew.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(SelectionEvent e) {
@@ -1175,17 +1175,17 @@ public class MetaEditor implements SelectionListener{
 
     final ToolItem tiFileOpen = new ToolItem(tBar, SWT.PUSH);
     tiFileOpen.setImage(imFileOpen);
-    tiFileOpen.setToolTipText(Messages.getString("MetaEditor.USER_OPEN_FILE")); //$NON-NLS-1$
+    tiFileOpen.setToolTipText(Messages.getString("MetaEditor.USER_OPEN_")); //$NON-NLS-1$
     tiFileOpen.addListener(SWT.Selection, lsFileOpen);
 
     final ToolItem tiFileSave = new ToolItem(tBar, SWT.PUSH);
     tiFileSave.setImage(imFileSave);
-    tiFileSave.setToolTipText(Messages.getString("MetaEditor.USER_SAVE_FILE")); //$NON-NLS-1$
+    tiFileSave.setToolTipText(Messages.getString("MetaEditor.USER_SAVE_")); //$NON-NLS-1$
     tiFileSave.addListener(SWT.Selection, lsFileSave);
 
     final ToolItem tiFileSaveAs = new ToolItem(tBar, SWT.PUSH);
     tiFileSaveAs.setImage(imFileSaveAs);
-    tiFileSaveAs.setToolTipText(Messages.getString("MetaEditor.USER_SAVE_FILE_NEW_NAME")); //$NON-NLS-1$
+    tiFileSaveAs.setToolTipText(Messages.getString("MetaEditor.USER_SAVE_AS_")); //$NON-NLS-1$
     tiFileSaveAs.addListener(SWT.Selection, lsFileSaveAs);
 
     new ToolItem(tBar, SWT.SEPARATOR);
@@ -1206,37 +1206,45 @@ public class MetaEditor implements SelectionListener{
 
     final ToolItem tiConceptEdit = new ToolItem(tBar, SWT.PUSH);
     tiConceptEdit.setImage(imConceptEdit);
+    tiConceptEdit.setToolTipText(Messages.getString("MetaEditor.USER_CONCEPT_EDITOR")); //$NON-NLS-1$
     tiConceptEdit.addListener(SWT.Selection, lsEditConcepts);
 
     final ToolItem tiLocaleEdit = new ToolItem(tBar, SWT.PUSH);
     tiLocaleEdit.setImage(imLocaleEdit);
+    tiLocaleEdit.setToolTipText(Messages.getString("MetaEditor.USER_LOCALE_EDITOR")); //$NON-NLS-1$
     tiLocaleEdit.addListener(SWT.Selection, lsEditLocales);
 
     final ToolItem tiCategoryEdit = new ToolItem(tBar, SWT.PUSH);
     tiCategoryEdit.setImage(imCategoryEdit);
+    tiCategoryEdit.setToolTipText(Messages.getString("MetaEditor.USER_CATEGORY_EDITOR")); //$NON-NLS-1$
     tiCategoryEdit.addListener(SWT.Selection, lsEditCategories);
 
     new ToolItem(tBar, SWT.SEPARATOR);
     tiEditProperties = new ToolItem(tBar, SWT.PUSH);
     tiEditProperties.setImage(imPropertyEdit);
+    tiEditProperties.setToolTipText(Messages.getString("MetaEditor.USER_EDIT_PROPERTIES")); //$NON-NLS-1$
     tiEditProperties.addListener(SWT.Selection, lsEditProperties);
     tiEditProperties.setEnabled(false);
 
     new ToolItem(tBar, SWT.SEPARATOR);
     tiAlignLeft = new ToolItem(tBar, SWT.PUSH);
     tiAlignLeft.setImage(imAlignLeft);
+    tiAlignLeft.setToolTipText(Messages.getString("MetaEditor.USER_ALIGN_LEFT")); //$NON-NLS-1$
     tiAlignLeft.addListener(SWT.Selection, lsAlignLeft);
 
     tiAlignRight = new ToolItem(tBar, SWT.PUSH);
     tiAlignRight.setImage(imAlignRight);
+    tiAlignRight.setToolTipText(Messages.getString("MetaEditor.USER_ALIGN_RIGHT")); //$NON-NLS-1$
     tiAlignRight.addListener(SWT.Selection, lsAlignRight);
 
     tiAlignTop = new ToolItem(tBar, SWT.PUSH);
     tiAlignTop.setImage(imAlignTop);
+    tiAlignTop.setToolTipText(Messages.getString("MetaEditor.USER_ALIGN_TOP")); //$NON-NLS-1$
     tiAlignTop.addListener(SWT.Selection, lsAlignTop);
 
     tiAlignBottom = new ToolItem(tBar, SWT.PUSH);
     tiAlignBottom.setImage(imAlignBottom);
+    tiAlignBottom.setToolTipText(Messages.getString("MetaEditor.USER_ALIGN_BOTTOM")); //$NON-NLS-1$
     tiAlignBottom.addListener(SWT.Selection, lsAlignBottom);
 
     tBar.addDisposeListener(new DisposeListener() {
