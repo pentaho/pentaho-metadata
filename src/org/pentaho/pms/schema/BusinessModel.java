@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.Vector;
@@ -732,21 +733,25 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
   /**
    * @param selectedColumns The selected business columns
    * @param locale the locale
+   * @param useDisplayNames if true, use localized display name, else use column id
+   * @param columnsMap map of truncated column "as" references to true column ids 
    * @return a SQL query based on a column selection and locale
    */
-  public String getSQL(BusinessColumn selectedColumns[], String locale, boolean useDisplayNames) throws PentahoMetadataException {
-    return getSQL(selectedColumns, (WhereCondition[]) null, (OrderBy[]) null, locale, useDisplayNames);
+  public String getSQL(BusinessColumn selectedColumns[], String locale, boolean useDisplayNames, Map columnsMap) throws PentahoMetadataException {
+    return getSQL(selectedColumns, (WhereCondition[]) null, (OrderBy[]) null, locale, useDisplayNames, columnsMap);
   }
 
   /**
    * @param selectedColumns The selected business columns
    * @param conditions the conditions to apply
    * @param locale the locale
+   * @param useDisplayNames if true, use localized display name, else use column id
+   * @param columnsMap map of truncated column "as" references to true column ids 
    * @return a SQL query based on a column selection, conditions and a locale
    */
   public String getSQL(BusinessColumn selectedColumns[], WhereCondition conditions[], String locale,
-      boolean useDisplayNames) throws PentahoMetadataException {
-    return getSQL(selectedColumns, conditions, (OrderBy[]) null, locale, useDisplayNames);
+      boolean useDisplayNames, Map columnsMap) throws PentahoMetadataException {
+    return getSQL(selectedColumns, conditions, (OrderBy[]) null, locale, useDisplayNames, columnsMap);
   }
 
   /**
@@ -754,10 +759,12 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
    * @param conditions the conditions to apply (null = no conditions)
    * @param orderBy the ordering (null = no order by clause)
    * @param locale the locale
+   * @param useDisplayNames if true, use localized display name, else use column id
+   * @param columnsMap map of truncated column "as" references to true column ids 
    * @return a SQL query based on a column selection, conditions and a locale
    */
   public String getSQL(BusinessColumn selectedColumns[], WhereCondition conditions[], OrderBy[] orderBy, String locale,
-      boolean useDisplayNames) throws PentahoMetadataException {
+      boolean useDisplayNames, Map columnsMap) throws PentahoMetadataException {
     String sql = null;
 
     // These are the tables involved in the field selection:
@@ -769,7 +776,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
       throw new PentahoMetadataException(Messages.getErrorString("BusinessModel.ERROR_0001_FAILED_TO_FIND_PATH")); //$NON-NLS-1$
     }
 
-    sql = getSQL(selectedColumns, path, conditions, orderBy, locale, useDisplayNames);
+    sql = getSQL(selectedColumns, path, conditions, orderBy, locale, useDisplayNames, columnsMap);
 
     return sql;
   }
@@ -780,8 +787,9 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
   // add group by line...
   // Klair!
 
+
   public String getSQL(BusinessColumn selectedColumns[], Path path, WhereCondition conditions[], OrderBy[] orderBy,
-      String locale, boolean useDisplayNames) throws PentahoMetadataException {
+      String locale, boolean useDisplayNames, Map columnsMap) throws PentahoMetadataException {
     String sql = null;
 
     BusinessTable usedBusinessTables[] = path.getUsedTables();
@@ -822,7 +830,18 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
         if (useDisplayNames) {
           sql += databaseMeta.quoteField(businessColumn.getDisplayName(locale));
         } else {
-          sql += databaseMeta.quoteField(businessColumn.getId());
+
+          // in some database implementations, the "as" name has a finite length;
+          // for instance, oracle cannot handle a name longer than 30 characters. 
+          // So, we map a short name here to the longer id, and replace the id
+          // later in the resultset metadata. 
+
+          if(columnsMap != null){
+            columnsMap.put("COL" + Integer.toString(i), businessColumn.getId());
+            sql += databaseMeta.quoteField("COL" + Integer.toString(i));
+          }else{
+            sql += databaseMeta.quoteField(businessColumn.getId());
+          }
         }
 
         sql += Const.CR;
@@ -982,7 +1001,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
       return null;
 
     DatabaseMeta databaseMeta = selectedColumns[0].getBusinessTable().getPhysicalTable().getDatabaseMeta();
-    String sql = getSQL(selectedColumns, conditions, orderBy, locale, useDisplayNames);
+    String sql = getSQL(selectedColumns, conditions, orderBy, locale, useDisplayNames, null);
 
     TableInputMeta tableInputMeta = new TableInputMeta();
     tableInputMeta.setDatabaseMeta(databaseMeta);

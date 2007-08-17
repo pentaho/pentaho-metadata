@@ -20,6 +20,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -163,7 +164,7 @@ public class MQLQuery {
     order.add(orderBy);
   }
 
-  public String getQuery(boolean useDisplayNames) throws PentahoMetadataException {
+	public String getQuery( boolean useDisplayNames, Map columnsMap ) throws PentahoMetadataException  {
     if (model == null || selections.size() == 0) {
       return null;
     }
@@ -171,7 +172,11 @@ public class MQLQuery {
     WhereCondition conditions[] = (WhereCondition[]) constraints.toArray(new WhereCondition[constraints.size()]);
     OrderBy orderBy[] = (OrderBy[]) order.toArray(new OrderBy[order.size()]);
 
-    return model.getSQL(selection, conditions, orderBy, locale, useDisplayNames);
+		return model.getSQL(selection, conditions, orderBy, locale, useDisplayNames, columnsMap);
+	}
+
+  public String getQuery( boolean useDisplayNames) throws PentahoMetadataException  {
+    return getQuery(useDisplayNames, null);
   }
 
   public TransMeta getTransformation(boolean useDisplayNames) throws PentahoMetadataException {

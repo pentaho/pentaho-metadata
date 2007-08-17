@@ -384,7 +384,7 @@ public class QueryBuilderDialog extends MQLQueryBuilderDialog {
     try {
       MQLQuery mqlQuery = getMqlQuery();
       if (mqlQuery != null) {
-        String sql = mqlQuery.getQuery(false);
+        String sql = mqlQuery.getQuery(true);
         DatabaseMeta databaseMeta = ((BusinessColumn) mqlQuery.getSelections().get(0)).getPhysicalColumn().getTable().getDatabaseMeta();
         executeSQL(databaseMeta, sql);
       }
