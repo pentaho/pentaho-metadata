@@ -128,7 +128,7 @@
 
 	<target name="jar-pentaho-metadata" depends="init-dist, compile" description="generate the Pentaho Meta library pentaho-meta.jar">
 		<echo>Generating the Pentaho Metadata library pentaho-meta.jar ...</echo>
-		<jar jarfile="${dist.dir}/pentaho-meta-${release.major.number}.${release.minor.number}.${release.milestone.number}.jar" basedir="${build.classes.dir}" includes="**/*" excludes="**/Thumbs.db">
+		<jar jarfile="${dist.dir}/pentaho-meta-${impl.version}.jar" basedir="${build.classes.dir}" includes="**/*" excludes="**/Thumbs.db">
 			<manifest>
 				<attribute name="Implementation-Title" value="${impl.title}" />
 				<attribute name="Implementation-Version" value="${impl.version}" />
