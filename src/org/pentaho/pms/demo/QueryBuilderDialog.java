@@ -2,6 +2,8 @@ package org.pentaho.pms.demo;
 
 import java.io.File;
 import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -32,11 +34,13 @@ import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.util.Const;
 
+import be.ibridge.kettle.core.Row;
 import be.ibridge.kettle.core.database.Database;
 import be.ibridge.kettle.core.database.DatabaseMeta;
 import be.ibridge.kettle.core.dialog.EnterTextDialog;
 import be.ibridge.kettle.core.dialog.ErrorDialog;
 import be.ibridge.kettle.core.dialog.PreviewRowsDialog;
+import be.ibridge.kettle.core.value.Value;
 
 public class QueryBuilderDialog extends MQLQueryBuilderDialog {
 
@@ -81,6 +85,7 @@ public class QueryBuilderDialog extends MQLQueryBuilderDialog {
   }
 
   String lastFileName;
+  Map columnsMap = null;
 
   public QueryBuilderDialog(Shell parentShell, SchemaMeta schemaMeta) {
     super(parentShell, schemaMeta);
@@ -313,7 +318,11 @@ public class QueryBuilderDialog extends MQLQueryBuilderDialog {
     try {
       MQLQuery mqlQuery = getMqlQuery();
       if (mqlQuery != null) {
-        String sql = mqlQuery.getQuery(false);
+        
+        // Here we will generate the SQL with the truncated column ids, and
+        // intentionally show those truncated ids as that IS the SQL that will be executing.
+        
+        String sql = mqlQuery.getQuery(false, new HashMap());
         if (sql != null) {
           EnterTextDialog showSQL = new EnterTextDialog(getShell(), Messages.getString("QueryDialog.USER_TITLE_GENERATED_SQL"), Messages.getString("QueryDialog.USER_GENERATED_SQL"), sql, true); //$NON-NLS-1$ //$NON-NLS-2$
           sql = showSQL.open();
@@ -352,9 +361,19 @@ public class QueryBuilderDialog extends MQLQueryBuilderDialog {
       if (database != null)
         database.disconnect();
     }
-
+    
     // Show the rows in a dialog.
     if (rows != null) {
+      
+      //Reinstate the actual "as" column identifiers here, before preview. 
+      if (columnsMap != null){
+        Row row = (Row)rows.get(0);
+        for (int i = 0; i < row.size(); i++){
+          Value value = row.getValue(i);
+          value.setName((String)columnsMap.get(row.getValue(i).getName()));
+        }        
+      }
+      
       PreviewRowsDialog previewRowsDialog = new PreviewRowsDialog(getShell(), SWT.NONE, Messages.getString("QueryDialog.USER_FIRST_5000_ROWS"), rows); //$NON-NLS-1$
       previewRowsDialog.open();
     }
@@ -384,9 +403,16 @@ public class QueryBuilderDialog extends MQLQueryBuilderDialog {
     try {
       MQLQuery mqlQuery = getMqlQuery();
       if (mqlQuery != null) {
-        String sql = mqlQuery.getQuery(true);
+        
+        // This map  holds references from the truncated column ids used to the actual column ids; 
+        // we'll use the map later to reinstate the real column ids for display. This is a work
+        // around for databases that limit the length of column ids in the "as" portion of the SQL.
+        
+        columnsMap = new HashMap();
+        String sql = mqlQuery.getQuery(false, columnsMap);
         DatabaseMeta databaseMeta = ((BusinessColumn) mqlQuery.getSelections().get(0)).getPhysicalColumn().getTable().getDatabaseMeta();
         executeSQL(databaseMeta, sql);
+        columnsMap = null;
       }
     } catch (Throwable e) {
       new ErrorDialog(getShell(), Messages.getString("General.USER_TITLE_ERROR"), Messages.getString("QueryDialog.USER_ERROR_QUERY_GENERATION"), new Exception(e)); //$NON-NLS-1$ //$NON-NLS-2$
