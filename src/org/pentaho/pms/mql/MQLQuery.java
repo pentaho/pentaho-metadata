@@ -577,20 +577,17 @@ public class MQLQuery {
     }
 
     if (cond == null) {
-      logger.error(Messages.getErrorString("MQLQuery.ERROR_0001_NULL_CONDITION")); //$NON-NLS-1$
+      throw new PentahoMetadataException(Messages.getErrorString("MQLQuery.ERROR_0001_NULL_CONDITION")); //$NON-NLS-1$
     }
 
-    if (cond != null) {
-      if (view_id == null || column_id == null) {
-        // new function support
-        addConstraint(operator, cond);
-      } else {
-        // backwards compatibility
-        if (view_id != null && column_id != null && cond != null) {
-          addConstraint(operator, "[" + view_id + "." + column_id + "] " + cond); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        }
-      }
+    if (view_id == null || column_id == null) {
+      // new function support
+      addConstraint(operator, cond);
+    } else {
+      // backwards compatibility
+      addConstraint(operator, "[" + view_id + "." + column_id + "] " + cond); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
+    
   }
 
   private String getElementText(Document doc, String name) {

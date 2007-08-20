@@ -487,5 +487,36 @@ public class MQLQueryTest extends TestCase {
       e.printStackTrace();
       fail();
     }
+    
+    // NOW TEST MQL QUERY EXCEPTIONS
+    String mqlfaildata01 = mqldata.replaceAll(
+          "<constraints/>", //$NON-NLS-1$
+          "<constraints>" + //$NON-NLS-1$
+          "   <constraint>" + //$NON-NLS-1$
+          "      <condition></condition>" + //$NON-NLS-1$
+          "   </constraint>" + //$NON-NLS-1$
+          "</constraints>" //$NON-NLS-1$
+        );
+    
+    try {
+      mqlquery = new MQLQuery(mqlfaildata01, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
+      fail();
+    } catch (PentahoMetadataException e) {
+      assertEquals("MQLQuery.ERROR_0001 - Condition not specified in MQL constraint", e.getMessage() ); //$NON-NLS-1$
+    }
+    
+    String mqlfaildata02 = mqldata.replaceAll(
+          "<constraints/>", //$NON-NLS-1$
+          "<constraints>" + //$NON-NLS-1$
+          "   <constraint/>" + //$NON-NLS-1$
+          "</constraints>" //$NON-NLS-1$
+        );
+
+    try {
+      mqlquery = new MQLQuery(mqlfaildata01, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
+      fail();
+    } catch (PentahoMetadataException e) {
+      assertEquals("MQLQuery.ERROR_0001 - Condition not specified in MQL constraint", e.getMessage() ); //$NON-NLS-1$
+    }
 	}
 }
