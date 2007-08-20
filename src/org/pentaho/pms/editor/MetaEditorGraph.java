@@ -33,6 +33,7 @@
 package org.pentaho.pms.editor;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -87,6 +88,8 @@ import be.ibridge.kettle.core.dialog.ErrorDialog;
 public class MetaEditorGraph extends Canvas implements Redrawable {
   private static final int HOP_SEL_MARGIN = 9;
 
+  private static final int RIGHT_HAND_SLOP = 20;
+  
   private Shell shell;
 
   private MetaEditorGraph metaEditorGraph;
@@ -1039,7 +1042,8 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
       gc.setFont(GUIResource.getInstance().getFontMedium());
       String description = activeModel.getConcept().getDescription(activeLocale);
       if (description != null) {
-        gc.drawText(description, 10, 10 + point.y);
+        description = paginateString(gc, description);
+        gc.drawText(description, 10, 10 + point.y, SWT.DRAW_DELIMITER);
       }
 
       // Display the active locale in the right hand corner.
@@ -1108,6 +1112,39 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
     }
   }
 
+  /**
+   * @param gc - The Graphics content 
+   * @param src - The string to break up
+   * @return String that contains \n characters where the distance between each
+   * \n character is less than the width of the frame
+   */
+  private String paginateString(GC gc, String strSrc) {
+    int stringWidth = gc.textExtent(strSrc).x;
+    int frameWidth = getSize().x - RIGHT_HAND_SLOP;
+    if (stringWidth <= frameWidth) {
+      return strSrc;
+    }
+    String[] tokens = strSrc.split("\\s"); //$NON-NLS-1$
+    String result = "";
+    ArrayList textRuns = new ArrayList();
+    for (int i=0; i<tokens.length; i++) {
+      if (gc.textExtent(result + tokens[i]).x < frameWidth) {
+        result = result + " " + tokens[i]; //$NON-NLS-1$
+      } else {
+        textRuns.add(result);
+        result = tokens[i];
+      }
+    }
+    textRuns.add(result);
+    
+    result = "";
+    Iterator iter = textRuns.iterator();
+    while (iter.hasNext()) {
+      result += iter.next().toString() + "\n";
+    }
+    return result;
+  }
+  
   private void drawRelationship(GC gc, RelationshipMeta hi) {
     drawRelationship(gc, hi, false);
   }
