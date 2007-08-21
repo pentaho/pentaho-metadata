@@ -47,7 +47,6 @@
 	<classpathentry kind="lib" path="libext/meta/openide-util.jar"/>
 	<classpathentry kind="lib" path="libext/misc/edtftpj-1.5.4.jar"/>
 	<classpathentry kind="lib" path="libext/misc/ehcache-1.1.jar"/>
-	<classpathentry kind="lib" path="libext/misc/gis-shape.jar"/>
 	<classpathentry kind="lib" path="libext/misc/hibernate3.jar" sourcepath="libext-src/hibernate-src-3.2.2.zip"/>
 	<classpathentry kind="lib" path="libext/misc/javadbf.jar"/>
 	<classpathentry kind="lib" path="libext/misc/js.jar"/>
