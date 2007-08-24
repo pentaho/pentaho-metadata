@@ -52,6 +52,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -1164,8 +1165,11 @@ public class MetaEditor implements SelectionListener{
     tiFileNew.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(SelectionEvent e) {
         if (e.detail == SWT.ARROW) {
-          Point pt = new Point(shell.getLocation().x, shell.getLocation().y + tiFileNew.getBounds().height);
-          fileMenus.setLocation(pt.x, pt.y);
+          ToolItem item = (ToolItem)e.widget;
+          Rectangle rect = item.getBounds();
+          org.eclipse.swt.graphics.Point p = item.getParent().toDisplay(
+                       new org.eclipse.swt.graphics.Point(rect.x, rect.y));
+          fileMenus.setLocation(p.x, p.y + rect.height);
           fileMenus.setVisible(true);
         } else {
           newFile();
