@@ -204,7 +204,6 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
             cwm.endTransaction();
     
             if (monitor!=null) monitor.subTask(Messages.getString("CwmSchemaFactory.INFO_FINISHED")); //$NON-NLS-1$
-            if (monitor!=null) monitor.done();
         }
         catch(Exception e)
         {

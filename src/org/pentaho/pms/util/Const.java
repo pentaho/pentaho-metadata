@@ -289,6 +289,13 @@ public class Const
         return Const.getBaseDirectory()+Const.FILE_SEPARATOR+".query"; //$NON-NLS-1$
     }
     
+    /**
+     * @return the saved query file name
+     */
+    public static String getDomainRecoveryFile()
+    {
+        return Const.getBaseDirectory()+Const.FILE_SEPARATOR+"recovery_"; //$NON-NLS-1$
+    }
 
 
     /**
