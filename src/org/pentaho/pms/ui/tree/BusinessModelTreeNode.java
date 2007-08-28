@@ -65,9 +65,7 @@ public class BusinessModelTreeNode extends ConceptTreeNode {
   }
 
   public int getDragAndDropType() {
-    // TODO: This type is an artifact from before we renamed the terminology in 
-    // metadata - this needs to be changed int he Kettle codeline to TYPE_BUSINESS_MODEL
-    return DragAndDropContainer.TYPE_BUSINESS_VIEW;
+    return DragAndDropContainer.TYPE_BUSINESS_MODEL;
   }
 
   public String getConceptName(){

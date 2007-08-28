@@ -11,6 +11,8 @@ import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.util.GUIResource;
 
+import be.ibridge.kettle.core.DragAndDropContainer;
+
 public class BusinessViewTreeNode extends ConceptTreeNode {
 
   BusinessCategory rootCategory;
@@ -83,9 +85,7 @@ public class BusinessViewTreeNode extends ConceptTreeNode {
   }
 
   public int getDragAndDropType() {
-    // TODO: Business categories have no draganddroptype; need to add
-    // this to the Kettle class DragAndDropContainer.
-    return 0;
+    return DragAndDropContainer.TYPE_BUSINESS_VIEW;
   }
  
   public Object getDomainObject(){
