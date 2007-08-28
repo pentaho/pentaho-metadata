@@ -1,5 +1,4 @@
 /*
- * Copyright 2006 Pentaho Corporation.  All rights reserved.
  * This software was developed by Pentaho Corporation and is provided under the terms
  * of the Mozilla Public License, Version 1.1, or any later version. You may not use
  * this file except in compliance with the license. If you need a copy of the license,
@@ -14,6 +13,7 @@ package org.pentaho.pms.schema;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -24,6 +24,7 @@ import java.util.Vector;
 
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.messages.Messages;
+import org.pentaho.pms.mql.MappedQuery;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
@@ -737,8 +738,8 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
    * @param columnsMap map of truncated column "as" references to true column ids 
    * @return a SQL query based on a column selection and locale
    */
-  public String getSQL(BusinessColumn selectedColumns[], String locale, boolean useDisplayNames, Map columnsMap) throws PentahoMetadataException {
-    return getSQL(selectedColumns, (WhereCondition[]) null, (OrderBy[]) null, locale, useDisplayNames, columnsMap);
+  public MappedQuery getSQL(BusinessColumn selectedColumns[], String locale) throws PentahoMetadataException {
+    return getSQL(selectedColumns, (WhereCondition[]) null, (OrderBy[]) null, locale);
   }
 
   /**
@@ -749,9 +750,8 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
    * @param columnsMap map of truncated column "as" references to true column ids 
    * @return a SQL query based on a column selection, conditions and a locale
    */
-  public String getSQL(BusinessColumn selectedColumns[], WhereCondition conditions[], String locale,
-      boolean useDisplayNames, Map columnsMap) throws PentahoMetadataException {
-    return getSQL(selectedColumns, conditions, (OrderBy[]) null, locale, useDisplayNames, columnsMap);
+  public MappedQuery getSQL(BusinessColumn selectedColumns[], WhereCondition conditions[], String locale) throws PentahoMetadataException {
+    return getSQL(selectedColumns, conditions, (OrderBy[]) null, locale);
   }
 
   /**
@@ -763,9 +763,8 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
    * @param columnsMap map of truncated column "as" references to true column ids 
    * @return a SQL query based on a column selection, conditions and a locale
    */
-  public String getSQL(BusinessColumn selectedColumns[], WhereCondition conditions[], OrderBy[] orderBy, String locale,
-      boolean useDisplayNames, Map columnsMap) throws PentahoMetadataException {
-    String sql = null;
+  public MappedQuery getSQL(BusinessColumn selectedColumns[], WhereCondition conditions[], OrderBy[] orderBy, String locale) throws PentahoMetadataException {
+    MappedQuery sql = null;
 
     // These are the tables involved in the field selection:
     BusinessTable tabs[] = getTablesInvolved(selectedColumns, conditions);
@@ -776,7 +775,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
       throw new PentahoMetadataException(Messages.getErrorString("BusinessModel.ERROR_0001_FAILED_TO_FIND_PATH")); //$NON-NLS-1$
     }
 
-    sql = getSQL(selectedColumns, path, conditions, orderBy, locale, useDisplayNames, columnsMap);
+    sql = getSQL(selectedColumns, path, conditions, orderBy, locale);
 
     return sql;
   }
@@ -788,9 +787,10 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
   // Klair!
 
 
-  public String getSQL(BusinessColumn selectedColumns[], Path path, WhereCondition conditions[], OrderBy[] orderBy,
-      String locale, boolean useDisplayNames, Map columnsMap) throws PentahoMetadataException {
+  public MappedQuery getSQL(BusinessColumn selectedColumns[], Path path, WhereCondition conditions[], OrderBy[] orderBy,
+      String locale) throws PentahoMetadataException {
     String sql = null;
+    Map columnsMap = new HashMap();
 
     BusinessTable usedBusinessTables[] = path.getUsedTables();
     if (path.size() == 0) {
@@ -827,10 +827,11 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
           sql += "          "; //$NON-NLS-1$
         sql += businessColumn.getFunctionTableAndColumnForSQL(this, locale);
         sql += " AS "; //$NON-NLS-1$
+/*
         if (useDisplayNames) {
           sql += databaseMeta.quoteField(businessColumn.getDisplayName(locale));
         } else {
-
+*/
           // in some database implementations, the "as" name has a finite length;
           // for instance, oracle cannot handle a name longer than 30 characters. 
           // So, we map a short name here to the longer id, and replace the id
@@ -842,7 +843,8 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
           }else{
             sql += databaseMeta.quoteField(businessColumn.getId());
           }
-        }
+
+          //}
 
         sql += Const.CR;
       }
@@ -992,20 +994,20 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
       }
     }
 
-    return sql;
+    return new MappedQuery(sql, columnsMap);
   }
 
   public TransMeta getTransformationMeta(BusinessColumn selectedColumns[], WhereCondition conditions[],
-      OrderBy[] orderBy, String locale, boolean useDisplayNames) throws PentahoMetadataException  {
+      OrderBy[] orderBy, String locale) throws PentahoMetadataException  {
     if (selectedColumns == null || selectedColumns.length == 0)
       return null;
 
     DatabaseMeta databaseMeta = selectedColumns[0].getBusinessTable().getPhysicalTable().getDatabaseMeta();
-    String sql = getSQL(selectedColumns, conditions, orderBy, locale, useDisplayNames, null);
+    MappedQuery query = getSQL(selectedColumns, conditions, orderBy, locale);
 
     TableInputMeta tableInputMeta = new TableInputMeta();
     tableInputMeta.setDatabaseMeta(databaseMeta);
-    tableInputMeta.setSQL(sql);
+    tableInputMeta.setSQL(query.getQuery());
 
     TransMeta transMeta = TransPreviewFactory.generatePreviewTransformation(tableInputMeta, Messages
         .getString("BusinessModel.USER_TITLE_QUERY")); //$NON-NLS-1$

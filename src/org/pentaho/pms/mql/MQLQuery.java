@@ -20,7 +20,6 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -164,7 +163,7 @@ public class MQLQuery {
     order.add(orderBy);
   }
 
-	public String getQuery( boolean useDisplayNames, Map columnsMap ) throws PentahoMetadataException  {
+	public MappedQuery getQuery() throws PentahoMetadataException  {
     if (model == null || selections.size() == 0) {
       return null;
     }
@@ -172,14 +171,11 @@ public class MQLQuery {
     WhereCondition conditions[] = (WhereCondition[]) constraints.toArray(new WhereCondition[constraints.size()]);
     OrderBy orderBy[] = (OrderBy[]) order.toArray(new OrderBy[order.size()]);
 
-		return model.getSQL(selection, conditions, orderBy, locale, useDisplayNames, columnsMap);
+		return model.getSQL(selection, conditions, orderBy, locale);
 	}
 
-  public String getQuery( boolean useDisplayNames) throws PentahoMetadataException  {
-    return getQuery(useDisplayNames, null);
-  }
 
-  public TransMeta getTransformation(boolean useDisplayNames) throws PentahoMetadataException {
+  public TransMeta getTransformation() throws PentahoMetadataException {
     if (model == null || selections.size() == 0) {
       return null;
     }
@@ -187,13 +183,13 @@ public class MQLQuery {
     WhereCondition conditions[] = (WhereCondition[]) constraints.toArray(new WhereCondition[constraints.size()]);
     OrderBy orderBy[] = (OrderBy[]) order.toArray(new OrderBy[order.size()]);
 
-    return model.getTransformationMeta(selection, conditions, orderBy, locale, useDisplayNames);
+    return model.getTransformationMeta(selection, conditions, orderBy, locale);
   }
 
-  public List getRowsUsingTransformation(boolean useDisplayNames, StringBuffer logBuffer) throws KettleException,
+  public List getRowsUsingTransformation(StringBuffer logBuffer) throws KettleException,
       PentahoMetadataException {
     final List list = new ArrayList();
-    TransMeta transMeta = getTransformation(useDisplayNames);
+    TransMeta transMeta = getTransformation();
     LogWriter log = LogWriter.getInstance();
     Log4jStringAppender stringAppender = LogWriter.createStringAppender();
     stringAppender.setBuffer(logBuffer);

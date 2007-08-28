@@ -25,6 +25,7 @@ import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.mql.MQLQuery;
+import org.pentaho.pms.mql.MappedQuery;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessColumnString;
 import org.pentaho.pms.schema.BusinessModel;
@@ -37,6 +38,7 @@ import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.Settings;
 
 import be.ibridge.kettle.core.Props;
+import be.ibridge.kettle.core.Row;
 import be.ibridge.kettle.core.database.Database;
 import be.ibridge.kettle.core.database.DatabaseMeta;
 import be.ibridge.kettle.core.dialog.EnterSelectionDialog;
@@ -44,6 +46,7 @@ import be.ibridge.kettle.core.dialog.EnterTextDialog;
 import be.ibridge.kettle.core.dialog.ErrorDialog;
 import be.ibridge.kettle.core.dialog.PreviewRowsDialog;
 import be.ibridge.kettle.core.util.EnvUtil;
+import be.ibridge.kettle.core.value.Value;
 
 public class MakeSelectionDemo
 {
@@ -265,7 +268,10 @@ public class MakeSelectionDemo
                     MQLQuery query2 = new MQLQuery( queryXML, selectedLocale, cwmSchemaFactory );
                     
                     //String sql = query.getQuery();
-                    String sql = query2.getQuery( true );
+                    MappedQuery mappedQuery = query2.getQuery();
+                    
+                    // This will be the modified query - should it be the "display" query? 
+                    String sql = mappedQuery.getQuery();
                     
                     System.out.println( query.getXML() );  
 //                    System.out.println( sql );  
@@ -321,8 +327,16 @@ public class MakeSelectionDemo
                         // Show the rows in a dialog.
                         if (rows!=null)
                         {
-                            PreviewRowsDialog previewRowsDialog = new PreviewRowsDialog(shell, SWT.NONE, Messages.getString("MakeSelectionDemo.USER_FIRST_1000_ROWS"), rows); //$NON-NLS-1$
-                            previewRowsDialog.open();
+                          //Reinstate the actual "as" column identifiers here, before preview. 
+                          if (mappedQuery.getMap() != null){
+                            Row row = (Row)rows.get(0);
+                            for (int i = 0; i < row.size(); i++){
+                              Value value = row.getValue(i);
+                              value.setName((String)mappedQuery.getMap().get(row.getValue(i).getName()));
+                            }        
+                          }
+                          PreviewRowsDialog previewRowsDialog = new PreviewRowsDialog(shell, SWT.NONE, Messages.getString("MakeSelectionDemo.USER_FIRST_1000_ROWS"), rows); //$NON-NLS-1$
+                          previewRowsDialog.open();
                         }
                     }
                     

@@ -1044,7 +1044,7 @@ public class QueryDialog extends Dialog
             MQLQuery mqlQuery = getQuery();
             if (mqlQuery!=null)
             {
-                String sql = mqlQuery.getQuery( true );
+                String sql = mqlQuery.getQuery().getQuery();
                 if (sql!=null)
                 {
                     EnterTextDialog showSQL = new EnterTextDialog(shell, Messages.getString("QueryDialog.USER_TITLE_GENERATED_SQL"), Messages.getString("QueryDialog.USER_GENERATED_SQL"), sql, true); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1073,7 +1073,7 @@ public class QueryDialog extends Dialog
         MQLQuery mqlQuery = getQuery();
         if (mqlQuery != null) {
           StringBuffer logBuffer = new StringBuffer();
-          java.util.List list = mqlQuery.getRowsUsingTransformation(true, logBuffer);
+          java.util.List list = mqlQuery.getRowsUsingTransformation(logBuffer);
 
           PreviewRowsDialog prd =new PreviewRowsDialog(shell, SWT.NONE, Messages.getString("QueryDialog.USER_QUERY"), list, logBuffer.toString()); //$NON-NLS-1$
           prd.open();
