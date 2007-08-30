@@ -26,6 +26,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
@@ -719,7 +720,7 @@ public class MetaEditor implements SelectionListener{
       fileDialog
           .setFilterNames(new String[] {
               Messages.getString("MetaEditor.USER_XMI_FILES"), Messages.getString("MetaEditor.USER_XML_FILES"), Messages.getString("MetaEditor.USER_ALL_FILES") }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      String filename = fileDialog.open();
+      final String filename = fileDialog.open();
       if (filename != null) {
         try {
           // Ask for a new domain to import into...
@@ -727,7 +728,7 @@ public class MetaEditor implements SelectionListener{
           EnterStringDialog stringDialog = new EnterStringDialog(
               shell,
               "", Messages.getString("MetaEditor.USER_TITLE_SAVE_DOMAIN"), Messages.getString("MetaEditor.USER_ENTER_DOMAIN_NAME")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-          String domainName = stringDialog.open();
+          final String domainName = stringDialog.open();
           if (domainName != null) {
             int id = SWT.YES;
             if (CWM.exists(domainName)) {
@@ -743,17 +744,34 @@ public class MetaEditor implements SelectionListener{
               return; // no selected.
             }
 
-            // Now create a new domain...
-            CWM cwmInstance = CWM.getInstance(domainName);
+            final ArrayList exceptionList = new ArrayList();
+            Runnable runnable = new Runnable(){
+              public void run() {
+                try {
+                  // Now create a new domain...
+                  CWM cwmInstance = CWM.getInstance(domainName);
 
-            // import it all...
-            cwmInstance.importFromXMI(filename);
+                  // import it all...
+                  cwmInstance.importFromXMI(filename);
 
-            // convert to a schema
-            schemaMeta = cwmSchemaFactory.getSchemaMeta(cwmInstance);
-
-            // Here, we are getting a whole new model, so rebuild the whole tree
-            refreshTree();
+                  // convert to a schema
+                  schemaMeta = cwmSchemaFactory.getSchemaMeta(cwmInstance);
+                } catch (Exception e) {
+                  exceptionList.add(e);
+                }
+              }
+            };
+            
+            BusyIndicator.showWhile(Display.getCurrent(), runnable);
+            
+            if (exceptionList.size() == 0) {
+              // Here, we are getting a whole new model, so rebuild the whole tree
+              refreshTree();
+            } else {
+              new ErrorDialog(
+                  shell,
+                  Messages.getString("MetaEditor.USER_TITLE_ERROR_SAVE_DOMAIN"), Messages.getString("MetaEditor.USER_ERROR_LOADING_DOMAIN"), (Exception)exceptionList.get(0)); //$NON-NLS-1$ //$NON-NLS-2$
+            }
           }
         } catch (Exception e) {
           new ErrorDialog(
