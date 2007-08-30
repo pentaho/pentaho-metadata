@@ -222,8 +222,6 @@ public class MetaEditor implements SelectionListener{
 
   private MenuItem mEdit;
 
-  private ToolItem tiAlignLeft, tiAlignRight, tiAlignTop, tiAlignBottom;
-
   private Menu msEdit;
 
   private Menu mPopAD;
@@ -1058,10 +1056,6 @@ public class MetaEditor implements SelectionListener{
 
           // Enable/disable menus that rely on having more than 1 graph item selected
           mPopAD.setEnabled(nrSelected > 1);
-          tiAlignLeft.setEnabled(nrSelected > 1);
-          tiAlignRight.setEnabled(nrSelected > 1);
-          tiAlignTop.setEnabled(nrSelected > 1);
-          tiAlignBottom.setEnabled(nrSelected > 1);
         }
       };
     }
@@ -1248,26 +1242,6 @@ public class MetaEditor implements SelectionListener{
     tiEditProperties.addListener(SWT.Selection, lsEditProperties);
     tiEditProperties.setEnabled(false);
 
-    new ToolItem(tBar, SWT.SEPARATOR);
-    tiAlignLeft = new ToolItem(tBar, SWT.PUSH);
-    tiAlignLeft.setImage(imAlignLeft);
-    tiAlignLeft.setToolTipText(Messages.getString("MetaEditor.USER_ALIGN_LEFT")); //$NON-NLS-1$
-    tiAlignLeft.addListener(SWT.Selection, lsAlignLeft);
-
-    tiAlignRight = new ToolItem(tBar, SWT.PUSH);
-    tiAlignRight.setImage(imAlignRight);
-    tiAlignRight.setToolTipText(Messages.getString("MetaEditor.USER_ALIGN_RIGHT")); //$NON-NLS-1$
-    tiAlignRight.addListener(SWT.Selection, lsAlignRight);
-
-    tiAlignTop = new ToolItem(tBar, SWT.PUSH);
-    tiAlignTop.setImage(imAlignTop);
-    tiAlignTop.setToolTipText(Messages.getString("MetaEditor.USER_ALIGN_TOP")); //$NON-NLS-1$
-    tiAlignTop.addListener(SWT.Selection, lsAlignTop);
-
-    tiAlignBottom = new ToolItem(tBar, SWT.PUSH);
-    tiAlignBottom.setImage(imAlignBottom);
-    tiAlignBottom.setToolTipText(Messages.getString("MetaEditor.USER_ALIGN_BOTTOM")); //$NON-NLS-1$
-    tiAlignBottom.addListener(SWT.Selection, lsAlignBottom);
 
     tBar.addDisposeListener(new DisposeListener() {
       public void widgetDisposed(DisposeEvent e) {
