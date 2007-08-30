@@ -312,7 +312,7 @@ public class PMSFormula implements FormulaTraversalInterface {
           // note, this lookup assumes that business categories are one level, not hierarchial
           column = category.findBusinessColumn(tblcol[1]);
           if (column == null) {
-            throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0019_FIELDNAME_ERROR_CAT_COLUMN_NOT_FOUND", fieldName, tblcol[1], tblcol[0])); //$NON-NLS-1$
+            throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0019_FIELDNAME_ERROR_CAT_COLUMN_NOT_FOUND", fieldName, tblcol[0], tblcol[1])); //$NON-NLS-1$
           }
 
         } else {
