@@ -212,8 +212,11 @@ public abstract class AbstractPropertyEditorWidget extends Composite implements 
     } else {
       ConceptPropertyInterface effectiveProperty = conceptModel.getEffectiveProperty(propertyId);
       try {
-        conceptModel.setProperty((ConceptPropertyInterface)PredefinedVsCustomPropertyHelper.createEmptyProperty(propertyId, effectiveProperty
-            .getType()).clone());
+        ConceptPropertyInterface clonedProperty = (ConceptPropertyInterface)effectiveProperty.clone();
+        clonedProperty.setRequired(false);
+        conceptModel.setProperty(clonedProperty);
+//        conceptModel.setProperty((ConceptPropertyInterface)PredefinedVsCustomPropertyHelper.createEmptyProperty(propertyId, effectiveProperty
+//            .getType()).clone());
       } catch (CloneNotSupportedException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();

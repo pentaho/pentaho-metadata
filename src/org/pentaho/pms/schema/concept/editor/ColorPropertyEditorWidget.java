@@ -30,7 +30,7 @@ public class ColorPropertyEditorWidget extends AbstractPropertyEditorWidget {
 
   // ~ Instance fields =================================================================================================
 
-  private Color color = new Color(Display.getCurrent(), 255, 0, 0);
+  private Color color = null;
 
   private Button button;
   Label colorLabel;
@@ -77,7 +77,9 @@ public class ColorPropertyEditorWidget extends AbstractPropertyEditorWidget {
         ColorDialog dlg = new ColorDialog(Display.getCurrent().getActiveShell());
 
         // Set the selected color in the dialog from user's selected color
-        dlg.setRGB(color.getRGB());
+        if (color != null) {
+          dlg.setRGB(color.getRGB());
+        }
 
         dlg.setText("Choose a Color");
 
@@ -100,29 +102,31 @@ public class ColorPropertyEditorWidget extends AbstractPropertyEditorWidget {
 
     button.addPaintListener(new PaintListener() {
       public void paintControl(PaintEvent event) {
-        Rectangle rect = button.getBounds();
-        if (logger.isDebugEnabled()) {
-          logger.debug("rect: " + rect);
+        if (color != null) {
+          Rectangle rect = button.getBounds();
+          if (logger.isDebugEnabled()) {
+            logger.debug("rect: " + rect);
+          }
+          event.gc.setBackground(color);
+          event.gc.fillRectangle(5, 5, rect.width - 10, rect.height - 10);
         }
-        event.gc.setBackground(color);
-        event.gc.fillRectangle(5, 5, rect.width - 10, rect.height - 10);
       }
     });
 
   }
 
   public Object getValue() {
-    return new ColorSettings(color.getRed(), color.getGreen(), color.getBlue());
+    return color != null ? new ColorSettings(color.getRed(), color.getGreen(), color.getBlue()) : null;
   }
 
   protected void setValue(final Object value) {
     if (value instanceof ColorSettings) {
       ColorSettings colorSettings = (ColorSettings) value;
       color = new Color(Display.getCurrent(), colorSettings.getRed(), colorSettings.getGreen(), colorSettings.getBlue());
-    } else if (value instanceof Color) {
-      Color color = (Color) value;
-      this.color = color;
+    } else {
+      this.color = (Color)value;
     }
+    button.redraw();
   }
 
   public void refresh() {

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -94,7 +95,6 @@ public class SecurityPropertyEditorWidget extends AbstractPropertyEditorWidget {
     
     securityTablePermEditor = new SecurityTablePermEditor(parent, SWT.BORDER, securityTableViewer);
     securityTablePermEditor.setLayoutData(gridData);
-    securityTablePermEditor.setAllowEditing(isEditable());
   }
 
   protected void widgetDisposed(final DisposeEvent e) {
@@ -135,6 +135,8 @@ public class SecurityPropertyEditorWidget extends AbstractPropertyEditorWidget {
     refreshOverrideButton();
     addPermsToolItem.setEnabled(isEditable());
     removePermsToolItem.setEnabled(isEditable());
+    securityTableViewer.setSelection(new StructuredSelection());
+    securityTablePermEditor.setAllowEditing(isEditable());
     setValue(getProperty().getValue());
   }
 
