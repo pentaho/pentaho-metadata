@@ -134,6 +134,7 @@ import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.GUIResource;
 import org.pentaho.pms.util.Settings;
 import org.pentaho.pms.util.Splash;
+import org.pentaho.pms.util.VersionHelper;
 import org.pentaho.pms.util.dialog.EnterOptionsDialog;
 import org.pentaho.pms.util.dialog.ListSelectionDialog;
 import org.pentaho.pms.util.logging.Log4jPMELayout;
@@ -2983,9 +2984,12 @@ public class MetaEditor implements SelectionListener{
   public void helpAbout() {
     MessageBox mb = new MessageBox(shell, SWT.OK | SWT.ICON_INFORMATION | SWT.CENTER);
 
+    VersionHelper verHelper = new VersionHelper();
     StringBuffer message = new StringBuffer();
+    
     message
-        .append(Messages.getString("MetaEditor.USER_HELP_METADATA_EDITOR")).append(Const.VERSION).append(Const.CR).append(Const.CR); //$NON-NLS-1$
+    .append(verHelper.getVersionInformation(MetaEditor.class)).append(Const.CR).append(Const.CR); //$NON-NLS-1$
+//        .append(Messages.getString("MetaEditor.USER_HELP_METADATA_EDITOR")).append(Const.VERSION).append(Const.CR).append(Const.CR); //$NON-NLS-1$
     message.append(Messages.getString("MetaEditor.USER_HELP_PENTAHO_CORPORATION")).append(Const.CR); //$NON-NLS-1$
     message.append(Messages.getString("MetaEditor.USER_HELP_PENTAHO_URL")).append(Const.CR); //$NON-NLS-1$
 
@@ -3495,6 +3499,10 @@ public class MetaEditor implements SelectionListener{
   }
 
   public static void main(String[] args) throws Exception {
+    System.setProperty("java.naming.factory.initial", "org.osjava.sj.SimpleContextFactory"); //$NON-NLS-1$ //$NON-NLS-2$
+    System.setProperty("org.osjava.sj.root", "simple-jndi"); //$NON-NLS-1$ //$NON-NLS-2$
+    System.setProperty("org.osjava.sj.delimiter", "/"); //$NON-NLS-1$ //$NON-NLS-2$
+    
     EnvUtil.environmentInit();
     LogWriter log = LogWriter.getInstance(Const.META_EDITOR_LOG_FILE, false, LogWriter.LOG_LEVEL_BASIC);
     LogWriter.setLayout(new Log4jPMELayout(true));
