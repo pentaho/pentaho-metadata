@@ -49,8 +49,16 @@ public class PropertyWidgetManager2 extends Composite implements ISelectionChang
   private ScrolledComposite widgetAreaWrapper;
 
   private Map groupNameWidgets = new HashMap();
-  
+
   private SecurityReference securityReference;
+
+  private IConceptModificationListener conceptModificationListener = new IConceptModificationListener() {
+    public void conceptModified(final ConceptModificationEvent e) {
+      if (e instanceof PropertyExistenceModificationEvent) {
+        refreshMe();
+      }
+    }
+  };
 
   // ~ Constructors ====================================================================================================
 
@@ -121,7 +129,7 @@ public class PropertyWidgetManager2 extends Composite implements ISelectionChang
       control.dispose();
     }
     groupNameWidgets.clear();
-    
+
     if (conceptModel != null) {
       // put all the widgets back
       List usedGroups = PropertyGroupHelper.getUsedGroups(conceptModel);
@@ -155,9 +163,10 @@ public class PropertyWidgetManager2 extends Composite implements ISelectionChang
 
   public void setConceptModel(IConceptModel cm) {
     conceptModel = cm;
+    conceptModel.addConceptModificationListener(conceptModificationListener);
     refreshMe();
   }
-  
+
   protected void addWidget(final Control widget) {
     GridData gdWidget = new GridData();
     gdWidget.grabExcessHorizontalSpace = true;
@@ -166,6 +175,7 @@ public class PropertyWidgetManager2 extends Composite implements ISelectionChang
   }
 
   protected void widgetDisposed(final DisposeEvent e) {
+    conceptModel.removeConceptModificationListener(conceptModificationListener);
   }
 
   public void selectionChanged(final SelectionChangedEvent e) {

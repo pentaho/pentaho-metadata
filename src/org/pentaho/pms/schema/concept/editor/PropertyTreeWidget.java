@@ -13,6 +13,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -58,22 +59,33 @@ public class PropertyTreeWidget extends TreeViewer implements ISelectionProvider
     this.decorate = decorate;
     setContentProvider(new PropertyTreeContentProvider());
     setLabelProvider(new PropertyTreeLabelProvider());
+
+    if (null != getTree()) {
+      getTree().addDisposeListener(new DisposeListener() {
+
+        public void widgetDisposed(DisposeEvent e) {
+          PropertyTreeWidget.this.widgetDisposed(e);
+        }
+
+      });
+    }
+
   }
 
   public void setConceptModel(IConceptModel cm) {
     if (conceptModel != null) {
       conceptModel.removeConceptModificationListener(this);
     }
-    
+
     this.conceptModel = cm;
     setInput(conceptModel);
     expandAll();
-    
+
     if (conceptModel != null) {
       conceptModel.addConceptModificationListener(this);
     }
   }
-  
+
   // ~ Methods =========================================================================================================
 
   protected void widgetDisposed(final DisposeEvent e) {
@@ -169,7 +181,7 @@ public class PropertyTreeWidget extends TreeViewer implements ISelectionProvider
       }
       return (PropertyTreeNode[]) propertyTreeNodes.toArray(new PropertyTreeNode[0]);
     }
-    
+
     public Object[] getChildren(final Object parentElement) {
       Object[] children = EMPTY_ARRAY;
       if (parentElement instanceof GroupNode) {
@@ -268,7 +280,7 @@ public class PropertyTreeWidget extends TreeViewer implements ISelectionProvider
       // not used
     }
   }
-  
+
   public void conceptModified(final ConceptModificationEvent e) {
     refresh(true);
     expandAll();
