@@ -317,8 +317,8 @@ public class MQLQueryTest extends TestCase {
       "[BT_CUSTOMERS.BC_CUSTOMERS_CUSTOMERNAME] = \"EuroCars\")", //$NON-NLS-1$
       
       // expected hypersonic sql
-      "(((4 * (2 + 3)) - (( Customers.COUNTRY  * 2) / 3)) <> 1000) AND " + //$NON-NLS-1$
-      "( Customers.CUSTOMERNAME  = 'EuroCars')" //$NON-NLS-1$
+      "( (((4 * (2 + 3)) - (( Customers.COUNTRY  * 2) / 3)) <> 1000) AND " + //$NON-NLS-1$
+      "( Customers.CUSTOMERNAME  = 'EuroCars') )" //$NON-NLS-1$
     );
   }
   
@@ -342,8 +342,8 @@ public class MQLQueryTest extends TestCase {
       "IN([BT_CUSTOMERS.BC_CUSTOMERS_CUSTOMERNAME];\"EuroCars1\";\"EuroCars2\";\"EuroCars3\"))", //$NON-NLS-1$
       
       // expected hypersonic sql
-      "(((4 * (2 + 3)) - (( Customers.COUNTRY  * 2) / 3)) <> 1000) AND " + //$NON-NLS-1$
-      " Customers.CUSTOMERNAME  IN ( 'EuroCars1' , 'EuroCars2' , 'EuroCars3' )" //$NON-NLS-1$
+      "( (((4 * (2 + 3)) - (( Customers.COUNTRY  * 2) / 3)) <> 1000) AND " + //$NON-NLS-1$
+      " Customers.CUSTOMERNAME  IN ( 'EuroCars1' , 'EuroCars2' , 'EuroCars3' ) )" //$NON-NLS-1$
     );
   }
   
@@ -353,7 +353,7 @@ public class MQLQueryTest extends TestCase {
       "LIKE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"%US%\")", //$NON-NLS-1$
 
       // expected hypersonic sql
-      "Customers.COUNTRY  LIKE '%US%'" //$NON-NLS-1$
+      "( Customers.COUNTRY  LIKE '%US%' )" //$NON-NLS-1$
     );
   }
   
