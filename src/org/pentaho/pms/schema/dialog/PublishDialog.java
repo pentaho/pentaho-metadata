@@ -191,9 +191,10 @@ public class PublishDialog extends TitleAreaDialog {
     super.setShellStyle(newShellStyle | SWT.RESIZE);
   }
 
-  protected Point getInitialSize() {
-    return new Point(524, 400);
-  }
+//  WG: commented out so we can see the password text field in linux
+//  protected Point getInitialSize() {
+//    return new Point(524, 400);
+//  }
 
   protected void createButtonsForButtonBar(Composite parent) {
     createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);

@@ -14,10 +14,11 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -29,9 +30,9 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.pentaho.pms.messages.Messages;
+import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.GUIResource;
 
-import org.pentaho.pms.util.Const;
 import be.ibridge.kettle.core.Props;
 import be.ibridge.kettle.core.WindowProperty;
 import be.ibridge.kettle.core.dialog.EnterTextDialog;
@@ -46,8 +47,6 @@ public class SecurityDialog extends TitleAreaDialog {
   private Button wbTest;
   
   private CTabFolder wTabFolder;
-
-  private FormData fdTabFolder;
 
   private CTabItem wServiceTab, wProxyTab, wFileTab;
 
@@ -105,18 +104,17 @@ public class SecurityDialog extends TitleAreaDialog {
 
   protected Control createDialogArea(final Composite parent) {
     Composite c0 = (Composite) super.createDialogArea(parent);
+    GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
+
     c0.setBackground(GUIResource.getInstance().getColorWhite());
     Composite c1 = new Composite(c0, SWT.BORDER);
     c1.setBackground(GUIResource.getInstance().getColorWhite());
-
+    c1.setLayoutData(gridData);
     middle = 25; props.getMiddlePct();
     margin = Const.MARGIN;
 
-    FormLayout formLayout = new FormLayout();
-    formLayout.marginWidth = Const.FORM_MARGIN;
-    formLayout.marginHeight = Const.FORM_MARGIN;
-
-    c1.setLayout(formLayout);
+    GridLayout gridLayout = new GridLayout(1, true);
+    c1.setLayout(gridLayout);
     props.setLook(c1);
 
     lsMod = new ModifyListener() {
@@ -132,12 +130,9 @@ public class SecurityDialog extends TitleAreaDialog {
     addProxyTab();
     addFileTab();
 
-    fdTabFolder = new FormData();
-    fdTabFolder.left = new FormAttachment(0, 0);
-    fdTabFolder.top = new FormAttachment(0, margin);
-    fdTabFolder.right = new FormAttachment(100, 0);
-    fdTabFolder.bottom = new FormAttachment(100, 0);
-    wTabFolder.setLayoutData(fdTabFolder);
+    GridData fdGridData = new GridData(SWT.FILL, SWT.FILL, true , true);
+
+    wTabFolder.setLayoutData(fdGridData);
 
     SelectionAdapter selAdapter = new SelectionAdapter() {
       public void widgetDefaultSelected(SelectionEvent e) {
@@ -448,9 +443,10 @@ public class SecurityDialog extends TitleAreaDialog {
     super.setShellStyle(newShellStyle | SWT.RESIZE);
   }
 
-  protected Point getInitialSize() {
-    return new Point(524, 351);
-  }
+//  WG: commented out so we can see all the text fields in linux
+//  protected Point getInitialSize() {
+//    return new Point(524, 351);
+//  }
 
   protected void createButtonsForButtonBar(Composite parent) {
     createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
