@@ -137,7 +137,7 @@ public class WhereCondition extends ConceptUtilityBase implements ConceptUtility
                 retval+=Const.rightPad(operator, 9)+" "; //$NON-NLS-1$
             }
 
-            retval += formula.generateSQL(locale);
+            retval += " ( " + formula.generateSQL(locale) + " ) "; //$NON-NLS-1$ //$NON-NLS-2$
     }
     return retval;
   }
