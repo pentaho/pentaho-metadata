@@ -74,6 +74,7 @@ public class Splash
 				{
 					e.gc.drawImage(splashImage, 0, 0);
           e.gc.setBackground(new Color(e.display, new RGB(255,255,255)));
+          // Updates for PMD-190 - Use version helper to display version information
           VersionHelper helper = new VersionHelper();
           e.gc.drawString(helper.getVersionInformation(Splash.class), 355, 285);
 				}
