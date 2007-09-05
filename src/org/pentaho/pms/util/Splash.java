@@ -18,13 +18,19 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.pentaho.pms.messages.Messages;
 
@@ -49,9 +55,10 @@ public class Splash
         splash.setImage(splashIcon);
         splash.setText(Messages.getString("Splash.USER_APP_TITLE")); //$NON-NLS-1$
         
+        
 		FormLayout splashLayout = new FormLayout();
 		splash.setLayout(splashLayout);
-        
+
 		Canvas canvas = new Canvas(splash, SWT.NO_BACKGROUND);
 		
 		FormData fdCanvas = new FormData();
@@ -66,6 +73,9 @@ public class Splash
 				public void paintControl(PaintEvent e)
 				{
 					e.gc.drawImage(splashImage, 0, 0);
+          e.gc.setBackground(new Color(e.display, new RGB(255,255,255)));
+          VersionHelper helper = new VersionHelper();
+          e.gc.drawString(helper.getVersionInformation(Splash.class), 355, 285);
 				}
 			}
 		);
