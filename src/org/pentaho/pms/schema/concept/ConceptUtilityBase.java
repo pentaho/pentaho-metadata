@@ -74,6 +74,11 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
     if (this == obj) {
       return true;
     }
+    
+    if (!obj.getClass().equals(this.getClass())) {
+      return false;
+    }
+    
     ConceptUtilityBase rhs = (ConceptUtilityBase) obj;
 
     String lhsId = null != id ? id.toUpperCase() : null;
