@@ -480,7 +480,6 @@ public class MQLQuery {
 
     // get the Business View id
     String modelId = getElementText(doc, "model_id"); //$NON-NLS-1$
-    System.out.println(modelId);
     model = schemaMeta.findModel(modelId); // This is the business model that was selected.
 
     if (model == null) {

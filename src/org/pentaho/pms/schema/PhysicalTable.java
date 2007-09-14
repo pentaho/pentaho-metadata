@@ -166,7 +166,6 @@ public class PhysicalTable extends ConceptUtilityBase implements Cloneable, Chan
 		int idx = findPhysicalColumnNr(columnId);
 		if (idx>=0)
 		{
-			// System.out.println("Found column #"+idx);
 			return getPhysicalColumn(idx);
 		}
 		return null;

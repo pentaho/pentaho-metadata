@@ -101,10 +101,6 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
                 {
                     concept.addProperty((ConceptPropertyInterface) ((ConceptPropertyBase) property).clone());
                 }
-                else
-                {
-                    System.out.println(Messages.getString("Concept.ERROR_0001_NO_PROPERTY_FOUND", ids[i])); //$NON-NLS-1$
-                }
             }
             concept.setChanged(hasChanged());
 

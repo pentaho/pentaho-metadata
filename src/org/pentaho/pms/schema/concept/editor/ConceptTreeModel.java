@@ -240,42 +240,23 @@ public class ConceptTreeModel implements IConceptTreeModel {
 
     IConceptTreeModel model = new ConceptTreeModel(schemaMeta);
 
-    model.addConceptTreeModificationListener(new IConceptTreeModificationListener() {
-
-      public void conceptTreeModified(final ConceptTreeModificationEvent e) {
-        System.out.println("event heard");
-      }
-
-    });
     ConceptInterface[] childrenOfRoots = model.getChildren(null);
-    System.out.print("" + childrenOfRoots.length + " root concept(s): ");
-    System.out.println(ArrayUtils.toString(childrenOfRoots));
     for (int i = 0; i < childrenOfRoots.length; i++) {
       ConceptInterface[] childrenOfRoot = model.getChildren(childrenOfRoots[i]);
-      System.out.print("" + childrenOfRoot.length + " child concept(s) of root #" + i + ": ");
-      System.out.println(ArrayUtils.toString(childrenOfRoot));
     }
 
     model.addConcept(model.getChildren(null)[0], secConcept);
 
     childrenOfRoots = model.getChildren(null);
-    System.out.print("" + childrenOfRoots.length + " root concept(s): ");
-    System.out.println(ArrayUtils.toString(childrenOfRoots));
     for (int i = 0; i < childrenOfRoots.length; i++) {
       ConceptInterface[] childrenOfRoot = model.getChildren(childrenOfRoots[i]);
-      System.out.print("" + childrenOfRoot.length + " child concept(s) of root #" + i + ": ");
-      System.out.println(ArrayUtils.toString(childrenOfRoot));
     }
 
     model.removeConcept(secConcept);
 
     childrenOfRoots = model.getChildren(null);
-    System.out.print("" + childrenOfRoots.length + " root concept(s): ");
-    System.out.println(ArrayUtils.toString(childrenOfRoots));
     for (int i = 0; i < childrenOfRoots.length; i++) {
       ConceptInterface[] childrenOfRoot = model.getChildren(childrenOfRoots[i]);
-      System.out.print("" + childrenOfRoot.length + " child concept(s) of root #" + i + ": ");
-      System.out.println(ArrayUtils.toString(childrenOfRoot));
     }
 
   }

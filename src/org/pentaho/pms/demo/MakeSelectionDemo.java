@@ -274,8 +274,6 @@ public class MakeSelectionDemo
                     String sql = mappedQuery.getQuery();
                     
                     System.out.println( query.getXML() );  
-//                    System.out.println( sql );  
-//                    System.out.println( sql2 );  
                     
                     // What is the connection information?
                     // We might need that to launch the transformation.

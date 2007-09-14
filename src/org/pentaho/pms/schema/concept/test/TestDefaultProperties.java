@@ -72,7 +72,6 @@ public class TestDefaultProperties
                 for (int i=0;i<ids.length;i++)
                 {
                     ConceptPropertyInterface property = concept.getProperty(ids[i]);
-                    System.out.println("#"+(i+1)+" : "+property.getId()+" = "+property.toString()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 }
             }
         }

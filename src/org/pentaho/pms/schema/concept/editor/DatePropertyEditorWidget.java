@@ -24,18 +24,8 @@ public class DatePropertyEditorWidget extends AbstractPropertyEditorWidget {
   protected void createContents(final Composite parent) {
 
     DateTime calendar = new DateTime(parent, SWT.CALENDAR);
-    calendar.addSelectionListener(new SelectionAdapter() {
-      public void widgetSelected(SelectionEvent e) {
-        System.out.println("calendar date changed");
-      }
-    });
 
     DateTime time = new DateTime(parent, SWT.TIME);
-    time.addSelectionListener(new SelectionAdapter() {
-      public void widgetSelected(SelectionEvent e) {
-        System.out.println("time changed");
-      }
-    });
 
   }
 

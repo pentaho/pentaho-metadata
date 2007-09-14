@@ -560,7 +560,6 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
       BusinessTable one = tabs[i];
       BusinessTable two = tabs[i + 1];
 
-      // System.out.println("Checking paths between "+one.getName()+" and "+two.getName()+" (i="+i+")");
       Vector vector = new Vector();
       if (i > 0) {
         Vector prev = (Vector) pathList.get(i - 1);
@@ -574,16 +573,12 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
       int min = getMinimumSize(vector);
       if (min > 0)
         onlyKeepSize(vector, min);
-      // System.out.println("Keeping "+pathlist[i].size()+" shortest paths between "+one.getName()+" and
-      // "+two.getName());
-      // System.out.println();
     }
 
     paths = (Vector) pathList.get(tabs.length - 2);
     quickSort(paths);
     for (int p = 0; p < paths.size(); p++) {
       Path pth = (Path) paths.get(p);
-      System.out.println("   #" + p + " : " + pth + " (" + pth.score() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
     }
     return paths;
   }
@@ -610,8 +605,6 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
       Path path = new Path();
 
-      // System.out.println("nr of selected tables: "+selectedTables.size());
-
       // Generate all combinations of the selected tables...
       for (int i = 0; i < selectedTables.size(); i++) {
         for (int j = i + 1; j < selectedTables.size(); j++) {
@@ -623,7 +616,6 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
             RelationshipMeta relationship = findRelationshipUsing(one, two);
             if (relationship != null && !path.contains(relationship)) {
               path.addRelationship(relationship);
-              // System.out.println("Added ["+relationship+"], Path now is: "+path.toString());
             }
           }
         }
@@ -712,8 +704,6 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
       if (!rel.getTableFrom().equals(one)) {
         rel.flip();
       }
-
-      // System.out.println(" Checking out relationship : "+rel+" after path ["+path+"]");
 
       if (!path.contains(rel)) // Let's not go endlessly round and round!
       {

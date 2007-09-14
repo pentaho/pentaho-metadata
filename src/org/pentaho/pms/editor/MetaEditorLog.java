@@ -12,6 +12,7 @@
 */
 package org.pentaho.pms.editor;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -116,7 +117,7 @@ public class MetaEditorLog extends Composite
 		}
 		catch(Exception e)
 		{
-			System.out.println(Messages.getString("MetaEditorLog.DEBUG_CANT_CREATE_CONNECTION")); //$NON-NLS-1$
+		  // Do nothing. This error will be reported in the readLog() method
 		}
 		
 		lsRefresh = new SelectionAdapter() 
@@ -182,22 +183,26 @@ public class MetaEditorLog extends Composite
 	{
 		int i, n;
 
-		if (message==null)  message = new StringBuffer(); else message.setLength(0);				
-		try
-		{	
-			n = in.available();
-					
-			if (n>0)
-			{
-				byte buffer[] = new byte[n];
-				int c = in.read(buffer, 0, n);
-				for (i=0;i<c;i++) message.append((char)buffer[i]);
-			}
-						
-		}
-		catch(Exception ex)
-		{
-			message.append(ex.toString());
+		if (message==null)  message = new StringBuffer(); else message.setLength(0);
+		if (in == null) {
+		  message.append(Messages.getString("MetaEditorLog.DEBUG_CANT_CREATE_CONNECTION"));
+		} else {
+	    try
+	    { 
+	      n = in.available();
+	          
+	      if (n>0)
+	      {
+	        byte buffer[] = new byte[n];
+	        int c = in.read(buffer, 0, n);
+	        for (i=0;i<c;i++) message.append((char)buffer[i]);
+	      }
+	            
+	    }
+	    catch(Exception ex)
+	    {
+	      message.append(ex.toString());
+	    }
 		}
 
 		if (!wText.isDisposed() && message.length()>0) 

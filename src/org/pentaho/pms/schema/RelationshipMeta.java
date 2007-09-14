@@ -325,7 +325,6 @@ public class RelationshipMeta extends ChangedFlag implements Cloneable, XMLInter
             }
             catch(Exception e)
             {
-                System.out.println(Const.getStackTracker(e));
                 return "??????????"; //$NON-NLS-1$
             }
 		}

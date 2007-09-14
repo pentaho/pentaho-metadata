@@ -635,17 +635,12 @@ public class Const
             while (en.hasMoreElements())
             {
                 NetworkInterface nwi = (NetworkInterface) en.nextElement();
-                //System.out.println("nwi : "+nwi.getName()+" ("+nwi.toString()+")");
                 Enumeration ip = nwi.getInetAddresses();
 
                 while (ip.hasMoreElements())
                 {
                     InetAddress in = (InetAddress) ip.nextElement();
                     lastHostname=in.getHostName();
-                    //System.out.println("  ip address bound : "+in.getHostAddress());
-                    //System.out.println("  hostname         : "+in.getHostName());
-                    //System.out.println("  Cann.hostname    : "+in.getCanonicalHostName());
-                    //System.out.println("  ip string        : "+in.toString());
                     if (!lastHostname.equalsIgnoreCase("localhost") && !(lastHostname.indexOf(":")>=0) ) //$NON-NLS-1$ //$NON-NLS-2$
                     {
                         return lastHostname;
@@ -701,16 +696,12 @@ public class Const
 		String os = getOS();
 		String s = ""; //$NON-NLS-1$
 
-		//System.out.println("os = "+os+", ip="+ip);
-
 		if (os.equalsIgnoreCase("Windows NT") || os.equalsIgnoreCase("Windows 2000") || os.equalsIgnoreCase("Windows XP") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				|| os.equalsIgnoreCase("Windows 95") || os.equalsIgnoreCase("Windows 98") || os.equalsIgnoreCase("Windows Me") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				|| os.startsWith("Windows")) //$NON-NLS-1$
 		{
 			try
 			{
-				// System.out.println("EXEC> nbtstat -a "+ip);
-
 				Process p = Runtime.getRuntime().exec("nbtstat -a " + ip); //$NON-NLS-1$
 
 				// read the standard output of the command
@@ -720,7 +711,6 @@ public class Const
 				{
 					while ((s = stdInput.readLine()) != null)
 					{
-						// System.out.println("NBTSTAT> "+s);
 						if (s.indexOf("MAC") >= 0) //$NON-NLS-1$
 						{
 							int idx = s.indexOf("="); //$NON-NLS-1$
@@ -1132,8 +1122,6 @@ public class Const
 				// remove this options from the arguments list...
 				// This is why we go from back to front...
 				args.remove(i);
-
-				// System.out.println("Option ["+prefix+"] found: ["+retval+"]");
 			}
 		}
 		return retval;
@@ -1190,7 +1178,6 @@ public class Const
 					{
 						// Replace the whole bunch
 						str.replace(idx, to + 2, newval);
-						//System.out.println("Replaced ["+marker+"] with ["+newval+"]");
 
 						// The last position has changed...
 						to += newval.length() - marker.length();
@@ -1310,7 +1297,6 @@ public class Const
 		 *           0123456
 		 *   Example a;b;c;d    -->    new String[] { a, b, c, d }
 		 */
-		// System.out.println("splitString ["+path+"] using ["+separator+"]");
 		List list = new ArrayList();
 
 		if (string == null || string.length() == 0)
@@ -1359,7 +1345,6 @@ public class Const
 		 *           0123456
 		 *   Example a;b;c;d    -->    new String[] { a, b, c, d }
 		 */
-		// System.out.println("splitString ["+path+"] using ["+separator+"]");
 		List list = new ArrayList();
 
 		if (string == null || string.length() == 0)
@@ -1407,7 +1392,6 @@ public class Const
 		 *           012345
 		 *   Example /a/b/c    -->    new String[] { a, b, c }
 		 */
-		// System.out.println("splitString ["+path+"] using ["+separator+"]");
 		if (path == null || path.length() == 0 || path.equals(separator))
 		{
 			return new String[] {};
@@ -1433,7 +1417,6 @@ public class Const
 			if (path.substring(i, i + sepLen).equalsIgnoreCase(separator))
 			{
 				spath[nr] = path.substring(from, i);
-				// System.out.println(nr+" --> ["+spath[nr]+"], (from,to)=("+from+", "+i+")");
 				nr++;
 
 				from = i + sepLen;
@@ -1442,7 +1425,6 @@ public class Const
 		if (nr < spath.length)
 		{
 			spath[nr] = path.substring(from);
-			// System.out.println(nr+" --> ["+spath[nr]+"], (from,to)=("+from+", "+path.length()+")");
 		}
 
 		// 

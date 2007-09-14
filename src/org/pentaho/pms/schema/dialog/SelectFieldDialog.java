@@ -330,7 +330,6 @@ public class SelectFieldDialog extends Dialog
 							{
 								String grandparentname = grandparent.getText();
 								
-								System.out.println(Messages.getString("SelectFieldDialog.DEBUG_GRANDPARENT_PARENT_ITEM", grandparentname, parentname, itemname)); //$NON-NLS-1$ 
 								if (grandparentname.equalsIgnoreCase(STRING_FIELDS) ||
 								    grandparentname.equalsIgnoreCase(STRING_CONDITIONS))
 								{
@@ -472,7 +471,6 @@ public class SelectFieldDialog extends Dialog
 				{
 					String grandparentname = grandparent.getText();
 								
-					System.out.println(Messages.getString("SelectFieldDialog.DEBUG_GRANDPARENT_PARENT_ITEM", grandparentname, parentname, itemname)); //$NON-NLS-1$
 					if (grandparentname.equalsIgnoreCase(STRING_FIELDS))
 					{
 						addToFieldsList(parentname, itemname);

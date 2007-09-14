@@ -14,6 +14,7 @@ package org.pentaho.pms.editor;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -1570,7 +1571,6 @@ public class MetaEditor implements SelectionListener{
         } else {
           // Nothing got dragged, only can happen on OSX :-)
           event.doit = false;
-          System.out.println(Messages.getString("MetaEditor.DEBUG_NOTHING_DRAGGED")); //$NON-NLS-1$
         }
       }
 
@@ -3703,7 +3703,22 @@ public class MetaEditor implements SelectionListener{
       {
         queryBuilderDialog = new QueryBuilderDialog(shell, schemaMeta);
       } else {
-        queryBuilderDialog = new QueryBuilderDialog(shell, query);
+        BusinessModel origModel = query.getModel();
+        BusinessModel businessModel = null;
+        List businessModels = schemaMeta.getBusinessModels().getList();
+        for (Iterator iter = businessModels.iterator(); iter.hasNext();) {
+          BusinessModel tmpModel = (BusinessModel)iter.next();
+          if (origModel.getId().equals(tmpModel.getId())) {
+            businessModel = tmpModel;
+          }
+        }
+        if (businessModel != null) {
+          query.setSchemaMeta(schemaMeta);
+          query.setModel(businessModel);
+          queryBuilderDialog = new QueryBuilderDialog(shell, query);
+        } else {
+          queryBuilderDialog = new QueryBuilderDialog(shell, schemaMeta);
+        }
       }
       if (queryBuilderDialog.open() == Window.OK) {
         query = queryBuilderDialog.getMqlQuery();

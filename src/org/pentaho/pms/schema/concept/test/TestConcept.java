@@ -47,14 +47,12 @@ public class TestConcept
         for (int i = 0; i < values.size(); i++)
         {
             ConceptPropertyInterface property = (ConceptPropertyInterface) values.get(i);
-            System.out.println("["+property.getId()+" : "+property.getType()+"] --> "+property); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
         
         ConceptPropertyInterface lookupLength = stringConcept.getProperty("field.data.length"); //$NON-NLS-1$
         if (lookupLength!=null)
         {
             BigDecimal length = (BigDecimal) lookupLength.getValue();
-            System.out.println("lookupLength = "+length.intValue()); //$NON-NLS-1$
         }
     }
 }

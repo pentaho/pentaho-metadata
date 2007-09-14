@@ -688,7 +688,6 @@ public class ConceptDefaultsDialog extends Dialog
                     ConceptPropertyInterface property = widgetInterface.getValue();
                     if (property!=null) // otherwise the value is not set/changed
                     {
-                        System.out.println(Messages.getString("ConceptDefaultsDialog.USER_PROPERTY_SET_TO_VALUE", property.getId(), property.toString())); //$NON-NLS-1$ 
                         concept.addProperty(property);
                     }
                     else
@@ -716,10 +715,6 @@ public class ConceptDefaultsDialog extends Dialog
                     allOK=false;
                     new ErrorDialog(shell, Messages.getString("ConceptDefaultsDialog.TITLE_ERROR_PARSING_VALUE"), Messages.getString("ConceptDefaultsDialog.ERROR_0001_ERROR_PARSING_VALUE"), e); //$NON-NLS-1$ //$NON-NLS-2$
                 }
-            }
-            else
-            {
-                System.out.println(Messages.getString("ConceptDefaultsDialog.ERROR_0002_OK_INTERFACE_NOT_FOUND", name)); //$NON-NLS-1$ 
             }
         }
         
