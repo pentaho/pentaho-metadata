@@ -15,6 +15,10 @@ package org.pentaho.pms.schema.concept.types.url;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
@@ -32,12 +36,6 @@ public class ConceptPropertyURL extends ConceptPropertyBase implements ConceptPr
     {
         super(name, required);
         this.value = value;
-    }
-
-    public String toString()
-    {
-        if (value==null) return null;
-        return value.toString();
     }
 
     public Object clone() throws CloneNotSupportedException
@@ -66,13 +64,29 @@ public class ConceptPropertyURL extends ConceptPropertyBase implements ConceptPr
         this.value = (URL) value;
     }
 
+
     public boolean equals(Object obj)
     {
-        return value.equals(obj);
+      if (obj instanceof ConceptPropertyURL == false) {
+        return false;
+      }
+      if (this == obj) {
+        return true;
+      }
+      ConceptPropertyURL rhs = (ConceptPropertyURL) obj;
+      return new EqualsBuilder().append(value, rhs.value).isEquals();
     }
 
     public int hashCode()
     {
-        return value.hashCode();
+      return new HashCodeBuilder(79, 223).append(value).toHashCode();
     }
+
+    public String toString()
+    {
+      return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).
+        append(value).
+        toString();
+  }
+
 }

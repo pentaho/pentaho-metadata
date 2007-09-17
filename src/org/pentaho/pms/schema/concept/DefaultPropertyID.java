@@ -217,6 +217,8 @@ public class DefaultPropertyID
         case ConceptPropertyType.PROPERTY_TYPE_TABLETYPE        : property = new ConceptPropertyTableType(name, null); break;
         case ConceptPropertyType.PROPERTY_TYPE_URL              : property = new ConceptPropertyURL(name, null); break;
         case ConceptPropertyType.PROPERTY_TYPE_SECURITY         : property = new ConceptPropertySecurity(name, null); break;
+        case ConceptPropertyType.PROPERTY_TYPE_ALIGNMENT        : property = new ConceptPropertyAlignment(name, null); break;
+        case ConceptPropertyType.PROPERTY_TYPE_COLUMN_WIDTH     : property = new ConceptPropertyColumnWidth(name, null); break;
         }
         return property;
     }

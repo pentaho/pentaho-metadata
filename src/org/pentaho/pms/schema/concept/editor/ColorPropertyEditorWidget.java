@@ -34,7 +34,7 @@ public class ColorPropertyEditorWidget extends AbstractPropertyEditorWidget {
 
   private Button button;
   Label colorLabel;
-  
+
   // ~ Constructors ====================================================================================================
 
   public ColorPropertyEditorWidget(final Composite parent, final int style, final IConceptModel conceptModel,
@@ -42,7 +42,7 @@ public class ColorPropertyEditorWidget extends AbstractPropertyEditorWidget {
     super(parent, style, conceptModel, propertyId, context);
     refresh();
     if (logger.isDebugEnabled()) {
-      logger.debug("created AggregationPropertyEditorWidget");
+      logger.debug("created ColorPropertyEditorWidget");
     }
   }
 
@@ -135,14 +135,14 @@ public class ColorPropertyEditorWidget extends AbstractPropertyEditorWidget {
     button.setEnabled(isEditable());
     setValue(getProperty().getValue());
   }
-  
+
   protected boolean isValid() {
     return true;
   }
 
   public void cleanup() {
     // TODO Auto-generated method stub
-    
+
   }
 
 }

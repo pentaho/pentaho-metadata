@@ -25,7 +25,7 @@ public class PropertyEditorWidgetFactory {
   private static final Log logger = LogFactory.getLog(PropertyEditorWidgetFactory.class);
 
   private static final Map propertyEditorMap;
-  
+
   private static final Class[] constructorParamTypes = { Composite.class, Integer.TYPE, IConceptModel.class,
       String.class, Map.class };
 
@@ -48,7 +48,7 @@ public class PropertyEditorWidgetFactory {
     propertyEditors.put(ConceptPropertyType.DATATYPE, DataTypePropertyEditorWidget.class);
     propertyEditors.put(ConceptPropertyType.LOCALIZED_STRING, LocalizedStringPropertyEditorWidget.class);
     propertyEditors.put(ConceptPropertyType.TABLETYPE, TableTypePropertyEditorWidget.class);
-    //  propertyEditors.put(ConceptPropertyType.PROPERTY_TYPE_URL, .class);
+    propertyEditors.put(ConceptPropertyType.URL, UrlPropertyEditorWidget.class);
     propertyEditors.put(ConceptPropertyType.SECURITY, SecurityPropertyEditorWidget.class);
     propertyEditors.put(ConceptPropertyType.ALIGNMENT, AlignmentPropertyEditorWidget.class);
     propertyEditors.put(ConceptPropertyType.COLUMN_WIDTH, ColumnWidthPropertyEditorWidget.class);
@@ -56,7 +56,8 @@ public class PropertyEditorWidgetFactory {
   }
 
   public static IPropertyEditorWidget getWidget(final ConceptPropertyType propertyType, final Composite parent,
-      final int style, final IConceptModel conceptModel, final String propertyId, final Map context, SecurityReference securityReference) {
+      final int style, final IConceptModel conceptModel, final String propertyId, final Map context,
+      SecurityReference securityReference) {
 
     Class clazz = (Class) propertyEditorMap.get(propertyType);
     if (null == clazz) {
@@ -68,7 +69,7 @@ public class PropertyEditorWidgetFactory {
       if (clazz == SecurityPropertyEditorWidget.class) {
         constParams.add(SecurityReference.class);
       }
-      cons = clazz.getConstructor((Class[])constParams.toArray(new Class[0]));
+      cons = clazz.getConstructor((Class[]) constParams.toArray(new Class[0]));
     } catch (SecurityException e) {
       if (logger.isErrorEnabled()) {
         logger.error("an exception occurred", e);
