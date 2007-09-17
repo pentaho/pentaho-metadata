@@ -11,6 +11,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -363,7 +364,7 @@ public class QueryBuilderDialog extends MQLQueryBuilderDialog {
     }
     
     // Show the rows in a dialog.
-    if (rows != null) {
+    if (rows != null && rows.size()>0) {
       
       //Reinstate the actual "as" column identifiers here, before preview. 
       if (columnsMap != null){
@@ -376,6 +377,8 @@ public class QueryBuilderDialog extends MQLQueryBuilderDialog {
       
       PreviewRowsDialog previewRowsDialog = new PreviewRowsDialog(getShell(), SWT.NONE, Messages.getString("QueryDialog.USER_FIRST_5000_ROWS"), rows); //$NON-NLS-1$
       previewRowsDialog.open();
+    } else {
+      MessageDialog.openInformation(getShell(), Messages.getString("QueryDialog.USER_NO_DATA_TITLE"), Messages.getString("QueryDialog.USER_NO_DATA_INFO"));//$NON-NLS-1$ //$NON-NLS-2$
     }
   }
 
