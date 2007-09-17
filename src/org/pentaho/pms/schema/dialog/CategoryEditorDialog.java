@@ -21,9 +21,9 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
@@ -31,6 +31,8 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.jface.tree.ITreeNodeChangedListener;
 import org.pentaho.pms.jface.tree.TreeContentProvider;
@@ -41,6 +43,7 @@ import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.SchemaMeta;
+import org.pentaho.pms.schema.concept.editor.Constants;
 import org.pentaho.pms.ui.tree.BusinessColumnTreeNode;
 import org.pentaho.pms.ui.tree.BusinessTableTreeNode;
 import org.pentaho.pms.ui.tree.BusinessTablesTreeNode;
@@ -75,13 +78,13 @@ public class CategoryEditorDialog extends TitleAreaDialog {
 
   private BusinessViewTreeNode rootCategory;
 
-  private Button wAddSelection;
+  private ToolItem wAddSelection;
 
-  private Button wDelSelection;
+  private ToolItem wDelSelection;
 
-  private Button wAddAll;
+  private ToolItem wAddAll;
 
-  private Button wNew;
+  private ToolItem wNew;
 
   private Menu categoryMenu;
 
@@ -184,8 +187,7 @@ public class CategoryEditorDialog extends TitleAreaDialog {
 
   private void buildBusinessCategoryPanel(Composite parent) {
 
-    GridLayout gridLayout = new GridLayout();
-    gridLayout.numColumns = 3;
+    GridLayout gridLayout = new GridLayout(2, false);
     parent.setLayout(gridLayout);
 
     Label label0 = new Label(parent, SWT.NONE);
@@ -197,24 +199,24 @@ public class CategoryEditorDialog extends TitleAreaDialog {
     data.grabExcessHorizontalSpace = true;
     label0.setLayoutData(data);
 
-    wNew = new Button(parent, SWT.PUSH);
-    wNew.setText("+"); //$NON-NLS-1$
+    ToolBar tb = new ToolBar(parent, SWT.FLAT);
+    tb.setBackground(GUIResource.getInstance().getColorWhite());
+    GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
+    gridData.horizontalAlignment = SWT.END;
+    tb.setLayoutData(gridData);
+    
+    wNew = new ToolItem(tb, SWT.PUSH);
+    wNew.setImage(Constants.getImageRegistry(Display.getCurrent()).get("add-button"));
     wNew.setToolTipText(Messages.getString("CategoryEditorDialog.USER_ADD_NEW_CATEGORY")); //$NON-NLS-1$
-    data = new GridData();
-    data.horizontalAlignment = GridData.END;
-    wNew.setLayoutData(data);
     wNew.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(SelectionEvent event) {
         newCategory();
       }
     });
 
-    wDelSelection = new Button(parent, SWT.PUSH);
-    wDelSelection.setText("x"); //$NON-NLS-1$
+    wDelSelection = new ToolItem(tb, SWT.PUSH);
+    wDelSelection.setImage(Constants.getImageRegistry(Display.getCurrent()).get("del-button"));
     wDelSelection.setToolTipText(Messages.getString("CategoryEditorDialog.USER_DELETE")); //$NON-NLS-1$
-    data = new GridData();
-    data.horizontalAlignment = GridData.END;
-    wDelSelection.setLayoutData(data);
     wDelSelection.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(SelectionEvent event) {
         deleteSelections();
@@ -261,52 +263,27 @@ public class CategoryEditorDialog extends TitleAreaDialog {
     composite0.setLayoutData(data);
     composite0.setBackground(GUIResource.getInstance().getColorWhite());
 
-    wAddSelection = new Button(parent, SWT.PUSH);
-    wAddSelection.setText(">"); //$NON-NLS-1$
+    ToolBar tb1 = new ToolBar(parent, SWT.FLAT);
+    tb1.setBackground(GUIResource.getInstance().getColorWhite());
+    wAddSelection = new ToolItem(tb1, SWT.PUSH);
+    wAddSelection.setImage(Constants.getImageRegistry(Display.getCurrent()).get("add-arrow")); //$NON-NLS-1$
     wAddSelection.setToolTipText(Messages.getString("CategoryEditorDialog.USER_ADD")); //$NON-NLS-1$
-    data = new GridData(GridData.FILL_HORIZONTAL);
-    data.horizontalAlignment = GridData.CENTER;
-    data.verticalAlignment = GridData.CENTER;
-    data.minimumWidth = 30;
-    wAddSelection.setLayoutData(data);
     wAddSelection.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(SelectionEvent event) {
         addSelection();
       }
     });
 
-    wAddAll = new Button(parent, SWT.PUSH);
-    wAddAll.setText(">>"); //$NON-NLS-1$
+    ToolBar tb2 = new ToolBar(parent, SWT.FLAT);
+    tb2.setBackground(GUIResource.getInstance().getColorWhite());
+    wAddAll = new ToolItem(tb2, SWT.PUSH);
+    wAddAll.setImage(Constants.getImageRegistry(Display.getCurrent()).get("add-all-arrow")); //$NON-NLS-1$
     wAddAll.setToolTipText(Messages.getString("CategoryEditorDialog.USER_ADD_ALL")); //$NON-NLS-1$
-    data = new GridData(GridData.FILL_HORIZONTAL);
-    data.horizontalAlignment = GridData.CENTER;
-    data.verticalAlignment = GridData.CENTER;
-    wAddAll.setLayoutData(data);
     wAddAll.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(SelectionEvent event) {
         addAll();
       }
     });
-
-    /* redundant removal controls
-     
-     Button wDelSelection = new Button (parent, SWT.PUSH);
-     wDelSelection.setText ("<");
-     data = new GridData (GridData.FILL_BOTH);
-     data.horizontalAlignment = GridData.CENTER;
-     data.verticalAlignment = GridData.CENTER;
-     data.minimumWidth = 30;
-     wDelSelection.setLayoutData (data);
-
-     Button wDelAll = new Button (parent, SWT.PUSH);
-     wDelAll.setText ("<<");
-     data = new GridData (GridData.FILL_BOTH);
-     data.verticalAlignment = GridData.CENTER;
-     data.minimumWidth = 30;
-     data.horizontalAlignment = GridData.CENTER;
-     wDelAll.setLayoutData (data);
-
-     */
 
     Composite composite5 = new Composite(parent, SWT.NONE);
     data = new GridData();
