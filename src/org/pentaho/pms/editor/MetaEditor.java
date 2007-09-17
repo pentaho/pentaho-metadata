@@ -1886,6 +1886,7 @@ public class MetaEditor implements SelectionListener{
         public void handleEvent(Event evt) {
           editBusinessColumn(businessColumn, (BusinessColumnTreeNode) node);
           treeViewer.update(node.getParent(), null);
+          treeViewer.update(node, null);
         }
       });
     } else if (node instanceof RelationshipTreeNode) {
