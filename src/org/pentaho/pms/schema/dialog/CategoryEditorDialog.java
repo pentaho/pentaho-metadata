@@ -4,7 +4,9 @@
  */
 package org.pentaho.pms.schema.dialog;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -68,6 +70,8 @@ public class CategoryEditorDialog extends TitleAreaDialog {
 
   private static final Log logger = LogFactory.getLog(CategoryEditorDialog.class);
 
+  private static final String DEFAULT_CATEGORY_ID_PREFIX = "CT_CATEGORY";
+  
   private BusinessModel businessModel;
 
   private SchemaMeta schemaMeta;
@@ -198,7 +202,7 @@ public class CategoryEditorDialog extends TitleAreaDialog {
     data.verticalAlignment = GridData.END;
     data.grabExcessHorizontalSpace = true;
     label0.setLayoutData(data);
-
+    
     ToolBar tb = new ToolBar(parent, SWT.FLAT);
     tb.setBackground(GUIResource.getInstance().getColorWhite());
     GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
@@ -372,7 +376,29 @@ public class CategoryEditorDialog extends TitleAreaDialog {
   protected void newCategory() {
 
     while (true) {
+      List existingCategories = businessModel.getRootCategory().getBusinessCategories().getList();
+      ArrayList existingCategoryNames = new ArrayList();
+      for (int i = 0; i < existingCategories.size(); i++) {
+        BusinessCategory existingCategory = (BusinessCategory)existingCategories.get(i);
+        existingCategoryNames.add(existingCategory.getId());
+      }
+      int index = 1;
+      String newCategoryId = DEFAULT_CATEGORY_ID_PREFIX + index;
       BusinessCategory businessCategory = new BusinessCategory();
+      boolean idOK = false;
+      while (!idOK) {
+        if (!existingCategoryNames.contains(newCategoryId)) {
+          try {
+            businessCategory.setId(newCategoryId);
+            idOK = true;
+          } catch (ObjectAlreadyExistsException e1) {
+            newCategoryId = DEFAULT_CATEGORY_ID_PREFIX + (++index);
+          }
+        } else {
+          newCategoryId = DEFAULT_CATEGORY_ID_PREFIX + (++index);
+        }
+      }
+      
       BusinessCategoryDialog dialog = new BusinessCategoryDialog(this.getShell(), businessCategory, schemaMeta);
       if (dialog.open() == Window.OK) {
         // Add this to the parent.
