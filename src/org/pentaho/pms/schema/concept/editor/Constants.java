@@ -77,6 +77,7 @@ public class Constants {
     imageRegistry.put("add-all-arrow", createImage(display, "add_all.gif"));
     imageRegistry.put("remove-arrow", createImage(display, "remove.gif"));
     imageRegistry.put("remove-all-arrow", createImage(display, "remove_all.gif"));
+    imageRegistry.put("pentaho-icon", createImage(display, "icon.png"));
   }
 
   private static Image createImage(final Display display, final String filename) {

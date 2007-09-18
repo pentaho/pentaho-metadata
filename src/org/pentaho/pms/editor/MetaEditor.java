@@ -98,6 +98,7 @@ import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.schema.concept.editor.ConceptEditorDialog;
 import org.pentaho.pms.schema.concept.editor.ConceptTreeModel;
+import org.pentaho.pms.schema.concept.editor.Constants;
 import org.pentaho.pms.schema.concept.editor.IConceptTreeModel;
 import org.pentaho.pms.schema.concept.editor.PredefinedVsCustomPropertyHelper;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
@@ -190,7 +191,7 @@ public class MetaEditor implements SelectionListener{
 
   private MetaEditorOlap metaEditorOlap;
   CTabItem tiTabsOlap;
-  
+
   private SashForm sashform;
 
   private CTabFolder tabfolder;
@@ -231,7 +232,7 @@ public class MetaEditor implements SelectionListener{
   private MenuItem miEditSelectAll, miEditUnselectAll, miEditProperties, miEditOptions, miEditRefresh;
 
   private Listener lsEditSelectAll, lsEditUnselectAll, lsEditOptions, lsEditProperties, lsEditRefresh;
-  
+
   private ToolItem tiEditProperties;
 
   private MenuItem mHelp;
@@ -332,17 +333,17 @@ public class MetaEditor implements SelectionListener{
     int weights[] = props.getSashWeights();
     sashform.setWeights(weights);
     sashform.setVisible(true);
-    
+
 
     shell.layout();
     getMainListener().handleEvent(null); // Force everything to match the current state
     disp.addFilter(SWT.KeyDown, new Listener(){
       public void handleEvent(Event arg0) {
-        if ((arg0.keyCode == 'o') 
+        if ((arg0.keyCode == 'o')
             && (arg0.stateMask == (SWT.ALT | SWT.CTRL))) {
           toggleOlapTab();
-        }    
-      }  
+        }
+      }
     });
   }
 
@@ -761,9 +762,9 @@ public class MetaEditor implements SelectionListener{
                 }
               }
             };
-            
+
             BusyIndicator.showWhile(Display.getCurrent(), runnable);
-            
+
             if (exceptionList.size() == 0) {
               // Here, we are getting a whole new model, so rebuild the whole tree
               refreshTree();
@@ -936,7 +937,7 @@ public class MetaEditor implements SelectionListener{
     miEditOptions = new MenuItem(msEdit, SWT.CASCADE);
     miEditOptions.setText(Messages.getString("MetaEditor.USER_EDIT_OPTIONS")); //$NON-NLS-1$
     miEditOptions.addListener(SWT.Selection, lsEditOptions);
-    
+
     new MenuItem(msEdit, SWT.SEPARATOR);
     miEditUnselectAll = new MenuItem(msEdit, SWT.CASCADE);
     miEditUnselectAll.setText(Messages.getString("MetaEditor.USER_CLEAR_SELECTION")); //$NON-NLS-1$
@@ -1608,7 +1609,7 @@ public class MetaEditor implements SelectionListener{
         || (node instanceof PhysicalTableTreeNode));
     tiEditProperties.setEnabled(enableProperties);
     miEditProperties.setEnabled(enableProperties);
-    
+
     if (node instanceof ConnectionsTreeNode) {
       MenuItem miNew = new MenuItem(mainMenu, SWT.PUSH);
       miNew.setText(Messages.getString("MetaEditor.USER_NEW_TEXT")); //$NON-NLS-1$
@@ -2344,7 +2345,7 @@ public class MetaEditor implements SelectionListener{
       metaEditorOlap = null;
     }
   }
-  
+
   private boolean readData(String domainName) {
     try {
       props.addLastFile(LastUsedFile.FILE_TYPE_SCHEMA, domainName, "", false, ""); //$NON-NLS-1$ //$NON-NLS-2$
@@ -2645,7 +2646,7 @@ public class MetaEditor implements SelectionListener{
       ConceptInterface originalInt = oldColumn.getConcept();
       originalInt.clearChildProperties();
       originalInt.getChildPropertyInterfaces().putAll(newColumn.getConcept().getChildPropertyInterfaces());
-    }      
+    }
 
     refreshGraph();
     mainTreeNode.sync();
@@ -2987,7 +2988,7 @@ public class MetaEditor implements SelectionListener{
 
     VersionHelper verHelper = new VersionHelper();
     StringBuffer message = new StringBuffer();
-    
+
     message
     .append(verHelper.getVersionInformation(MetaEditor.class)).append(Const.CR).append(Const.CR); //$NON-NLS-1$
 //        .append(Messages.getString("MetaEditor.USER_HELP_METADATA_EDITOR")).append(Const.VERSION).append(Const.CR).append(Const.CR); //$NON-NLS-1$
@@ -3054,7 +3055,7 @@ public class MetaEditor implements SelectionListener{
       treeViewer.update(selectedItem, null);
     }
   }
-  
+
   public int getTreePosition(TreeItem ti, String item) {
     if (ti != null) {
       TreeItem items[] = ti.getItems();
@@ -3503,7 +3504,7 @@ public class MetaEditor implements SelectionListener{
     System.setProperty("java.naming.factory.initial", "org.osjava.sj.SimpleContextFactory"); //$NON-NLS-1$ //$NON-NLS-2$
     System.setProperty("org.osjava.sj.root", "simple-jndi"); //$NON-NLS-1$ //$NON-NLS-2$
     System.setProperty("org.osjava.sj.delimiter", "/"); //$NON-NLS-1$ //$NON-NLS-2$
-    
+
     EnvUtil.environmentInit();
     LogWriter log = LogWriter.getInstance(Const.META_EDITOR_LOG_FILE, false, LogWriter.LOG_LEVEL_BASIC);
     LogWriter.setLayout(new Log4jPMELayout(true));
@@ -3518,6 +3519,9 @@ public class MetaEditor implements SelectionListener{
     // Init steps, jobentries, plugins...
     StepLoader.getInstance().read();
     JobEntryLoader.getInstance().read();
+
+
+    Window.setDefaultImage(Constants.getImageRegistry(Display.getCurrent()).get("pentaho-icon"));
 
     Splash splash = new Splash(display);
 
@@ -3931,7 +3935,7 @@ public class MetaEditor implements SelectionListener{
     if (e.getSource() == treeViewer.getTree()) {
       updateMenusAndToolbars(e);
       setActiveBusinessModel(e);
-    }    
+    }
   }
 
 }
