@@ -44,6 +44,7 @@ import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.Settings;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -80,6 +81,8 @@ public class MQLQuery {
   private String locale;
 
   private SchemaMeta schemaMeta;
+  
+  private boolean disableDistinct; // = false;
 
   private CwmSchemaFactoryInterface cwmSchemaFactory;
 
@@ -171,7 +174,7 @@ public class MQLQuery {
     WhereCondition conditions[] = (WhereCondition[]) constraints.toArray(new WhereCondition[constraints.size()]);
     OrderBy orderBy[] = (OrderBy[]) order.toArray(new OrderBy[order.size()]);
 
-		return model.getSQL(selection, conditions, orderBy, locale);
+		return model.getSQL(selection, conditions, orderBy, locale, this.disableDistinct);
 	}
 
 
@@ -318,6 +321,15 @@ public class MQLQuery {
         return false;
       }
 
+      // Add additional options
+      Element optionsElement = doc.createElement("options"); //$NON-NLS-1$
+      mqlElement.appendChild(optionsElement);
+      Element disableDistinct = doc.createElement("disable_distinct");
+      data = Boolean.toString(this.disableDistinct);
+      disableDistinct.appendChild(doc.createTextNode(data));
+      optionsElement.appendChild(disableDistinct);
+      
+      
       // insert the selections
       Element selectionsElement = doc.createElement("selections"); //$NON-NLS-1$
       mqlElement.appendChild(selectionsElement);
@@ -478,6 +490,15 @@ public class MQLQuery {
     }
     schemaMeta = cwmSchemaFactory.getSchemaMeta(cwm);
 
+    // get the options node if it exists...
+    NodeList nList = doc.getElementsByTagName("options"); //$NON-NLS-1$
+    if (nList != null) {
+      Element optionElement;
+      for (int i=0; i<nList.getLength(); i++) {
+        optionElement = (Element)nList.item(i);
+        setOptionsFromXmlNode(optionElement);
+      }
+    }
     // get the Business View id
     String modelId = getElementText(doc, "model_id"); //$NON-NLS-1$
     model = schemaMeta.findModel(modelId); // This is the business model that was selected.
@@ -522,6 +543,17 @@ public class MQLQuery {
     }
   }
 
+  private void setOptionsFromXmlNode(Element optionElement) {
+    if (optionElement != null) {
+      String disableStr = getElementText(optionElement, "disable_distinct");//$NON-NLS-1$
+      if (disableStr != null) {
+        this.disableDistinct = disableStr.equalsIgnoreCase("true");//$NON-NLS-1$
+        return;
+      }
+    }
+    this.disableDistinct = false; // Keep default behavior...
+  }
+  
   private void addOrderByFromXmlNode(Element orderElement) throws PentahoMetadataException {
     boolean ascending = true;
     String view_id = null;
@@ -588,6 +620,14 @@ public class MQLQuery {
   private String getElementText(Document doc, String name) {
     try {
       return doc.getElementsByTagName(name).item(0).getFirstChild().getNodeValue();
+    } catch (Exception e) {
+      return null;
+    }
+  }
+
+  private String getElementText(Element ele, String name) {
+    try {
+      return ele.getElementsByTagName(name).item(0).getFirstChild().getNodeValue();
     } catch (Exception e) {
       return null;
     }
@@ -670,4 +710,12 @@ public class MQLQuery {
     this.selections = selections;
   }
 
+  public void setDisableDistinct(boolean value) {
+    this.disableDistinct = value;
+  }
+  
+  public boolean getDisableDistinct() {
+    return this.disableDistinct;
+  }
+  
 }

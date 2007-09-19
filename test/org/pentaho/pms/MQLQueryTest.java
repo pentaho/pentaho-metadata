@@ -126,6 +126,13 @@ public class MQLQueryTest extends TestCase {
       String sql = cond.getWhereClause("en_US", false); //$NON-NLS-1$
       assertNotNull(sql);
       sql = sql.trim();
+      /*
+      System.out.println("-----------");
+      System.out.println("Expected SQL: [" + expectedSql + "]");
+      System.out.println("-----------");
+      System.out.println("Actual SQL: [" + sql + "]");
+      System.out.println("-----------");
+      */
       assertEquals(expectedSql, sql);
     } catch (Exception e) {
       e.printStackTrace();
@@ -343,7 +350,7 @@ public class MQLQueryTest extends TestCase {
       
       // expected hypersonic sql
       "( (((4 * (2 + 3)) - (( Customers.COUNTRY  * 2) / 3)) <> 1000) AND " + //$NON-NLS-1$
-      " Customers.CUSTOMERNAME  IN ( 'EuroCars1' , 'EuroCars2' , 'EuroCars3' ) )" //$NON-NLS-1$
+      " Customers.CUSTOMERNAME  IN ( 'EuroCars1' , 'EuroCars2' , 'EuroCars3' )  )" //$NON-NLS-1$
     );
   }
   
@@ -353,7 +360,7 @@ public class MQLQueryTest extends TestCase {
       "LIKE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"%US%\")", //$NON-NLS-1$
 
       // expected hypersonic sql
-      "( Customers.COUNTRY  LIKE '%US%' )" //$NON-NLS-1$
+      "(  Customers.COUNTRY  LIKE '%US%' )" //$NON-NLS-1$
     );
   }
   
@@ -412,7 +419,7 @@ public class MQLQueryTest extends TestCase {
 //        ,"Customers.COUNTRY  LIKE '%'" //$NON-NLS-1$
 //      );
 //  }
-  
+
   public void testToFromXML() {
 
     CWM cwm = CWM.getInstance("Orders", false); //$NON-NLS-1$
@@ -425,13 +432,41 @@ public class MQLQueryTest extends TestCase {
     CwmSchemaFactory cwmSchemaFactory = new CwmSchemaFactory();
     
    
-		String mqlfile = "test/org/pentaho/pms/mqlquery01.xmql"; //$NON-NLS-1$
+		String mqlfile1 = "test/org/pentaho/pms/mqlquery01.xmql"; //$NON-NLS-1$
+    String mqlfile2 = "test/org/pentaho/pms/mqlquery02.xmql"; //$NON-NLS-1$ // Distinct is off, but otherwise the same
+    String mqlfile3 = "test/org/pentaho/pms/mqlquery_oldformat.xmql"; //$NON-NLS-1$
     
-    String mqldata = loadXmlFile(mqlfile);
+    String mqldata = loadXmlFile(mqlfile1);
     assertNotNull(mqldata);
     MQLQuery mqlquery = null;
     try {
       mqlquery = new MQLQuery(mqldata, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
+    } catch (PentahoMetadataException e) {
+      e.printStackTrace();
+      fail();
+    }
+
+    // Tests parsing the options tag to get the boolean into the MQL query
+    mqldata = null;
+    mqldata = loadXmlFile(mqlfile2);
+    assertNotNull(mqldata);
+    MQLQuery mqlquery2 = null;
+    try {
+      mqlquery2 = new MQLQuery(mqldata, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
+      assertEquals(mqlquery2.getDisableDistinct(), true);
+    } catch (PentahoMetadataException e) {
+      e.printStackTrace();
+      fail();
+    }
+    
+    // Tests parsing an old-format (without options tag) still works, and defaults disableDistinct to false
+    mqldata = null;
+    mqldata = loadXmlFile(mqlfile3);
+    assertNotNull(mqldata);
+    MQLQuery mqlquery3 = null;
+    try {
+      mqlquery3 = new MQLQuery(mqldata, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
+      assertEquals(mqlquery3.getDisableDistinct(), false);
     } catch (PentahoMetadataException e) {
       e.printStackTrace();
       fail();
@@ -472,7 +507,7 @@ public class MQLQueryTest extends TestCase {
     
     // NOW TEST XML OUTPUT
     try {
-      File file = new File(mqlfile);
+      File file = new File(mqlfile1);
       FileInputStream fileInputStream = new FileInputStream(file);
       byte bytes[] = new byte[(int)file.length()];
       fileInputStream.read(bytes);
@@ -482,11 +517,48 @@ public class MQLQueryTest extends TestCase {
       String xml = mqlquery.getXML();
       assertNotNull(xml);
       xml = xml.replaceAll("[\n\t]",""); //$NON-NLS-1$ //$NON-NLS-2$
-      assertEquals(data, xml);      
+      /*
+      System.out.println("Generated XML");
+      System.out.println(xml);
+      System.out.println("File XML");
+      System.out.println(data);
+      */
+      assertEquals(data, xml);
+      
+      // Checks that the rendered XML has the option with true instead of false
+      xml = mqlquery2.getXML();
+      assertFalse(data.equals(xml));
+      
+      // Tests that newly generated XML has the correct false flag in it.
+      xml = mqlquery3.getXML();
+      assertEquals(data, xml);
+      
     } catch (IOException e) {
       e.printStackTrace();
       fail();
     }
+    try {
+      // Now, look at generated SQL for distinct -vs- no distinct...
+      String SQL1 = mqlquery.getQuery().getQuery();
+      assertNotNull(SQL1);
+      assertTrue(SQL1.startsWith("SELECT DISTINCT"));
+      // System.out.println("SQL1: " + SQL1);
+     
+      String SQL2 = mqlquery2.getQuery().getQuery();
+      assertNotNull(SQL2);
+      assertFalse(SQL2.startsWith("SELECT DISTINCT"));
+      // System.out.println("SQL2: " + SQL2);
+
+      String SQL3 = mqlquery3.getQuery().getQuery();
+      assertNotNull(SQL3);
+      assertTrue(SQL3.startsWith("SELECT DISTINCT"));
+      // System.out.println("SQL3: " + SQL3);
+      
+    } catch (PentahoMetadataException e) {
+      e.printStackTrace();
+      fail();
+    }
+    
     
     // NOW TEST MQL QUERY EXCEPTIONS
     String mqlfaildata01 = mqldata.replaceAll(

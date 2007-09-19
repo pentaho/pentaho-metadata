@@ -724,24 +724,24 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
   /**
    * @param selectedColumns The selected business columns
    * @param locale the locale
-   * @param useDisplayNames if true, use localized display name, else use column id
-   * @param columnsMap map of truncated column "as" references to true column ids 
+   * @param disableDistinct if true, disables default behavior of using DISTINCT when there
+   * are no groupings.
    * @return a SQL query based on a column selection and locale
    */
-  public MappedQuery getSQL(BusinessColumn selectedColumns[], String locale) throws PentahoMetadataException {
-    return getSQL(selectedColumns, (WhereCondition[]) null, (OrderBy[]) null, locale);
+  public MappedQuery getSQL(BusinessColumn selectedColumns[], String locale, boolean disableDistinct) throws PentahoMetadataException {
+    return getSQL(selectedColumns, (WhereCondition[]) null, (OrderBy[]) null, locale, disableDistinct);
   }
 
   /**
    * @param selectedColumns The selected business columns
    * @param conditions the conditions to apply
    * @param locale the locale
-   * @param useDisplayNames if true, use localized display name, else use column id
-   * @param columnsMap map of truncated column "as" references to true column ids 
+   * @param disableDistinct if true, disables default behavior of using DISTINCT when there
+   * are no groupings.
    * @return a SQL query based on a column selection, conditions and a locale
    */
-  public MappedQuery getSQL(BusinessColumn selectedColumns[], WhereCondition conditions[], String locale) throws PentahoMetadataException {
-    return getSQL(selectedColumns, conditions, (OrderBy[]) null, locale);
+  public MappedQuery getSQL(BusinessColumn selectedColumns[], WhereCondition conditions[], String locale, boolean disableDistinct) throws PentahoMetadataException {
+    return getSQL(selectedColumns, conditions, (OrderBy[]) null, locale, disableDistinct);
   }
 
   /**
@@ -750,10 +750,11 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
    * @param orderBy the ordering (null = no order by clause)
    * @param locale the locale
    * @param useDisplayNames if true, use localized display name, else use column id
-   * @param columnsMap map of truncated column "as" references to true column ids 
+   * @param disableDistinct if true, disables default behavior of using DISTINCT when there
+   * are no groupings.
    * @return a SQL query based on a column selection, conditions and a locale
    */
-  public MappedQuery getSQL(BusinessColumn selectedColumns[], WhereCondition conditions[], OrderBy[] orderBy, String locale) throws PentahoMetadataException {
+  public MappedQuery getSQL(BusinessColumn selectedColumns[], WhereCondition conditions[], OrderBy[] orderBy, String locale, boolean disableDistinct) throws PentahoMetadataException {
     MappedQuery sql = null;
 
     // These are the tables involved in the field selection:
@@ -765,20 +766,25 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
       throw new PentahoMetadataException(Messages.getErrorString("BusinessModel.ERROR_0001_FAILED_TO_FIND_PATH")); //$NON-NLS-1$
     }
 
-    sql = getSQL(selectedColumns, path, conditions, orderBy, locale);
+    sql = getSQL(selectedColumns, path, conditions, orderBy, locale, disableDistinct);
 
     return sql;
   }
 
-  // Make a list of all facts with aggr. type <> none
-  // if the list is not empty, make a group by list: all dimensions & aggr.type==none
-  // place sum()/etc functions over field
-  // add group by line...
-  // Klair!
-
-
-  public MappedQuery getSQL(BusinessColumn selectedColumns[], Path path, WhereCondition conditions[], OrderBy[] orderBy,
-      String locale) throws PentahoMetadataException {
+ 
+  /**
+   * Gets a MappedQuery object based on the selections and options specified
+   * @param selectedColumns The selected business columns
+   * @param path The shortest join path between all the tables involved
+   * @param conditions the conditions to apply (null = no conditions)
+   * @param orderBy the ordering (null = no order by clause)
+   * @param locale the locale
+   * @param disableDistinct if true, disables default behavior of using DISTINCT when there
+   * are no groupings.
+   * @return a MappedQuery based on a column selection, conditions and a locale
+   * @throws PentahoMetadataException
+   */
+  public MappedQuery getSQL(BusinessColumn selectedColumns[], Path path, WhereCondition conditions[], OrderBy[] orderBy, String locale, boolean disableDistinct) throws PentahoMetadataException {
     String sql = null;
     Map columnsMap = new HashMap();
 
@@ -804,8 +810,9 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
       //
       boolean group = hasFactsInIt(selectedColumns, conditions);
 
-      if (!group)
+      if (!disableDistinct && !group) {
         sql += "DISTINCT "; //$NON-NLS-1$
+      }
       sql += Const.CR;
 
       for (int i = 0; i < selectedColumns.length; i++) {
@@ -987,13 +994,12 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
     return new MappedQuery(sql, columnsMap);
   }
 
-  public TransMeta getTransformationMeta(BusinessColumn selectedColumns[], WhereCondition conditions[],
-      OrderBy[] orderBy, String locale) throws PentahoMetadataException  {
+  public TransMeta getTransformationMeta(BusinessColumn selectedColumns[], WhereCondition conditions[], OrderBy[] orderBy, String locale) throws PentahoMetadataException  {
     if (selectedColumns == null || selectedColumns.length == 0)
       return null;
 
     DatabaseMeta databaseMeta = selectedColumns[0].getBusinessTable().getPhysicalTable().getDatabaseMeta();
-    MappedQuery query = getSQL(selectedColumns, conditions, orderBy, locale);
+    MappedQuery query = getSQL(selectedColumns, conditions, orderBy, locale, false);
 
     TableInputMeta tableInputMeta = new TableInputMeta();
     tableInputMeta.setDatabaseMeta(databaseMeta);

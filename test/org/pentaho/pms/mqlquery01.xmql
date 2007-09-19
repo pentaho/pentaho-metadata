@@ -4,6 +4,9 @@
 	<domain_id>Orders</domain_id>
 	<model_id>Orders</model_id>
 	<model_name>Orders</model_name>
+	<options>
+		<disable_distinct>false</disable_distinct>
+	</options>
 	<selections>
 		<selection>
 			<view>bc_CUSTOMER_W_TER</view>
