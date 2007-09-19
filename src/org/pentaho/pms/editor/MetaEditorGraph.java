@@ -1,13 +1,13 @@
 /*
- * Copyright 2006 Pentaho Corporation.  All rights reserved. 
- * This software was developed by Pentaho Corporation and is provided under the terms 
- * of the Mozilla Public License, Version 1.1, or any later version. You may not use 
- * this file except in compliance with the license. If you need a copy of the license, 
- * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho 
+ * Copyright 2006 Pentaho Corporation.  All rights reserved.
+ * This software was developed by Pentaho Corporation and is provided under the terms
+ * of the Mozilla Public License, Version 1.1, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho
  * BI Platform.  The Initial Developer is Pentaho Corporation.
  *
- * Software distributed under the Mozilla Public License is distributed on an "AS IS" 
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to 
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
  * the license for the specific language governing your rights and limitations.
  */
 /**********************************************************************
@@ -27,7 +27,7 @@
 
 /*
  * Created on 17-mei-2003
- *  
+ *
  */
 
 package org.pentaho.pms.editor;
@@ -69,6 +69,7 @@ import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.RelationshipMeta;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
+import org.pentaho.pms.schema.concept.editor.Constants;
 import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.GUIResource;
 
@@ -89,7 +90,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
   private static final int HOP_SEL_MARGIN = 9;
 
   private static final int RIGHT_HAND_SLOP = 20;
-  
+
   private Shell shell;
 
   private MetaEditorGraph metaEditorGraph;
@@ -129,7 +130,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
   private Rectangle selrect;
 
   private Props props;
-  
+
   private Menu mPop;
 
   public MetaEditorGraph(Composite par, int style, MetaEditor pm) {
@@ -321,7 +322,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
               }
             } else // We moved around some items: store undo info...
             if (selected_items != null && prev_locations != null) {
-              // int indexes[] = activeView.getTableIndexes(selected_items); 
+              // int indexes[] = activeView.getTableIndexes(selected_items);
             }
           }
           selected_items = null;
@@ -376,7 +377,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
           if (last_button == 1) {
             /*
              * One or more icons are selected and moved around...
-             * 
+             *
              * new : new position of the ICON (not the mouse pointer) dx : difference with previous position
              */
             int dx = icon.x - selected_icon.getLocation().x;
@@ -452,12 +453,12 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
         // What's the real drop position?
         Point p = getRealPosition(metaEditorGraph, event.x, event.y);
 
-        // 
+        //
         // We expect a Drag and Drop container... (encased in XML)
         try {
           DragAndDropContainer container = (DragAndDropContainer) event.data;
           switch (container.getType()) {
-            // 
+            //
             // Drag physical table onto metaEditorGraph:
             //  0) Look up the referenced Physical Table name, if it exists continue
             //  1) If there is an active business model use that one, if not ask name, create one, edit it
@@ -486,7 +487,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
 
             //
             // Nothing we can use: give an error!
-            //  
+            //
             default: {
               MessageBox mb = new MessageBox(shell, SWT.OK);
               mb.setMessage(Messages.getString("MetaEditorGraph.USER_CANT_PLACE_ON_GRAPH")); //$NON-NLS-1$
@@ -641,7 +642,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
     }
     setMenu(null);
     mPop = new Menu(this);
-    
+
     final BusinessModel activeModel = metaEditor.getSchemaMeta().getActiveModel();
     if (activeModel == null)
       return;
@@ -691,7 +692,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
               MessageBox mb = new MessageBox(shell, SWT.YES | SWT.NO | SWT.ICON_WARNING);
               mb.setText(Messages.getString("MetaEditorGraph.USER_WARNING")); //$NON-NLS-1$
               String message = Messages.getString(
-                  "MetaEditorGraph.USER_CONFRIM_DELETE_TABLES", Integer.toString(nrsels)); //$NON-NLS-1$ 
+                  "MetaEditorGraph.USER_CONFRIM_DELETE_TABLES", Integer.toString(nrsels)); //$NON-NLS-1$
               for (int i = activeModel.nrBusinessTables() - 1; i >= 0; i--) {
                 BusinessTable tableinfo = activeModel.getBusinessTable(i);
                 if (tableinfo.isSelected() || bTable.equals(tableinfo)) {
@@ -802,7 +803,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
         miPopDVertic.setText(Messages.getString("MetaEditorGraph.USER_DISTRIBUTE_VERT")); //$NON-NLS-1$
         new MenuItem(mPopAD, SWT.SEPARATOR);
         MenuItem miPopSSnap = new MenuItem(mPopAD, SWT.CASCADE);
-        miPopSSnap.setText(Messages.getString("MetaEditorGraph.USER_SNAP_TO_GRID", Integer.toString(Const.GRID_SIZE))); //$NON-NLS-1$ 
+        miPopSSnap.setText(Messages.getString("MetaEditorGraph.USER_SNAP_TO_GRID", Integer.toString(Const.GRID_SIZE))); //$NON-NLS-1$
         miPopAD.setMenu(mPopAD);
 
         miPopALeft.addSelectionListener(new SelectionAdapter() {
@@ -873,7 +874,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
         if (ni != null) {
           // Delete note
           // Edit note
- 
+
           MenuItem miNoteEdit = new MenuItem(mPop, SWT.CASCADE);
           miNoteEdit.setText(Messages.getString("MetaEditorGraph.USER_EDIT_NOTE")); //$NON-NLS-1$
           MenuItem miNoteDel = new MenuItem(mPop, SWT.CASCADE);
@@ -1033,7 +1034,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
 
     // Draw the active business model.  If there is none, don't draw anything except the drop rectangles ;-)
     if (activeModel != null) {
-      // display the name/description of the business model 
+      // display the name/description of the business model
       //
       String title = activeModel.getDisplayName(activeLocale);
       gc.setFont(GUIResource.getInstance().getFontLarge());
@@ -1098,7 +1099,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
         case 1:
           message1 = Messages.getString("MetaEditorGraph.USER_ONE_BUSINESS_MODEL_DEFINED");message2 = Messages.getString("MetaEditorGraph.USER_SELECT_IN_TREE");break; //$NON-NLS-1$ //$NON-NLS-2$
         default:
-          message1 = Messages.getString("MetaEditorGraph.USER_N_BUSINESS_MODELS_DEFINED", Integer.toString(nrModels));message2 = Messages.getString("MetaEditorGraph.USER_SELECT_ONE_IN_TREE");break; //$NON-NLS-1$ //$NON-NLS-2$ 
+          message1 = Messages.getString("MetaEditorGraph.USER_N_BUSINESS_MODELS_DEFINED", Integer.toString(nrModels));message2 = Messages.getString("MetaEditorGraph.USER_SELECT_ONE_IN_TREE");break; //$NON-NLS-1$ //$NON-NLS-2$
       }
       gc.drawText(message1, 10, 10, true);
       gc.drawText(message2, 10, 20 + h, true);
@@ -1113,7 +1114,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
   }
 
   /**
-   * @param gc - The Graphics content 
+   * @param gc - The Graphics content
    * @param src - The string to break up
    * @return String that contains \n characters where the distance between each
    * \n character is less than the width of the frame
@@ -1136,7 +1137,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
       }
     }
     textRuns.add(result);
-    
+
     result = "";
     Iterator iter = textRuns.iterator();
     while (iter.hasNext()) {
@@ -1144,7 +1145,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
     }
     return result;
   }
-  
+
   private void drawRelationship(GC gc, RelationshipMeta hi) {
     drawRelationship(gc, hi, false);
   }
@@ -1216,22 +1217,25 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
     int sizeY = iconsize;
 
     String name = businessTable.getDisplayName(metaEditor.getSchemaMeta().getActiveLocale());
-    if (businessTable.isSelected())
-      gc.setLineWidth(linewidth + 2);
-    else
-      gc.setLineWidth(linewidth);
-    if (businessTable.isFactTable()) {
-      gc.setBackground(GUIResource.getInstance().getColorOrange());
-    } else if (businessTable.isDimensionTable()) {
-      gc.setBackground(GUIResource.getInstance().getColorYellow());
-    } else {
-      gc.setBackground(GUIResource.getInstance().getColorLightGray());
-    }
-    gc.setForeground(GUIResource.getInstance().getColorBlack());
-    gc.fillRectangle(screen.x, screen.y, sizeX, sizeY);
 
-    gc.setBackground(GUIResource.getInstance().getColorBackground());
-    gc.drawRectangle(screen.x - 1, screen.y - 1, sizeX + 1, sizeY + 1);
+    Image im = Constants.getImageRegistry(Display.getCurrent()).get("bus-table-graph-icon");
+    org.eclipse.swt.graphics.Rectangle bounds = im.getBounds();
+    gc.drawImage(im, 0, 0, bounds.width, bounds.height, screen.x, screen.y, iconsize, iconsize);
+
+    // PMD-204: Previously, the boxes were colored according to type; leaving this code commented out for reference
+//    if (businessTable.isFactTable()) {
+//      gc.setBackground(GUIResource.getInstance().getColorOrange());
+//    } else if (businessTable.isDimensionTable()) {
+//      gc.setBackground(GUIResource.getInstance().getColorYellow());
+//    } else {
+//      gc.setBackground(GUIResource.getInstance().getColorLightGray());
+//    }
+
+    if (businessTable.isSelected()) {
+      gc.setLineWidth(linewidth + 2);
+      gc.setBackground(GUIResource.getInstance().getColorBackground());
+      gc.drawRectangle(screen.x - 1, screen.y - 1, sizeX + 1, sizeY + 1);
+    }
 
     org.eclipse.swt.graphics.Point ext = gc.textExtent(name);
     Point textsize = new Point(ext.x, ext.y);
@@ -1356,9 +1360,9 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
     BusinessTable from = null;
     BusinessTable to = null;
     BusinessTable[] selectedTables = metaEditor.getSchemaMeta().getActiveModel().getSelectedTables();
-    
+
     if (selectedTables != null){
-      
+
       from = selectedTables[0];
       if (selectedTables.length > 1){
         to = metaEditor.getSchemaMeta().getActiveModel().getSelectedTables()[1];
@@ -1577,7 +1581,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
 
   /**
    * Note: we know that we have an active business model here so it's safe to use this BusinessModel.$
-   * 
+   *
    * @return a new SnapAllignDistribute object
    */
   private SnapAllignDistribute createSnapAllignDistribute() {
