@@ -15,6 +15,9 @@ package org.pentaho.pms.schema.security;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HttpClient;
@@ -32,9 +35,11 @@ import org.w3c.dom.Node;
 import be.ibridge.kettle.core.ChangedFlag;
 import be.ibridge.kettle.core.LogWriter;
 import be.ibridge.kettle.core.XMLHandler;
+import be.ibridge.kettle.core.exception.KettleException;
 import be.ibridge.kettle.core.exception.KettleXMLException;
 
 public class SecurityService extends ChangedFlag implements Cloneable {
+  
   public static final int SERVICE_TYPE_ALL = 0;
 
   public static final int SERVICE_TYPE_USERS = 1;
@@ -72,8 +77,16 @@ public class SecurityService extends ChangedFlag implements Cloneable {
   private String nonProxyHosts;
 
   private String filename;
+  
+  LogWriter log = null;
 
   public SecurityService() {
+    try {
+      LogWriter log = LogWriter.getInstance(Const.META_EDITOR_LOG_FILE, false, LogWriter.LOG_LEVEL_BASIC);
+    } catch (KettleException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   protected Object clone() {
@@ -427,6 +440,79 @@ public class SecurityService extends ChangedFlag implements Cloneable {
    */
   public void setFilename(String filename) {
     this.filename = filename;
+  }
+
+  public List getUsers() {
+    List users = new ArrayList();
+    if (hasService() || hasFile()) {
+      try {
+        Node contentNode = getContent();
+
+        // Load the users
+        Node usersNode = XMLHandler.getSubNode(contentNode, "users"); //$NON-NLS-1$
+        int nrUsers = XMLHandler.countNodes(usersNode, "user"); //$NON-NLS-1$
+        for (int i = 0; i < nrUsers; i++) {
+          Node userNode = XMLHandler.getSubNodeByNr(usersNode, "user", i); //$NON-NLS-1$
+          String username = XMLHandler.getNodeValue(userNode);
+          if (username != null)
+            users.add(username);
+        }
+      } catch (PentahoMetadataException ex) {
+        log.logError(Messages.getString("SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML"), ex.getLocalizedMessage()); //$NON-NLS-1$
+      } catch (Exception e) {
+        log.logError(Messages.getString("SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML"), e.getLocalizedMessage()); //$NON-NLS-1$
+      }
+    }
+    return users;
+  }
+  
+  public List getRoles() {
+    List roles = new ArrayList();
+    if (hasService() || hasFile()) {
+      try {
+        Node contentNode = getContent();
+
+        // Load the roles
+        Node rolesNode = XMLHandler.getSubNode(contentNode, "roles"); //$NON-NLS-1$
+        int nrRoles = XMLHandler.countNodes(rolesNode, "role"); //$NON-NLS-1$
+        for (int i=0;i<nrRoles;i++)
+        {
+            Node roleNode = XMLHandler.getSubNodeByNr(rolesNode, "role", i); //$NON-NLS-1$
+            String rolename = XMLHandler.getNodeValue(roleNode);
+            if (rolename!=null) roles.add(rolename);
+        }
+      } catch (PentahoMetadataException ex) {
+        log.logError(Messages.getString("SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML"), ex.getLocalizedMessage()); //$NON-NLS-1$
+      } catch (Exception e) {
+        log.logError(Messages.getString("SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML"), e.getLocalizedMessage()); //$NON-NLS-1$
+      }
+    }
+    return roles;
+  }
+
+  public List getAcls() {
+    List acls = new ArrayList();
+    if (hasService() || hasFile()) {
+      try {
+        Node contentNode = getContent();
+
+        // Load the ACLs
+        Node aclsNode = XMLHandler.getSubNode(contentNode, "acls"); //$NON-NLS-1$
+        int nrAcls = XMLHandler.countNodes(aclsNode, "acl"); //$NON-NLS-1$
+        for (int i=0;i<nrAcls;i++)
+        {
+            Node aclNode = XMLHandler.getSubNodeByNr(aclsNode, "acl", i); //$NON-NLS-1$
+            SecurityACL acl = new SecurityACL(aclNode);
+            acls.add(acl);
+        }
+        Collections.sort(acls); // sort by acl mask, from low to high
+      } catch (PentahoMetadataException ex) {
+        log.logError(Messages.getString("SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML"), ex.getLocalizedMessage()); //$NON-NLS-1$
+      } catch (Exception e) {
+        log.logError(Messages.getString("SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML"), e.getLocalizedMessage()); //$NON-NLS-1$
+      }
+    }
+    return acls;
   }
 
 }
