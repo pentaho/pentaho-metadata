@@ -401,15 +401,8 @@ public class RelationshipDialog extends Dialog {
   public void setComplex() {
     wFromField.setEnabled(relationshipMeta.isRegular());
     wToField.setEnabled(relationshipMeta.isRegular());
-    
-    // TODO: complex joins do not generate the correct SQL, and 
-    // needs to be thoughtfully implemented; disabling the feature, 
-    // but needs to be revisited
-    
-//    wComplexJoin.setEnabled(relationshipMeta.isComplex());
-//    wlComplexJoin.setEnabled(relationshipMeta.isComplex());
-    wComplexJoin.setEnabled(false);
-    wlComplexJoin.setEnabled(false);
+    wComplexJoin.setEnabled(relationshipMeta.isComplex());
+    wlComplexJoin.setEnabled(relationshipMeta.isComplex());
 
     /*
      if (relationshipMeta.isRegular())
