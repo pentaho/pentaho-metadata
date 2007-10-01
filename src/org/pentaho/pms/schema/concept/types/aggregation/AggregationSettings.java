@@ -54,7 +54,7 @@ public class AggregationSettings
 
     public static final AggregationSettings[] types = new AggregationSettings[]
         {
-            NONE, SUM, AVERAGE, COUNT, MINIMUM, MAXIMUM,
+            NONE, SUM, AVERAGE, COUNT, COUNT_DISTINCT, MINIMUM, MAXIMUM,
         };
 
     private int type;
