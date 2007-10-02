@@ -12,7 +12,6 @@
 */
 package org.pentaho.pms.editor;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
