@@ -19,7 +19,7 @@ import java.util.List;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.pentaho.pms.messages.Messages;
-import org.pentaho.pms.schema.DefaultProperties;
+import org.pentaho.pms.schema.RequiredProperties;
 import org.pentaho.pms.schema.DefaultProperty;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.schema.concept.types.aggregation.ConceptPropertyAggregation;
@@ -517,7 +517,7 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
   }
 
   protected void addDefaultProperties() {
-    java.util.List list = new DefaultProperties().getDefaultProperties(getClass());
+    java.util.List list = new RequiredProperties().getDefaultProperties(getClass());
     if (null != list) {
       for (int i = 0; i < list.size(); i++) {
         DefaultProperty defaultProperty = (DefaultProperty) list.get(i);

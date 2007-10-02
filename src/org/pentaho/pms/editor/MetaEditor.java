@@ -14,7 +14,6 @@ package org.pentaho.pms.editor;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -3412,13 +3411,6 @@ public class MetaEditor implements SelectionListener{
     // The data type...
     DataTypeSettings dataTypeSettings = getDataTypeSettings(v);
     physicalColumn.setDataType(dataTypeSettings);
-
-    // It this a key field? If yes: set the appropriate parent concept...
-    if (fieldType.equals(FieldTypeSettings.KEY)) {
-      ConceptInterface parentIDConcept = schemaMeta.findConcept(Settings.getConceptNameID());
-      if (parentIDConcept != null)
-        physicalColumn.getConcept().setParentInterface(parentIDConcept);
-    }
 
     return physicalColumn;
   }

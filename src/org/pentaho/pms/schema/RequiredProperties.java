@@ -24,16 +24,17 @@ import be.ibridge.kettle.core.ChangedFlag;
 import be.ibridge.kettle.core.ChangedFlagInterface;
 
 /**
- * Contains a list of the default properties per object class
+ * Contains a list of the required properties per object class. These property values can change,
+ * but the properties themselves cannot be removed. 
  *
- * @author Matt
+ * @author Matt (updated gmoran)
  *
  */
-public class DefaultProperties extends ChangedFlag implements ChangedFlagInterface
+public class RequiredProperties extends ChangedFlag implements ChangedFlagInterface
 {
     private Map map;
 
-    public DefaultProperties()
+    public RequiredProperties()
     {
         this.map = new Hashtable();
 
@@ -97,6 +98,7 @@ public class DefaultProperties extends ChangedFlag implements ChangedFlagInterfa
         propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.AGGREGATION));
         propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.EXACT));
         propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.HIDDEN));
+//      gmoran: These are defaulted but not required
         //propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.FONT));
         //propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.MASK));
         //propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.COLOR_FG));

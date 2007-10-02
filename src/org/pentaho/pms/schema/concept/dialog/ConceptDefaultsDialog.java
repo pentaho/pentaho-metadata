@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.pentaho.pms.locale.Locales;
 import org.pentaho.pms.messages.Messages;
-import org.pentaho.pms.schema.DefaultProperties;
+import org.pentaho.pms.schema.RequiredProperties;
 import org.pentaho.pms.schema.DefaultProperty;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
@@ -96,7 +96,7 @@ public class ConceptDefaultsDialog extends Dialog
     private Props props;
 
     private ConceptInterface concept;
-    private DefaultProperties defaultProperties;
+    private RequiredProperties requiredProperties;
     private String title;
 
     private Class subject;
@@ -107,13 +107,13 @@ public class ConceptDefaultsDialog extends Dialog
     private Locales locales;
     private SecurityReference securityReference;
 
-	public ConceptDefaultsDialog(Shell parent, String title, ConceptUtilityInterface conceptUtility, DefaultProperties defaultProperties, Locales locales, SecurityReference securityReference)
+	public ConceptDefaultsDialog(Shell parent, String title, ConceptUtilityInterface conceptUtility, RequiredProperties requiredProperties, Locales locales, SecurityReference securityReference)
 	{
 		super(parent, SWT.NONE);
 
         this.title = title;
         this.concept = conceptUtility.getConcept();
-        this.defaultProperties = defaultProperties;
+        this.requiredProperties = requiredProperties;
         this.locales = locales;
         this.securityReference = securityReference;
         
@@ -125,7 +125,7 @@ public class ConceptDefaultsDialog extends Dialog
         this.conceptPropertyInterfaces = new Hashtable();
 	}
 
-	public DefaultProperties open()
+	public RequiredProperties open()
 	{
 		Shell parent = getParent();
 		Display display = parent.getDisplay();
@@ -156,7 +156,7 @@ public class ConceptDefaultsDialog extends Dialog
         composite.setLayout(new FormLayout());
         composite.setBackground(GUIResource.getInstance().getColorRed());
 
-        getControls(composite, Messages.getString("ConceptDefaultsDialog.USER_SAMPLE_MESSAGE"), subject, defaultProperties, concept, conceptPropertyInterfaces, locales, securityReference); //$NON-NLS-1$
+        getControls(composite, Messages.getString("ConceptDefaultsDialog.USER_SAMPLE_MESSAGE"), subject, requiredProperties, concept, conceptPropertyInterfaces, locales, securityReference); //$NON-NLS-1$
         
         FormData fdComposite =new FormData();
         fdComposite.left   = new FormAttachment(0, 0);
@@ -187,7 +187,7 @@ public class ConceptDefaultsDialog extends Dialog
 		{
 				if (!display.readAndDispatch()) display.sleep();
 		}
-        return defaultProperties;
+        return requiredProperties;
 	}
 
     public static final ScrolledComposite getControls(Composite parentComposite, String message, ConceptInterface concept, Map conceptPropertyInterfaces, Locales locales, SecurityReference securityReference)
@@ -195,9 +195,9 @@ public class ConceptDefaultsDialog extends Dialog
         return getControls(parentComposite, message, null, null, concept, conceptPropertyInterfaces, locales, securityReference);
     }
     
-    public static final ScrolledComposite getControls(final Composite parentComposite, String message, Class subject, DefaultProperties defaultProperties, final ConceptInterface concept, Map conceptPropertyInterfaces, Locales locales, SecurityReference securityReference)
+    public static final ScrolledComposite getControls(final Composite parentComposite, String message, Class subject, RequiredProperties requiredProperties, final ConceptInterface concept, Map conceptPropertyInterfaces, Locales locales, SecurityReference securityReference)
     {
-        return getControls(parentComposite, null, message, subject, defaultProperties, concept, conceptPropertyInterfaces, locales, securityReference);
+        return getControls(parentComposite, null, message, subject, requiredProperties, concept, conceptPropertyInterfaces, locales, securityReference);
     }
     
     public static final ScrolledComposite getControls(
@@ -218,7 +218,7 @@ public class ConceptDefaultsDialog extends Dialog
             final ConceptUtilityInterface utilityInterface, 
             final String message, 
             final Class subject, 
-            final DefaultProperties defaultProperties, 
+            final RequiredProperties requiredProperties, 
             final ConceptInterface concept, 
             final Map conceptPropertyInterfaces, 
             final Locales locales, 
@@ -311,7 +311,7 @@ public class ConceptDefaultsDialog extends Dialog
             wDelProperty = new Button(composite, SWT.PUSH);
             props.setLook(wDelProperty);
             wDelProperty.setText(Messages.getString("ConceptDefaultsDialog.USER_DELETE_PROPERTY")); //$NON-NLS-1$
-            wDelProperty.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent arg0) { delProperty(parentComposite, utilityInterface, message, subject, defaultProperties, concept, conceptPropertyInterfaces, locales, securityReference); } });
+            wDelProperty.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent arg0) { delProperty(parentComposite, utilityInterface, message, subject, requiredProperties, concept, conceptPropertyInterfaces, locales, securityReference); } });
             FormData fdDelProperty = new FormData();
             fdDelProperty.right = new FormAttachment(props.getMiddlePct(), 0);
             fdDelProperty.top   = new FormAttachment(lastControl, Const.MARGIN);
@@ -321,7 +321,7 @@ public class ConceptDefaultsDialog extends Dialog
             wAddProperty = new Button(composite, SWT.PUSH);
             props.setLook(wAddProperty);
             wAddProperty.setText(Messages.getString("ConceptDefaultsDialog.USER_ADD_PROPERTY")); //$NON-NLS-1$
-            wAddProperty.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent arg0) { addProperty(parentComposite, utilityInterface, message, subject, defaultProperties, concept, conceptPropertyInterfaces, locales, securityReference); } } );
+            wAddProperty.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent arg0) { addProperty(parentComposite, utilityInterface, message, subject, requiredProperties, concept, conceptPropertyInterfaces, locales, securityReference); } } );
             FormData fdAddProperty = new FormData();
             fdAddProperty.right = new FormAttachment(wDelProperty, -Const.MARGIN);
             fdAddProperty.top   = new FormAttachment(lastControl, Const.MARGIN);
@@ -334,9 +334,9 @@ public class ConceptDefaultsDialog extends Dialog
         // Slap the type composites on there...
         // What are the default properties for the concept?
         // 
-        if (defaultProperties!=null && subject!=null)
+        if (requiredProperties!=null && subject!=null)
         {
-            java.util.List list = defaultProperties.getDefaultProperties(subject);
+            java.util.List list = requiredProperties.getDefaultProperties(subject);
             for (int i=0;i<list.size();i++)
             {
                 DefaultProperty defaultProperty = (DefaultProperty) list.get(i);
@@ -471,7 +471,7 @@ public class ConceptDefaultsDialog extends Dialog
                final ConceptUtilityInterface utilityInterface, 
                final String message, 
                final Class subject, 
-               final DefaultProperties defaultProperties, 
+               final RequiredProperties requiredProperties, 
                final ConceptInterface concept, 
                final Map conceptPropertyInterfaces, 
                final Locales locales, 
@@ -481,7 +481,7 @@ public class ConceptDefaultsDialog extends Dialog
         ConceptPropertyInterface property = NewPropertyDialog.addNewProperty(parentComposite.getShell(), concept);
         if (property!=null)
         {
-            getControls(parentComposite, utilityInterface, message, subject, defaultProperties, concept, conceptPropertyInterfaces, locales, securityReference);
+            getControls(parentComposite, utilityInterface, message, subject, requiredProperties, concept, conceptPropertyInterfaces, locales, securityReference);
             
             // Set the focus on this new property
             ConceptPropertyWidgetInterface widgetInterface = (ConceptPropertyWidgetInterface) conceptPropertyInterfaces.get(property.getId());
@@ -498,7 +498,7 @@ public class ConceptDefaultsDialog extends Dialog
                 final ConceptUtilityInterface utilityInterface, 
                 final String message, 
                 final Class subject, 
-                final DefaultProperties defaultProperties, 
+                final RequiredProperties requiredProperties, 
                 final ConceptInterface concept, 
                 final Map conceptPropertyInterfaces, 
                 final Locales locales, 
@@ -507,7 +507,7 @@ public class ConceptDefaultsDialog extends Dialog
     {
         if (ConceptDialog.delChildProperty(parentComposite.getShell(), concept))
         {
-            getControls(parentComposite, utilityInterface, message, subject, defaultProperties, concept, conceptPropertyInterfaces, locales, securityReference);
+            getControls(parentComposite, utilityInterface, message, subject, requiredProperties, concept, conceptPropertyInterfaces, locales, securityReference);
         }
     }
 
@@ -657,7 +657,7 @@ public class ConceptDefaultsDialog extends Dialog
 	
 	private void cancel()
 	{
-        defaultProperties=null;
+        requiredProperties=null;
 		dispose();
 	}
 	

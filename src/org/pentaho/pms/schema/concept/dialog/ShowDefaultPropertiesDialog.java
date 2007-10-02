@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 import org.pentaho.pms.messages.Messages;
-import org.pentaho.pms.schema.DefaultProperties;
+import org.pentaho.pms.schema.RequiredProperties;
 import org.pentaho.pms.schema.DefaultProperty;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.DefaultPropertyID;
@@ -75,14 +75,14 @@ public class ShowDefaultPropertiesDialog extends Dialog
 	
     private Props props;
 
-    private DefaultProperties defaultProperties;
+    private RequiredProperties requiredProperties;
     private String title;
     private String message;
 
-	public ShowDefaultPropertiesDialog(Shell parent, String title, String messsage, DefaultProperties defaultProperties)
+	public ShowDefaultPropertiesDialog(Shell parent, String title, String messsage, RequiredProperties requiredProperties)
 	{
 		super(parent, SWT.NONE);
-		this.defaultProperties = defaultProperties;
+		this.requiredProperties = requiredProperties;
         this.title = title;
         this.message = messsage;
         
@@ -90,7 +90,7 @@ public class ShowDefaultPropertiesDialog extends Dialog
         props=Props.getInstance();
 	}
 
-	public DefaultProperties open()
+	public RequiredProperties open()
 	{
 		Shell parent = getParent();
 		Display display = parent.getDisplay();
@@ -104,7 +104,7 @@ public class ShowDefaultPropertiesDialog extends Dialog
 		{
 			public void modifyText(ModifyEvent e) 
 			{
-				defaultProperties.setChanged();
+				requiredProperties.setChanged();
 			}
 		};
 
@@ -139,7 +139,7 @@ public class ShowDefaultPropertiesDialog extends Dialog
         wlList.setLayoutData(fdlList);
         wList=new List(shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         props.setLook(wList);
-        Class[] subjects = defaultProperties.getSubjects();
+        Class[] subjects = requiredProperties.getSubjects();
         for (int i=0;i<subjects.length;i++)
         {
             wList.add(subjects[i].getName());
@@ -216,7 +216,7 @@ public class ShowDefaultPropertiesDialog extends Dialog
 		{
 				if (!display.readAndDispatch()) display.sleep();
 		}
-        return defaultProperties;
+        return requiredProperties;
 	}
 
 	public void dispose()
@@ -236,12 +236,12 @@ public class ShowDefaultPropertiesDialog extends Dialog
         String selection[] = wList.getSelection();
         if (selection.length==1)
         {
-            Class[] subjects = defaultProperties.getSubjects();
+            Class[] subjects = requiredProperties.getSubjects();
             for (int i=0;i<subjects.length;i++)
             {
                 if (subjects[i].getName().equals(selection[0]))
                 {
-                    java.util.List list = defaultProperties.getDefaultProperties(subjects[i]);
+                    java.util.List list = requiredProperties.getDefaultProperties(subjects[i]);
                     for (int x=0;x<list.size();x++)
                     {
                         DefaultProperty defaultProperty = (DefaultProperty) list.get(x);
@@ -269,7 +269,7 @@ public class ShowDefaultPropertiesDialog extends Dialog
 	
 	private void cancel()
 	{
-        defaultProperties=null;
+        requiredProperties=null;
 		dispose();
 	}
 	

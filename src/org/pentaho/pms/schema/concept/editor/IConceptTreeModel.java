@@ -2,6 +2,7 @@ package org.pentaho.pms.schema.concept.editor;
 
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.concept.ConceptInterface;
+import org.pentaho.pms.schema.concept.DeleteNotAllowedException;
 
 import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
 
@@ -27,13 +28,13 @@ public interface IConceptTreeModel {
   /**
    * Removes the concept.
    */
-  void removeConcept(ConceptInterface concept);
+  void removeConcept(ConceptInterface concept) throws DeleteNotAllowedException;
 
   /**
    * Returns the parent of the concept.
    */
   ConceptInterface getParent(ConceptInterface concept);
-
+  
   public SchemaMeta getSchemaMeta();
 
   /**

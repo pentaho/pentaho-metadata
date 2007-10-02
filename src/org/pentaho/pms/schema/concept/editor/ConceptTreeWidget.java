@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.Concept;
 import org.pentaho.pms.schema.concept.ConceptInterface;
+import org.pentaho.pms.schema.concept.DeleteNotAllowedException;
 
 import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
 
@@ -165,7 +166,13 @@ public class ConceptTreeWidget extends Composite implements ISelectionProvider {
       logger.debug(Messages.getString("ConceptTreeWidget.DEBUG_DELETE") + delete); //$NON-NLS-1$
     }
     if (delete) {
-      conceptTreeModel.removeConcept(selected);
+      try {
+        conceptTreeModel.removeConcept(selected);
+      } catch (DeleteNotAllowedException e) {
+        MessageDialog.openError(this.getShell(), Messages
+            .getString("ConceptTreeWidget.USER_DELETE_NOT_ALLOWED_TITLE"), //$NON-NLS-1$
+            Messages.getString("ConceptTreeWidget.USER_DELETE_NOT_ALLOWED", selected.getName())); //$NON-NLS-1$ //$NON-NLS-2$   
+        }
     }
   }
 

@@ -27,9 +27,6 @@ public class Settings
     private static final String IDS_ARE_UPPERCASE            = "IDS_ARE_UPPERCASE"; //$NON-NLS-1$
     private static final String SCHEMA_FACTORY_CLASS_NAME         = "SCHEMA_FACTORY_CLASS_NAME"; //$NON-NLS-1$
     private static final String CONCEPT_NAME_BASE = null;
-    private static final String CONCEPT_NAME_NUMBER = null;
-    private static final String CONCEPT_NAME_ID = null;
-    private static final String CONCEPT_NAME_SK = null;
     
     public static final String getBusinessModelIDPrefix()
     {
@@ -101,22 +98,6 @@ public class Settings
         return Props.getInstance().getCustomParameter(CONCEPT_NAME_BASE, "Base"); //$NON-NLS-1$
     }
 
-    public static String getConceptNameNumber()
-    {
-        return Props.getInstance().getCustomParameter(CONCEPT_NAME_NUMBER, "Number"); //$NON-NLS-1$
-    }
-
-    public static String getConceptNameID()
-    {
-        return Props.getInstance().getCustomParameter(CONCEPT_NAME_ID, "ID"); //$NON-NLS-1$
-    }
-
-    public static String getConceptNameSK()
-    {
-        return Props.getInstance().getCustomParameter(CONCEPT_NAME_SK, "SurrogateKey"); //$NON-NLS-1$
-    }
-
-    
     public static final CwmSchemaFactoryInterface getCwmSchemaFactory() {
       String cwmSchemaClassName = Props.getInstance().getCustomParameter(SCHEMA_FACTORY_CLASS_NAME, "org.pentaho.pms.factory.CwmSchemaFactory"); //$NON-NLS-1$
       try {

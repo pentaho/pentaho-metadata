@@ -44,12 +44,10 @@ import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.DefaultPropertyID;
 import org.pentaho.pms.schema.concept.types.alignment.AlignmentSettings;
 import org.pentaho.pms.schema.concept.types.alignment.ConceptPropertyAlignment;
-import org.pentaho.pms.schema.concept.types.bool.ConceptPropertyBoolean;
 import org.pentaho.pms.schema.concept.types.color.ColorSettings;
 import org.pentaho.pms.schema.concept.types.color.ConceptPropertyColor;
 import org.pentaho.pms.schema.concept.types.font.ConceptPropertyFont;
 import org.pentaho.pms.schema.concept.types.font.FontSettings;
-import org.pentaho.pms.schema.concept.types.string.ConceptPropertyString;
 import org.pentaho.pms.schema.security.SecurityReference;
 import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.Settings;
@@ -76,7 +74,7 @@ public class SchemaMeta {
 
   private SecurityReference securityReference;
 
-  private DefaultProperties defaultProperties;
+  private RequiredProperties requiredProperties;
 
   private BusinessModel activeModel;
 
@@ -94,7 +92,7 @@ public class SchemaMeta {
     locales = new Locales();
     securityReference = new SecurityReference();
 
-    defaultProperties = new DefaultProperties();
+    requiredProperties = new RequiredProperties();
 
     activeModel = null;
 
@@ -103,27 +101,17 @@ public class SchemaMeta {
 
  
   public void addDefaults() {
+
     Concept baseConcept = new Concept(Settings.getConceptNameBase());
     baseConcept.addProperty(new ConceptPropertyFont(DefaultPropertyID.FONT.getId(), new FontSettings(
         "Arial", 10, false, false))); //$NON-NLS-1$
     baseConcept.addProperty(new ConceptPropertyAlignment(DefaultPropertyID.ALIGNMENT.getId(), AlignmentSettings.LEFT));
     baseConcept.addProperty(new ConceptPropertyColor(DefaultPropertyID.COLOR_FG.getId(), ColorSettings.BLACK));
-    baseConcept.addProperty(new ConceptPropertyColor(DefaultPropertyID.COLOR_BG.getId(), ColorSettings.WHITE));
+//    baseConcept.addProperty(new ConceptPropertyColor(DefaultPropertyID.COLOR_BG.getId(), ColorSettings.WHITE));
 
-    Concept numberConcept = new Concept(Settings.getConceptNameNumber(), baseConcept);
-    numberConcept.addProperty(new ConceptPropertyString(DefaultPropertyID.MASK.getId(), "###,##0.00")); //$NON-NLS-1$
-
-    Concept idConcept = new Concept(Settings.getConceptNameID(), numberConcept);
-    idConcept.addProperty(new ConceptPropertyString(DefaultPropertyID.MASK.getId(), "0")); //$NON-NLS-1$
-
-    Concept skConcept = new Concept(Settings.getConceptNameSK(), idConcept);
-    skConcept.addProperty(new ConceptPropertyBoolean(DefaultPropertyID.HIDDEN.getId(), true));
 
     try {
       addConcept(baseConcept);
-      addConcept(numberConcept);
-      addConcept(idConcept);
-      addConcept(skConcept);
     } catch (ObjectAlreadyExistsException e) {
       // Can't really happen, but hey, throw a runtime for good measure.
       throw new RuntimeException(e);
@@ -570,12 +558,12 @@ public class SchemaMeta {
     return null;
   }
 
-  public DefaultProperties getDefaultProperties() {
-    return defaultProperties;
+  public RequiredProperties getDefaultProperties() {
+    return requiredProperties;
   }
 
-  public void setDefaultProperties(DefaultProperties defaultProperties) {
-    this.defaultProperties = defaultProperties;
+  public void setDefaultProperties(RequiredProperties requiredProperties) {
+    this.requiredProperties = requiredProperties;
   }
 
   /**

@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.pentaho.pms.locale.Locales;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessColumn;
-import org.pentaho.pms.schema.DefaultProperties;
+import org.pentaho.pms.schema.RequiredProperties;
 import org.pentaho.pms.schema.concept.Concept;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
@@ -47,10 +47,10 @@ public class TestDefaultProperties
         Props.init(display, Props.TYPE_PROPERTIES_MENU);
         
         // Test the default properties dialog...
-        DefaultProperties defaultProperties = new DefaultProperties();
+        RequiredProperties requiredProperties = new RequiredProperties();
         
-        ShowDefaultPropertiesDialog dialog = new ShowDefaultPropertiesDialog(shell, Messages.getString("TestDefaultProperties.USER_TITLE_DEFAULT_PROPERTIES"), Messages.getString("TestDefaultProperties.USER_DEFAULT_PROPERTIES"), defaultProperties); //$NON-NLS-1$ //$NON-NLS-2$
-        DefaultProperties dp = dialog.open();
+        ShowDefaultPropertiesDialog dialog = new ShowDefaultPropertiesDialog(shell, Messages.getString("TestDefaultProperties.USER_TITLE_DEFAULT_PROPERTIES"), Messages.getString("TestDefaultProperties.USER_DEFAULT_PROPERTIES"), requiredProperties); //$NON-NLS-1$ //$NON-NLS-2$
+        RequiredProperties dp = dialog.open();
         if (dp!=null)
         {
             BusinessColumn businessColumn = new BusinessColumn();

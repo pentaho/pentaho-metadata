@@ -11,7 +11,6 @@ import org.apache.commons.collections.MapIterator;
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.bidimap.DualHashBidiMap;
 import org.apache.commons.collections.map.MultiValueMap;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,12 +19,14 @@ import org.pentaho.pms.schema.concept.Concept;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.DefaultPropertyID;
+import org.pentaho.pms.schema.concept.DeleteNotAllowedException;
 import org.pentaho.pms.schema.concept.types.bool.ConceptPropertyBoolean;
 import org.pentaho.pms.schema.concept.types.columnwidth.ColumnWidth;
 import org.pentaho.pms.schema.concept.types.columnwidth.ConceptPropertyColumnWidth;
 import org.pentaho.pms.schema.concept.types.localstring.ConceptPropertyLocalizedString;
 import org.pentaho.pms.schema.concept.types.localstring.LocalizedStringSettings;
 import org.pentaho.pms.schema.concept.types.string.ConceptPropertyString;
+import org.pentaho.pms.util.Settings;
 
 import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
 
@@ -160,8 +161,12 @@ public class ConceptTreeModel implements IConceptTreeModel {
     }
   }
   
-  public void removeConcept(final ConceptInterface concept) {
+  public void removeConcept(final ConceptInterface concept) throws DeleteNotAllowedException {
     Validate.notNull(concept);
+    
+    if (concept.getName().equalsIgnoreCase(Settings.getConceptNameBase())){
+      throw new DeleteNotAllowedException();
+    }
 
     List forRemoval = new ArrayList();
     forRemoval.add(concept);
@@ -170,29 +175,29 @@ public class ConceptTreeModel implements IConceptTreeModel {
     ConceptInterface parent = concept.getParentInterface();
     Collection children = (Collection) parentToChildrenMap.get(parent);
     children.remove(concept);
-
-    // Now collect all descendants and remove from model and CWM repository
+    
+    // Now collect all descendants and remove from model and mark for removal from CWM repository
     removeDescendants(concept, forRemoval);
 
     for (Iterator iter = forRemoval.iterator(); iter.hasNext();) {
       ConceptInterface conceptToRemove = (ConceptInterface) iter.next();
       ConceptInterface orig = (ConceptInterface) origModBidiMap.remove(conceptToRemove);
-    if (null != orig) {
-      // if this concept exists in schema meta, it needs to be marked for removal
-      markForRemoval(orig);
-    } else {
-      // concept has been added since last save; simply remove it from the list of concepts to be added
-      newConcepts.remove(concept);
+      if (null != orig) {
+        // if this concept exists in schema meta, it needs to be marked for removal
+        markForRemoval(orig);
+      } else {
+        // concept has been added since last save; simply remove it from the list of concepts to be added
+        newConcepts.remove(concept);
+      }
     }
-    }
-    
-    
     fireConceptTreeModificationEvent(new ConceptTreeModificationEvent(this));
   }
 
   private void markForRemoval(final ConceptInterface concept) {
     deletedConcepts.add(concept);
   }
+  
+  
 
   public void save() throws ObjectAlreadyExistsException {
     // process additions
@@ -208,9 +213,9 @@ public class ConceptTreeModel implements IConceptTreeModel {
     // process deletions
     Iterator iter2 = deletedConcepts.iterator();
     while (iter2.hasNext()) {
-
+      
       ConceptInterface mod = (ConceptInterface) iter2.next();
-      // we removed this object from the list in the delete execution above...
+      // we removed this object from the list in the delete execution above... 
       //ConceptInterface orig = (ConceptInterface) origModBidiMap.get(mod);
       // origModBidiMap.remove(mod);
       removeConceptFromSchemaMeta(mod);
@@ -242,7 +247,7 @@ public class ConceptTreeModel implements IConceptTreeModel {
     }
   }
 
-  public static void main(String[] args) throws ObjectAlreadyExistsException {
+  public static void main(String[] args) throws ObjectAlreadyExistsException, DeleteNotAllowedException {
     ConceptInterface c = new Concept();
     IConceptModel conceptModel = new ConceptModel(c);
     LocalizedStringSettings s1 = new LocalizedStringSettings();
