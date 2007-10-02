@@ -131,27 +131,51 @@ public class ConceptTreeModel implements IConceptTreeModel {
     return concept.getParentInterface();
   }
 
+  private void removeDescendants(ConceptInterface parent, List forRemoval){
+    ConceptInterface[] children = getChildren(parent);
+    for (int i = 0; i < children.length; i++) {
+      ConceptInterface child = children[i];
+      forRemoval.add(child);
+      // Are you anyone's parent? 
+      removeDescendants(child, forRemoval);
+    }
+  }
+  
   public void removeConcept(final ConceptInterface concept) {
     Validate.notNull(concept);
-    // TODO cleanup children of children, etc.
+
+    List forRemoval = new ArrayList();
+    forRemoval.add(concept);
+
+    // trigger removal from tree
     ConceptInterface parent = concept.getParentInterface();
     Collection children = (Collection) parentToChildrenMap.get(parent);
     children.remove(concept);
+    
+    // Now collect all descendants and remove from model and CWM repository
+    removeDescendants(concept, forRemoval);
 
-    ConceptInterface orig = (ConceptInterface) origModBidiMap.remove(concept);
-    if (null != orig) {
-      // if this concept exists in schema meta, it needs to be marked for removal
-      markForRemoval(orig);
-    } else {
-      // concept has been added since last save; simply remove it from the list of concepts to be added
-      newConcepts.remove(concept);
+    for (Iterator iter = forRemoval.iterator(); iter.hasNext();) {
+      ConceptInterface conceptToRemove = (ConceptInterface) iter.next();
+      ConceptInterface orig = (ConceptInterface) origModBidiMap.remove(conceptToRemove);
+      if (null != orig) {
+        // if this concept exists in schema meta, it needs to be marked for removal
+        markForRemoval(orig);
+      } else {
+        // concept has been added since last save; simply remove it from the list of concepts to be added
+        newConcepts.remove(concept);
+      }
     }
+    
+    
     fireConceptTreeModificationEvent(new ConceptTreeModificationEvent(this));
   }
 
   private void markForRemoval(final ConceptInterface concept) {
     deletedConcepts.add(concept);
   }
+  
+  
 
   public void save() throws ObjectAlreadyExistsException {
     // process additions
@@ -194,7 +218,7 @@ public class ConceptTreeModel implements IConceptTreeModel {
   private void removeConceptFromSchemaMeta(final ConceptInterface concept) {
     String[] names = schemaMeta.getConceptNames();
     for (int i = 0; i < schemaMeta.nrConcepts(); i++) {
-      if (names[i].equals(concept.getName())) {
+      if (schemaMeta.getConcept(i).getName().equalsIgnoreCase(concept.getName())) {
         schemaMeta.removeConcept(i);
         return;
       }
