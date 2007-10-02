@@ -20,8 +20,9 @@ public interface IConceptTreeModel {
 
   /**
    * Adds the concept with parent as parent.
+   * @throws ObjectAlreadyExistsException if concept with given name already exists anywhere in hierarchy
    */
-  void addConcept(ConceptInterface parent, ConceptInterface newChild);
+  void addConcept(ConceptInterface parent, ConceptInterface newChild) throws ObjectAlreadyExistsException;
 
   /**
    * Removes the concept.
@@ -32,7 +33,7 @@ public interface IConceptTreeModel {
    * Returns the parent of the concept.
    */
   ConceptInterface getParent(ConceptInterface concept);
-  
+
   public SchemaMeta getSchemaMeta();
 
   /**

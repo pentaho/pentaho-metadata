@@ -1,5 +1,6 @@
 package org.pentaho.pms.schema.concept.editor;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -29,8 +30,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.Concept;
 import org.pentaho.pms.schema.concept.ConceptInterface;
+
+import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
 
 public class ConceptTreeWidget extends Composite implements ISelectionProvider {
 
@@ -81,8 +85,8 @@ public class ConceptTreeWidget extends Composite implements ISelectionProvider {
     setLayout(new FormLayout());
 
     Label lab1 = new Label(this, SWT.NONE);
-    lab1.setFont(Constants.getFontRegistry(getDisplay()).get("prop-mgmt-title"));
-    lab1.setText("Concepts");
+    lab1.setFont(Constants.getFontRegistry(getDisplay()).get("prop-mgmt-title")); //$NON-NLS-1$
+    lab1.setText(Messages.getString("ConceptTreeWidget.USER_TREE_LABEL")); //$NON-NLS-1$
 
     Tree tree2 = new Tree(this, SWT.SINGLE | SWT.BORDER); // single selection at a time
     treeViewer = new TreeViewer(tree2);
@@ -90,7 +94,7 @@ public class ConceptTreeWidget extends Composite implements ISelectionProvider {
     ToolBar tb3 = new ToolBar(this, SWT.FLAT);
 
     ToolItem ti4 = new ToolItem(tb3, SWT.PUSH);
-    ti4.setImage(Constants.getImageRegistry(Display.getCurrent()).get("concept-add-button"));
+    ti4.setImage(Constants.getImageRegistry(Display.getCurrent()).get("concept-add-button")); //$NON-NLS-1$
     ti4.addSelectionListener(new SelectionListener() {
 
       public void widgetDefaultSelected(final SelectionEvent e) {
@@ -102,7 +106,7 @@ public class ConceptTreeWidget extends Composite implements ISelectionProvider {
 
     });
     final ToolItem delButton = new ToolItem(tb3, SWT.PUSH);
-    delButton.setImage(Constants.getImageRegistry(Display.getCurrent()).get("concept-del-button"));
+    delButton.setImage(Constants.getImageRegistry(Display.getCurrent()).get("concept-del-button")); //$NON-NLS-1$
     delButton.addSelectionListener(new SelectionListener() {
       public void widgetDefaultSelected(final SelectionEvent e) {
       }
@@ -112,17 +116,17 @@ public class ConceptTreeWidget extends Composite implements ISelectionProvider {
       }
     });
 
-        treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-          public void selectionChanged(final SelectionChangedEvent e) {
-            TreeSelection sel = (TreeSelection) e.getSelection();
-            Object selectedObject = sel.getFirstElement();
-            if (selectedObject instanceof ConceptInterface) {
-              delButton.setEnabled(true);
-            } else {
-              delButton.setEnabled(false);
-            }
-          }
-        });
+    treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+      public void selectionChanged(final SelectionChangedEvent e) {
+        TreeSelection sel = (TreeSelection) e.getSelection();
+        Object selectedObject = sel.getFirstElement();
+        if (selectedObject instanceof ConceptInterface) {
+          delButton.setEnabled(true);
+        } else {
+          delButton.setEnabled(false);
+        }
+      }
+    });
 
     FormData fd1 = new FormData();
     fd1.bottom = new FormAttachment(tree2, -10);
@@ -146,7 +150,7 @@ public class ConceptTreeWidget extends Composite implements ISelectionProvider {
     treeViewer.setContentProvider(contentProvider);
     treeViewer.setLabelProvider(new ConceptTreeLabelProvider());
 
-    treeViewer.setInput("ignored");
+    treeViewer.setInput("ignored"); //$NON-NLS-1$
 
     treeViewer.expandAll();
   }
@@ -154,10 +158,11 @@ public class ConceptTreeWidget extends Composite implements ISelectionProvider {
   protected void deleteButtonPressed() {
     TreeSelection treeSelection = (TreeSelection) treeViewer.getSelection();
     ConceptInterface selected = (ConceptInterface) treeSelection.getFirstElement();
-    boolean delete = MessageDialog.openConfirm(this.getShell(), "Confirm",
-        "Are you sure you want to delete the concept '" + selected.getName() + "'?");
+    boolean delete = MessageDialog.openConfirm(this.getShell(), Messages
+        .getString("ConceptTreeWidget.USER_CONFIRM_DELETE_TITLE"), //$NON-NLS-1$
+        Messages.getString("ConceptTreeWidget.USER_CONFIRM_DELETE_MESSAGE", selected.getName())); //$NON-NLS-1$ //$NON-NLS-2$
     if (logger.isDebugEnabled()) {
-      logger.debug("user chose to delete: " + delete);
+      logger.debug(Messages.getString("ConceptTreeWidget.DEBUG_DELETE") + delete); //$NON-NLS-1$
     }
     if (delete) {
       conceptTreeModel.removeConcept(selected);
@@ -165,20 +170,28 @@ public class ConceptTreeWidget extends Composite implements ISelectionProvider {
   }
 
   protected void addButtonPressed() {
-    InputDialog dialog = new InputDialog(getShell(), "New Concept",
-        "Enter the name of the new concept. The parent concept of the new concept will "
-            + "be the concept currently selected.", "", null);
+    InputDialog dialog = new InputDialog(getShell(), Messages.getString("ConceptTreeWidget.USER_ADD_CONCEPT_TITLE"), //$NON-NLS-1$
+        Messages.getString("ConceptTreeWidget.USER_ADD_CONCEPT_MESSAGE"), "", null); //$NON-NLS-1$ //$NON-NLS-2$
     dialog.open();
     String name = dialog.getValue();
-    if (null != name) {
+    if (StringUtils.isNotBlank(name)) {
       TreeSelection treeSelection = (TreeSelection) treeViewer.getSelection();
       Object selectedObject = treeSelection.getFirstElement();
       ConceptInterface selected = null;
       if (selectedObject instanceof ConceptInterface) {
         selected = (ConceptInterface) treeSelection.getFirstElement();
       }
+
       ConceptInterface newConcept = new Concept(name, selected);
-      conceptTreeModel.addConcept(selected, newConcept);
+      try {
+        conceptTreeModel.addConcept(selected, newConcept);
+      } catch (ObjectAlreadyExistsException e) {
+        MessageDialog
+            .openError(
+                getShell(),
+                Messages.getString("ConceptTreeWidget.USER_DUPE_TITLE"), Messages.getString("ConceptTreeWidget.USER_DUPE_MESSAGE")); //$NON-NLS-1$ //$NON-NLS-2$
+      }
+
     }
   }
 
@@ -196,7 +209,7 @@ public class ConceptTreeWidget extends Composite implements ISelectionProvider {
 
     public Object getParent(final Object element) {
       if (logger.isDebugEnabled()) {
-        logger.debug("getParent arg is " + element);
+        logger.debug(Messages.getString("ConceptTreeWidget.DEBUG_PARENT_ARG") + element); //$NON-NLS-1$
       }
       if (element instanceof ConceptInterface) {
         return ((ConceptInterface) element).getParentInterface();
@@ -206,7 +219,7 @@ public class ConceptTreeWidget extends Composite implements ISelectionProvider {
 
     public boolean hasChildren(final Object element) {
       if (logger.isDebugEnabled()) {
-        logger.debug("hasChildren arg is " + element);
+        logger.debug(Messages.getString("ConceptTreeWidget.DEBUG_HASCHILDREN_ARG") + element); //$NON-NLS-1$
       }
       if (element instanceof ConceptInterface) {
         ConceptInterface[] children = conceptTreeModel.getChildren((ConceptInterface) element);
@@ -222,14 +235,14 @@ public class ConceptTreeWidget extends Composite implements ISelectionProvider {
 
     public void dispose() {
       if (logger.isDebugEnabled()) {
-        logger.debug("dispose");
+        logger.debug(Messages.getString("ConceptTreeWidget.DEBUG_DISPOSE")); //$NON-NLS-1$
       }
       // nothing to dispose
     }
 
     public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
       if (logger.isDebugEnabled()) {
-        logger.debug("inputChanged");
+        logger.debug(Messages.getString("ConceptTreeWidget.DEBUG_INPUTCHANGED")); //$NON-NLS-1$
       }
       this.viewer = (TreeViewer) viewer;
       // no need to adjust listeners
@@ -237,7 +250,7 @@ public class ConceptTreeWidget extends Composite implements ISelectionProvider {
 
     public Object[] getChildren(final Object parentElement) {
       if (logger.isDebugEnabled()) {
-        logger.debug("getChildren arg is " + parentElement);
+        logger.debug(Messages.getString("ConceptTreeWidget.DEBUG_GETCHILDREN_ARG") + parentElement); //$NON-NLS-1$
       }
       if (parentElement instanceof ConceptInterface) {
         return conceptTreeModel.getChildren((ConceptInterface) parentElement);
@@ -250,9 +263,9 @@ public class ConceptTreeWidget extends Composite implements ISelectionProvider {
 
     public Object[] getElements(final Object inputElement) {
       if (logger.isDebugEnabled()) {
-        logger.debug("getElements arg is " + inputElement);
+        logger.debug(Messages.getString("ConceptTreeWidget.DEBUG_GETELEMENTS_ARG") + inputElement); //$NON-NLS-1$
       }
-      return new String[] { "Concepts" };
+      return new String[] { Messages.getString("ConceptTreeWidget.USER_CONCEPTS_ROOT_NODE") }; //$NON-NLS-1$
     }
 
   }
@@ -261,17 +274,17 @@ public class ConceptTreeWidget extends Composite implements ISelectionProvider {
 
     public Image getImage(final Object element) {
       if (logger.isDebugEnabled()) {
-        logger.debug("getImage arg is " + element);
+        logger.debug(Messages.getString("ConceptTreeWidget.DEBUG_GETIMAGE_ARG") + element); //$NON-NLS-1$
       }
       if (decorate) {
-        return Constants.getImageRegistry(Display.getCurrent()).get("concept");
+        return Constants.getImageRegistry(Display.getCurrent()).get("concept"); //$NON-NLS-1$
       }
       return null;
     }
 
     public String getText(final Object element) {
       if (logger.isDebugEnabled()) {
-        logger.debug("getText arg is " + element);
+        logger.debug(Messages.getString("ConceptTreeWidget.DEBUG_GETTEXT_ARG") + element); //$NON-NLS-1$
       }
       if (element instanceof ConceptInterface) {
         return ((ConceptInterface) element).getName();

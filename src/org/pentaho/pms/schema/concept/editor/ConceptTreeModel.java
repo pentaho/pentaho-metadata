@@ -108,9 +108,28 @@ public class ConceptTreeModel implements IConceptTreeModel {
     }
   }
 
-  public void addConcept(final ConceptInterface parent, final ConceptInterface newChild) {
+  public void addConcept(final ConceptInterface parent, final ConceptInterface newChild)
+      throws ObjectAlreadyExistsException {
     // parent can be null but concept cannot
     Validate.notNull(newChild);
+    // newChild name cannot be null
+    Validate.notNull(newChild.getName());
+
+    // do not add newChild if its name already exists; need to check both orig and new concepts
+    Iterator iter = origModBidiMap.keySet().iterator();
+    while (iter.hasNext()) {
+      if (newChild.getName().equals(((ConceptInterface) iter.next()).getName())) {
+        throw new ObjectAlreadyExistsException();
+      }
+    }
+    Iterator iter1 = newConcepts.iterator();
+    while (iter1.hasNext()) {
+      if (newChild.getName().equals(((ConceptInterface) iter1.next()).getName())) {
+        throw new ObjectAlreadyExistsException();
+      }
+    }
+
+
     newChild.setParentInterface(parent);
     parentToChildrenMap.put(parent, newChild);
     newConcepts.add(newChild);
@@ -151,20 +170,20 @@ public class ConceptTreeModel implements IConceptTreeModel {
     ConceptInterface parent = concept.getParentInterface();
     Collection children = (Collection) parentToChildrenMap.get(parent);
     children.remove(concept);
-    
+
     // Now collect all descendants and remove from model and CWM repository
     removeDescendants(concept, forRemoval);
 
     for (Iterator iter = forRemoval.iterator(); iter.hasNext();) {
       ConceptInterface conceptToRemove = (ConceptInterface) iter.next();
       ConceptInterface orig = (ConceptInterface) origModBidiMap.remove(conceptToRemove);
-      if (null != orig) {
-        // if this concept exists in schema meta, it needs to be marked for removal
-        markForRemoval(orig);
-      } else {
-        // concept has been added since last save; simply remove it from the list of concepts to be added
-        newConcepts.remove(concept);
-      }
+    if (null != orig) {
+      // if this concept exists in schema meta, it needs to be marked for removal
+      markForRemoval(orig);
+    } else {
+      // concept has been added since last save; simply remove it from the list of concepts to be added
+      newConcepts.remove(concept);
+    }
     }
     
     
@@ -174,8 +193,6 @@ public class ConceptTreeModel implements IConceptTreeModel {
   private void markForRemoval(final ConceptInterface concept) {
     deletedConcepts.add(concept);
   }
-  
-  
 
   public void save() throws ObjectAlreadyExistsException {
     // process additions
@@ -191,9 +208,9 @@ public class ConceptTreeModel implements IConceptTreeModel {
     // process deletions
     Iterator iter2 = deletedConcepts.iterator();
     while (iter2.hasNext()) {
-      
+
       ConceptInterface mod = (ConceptInterface) iter2.next();
-      // we removed this object from the list in the delete execution above... 
+      // we removed this object from the list in the delete execution above...
       //ConceptInterface orig = (ConceptInterface) origModBidiMap.get(mod);
       // origModBidiMap.remove(mod);
       removeConceptFromSchemaMeta(mod);
