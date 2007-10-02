@@ -167,10 +167,12 @@ public class ConceptTreeModel implements IConceptTreeModel {
     // process deletions
     Iterator iter2 = deletedConcepts.iterator();
     while (iter2.hasNext()) {
+      
       ConceptInterface mod = (ConceptInterface) iter2.next();
-      ConceptInterface orig = (ConceptInterface) origModBidiMap.get(mod);
-      origModBidiMap.remove(mod);
-      removeConceptFromSchemaMeta(orig);
+      // we removed this object from the list in the delete execution above... 
+      //ConceptInterface orig = (ConceptInterface) origModBidiMap.get(mod);
+      // origModBidiMap.remove(mod);
+      removeConceptFromSchemaMeta(mod);
     }
     deletedConcepts.clear();
 
@@ -190,8 +192,9 @@ public class ConceptTreeModel implements IConceptTreeModel {
    * The only way to remove the concept is via index. Find the index by comparing object identity.
    */
   private void removeConceptFromSchemaMeta(final ConceptInterface concept) {
+    String[] names = schemaMeta.getConceptNames();
     for (int i = 0; i < schemaMeta.nrConcepts(); i++) {
-      if (schemaMeta.getConcept(i) == concept) {
+      if (names[i].equals(concept.getName())) {
         schemaMeta.removeConcept(i);
         return;
       }
