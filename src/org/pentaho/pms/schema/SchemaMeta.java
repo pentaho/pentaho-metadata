@@ -45,6 +45,8 @@ import org.pentaho.pms.schema.concept.DefaultPropertyID;
 import org.pentaho.pms.schema.concept.types.alignment.AlignmentSettings;
 import org.pentaho.pms.schema.concept.types.alignment.ConceptPropertyAlignment;
 import org.pentaho.pms.schema.concept.types.bool.ConceptPropertyBoolean;
+import org.pentaho.pms.schema.concept.types.color.ColorSettings;
+import org.pentaho.pms.schema.concept.types.color.ConceptPropertyColor;
 import org.pentaho.pms.schema.concept.types.font.ConceptPropertyFont;
 import org.pentaho.pms.schema.concept.types.font.FontSettings;
 import org.pentaho.pms.schema.concept.types.string.ConceptPropertyString;
@@ -99,11 +101,14 @@ public class SchemaMeta {
     clearChanged();
   }
 
+ 
   public void addDefaults() {
     Concept baseConcept = new Concept(Settings.getConceptNameBase());
     baseConcept.addProperty(new ConceptPropertyFont(DefaultPropertyID.FONT.getId(), new FontSettings(
-        "Verdana", 10, false, false))); //$NON-NLS-1$
+        "Arial", 10, false, false))); //$NON-NLS-1$
     baseConcept.addProperty(new ConceptPropertyAlignment(DefaultPropertyID.ALIGNMENT.getId(), AlignmentSettings.LEFT));
+    baseConcept.addProperty(new ConceptPropertyColor(DefaultPropertyID.COLOR_FG.getId(), ColorSettings.BLACK));
+    baseConcept.addProperty(new ConceptPropertyColor(DefaultPropertyID.COLOR_BG.getId(), ColorSettings.WHITE));
 
     Concept numberConcept = new Concept(Settings.getConceptNameNumber(), baseConcept);
     numberConcept.addProperty(new ConceptPropertyString(DefaultPropertyID.MASK.getId(), "###,##0.00")); //$NON-NLS-1$

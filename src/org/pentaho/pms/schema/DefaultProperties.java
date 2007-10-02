@@ -97,10 +97,10 @@ public class DefaultProperties extends ChangedFlag implements ChangedFlagInterfa
         propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.AGGREGATION));
         propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.EXACT));
         propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.HIDDEN));
-        propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.FONT));
-        propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.MASK));
-        propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.COLOR_FG));
-        propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.COLOR_BG));
+        //propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.FONT));
+        //propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.MASK));
+        //propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.COLOR_FG));
+        //propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.COLOR_BG));
         setDefaultProperties(subject, propertyTypes);
 
         // Business Column...
