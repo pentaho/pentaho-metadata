@@ -3869,6 +3869,18 @@ public class MetaEditor implements SelectionListener{
 
   protected void clearParentConcept(ConceptUtilityInterface[] utilityInterfaces) {
     for (int u = 0; u < utilityInterfaces.length; u++) {
+      
+      // If this concept's parent interface is null, then the parent 
+      // interface the user is trying to remove is inherited... and can't
+      // be removed here. Throw a message to tell them to remove the 
+      // parent concept from the inherited counterpart. 
+      
+      if (utilityInterfaces[u].getConcept().getParentInterface() == null){
+        MessageDialog.openWarning(this.shell, Messages.getString("MetaEditor.USER_TITLE_CANT_CLEAR_PARENT_CONCEPT"), 
+            Messages.getString("MetaEditor.USER_CANT_CLEAR_PARENT_CONCEPT") +
+            Messages.getString("MetaEditor.USER_CANT_CLEAR_PARENT_CONCEPT_2") +
+            Messages.getString("MetaEditor.USER_CANT_CLEAR_PARENT_CONCEPT_3") );
+      }
       utilityInterfaces[u].getConcept().setParentInterface(null);
       utilityInterfaces[u].setChanged();
     }
