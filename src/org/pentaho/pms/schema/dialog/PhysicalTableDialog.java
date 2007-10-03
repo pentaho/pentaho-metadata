@@ -162,12 +162,17 @@ public class PhysicalTableDialog extends AbstractTableDialog {
     if (lastSelection != null) {
       try {
         String id = conceptIdText.getText();
-        if (id.trim().length() == 0) {
-          MessageDialog.openError(getShell(), Messages.getString("General.USER_TITLE_ERROR"), Messages.getString(
-              "PhysicalTableDialog.USER_ERROR_INVALID_ID", conceptIdText.getText()));
-          tableColumnTree.setSelection(new StructuredSelection(lastSelection));
-          conceptIdText.forceFocus();
-          conceptIdText.selectAll();
+        if (id.trim().length() == 0){ 
+          // gmoran, PMD-227: Without this check we get into an infinite loop since we reset the selection after 
+          // throwing the error message...
+          if (!lastSelection.equals(((StructuredSelection)e.getSelection()).getFirstElement())) {
+            MessageDialog.openError(getShell(), Messages.getString("General.USER_TITLE_ERROR"), Messages.getString(
+                "PhysicalTableDialog.USER_ERROR_INVALID_ID", conceptIdText.getText()));
+            
+            tableColumnTree.setSelection(new StructuredSelection(lastSelection));
+            conceptIdText.forceFocus();
+            conceptIdText.selectAll();
+          }
         } else {
           lastSelection.setId(conceptIdText.getText());
           super.selectionChanged(e);
