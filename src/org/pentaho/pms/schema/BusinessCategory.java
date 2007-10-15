@@ -157,8 +157,8 @@ public class BusinessCategory extends ConceptUtilityBase implements ChangedFlagI
     public static final String proposeId(String locale, BusinessTable table, BusinessCategory category)
     {
         String baseID = (table != null) ? Const.toID( table.getTargetTable()): "";  //$NON-NLS-1$
-        String namePart = ((category !=null)&& (category.getDisplayName(locale)!=null)) ? Const.toID(category.getDisplayName(locale)) : "";  //$NON-NLS-1$
-        String id = Settings.getBusinessCategoryIDPrefix() + baseID+"_" + namePart; //$NON-NLS-1$
+        String namePart = ((category !=null)&& (category.getDisplayName(locale)!=null)) ? "_" + Const.toID(category.getDisplayName(locale)) : "";  //$NON-NLS-1$
+        String id = Settings.getBusinessCategoryIDPrefix() + baseID + namePart; //$NON-NLS-1$
         if (Settings.isAnIdUppercase()) id = id.toUpperCase();
         return id;
     }
