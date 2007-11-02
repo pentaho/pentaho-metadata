@@ -120,10 +120,18 @@ public class PhysicalColumn extends ConceptUtilityBase implements ConceptUtility
 		return retval;
 	}
 
-	public String getAliasColumn(String tableAlias, String formula)
+  /**
+   * @deprecated
+   */
+  public String getAliasColumn(String tableAlias, String formula)
+  {
+    // Database?
+    DatabaseMeta databaseMeta = getTable().getDatabaseMeta();
+    return getAliasColumn(tableAlias, formula, databaseMeta);
+  }
+  
+	public String getAliasColumn(String tableAlias, String formula, DatabaseMeta databaseMeta)
 	{
-	    // Database?
-        DatabaseMeta databaseMeta = getTable().getDatabaseMeta();
 
 		String retval;
 

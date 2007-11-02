@@ -43,6 +43,8 @@ import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.util.Const;
 
+import be.ibridge.kettle.core.database.DatabaseMeta;
+
 public class WhereCondition extends ConceptUtilityBase implements ConceptUtilityInterface {
 
   public static final String[] operators = new String[] { "AND", "OR", "AND NOT", "OR NOT" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -55,6 +57,16 @@ public class WhereCondition extends ConceptUtilityBase implements ConceptUtility
   private String condition = null;
   private Boolean hasAgg = null;
   private PMSFormula formula = null;
+  
+  /**
+   * The WhereCondition now is based on LibFormula, so only a conditional string is necessary
+   */
+  public WhereCondition(BusinessModel model, DatabaseMeta databaseMeta, String operator, String condition) throws PentahoMetadataException {
+    this.operator = operator;
+    this.condition = condition;
+    this.formula = new PMSFormula(model, databaseMeta, condition);
+    formula.parseAndValidate();
+  }
   
   /**
    * The WhereCondition now is based on LibFormula, so only a conditional string is necessary

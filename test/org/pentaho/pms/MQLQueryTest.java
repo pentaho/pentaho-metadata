@@ -21,6 +21,7 @@ import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.factory.CwmSchemaFactory;
 import org.pentaho.pms.mql.MQLQuery;
+import org.pentaho.pms.mql.MappedQuery;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
@@ -30,6 +31,7 @@ import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.WhereCondition;
 import org.pentaho.pms.util.Const;
 
+import be.ibridge.kettle.core.database.DatabaseInterface;
 import be.ibridge.kettle.core.database.DatabaseMeta;
 
 import junit.framework.TestCase;
@@ -420,6 +422,55 @@ public class MQLQueryTest extends TestCase {
 //      );
 //  }
 
+  public void testDatabaseMetaReplacement() {
+
+    CWM cwm = CWM.getInstance("Orders", false); //$NON-NLS-1$
+    try {
+      cwm.importFromXMI("samples/orders.xmi"); //$NON-NLS-1$
+    } catch (Exception e) {
+      e.printStackTrace();
+      fail();
+    }
+    CwmSchemaFactory cwmSchemaFactory = new CwmSchemaFactory();
+    
+    // the current sql should have a 'date', while the oracle version should have a DATE()
+    
+    String mqlfile = "test/org/pentaho/pms/mqlquery03.xmql"; //$NON-NLS-1$
+
+    String mqldata = loadXmlFile(mqlfile);
+    
+    MQLQuery mqlquery = null;
+    try {
+      mqlquery = new MQLQuery(mqldata, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
+      
+      MappedQuery query = mqlquery.getQuery();
+      String sqlQuery = query.getQuery();
+      assertTrue(sqlQuery.indexOf(">= '1-01-2007' )") >= 0); //$NON-NLS-1$
+      
+      // now replace with oracle database metadata
+      DatabaseMeta meta = (DatabaseMeta)mqlquery.getDatabaseMeta().clone();
+      
+      DatabaseInterface di[] = DatabaseMeta.getDatabaseInterfaces();
+      DatabaseInterface oracleDI = null;
+      for (int i=0;i<di.length;i++) {
+        if (di[i].getDatabaseTypeDesc().toLowerCase().indexOf("oracle") >= 0) { //$NON-NLS-1$
+          oracleDI = (DatabaseInterface)di[i].clone();
+          break;
+        }
+      }
+      meta.setDatabaseInterface(oracleDI);
+      
+      mqlquery = new MQLQuery(mqldata, meta, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
+      
+      query = mqlquery.getQuery();
+      sqlQuery = query.getQuery();
+      assertTrue(sqlQuery.indexOf(">= TO_DATE('1-01-2007','YYYY-MM-DD') )") >= 0); //$NON-NLS-1$
+    } catch (Exception e) {
+      e.printStackTrace();
+      fail();
+    }
+  }
+  
   public void testToFromXML() {
 
     CWM cwm = CWM.getInstance("Orders", false); //$NON-NLS-1$
@@ -527,10 +578,16 @@ public class MQLQueryTest extends TestCase {
       
       // Checks that the rendered XML has the option with true instead of false
       xml = mqlquery2.getXML();
+      assertNotNull(xml);
+      xml = xml.replaceAll("[\n\t]",""); //$NON-NLS-1$ //$NON-NLS-2$
+
       assertFalse(data.equals(xml));
       
       // Tests that newly generated XML has the correct false flag in it.
       xml = mqlquery3.getXML();
+      assertNotNull(xml);
+      xml = xml.replaceAll("[\n\t]",""); //$NON-NLS-1$ //$NON-NLS-2$
+      
       assertEquals(data, xml);
       
     } catch (IOException e) {

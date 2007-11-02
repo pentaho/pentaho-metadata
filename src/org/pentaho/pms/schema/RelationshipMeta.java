@@ -343,8 +343,20 @@ public class RelationshipMeta extends ChangedFlag implements Cloneable, XMLInter
                 rel.table_to.equals(table_to)
                 ;
 	}
-	
-	public String getJoin(String locale)
+
+  /**
+   * @deprecated
+   */
+  public String getJoin(String locale)
+  {
+    DatabaseMeta databaseMeta = null;
+    if (field_from != null) {
+      databaseMeta = field_from.getBusinessTable().getPhysicalTable().getDatabaseMeta();
+    }
+    return getJoin(databaseMeta, locale);
+  }
+  
+	public String getJoin(DatabaseMeta databaseMeta, String locale)
 	{
         String join=""; //$NON-NLS-1$
 		
@@ -355,7 +367,6 @@ public class RelationshipMeta extends ChangedFlag implements Cloneable, XMLInter
 		else
 		if (table_from!=null && table_to!=null && field_from!=null && field_to!=null)
 		{
-            DatabaseMeta databaseMeta = field_from.getBusinessTable().getPhysicalTable().getDatabaseMeta();
             
             // Left side
             join  = databaseMeta.quoteField( field_from.getBusinessTable().getDisplayName(locale) );

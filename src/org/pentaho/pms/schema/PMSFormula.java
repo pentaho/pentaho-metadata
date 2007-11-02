@@ -472,7 +472,6 @@ public class PMSFormula implements FormulaTraversalInterface {
         // we have a physical column function, we need to evaluate it
         // in a special way due to aggregations and such
         
-        DatabaseMeta databaseMeta = table.getPhysicalTable().getDatabaseMeta();
         String tableColumn = ""; //$NON-NLS-1$
         sb.append(" "); //$NON-NLS-1$
         
@@ -485,7 +484,7 @@ public class PMSFormula implements FormulaTraversalInterface {
       } else {
         // render the column sql
         sb.append(" "); //$NON-NLS-1$
-        sb.append(column.getFunctionTableAndColumnForSQL(model, locale));
+        sb.append(column.getFunctionTableAndColumnForSQL(model, databaseMeta, locale));
         sb.append(" "); //$NON-NLS-1$
       }
     } else if (val instanceof StaticValue) {

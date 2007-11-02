@@ -212,10 +212,17 @@ public class BusinessColumn extends ConceptUtilityBase implements ChangedFlagInt
         this.businessTable = businessTable;
     }
     
+    /**
+     * @deprecated
+     */
     public String getFunctionTableAndColumnForSQL(BusinessModel model, String locale)
     {
         DatabaseMeta databaseMeta = getBusinessTable().getPhysicalTable().getDatabaseMeta();
-        
+        return getFunctionTableAndColumnForSQL(model, databaseMeta, locale);
+    }
+    
+    public String getFunctionTableAndColumnForSQL(BusinessModel model, DatabaseMeta databaseMeta, String locale)
+    {
         if (isExact())
         { 
           // convert to sql using libformula subsystem

@@ -84,21 +84,34 @@ public class MQLQuery {
   private boolean disableDistinct; // = false;
 
   private CwmSchemaFactoryInterface cwmSchemaFactory;
+  
+  // if null, pull databaseMeta out of selections()
+  private DatabaseMeta databaseMeta = null;
 
-  public MQLQuery(SchemaMeta schemaMeta, BusinessModel model, String locale) {
+  public MQLQuery(SchemaMeta schemaMeta, BusinessModel model, DatabaseMeta databaseMeta, String locale) {
+    this.databaseMeta = databaseMeta;
     this.schemaMeta = schemaMeta;
     this.model = model;
     this.locale = locale;
   }
 
-  public MQLQuery(String XML, String locale, CwmSchemaFactoryInterface factory) throws PentahoMetadataException {
-    // this.schemaMeta = schemaMeta;
+  public MQLQuery(SchemaMeta schemaMeta, BusinessModel model, String locale) {
+    this(schemaMeta, model, null, locale);
+  }
+  
+  public MQLQuery(String XML, DatabaseMeta databaseMeta, String locale, CwmSchemaFactoryInterface factory) throws PentahoMetadataException {
+    this.databaseMeta = databaseMeta;
     this.locale = locale;
     this.cwmSchemaFactory = factory;
     fromXML(XML);
   }
+  
+  public MQLQuery(String XML, String locale, CwmSchemaFactoryInterface factory) throws PentahoMetadataException {
+    this(XML, null, locale, factory);
+  }
 
-  public MQLQuery(String filename) throws IOException, PentahoMetadataException {
+  public MQLQuery(String filename, DatabaseMeta databaseMeta) throws IOException, PentahoMetadataException {
+    this.databaseMeta = databaseMeta;
     File file = new File(filename);
     FileInputStream fileInputStream = new FileInputStream(file);
     byte bytes[] = new byte[(int) file.length()];
@@ -107,7 +120,12 @@ public class MQLQuery {
 
     fromXML(new String(bytes, Const.XML_ENCODING));
   }
+  
 
+  public MQLQuery(String filename) throws IOException, PentahoMetadataException {
+    this(filename, null);
+  }
+  
   public void save(String queryFile) throws IOException {
     File file = new File(queryFile);
     FileOutputStream fileOutputStream = new FileOutputStream(file);
@@ -126,14 +144,14 @@ public class MQLQuery {
   }
 
   public DatabaseMeta getDatabaseMeta() {
-    if (selections.size() > 0) {
+    if (databaseMeta == null && selections.size() > 0) {
       return ((BusinessColumn) selections.get(0)).getPhysicalColumn().getTable().getDatabaseMeta();
     }
-    return null;
+    return databaseMeta;
   }
 
   public void addConstraint(String operator, String condition) throws PentahoMetadataException {
-    WhereCondition where = new WhereCondition(model, operator, condition);
+    WhereCondition where = new WhereCondition(model, getDatabaseMeta(), operator, condition);
     constraints.add(where);
   }
 
@@ -173,7 +191,7 @@ public class MQLQuery {
     WhereCondition conditions[] = (WhereCondition[]) constraints.toArray(new WhereCondition[constraints.size()]);
     OrderBy orderBy[] = (OrderBy[]) order.toArray(new OrderBy[order.size()]);
 
-		return model.getSQL(selection, conditions, orderBy, locale, this.disableDistinct);
+		return model.getSQL(selection, conditions, orderBy, getDatabaseMeta(), locale, this.disableDistinct);
 	}
 
 
@@ -185,7 +203,7 @@ public class MQLQuery {
     WhereCondition conditions[] = (WhereCondition[]) constraints.toArray(new WhereCondition[constraints.size()]);
     OrderBy orderBy[] = (OrderBy[]) order.toArray(new OrderBy[order.size()]);
 
-    return model.getTransformationMeta(selection, conditions, orderBy, locale);
+    return model.getTransformationMeta(selection, conditions, orderBy, getDatabaseMeta(), locale);
   }
 
   public List getRowsUsingTransformation(StringBuffer logBuffer) throws KettleException,
@@ -323,7 +341,7 @@ public class MQLQuery {
       // Add additional options
       Element optionsElement = doc.createElement("options"); //$NON-NLS-1$
       mqlElement.appendChild(optionsElement);
-      Element disableDistinct = doc.createElement("disable_distinct");
+      Element disableDistinct = doc.createElement("disable_distinct"); //$NON-NLS-1$
       data = Boolean.toString(this.disableDistinct);
       disableDistinct.appendChild(doc.createTextNode(data));
       optionsElement.appendChild(disableDistinct);

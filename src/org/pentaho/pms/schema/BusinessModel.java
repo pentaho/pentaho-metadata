@@ -728,8 +728,8 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
    * are no groupings.
    * @return a SQL query based on a column selection and locale
    */
-  public MappedQuery getSQL(BusinessColumn selectedColumns[], String locale, boolean disableDistinct) throws PentahoMetadataException {
-    return getSQL(selectedColumns, (WhereCondition[]) null, (OrderBy[]) null, locale, disableDistinct);
+  public MappedQuery getSQL(BusinessColumn selectedColumns[], DatabaseMeta databaseMeta, String locale, boolean disableDistinct) throws PentahoMetadataException {
+    return getSQL(selectedColumns, (WhereCondition[]) null, (OrderBy[]) null, databaseMeta, locale, disableDistinct);
   }
 
   /**
@@ -740,8 +740,8 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
    * are no groupings.
    * @return a SQL query based on a column selection, conditions and a locale
    */
-  public MappedQuery getSQL(BusinessColumn selectedColumns[], WhereCondition conditions[], String locale, boolean disableDistinct) throws PentahoMetadataException {
-    return getSQL(selectedColumns, conditions, (OrderBy[]) null, locale, disableDistinct);
+  public MappedQuery getSQL(BusinessColumn selectedColumns[], WhereCondition conditions[], DatabaseMeta databaseMeta, String locale, boolean disableDistinct) throws PentahoMetadataException {
+    return getSQL(selectedColumns, conditions, (OrderBy[]) null, databaseMeta, locale, disableDistinct);
   }
 
   /**
@@ -754,7 +754,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
    * are no groupings.
    * @return a SQL query based on a column selection, conditions and a locale
    */
-  public MappedQuery getSQL(BusinessColumn selectedColumns[], WhereCondition conditions[], OrderBy[] orderBy, String locale, boolean disableDistinct) throws PentahoMetadataException {
+  public MappedQuery getSQL(BusinessColumn selectedColumns[], WhereCondition conditions[], OrderBy[] orderBy, DatabaseMeta databaseMeta, String locale, boolean disableDistinct) throws PentahoMetadataException {
     MappedQuery sql = null;
 
     // These are the tables involved in the field selection:
@@ -766,7 +766,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
       throw new PentahoMetadataException(Messages.getErrorString("BusinessModel.ERROR_0001_FAILED_TO_FIND_PATH")); //$NON-NLS-1$
     }
 
-    sql = getSQL(selectedColumns, path, conditions, orderBy, locale, disableDistinct);
+    sql = getSQL(selectedColumns, path, conditions, orderBy, databaseMeta, locale, disableDistinct);
 
     return sql;
   }
@@ -784,7 +784,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
    * @return a MappedQuery based on a column selection, conditions and a locale
    * @throws PentahoMetadataException
    */
-  public MappedQuery getSQL(BusinessColumn selectedColumns[], Path path, WhereCondition conditions[], OrderBy[] orderBy, String locale, boolean disableDistinct) throws PentahoMetadataException {
+  public MappedQuery getSQL(BusinessColumn selectedColumns[], Path path, WhereCondition conditions[], OrderBy[] orderBy, DatabaseMeta databaseMeta, String locale, boolean disableDistinct) throws PentahoMetadataException {
     String sql = null;
     Map columnsMap = new HashMap();
 
@@ -798,8 +798,6 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
     }
 
     if (usedBusinessTables.length > 0) {
-      DatabaseMeta databaseMeta = usedBusinessTables[0].getPhysicalTable().getDatabaseMeta(); // just the first table
-      // for now.
 
       // SELECT
       //
@@ -822,7 +820,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
           sql += "         ,"; //$NON-NLS-1$
         else
           sql += "          "; //$NON-NLS-1$
-        sql += businessColumn.getFunctionTableAndColumnForSQL(this, locale);
+        sql += businessColumn.getFunctionTableAndColumnForSQL(this, databaseMeta, locale);
         sql += " AS "; //$NON-NLS-1$
 /*
         if (useDisplayNames) {
@@ -835,8 +833,8 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
           // later in the resultset metadata. 
 
           if(columnsMap != null){
-            columnsMap.put("COL" + Integer.toString(i), businessColumn.getId());
-            sql += databaseMeta.quoteField("COL" + Integer.toString(i));
+            columnsMap.put("COL" + Integer.toString(i), businessColumn.getId()); //$NON-NLS-1$
+            sql += databaseMeta.quoteField("COL" + Integer.toString(i)); //$NON-NLS-1$
           }else{
             sql += databaseMeta.quoteField(businessColumn.getId());
           }
@@ -881,7 +879,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
             sql += "      AND "; //$NON-NLS-1$
           else
             sql += "          "; //$NON-NLS-1$
-          sql += relation.getJoin(locale);
+          sql += relation.getJoin(databaseMeta, locale);
           sql += Const.CR;
         }
       }
@@ -935,7 +933,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
             else
               sql += "          "; //$NON-NLS-1$
             first = false;
-            sql += businessColumn.getFunctionTableAndColumnForSQL(this, locale);
+            sql += businessColumn.getFunctionTableAndColumnForSQL(this, databaseMeta, locale);
             sql += Const.CR;
           }
         }
@@ -983,7 +981,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
           else
             sql += "          "; //$NON-NLS-1$
           first = false;
-          sql += businessColumn.getFunctionTableAndColumnForSQL(this, locale);
+          sql += businessColumn.getFunctionTableAndColumnForSQL(this, databaseMeta, locale);
           if (!orderBy[i].isAscending())
             sql += " DESC"; //$NON-NLS-1$
           sql += Const.CR;
@@ -994,12 +992,11 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
     return new MappedQuery(sql, columnsMap);
   }
 
-  public TransMeta getTransformationMeta(BusinessColumn selectedColumns[], WhereCondition conditions[], OrderBy[] orderBy, String locale) throws PentahoMetadataException  {
+  public TransMeta getTransformationMeta(BusinessColumn selectedColumns[], WhereCondition conditions[], OrderBy[] orderBy, DatabaseMeta databaseMeta, String locale) throws PentahoMetadataException  {
     if (selectedColumns == null || selectedColumns.length == 0)
       return null;
 
-    DatabaseMeta databaseMeta = selectedColumns[0].getBusinessTable().getPhysicalTable().getDatabaseMeta();
-    MappedQuery query = getSQL(selectedColumns, conditions, orderBy, locale, false);
+    MappedQuery query = getSQL(selectedColumns, conditions, orderBy, databaseMeta, locale, false);
 
     TableInputMeta tableInputMeta = new TableInputMeta();
     tableInputMeta.setDatabaseMeta(databaseMeta);
