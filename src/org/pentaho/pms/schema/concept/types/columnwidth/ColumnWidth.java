@@ -19,6 +19,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.pentaho.pms.messages.Messages;
+import org.pentaho.pms.schema.concept.types.alignment.AlignmentSettings;
 
 public class ColumnWidth
 {
@@ -51,6 +52,7 @@ public class ColumnWidth
 
     private int        type;
     private BigDecimal width;
+    private static final String SEPARATOR = ",";
 
     /**
      * @param type the column width type
@@ -115,12 +117,19 @@ public class ColumnWidth
   }
 
   public String toString() {
-      return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).
-        append(type).
-        append(width).
-        toString();
+      return type + SEPARATOR + width;
   }
 
+
+  public static ColumnWidth fromString( String value )
+  {
+    String[] parts = value.split( SEPARATOR );
+    if ( parts.length != 2 )
+    {
+      return null;
+    }
+    return new ColumnWidth( Integer.parseInt( parts[0] ), new BigDecimal( parts[1]) );
+  }
 
     public static ColumnWidth getType(String description)
     {

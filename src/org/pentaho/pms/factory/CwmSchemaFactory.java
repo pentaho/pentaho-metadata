@@ -15,6 +15,7 @@ package org.pentaho.pms.factory;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,6 +24,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.cwm.pentaho.meta.behavioral.CwmEvent;
@@ -66,9 +69,13 @@ import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.schema.concept.types.aggregation.ConceptPropertyAggregation;
+import org.pentaho.pms.schema.concept.types.alignment.AlignmentSettings;
+import org.pentaho.pms.schema.concept.types.alignment.ConceptPropertyAlignment;
 import org.pentaho.pms.schema.concept.types.bool.ConceptPropertyBoolean;
 import org.pentaho.pms.schema.concept.types.color.ColorSettings;
 import org.pentaho.pms.schema.concept.types.color.ConceptPropertyColor;
+import org.pentaho.pms.schema.concept.types.columnwidth.ColumnWidth;
+import org.pentaho.pms.schema.concept.types.columnwidth.ConceptPropertyColumnWidth;
 import org.pentaho.pms.schema.concept.types.datatype.ConceptPropertyDataType;
 import org.pentaho.pms.schema.concept.types.datatype.DataTypeSettings;
 import org.pentaho.pms.schema.concept.types.date.ConceptPropertyDate;
@@ -108,6 +115,8 @@ import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
  */
 public class CwmSchemaFactory implements CwmSchemaFactoryInterface
 {
+  
+  private static final Log logger = LogFactory.getLog(CwmSchemaFactory.class);
     public CwmSchemaFactory() {
       
     }
@@ -256,6 +265,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
             {
                 // Ignore the duplicates for now.
                 // TODO: figure out how to handle this error, the duplicate shouldn't be in the CWM in the first place!
+              logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
             }
 
         }
@@ -289,6 +299,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                     {
                         // Ignore the duplicates for now.
                         // TODO: figure out how to handle this error, the duplicate shouldn't be in the CWM in the first place!
+                      logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
                     }
                 }
                 else
@@ -316,6 +327,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
             {
                 // Ignore the duplicates for now.
                 // TODO: figure out how to handle this error, the duplicate shouldn't be in the CWM in the first place!
+              logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
             }
         }
         
@@ -337,6 +349,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                 {
                     // Ignore the duplicates for now.
                     // TODO: figure out how to handle this error, the duplicate shouldn't be in the CWM in the first place!
+                  logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
                 }
             }
         }
@@ -523,6 +536,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                 {
                     // Ignore the duplicates for now.
                     // TODO: figure out how to handle this error, the duplicate shouldn't be in the CWM in the first place!
+                    logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
                 }
             }
         }
@@ -802,6 +816,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                 {
                     // Ignore the duplicates for now.
                     // TODO: figure out how to handle this error, the duplicate shouldn't be in the CWM in the first place!
+                    logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
                 }
             }
         }
@@ -844,6 +859,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                 {
                     // Ignore the duplicates for now.
                     // TODO: figure out how to handle this error, the duplicate shouldn't be in the CWM in the first place!
+                  logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
                 }
             }
         }
@@ -977,6 +993,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                 {
                     // Ignore the duplicates for now.
                     // TODO: figure out how to handle this error, the duplicate shouldn't be in the CWM in the first place!
+                    logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
                 }
             }
         }
@@ -1330,7 +1347,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                       } catch (ObjectAlreadyExistsException e) {
                         // Ignore the duplicates for now.
                         // TODO: figure out how to handle this error, the duplicate shouldn't be in the CWM in the first place!
-                        
+                        logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
                       
                       }
                   }
@@ -1352,6 +1369,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                     {
                         // Ignore the duplicates for now.
                         // TODO: figure out how to handle this error, the duplicate shouldn't be in the CWM in the first place!
+                        logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
                     }
                 }
             }
@@ -1707,11 +1725,55 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                     description.setType(property.getType().getCode());
                     cwm.setDescription(modelElement, description);
                 }
+                
+                // Save the alignment properties
+                //
+                else
+                if (property.getType().equals(ConceptPropertyType.ALIGNMENT))
+                {
+                    AlignmentSettings value = (AlignmentSettings)property.getValue();
+    
+                    String string = ""; //$NON-NLS-1$
+                    if (value!=null)
+                    {
+                        string = value.toString();
+                    }
+                    
+                    CwmDescription description = cwm.createDescription(string);
+                    description.setName(property.getId());
+                    description.setType(property.getType().getCode());
+                    cwm.setDescription(modelElement, description);
+                }
+              
+                // Save the column width properties
+                //
+                else
+                if (property.getType().equals(ConceptPropertyType.COLUMN_WIDTH))
+                {
+                    Object value = property.getValue();
+    
+                    String string = ""; //$NON-NLS-1$
+                    if (value!=null)
+                    {
+                        string = value.toString();
+                    }
+                    
+                    CwmDescription description = cwm.createDescription(string);
+                    description.setName(property.getId());
+                    description.setType(property.getType().getCode());
+                    cwm.setDescription(modelElement, description);
+                }    
+                else
+                {
+                  throw new RuntimeException( "Unrecognized concept property type: " + property.getType() );
+                }
+            }
+            else
+            {
+              logger.error( Messages.getString( "CwmSchemaFactory.ERROR_PROPERTY_VALUE_IS_NULL", property.getType().toString() ) );
             }
         }
-        
     }
-
     
     public void getConceptProperties(CWM cwm, CwmModelElement modelElement, ConceptInterface concept, SchemaMeta schemaMeta)
     {
@@ -1791,9 +1853,10 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                         ConceptPropertyDate conceptPropertyDate = new ConceptPropertyDate(name, df.parse(value));
                         concept.addProperty(conceptPropertyDate);
                     }
-                    catch(Exception e)
+                    catch(ParseException e)
                     {
                         // TODO: ignoring the error for the time being
+                      logger.error( Messages.getString( "CwmSchemaFactory.ERROR_FAILED_TO_PARSE_DATE", value ), e );
                     }
                 }
             }
@@ -1861,7 +1924,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                     }
                     else
                     {
-                        // TODO: log this in case of error
+                        logger.error( Messages.getString( "CwmSchemaFactory.ERROR_FAILED_TO_PARSE_COLOR", value ) );
                     }
                 }
             }
@@ -1881,7 +1944,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                     }
                     else
                     {
-                        // TODO: log this in case of error
+                        logger.error( Messages.getString( "CwmSchemaFactory.ERROR_FAILED_TO_PARSE_DATA_TYPE", value ) );
                     }
                 }
             }
@@ -1901,7 +1964,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                     }
                     else
                     {
-                        // TODO: log this in case of error
+                      logger.error( Messages.getString( "CwmSchemaFactory.ERROR_FAILED_TO_PARSE_FONT", value ) );
                     }
                 }
             }
@@ -1921,7 +1984,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                     }
                     catch(Exception e)
                     {
-                        // TODO: log this in case of error
+                      logger.error( Messages.getString( "CwmSchemaFactory.ERROR_MALFORMED_URL", value ), e );
                     }
                 }
             }
@@ -1931,19 +1994,63 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
             else
             if (type.equals(ConceptPropertyType.SECURITY.getCode()))
             {
-                if (!Const.isEmpty(name) && !Const.isEmpty(value) )
+              if (!Const.isEmpty(name) && !Const.isEmpty(value) )
+              {
+                try
                 {
-                    try
-                    {
-                        Security security = Security.fromXML(value);
-                        ConceptPropertyInterface property = new ConceptPropertySecurity(name, security);
-                        concept.addProperty(property);
-                    }
-                    catch(Exception e)
-                    {
-                        // TODO: log this in case of error
-                    }
+                    Security security = Security.fromXML(value);
+                    ConceptPropertyInterface property = new ConceptPropertySecurity(name, security);
+                    concept.addProperty(property);
                 }
+                catch(Exception e)
+                {
+                  logger.error( e.getMessage(), e );
+                }
+              }
+            }
+            
+            // Load the alignment properties...
+            //
+            else
+            if (type.equals(ConceptPropertyType.ALIGNMENT.getCode()))
+            {
+              if (!Const.isEmpty(name) && !Const.isEmpty(value) )
+              {
+                AlignmentSettings alignment = AlignmentSettings.fromString( value );
+                if (alignment!=null)
+                {
+                    ConceptPropertyInterface property = new ConceptPropertyAlignment(name, alignment);
+                    concept.addProperty(property);
+                }
+                else
+                {
+                  logger.error( Messages.getString( "CwmSchemaFactory.ERROR_UNRECOGNIZED_ALIGNMENT_SETTING", value ) );
+                }
+              }
+            }
+            
+            // Load the column width properties...
+            //
+            else
+            if (type.equals(ConceptPropertyType.COLUMN_WIDTH.getCode()))
+            {
+              if (!Const.isEmpty(name) && !Const.isEmpty(value) )
+              {
+                ColumnWidth colWidth = ColumnWidth.fromString(value); 
+                if (colWidth!=null)
+                {
+                    ConceptPropertyInterface property = new ConceptPropertyColumnWidth(name, colWidth);
+                    concept.addProperty(property);
+                }
+                else
+                {
+                  logger.error( Messages.getString( "CwmSchemaFactory.ERROR_UNRECOGNIZED_COLUMN_WIDTH", value ) );
+                }
+              }
+            }
+            else
+            {
+              logger.error( Messages.getString( "CwmSchemaFactory.ERROR_UNRECOGNIZED_TYPE", type ) );
             }
         }
     }

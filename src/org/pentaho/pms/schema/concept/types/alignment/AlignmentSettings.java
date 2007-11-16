@@ -12,10 +12,10 @@
 */
 package org.pentaho.pms.schema.concept.types.alignment;
 
+import java.util.HashMap;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import org.pentaho.pms.messages.Messages;
 
 public class AlignmentSettings
@@ -30,11 +30,22 @@ public class AlignmentSettings
     public static final AlignmentSettings CENTERED       = new AlignmentSettings(TYPE_ALIGNMENT_CENTERED);
     public static final AlignmentSettings JUSTIFIED      = new AlignmentSettings(TYPE_ALIGNMENT_JUSTIFIED);
 
-    public static final String typeCodes[] =
+    private static final String typeCodes[] =
         {
             "left", "right", "centered", "justified",    //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         };
 
+    /*
+     * provides a mechanism for quickly getting the the integer value associated
+     * with with the typeCode
+     */
+    private static final HashMap typeCodeToAlignmentSettings = new HashMap( 4 );
+    static {
+      typeCodeToAlignmentSettings.put( typeCodes[ TYPE_ALIGNMENT_LEFT ], LEFT );
+      typeCodeToAlignmentSettings.put( typeCodes[ TYPE_ALIGNMENT_RIGHT ], RIGHT );
+      typeCodeToAlignmentSettings.put( typeCodes[ TYPE_ALIGNMENT_CENTERED ], CENTERED );
+      typeCodeToAlignmentSettings.put( typeCodes[ TYPE_ALIGNMENT_JUSTIFIED ], JUSTIFIED );
+    }
     public static final String typeDescriptions[] =
         {
             Messages.getString("AlignmentSettings.USER_LEFT_DESC"),  //$NON-NLS-1$
@@ -91,9 +102,21 @@ public class AlignmentSettings
     }
 
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).
-          append(type).
-          toString();
+        return this.getCode();
+    }
+
+    /**
+     * Given a string "left", "right", "centered", or "justified", return an
+     * appropriately initialized instance of AlignmentSettings. The return
+     * value must NEVER be modified.
+     *  
+     * @param value
+     * @return AlignmentSettings associated with <param>value</param>, or 
+     * null if <param>value</param> is not a recognized value.
+     */
+    public static AlignmentSettings fromString( String value )
+    {
+      return (AlignmentSettings)typeCodeToAlignmentSettings.get( value );
     }
 
     public static AlignmentSettings getType(String description)
@@ -124,5 +147,4 @@ public class AlignmentSettings
     {
         return typeDescriptions[type];
     }
-
 }
