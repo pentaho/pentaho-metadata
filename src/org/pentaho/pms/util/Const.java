@@ -606,7 +606,7 @@ public class Const
 	}
 
 	/** 
-	 * @return True if the OS is a Windows diravate. 
+	 * @return True if the OS is a Windows derivative. 
 	 */
 	public static final boolean isWindows()
 	{
