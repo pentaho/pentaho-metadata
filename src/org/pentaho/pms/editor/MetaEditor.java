@@ -1686,6 +1686,15 @@ public class MetaEditor implements SelectionListener{
           node.sync();
         }
       });
+      MenuItem miMImpExpl = new MenuItem(mainMenu, SWT.PUSH);
+      miMImpExpl.setText(Messages.getString("MetaEditor.USER_IMPORT_FROM_EXPLORER")); //$NON-NLS-1$
+      miMImpExpl.addListener(SWT.Selection, new Listener() {
+        public void handleEvent(Event evt) {
+          importTables(databaseMeta);
+          node.sync();
+        }
+      });
+      new MenuItem(mainMenu, SWT.SEPARATOR);
       MenuItem miCache = new MenuItem(mainMenu, SWT.PUSH);
       miCache.setText(Messages.getString("MetaEditor.USER_CLEAR_DB_CACHE", ti.getText())); //$NON-NLS-1$
       miCache.addListener(SWT.Selection, new Listener() {
@@ -3263,7 +3272,7 @@ public class MetaEditor implements SelectionListener{
   public void importTables(DatabaseMeta databaseMeta) {
     if (databaseMeta != null) {
       DatabaseExplorerDialog std = new DatabaseExplorerDialog(shell, SWT.NONE, databaseMeta, schemaMeta.databases
-          .getList(), false, true);
+          .getList(), true, true);
       if (std.open() != null) {
         String schemaName = std.getSchemaName();
         String tableName = std.getTableName();
