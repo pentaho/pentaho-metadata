@@ -583,7 +583,27 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
     return paths;
   }
 
-  public Path getShortestPathBetween(BusinessTable tabs[]) {
+  public List getSubsetsOfSize(int size, List list) {
+    if (size <= 0) return new ArrayList();
+    return getSubsets(0, size, new ArrayList(), list);
+  }
+  
+  // recursive function to generate all subsets
+  public static List getSubsets(int indexToStart, int subSize, List toClone, List origList) {
+    ArrayList allSubsets = new ArrayList();
+    for (int i = indexToStart; i <= origList.size() - subSize; i++) {
+      List subset = new ArrayList(toClone);
+      subset.add(origList.get(i));
+      if (subSize == 1) {
+        allSubsets.add(subset);
+      } else {
+        allSubsets.addAll(getSubsets(i + 1, subSize - 1, subset, origList));
+      }
+    }
+    return allSubsets;
+  }
+  
+  public Path getShortestPathBetween(BusinessTable tabsArr[]) {
     // Let's try a different approach.
     // We have the business tables.
     // Let's try to see if they are somehow connected first.
@@ -594,52 +614,56 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
     List paths = new ArrayList();
 
     // Here are the tables we need to link it all together.
-    List selectedTables = new ArrayList();
-    for (int i = 0; i < tabs.length; i++)
-      selectedTables.add(tabs[i]);
+    List origSelectedTables = new ArrayList();
+    for (int i = 0; i < tabsArr.length; i++) {
+      origSelectedTables.add(tabsArr[i]);
+    }
+    boolean allUsed = (tabsArr.length == 0);
+    // These are the tables that are not yet used
+    List notSelectedTables = getNonSelectedTables(origSelectedTables);
 
-    boolean allUsed = tabs.length == 0;
-    while (!allUsed) {
-      // These are the tables that are not yet used
-      List notSelectedTables = getNonSelectedTables(selectedTables);
-
-      Path path = new Path();
-
-      // Generate all combinations of the selected tables...
-      for (int i = 0; i < selectedTables.size(); i++) {
-        for (int j = i + 1; j < selectedTables.size(); j++) {
-          if (i != j) {
-            BusinessTable one = (BusinessTable) selectedTables.get(i);
-            BusinessTable two = (BusinessTable) selectedTables.get(j);
-
-            // See if we have a relationship that goes from one to two...
-            RelationshipMeta relationship = findRelationshipUsing(one, two);
-            if (relationship != null && !path.contains(relationship)) {
-              path.addRelationship(relationship);
+    for (int ns = 0; ns <= notSelectedTables.size() && !allUsed; ns++) {
+    
+      // find unique combinations of notSelectedTables of size NS
+      List uniqueCombos = getSubsetsOfSize(ns, notSelectedTables);
+      if (ns == 0) {
+        uniqueCombos.add(new ArrayList());
+      }
+        
+      // add all the selected tables to this list
+      for (int i = 0; i < uniqueCombos.size(); i++) {
+        List uc = (List)uniqueCombos.get(i);
+        uc.addAll(origSelectedTables);
+      }
+    
+      for (int p = 0; p < uniqueCombos.size(); p++) {
+      
+        List selectedTables = (List)uniqueCombos.get(p);
+        Path path = new Path();
+        
+        // Generate all combinations of the selected tables...
+        for (int i = 0; i < selectedTables.size(); i++) {
+          for (int j = i + 1; j < selectedTables.size(); j++) {
+            if (i != j) {
+              BusinessTable one = (BusinessTable) selectedTables.get(i);
+              BusinessTable two = (BusinessTable) selectedTables.get(j);
+  
+              // See if we have a relationship that goes from one to two...
+              RelationshipMeta relationship = findRelationshipUsing(one, two);
+              if (relationship != null && !path.contains(relationship)) {
+                path.addRelationship(relationship);
+              }
             }
           }
-        }
-
-        // We need to have (n-1) relationships for n tables, otherwise we will not connect everything.
-        //
-        if (path.size() == selectedTables.size() - 1) {
-          // This is a valid path, the first we find here is probably the shortest
-          paths.add(path);
-          // We can stop now.
-          allUsed = true;
-        }
-      }
-
-      if (!allUsed) {
-        // Add one of the tables to the equation
-        // Try one that has a relationship to one of the other tables.
-        // Otherwise it doesn't make sense to add it.
-        if (notSelectedTables.size() > 0) {
-          BusinessTable businessTable = (BusinessTable) notSelectedTables.get(0);
-          notSelectedTables.remove(0);
-          selectedTables.add(businessTable);
-        } else {
-          allUsed = true; // we're done
+  
+          // We need to have (n-1) relationships for n tables, otherwise we will not connect everything.
+          //
+          if (path.size() == selectedTables.size() - 1) {
+            // This is a valid path, the first we find here is probably the shortest
+            paths.add(path);
+            // We can stop now.
+            allUsed = true;
+          }
         }
       }
     }
