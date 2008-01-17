@@ -265,7 +265,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
             {
                 // Ignore the duplicates for now.
                 // TODO: figure out how to handle this error, the duplicate shouldn't be in the CWM in the first place!
-              logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
+                // logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
             }
 
         }
@@ -299,7 +299,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                     {
                         // Ignore the duplicates for now.
                         // TODO: figure out how to handle this error, the duplicate shouldn't be in the CWM in the first place!
-                      logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
+                        // logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
                     }
                 }
                 else
@@ -327,7 +327,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
             {
                 // Ignore the duplicates for now.
                 // TODO: figure out how to handle this error, the duplicate shouldn't be in the CWM in the first place!
-              logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
+                // logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
             }
         }
         
@@ -349,7 +349,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                 {
                     // Ignore the duplicates for now.
                     // TODO: figure out how to handle this error, the duplicate shouldn't be in the CWM in the first place!
-                  logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
+                    // logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
                 }
             }
         }
@@ -536,7 +536,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                 {
                     // Ignore the duplicates for now.
                     // TODO: figure out how to handle this error, the duplicate shouldn't be in the CWM in the first place!
-                    logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
+                    // logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
                 }
             }
         }
@@ -816,7 +816,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                 {
                     // Ignore the duplicates for now.
                     // TODO: figure out how to handle this error, the duplicate shouldn't be in the CWM in the first place!
-                    logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
+                    // logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
                 }
             }
         }
@@ -859,7 +859,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                 {
                     // Ignore the duplicates for now.
                     // TODO: figure out how to handle this error, the duplicate shouldn't be in the CWM in the first place!
-                  logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
+                    // logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
                 }
             }
         }
@@ -993,7 +993,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                 {
                     // Ignore the duplicates for now.
                     // TODO: figure out how to handle this error, the duplicate shouldn't be in the CWM in the first place!
-                    logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
+                    // logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
                 }
             }
         }
@@ -1347,7 +1347,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                       } catch (ObjectAlreadyExistsException e) {
                         // Ignore the duplicates for now.
                         // TODO: figure out how to handle this error, the duplicate shouldn't be in the CWM in the first place!
-                        logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
+                        // logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
                       
                       }
                   }
@@ -1369,7 +1369,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                     {
                         // Ignore the duplicates for now.
                         // TODO: figure out how to handle this error, the duplicate shouldn't be in the CWM in the first place!
-                        logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
+                        // logger.error( Messages.getString("CwmSchemaFactory.ERROR_DUPLICATE_IN_CWM" ), e );
                     }
                 }
             }
