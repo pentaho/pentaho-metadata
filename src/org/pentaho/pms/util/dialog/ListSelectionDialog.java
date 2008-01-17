@@ -17,7 +17,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-import org.pentaho.pms.schema.dialog.CategoryEditorDialog;
 import org.pentaho.pms.util.GUIResource;
 
 public class ListSelectionDialog extends TitleAreaDialog {
@@ -35,7 +34,7 @@ public class ListSelectionDialog extends TitleAreaDialog {
     this.selections = selections;
   }
 
-  private static final Log logger = LogFactory.getLog(CategoryEditorDialog.class);
+  private static final Log logger = LogFactory.getLog(ListSelectionDialog.class);
 
   protected Control createContents(Composite parent) {
     Control contents = super.createContents(parent);
