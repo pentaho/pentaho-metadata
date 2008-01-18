@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="cobertura metadata" default="coverage" basedir=".">
+	<tstamp>
+		<format property="current.date" pattern="MM-dd-yyyy" locale="en" />
+	</tstamp>
+
+	<property file="build_coverage.properties" />
+
+	<path id="thirdparty_classpath">
+		<fileset dir="${cobertura.dir}">
+			<include name="cobertura.jar" />
+		</fileset>
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset dir="${libswt}" includes="*.jar" />
+		<fileset dir="${libswt_os}" includes="*.jar" />
+
+		<fileset dir="${metadata.lib.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+	<path id="test-src-classpath">
+		<fileset dir="../test">
+			<include name="**/*.java **/*.xml" />
+		</fileset>
+	</path>
+
+	<path id="src-classpath">
+		<fileset dir="../src">
+			<include name="**/*.java" />
+		</fileset>
+	</path>
+
+	<taskdef classpathref="thirdparty_classpath" resource="tasks.properties" />
+	
+	<target name="clean-all" description="Remove all files created by the build/test process.">
+		<delete dir="${build.dir}" />
+		<delete file="cobertura.log" />
+		<delete file="cobertura.ser" />
+	</target>
+
+	<target name="clean-metadata-instrumented-classes">
+		<!--
+			Remove the coverage data file and any old instrumentation.
+		-->
+		<delete file="cobertura.ser" />
+		<delete dir="${instrumented.dir}" />
+	</target>
+
+	<target name="clean-metadata-test-reports">
+		<delete dir="${reports.dir}" />
+	</target>
+
+	<target name="clean-metadata-coverage-reports">
+		<delete dir="${coverage.dir}" />
+	</target>
+
+	<target name="init-instrument-metadata-classes" depends="clean-metadata-instrumented-classes">
+		<mkdir dir="${instrumented.dir}" />
+	</target>
+
+	<target name="init-metadata-test-reports" depends="clean-metadata-test-reports">
+		<mkdir dir="${reports.xml.dir}" />
+		<mkdir dir="${reports.html.dir}" />		
+	</target>
+
+	<target name="init-metadata-coverage-reports" depends="clean-metadata-coverage-reports">
+		<mkdir dir="${coverage.xml.dir}" />
+		<mkdir dir="${coverage.html.dir}" />
+	</target>
+
+	<target name="compile" unless="metadata.compiled">
+		<mkdir dir="${classes.dir}" />
+		<javac destdir="${classes.dir}" debug="yes" source="1.5" target="1.5" fork="true">
+			<src path="../src" />
+			<classpath refid="thirdparty_classpath" />
+		</javac>
+		<copy todir="${classes.dir}">
+			<fileset dir="../src" includes="**/*.gif **/*.png **/*.xml **/*properties" />
+		</copy>
+	</target>
+
+	<target name="compile-tests" depends="compile" unless="metadata.compiled">
+		<mkdir dir="${testclasses.dir}" />
+		<javac destdir="${testclasses.dir}" debug="yes" source="1.5" target="1.5" fork="true">
+			<src path="../test" />
+			<classpath>
+				<pathelement path="${classes.dir}" />
+			</classpath>
+			<classpath refid="thirdparty_classpath" />
+		</javac>
+		<copy todir="${testclasses.dir}">
+			<fileset dir="../test" excludes="**/*.java"/>
+		</copy>
+	</target>
+
+	<target name="instrument-metadata-classes" depends="init-instrument-metadata-classes">
+		<!--
+			Instrument the application classes, writing the
+			instrumented classes into ${build.instrumented.dir}.
+		-->
+		<mkdir dir="${instrumented.dir}" />
+		<mkdir dir="${classes.dir}" />
+		
+		<cobertura-instrument todir="${instrumented.dir}">
+
+			<fileset dir="${classes.dir}">
+				<!--
+					Instrument all the application classes, but
+					don't instrument the test classes.
+				-->
+				<include name="**/*.class" />
+				<exclude name="**/*Test.class" />
+			</fileset>
+		</cobertura-instrument>
+
+	</target>
+
+	<target name="test" depends="init-metadata-test-reports">
+		<junit fork="yes" dir=".." failureProperty="test.failed">
+
+			<!--
+				Specify the name of the coverage data file to use.
+				The value specified below is the default.
+			-->
+			<sysproperty key="net.sourceforge.cobertura.datafile"
+				file="${basedir}/cobertura.ser" />
+		
+			<!--
+				Note the classpath order: instrumented classes are before the
+				original (uninstrumented) classes.  This is important.
+			-->
+			<classpath location="${instrumented.dir}" />
+			<classpath location="${classes.dir}" />
+
+			<!--
+				The instrumented classes reference classes used by the
+				Cobertura runtime, so Cobertura and its dependencies
+				must be on your classpath.
+			-->
+			<classpath refid="thirdparty_classpath" />
+			<classpath location="${testclasses.dir}" />
+			
+			<formatter type="xml" />
+			<test name="${testcase}" todir="${reports.xml.dir}" if="testcase" />
+			<batchtest todir="${reports.xml.dir}" unless="testcase">
+				<fileset dir="../test">
+					<include name="**/*Test.java" />
+				</fileset>
+			</batchtest>
+		</junit>
+
+		<junitreport todir="${reports.xml.dir}">
+			<fileset dir="${reports.xml.dir}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${reports.html.dir}" />
+		</junitreport>
+
+	</target>
+
+	<target name="coverage-check">
+		<cobertura-check branchrate="34" totallinerate="100" />
+	</target>
+
+	<target name="coverage-report">
+		<!--
+			Generate an XML file containing the coverage data using
+			the "srcdir" attribute.
+		-->
+		<cobertura-report destdir="${coverage.xml.dir}" format="xml">
+			<fileset dir="../src">
+				<include name="**/*.java" />
+			</fileset>
+		</cobertura-report>
+			
+	</target>
+
+	<target name="alternate-coverage-report">
+		<!--
+			Generate a series of HTML files containing the coverage
+			data in a user-readable form using nested source filesets.
+		-->
+		<cobertura-report destdir="${coverage.html.dir}">
+			<fileset dir="../src">
+				<include name="**/*.java" />
+			</fileset>
+		</cobertura-report>
+	</target>
+	
+	<target name="zip-reports">
+		<mkdir dir="${dist.dir}"/>
+		<zip destfile="${dist.dir}/open-source-reports-${current.date}.zip">
+			<zipfileset dir="${reports.dir}" prefix="opensource-tests" />
+			<zipfileset dir="${coverage.dir}" prefix="opensource-coverage" />
+		</zip>
+	</target>
+
+	<target name="coverage" depends="clean-all,compile,compile-tests,instrument-metadata-classes,test,coverage-report,alternate-coverage-report" description="Compile, instrument ourself, run the tests and generate JUnit and coverage reports." />
+
+</project>
