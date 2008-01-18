@@ -10,7 +10,7 @@
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to 
  * the license for the specific language governing your rights and limitations.
 */
-package org.pentaho.pms.schema.dialect;
+package org.pentaho.pms.mql.dialect;
 
 import java.math.BigDecimal;
 import java.util.HashMap;

@@ -344,47 +344,6 @@ public class RelationshipMeta extends ChangedFlag implements Cloneable, XMLInter
                 ;
 	}
 
-  /**
-   * @deprecated
-   */
-  public String getJoin(String locale)
-  {
-    DatabaseMeta databaseMeta = null;
-    if (field_from != null) {
-      databaseMeta = field_from.getBusinessTable().getPhysicalTable().getDatabaseMeta();
-    }
-    return getJoin(databaseMeta, locale);
-  }
-  
-	public String getJoin(DatabaseMeta databaseMeta, String locale)
-	{
-        String join=""; //$NON-NLS-1$
-		
-		if (isComplex())
-		{
-			join = complex_join;
-		}
-		else
-		if (table_from!=null && table_to!=null && field_from!=null && field_to!=null)
-		{
-            
-            // Left side
-            join  = databaseMeta.quoteField( field_from.getBusinessTable().getDisplayName(locale) );
-            join += "."; //$NON-NLS-1$
-            join += databaseMeta.quoteField( field_from.getFormula() );
-            
-            // Equals
-            join += " = "; //$NON-NLS-1$
-            
-            // Right side
-            join += databaseMeta.quoteField( field_to.getBusinessTable().getDisplayName(locale) );
-            join += "."; //$NON-NLS-1$
-            join += databaseMeta.quoteField( field_to.getFormula() );
-		}
-		
-		return join;
-	}
-
     public void clearChanged()
     {
         setChanged(false);

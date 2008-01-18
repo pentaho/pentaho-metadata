@@ -31,10 +31,10 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 import org.pentaho.pms.messages.Messages;
+import org.pentaho.pms.mql.WhereCondition;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessColumnString;
 import org.pentaho.pms.schema.BusinessModel;
-import org.pentaho.pms.schema.WhereCondition;
 import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.GUIResource;
 

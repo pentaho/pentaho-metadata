@@ -10,7 +10,7 @@
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to 
  * the license for the specific language governing your rights and limitations.
 */
-package org.pentaho.pms.schema;
+package org.pentaho.pms.mql;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,15 +19,15 @@ import org.jfree.formula.DefaultFormulaContext;
 import org.jfree.formula.typing.Type;
 
 import org.pentaho.pms.messages.Messages;
+import org.pentaho.pms.mql.dialect.DB2Dialect;
+import org.pentaho.pms.mql.dialect.DefaultSQLDialect;
+import org.pentaho.pms.mql.dialect.MSAccessDialect;
+import org.pentaho.pms.mql.dialect.MSSQLDialect;
+import org.pentaho.pms.mql.dialect.MySQLDialect;
+import org.pentaho.pms.mql.dialect.OracleDialect;
+import org.pentaho.pms.mql.dialect.PostgreSQLDialect;
+import org.pentaho.pms.mql.dialect.SQLDialectInterface;
 
-import org.pentaho.pms.schema.dialect.DB2Dialect;
-import org.pentaho.pms.schema.dialect.DefaultSQLDialect;
-import org.pentaho.pms.schema.dialect.MSAccessDialect;
-import org.pentaho.pms.schema.dialect.MSSQLDialect;
-import org.pentaho.pms.schema.dialect.MySQLDialect;
-import org.pentaho.pms.schema.dialect.OracleDialect;
-import org.pentaho.pms.schema.dialect.PostgreSQLDialect;
-import org.pentaho.pms.schema.dialect.SQLDialectInterface;
 
 import be.ibridge.kettle.core.database.DatabaseMeta;
 

@@ -10,31 +10,23 @@
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to 
  * the license for the specific language governing your rights and limitations.
 */
-package org.pentaho.pms.schema.dialect;
-
-import org.jfree.formula.lvalues.FormulaFunction;
-import org.pentaho.pms.core.exception.PentahoMetadataException;
+package org.pentaho.pms.mql.dialect;
 
 /**
- * DB2 Pentaho Metadata Dialect Class  
- * 
+ * MySQL Implementation of Metadata SQL Dialect
+ *  
  * @author Will Gorman (wgorman@pentaho.org)
+ *
  */
-public class DB2Dialect extends DefaultSQLDialect {
+public class MySQLDialect extends DefaultSQLDialect {
   
-  public DB2Dialect() {
-    super("DB2"); //$NON-NLS-1$
-    
-    // db2 specific date functions 
-    supportedFunctions.put("NOW", new DefaultSQLFunctionGenerator(DefaultSQLFunctionGenerator.PARAM_FUNCTION, "( CURRENT DATE )", 0) { //$NON-NLS-1$ //$NON-NLS-2$
-      public void generateFunctionSQL(FormulaTraversalInterface formula, StringBuffer sb, String locale, FormulaFunction f) throws PentahoMetadataException {
-        sb.append(sql);
-      }
-    });
+  public MySQLDialect() {
+    super("MYSQL"); //$NON-NLS-1$
   }
-
+  
+  
   /**
-   * return DB2 formatted date, DATE('YYYY-MM-DD')
+   * return MySQL formatted date, DATE('YYYY-MM-DD')
    * 
    * @param year 
    * @param month
@@ -44,8 +36,7 @@ public class DB2Dialect extends DefaultSQLDialect {
    */
   public String getDateSQL(int year, int month, int day) {
     return "DATE(" + //$NON-NLS-1$
-        quoteStringLiteral(year + "-" + displayAsTwoOrMoreDigits(month) + "-" + displayAsTwoOrMoreDigits(day)) + //$NON-NLS-1$ //$NON-NLS-2$
-        ")"; //$NON-NLS-1$
-    
+           quoteStringLiteral(year + "-" + displayAsTwoOrMoreDigits(month) + "-" + displayAsTwoOrMoreDigits(day)) + //$NON-NLS-1$ //$NON-NLS-2$
+           ")"; //$NON-NLS-1$
   }
 }

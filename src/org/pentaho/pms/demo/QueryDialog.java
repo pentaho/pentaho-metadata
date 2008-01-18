@@ -46,14 +46,16 @@ import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.editor.MetaEditor;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.mql.MQLQuery;
+import org.pentaho.pms.mql.MQLQueryImpl;
+import org.pentaho.pms.mql.WhereCondition;
+import org.pentaho.pms.mql.OrderBy;
 import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
-import org.pentaho.pms.schema.OrderBy;
 import org.pentaho.pms.schema.SchemaMeta;
-import org.pentaho.pms.schema.WhereCondition;
 import org.pentaho.pms.util.Const;
+import org.pentaho.pms.util.FileUtil;
 import org.pentaho.pms.util.GUIResource;
 
 import be.ibridge.kettle.core.ColumnInfo;
@@ -535,7 +537,7 @@ public class QueryDialog extends Dialog
         {
             try
             {
-                query = new MQLQuery(filename);
+                query = new MQLQueryImpl(FileUtil.readAsXml(filename), null, null, null);
                 getData();
             }
             catch(Exception e)
@@ -558,8 +560,7 @@ public class QueryDialog extends Dialog
                 if (getModel()!=null)
                 {
                     query = getQuery();
-                    
-                    query.save(filename);
+                    FileUtil.saveAsXml(filename, query.getXML());
                 }
                 else
                 {
@@ -990,9 +991,9 @@ public class QueryDialog extends Dialog
         updateOrders();
     }
     
-    private MQLQuery getQuery() throws PentahoMetadataException
+    private MQLQueryImpl getQuery() throws PentahoMetadataException
     {
-        MQLQuery mqlQuery = new MQLQuery(schemaMeta, getModel(), locale);
+        MQLQueryImpl mqlQuery = new MQLQueryImpl(schemaMeta, getModel(), null, locale);
         ArrayList mqlQueryConditions = new ArrayList();
         // Get the conditions and operators.
         for (int i=0;i<conditions.size();i++) {
@@ -1052,7 +1053,7 @@ public class QueryDialog extends Dialog
                     if (!Const.isEmpty(sql))
                     {
                         
-                        DatabaseMeta databaseMeta = ((BusinessColumn)mqlQuery.getSelections().get(0)).getPhysicalColumn().getTable().getDatabaseMeta();
+                        DatabaseMeta databaseMeta = mqlQuery.getSelections().get(0).getBusinessColumn().getPhysicalColumn().getTable().getDatabaseMeta();
                         executeSQL(databaseMeta, sql);
                     }
                 }
@@ -1070,7 +1071,7 @@ public class QueryDialog extends Dialog
       try
       {
         
-        MQLQuery mqlQuery = getQuery();
+        MQLQueryImpl mqlQuery = getQuery();
         if (mqlQuery != null) {
           StringBuffer logBuffer = new StringBuffer();
           java.util.List list = mqlQuery.getRowsUsingTransformation(logBuffer);

@@ -66,42 +66,11 @@
 		<mkdir dir="${build.javadoc.dir}" />
 	</target>
 
-	<target name="compile" depends="init-metadata-classes, compile-out-of-box, compiled-with-1.5-to-run-in-1.4" />
-	
-	<target name="compile-out-of-box" unless="javacbootclasspath" description="compile the source ">
+	<target name="compile" description="compile the source " depends="init-metadata-classes">
 		<echo>Compiling Pentaho Metadata...</echo>
-		<javac srcdir="${src}" destdir="${build.classes.dir}" target="1.4" source="1.4" deprecation="true" debug="true">
-
-			<classpath id="cp-meta">
-				<fileset dir="${libext}" includes="**/*.jar" />
-				<fileset dir="${libswt}" includes="*.jar" />
-				<fileset dir="${libswt}/win32/" includes="*.jar" />
-			</classpath>
-		</javac>
-		
-		<echo>Copying images etc to classes directory...</echo>
-		<copy todir="${build.classes.dir}">
-			<fileset dir="${src}" includes="**/*.gif **/*.png **/*.xml **/*properties" />
-		</copy>
-	</target>
-	
-	<!-- =======================================================
-		If you want to compile this code using a JDK 1.5 compiler,
-		but you also want this code to have the ability to run in
-		JDK1.4, you need to tell the compiler where the 1.4
-		rt.jar is located. To do this, simply set the property:
-		
-		javacbootclasspath
-		
-		For details, see the following:		
-		http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6226858		
-		
-		=================================================== -->
-	
-	<target name="compiled-with-1.5-to-run-in-1.4" if="javacbootclasspath" description="compile the source ">
-		<echo>Compiling Pentaho Metadata...bootclasspath=${javacbootclasspath}</echo>
-		<javac srcdir="${src}" destdir="${build.classes.dir}" bootclasspath="${javacbootclasspath}" target="1.4" source="1.4" deprecation="true" debug="true">
-
+		<javac srcdir="${src}" destdir="${build.classes.dir}" target="1.5" source="1.5" deprecation="true" debug="true">
+			<!-- exclude the example from the distribution -->
+			<exclude name="org/pentaho/pms/example/*"/>
 			<classpath id="cp-meta">
 				<fileset dir="${libext}" includes="**/*.jar" />
 				<fileset dir="${libswt}" includes="*.jar" />
@@ -118,7 +87,7 @@
 	<target name="zip-pentaho-metadata-javadoc" depends="init-pentaho-metadata-javadoc, compile" description="compile the javadoc api">
 		<echo>Compiling the Pentaho Metadata API javadocs...</echo>
 		
-		<javadoc destdir="${build.javadoc.dir}/docs/api" access="public" source="1.4" use="true" notree="false" nonavbar="false" noindex="false" splitindex="true" author="true" version="true" maxmemory="256M" nodeprecatedlist="false" nodeprecated="false" packagenames="org.pentaho.pms.*" sourcepath="${src}" doctitle="Pentaho Metadata API documentation">
+		<javadoc destdir="${build.javadoc.dir}/docs/api" access="public" source="1.5" use="true" notree="false" nonavbar="false" noindex="false" splitindex="true" author="true" version="true" maxmemory="256M" nodeprecatedlist="false" nodeprecated="false" packagenames="org.pentaho.pms.*" sourcepath="${src}" doctitle="Pentaho Metadata API documentation">
 			<link href="http://java.sun.com/j2se/1.4.2/docs/api/" />
 
 			<classpath refid="cp-meta" />

@@ -10,32 +10,31 @@
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to 
  * the license for the specific language governing your rights and limitations.
 */
-package org.pentaho.pms.schema.dialect;
+package org.pentaho.pms.mql.dialect;
 
 import org.jfree.formula.lvalues.FormulaFunction;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 
 /**
- * PostgreSQL Implementation of Metadata SQL Dialect
- *  
+ * DB2 Pentaho Metadata Dialect Class  
+ * 
  * @author Will Gorman (wgorman@pentaho.org)
- *
  */
-public class PostgreSQLDialect extends DefaultSQLDialect {
+public class DB2Dialect extends DefaultSQLDialect {
   
-  public PostgreSQLDialect() {
-    super("POSTGRESQL"); //$NON-NLS-1$
+  public DB2Dialect() {
+    super("DB2"); //$NON-NLS-1$
     
-    // oracle specific date functions 
-    supportedFunctions.put("NOW", new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_FUNCTION, "now", 0) { //$NON-NLS-1$ //$NON-NLS-2$
+    // db2 specific date functions 
+    supportedFunctions.put("NOW", new DefaultSQLFunctionGenerator(DefaultSQLFunctionGenerator.PARAM_FUNCTION, "( CURRENT DATE )", 0) { //$NON-NLS-1$ //$NON-NLS-2$
       public void generateFunctionSQL(FormulaTraversalInterface formula, StringBuffer sb, String locale, FormulaFunction f) throws PentahoMetadataException {
         sb.append(sql);
       }
     });
   }
-  
+
   /**
-   * return PostgreSQL formatted date, date 'YYYY-MM-DD'
+   * return DB2 formatted date, DATE('YYYY-MM-DD')
    * 
    * @param year 
    * @param month
@@ -44,8 +43,9 @@ public class PostgreSQLDialect extends DefaultSQLDialect {
    * @return date string
    */
   public String getDateSQL(int year, int month, int day) {
-    return "date " + //$NON-NLS-1$
-       quoteStringLiteral(year + "-" + displayAsTwoOrMoreDigits(month) + "-" + displayAsTwoOrMoreDigits(day)); //$NON-NLS-1$ //$NON-NLS-2$
-       
+    return "DATE(" + //$NON-NLS-1$
+        quoteStringLiteral(year + "-" + displayAsTwoOrMoreDigits(month) + "-" + displayAsTwoOrMoreDigits(day)) + //$NON-NLS-1$ //$NON-NLS-2$
+        ")"; //$NON-NLS-1$
+    
   }
 }

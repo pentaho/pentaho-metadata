@@ -12,24 +12,18 @@
  */
 package org.pentaho.pms.mql;
 
-public class Query {
+import org.pentaho.commons.connection.IPentahoMetaData;
+
+/**
+ * This interface defines the result of executing an MQLQuery
+ * 
+ * @author Will Gorman (wgorman@pentaho.org)
+ *
+ */
+public interface Query {
   
-  protected String query;
+  public String getQuery();
+
+  public IPentahoMetaData generateMetadata(IPentahoMetaData nativeMetadata);
   
-  /**
-   * A base line class for holding a query string. This is a foundation for queries that require more information up front in order to logically 
-   * pre-process some of the metadata. 
-   */
-  public Query(){
-    
-  }
-
-  public String getQuery() {
-    return query;
-  }
-
-  public void setQuery(String query) {
-    this.query = query;
-  }
-
 }

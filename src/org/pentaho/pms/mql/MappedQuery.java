@@ -13,7 +13,10 @@
 package org.pentaho.pms.mql;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+
+import org.pentaho.commons.connection.IPentahoMetaData;
 
 /**
  * A mapped query holds a query string that has the "as" identifiers mapped to truncated
@@ -26,12 +29,14 @@ import java.util.Map;
  * @author gmoran
  *
  */
-public class MappedQuery extends Query {
-
-  private Map columnsMap;
+public class MappedQuery implements Query {
+  protected String query;
+  protected Map columnsMap;
+  protected List<? extends Selection> selections;
   
-  public MappedQuery(String sql, Map columnsMap){
+  public MappedQuery(String sql, Map columnsMap, List<? extends Selection> selections){
     query = sql;
+    this.selections = selections;
     this.columnsMap = columnsMap;
   }
   
@@ -61,5 +66,23 @@ public class MappedQuery extends Query {
    */
   public Map getMap(){
     return columnsMap;
+  }
+
+  /**
+   * returns a generated sql query string
+   * @return sql query string
+   */
+  public String getQuery() {
+    return query;
+  }
+
+  public IPentahoMetaData generateMetadata(IPentahoMetaData nativeMetadata) {
+
+    // columnsMap holds a reference to the id of the columns that we retrieved - the column
+    // headers in the resultSet currently (if columnsMap is not null) are truncated names that 
+    // we query with to get past length limitations of some databases. Here, we reinstate the true column ids for 
+    // display and further metadata mapping purposes. 
+
+    return new ExtendedMetaData(columnsMap, nativeMetadata.getColumnHeaders(), nativeMetadata.getRowHeaders(), selections);
   }
 }

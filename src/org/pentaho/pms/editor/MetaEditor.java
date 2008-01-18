@@ -13,6 +13,9 @@ package org.pentaho.pms.editor;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -83,6 +86,8 @@ import org.pentaho.pms.jface.tree.ITreeNodeChangedListener;
 import org.pentaho.pms.jface.tree.TreeContentProvider;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.mql.MQLQuery;
+import org.pentaho.pms.mql.MQLQueryFactory;
+import org.pentaho.pms.mql.MQLQueryImpl;
 import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
@@ -132,6 +137,7 @@ import org.pentaho.pms.ui.tree.RelationshipTreeNode;
 import org.pentaho.pms.ui.tree.RelationshipsTreeNode;
 import org.pentaho.pms.ui.tree.SchemaMetaTreeNode;
 import org.pentaho.pms.util.Const;
+import org.pentaho.pms.util.FileUtil;
 import org.pentaho.pms.util.GUIResource;
 import org.pentaho.pms.util.Settings;
 import org.pentaho.pms.util.Splash;
@@ -3756,8 +3762,9 @@ public class MetaEditor implements SelectionListener{
 
   private void saveQuery() {
     try {
-      if (query != null)
-        query.save(Const.getQueryFile());
+      if (query != null) {
+        FileUtil.saveAsXml(Const.getQueryFile(), query.getXML());
+      }
     } catch (Exception e) {
       log.logError(APPLICATION_NAME, Messages.getString("MetaEditor.ERROR_0002_CANT_SAVE_QUERY") + e.toString()); //$NON-NLS-1$
       log.logError(APPLICATION_NAME, Const.getStackTracker(e));
@@ -3772,7 +3779,7 @@ public class MetaEditor implements SelectionListener{
       fileInputStream.read(bytes);
       fileInputStream.close();
 
-      query = new MQLQuery(new String(bytes, Const.XML_ENCODING), Const.XML_ENCODING, cwmSchemaFactory);
+      query = MQLQueryFactory.getMQLQuery(new String(bytes, Const.XML_ENCODING), null, Const.XML_ENCODING, cwmSchemaFactory);
     } catch (Exception e) {
       log.logError(APPLICATION_NAME, Messages.getString("MetaEditor.ERROR_0003_CANT_LOAD_QUERY", e.toString())); //$NON-NLS-1$
     }

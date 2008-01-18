@@ -25,9 +25,14 @@
  **                                                                   **
  **********************************************************************/
  
-package org.pentaho.pms.schema;
+package org.pentaho.pms.mql;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.pentaho.pms.schema.BusinessTable;
+import org.pentaho.pms.schema.RelationshipMeta;
 
 
 /*
@@ -53,6 +58,11 @@ public class Path
 	{
 		path.remove(size()-1);
 	}
+  
+  public RelationshipMeta removeRelationship(int i)
+  {
+    return (RelationshipMeta)path.remove(i);
+  }
 	
 	public RelationshipMeta getLastRelationship()
 	{
@@ -66,7 +76,7 @@ public class Path
 	
 	public int nrTables()
 	{
-		return getUsedTables().length;
+		return getUsedTables().size();
 	}
 	
 	public int score()
@@ -206,17 +216,16 @@ public class Path
 		else return 0;
 	}
 	
-	public BusinessTable[] getUsedTables()
+	public List<BusinessTable> getUsedTables()
 	{
-		Hashtable hash = new Hashtable();
-		
+		Set<BusinessTable> treeSet = new TreeSet<BusinessTable>();
 		for (int i=0;i<size();i++)
 		{
 			RelationshipMeta rel = getRelationship(i);
-			hash.put(rel.getTableFrom(), "OK"); //$NON-NLS-1$
-			hash.put(rel.getTableTo(), "OK"); //$NON-NLS-1$
+			treeSet.add(rel.getTableFrom()); //$NON-NLS-1$
+			treeSet.add(rel.getTableTo()); //$NON-NLS-1$
 		}
-        return (BusinessTable[]) hash.keySet().toArray(new BusinessTable[hash.keySet().size()]);
+        return new ArrayList<BusinessTable>(treeSet);
 	}
 
 	public RelationshipMeta[] getUsedRelationships()

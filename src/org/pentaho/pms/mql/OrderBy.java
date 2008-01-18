@@ -10,7 +10,9 @@
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to 
  * the license for the specific language governing your rights and limitations.
 */
-package org.pentaho.pms.schema;
+package org.pentaho.pms.mql;
+
+import org.pentaho.pms.schema.BusinessColumn;
 
 /**
  * Contains a business column an the sort direction, used to specify the sorting of that column.

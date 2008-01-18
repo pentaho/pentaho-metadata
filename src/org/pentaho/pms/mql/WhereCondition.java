@@ -31,7 +31,7 @@
  * 
  */
 
-package org.pentaho.pms.schema;
+package org.pentaho.pms.mql;
 
 import java.util.Iterator;
 import java.util.List;
@@ -39,6 +39,8 @@ import java.util.List;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.messages.Messages;
 
+import org.pentaho.pms.schema.BusinessColumn;
+import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.util.Const;
@@ -57,6 +59,21 @@ public class WhereCondition extends ConceptUtilityBase implements ConceptUtility
   private String condition = null;
   private Boolean hasAgg = null;
   private PMSFormula formula = null;
+
+  /**
+   * this method makes it possible to override the PMSFormula object with a subclass
+   * 
+   * @param formula
+   * @param operator
+   * @param condition
+   * @throws PentahoMetadataException
+   */
+  public WhereCondition(PMSFormula formula, String operator, String condition) throws PentahoMetadataException {
+    this.operator = operator;
+    this.condition = condition;
+    this.formula = formula;
+    formula.parseAndValidate();
+  }
   
   /**
    * The WhereCondition now is based on LibFormula, so only a conditional string is necessary
@@ -80,7 +97,7 @@ public class WhereCondition extends ConceptUtilityBase implements ConceptUtility
   
   /**
    * return the condition operator for combining where conditions
-   * @return
+   * @return the operator string
    */
   public String getOperator() {
     return operator;
@@ -88,7 +105,7 @@ public class WhereCondition extends ConceptUtilityBase implements ConceptUtility
   
   /**
    * return the condition, ie "A = B"
-   * @return
+   * @return the condition string
    */
   public String getCondition() {
     return condition;
@@ -134,8 +151,9 @@ public class WhereCondition extends ConceptUtilityBase implements ConceptUtility
   
   /**
    * generate the SQL condition
-   * @param locale
-   * @return
+   * @param locale locale for generating sql
+   * @param useOperator appends operator if true
+   * @return where clause
    */
   public String getWhereClause(String locale, boolean useOperator) throws PentahoMetadataException {
     String retval = ""; //$NON-NLS-1$

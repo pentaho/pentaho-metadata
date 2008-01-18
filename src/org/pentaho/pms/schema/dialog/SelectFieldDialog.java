@@ -66,12 +66,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.pentaho.pms.messages.Messages;
+import org.pentaho.pms.mql.WhereCondition;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.PhysicalColumn;
 import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.SchemaMeta;
-import org.pentaho.pms.schema.WhereCondition;
 import org.pentaho.pms.util.Const;
 
 import be.ibridge.kettle.core.LogWriter;

@@ -25,16 +25,19 @@ import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.mql.MQLQuery;
+import org.pentaho.pms.mql.MQLQueryImpl;
 import org.pentaho.pms.mql.MappedQuery;
+import org.pentaho.pms.mql.Selection;
+import org.pentaho.pms.mql.WhereCondition;
+import org.pentaho.pms.mql.OrderBy;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessColumnString;
 import org.pentaho.pms.schema.BusinessModel;
-import org.pentaho.pms.schema.OrderBy;
 import org.pentaho.pms.schema.SchemaMeta;
-import org.pentaho.pms.schema.WhereCondition;
 import org.pentaho.pms.schema.dialog.OrderByDialog;
 import org.pentaho.pms.schema.dialog.WhereConditionsDialog;
 import org.pentaho.pms.util.Const;
+import org.pentaho.pms.util.FileUtil;
 import org.pentaho.pms.util.Settings;
 
 import be.ibridge.kettle.core.Props;
@@ -64,10 +67,10 @@ public class MakeSelectionDemo
         Props.init(display, Const.getPropertiesFile());
         Props props = Props.getInstance();
         
-        MQLQuery previousQuery = null;
+        MQLQueryImpl previousQuery = null;
         try
         {
-            previousQuery = new MQLQuery( Const.getQueryFile() );
+            previousQuery = new MQLQueryImpl(FileUtil.readAsXml(Const.getQueryFile()), null, null, null);
         }
         catch(IOException e)
         {
@@ -80,7 +83,7 @@ public class MakeSelectionDemo
             Const.checkPentahoMetadataDirectory();
             try
             {
-                previousQuery.save(Const.getQueryFile());
+              FileUtil.saveAsXml(Const.getQueryFile(), previousQuery.getXML());
             }
             catch(IOException e)
             {
@@ -94,9 +97,9 @@ public class MakeSelectionDemo
         executeDemo(shell, props, null, true);
     }
 
-    public static final MQLQuery executeDemo(Shell shell, Props props, MQLQuery previousQuery, boolean shutdown) throws Exception
+    public static final MQLQueryImpl executeDemo(Shell shell, Props props, MQLQueryImpl previousQuery, boolean shutdown) throws Exception
     {
-        MQLQuery previous = previousQuery;
+        MQLQueryImpl previous = previousQuery;
         previousQuery = null;
 
         // What domains do we have in the repository?
@@ -191,7 +194,8 @@ public class MakeSelectionDemo
                     List indexes=new ArrayList();
                     for (int i=0;i<previous.getSelections().size();i++)
                     {
-                        BusinessColumn bc = (BusinessColumn) previous.getSelections().get(i);
+                        Selection selection = previous.getSelections().get(i);
+                        BusinessColumn bc = selection.getBusinessColumn();
                         int idx = BusinessColumnString.getBusinessColumnIndex(strings, bc);
                         if (idx>=0)
                         {
@@ -208,7 +212,7 @@ public class MakeSelectionDemo
                 columnSelectionDialog.setFixed(true);
                 if (columnSelectionDialog.open()!=null)
                 {
-                	MQLQuery query = new MQLQuery( schemaMeta, businessModel, selectedLocale );
+                	MQLQueryImpl query = new MQLQueryImpl( schemaMeta, businessModel, null, selectedLocale );
                     int[] indices = columnSelectionDialog.getSelectionIndeces();
                     List selectionList = new ArrayList();
                     for (int i=0;i<indices.length;i++)
@@ -217,7 +221,7 @@ public class MakeSelectionDemo
                         if (bcs.getBusinessColumn()!=null) // Ignore categories themselves if they are selected.
                         {
                             selectionList.add(bcs.getBusinessColumn());
-                            query.addSelection( bcs.getBusinessColumn() );
+                            query.addSelection(new Selection( bcs.getBusinessColumn() ));
                         }
                     }
                     BusinessColumn selection[] = (BusinessColumn[])selectionList.toArray(new BusinessColumn[selectionList.size()]);
@@ -265,7 +269,7 @@ public class MakeSelectionDemo
                     String queryXML = query.getXML();
                     System.out.println( query.getXML() );  
                     
-                    MQLQuery query2 = new MQLQuery( queryXML, selectedLocale, cwmSchemaFactory );
+                    MQLQueryImpl query2 = new MQLQueryImpl( queryXML, null, selectedLocale, cwmSchemaFactory );
                     
                     //String sql = query.getQuery();
                     MappedQuery mappedQuery = query2.getQuery();

@@ -1,6 +1,9 @@
 package org.pentaho.pms.demo;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Map;
 
@@ -30,10 +33,12 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.pentaho.commons.mql.ui.mqldesigner.MQLQueryBuilderDialog;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.mql.MQLQuery;
+import org.pentaho.pms.mql.MQLQueryImpl;
 import org.pentaho.pms.mql.MappedQuery;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.util.Const;
+import org.pentaho.pms.util.FileUtil;
 
 import be.ibridge.kettle.core.Row;
 import be.ibridge.kettle.core.database.Database;
@@ -328,7 +333,7 @@ public class QueryBuilderDialog extends MQLQueryBuilderDialog {
           EnterTextDialog showSQL = new EnterTextDialog(getShell(), Messages.getString("QueryDialog.USER_TITLE_GENERATED_SQL"), Messages.getString("QueryDialog.USER_GENERATED_SQL"), sql, true); //$NON-NLS-1$ //$NON-NLS-2$
           sql = showSQL.open();
           if (!Const.isEmpty(sql)) {
-            DatabaseMeta databaseMeta = ((BusinessColumn) mqlQuery.getSelections().get(0)).getPhysicalColumn().getTable().getDatabaseMeta();
+            DatabaseMeta databaseMeta = mqlQuery.getSelections().get(0).getBusinessColumn().getPhysicalColumn().getTable().getDatabaseMeta();
             executeSQL(databaseMeta, sql);
           }
         }
@@ -394,7 +399,7 @@ public class QueryBuilderDialog extends MQLQueryBuilderDialog {
     String filename = fileDialog.open();
     if (filename != null) {
       try {
-        setMqlQuery(new MQLQuery(filename), false);
+        setMqlQuery(new MQLQueryImpl(FileUtil.readAsXml(filename), null, null, null), false);
         
       } catch (Exception e) {
         new ErrorDialog(getShell(), Messages.getString("QueryDialog.USER_TITLE_ERROR_LOADING_QUERY"), Messages.getString("QueryDialog.USER_ERROR_LOADING_QUERY"), e); //$NON-NLS-1$ //$NON-NLS-2$
@@ -414,7 +419,7 @@ public class QueryBuilderDialog extends MQLQueryBuilderDialog {
         MappedQuery q = mqlQuery.getQuery();
         String sql = q.getQuery();
         columnsMap = q.getMap();
-        DatabaseMeta databaseMeta = ((BusinessColumn) mqlQuery.getSelections().get(0)).getPhysicalColumn().getTable().getDatabaseMeta();
+        DatabaseMeta databaseMeta = mqlQuery.getSelections().get(0).getBusinessColumn().getPhysicalColumn().getTable().getDatabaseMeta();
         executeSQL(databaseMeta, sql);
       }
     } catch (Throwable e) {
@@ -461,7 +466,7 @@ public class QueryBuilderDialog extends MQLQueryBuilderDialog {
     if (query != null) {
       if (lastFileName != null) {
         try {
-          query.save(lastFileName);
+          FileUtil.saveAsXml(lastFileName, query.getXML());
         } catch (Exception e) {
           new ErrorDialog(getShell(), Messages.getString("QueryDialog.USER_TITLE_ERROR_LOADING_QUERY"), Messages.getString("QueryDialog.USER_ERROR_LOADING_QUERY"), e); //$NON-NLS-1$ //$NON-NLS-2$
         }
@@ -481,7 +486,7 @@ public class QueryBuilderDialog extends MQLQueryBuilderDialog {
       String filename = fileDialog.open();
       if (filename != null) {
         try {
-          query.save(filename);
+          FileUtil.saveAsXml(filename, query.getXML());
           lastFileName = filename;
         } catch (Exception e) {
           new ErrorDialog(getShell(), Messages.getString("QueryDialog.USER_TITLE_ERROR_LOADING_QUERY"), Messages.getString("QueryDialog.USER_ERROR_LOADING_QUERY"), e); //$NON-NLS-1$ //$NON-NLS-2$

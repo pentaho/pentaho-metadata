@@ -21,14 +21,17 @@ import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.factory.CwmSchemaFactory;
 import org.pentaho.pms.mql.MQLQuery;
+import org.pentaho.pms.mql.MQLQueryFactory;
+import org.pentaho.pms.mql.MQLQueryImpl;
 import org.pentaho.pms.mql.MappedQuery;
+import org.pentaho.pms.mql.PMSFormula;
+import org.pentaho.pms.mql.Selection;
+import org.pentaho.pms.mql.WhereCondition;
+import org.pentaho.pms.mql.OrderBy;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
-import org.pentaho.pms.schema.OrderBy;
-import org.pentaho.pms.schema.PMSFormula;
 import org.pentaho.pms.schema.SchemaMeta;
-import org.pentaho.pms.schema.WhereCondition;
 import org.pentaho.pms.util.Const;
 
 import be.ibridge.kettle.core.database.DatabaseInterface;
@@ -39,10 +42,11 @@ import junit.framework.TestCase;
 public class MQLQueryTest extends TestCase {
   
   BusinessModel ordersModel = null;
+  CwmSchemaFactory cwmSchemaFactory = null;
   
   public void setUp() {
-    if (ordersModel == null) {
-      ordersModel = getOrdersModel();
+    if (ordersModel == null || cwmSchemaFactory == null) {
+      loadOrdersModel();
     }
   }
   
@@ -62,7 +66,7 @@ public class MQLQueryTest extends TestCase {
     return null;
   }
   
-  public BusinessModel getOrdersModel() {
+  public void loadOrdersModel() {
     CWM cwm = null;
     try {
       cwm = CWM.getInstance("Orders", true); //$NON-NLS-1$
@@ -71,10 +75,10 @@ public class MQLQueryTest extends TestCase {
       e.printStackTrace();
       fail();
     }
-    CwmSchemaFactory cwmSchemaFactory = new CwmSchemaFactory();
+    cwmSchemaFactory = new CwmSchemaFactory();
     
     SchemaMeta schemaMeta = cwmSchemaFactory.getSchemaMeta(cwm);
-    return schemaMeta.findModel("Orders"); //$NON-NLS-1$
+    ordersModel = schemaMeta.findModel("Orders"); //$NON-NLS-1$
   }
   
   public void handleFormula(BusinessModel model, String databaseToTest, String mqlFormula, String expectedSql) {
@@ -421,18 +425,17 @@ public class MQLQueryTest extends TestCase {
 //        ,"Customers.COUNTRY  LIKE '%'" //$NON-NLS-1$
 //      );
 //  }
+  
+  public void testMQLQueryFactoryPentahoMetadataException() {
+    try {
+      MQLQueryFactory.getMQLQuery(null, null, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
+      fail();
+    } catch (PentahoMetadataException e) {
+      assertTrue(e.getMessage().indexOf("ERROR_0017 - ") >= 0);
+    }
+  }
 
   public void testDatabaseMetaReplacement() {
-
-    CWM cwm = CWM.getInstance("Orders", false); //$NON-NLS-1$
-    try {
-      cwm.importFromXMI("samples/orders.xmi"); //$NON-NLS-1$
-    } catch (Exception e) {
-      e.printStackTrace();
-      fail();
-    }
-    CwmSchemaFactory cwmSchemaFactory = new CwmSchemaFactory();
-    
     // the current sql should have a 'date', while the oracle version should have a DATE()
     
     String mqlfile = "test/org/pentaho/pms/mqlquery03.xmql"; //$NON-NLS-1$
@@ -441,14 +444,14 @@ public class MQLQueryTest extends TestCase {
     
     MQLQuery mqlquery = null;
     try {
-      mqlquery = new MQLQuery(mqldata, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
+      mqlquery = MQLQueryFactory.getMQLQuery(mqldata, null, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
       
       MappedQuery query = mqlquery.getQuery();
       String sqlQuery = query.getQuery();
       assertTrue(sqlQuery.indexOf(">= '1-01-2007' )") >= 0); //$NON-NLS-1$
       
       // now replace with oracle database metadata
-      DatabaseMeta meta = (DatabaseMeta)mqlquery.getDatabaseMeta().clone();
+      DatabaseMeta meta = (DatabaseMeta)((MQLQueryImpl)mqlquery).getDatabaseMeta().clone();
       
       DatabaseInterface di[] = DatabaseMeta.getDatabaseInterfaces();
       DatabaseInterface oracleDI = null;
@@ -460,7 +463,7 @@ public class MQLQueryTest extends TestCase {
       }
       meta.setDatabaseInterface(oracleDI);
       
-      mqlquery = new MQLQuery(mqldata, meta, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
+      mqlquery = MQLQueryFactory.getMQLQuery(mqldata, meta, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
       
       query = mqlquery.getQuery();
       sqlQuery = query.getQuery();
@@ -472,26 +475,17 @@ public class MQLQueryTest extends TestCase {
   }
   
   public void testToFromXML() {
-
-    CWM cwm = CWM.getInstance("Orders", false); //$NON-NLS-1$
-    try {
-      cwm.importFromXMI("samples/orders.xmi"); //$NON-NLS-1$
-    } catch (Exception e) {
-      e.printStackTrace();
-      fail();
-    }
-    CwmSchemaFactory cwmSchemaFactory = new CwmSchemaFactory();
-    
    
 		String mqlfile1 = "test/org/pentaho/pms/mqlquery01.xmql"; //$NON-NLS-1$
     String mqlfile2 = "test/org/pentaho/pms/mqlquery02.xmql"; //$NON-NLS-1$ // Distinct is off, but otherwise the same
     String mqlfile3 = "test/org/pentaho/pms/mqlquery_oldformat.xmql"; //$NON-NLS-1$
+    String mqlfile4 = "test/org/pentaho/pms/mqlquery03.xmql"; //$NON-NLS-1$
     
     String mqldata = loadXmlFile(mqlfile1);
     assertNotNull(mqldata);
     MQLQuery mqlquery = null;
     try {
-      mqlquery = new MQLQuery(mqldata, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
+      mqlquery = MQLQueryFactory.getMQLQuery(mqldata, null, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
     } catch (PentahoMetadataException e) {
       e.printStackTrace();
       fail();
@@ -503,8 +497,21 @@ public class MQLQueryTest extends TestCase {
     assertNotNull(mqldata);
     MQLQuery mqlquery2 = null;
     try {
-      mqlquery2 = new MQLQuery(mqldata, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
-      assertEquals(mqlquery2.getDisableDistinct(), true);
+      mqlquery2 = MQLQueryFactory.getMQLQuery(mqldata, null, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
+      assertEquals(((MQLQueryImpl)mqlquery2).getDisableDistinct(), true);
+    } catch (PentahoMetadataException e) {
+      e.printStackTrace();
+      fail();
+    }
+
+    // Tests parsing of conditions
+    mqldata = null;
+    mqldata = loadXmlFile(mqlfile4);
+    assertNotNull(mqldata);
+    MQLQuery mqlquery4 = null;
+    try {
+      mqlquery4 = MQLQueryFactory.getMQLQuery(mqldata, null, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
+      assertEquals(mqlquery4.getConstraints().size(), 1);
     } catch (PentahoMetadataException e) {
       e.printStackTrace();
       fail();
@@ -516,35 +523,33 @@ public class MQLQueryTest extends TestCase {
     assertNotNull(mqldata);
     MQLQuery mqlquery3 = null;
     try {
-      mqlquery3 = new MQLQuery(mqldata, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
-      assertEquals(mqlquery3.getDisableDistinct(), false);
+      mqlquery3 = MQLQueryFactory.getMQLQuery(mqldata, null, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
+      assertEquals(((MQLQueryImpl)mqlquery3).getDisableDistinct(), false);
     } catch (PentahoMetadataException e) {
       e.printStackTrace();
       fail();
     }
     
     assertNotNull(mqlquery);
-    assertNotNull(mqlquery.getSchemaMeta());
-    assertEquals("Orders", mqlquery.getSchemaMeta().getDomainName()); //$NON-NLS-1$
+    assertNotNull(((MQLQueryImpl)mqlquery).getSchemaMeta());
+    assertEquals("Orders", ((MQLQueryImpl)mqlquery).getSchemaMeta().getDomainName()); //$NON-NLS-1$
     assertNotNull(mqlquery.getModel());
     assertEquals("Orders", mqlquery.getModel().getId() ); //$NON-NLS-1$
     
-    List selections = mqlquery.getSelections();
+    List<? extends Selection> selections = ((MQLQueryImpl)mqlquery).getSelections();
     
     assertNotNull(selections);
     assertEquals(2, selections.size());
     
-    assertTrue(selections.get(0) instanceof BusinessColumn);
-    BusinessColumn col1 = (BusinessColumn)selections.get(0);
+    BusinessColumn col1 = selections.get(0).getBusinessColumn();
     assertEquals("BT_CUSTOMERS", col1.getBusinessTable().getId()); //$NON-NLS-1$
     assertEquals("BC_CUSTOMERS_CUSTOMERNAME", col1.getId()); //$NON-NLS-1$
     
-    assertTrue(selections.get(1) instanceof BusinessColumn);
-    BusinessColumn col2 = (BusinessColumn)selections.get(1);
+    BusinessColumn col2 = selections.get(1).getBusinessColumn();
     assertEquals("BT_CUSTOMERS", col2.getBusinessTable().getId()); //$NON-NLS-1$
     assertEquals("BC_CUSTOMERS_COUNTRY", col2.getId()); //$NON-NLS-1$
     
-    List orders = mqlquery.getOrder();
+    List orders = ((MQLQueryImpl)mqlquery).getOrder();
     
     assertNotNull(orders);
     assertEquals(1, orders.size());
@@ -594,6 +599,28 @@ public class MQLQueryTest extends TestCase {
       e.printStackTrace();
       fail();
     }
+    
+    // TEST CONSTRAINT XML OUTPUT
+    try {
+      File file = new File(mqlfile4);
+      FileInputStream fileInputStream = new FileInputStream(file);
+      byte bytes[] = new byte[(int)file.length()];
+      fileInputStream.read(bytes);
+      fileInputStream.close();
+      String data = new String(bytes, Const.XML_ENCODING);
+      data = data.replaceAll("[\r\n\t]", ""); //$NON-NLS-1$ //$NON-NLS-2$
+      data = data.replaceAll("<!--.*[-][-][>]", "");  //$NON-NLS-1$ //$NON-NLS-2$
+      String xml = mqlquery4.getXML();
+      assertNotNull(xml);
+      xml = xml.replaceAll("[\r\n\t]",""); //$NON-NLS-1$ //$NON-NLS-2$
+      xml = xml.replaceAll("<options><disable_distinct>false</disable_distinct></options>", "");  //$NON-NLS-1$ //$NON-NLS-2$
+      assertEquals(data, xml);
+      
+    } catch (IOException e) {
+      e.printStackTrace();
+      fail();
+    }
+    
     try {
       // Now, look at generated SQL for distinct -vs- no distinct...
       String SQL1 = mqlquery.getQuery().getQuery();
@@ -628,7 +655,7 @@ public class MQLQueryTest extends TestCase {
         );
     
     try {
-      mqlquery = new MQLQuery(mqlfaildata01, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
+      mqlquery = MQLQueryFactory.getMQLQuery(mqlfaildata01, null, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
       fail();
     } catch (PentahoMetadataException e) {
       assertEquals("MQLQuery.ERROR_0001 - Condition not specified in MQL constraint", e.getMessage() ); //$NON-NLS-1$
@@ -642,7 +669,7 @@ public class MQLQueryTest extends TestCase {
         );
 
     try {
-      mqlquery = new MQLQuery(mqlfaildata01, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
+      mqlquery = MQLQueryFactory.getMQLQuery(mqlfaildata01, null, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
       fail();
     } catch (PentahoMetadataException e) {
       assertEquals("MQLQuery.ERROR_0001 - Condition not specified in MQL constraint", e.getMessage() ); //$NON-NLS-1$

@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.pentaho.pms.messages.Messages;
+import org.pentaho.pms.mql.SQLGenerator;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
@@ -388,7 +389,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         final Text key = new Text(compDynamic, SWT.LEFT | SWT.SINGLE | SWT.BORDER);
         props.setLook(key);
         BusinessColumn primaryKey = hierarchy.getPrimaryKey();
-        key.setText(primaryKey.getDisplayName(locale)+" : "+primaryKey.getFunctionTableAndColumnForSQL(metaEditor.getSchemaMeta().getActiveModel(), locale)); //$NON-NLS-1$
+        key.setText(primaryKey.getDisplayName(locale)+" : "+ SQLGenerator.getBusinessColumnSQL(metaEditor.getSchemaMeta().getActiveModel(), primaryKey, null, locale)); //$NON-NLS-1$
         key.setToolTipText(Messages.getString("MetaEditorOlap.USER_SELECTED_PRIMARY_KEY_COLUMN")); //$NON-NLS-1$
         key.setEditable(false);
         FormData fdKey = new FormData();
@@ -488,7 +489,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         final Text refColumn = new Text(compDynamic, SWT.BORDER | SWT.LEFT | SWT.SINGLE);
         props.setLook(refColumn);
         BusinessColumn referenceColumn = level.getReferenceColumn(); 
-        refColumn.setText(referenceColumn.getDisplayName(locale)+" : "+referenceColumn.getFunctionTableAndColumnForSQL(metaEditor.getSchemaMeta().getActiveModel(), locale)); //$NON-NLS-1$
+        refColumn.setText(referenceColumn.getDisplayName(locale)+" : "+ SQLGenerator.getBusinessColumnSQL(metaEditor.getSchemaMeta().getActiveModel(), referenceColumn, referenceColumn.getBusinessTable().getPhysicalTable().getDatabaseMeta(), locale)); //$NON-NLS-1$
         refColumn.setEditable(false);
         refColumn.setToolTipText(Messages.getString("MetaEditorOlap.USER_REFERENCE_COLUMN_NAME")); //$NON-NLS-1$
         FormData fdRefColumn = new FormData();

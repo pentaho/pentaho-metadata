@@ -10,7 +10,7 @@
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to 
  * the license for the specific language governing your rights and limitations.
 */
-package org.pentaho.pms.schema;
+package org.pentaho.pms.mql;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,10 +31,14 @@ import org.jfree.formula.parser.ParseException;
 import org.jfree.formula.typing.coretypes.TextType;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.messages.Messages;
-import org.pentaho.pms.schema.dialect.FormulaTraversalInterface;
-import org.pentaho.pms.schema.dialect.SQLDialectInterface;
-import org.pentaho.pms.schema.dialect.SQLFunctionGeneratorInterface;
-import org.pentaho.pms.schema.dialect.SQLOperatorGeneratorInterface;
+import org.pentaho.pms.mql.dialect.FormulaTraversalInterface;
+import org.pentaho.pms.mql.dialect.SQLDialectInterface;
+import org.pentaho.pms.mql.dialect.SQLFunctionGeneratorInterface;
+import org.pentaho.pms.mql.dialect.SQLOperatorGeneratorInterface;
+import org.pentaho.pms.schema.BusinessCategory;
+import org.pentaho.pms.schema.BusinessColumn;
+import org.pentaho.pms.schema.BusinessModel;
+import org.pentaho.pms.schema.BusinessTable;
 
 import be.ibridge.kettle.core.database.DatabaseMeta;
 
@@ -51,7 +55,7 @@ import be.ibridge.kettle.core.database.DatabaseMeta;
  * 
  * @author Will Gorman (wgorman@pentaho.org)
  * 
- * @see WhereCondition
+ * @see org.pentaho.pms.mql.WhereCondition
  * @see BusinessColumn
  */
 public class PMSFormula implements FormulaTraversalInterface {
@@ -213,6 +217,22 @@ public class PMSFormula implements FormulaTraversalInterface {
     }
   }
 
+  protected DatabaseMeta getDatabaseMeta() {
+    return databaseMeta;
+  }
+  
+  protected BusinessTable getBusinessTable() {
+    return table;
+  }
+  
+  protected BusinessModel getBusinessModel() {
+    return model;
+  }
+  
+  protected Map getBusinessColumnMap() {
+    return businessColumnMap;
+  }
+  
   /**
    * parse and validate formula, including resolving all fields
    * 
@@ -255,7 +275,7 @@ public class PMSFormula implements FormulaTraversalInterface {
    * 
    * @throws PentahoMetadataException if field cannot be resolved
    */
-  private void addField(String fieldName) throws PentahoMetadataException {
+  protected void addField(String fieldName) throws PentahoMetadataException {
     
     if (fieldName == null) {
       throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0008_FIELDNAME_NULL", formulaString)); //$NON-NLS-1$
@@ -467,26 +487,7 @@ public class PMSFormula implements FormulaTraversalInterface {
       }
     } else if (val instanceof ContextLookup) {
       ContextLookup l = (ContextLookup)val;
-      BusinessColumn column = (BusinessColumn)businessColumnMap.get(l.getName());
-      if (column == null) {
-        // we have a physical column function, we need to evaluate it
-        // in a special way due to aggregations and such
-        
-        String tableColumn = ""; //$NON-NLS-1$
-        sb.append(" "); //$NON-NLS-1$
-        
-        // Todo: WPG: is this correct?  shouldn't we be getting an alias for the table vs. it's display name?
-        sb.append(databaseMeta.quoteField(table.getDisplayName(locale)));
-        sb.append("."); //$NON-NLS-1$
-        sb.append(databaseMeta.quoteField(l.getName()));
-        sb.append(" "); //$NON-NLS-1$
-        
-      } else {
-        // render the column sql
-        sb.append(" "); //$NON-NLS-1$
-        sb.append(column.getFunctionTableAndColumnForSQL(model, databaseMeta, locale));
-        sb.append(" "); //$NON-NLS-1$
-      }
+      renderContextLookup(sb, l.getName(), locale);
     } else if (val instanceof StaticValue) {
       StaticValue v = (StaticValue)val;
       
@@ -517,6 +518,29 @@ public class PMSFormula implements FormulaTraversalInterface {
       }
     } else {
       throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0016_CLASS_TYPE_NOT_SUPPORTED", val.getClass().toString())); //$NON-NLS-1$
+    }
+  }
+
+  protected void renderContextLookup(StringBuffer sb, String contextName, String locale) {
+    BusinessColumn column = (BusinessColumn)businessColumnMap.get(contextName);
+    if (column == null) {
+      // we have a physical column function, we need to evaluate it
+      // in a special way due to aggregations and such
+      
+      String tableColumn = ""; //$NON-NLS-1$
+      sb.append(" "); //$NON-NLS-1$
+      
+      // Todo: WPG: is this correct?  shouldn't we be getting an alias for the table vs. it's display name?
+      sb.append(databaseMeta.quoteField(table.getDisplayName(locale)));
+      sb.append("."); //$NON-NLS-1$
+      sb.append(databaseMeta.quoteField(contextName));
+      sb.append(" "); //$NON-NLS-1$
+      
+    } else {
+      // render the column sql
+      sb.append(" "); //$NON-NLS-1$
+      sb.append(SQLGenerator.getBusinessColumnSQL(model, column, databaseMeta, locale));
+      sb.append(" "); //$NON-NLS-1$
     }
   }
   

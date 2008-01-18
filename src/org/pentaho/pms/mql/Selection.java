@@ -9,21 +9,30 @@
  * Software distributed under the Mozilla Public License is distributed on an "AS IS" 
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to 
  * the license for the specific language governing your rights and limitations.
-*/
-package org.pentaho.pms.schema.dialect;
+ */
+package org.pentaho.pms.mql;
+
+import org.pentaho.pms.schema.BusinessColumn;
 
 /**
- * This method manages the generation of the SQL for a specific function.
- *  
+ * This class defines an MQL selection
+ * 
  * @author Will Gorman (wgorman@pentaho.org)
- *
  */
-public interface SQLOperatorGeneratorInterface {
+public class Selection {
+ 
+  protected BusinessColumn businessColumn;
   
+  public Selection(BusinessColumn businessColumn) {
+    this.businessColumn = businessColumn;
+  }
+ 
   /**
-   * return the sql for this operator
+   * get the selected business column
    * 
-   * @return sql
+   * @return business column
    */
-  public String getOperatorSQL();
+  public BusinessColumn getBusinessColumn() {
+    return businessColumn;
+  }
 }

@@ -10,7 +10,7 @@
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to 
  * the license for the specific language governing your rights and limitations.
 */
-package org.pentaho.pms.schema.dialect;
+package org.pentaho.pms.mql.dialect;
 
 /**
  * This interface defines how specific SQL dialects interact with the metadata 

@@ -10,33 +10,20 @@
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to 
  * the license for the specific language governing your rights and limitations.
 */
-package org.pentaho.pms.schema.dialect;
+package org.pentaho.pms.mql.dialect;
 
 /**
- * MS Access implementation of Metadata SQL Dialect
+ * This method manages the generation of the SQL for a specific function.
  *  
  * @author Will Gorman (wgorman@pentaho.org)
  *
  */
-public class MSAccessDialect extends DefaultSQLDialect {
+public interface SQLOperatorGeneratorInterface {
   
   /**
-   * constructor
-   */
-  public MSAccessDialect() {
-    super("MSACCESS"); //$NON-NLS-1$
-  }
-  
-  /**
-   * return MS Access formatsted date, #MM/DD/YYYY#
+   * return the sql for this operator
    * 
-   * @param year 
-   * @param month
-   * @param day
-   * 
-   * @return date string
+   * @return sql
    */
-  public String getDateSQL(int year, int month, int day) {
-    return "#" + displayAsTwoOrMoreDigits(month) + "/" + displayAsTwoOrMoreDigits(day) + "/" + year + "#"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-  }
+  public String getOperatorSQL();
 }
