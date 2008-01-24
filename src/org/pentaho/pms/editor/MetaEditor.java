@@ -342,6 +342,7 @@ public class MetaEditor implements SelectionListener{
 
     shell.layout();
     getMainListener().handleEvent(null); // Force everything to match the current state
+
     disp.addFilter(SWT.KeyDown, new Listener(){
       public void handleEvent(Event arg0) {
         if ((arg0.keyCode == 'o')
@@ -349,7 +350,7 @@ public class MetaEditor implements SelectionListener{
           toggleOlapTab();
         }
       }
-    });
+	});
   }
 
   private void initGlobalKeyBindings() {
@@ -2339,6 +2340,8 @@ public class MetaEditor implements SelectionListener{
     tiTabsLocale.setControl(metaEditorLocales);
     tiTabsLog.setControl(metaEditorLog);
 
+    toggleOlapTab();
+    
     tabfolder.setSelection(0);
 
     sashform.addKeyListener(defKeys);

@@ -51,6 +51,7 @@ import org.pentaho.pms.util.GUIResource;
 
 import be.ibridge.kettle.core.ColumnInfo;
 import be.ibridge.kettle.core.Props;
+import be.ibridge.kettle.core.database.DatabaseMeta;
 import be.ibridge.kettle.core.dialog.EnterSelectionDialog;
 import be.ibridge.kettle.core.dialog.EnterStringDialog;
 import be.ibridge.kettle.core.widget.LabelText;
@@ -279,8 +280,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         apply.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent event) 
                 { 
                     dimension.setName(name.getText());
-                    refreshScreen();
-                    selectTreeItem(new String[] { STRING_DIMENSIONS, dimension.getName() });
+                    refreshScreen(new String[] { STRING_DIMENSIONS, dimension.getName() });
                 } 
             } 
         );
@@ -335,8 +335,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         apply.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent event) 
                 { 
                     hierarchy.setName(name.getText()); 
-                    refreshScreen();
-                    selectTreeItem(new String[] { STRING_DIMENSIONS, hierarchy.getOlapDimension().getName(), hierarchy.getName() });
+                    refreshScreen(new String[] { STRING_DIMENSIONS, hierarchy.getOlapDimension().getName(), hierarchy.getName() });
                 } 
             } 
         );
@@ -389,7 +388,9 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         final Text key = new Text(compDynamic, SWT.LEFT | SWT.SINGLE | SWT.BORDER);
         props.setLook(key);
         BusinessColumn primaryKey = hierarchy.getPrimaryKey();
-        key.setText(primaryKey.getDisplayName(locale)+" : "+ SQLGenerator.getBusinessColumnSQL(metaEditor.getSchemaMeta().getActiveModel(), primaryKey, null, locale)); //$NON-NLS-1$
+        DatabaseMeta databaseMeta = hierarchy.getPrimaryKey().getPhysicalColumn().getTable().getDatabaseMeta();
+        String columnSQL = SQLGenerator.getBusinessColumnSQL(metaEditor.getSchemaMeta().getActiveModel(), primaryKey, databaseMeta, locale);
+        key.setText(primaryKey.getDisplayName(locale)+" : "+Const.NVL(columnSQL,"?") ); //$NON-NLS-1$
         key.setToolTipText(Messages.getString("MetaEditorOlap.USER_SELECTED_PRIMARY_KEY_COLUMN")); //$NON-NLS-1$
         key.setEditable(false);
         FormData fdKey = new FormData();
@@ -426,7 +427,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         fdAdd.left = new FormAttachment(0,0);
         fdAdd.top  = new FormAttachment(all, 10*margin);
         add.setLayoutData(fdAdd);
-        
+        	
         Button remove = new Button(compDynamic, SWT.PUSH);
         remove.setText(Messages.getString("MetaEditorOlap.USER_REMOVE_HIERARCHY")); //$NON-NLS-1$
         remove.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent event) { removeHierarchy(hierarchy); } });
@@ -458,8 +459,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         apply.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent event) 
                 { 
                     level.setName(name.getText()); 
-                    refreshScreen();
-                    selectTreeItem(new String[] { STRING_DIMENSIONS, level.getOlapHierarchy().getOlapDimension().getName(), level.getOlapHierarchy().getName(), level.getName() });
+                    refreshScreen(new String[] { STRING_DIMENSIONS, level.getOlapHierarchy().getOlapDimension().getName(), level.getOlapHierarchy().getName(), level.getName() });
                 } 
             } 
         );
@@ -569,7 +569,6 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         fdRemove.left = new FormAttachment(del, 2*margin);
         fdRemove.top  = new FormAttachment(columns, 10*margin);
         remove.setLayoutData(fdRemove);
-
     }
 
     private void showCube(final OlapCube olapCube, final String locale)
@@ -582,8 +581,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         apply.addSelectionListener(new SelectionAdapter() { public void widgetSelected(SelectionEvent event) 
                 { 
                     olapCube.setName(name.getText()); 
-                    refreshScreen();
-                    selectTreeItem(new String[] { STRING_CUBES, olapCube.getName() });
+                    refreshScreen(new String[] { STRING_CUBES, olapCube.getName() });
                 } 
             } 
         );
@@ -741,10 +739,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
                 cube.getOlapDimensionUsages().add(usage);
             }
             
-            refreshScreen();
-            
-            String path[] = new String[] { STRING_CUBES, cube.getName() };
-            selectTreeItem(path);
+            refreshScreen(new String[] { STRING_CUBES, cube.getName() });
         }
 
     }
@@ -763,9 +758,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
                 cube.setChanged();
             }
         }
-        refreshScreen();
-        String path[] = new String[] { STRING_CUBES, cube.getName() };
-        selectTreeItem(path);
+        refreshScreen(new String[] { STRING_CUBES, cube.getName() });
     }
 
     protected void newCubeMeasure(OlapCube cube, String locale)
@@ -789,10 +782,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
                 cube.getOlapMeasures().add(measure);
             }
             
-            refreshScreen();
-            
-            String path[] = new String[] { STRING_CUBES, cube.getName() };
-            selectTreeItem(path);
+            refreshScreen(new String[] { STRING_CUBES, cube.getName() });
         }
     }
 
@@ -806,9 +796,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
             int idx = cube.getOlapMeasures().indexOf(measure[i]);
             if (idx>=0) cube.getOlapMeasures().remove(idx);
         }
-        refreshScreen();
-        String path[] = new String[] { STRING_CUBES, cube.getName() };
-        selectTreeItem(path);
+        refreshScreen(new String[] { STRING_CUBES, cube.getName() });
     }
 
     protected void refreshCubeDimensions(OlapCube cube, TableView dimensions, String locale)
@@ -891,8 +879,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
             TreeMemory.getInstance().storeExpanded(STRING_OLAP_TREE, path, true);
             path = new String[] { STRING_DIMENSIONS, dimensionName };
             TreeMemory.getInstance().storeExpanded(STRING_OLAP_TREE, path, true);
-            refreshScreen();  
-            selectTreeItem(path);
+            refreshScreen(path);  
         }
     }
     
@@ -954,8 +941,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
                     
                     String path[] = new String[] { STRING_DIMENSIONS, olapDimension.getName() };
                     TreeMemory.getInstance().storeExpanded(STRING_OLAP_TREE, path, true);
-                    refreshScreen();
-                    selectTreeItem(path);
+                    refreshScreen(path);
                 }
             }
         }
@@ -971,8 +957,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
             olapDimension.setChanged();
         }
         String[] path = new String[] { STRING_DIMENSIONS, olapHierarchy.getOlapDimension().getName(), olapHierarchy.getName() };
-        refreshScreen();
-        selectTreeItem(path);
+        refreshScreen(path);
     }
 
 
@@ -1003,8 +988,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
             
             String path[] = new String[] { STRING_DIMENSIONS, dimension.getName(), olapHierarchy.getName() };
             TreeMemory.getInstance().storeExpanded(STRING_OLAP_TREE, path, true);
-            refreshScreen();      
-            selectTreeItem(path);
+            refreshScreen(path);      
         }
     }
     
@@ -1021,8 +1005,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         }
         
         String[] path = new String[] { STRING_DIMENSIONS, level.getOlapHierarchy().getOlapDimension().getName(), level.getOlapHierarchy().getName() };
-        refreshScreen();
-        selectTreeItem(path);
+        refreshScreen(path);
     }
 
     protected void addColumns(OlapHierarchyLevel level, String locale)
@@ -1049,8 +1032,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
             
             String[] path = new String[] { STRING_DIMENSIONS, dimension.getName(), hierarchy.getName(), level.getName() };
             TreeMemory.getInstance().storeExpanded(STRING_OLAP_TREE, path, true);
-            refreshScreen();
-            selectTreeItem(path);
+            refreshScreen(path);
         }
     }
     
@@ -1071,8 +1053,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         OlapHierarchy hierarchy = level.getOlapHierarchy();
         OlapDimension dimension = hierarchy.getOlapDimension();
         String[] path = new String[] { STRING_DIMENSIONS, dimension.getName(), hierarchy.getName(), level.getName() };
-        refreshScreen();
-        selectTreeItem(path);
+        refreshScreen(path);
     }
 
 
@@ -1100,8 +1081,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
             TreeMemory.getInstance().storeExpanded(STRING_OLAP_TREE, path, true);
             path = new String[] { STRING_CUBES, cubeName };
             TreeMemory.getInstance().storeExpanded(STRING_OLAP_TREE, path, true);
-            refreshScreen();  
-            selectTreeItem(path);
+            refreshScreen(path);  
         }
     }
     
@@ -1141,7 +1121,11 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
 		return "MetaEditorOlap"; //$NON-NLS-1$
 	}
     
-    public void refreshScreen()
+    public void refreshScreen() {
+    	refreshScreen(null);
+    }
+    
+    public void refreshScreen(String[] path)
     {
         tiDimensions.removeAll();
         tiCubes.removeAll();
@@ -1162,7 +1146,10 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         }
         
         metaEditor.setShellText(); // changed flag.
-        showDynamicComposite();
+        if (path!=null) {
+        	selectTreeItem(path);
+        	showDynamicComposite();
+        }
     }
 
     private void refreshTree(BusinessModel activeModel, String locale)
