@@ -21,6 +21,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ResourceBundle;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -145,6 +146,19 @@ public class PublishDialog extends TitleAreaDialog {
     data.grabExcessHorizontalSpace = true;
     data.minimumWidth = 300;
     tPublishPassword.setLayoutData (data);
+    // Add code to check for a properties file containing the default
+    // publish password. For this to work, the file needs to be located in the
+    // lib directory if it is to be found.
+    try {
+      ResourceBundle bundle = ResourceBundle.getBundle("publishpassword"); //$NON-NLS-1$
+      String defaultPassword = bundle.getString("default.password"); //$NON-NLS-1$
+      if ( (defaultPassword != null) && (defaultPassword.length() > 0) ) {
+        // System.out.println("Default Password:" + defaultPassword);
+        tPublishPassword.setText(defaultPassword);
+      }
+    } catch (Exception ex) {
+      // No publishpassword.properties
+    }
 
     Label label6 = new Label (c1, SWT.NONE);
     label6.setText (Messages.getString("PublishDialog.LABEL_USER"));
