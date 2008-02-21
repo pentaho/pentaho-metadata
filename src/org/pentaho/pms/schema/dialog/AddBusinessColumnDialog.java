@@ -70,7 +70,7 @@ public class AddBusinessColumnDialog extends TitleAreaDialog {
     GridData gdContainer = new GridData(GridData.FILL_BOTH);
     container.setLayoutData(gdContainer);
 
-    businessColumnList = new org.eclipse.swt.widgets.List(container, SWT.MULTI | SWT.BORDER);
+    businessColumnList = new org.eclipse.swt.widgets.List(container, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 
     businessColumnList.setItems(tableModel.getParentAsTableModel().getColumnNames(activeLocale));
 
