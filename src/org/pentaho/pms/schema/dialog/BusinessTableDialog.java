@@ -66,8 +66,8 @@ import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.schema.concept.editor.BusinessTableModel;
 import org.pentaho.pms.schema.concept.editor.PropertyNavigationWidget;
 import org.pentaho.pms.schema.concept.editor.PropertyWidgetManager2;
+import org.pentaho.pms.util.ObjectAlreadyExistsException;
 
-import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
 
 public class BusinessTableDialog extends AbstractTableDialog implements SelectionListener {
 
@@ -79,7 +79,7 @@ public class BusinessTableDialog extends AbstractTableDialog implements Selectio
 
   private BusinessTable businessTable;
 
-  HashMap modificationsMap = new HashMap();
+  HashMap<Object,Object> modificationsMap = new HashMap<Object,Object>();
 
   
   protected void configureShell(final Shell shell) {
@@ -135,7 +135,7 @@ public class BusinessTableDialog extends AbstractTableDialog implements Selectio
   }
 
 
-  protected void okPressed() {
+  protected void okPressed(){
     try {
       if (lastSelection != null) {
         String id = conceptIdText.getText();
@@ -198,8 +198,8 @@ public class BusinessTableDialog extends AbstractTableDialog implements Selectio
     }
     
     // Remove any columns from the original physical table that were removed from the working copy.
-    ArrayList entriesToRemove = new ArrayList();
-    Set entrySet = modificationsMap.entrySet();
+    ArrayList<Map.Entry> entriesToRemove = new ArrayList<Map.Entry>();
+    Set<Map.Entry<Object,Object>> entrySet = modificationsMap.entrySet();
     for (Iterator iterator = entrySet.iterator(); iterator.hasNext();) {
       boolean found = false;
       Map.Entry entry = (Map.Entry)iterator.next();

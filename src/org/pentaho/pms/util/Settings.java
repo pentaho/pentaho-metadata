@@ -12,9 +12,8 @@
 */
 package org.pentaho.pms.util;
 
+import org.pentaho.di.core.Props;
 import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
-
-import be.ibridge.kettle.core.Props;
 
 public class Settings
 {

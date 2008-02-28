@@ -27,8 +27,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.pentaho.pms.schema.concept.ConceptInterface;
+import org.pentaho.pms.util.ObjectAlreadyExistsException;
 
-import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
 
 public class ConceptEditorDialog extends Dialog {
 
@@ -50,7 +50,7 @@ public class ConceptEditorDialog extends Dialog {
 
   protected ConceptModelRegistry conceptModelRegistry = new ConceptModelRegistry();
 
-  protected Map cards = new HashMap();
+  protected Map<ConceptInterface,Composite> cards = new HashMap<ConceptInterface,Composite>();
 
   protected Control defaultCard;
 

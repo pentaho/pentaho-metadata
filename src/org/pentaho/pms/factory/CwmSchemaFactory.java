@@ -27,6 +27,10 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.pentaho.di.core.NotePadMeta;
+import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.di.core.exception.KettleDatabaseException;
+import org.pentaho.di.core.exception.KettleXMLException;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.cwm.pentaho.meta.behavioral.CwmEvent;
 import org.pentaho.pms.cwm.pentaho.meta.behavioral.CwmParameter;
@@ -100,12 +104,7 @@ import org.pentaho.pms.schema.security.Security;
 import org.pentaho.pms.schema.security.SecurityReference;
 import org.pentaho.pms.schema.security.SecurityService;
 import org.pentaho.pms.util.Const;
-
-import be.ibridge.kettle.core.NotePadMeta;
-import be.ibridge.kettle.core.database.DatabaseMeta;
-import be.ibridge.kettle.core.exception.KettleDatabaseException;
-import be.ibridge.kettle.core.exception.KettleXMLException;
-import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
+import org.pentaho.pms.util.ObjectAlreadyExistsException;
 
 /**
  * This class is responsible for converting between the Schema metadata and the CWM
@@ -518,7 +517,8 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
 
         // Load the column data...
         //
-        Collection columnsCollection = cwmTable.getOwnedElement();
+        @SuppressWarnings("unchecked")
+        Collection<CwmColumn> columnsCollection = cwmTable.getOwnedElement();
         if (columnsCollection!=null)
         {
             CwmColumn[] columns = (CwmColumn[]) columnsCollection.toArray(new CwmColumn[columnsCollection.size()]);
@@ -575,7 +575,9 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         // Store all properties...
         storeConceptProperties(cwm, column, physicalColumn.getConcept());
                         
-        cwmTable.getOwnedElement().add(column);    
+        @SuppressWarnings("unchecked")
+        Collection<CwmColumn> c = cwmTable.getOwnedElement();
+        c.add(column);    
     }
     
     /**
@@ -637,7 +639,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         
         // Save all the attributes as well...
         //
-        List list = new ArrayList( databaseMeta.getAttributes().keySet() );
+        List<Object> list = new ArrayList<Object>( databaseMeta.getAttributes().keySet() );
         for (Iterator iter = list.iterator(); iter.hasNext();)
         {
             String key = (String) iter.next();
@@ -789,7 +791,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
      * @param schemaMeta
      * @return a newly created Business Model
      */
-    public BusinessModel getBusinessModel(CWM cwm, CwmSchema cwmSchema, SchemaMeta schemaMeta)
+    public BusinessModel getBusinessModel(CWM cwm, CwmSchema cwmSchema, SchemaMeta schemaMeta) 
     {
         // The name?
         BusinessModel businessModel = new BusinessModel(cwmSchema.getName());
@@ -920,7 +922,9 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         
         // The physical table name?
         String physicalTablename = businessTable.getPhysicalTable().getId();
-        cwmDimension.getTaggedValue().add(cwm.createTaggedValue(CWM.TAG_BUSINESS_TABLE_PHYSICAL_TABLE_NAME, physicalTablename));
+        @SuppressWarnings("all")
+        Collection<CwmTaggedValue> cg = cwmDimension.getTaggedValue();
+        cg.add(cwm.createTaggedValue(CWM.TAG_BUSINESS_TABLE_PHYSICAL_TABLE_NAME, physicalTablename));
         
         // The location, etc: GUI elements...
         //
@@ -948,7 +952,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
      * @param schemaMeta
      * @return a newly created BusinessTable
      */
-    public BusinessTable getBusinessTable(CWM cwm, CwmDimension cwmDimension, SchemaMeta schemaMeta, BusinessModel businessModel)
+    public BusinessTable getBusinessTable(CWM cwm, CwmDimension cwmDimension, SchemaMeta schemaMeta, BusinessModel businessModel) 
     {
         BusinessTable businessTable = new BusinessTable(cwmDimension.getName());
         businessTable.addIDChangedListener(ConceptUtilityBase.createIDChangedListener(businessModel.getBusinessTables()));
@@ -1026,19 +1030,25 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         CwmDimensionedObject cwmDimensionedObject = cwm.createDimensionedObject(businessColumn.getId());
         cwmDimensionedObject.setSchema(cwmSchema);
         
+        @SuppressWarnings("all")
+        Collection<CwmTaggedValue> c = cwmDimensionedObject.getTaggedValue();
+        
         // store the physical column name...
         String physicalColumnName = businessColumn.getPhysicalColumn().getId();
-        cwmDimensionedObject.getTaggedValue().add(cwm.createTaggedValue(CWM.TAG_BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME, physicalColumnName));
+        c.add(cwm.createTaggedValue(CWM.TAG_BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME, physicalColumnName));
         
         // Store the name of the business table as well, just for reference
         String businessTableName = businessColumn.getBusinessTable().getId();
-        cwmDimensionedObject.getTaggedValue().add(cwm.createTaggedValue(CWM.TAG_BUSINESS_COLUMN_BUSINESS_TABLE, businessTableName));
+        c.add(cwm.createTaggedValue(CWM.TAG_BUSINESS_COLUMN_BUSINESS_TABLE, businessTableName));
         
         // And store the business column properties
         storeConceptProperties(cwm, cwmDimensionedObject, businessColumn.getConcept());
         
         // Add to the dimension
-        cwmDimension.getDimensionedObject().add(cwmDimensionedObject);
+        @SuppressWarnings("all")
+        Collection<CwmDimensionedObject> cd = cwmDimension.getDimensionedObject();
+        
+        cd.add(cwmDimensionedObject);
     }
     
     /**
@@ -1098,7 +1108,8 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         throw new CwmSchemaFactoryException(Messages.getString("CwmSchemaFactory.ERROR_0001_SCHEMA_ADMIN_ACCESS_DENIED")); //$NON-NLS-1$
       }
         CwmKeyRelationship relationship = cwm.createRelationship();
-        Collection pairs = relationship.getTaggedValue();
+        @SuppressWarnings("unchecked")
+        Collection<CwmTaggedValue> pairs = relationship.getTaggedValue();
                 
         // Parent table
         if (relationshipMeta.getTableFrom()!=null) 
@@ -1141,7 +1152,9 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         pairs.add(cwm.createTaggedValue(CWM.TAG_RELATIONSHIP_TYPE, relationshipMeta.getTypeDesc()));
         
         // add the relationship to the schema 
-        cwmSchema.getOwnedElement().add(relationship);
+        @SuppressWarnings("unchecked")
+        Collection<CwmKeyRelationship> cr = cwmSchema.getOwnedElement();
+        cr.add(relationship);
     }
 
     /**
@@ -1157,7 +1170,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         
         // From which to which table are we building a relationship?
         // Parent = From, Child = to
-        //
+        
         String parentTable = CWM.findFirstTaggedValue(relationship.getTaggedValue(), CWM.TAG_RELATIONSHIP_TABLENAME_PARENT);
         String childTable =  CWM.findFirstTaggedValue(relationship.getTaggedValue(), CWM.TAG_RELATIONSHIP_TABLENAME_CHILD);
         
@@ -1281,7 +1294,10 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         String isRoot = (parent==null)?"Y":"N"; //$NON-NLS-1$ //$NON-NLS-2$
 
         // Store a ROOT flag to know where to start later on.
-        cwmExtent.getTaggedValue().add( cwm.createTaggedValue(CWM.TAG_BUSINESS_CATEGORY_ROOT, isRoot) );
+        
+        @SuppressWarnings("unchecked")
+        Collection<CwmTaggedValue> cat = cwmExtent.getTaggedValue();
+        cat.add( cwm.createTaggedValue(CWM.TAG_BUSINESS_CATEGORY_ROOT, isRoot) );
 
         // Store the concept properties as well
         storeConceptProperties(cwm, cwmExtent, businessCategory.getConcept());
@@ -1296,16 +1312,27 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
 
             // Just take a model element and store it into this it.
             CwmAttribute cwmAttribute = cwm.createAttribute(businessColumn.getId());
-            cwmAttribute.getTaggedValue().add(cwm.createTaggedValue(CWM.TAG_BUSINESS_CATEGORY_TYPE, CWM.VALUE_BUSINESS_TYPE_COLUMN));
-            cwmExtent.getOwnedElement().add(cwmAttribute);
+            @SuppressWarnings("unchecked")
+            Collection<CwmTaggedValue> ct = cwmAttribute.getTaggedValue();
+            
+            ct.add(cwm.createTaggedValue(CWM.TAG_BUSINESS_CATEGORY_TYPE, CWM.VALUE_BUSINESS_TYPE_COLUMN));
+            
+            @SuppressWarnings("unchecked")
+            Collection<CwmAttribute> ca = cwmExtent.getOwnedElement();
+            ca.add(cwmAttribute);
         }
         
         // Now store the sub-categories...
         for (int i=0;i<businessCategory.nrBusinessCategories();i++)
         {
             CwmExtent childCwmExtent = storeBusinessCategory(cwm, businessCategory.getBusinessCategory(i), cwmExtent, cwmSchema);
-            childCwmExtent.getTaggedValue().add(cwm.createTaggedValue(CWM.TAG_BUSINESS_CATEGORY_TYPE, CWM.VALUE_BUSINESS_TYPE_COLUMN));
-            cwmExtent.getOwnedElement().add(childCwmExtent);
+            @SuppressWarnings("unchecked")
+            Collection<CwmTaggedValue> cac = childCwmExtent.getTaggedValue();
+            cac.add(cwm.createTaggedValue(CWM.TAG_BUSINESS_CATEGORY_TYPE, CWM.VALUE_BUSINESS_TYPE_COLUMN));
+            
+            @SuppressWarnings("unchecked")
+            Collection<CwmExtent> cao = cwmExtent.getOwnedElement();
+            cao.add(childCwmExtent);
         }
         
         return cwmExtent;
@@ -2093,7 +2120,9 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                 CwmCubeDimensionAssociation cwmCubeDimensionAssociation = cwm.createCubeDimensionAssocation(usage.getName());
                 cwmCubeDimensionAssociation.setCube(cwmOlapCube);
                 cwmCubeDimensionAssociation.setDimension(cwmOlapDimension);
-                cwmOlapCube.getCubeDimensionAssociation().add(cwmCubeDimensionAssociation);
+                @SuppressWarnings("all")
+                Collection<CwmCubeDimensionAssociation> cu = cwmOlapCube.getCubeDimensionAssociation();
+                cu.add(cwmCubeDimensionAssociation);
             }
         }
         
@@ -2105,11 +2134,15 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
             
             CwmMeasure cwmMeasure = cwm.createMeasure(olapMeasure.getName());
             cwm.addTaggedValue(cwmMeasure, CWM.TAG_MEASURE_BUSINESS_COLUMN, olapMeasure.getBusinessColumn().getId());
+            @SuppressWarnings("all")
+            Collection<CwmMeasure> cu = cwmOlapCube.getOwnedElement();
             
-            cwmOlapCube.getOwnedElement().add(cwmMeasure); // Not sure if this is the right thing to do
+            cu.add(cwmMeasure); // Not sure if this is the right thing to do
         }
         
-        cwmOlapSchema.getCube().add(cwmOlapCube);
+        @SuppressWarnings("all")
+        Collection<CwmCube> cu = cwmOlapSchema.getCube();
+        cu.add(cwmOlapCube);
     }
     
     
@@ -2180,7 +2213,9 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         }
         
         // Add this dimension to the OLAP schema
-        cwmOlapSchema.getDimension().add(cwmOlapDimension);
+        @SuppressWarnings("all")
+        Collection<org.pentaho.pms.cwm.pentaho.meta.olap.CwmDimension> cd = cwmOlapSchema.getDimension();
+        cd.add(cwmOlapDimension);
     }
 
 
@@ -2228,7 +2263,9 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
             storeOlapHierarchyLevel(cwm, level, cwmHierarchy, cwmOlapDimension);
         }
         
-        cwmOlapDimension.getHierarchy().add(cwmHierarchy);
+        @SuppressWarnings("all")
+        Collection<CwmLevelBasedHierarchy> ch = cwmOlapDimension.getHierarchy();
+        ch.add(cwmHierarchy);
     }
 
     public OlapHierarchy getOlapHierarchy(CWM cwm, CwmLevelBasedHierarchy cwmHierarchy, OlapDimension olapDimension, BusinessModel businessModel)
@@ -2272,7 +2309,9 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         cwmHierarchyLevelAssociation.setCurrentLevel(cwmLevel);
 
         // Add it to the list: no need, this is already done.
-        cwmLevelBasedHierarchy.getHierarchyLevelAssociation().add(cwmHierarchyLevelAssociation);
+        @SuppressWarnings("all")
+        Collection<CwmHierarchyLevelAssociation> ch = cwmLevelBasedHierarchy.getHierarchyLevelAssociation();
+        ch.add(cwmHierarchyLevelAssociation);
 
         // Now also save the other attributes of the level... (excluding the columns)
         // Unique members flag
@@ -2288,7 +2327,9 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
             // We want the reference to the business columns that were saved earlier.
             // Let's create new ones and save the ID's of the columns
             CwmDimensionedObject cwmDimensionedObject = cwm.createDimensionedObject(businessColumn.getId());
-            cwmLevel.getOwnedElement().add(cwmDimensionedObject);
+            @SuppressWarnings("unchecked")
+            Collection<CwmDimensionedObject> c = cwmLevel.getOwnedElement();
+            c.add(cwmDimensionedObject);
         }
     }
 

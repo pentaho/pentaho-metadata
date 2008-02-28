@@ -22,14 +22,13 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.pentaho.di.core.changed.ChangedFlag;
+import org.pentaho.di.ui.core.PropsUI;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyWidgetInterface;
 import org.pentaho.pms.util.Const;
-
-import be.ibridge.kettle.core.ChangedFlag;
-import be.ibridge.kettle.core.Props;
 
 public class ConceptPropertyAlignmentWidget extends ChangedFlag implements ConceptPropertyWidgetInterface
 {
@@ -90,9 +89,9 @@ public class ConceptPropertyAlignmentWidget extends ChangedFlag implements Conce
     }
     
 
-    public static final Control getControl(Composite composite, ConceptInterface concept, final String name, Control lastControl, Map conceptPropertyInterfaces)
+    public static final Control getControl(Composite composite, ConceptInterface concept, final String name, Control lastControl, Map<String,ConceptPropertyWidgetInterface> conceptPropertyInterfaces)
     {
-        Props props = Props.getInstance();
+        PropsUI props = PropsUI.getInstance();
         ConceptPropertyInterface property = concept.getProperty(name);
 
         final CCombo combo = new CCombo(composite, SWT.BORDER);

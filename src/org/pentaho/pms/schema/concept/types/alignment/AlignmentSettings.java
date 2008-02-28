@@ -39,7 +39,7 @@ public class AlignmentSettings
      * provides a mechanism for quickly getting the the integer value associated
      * with with the typeCode
      */
-    private static final HashMap typeCodeToAlignmentSettings = new HashMap( 4 );
+    private static final HashMap<String,AlignmentSettings> typeCodeToAlignmentSettings = new HashMap<String,AlignmentSettings>( 4 );
     static {
       typeCodeToAlignmentSettings.put( typeCodes[ TYPE_ALIGNMENT_LEFT ], LEFT );
       typeCodeToAlignmentSettings.put( typeCodes[ TYPE_ALIGNMENT_RIGHT ], RIGHT );

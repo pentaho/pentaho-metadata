@@ -40,6 +40,9 @@ import org.netbeans.api.xmi.XMIWriter;
 import org.netbeans.api.xmi.XMIWriterFactory;
 import org.netbeans.mdr.NBMDRepositoryImpl;
 import org.netbeans.mdr.persistence.btreeimpl.btreestorage.BtreeFactory;
+import org.pentaho.di.core.logging.LogWriter;
+import org.pentaho.di.core.row.RowMetaInterface;
+import org.pentaho.di.core.row.ValueMetaInterface;
 import org.pentaho.pms.core.exception.CWMException;
 import org.pentaho.pms.cwm.pentaho.PentahoPackage;
 import org.pentaho.pms.cwm.pentaho.meta.MetaPackage;
@@ -81,10 +84,6 @@ import org.pentaho.pms.cwm.pentaho.meta.relational.CwmTable;
 import org.pentaho.pms.cwm.pentaho.meta.relational.RelationalPackage;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.util.Const;
-
-import be.ibridge.kettle.core.LogWriter;
-import be.ibridge.kettle.core.Row;
-import be.ibridge.kettle.core.value.Value;
 
 
 /**
@@ -323,7 +322,7 @@ public class CWM
 
 
     
-    private static Map domains = Collections.synchronizedMap( new HashMap() );
+    private static Map<String,CWM> domains = Collections.synchronizedMap( new HashMap<String,CWM>() );
     
     private String domainName;
     
@@ -460,8 +459,10 @@ public class CWM
             // The system relies on properties set in the virtual machine (system wide)
             // 
             Properties systemProperties = System.getProperties();
-            Properties backup = new Properties();
-            backup.putAll((Map)systemProperties.clone());
+            Map<Object,Object> backup = new Properties();
+            @SuppressWarnings("all")
+            Map<Object,Object> m = (Map<Object,Object>)systemProperties.clone();
+            backup.putAll(m);
             
             systemProperties.putAll(properties);
             
@@ -549,7 +550,7 @@ public class CWM
     public static final String[] getDomainNames() throws CWMException
     {
         String ext[] = getRepositoryInstance().getExtentNames();
-        ArrayList domainNames = new ArrayList();
+        ArrayList<String> domainNames = new ArrayList<String>();
         
         for (int i = 0; i < ext.length; i++)
         {
@@ -647,14 +648,15 @@ public class CWM
         return table;
     }
     
-    public CwmTable createTable(String tableName, Row fields)
+    public CwmTable createTable(String tableName, RowMetaInterface fields)
     {
         CwmTable table = createTable(tableName);
-        Collection collection = table.getOwnedElement();
+        @SuppressWarnings("unchecked")
+        Collection<CwmColumn> collection = table.getOwnedElement();
         
         for (int i=fields.size()-1;i>=0;i--)  // Reversed order please!
         {
-            Value field = fields.getValue(i);
+        	ValueMetaInterface field = fields.getValueMeta(i);
             CwmColumn column = createColumn(field);
             collection.add(column);
         }
@@ -670,7 +672,7 @@ public class CWM
         return column;
     }
 
-    public CwmColumn createColumn(Value value)
+    public CwmColumn createColumn(ValueMetaInterface value)
     {
         CwmColumn column = relationalPackage.getCwmColumn().createCwmColumn();
         column.setName(value.getName());
@@ -680,7 +682,7 @@ public class CWM
         return column;
     }
 
-    public CwmDataType createDataType(Value value)
+    public CwmDataType createDataType(ValueMetaInterface value)
     {
         return createDataType(value.getTypeDesc());
     }
@@ -991,7 +993,8 @@ public class CWM
     
     public CwmTable[] getTables()
     {
-        Collection collection = relationalPackage.getCwmTable().refAllOfClass();
+    	@SuppressWarnings("unchecked")
+        Collection<CwmTable> collection = relationalPackage.getCwmTable().refAllOfClass();
         
         return (CwmTable[]) collection.toArray(new CwmTable[collection.size()]);
     }
@@ -1003,7 +1006,8 @@ public class CWM
     public CwmDescription[] getDescription(CwmModelElement modelElement)
     {
         ModelElementDescription modelElementDescription = businessInformationPackage.getModelElementDescription();
-        Collection collection = modelElementDescription.getDescription(modelElement);
+        @SuppressWarnings("unchecked")
+        Collection<CwmDescription> collection = modelElementDescription.getDescription(modelElement);
         
         return (CwmDescription[]) collection.toArray(new CwmDescription[collection.size()]); // There can be more than 1 description for a model element
     }
@@ -1013,7 +1017,8 @@ public class CWM
      */
     public CwmDescription[] getDescriptions()
     {
-        Collection descriptions = businessInformationPackage.getCwmDescription().refAllOfClass();
+    	@SuppressWarnings("all")
+        Collection<CwmDescription> descriptions = businessInformationPackage.getCwmDescription().refAllOfClass();
         return (CwmDescription[]) descriptions.toArray(new CwmDescription[descriptions.size()]);
     }
     
@@ -1022,7 +1027,8 @@ public class CWM
      */
     public CwmPackage[] getPackages()
     {
-        Collection packages = corePackage.getCwmPackage().refAllOfClass();
+    	@SuppressWarnings("all")
+        Collection<CwmPackage> packages = corePackage.getCwmPackage().refAllOfClass();
         return (CwmPackage[]) packages.toArray(new CwmPackage[packages.size()]);
     }
     
@@ -1045,7 +1051,8 @@ public class CWM
     
     public CwmTaggedValue[] getTaggedValues(CwmModelElement modelElement)
     {
-        Collection pairs = corePackage.getTaggedElement().getTaggedValue(modelElement);
+    	@SuppressWarnings("unchecked")
+        Collection<CwmTaggedValue> pairs = corePackage.getTaggedElement().getTaggedValue(modelElement);
         return (CwmTaggedValue[])pairs.toArray(new CwmTaggedValue[pairs.size()]);
     }
     
@@ -1062,7 +1069,7 @@ public class CWM
     {
         Collection pairs = corePackage.getTaggedElement().getTaggedValue(modelElement);
         CwmTaggedValue[] found = findTaggedValues(pairs, tag);
-        ArrayList strings = new ArrayList();
+        ArrayList<String> strings = new ArrayList<String>();
         for (int i = 0; i < found.length; i++)
         {
             strings.add(found[i].getValue());
@@ -1076,7 +1083,8 @@ public class CWM
      */
     public CwmCatalog[] getCatalogs()
     {
-        Collection catalogs = relationalPackage.getCwmCatalog().refAllOfClass();
+    	@SuppressWarnings("all")
+        Collection<CwmCatalog> catalogs = relationalPackage.getCwmCatalog().refAllOfClass();
         return (CwmCatalog[])catalogs.toArray(new CwmCatalog[catalogs.size()]);
     }
 
@@ -1103,7 +1111,7 @@ public class CWM
     
     public CwmKeyRelationship[] getRelationships(CwmSchema cwmSchema)
     {
-        List relationships = new ArrayList();
+        List<CwmKeyRelationship> relationships = new ArrayList<CwmKeyRelationship>();
         
         Collection allElements = cwmSchema.getOwnedElement();
         for (Iterator iter = allElements.iterator(); iter.hasNext();)
@@ -1111,7 +1119,7 @@ public class CWM
             Object element = iter.next();
             if (element instanceof CwmKeyRelationship)
             {
-                relationships.add(element);
+                relationships.add((CwmKeyRelationship)element);
             }
         }
         
@@ -1121,7 +1129,8 @@ public class CWM
 
     public CwmSchema[] getSchemas()
     {
-        Collection schemas = multiDimensionalPackage.getCwmSchema().refAllOfClass();
+    	@SuppressWarnings("unchecked")
+        Collection<CwmSchema> schemas = multiDimensionalPackage.getCwmSchema().refAllOfClass();
         return (CwmSchema[])schemas.toArray(new CwmSchema[schemas.size()]);
     }
     
@@ -1132,7 +1141,7 @@ public class CWM
      */
     public CwmDimension[] getDimensions(CwmSchema cwmSchema)
     {
-        List dimensions = new ArrayList();
+        List<CwmDimension> dimensions = new ArrayList<CwmDimension>();
         Collection allDimensions = multiDimensionalPackage.getCwmDimension().refAllOfClass();
         for (Iterator iter = allDimensions.iterator(); iter.hasNext();)
         {
@@ -1153,7 +1162,7 @@ public class CWM
      */
     public CwmExtent[] getRootExtents(CwmSchema cwmSchema)
     {
-        List extents = new ArrayList();
+        List<CwmExtent> extents = new ArrayList<CwmExtent>();
         Collection allExtents = instancePackage.getCwmExtent().refAllOfClass();
         for (Iterator iter = allExtents.iterator(); iter.hasNext();)
         {
@@ -1175,14 +1184,16 @@ public class CWM
     
     public CwmClass[] getClasses()
     {
-        Collection classes = corePackage.getCwmClass().refAllOfClass();
+    	@SuppressWarnings("unchecked")
+        Collection<CwmClass> classes = corePackage.getCwmClass().refAllOfClass();
         return (CwmClass[]) classes.toArray(new CwmClass[classes.size()]);
     }
     
 
     public CwmParameter[] getParameters()
     {
-        Collection parameters = behavioralPackage.getCwmParameter().refAllOfClass();
+    	@SuppressWarnings("unchecked")
+        Collection<CwmParameter> parameters = behavioralPackage.getCwmParameter().refAllOfClass();
         return (CwmParameter[]) parameters.toArray(new CwmParameter[parameters.size()]);
     }
     
@@ -1248,7 +1259,7 @@ public class CWM
     
     public static final CwmTaggedValue[] findTaggedValues(Collection pairs, String tag)
     {
-        ArrayList found = new ArrayList();
+        ArrayList<CwmTaggedValue> found = new ArrayList<CwmTaggedValue>();
         
         for (Iterator iter = pairs.iterator(); iter.hasNext();)
         {

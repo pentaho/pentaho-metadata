@@ -52,6 +52,10 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.pentaho.di.core.logging.LogWriter;
+import org.pentaho.di.ui.core.PropsUI;
+import org.pentaho.di.ui.core.gui.WindowProperty;
+import org.pentaho.di.ui.trans.step.BaseStepDialog;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
@@ -59,11 +63,6 @@ import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.RelationshipMeta;
 import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.GUIResource;
-
-import be.ibridge.kettle.core.LogWriter;
-import be.ibridge.kettle.core.Props;
-import be.ibridge.kettle.core.WindowProperty;
-import be.ibridge.kettle.trans.step.BaseStepDialog;
 
 public class RelationshipDialog extends Dialog {
   private Label wlFrom;
@@ -143,7 +142,7 @@ public class RelationshipDialog extends Dialog {
   }
 
   public Object open() {
-    Props props = Props.getInstance();
+    PropsUI props = PropsUI.getInstance();
     Shell parent = getParent();
     Display display = parent.getDisplay();
 
@@ -441,7 +440,7 @@ public class RelationshipDialog extends Dialog {
   }
 
   public void dispose() {
-    Props.getInstance().setScreen(new WindowProperty(shell));
+    PropsUI.getInstance().setScreen(new WindowProperty(shell));
     shell.dispose();
   }
 

@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.pentaho.pms.locale.Locales;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
@@ -39,8 +40,7 @@ import org.pentaho.pms.schema.concept.editor.ConceptModel;
 import org.pentaho.pms.schema.concept.editor.IConceptModel;
 import org.pentaho.pms.schema.concept.editor.PropertyNavigationWidget;
 import org.pentaho.pms.schema.concept.editor.PropertyWidgetManager2;
-
-import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
+import org.pentaho.pms.util.ObjectAlreadyExistsException;
 
 
 /***
@@ -52,7 +52,7 @@ import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
 public class BusinessCategoryDialog extends Dialog
 {
   private static final Log logger = LogFactory.getLog(BusinessCategoryDialog.class);
-  protected Map propertyEditorContext = new HashMap();
+  protected Map<String,Locales> propertyEditorContext = new HashMap<String,Locales>();
   private Text wId;
   private IConceptModel conceptModel;
   private ConceptUtilityInterface conceptUtil;

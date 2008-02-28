@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.pentaho.di.ui.core.PropsUI;
 import org.pentaho.pms.locale.LocaleMeta;
 import org.pentaho.pms.locale.Locales;
 import org.pentaho.pms.schema.SchemaMeta;
@@ -37,10 +38,8 @@ import org.pentaho.pms.schema.concept.types.localstring.ConceptPropertyLocalized
 import org.pentaho.pms.schema.concept.types.localstring.LocalizedStringSettings;
 import org.pentaho.pms.schema.concept.types.string.ConceptPropertyString;
 import org.pentaho.pms.util.Const;
+import org.pentaho.pms.util.ObjectAlreadyExistsException;
 
-import be.ibridge.kettle.core.Props;
-import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
-import be.ibridge.kettle.core.util.EnvUtil;
 
 public class ConceptEditorDialogTestApp extends ApplicationWindow {
   // ~ Static fields/initializers ======================================================================================
@@ -125,10 +124,9 @@ public class ConceptEditorDialogTestApp extends ApplicationWindow {
   }
 
   public void run() {
-    EnvUtil.environmentInit();
-    if (!Props.isInitialized()) {
+    if (!PropsUI.isInitialized()) {
       Const.checkPentahoMetadataDirectory();
-      Props.init(new Display(), Const.getPropertiesFile());
+      PropsUI.init(new Display(), Const.getPropertiesFile());
     }
     setBlockOnOpen(true);
     open();

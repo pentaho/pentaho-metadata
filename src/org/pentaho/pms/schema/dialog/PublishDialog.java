@@ -35,13 +35,12 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.pentaho.core.util.PublisherUtil;
+import org.pentaho.di.core.logging.LogWriter;
+import org.pentaho.di.ui.core.PropsUI;
+import org.pentaho.di.ui.core.gui.WindowProperty;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.SchemaMeta;
-
-import be.ibridge.kettle.core.LogWriter;
-import be.ibridge.kettle.core.Props;
-import be.ibridge.kettle.core.WindowProperty;
 
 /**
  * @author wseyler
@@ -51,7 +50,7 @@ public class PublishDialog extends TitleAreaDialog {
   private SchemaMeta schemaMeta;
   
   private LogWriter log;
-  private Props props;
+  private PropsUI props;
   
   private String serverURL;
   private String solutionName;
@@ -77,7 +76,7 @@ public class PublishDialog extends TitleAreaDialog {
     
     this.schemaMeta = schemaMeta;
     log = LogWriter.getInstance();
-    props = Props.getInstance();
+    props = PropsUI.getInstance();
   }
 
   protected Control createContents(Composite parent) {
@@ -158,6 +157,7 @@ public class PublishDialog extends TitleAreaDialog {
       }
     } catch (Exception ex) {
       // No publishpassword.properties
+      ex.printStackTrace();
     }
 
     Label label6 = new Label (c1, SWT.NONE);

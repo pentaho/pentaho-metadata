@@ -26,9 +26,9 @@ import org.pentaho.pms.schema.concept.types.columnwidth.ConceptPropertyColumnWid
 import org.pentaho.pms.schema.concept.types.localstring.ConceptPropertyLocalizedString;
 import org.pentaho.pms.schema.concept.types.localstring.LocalizedStringSettings;
 import org.pentaho.pms.schema.concept.types.string.ConceptPropertyString;
+import org.pentaho.pms.util.ObjectAlreadyExistsException;
 import org.pentaho.pms.util.Settings;
 
-import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
 
 /**
  * This is actually a model of a forest (set of trees).
@@ -56,13 +56,13 @@ public class ConceptTreeModel implements IConceptTreeModel {
    * List of concepts marked for deletion since either instantiation of this class or last <code>save</code> call.
    * (Cleared on save.)
    */
-  List deletedConcepts = new ArrayList();
+  List<ConceptInterface> deletedConcepts = new ArrayList<ConceptInterface>();
 
   /**
    * List of concepts marked for creation since either instantiation of this class or last <code>save</code> call.
    * (Cleared on save.)
    */
-  List newConcepts = new ArrayList();
+  List<ConceptInterface> newConcepts = new ArrayList<ConceptInterface>();
 
   /**
    * Stores children of concepts. (Concepts already know about their parents.) Keys are instances of
@@ -88,7 +88,7 @@ public class ConceptTreeModel implements IConceptTreeModel {
 
   private void buildTree() {
     // clone all concepts and remember how to get from modified to original and vice versa
-    List clones = new ArrayList();
+    List<ConceptInterface> clones = new ArrayList<ConceptInterface>();
     Iterator iter1 = schemaMeta.getConcepts().iterator();
     while (iter1.hasNext()) {
       ConceptInterface orig = (ConceptInterface) iter1.next();
@@ -120,7 +120,7 @@ public class ConceptTreeModel implements IConceptTreeModel {
     Iterator iter = origModBidiMap.keySet().iterator();
     while (iter.hasNext()) {
       if (newChild.getName().equals(((ConceptInterface) iter.next()).getName())) {
-        throw new ObjectAlreadyExistsException();
+        throw new ObjectAlreadyExistsException(newChild.getName());
       }
     }
     Iterator iter1 = newConcepts.iterator();
@@ -139,7 +139,8 @@ public class ConceptTreeModel implements IConceptTreeModel {
 
   public ConceptInterface[] getChildren(final ConceptInterface parent) {
     if (parentToChildrenMap.containsKey(parent)) {
-      Collection c = (Collection) parentToChildrenMap.get(parent);
+    	@SuppressWarnings("unchecked")
+      Collection<ConceptInterface> c = (Collection<ConceptInterface>) parentToChildrenMap.get(parent);
       return (ConceptInterface[]) c.toArray(new ConceptInterface[0]);
     } else {
       return new ConceptInterface[0];
@@ -151,7 +152,7 @@ public class ConceptTreeModel implements IConceptTreeModel {
     return concept.getParentInterface();
   }
 
-  private void removeDescendants(ConceptInterface parent, List forRemoval){
+  private void removeDescendants(ConceptInterface parent, List<ConceptInterface> forRemoval){
     ConceptInterface[] children = getChildren(parent);
     for (int i = 0; i < children.length; i++) {
       ConceptInterface child = children[i];
@@ -168,7 +169,7 @@ public class ConceptTreeModel implements IConceptTreeModel {
       throw new DeleteNotAllowedException();
     }
 
-    List forRemoval = new ArrayList();
+    List<ConceptInterface> forRemoval = new ArrayList<ConceptInterface>();
     forRemoval.add(concept);
 
     // trigger removal from tree

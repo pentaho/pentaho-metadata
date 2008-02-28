@@ -29,14 +29,14 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.pentaho.di.core.Props;
+import org.pentaho.di.ui.core.PropsUI;
+import org.pentaho.di.ui.core.dialog.EnterTextDialog;
+import org.pentaho.di.ui.core.dialog.ErrorDialog;
+import org.pentaho.di.ui.core.gui.WindowProperty;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.GUIResource;
-
-import be.ibridge.kettle.core.Props;
-import be.ibridge.kettle.core.WindowProperty;
-import be.ibridge.kettle.core.dialog.EnterTextDialog;
-import be.ibridge.kettle.core.dialog.ErrorDialog;
 
 /**
  * @author Gretchen Moran
@@ -78,7 +78,7 @@ public class SecurityDialog extends TitleAreaDialog {
   
   /**************************************************************************************/
 
-  private Props props;
+  private PropsUI props;
 
   private int middle;
 
@@ -92,7 +92,7 @@ public class SecurityDialog extends TitleAreaDialog {
     super(shell);
     originalService = service;
     securityService = (SecurityService) originalService.clone();
-    props = Props.getInstance();
+    props = PropsUI.getInstance();
   }
 
   protected Control createContents(Composite parent) {

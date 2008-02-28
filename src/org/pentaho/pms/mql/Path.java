@@ -42,11 +42,11 @@ import org.pentaho.pms.schema.RelationshipMeta;
 
 public class Path
 {
-	private ArrayList path;  // contains Relationship objects
+	private List<RelationshipMeta> path;  // contains Relationship objects
 	
 	public Path()
 	{
-		path=new ArrayList();
+		path=new ArrayList<RelationshipMeta>();
 	}
 	
 	public void addRelationship(RelationshipMeta rel)
@@ -230,7 +230,7 @@ public class Path
 
 	public RelationshipMeta[] getUsedRelationships()
 	{
-		ArrayList list = new ArrayList();
+		ArrayList<RelationshipMeta> list = new ArrayList<RelationshipMeta>();
 		
 		for (int i=0;i<size();i++)
 		{

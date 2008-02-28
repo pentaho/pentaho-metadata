@@ -95,6 +95,7 @@ public class PropertyGroupHelper {
    * @param id the id of the property
    * @param group the group name to which this property belongs
    */
+  @SuppressWarnings("unchecked")
   private static void add(final String id, final String group) {
     groupMapping.put(id, group);
     propertyMapping.put(group, id);
@@ -105,9 +106,10 @@ public class PropertyGroupHelper {
    * @param group the group to search
    * @return a set of property IDs
    */
+  @SuppressWarnings("unchecked")
   public static List getPropertiesForGroup(final String group) {
     if (null != propertyMapping.getCollection(group)) {
-      return new ArrayList(propertyMapping.getCollection(group));
+      return new ArrayList<Object>(propertyMapping.getCollection(group));
     } else {
       return Collections.EMPTY_LIST;
     }
@@ -137,7 +139,7 @@ public class PropertyGroupHelper {
     if (GROUP_CUSTOM.equals(group)) {
       Map effectivePropertyMap = conceptModel.getEffectivePropertyMap();
       Iterator keyIter = effectivePropertyMap.keySet().iterator();
-      List customProperties = new ArrayList();
+      List<String> customProperties = new ArrayList<String>();
       while (keyIter.hasNext()) {
         String id = (String) keyIter.next();
         if (GROUP_CUSTOM.equals(getGroupForProperty(id))) {
@@ -147,7 +149,7 @@ public class PropertyGroupHelper {
       return customProperties;
     }
     final List allProperties = getPropertiesForGroup(group);
-    List usedProperties = new ArrayList();
+    List<String> usedProperties = new ArrayList<String>();
     for (Iterator iter = allProperties.iterator(); iter.hasNext();) {
       String id = (String) iter.next();
       if (null != conceptModel.getEffectiveProperty(id)) {
@@ -164,17 +166,19 @@ public class PropertyGroupHelper {
    * @param conceptModel the concept to search
    * @return a set of property IDs
    */
-  public static List getUnusedPropertiesForGroup(final String group, final IConceptModel conceptModel) {
+  @SuppressWarnings("unchecked")
+  public static List<String> getUnusedPropertiesForGroup(final String group, final IConceptModel conceptModel) {
     if (GROUP_CUSTOM.equals(group)) {
-      return Collections.EMPTY_LIST;
+      return Collections.<String>emptyList();
     }
     final List allProperties = getPropertiesForGroup(group);
     final List usedProperties = getUsedPropertiesForGroup(group, conceptModel);
-    return new ArrayList(CollectionUtils.subtract(allProperties, usedProperties));
+    return new ArrayList<String>(CollectionUtils.subtract(allProperties, usedProperties));
   }
 
-  private static List getOrderedGroups() {
-    List groups = new ArrayList();
+  @SuppressWarnings("unchecked")
+  private static List<String> getOrderedGroups() {
+    List<String> groups = new ArrayList<String>();
     groups.addAll(wrappedPropertyMap.keyList());
     groups.add(GROUP_CUSTOM);
     return groups;
@@ -186,7 +190,7 @@ public class PropertyGroupHelper {
 
   public static List getUsedGroups(final IConceptModel conceptModel) {
     List allGroups = getGroups();
-    List usedGroups = new ArrayList();
+    List<String> usedGroups = new ArrayList<String>();
     for (Iterator iter = allGroups.iterator(); iter.hasNext();) {
       String groupName = (String) iter.next();
       if (!getUsedPropertiesForGroup(groupName, conceptModel).isEmpty()) {
@@ -198,7 +202,7 @@ public class PropertyGroupHelper {
 
   public static List getUnusedGroups(final IConceptModel conceptModel) {
     List allGroups = getGroups();
-    List unusedGroups = new ArrayList();
+    List<String> unusedGroups = new ArrayList<String>();
     for (Iterator iter = allGroups.iterator(); iter.hasNext();) {
       String groupName = (String) iter.next();
       if (!getUnusedPropertiesForGroup(groupName, conceptModel).isEmpty()) {

@@ -26,6 +26,8 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.di.core.xml.XMLHandler;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
@@ -34,26 +36,12 @@ import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.SchemaMeta;
-import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.Settings;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import be.ibridge.kettle.core.LogWriter;
-import be.ibridge.kettle.core.Row;
-import be.ibridge.kettle.core.XMLHandler;
-import be.ibridge.kettle.core.database.DatabaseMeta;
-import be.ibridge.kettle.core.exception.KettleException;
-import be.ibridge.kettle.core.logging.Log4jStringAppender;
-import be.ibridge.kettle.trans.Trans;
-import be.ibridge.kettle.trans.TransMeta;
-import be.ibridge.kettle.trans.TransPreviewFactory;
-import be.ibridge.kettle.trans.step.RowListener;
-import be.ibridge.kettle.trans.step.StepInterface;
-import be.ibridge.kettle.trans.step.tableinput.TableInputMeta;
 
 public class MQLQueryImpl implements MQLQuery {
 
@@ -123,7 +111,7 @@ public class MQLQueryImpl implements MQLQuery {
     }
   }
 
-  public List<? extends Selection> getSelections() {
+  public List<Selection> getSelections() {
     return selections;
   }
 
@@ -172,14 +160,6 @@ public class MQLQueryImpl implements MQLQuery {
     }
 		return sqlGenerator.getSQL(model, selections, constraints, order, getDatabaseMeta(), locale, this.disableDistinct);
 	}
-
-  public TransMeta getTransformation() throws PentahoMetadataException {
-    if (model == null || selections.size() == 0) {
-      return null;
-    }
-    
-    return getTransformationMeta(selections, constraints, order, getDatabaseMeta(), locale);
-  }
 
   public String getXML() {
     try {
@@ -488,17 +468,17 @@ public class MQLQueryImpl implements MQLQuery {
     }
   }
 
-  protected void addSelectionFromXmlNode(Element selectionElement) {
+  protected void addSelectionFromXmlNode(Element selectionElement)  {
     NodeList nodes = selectionElement.getElementsByTagName("column"); //$NON-NLS-1$
     if (nodes.getLength() > 0) {
       String columnId = XMLHandler.getNodeValue(nodes.item(0));
-      BusinessColumn businessColumn = model.findBusinessColumn(columnId);
+      BusinessColumn businessColumn = getModel().findBusinessColumn(columnId);
       if (businessColumn != null) {
         addSelection(new Selection(businessColumn));
       }
     }
   }
-
+  
   protected void setOptionsFromXmlNode(Element optionElement) {
     if (optionElement != null) {
       String disableStr = getElementText(optionElement, "disable_distinct");//$NON-NLS-1$
@@ -658,66 +638,6 @@ public class MQLQueryImpl implements MQLQuery {
     return this.disableDistinct;
   }
 
-  // kettle transformation related methods
-  
-  public List<Row> getRowsUsingTransformation(StringBuffer logBuffer) 
-      throws KettleException, PentahoMetadataException {
-    
-    final List<Row> list = new ArrayList<Row>();
-    TransMeta transMeta = getTransformation();
-    LogWriter log = LogWriter.getInstance();
-    Log4jStringAppender stringAppender = LogWriter.createStringAppender();
-    stringAppender.setBuffer(logBuffer);
-    
-    log.addAppender(stringAppender);
-    Trans trans = new Trans(log, transMeta);
-    trans.prepareExecution(null);
-    for (int i = 0; i < transMeta.getStep(0).getCopies(); i++) {
-      StepInterface stepInterface = trans.getStepInterface(transMeta.getStep(0).getName(), i);
-      stepInterface.addRowListener(new RowListener() {
-        public void rowWrittenEvent(Row row) {
-          list.add(row); // later: clone to be safe 
-        }
-    
-        public void rowReadEvent(Row row) {
-        }
-    
-        public void errorRowWrittenEvent(Row row) {
-        }
-      });
-    }
-    trans.startThreads();
-    trans.waitUntilFinished();
-    log.removeAppender(stringAppender);
-    
-    if (trans.getErrors() > 0)
-      throw new KettleException(
-          Messages
-              .getString(
-                  "MQLQuery.ERROR_0001_ERROR_TRANSFORMATION_QUERY_EXECUTE", Const.CR + Const.CR + stringAppender.getBuffer().toString())); //$NON-NLS-1$
-    
-    return list;
-  }
-  
-  public TransMeta getTransformationMeta(List<? extends Selection> selections, List<WhereCondition> conditions, List<OrderBy> orderBy, DatabaseMeta databaseMeta, String locale) throws PentahoMetadataException  {
-    if (selections == null || selections.size() == 0)
-      return null;
-
-    MappedQuery query = sqlGenerator.getSQL(model, selections, conditions, orderBy, databaseMeta, locale, false);
-
-    TableInputMeta tableInputMeta = new TableInputMeta();
-    tableInputMeta.setDatabaseMeta(databaseMeta);
-    tableInputMeta.setSQL(query.getQuery());
-
-    TransMeta transMeta = TransPreviewFactory.generatePreviewTransformation(tableInputMeta, Messages
-        .getString("BusinessModel.USER_TITLE_QUERY")); //$NON-NLS-1$
-    transMeta.addDatabase(databaseMeta);
-
-    transMeta.setName(Messages.getString("BusinessModel.USER_QUERY_GENERATED_FROM_MODEL", model.getName(locale))); //$NON-NLS-1$
-
-    return transMeta;
-  }
- 
   // dom utility methods
   
   protected String getElementText(Document doc, String name) {

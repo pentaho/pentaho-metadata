@@ -17,8 +17,9 @@ import org.pentaho.pms.schema.concept.types.datatype.DataTypeSettings;
 import org.pentaho.pms.schema.concept.types.fieldtype.FieldTypeSettings;
 import org.pentaho.pms.schema.concept.types.tabletype.TableTypeSettings;
 import org.pentaho.pms.schema.security.Security;
+import org.pentaho.pms.util.ObjectAlreadyExistsException;
 
-import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
+
 
 public interface ConceptUtilityInterface
 {

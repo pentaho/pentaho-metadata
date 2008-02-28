@@ -14,27 +14,27 @@ package org.pentaho.pms.schema;
 
 import java.util.Iterator;
 
+import org.pentaho.di.core.changed.ChangedFlagInterface;
+import org.pentaho.di.core.gui.GUIPositionInterface;
+import org.pentaho.di.core.gui.Point;
+import org.pentaho.di.core.xml.XMLHandler;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.util.Const;
+import org.pentaho.pms.util.ObjectAlreadyExistsException;
 import org.pentaho.pms.util.Settings;
+import org.pentaho.pms.util.UniqueArrayList;
+import org.pentaho.pms.util.UniqueList;
 import org.w3c.dom.Node;
 
-import be.ibridge.kettle.core.ChangedFlagInterface;
-import be.ibridge.kettle.core.GUIPositionInterface;
-import be.ibridge.kettle.core.Point;
-import be.ibridge.kettle.core.XMLHandler;
-import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
-import be.ibridge.kettle.core.list.UniqueArrayList;
-import be.ibridge.kettle.core.list.UniqueList;
-
 /**
- * A business table maps to a Physical table with a certain id (this is used as ID)
+ * A business table maps to a Physical table with a certain id (this is used as
+ * ID)
  * 
  * @author Matt
- * @since  18-aug-2006
+ * @since 18-aug-2006
  */
 public class BusinessTable extends ConceptUtilityBase implements Cloneable, GUIPositionInterface, ChangedFlagInterface,
     ConceptUtilityInterface, Comparable {
@@ -48,12 +48,12 @@ public class BusinessTable extends ConceptUtilityBase implements Cloneable, GUIP
 
   private PhysicalTable physicalTable;
 
-  private UniqueList businessColumns;
+  private UniqueList<BusinessColumn> businessColumns;
 
   public BusinessTable() {
     super();
     this.physicalTable = null;
-    this.businessColumns = new UniqueArrayList();
+    this.businessColumns = new UniqueArrayList<BusinessColumn>();
 
     this.location = new Point(150, 150);
     this.drawn = true;
@@ -75,7 +75,7 @@ public class BusinessTable extends ConceptUtilityBase implements Cloneable, GUIP
   }
 
   /**
-   * @return the description of the model element 
+   * @return the description of the model element
    */
   public String getModelElementDescription() {
     return Messages.getString("BusinessTable.USER_DESCRIPTION"); //$NON-NLS-1$
@@ -85,17 +85,19 @@ public class BusinessTable extends ConceptUtilityBase implements Cloneable, GUIP
     BusinessTable businessTable = new BusinessTable(getId(), physicalTable);
 
     // TODO (GEM) this could be a problem - not sure about dependencies; see case 
-    // PMD-85 and PMD-86 for why this is here. 
+    // PMD-85 and PMD-86 for why this is here.
     businessTable.idChangedListeners = this.idChangedListeners;
 
     businessTable.setConcept((ConceptInterface) getConcept().clone()); // deep copy
     businessTable.getBusinessColumns().clear(); // clear the list of column
     for (int i = 0; i < nrBusinessColumns(); i++) {
+
       try {
         businessTable.addBusinessColumn((BusinessColumn) getBusinessColumn(i).clone());
       } catch (ObjectAlreadyExistsException e) {
         throw new RuntimeException(e); // This should not happen, but I don't like to swallow the error.
       }
+
     }
 
     // GUI stuff too
@@ -109,10 +111,12 @@ public class BusinessTable extends ConceptUtilityBase implements Cloneable, GUIP
 
   /**
    * 
-   * @param tables List of tables to compare new table id against
-   * @return a new BusinessTable, duplicate of this, with only the id changed to be unique in it's list
+   * @param tables
+   *            List of tables to compare new table id against
+   * @return a new BusinessTable, duplicate of this, with only the id changed
+   *         to be unique in it's list
    */
-  public BusinessTable cloneUnique(String locale, UniqueList tables, UniqueList columns) {
+  public BusinessTable cloneUnique(String locale, UniqueList tables, UniqueList<BusinessColumn> columns) {
 
     BusinessTable businessTable = (BusinessTable) clone();
 
@@ -185,10 +189,12 @@ public class BusinessTable extends ConceptUtilityBase implements Cloneable, GUIP
   public BusinessCategory generateCategory(String locale, UniqueList categories) {
 
     BusinessCategory businessCategory = new BusinessCategory();
+
     try {
       businessCategory.setId(BusinessCategory.proposeId(locale, this, businessCategory, categories));
-    } catch (ObjectAlreadyExistsException ex) {
-      throw new RuntimeException(ex); // This should not happen ...
+    } catch (ObjectAlreadyExistsException e) {
+      //should never happen
+      throw new RuntimeException(e);
     }
 
     // The name is the same as the table...
@@ -221,11 +227,13 @@ public class BusinessTable extends ConceptUtilityBase implements Cloneable, GUIP
     // add the business columns to the category
     //
     for (int i = nrBusinessColumns() - 1; i >= 0; i--) {
+
       try {
         businessCategory.addBusinessColumn(getBusinessColumn(i));
       } catch (ObjectAlreadyExistsException e) {
         throw new RuntimeException(e); // This should not happen ...
       }
+
     }
 
     return businessCategory;
@@ -239,7 +247,8 @@ public class BusinessTable extends ConceptUtilityBase implements Cloneable, GUIP
   }
 
   /**
-   * @param changed the changed to set
+   * @param changed
+   *            the changed to set
    */
   public void setChanged(boolean changed) {
     this.changed = changed;
@@ -257,7 +266,8 @@ public class BusinessTable extends ConceptUtilityBase implements Cloneable, GUIP
   }
 
   /**
-   * @param physicalTable the physicalTable to set
+   * @param physicalTable
+   *            the physicalTable to set
    */
   public void setPhysicalTable(PhysicalTable physicalTable) {
     this.physicalTable = physicalTable;
@@ -273,7 +283,7 @@ public class BusinessTable extends ConceptUtilityBase implements Cloneable, GUIP
   /**
    * @return the businessColumns
    */
-  public UniqueList getBusinessColumns() {
+  public UniqueList<BusinessColumn> getBusinessColumns() {
     return businessColumns;
   }
 
@@ -310,7 +320,8 @@ public class BusinessTable extends ConceptUtilityBase implements Cloneable, GUIP
   }
 
   /**
-   * @param drawn the drawn to set
+   * @param drawn
+   *            the drawn to set
    */
   public void setDrawn(boolean drawn) {
     if (this.drawn != drawn)
@@ -360,7 +371,9 @@ public class BusinessTable extends ConceptUtilityBase implements Cloneable, GUIP
 
   /**
    * Finds a business column in the table using the id of the column
-   * @param columnId The id
+   * 
+   * @param columnId
+   *            The id
    * @return the business column or null if nothing could be found.
    */
   public BusinessColumn findBusinessColumn(String columnId) {
@@ -373,9 +386,13 @@ public class BusinessTable extends ConceptUtilityBase implements Cloneable, GUIP
   }
 
   /**
-   * Finds a business column using the displayed name and the locale.  If nothing is found, the IDs are searched as well.
-   * @param name The localized name or the ID in case nothing could be found
-   * @param locale the locale
+   * Finds a business column using the displayed name and the locale. If
+   * nothing is found, the IDs are searched as well.
+   * 
+   * @param name
+   *            The localized name or the ID in case nothing could be found
+   * @param locale
+   *            the locale
    * @return The business column or null if nothing could be found
    */
   public BusinessColumn findBusinessColumn(String locale, String name) {
@@ -404,13 +421,15 @@ public class BusinessTable extends ConceptUtilityBase implements Cloneable, GUIP
 
   public void addBusinessColumn(BusinessColumn businessColumn) throws ObjectAlreadyExistsException {
     businessColumns.add(businessColumn);
-    // businessColumn.getConcept().setSecurityParentInterface(getConcept()); // set the security parent to the table, not the physical column
+    // businessColumn.getConcept().setSecurityParentInterface(getConcept());
+    // // set the security parent to the table, not the physical column
     setChanged(true);
   }
 
   public void addBusinessColumn(int index, BusinessColumn businessColumn) throws ObjectAlreadyExistsException {
     businessColumns.add(index, businessColumn);
-    // businessColumn.getConcept().setSecurityParentInterface(getConcept()); // set the security parent to the table, not the physical column
+    // businessColumn.getConcept().setSecurityParentInterface(getConcept());
+    // // set the security parent to the table, not the physical column
     setChanged(true);
   }
 

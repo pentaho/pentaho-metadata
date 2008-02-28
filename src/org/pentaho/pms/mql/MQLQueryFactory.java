@@ -17,12 +17,10 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
-
 import org.pentaho.pms.messages.Messages;
-
-import be.ibridge.kettle.core.database.DatabaseMeta;
 
 public class MQLQueryFactory {
     
@@ -41,12 +39,15 @@ public class MQLQueryFactory {
   public static MQLQuery getMQLQuery(String mqlQueryClassName, String XML, DatabaseMeta meta, String locale, CwmSchemaFactoryInterface factory) throws PentahoMetadataException {
     // load MQLQuery class instance from properties somewhere
     try {
-      Class clazz = Class.forName(mqlQueryClassName);
+      Class<?> claz = Class.forName(mqlQueryClassName);
+      @SuppressWarnings("unchecked")
+      Class<?  extends MQLQuery> clazz = (Class<?  extends MQLQuery>)claz.asSubclass(MQLQuery.class);
+      
       if (MQLQuery.class.isAssignableFrom(clazz)) {
         Class argClasses[] = {String.class, DatabaseMeta.class, String.class, CwmSchemaFactoryInterface.class};
-        Constructor constr = clazz.getConstructor(argClasses);
+        Constructor<? extends MQLQuery> constr = clazz.getConstructor(argClasses);
         Object vars[] = {XML, meta, locale, factory};
-        return (MQLQuery)constr.newInstance(vars);
+        return constr.newInstance(vars);
       } else {
         logger.error(Messages.getErrorString("MQLQueryFactory.ERROR_0001_MQLQUERY_CLASS_NOT_ASSIGNABLE", mqlQueryClassName)); //$NON-NLS-1$
       }

@@ -20,10 +20,9 @@ import java.util.regex.Pattern;
 
 import org.jfree.formula.lvalues.FormulaFunction;
 import org.jfree.formula.lvalues.StaticValue;
+import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.messages.Messages;
-
-import be.ibridge.kettle.core.database.DatabaseMeta;
 
 /**
  * This is the Default SQL Dialect Class that implements SQLDialectInterface.
@@ -34,8 +33,8 @@ import be.ibridge.kettle.core.database.DatabaseMeta;
  */
 public class DefaultSQLDialect implements SQLDialectInterface {
   
-  protected Map supportedFunctions = new HashMap();
-  protected Map supportedInfixOperators = new HashMap();
+  protected Map<String,SQLFunctionGeneratorInterface>  supportedFunctions = new HashMap<String,SQLFunctionGeneratorInterface> ();
+  protected Map<String,SQLOperatorGeneratorInterface> supportedInfixOperators = new HashMap<String,SQLOperatorGeneratorInterface>();
   String databaseType;
   DatabaseMeta databaseMeta;
   

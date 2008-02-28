@@ -16,21 +16,20 @@ import org.jfree.formula.typing.Type;
 import org.jfree.formula.typing.TypeRegistry;
 import org.jfree.formula.typing.coretypes.AnyType;
 import org.jfree.util.Configuration;
-
-import be.ibridge.kettle.core.Row;
-import be.ibridge.kettle.core.value.Value;
+import org.pentaho.di.compatibility.Row;
+import org.pentaho.di.compatibility.Value;
 
 public class RowForumulaContext implements FormulaContext
 {
     private Row row;
     private FormulaContext formulaContext;
-    private Map valueIndexMap;
+    private Map<Object,Integer> valueIndexMap;
     
     public RowForumulaContext(Row row)
     {
         this.formulaContext = new DefaultFormulaContext();
         this.row = row;
-        this.valueIndexMap = new Hashtable();
+        this.valueIndexMap = new Hashtable<Object,Integer>();
     }
     
     public Type resolveReferenceType(Object name) throws ContextEvaluationException

@@ -14,9 +14,8 @@ package org.pentaho.pms.schema.security;
 
 import java.util.List;
 
+import org.pentaho.di.core.xml.XMLHandler;
 import org.pentaho.pms.util.Const;
-
-import be.ibridge.kettle.core.XMLHandler;
 
 public class SecurityReference
 {
@@ -135,7 +134,7 @@ public class SecurityReference
      * @return the acls
      * @throws Exception 
      */
-    public List getAcls()
+    public List<SecurityACL> getAcls()
     {
         return securityService.getAcls();
     }
@@ -144,7 +143,7 @@ public class SecurityReference
      * @return the roles
      * @throws Exception 
      */
-    public List getRoles()
+    public List<String> getRoles()
     {
         return securityService.getRoles();
     }
@@ -153,7 +152,7 @@ public class SecurityReference
      * @return the users
      * @throws Exception 
      */
-    public List getUsers()
+    public List<String> getUsers()
     {
         return securityService.getUsers();
     }

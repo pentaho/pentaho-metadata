@@ -6,7 +6,6 @@ package org.pentaho.pms.schema.dialog;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,6 +34,8 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.pentaho.di.ui.core.dialog.ErrorDialog;
+import org.pentaho.di.ui.core.widget.TreeMemory;
 import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.jface.tree.ITreeNodeChangedListener;
 import org.pentaho.pms.jface.tree.TreeContentProvider;
@@ -53,10 +54,8 @@ import org.pentaho.pms.ui.tree.BusinessViewTreeNode;
 import org.pentaho.pms.ui.tree.CategoryTreeNode;
 import org.pentaho.pms.ui.tree.ConceptTreeNode;
 import org.pentaho.pms.util.GUIResource;
-
-import be.ibridge.kettle.core.dialog.ErrorDialog;
-import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
-import be.ibridge.kettle.core.widget.TreeMemory;
+import org.pentaho.pms.util.ObjectAlreadyExistsException;
+import org.pentaho.pms.util.UniqueList;
 
 /**
  * @author Gretchen Moran
@@ -214,7 +213,7 @@ public class CategoryEditorDialog extends TitleAreaDialog {
     wNew.setToolTipText(Messages.getString("CategoryEditorDialog.USER_ADD_NEW_CATEGORY")); //$NON-NLS-1$
     wNew.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(SelectionEvent event) {
-        newCategory();
+        	newCategory();
       }
     });
 
@@ -333,7 +332,7 @@ public class CategoryEditorDialog extends TitleAreaDialog {
     miNew.setText(Messages.getString("CategoryEditorDialog.USER_ADD_NEW_CATEGORY"));  //$NON-NLS-1$
     miNew.addListener(SWT.Selection, new Listener() {
       public void handleEvent(Event evt) {
-        newCategory();
+          	newCategory();
       }
     });
     wCategories.getTree().setMenu(categoryMenu);
@@ -376,8 +375,8 @@ public class CategoryEditorDialog extends TitleAreaDialog {
   protected void newCategory() {
 
     while (true) {
-      List existingCategories = businessModel.getRootCategory().getBusinessCategories().getList();
-      ArrayList existingCategoryNames = new ArrayList();
+      UniqueList<BusinessCategory> existingCategories = businessModel.getRootCategory().getBusinessCategories();
+      ArrayList<String> existingCategoryNames = new ArrayList<String>();
       for (int i = 0; i < existingCategories.size(); i++) {
         BusinessCategory existingCategory = (BusinessCategory)existingCategories.get(i);
         existingCategoryNames.add(existingCategory.getId());

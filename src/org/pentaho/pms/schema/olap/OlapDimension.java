@@ -15,20 +15,19 @@ package org.pentaho.pms.schema.olap;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pentaho.di.core.changed.ChangedFlag;
 import org.pentaho.pms.schema.BusinessTable;
-
-import be.ibridge.kettle.core.ChangedFlag;
 
 public class OlapDimension extends ChangedFlag implements Cloneable
 {
     private String name;
     private boolean timeDimension;
     
-    private List hierarchies;
+    private List<OlapHierarchy> hierarchies;
     
     public OlapDimension()
     {
-        hierarchies = new ArrayList();
+        hierarchies = new ArrayList<OlapHierarchy>();
     }
     
     public Object clone()
@@ -40,7 +39,7 @@ public class OlapDimension extends ChangedFlag implements Cloneable
         for (int i=0;i<hierarchies.size();i++)
         {
             OlapHierarchy hierarchy = (OlapHierarchy) hierarchies.get(i);
-            olapDimension.hierarchies.add(hierarchy.clone());
+            olapDimension.hierarchies.add((OlapHierarchy)hierarchy.clone());
         }
         
         return olapDimension;
@@ -54,7 +53,7 @@ public class OlapDimension extends ChangedFlag implements Cloneable
     /**
      * @return the hierarchies
      */
-    public List getHierarchies()
+    public List<OlapHierarchy> getHierarchies()
     {
         return hierarchies;
     }
@@ -62,7 +61,7 @@ public class OlapDimension extends ChangedFlag implements Cloneable
     /**
      * @param hierarchies the hierarchies to set
      */
-    public void setHierarchies(List hierarchies)
+    public void setHierarchies(List<OlapHierarchy> hierarchies)
     {
         this.hierarchies = hierarchies;
     }

@@ -23,8 +23,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-
-import be.ibridge.kettle.core.Props;
+import org.pentaho.di.ui.core.PropsUI;
 
 /**
  * This is a singleton class that contains allocated Fonts, Colors, etc.
@@ -129,7 +128,7 @@ public class GUIResource
     public static final GUIResource getInstance()
     {
         if (guiResource!=null) return guiResource;
-        guiResource = new GUIResource(Props.getInstance().getDisplay());
+        guiResource = new GUIResource(PropsUI.getDisplay());
         return guiResource;
     }
         
@@ -141,11 +140,11 @@ public class GUIResource
     
     private synchronized void getResources(boolean skipImages)
     {
-        Props props = Props.getInstance();
+        PropsUI propsUI = PropsUI.getInstance();
         
-        colorBackground = new ManagedColor(display, props.getBackgroundRGB() );
-        colorGraph      = new ManagedColor(display, props.getGraphColorRGB() );
-        colorTab        = new ManagedColor(display, props.getTabColorRGB()   );
+        colorBackground = new ManagedColor(display, propsUI.getBackgroundRGB() );
+        colorGraph      = new ManagedColor(display, propsUI.getGraphColorRGB() );
+        colorTab        = new ManagedColor(display, propsUI.getTabColorRGB()   );
         
         colorRed        = new ManagedColor(display, 255,   0,   0 );
         colorGreen      = new ManagedColor(display,   0, 255,   0 );
@@ -163,17 +162,17 @@ public class GUIResource
 
         colorDirectory  = new ManagedColor(display,   0,   0, 255 );
         
-        fontGraph   = new ManagedFont(display, props.getGraphFont());
-        fontNote    = new ManagedFont(display, props.getNoteFont());
-        fontFixed   = new ManagedFont(display, props.getFixedFont());
+        fontGraph   = new ManagedFont(display, propsUI.getGraphFont());
+        fontNote    = new ManagedFont(display, propsUI.getNoteFont());
+        fontFixed   = new ManagedFont(display, propsUI.getFixedFont());
 
         // Create a large version of the graph font
-        FontData largeFontData = props.getGraphFont();
+        FontData largeFontData = propsUI.getGraphFont();
         largeFontData.setHeight(largeFontData.getHeight()*2);
         fontLarge   = new ManagedFont(display, largeFontData);
 
         // Create a medium size version of the graph font
-        FontData mediumFontData = props.getGraphFont();
+        FontData mediumFontData = propsUI.getGraphFont();
         mediumFontData.setHeight((int)(mediumFontData.getHeight()*1.5));
         fontMedium = new ManagedFont(display, mediumFontData);
 

@@ -109,6 +109,7 @@ public class SecurityTableViewer extends TableViewer {
   }
 
 
+  @SuppressWarnings("unchecked")
   public SecurityOwner[] getSelectedOwners(){
     StructuredSelection selection = (StructuredSelection)getSelection();
     return (SecurityOwner[])selection.toList().toArray(new SecurityOwner[0]);

@@ -29,6 +29,7 @@ import org.jfree.formula.lvalues.Term;
 import org.jfree.formula.operators.InfixOperator;
 import org.jfree.formula.parser.ParseException;
 import org.jfree.formula.typing.coretypes.TextType;
+import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.mql.dialect.FormulaTraversalInterface;
@@ -39,8 +40,6 @@ import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
-
-import be.ibridge.kettle.core.database.DatabaseMeta;
 
 /**
  * This class manages the two types of formulas which appear in the metadata system.  Both of 
@@ -79,10 +78,10 @@ public class PMSFormula implements FormulaTraversalInterface {
   private Formula formulaObject = null;
   
   /** cache of business columns for lookup during SQL generation */
-  private Map businessColumnMap = new HashMap();
+  private Map<String,BusinessColumn> businessColumnMap = new HashMap<String,BusinessColumn>();
   
   /** list of business columns, accessible by other classes */
-  private List businessColumnList = new ArrayList();
+  private List<BusinessColumn> businessColumnList = new ArrayList<BusinessColumn>();
   
   /** reference to formulaContext singleton */
   private PMSFormulaContext formulaContext = PMSFormulaContext.getInstance();

@@ -17,11 +17,10 @@ import java.util.Date;
 
 import org.apache.log4j.Layout;
 import org.apache.log4j.spi.LoggingEvent;
+import org.pentaho.di.core.Const;
+import org.pentaho.di.core.logging.Log4JLayoutInterface;
+import org.pentaho.di.core.logging.Log4jMessage;
 import org.pentaho.pms.messages.Messages;
-
-import be.ibridge.kettle.core.Const;
-import be.ibridge.kettle.core.logging.Log4JLayoutInterface;
-import be.ibridge.kettle.core.logging.Log4jMessage;
 
 public class Log4jPMELayout extends Layout implements Log4JLayoutInterface
 {

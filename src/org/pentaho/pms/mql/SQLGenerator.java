@@ -11,6 +11,7 @@ import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessColumn;
@@ -19,8 +20,6 @@ import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.RelationshipMeta;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.util.Const;
-
-import be.ibridge.kettle.core.database.DatabaseMeta;
 
 /**
  * This class contains the SQL generation algorithm.

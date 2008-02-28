@@ -14,17 +14,17 @@ package org.pentaho.pms.schema;
 
 import java.util.Iterator;
 
+import org.pentaho.di.core.changed.ChangedFlagInterface;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.util.Const;
+import org.pentaho.pms.util.ObjectAlreadyExistsException;
 import org.pentaho.pms.util.Settings;
+import org.pentaho.pms.util.UniqueArrayList;
+import org.pentaho.pms.util.UniqueList;
 
-import be.ibridge.kettle.core.ChangedFlagInterface;
-import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
-import be.ibridge.kettle.core.list.UniqueArrayList;
-import be.ibridge.kettle.core.list.UniqueList;
 
 /**
  * A business category is a way of categorising selectable business fields.
@@ -34,8 +34,8 @@ import be.ibridge.kettle.core.list.UniqueList;
  */
 public class BusinessCategory extends ConceptUtilityBase implements ChangedFlagInterface, ConceptUtilityInterface, Cloneable
 {
-    private UniqueList businessCategories;
-    private UniqueList businessColumns;
+    private UniqueList<BusinessCategory> businessCategories;
+    private UniqueList<BusinessColumn> businessColumns;
     
     private boolean rootCategory;
     
@@ -63,8 +63,8 @@ public class BusinessCategory extends ConceptUtilityBase implements ChangedFlagI
     public BusinessCategory(String id)
     {
         super(id);
-        this.businessCategories = new UniqueArrayList();
-        this.businessColumns = new UniqueArrayList();
+        this.businessCategories = new UniqueArrayList<BusinessCategory>();
+        this.businessColumns = new UniqueArrayList<BusinessColumn>();
     }
     
     /**
@@ -196,12 +196,12 @@ public class BusinessCategory extends ConceptUtilityBase implements ChangedFlagI
     }
     
         
-    public UniqueList getBusinessCategories()
+    public UniqueList<BusinessCategory> getBusinessCategories()
     {
         return businessCategories;
     }
 
-    public void setBusinessCategories(UniqueList businessCategories)
+    public void setBusinessCategories(UniqueList<BusinessCategory> businessCategories)
     {
         this.businessCategories = businessCategories;
     }
@@ -234,7 +234,7 @@ public class BusinessCategory extends ConceptUtilityBase implements ChangedFlagI
         setChanged();
     }
     
-    public void addBusinessCategory(int index, BusinessCategory businessCategory) throws ObjectAlreadyExistsException
+    public void addBusinessCategory(int index, BusinessCategory businessCategory)  throws ObjectAlreadyExistsException
     {
         businessCategories.add(index, businessCategory);
         setChanged();
@@ -256,7 +256,7 @@ public class BusinessCategory extends ConceptUtilityBase implements ChangedFlagI
     /**
      * @param businessColumns the businessColumns to set
      */
-    public void setBusinessColumns(UniqueList businessColumns)
+    public void setBusinessColumns(UniqueList<BusinessColumn> businessColumns)
     {
         this.businessColumns = businessColumns;
     }

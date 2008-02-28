@@ -18,10 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.pentaho.di.core.changed.ChangedFlag;
+import org.pentaho.di.core.changed.ChangedFlagInterface;
 import org.pentaho.pms.schema.concept.DefaultPropertyID;
-
-import be.ibridge.kettle.core.ChangedFlag;
-import be.ibridge.kettle.core.ChangedFlagInterface;
 
 /**
  * Contains a list of the required properties per object class. These property values can change,
@@ -32,11 +31,11 @@ import be.ibridge.kettle.core.ChangedFlagInterface;
  */
 public class RequiredProperties extends ChangedFlag implements ChangedFlagInterface
 {
-    private Map map;
+    private Map<Class,List> map;
 
     public RequiredProperties()
     {
-        this.map = new Hashtable();
+        this.map = new Hashtable<Class,List>();
 
         setDefault(); // TODO: For testing purposes, persist in CWM later on.
     }
@@ -46,7 +45,7 @@ public class RequiredProperties extends ChangedFlag implements ChangedFlagInterf
         return map;
     }
 
-    public void setMap(Map map)
+    public void setMap(Map<Class,List> map)
     {
         this.map = map;
     }
@@ -64,7 +63,7 @@ public class RequiredProperties extends ChangedFlag implements ChangedFlagInterf
 
     public Class[] getSubjects()
     {
-        Set keySet = map.keySet();
+        Set<Class> keySet = map.keySet();
         return (Class[])keySet.toArray(new Class[keySet.size()]);
     }
 
@@ -72,7 +71,7 @@ public class RequiredProperties extends ChangedFlag implements ChangedFlagInterf
     {
         // First we do the Physical Table...
         Class subject = PhysicalTable.class;
-        List propertyTypes = new ArrayList();
+        List<DefaultProperty> propertyTypes = new ArrayList<DefaultProperty>();
         propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.TARGET_TABLE));
         propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.NAME));
         propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.DESCRIPTION));
@@ -81,7 +80,7 @@ public class RequiredProperties extends ChangedFlag implements ChangedFlagInterf
         setDefaultProperties(subject, propertyTypes);
 
         subject = BusinessTable.class;
-        propertyTypes = new ArrayList();
+        propertyTypes = new ArrayList<DefaultProperty>();
 //      mlowery: PMD-112: commenting out props for business table
 //        propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.NAME));
 //        propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.DESCRIPTION));
@@ -89,7 +88,7 @@ public class RequiredProperties extends ChangedFlag implements ChangedFlagInterf
 
         // Physical Column...
         subject = PhysicalColumn.class;
-        propertyTypes = new ArrayList();
+        propertyTypes = new ArrayList<DefaultProperty>();
         propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.FORMULA));
         propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.NAME));
         propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.DESCRIPTION));
@@ -107,7 +106,7 @@ public class RequiredProperties extends ChangedFlag implements ChangedFlagInterf
 
         // Business Column...
         subject = BusinessColumn.class;
-        propertyTypes = new ArrayList();
+        propertyTypes = new ArrayList<DefaultProperty>();
 //      mlowery: PMD-112: commenting out props for business column
 //        propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.FORMULA));
 //        propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.NAME));
@@ -126,7 +125,7 @@ public class RequiredProperties extends ChangedFlag implements ChangedFlagInterf
 
         // The business Categories
         subject = BusinessCategory.class;
-        propertyTypes = new ArrayList();
+        propertyTypes = new ArrayList<DefaultProperty>();
         propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.NAME));
         propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.DESCRIPTION));
         propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.SECURITY));
@@ -134,7 +133,7 @@ public class RequiredProperties extends ChangedFlag implements ChangedFlagInterf
 
         // The business models
         subject = BusinessModel.class;
-        propertyTypes = new ArrayList();
+        propertyTypes = new ArrayList<DefaultProperty>();
         propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.NAME));
         propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.DESCRIPTION));
         propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.SECURITY));

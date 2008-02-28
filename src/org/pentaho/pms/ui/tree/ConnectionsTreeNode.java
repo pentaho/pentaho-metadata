@@ -22,12 +22,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.graphics.Image;
+import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.util.GUIResource;
-
-import be.ibridge.kettle.core.database.DatabaseMeta;
 
 /**
  * @author wseyler
@@ -76,7 +75,7 @@ public class ConnectionsTreeNode extends ConceptTreeNode {
     }
   }
 
-  public void sync(){
+  public void sync() {
     sync(schemaMeta.getDatabases());
   }
   

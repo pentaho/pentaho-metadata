@@ -15,15 +15,16 @@ package org.pentaho.pms.test;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.pentaho.di.core.row.RowMeta;
+import org.pentaho.di.core.row.RowMetaInterface;
+import org.pentaho.di.core.row.ValueMeta;
+import org.pentaho.di.core.row.ValueMetaInterface;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.cwm.pentaho.meta.businessinformation.CwmDescription;
 import org.pentaho.pms.cwm.pentaho.meta.core.CwmExpression;
 import org.pentaho.pms.cwm.pentaho.meta.core.CwmPackage;
 import org.pentaho.pms.cwm.pentaho.meta.relational.CwmColumn;
 import org.pentaho.pms.cwm.pentaho.meta.relational.CwmTable;
-
-import be.ibridge.kettle.core.Row;
-import be.ibridge.kettle.core.value.Value;
 
 /**
  * Test program for our meta-model driver meta-data implementation...
@@ -73,18 +74,18 @@ public class TestCWM
         }
         cwm.beginTransaction();
         
-        Row fields = new Row();
+        RowMetaInterface fields = new RowMeta();
         { 
-          Value field = new Value("field1", Value.VALUE_TYPE_STRING   );   //$NON-NLS-1$
+          ValueMetaInterface field = new ValueMeta("field1", ValueMetaInterface.TYPE_STRING   );   //$NON-NLS-1$
           field.setLength(35);    
           field.setOrigin("field1 description");  //$NON-NLS-1$
-          fields.addValue(field);
+          fields.addValueMeta(field);
         } 
-        { Value field = new Value("field2", Value.VALUE_TYPE_NUMBER   );  field.setLength(7,2);   field.setOrigin("field2 description"); fields.addValue(field); }  //$NON-NLS-1$ //$NON-NLS-2$
-        { Value field = new Value("field3", Value.VALUE_TYPE_INTEGER  );  field.setLength(5);     field.setOrigin("field3 description"); fields.addValue(field); }  //$NON-NLS-1$ //$NON-NLS-2$
-        { Value field = new Value("field4", Value.VALUE_TYPE_DATE     );                          field.setOrigin("field4 description"); fields.addValue(field); }  //$NON-NLS-1$ //$NON-NLS-2$
-        { Value field = new Value("field5", Value.VALUE_TYPE_BIGNUMBER);  field.setLength(52,16); field.setOrigin("field5 description"); fields.addValue(field); }  //$NON-NLS-1$ //$NON-NLS-2$
-        { Value field = new Value("field6", Value.VALUE_TYPE_BOOLEAN  );                          field.setOrigin("field6 description"); fields.addValue(field); }  //$NON-NLS-1$ //$NON-NLS-2$
+        { ValueMetaInterface field = new ValueMeta("field2", ValueMetaInterface.TYPE_NUMBER   );  field.setLength(7,2);   field.setOrigin("field2 description"); fields.addValueMeta(field); }  //$NON-NLS-1$ //$NON-NLS-2$
+        { ValueMetaInterface field = new ValueMeta("field3", ValueMetaInterface.TYPE_INTEGER  );  field.setLength(5);     field.setOrigin("field3 description"); fields.addValueMeta(field); }  //$NON-NLS-1$ //$NON-NLS-2$
+        { ValueMetaInterface field = new ValueMeta("field4", ValueMetaInterface.TYPE_DATE     );                          field.setOrigin("field4 description"); fields.addValueMeta(field); }  //$NON-NLS-1$ //$NON-NLS-2$
+        { ValueMetaInterface field = new ValueMeta("field5", ValueMetaInterface.TYPE_BIGNUMBER);  field.setLength(52,16); field.setOrigin("field5 description"); fields.addValueMeta(field); }  //$NON-NLS-1$ //$NON-NLS-2$
+        { ValueMetaInterface field = new ValueMeta("field6", ValueMetaInterface.TYPE_BOOLEAN  );                          field.setOrigin("field6 description"); fields.addValueMeta(field); }  //$NON-NLS-1$ //$NON-NLS-2$
         
         table = cwm.createTable(TEST_TABLE_NAME, fields);
         
@@ -92,13 +93,13 @@ public class TestCWM
         
         CwmDescription description = cwm.createDescription("This is a table description"); //$NON-NLS-1$
         cwm.setDescription(table, description);
-        
-        Collection collection = table.getOwnedElement();
+        @SuppressWarnings("unchecked")
+        Collection<CwmColumn> collection = table.getOwnedElement();
         CwmColumn[] columns = (CwmColumn[]) collection.toArray(new CwmColumn[collection.size()]);
         
         for (int i=0;i<fields.size();i++)
         {
-            Value field = fields.getValue(i);
+            ValueMetaInterface field = fields.getValueMeta(i);
             CwmColumn column = columns[i];
             
             // Add a description to the column
@@ -109,7 +110,9 @@ public class TestCWM
         
         // Try to create a package here...
         CwmPackage p = cwm.createPackage(DOMAIN+" package"); //$NON-NLS-1$
-        p.getImportedElement().add(table);
+        @SuppressWarnings("unchecked")
+        Collection<CwmTable> ca = p.getImportedElement();
+        ca.add(table);
         cwm.setDescription(p, cwm.createDescription("This is a package description for ["+DOMAIN+"]") ); //$NON-NLS-1$ //$NON-NLS-2$
         
         cwm.endTransaction();

@@ -3,13 +3,12 @@ package org.pentaho.pms.ui.tree;
 import java.util.List;
 
 import org.eclipse.swt.graphics.Image;
+import org.pentaho.di.core.dnd.DragAndDropContainer;
 import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.util.GUIResource;
-
-import be.ibridge.kettle.core.DragAndDropContainer;
 
 
 public class BusinessModelTreeNode extends ConceptTreeNode {

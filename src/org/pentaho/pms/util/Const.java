@@ -38,13 +38,10 @@ import java.util.Locale;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.TreeItem;
+import org.pentaho.di.core.Props;
+import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.pms.messages.Messages;
-
-import be.ibridge.kettle.core.Props;
-import be.ibridge.kettle.core.database.DatabaseMeta;
-import be.ibridge.kettle.core.exception.KettleException;
-import be.ibridge.kettle.job.entry.JobEntryCopy;
-import be.ibridge.kettle.job.entry.JobEntryInterface;
 
 /**
  * This class is used to define a number of default values for various settings throughout Pentaho Metadata.
@@ -1011,7 +1008,7 @@ public class Const
 	 */
 	public static final List selectSAPR3Databases(List databases)
 	{
-		List sap = new ArrayList();
+		List<DatabaseMeta> sap = new ArrayList<DatabaseMeta>();
 
 		Iterator it = databases.iterator();
 		while (it.hasNext())
@@ -1035,46 +1032,6 @@ public class Const
 	public static final ArrayList selectSAPR3Databases(ArrayList databases)
 	{
 		return (ArrayList)selectSAPR3Databases((List)databases);
-	}
-
-	/**
-	 * Find a jobentry with a certain ID in a list of job entries.
-	 * @param jobentries The List of jobentries
-	 * @param id_jobentry The id of the jobentry
-	 * @return The JobEntry object if one was found, null otherwise.
-	 */
-	public static final JobEntryInterface findJobEntry(List jobentries, long id_jobentry)
-	{
-		if (jobentries == null)
-			return null;
-
-		for (int i = 0; i < jobentries.size(); i++)
-		{
-			JobEntryInterface je = (JobEntryInterface) jobentries.get(i);
-			if (je.getID() == id_jobentry)
-				return je;
-		}
-		return null;
-	}
-
-	/**
-	 * Find a jobentrycopy with a certain ID in a list of job entry copies.
-	 * @param jobcopies The List of jobentry copies
-	 * @param id_jobentry_copy The id of the jobentry copy
-	 * @return The JobEntryCopy object if one was found, null otherwise.
-	 */
-	public static final JobEntryCopy findJobEntryCopy(List jobcopies, long id_jobentry_copy)
-	{
-		if (jobcopies == null)
-			return null;
-
-		for (int i = 0; i < jobcopies.size(); i++)
-		{
-			JobEntryCopy jec = (JobEntryCopy) jobcopies.get(i);
-			if (jec.getID() == id_jobentry_copy)
-				return jec;
-		}
-		return null;
 	}
 
 	/**
@@ -1297,7 +1254,7 @@ public class Const
 		 *           0123456
 		 *   Example a;b;c;d    -->    new String[] { a, b, c, d }
 		 */
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 
 		if (string == null || string.length() == 0)
 		{
@@ -1345,7 +1302,7 @@ public class Const
 		 *           0123456
 		 *   Example a;b;c;d    -->    new String[] { a, b, c, d }
 		 */
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 
 		if (string == null || string.length() == 0)
 		{
@@ -1452,7 +1409,7 @@ public class Const
 			return new String[] {};
 
 		String[] sorted = sortStrings(strings);
-		List result = new ArrayList();
+		List<String> result = new ArrayList<String>();
 		String previous = ""; //$NON-NLS-1$
 		for (int i = 0; i < sorted.length; i++)
 		{

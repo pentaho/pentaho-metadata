@@ -32,20 +32,20 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
+import org.pentaho.di.core.logging.LogWriter;
+import org.pentaho.di.core.variables.Variables;
+import org.pentaho.di.ui.core.PropsUI;
+import org.pentaho.di.ui.core.gui.WindowProperty;
+import org.pentaho.di.ui.core.widget.ColumnInfo;
+import org.pentaho.di.ui.core.widget.TableView;
+import org.pentaho.di.ui.trans.step.BaseStepDialog;
 import org.pentaho.pms.messages.Messages;
-import org.pentaho.pms.schema.RequiredProperties;
 import org.pentaho.pms.schema.DefaultProperty;
+import org.pentaho.pms.schema.RequiredProperties;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.DefaultPropertyID;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 import org.pentaho.pms.util.Const;
-
-import be.ibridge.kettle.core.ColumnInfo;
-import be.ibridge.kettle.core.LogWriter;
-import be.ibridge.kettle.core.Props;
-import be.ibridge.kettle.core.WindowProperty;
-import be.ibridge.kettle.core.widget.TableView;
-import be.ibridge.kettle.trans.step.BaseStepDialog;
 
 
 /***
@@ -73,7 +73,7 @@ public class ShowDefaultPropertiesDialog extends Dialog
 
 	private Shell         shell;
 	
-    private Props props;
+    private PropsUI propsUI;
 
     private RequiredProperties requiredProperties;
     private String title;
@@ -87,7 +87,7 @@ public class ShowDefaultPropertiesDialog extends Dialog
         this.message = messsage;
         
         log=LogWriter.getInstance();
-        props=Props.getInstance();
+        propsUI=PropsUI.getInstance();
 	}
 
 	public RequiredProperties open()
@@ -96,7 +96,7 @@ public class ShowDefaultPropertiesDialog extends Dialog
 		Display display = parent.getDisplay();
 		
 		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.MIN);
- 		props.setLook(shell);
+ 		propsUI.setLook(shell);
         
         log.logDebug(this.getClass().getName(), Messages.getString("General.DEBUG_OPENING_DIALOG")); //$NON-NLS-1$
 
@@ -115,13 +115,13 @@ public class ShowDefaultPropertiesDialog extends Dialog
 		shell.setLayout(formLayout);
 		shell.setText(title);
 		
-		int middle = props.getMiddlePct()/2;
+		int middle = propsUI.getMiddlePct()/2;
 		int margin = Const.MARGIN;
 
         // List line
         wlMessage=new Label(shell, SWT.LEFT);
         wlMessage.setText(message);
-        props.setLook(wlMessage);
+        propsUI.setLook(wlMessage);
         fdlMessage=new FormData();
         fdlMessage.left = new FormAttachment(0, 0);
         fdlMessage.right= new FormAttachment(100, 0);
@@ -131,14 +131,14 @@ public class ShowDefaultPropertiesDialog extends Dialog
         // List line
         wlList=new Label(shell, SWT.LEFT);
         wlList.setText(Messages.getString("ShowDefaultPropertiesDialog.USER_SUBJECT")); //$NON-NLS-1$
-        props.setLook(wlList);
+        propsUI.setLook(wlList);
         fdlList=new FormData();
         fdlList.left = new FormAttachment(0, 0);
         fdlList.right= new FormAttachment(middle, 0);
         fdlList.top  = new FormAttachment(wlMessage, 2*margin);
         wlList.setLayoutData(fdlList);
         wList=new List(shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-        props.setLook(wList);
+        propsUI.setLook(wList);
         Class[] subjects = requiredProperties.getSubjects();
         for (int i=0;i<subjects.length;i++)
         {
@@ -166,13 +166,13 @@ public class ShowDefaultPropertiesDialog extends Dialog
               new ColumnInfo(Messages.getString("ShowDefaultPropertiesDialog.USER_DEFAULT_VALUE"),  ColumnInfo.COLUMN_TYPE_TEXT,   false), //$NON-NLS-1$
             };
         
-        wFields=new TableView(shell, 
+        wFields=new TableView(new Variables(),shell, 
                               SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI, 
                               colinf, 
                               1,  
                               false, // true=read-only
                               lsMod,
-                              props
+                              propsUI
                               );
 
         wOK=new Button(shell, SWT.PUSH);
@@ -206,7 +206,7 @@ public class ShowDefaultPropertiesDialog extends Dialog
 		// Detect X or ALT-F4 or something that kills this window...
 		shell.addShellListener(	new ShellAdapter() { public void shellClosed(ShellEvent e) { cancel(); } } );
 
-		WindowProperty winprop = props.getScreen(shell.getText());
+		WindowProperty winprop = propsUI.getScreen(shell.getText());
 		if (winprop!=null) winprop.setShell(shell); else shell.pack();
 		
 		getData();
@@ -221,7 +221,7 @@ public class ShowDefaultPropertiesDialog extends Dialog
 
 	public void dispose()
 	{
-		props.setScreen(new WindowProperty(shell));
+		propsUI.setScreen(new WindowProperty(shell));
 		shell.dispose();
 	}
 	

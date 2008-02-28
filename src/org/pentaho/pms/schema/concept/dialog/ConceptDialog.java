@@ -33,6 +33,13 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+import org.pentaho.di.core.logging.LogWriter;
+import org.pentaho.di.ui.core.PropsUI;
+import org.pentaho.di.ui.core.dialog.EnterSelectionDialog;
+import org.pentaho.di.ui.core.dialog.ErrorDialog;
+import org.pentaho.di.ui.core.gui.WindowProperty;
+import org.pentaho.di.ui.core.widget.TableView;
+import org.pentaho.di.ui.trans.step.BaseStepDialog;
 import org.pentaho.pms.locale.Locales;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.SchemaMeta;
@@ -44,15 +51,7 @@ import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyWidgetInterface;
 import org.pentaho.pms.schema.security.SecurityReference;
 import org.pentaho.pms.util.Const;
-
-import be.ibridge.kettle.core.LogWriter;
-import be.ibridge.kettle.core.Props;
-import be.ibridge.kettle.core.WindowProperty;
-import be.ibridge.kettle.core.dialog.EnterSelectionDialog;
-import be.ibridge.kettle.core.dialog.ErrorDialog;
-import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
-import be.ibridge.kettle.core.widget.TableView;
-import be.ibridge.kettle.trans.step.BaseStepDialog;
+import org.pentaho.pms.util.ObjectAlreadyExistsException;
 
 
 public class ConceptDialog extends Dialog
@@ -68,7 +67,7 @@ public class ConceptDialog extends Dialog
 
 	private Shell         shell;
 	
-    private Props props;
+    private PropsUI props;
 
     private String title;
     private String message;
@@ -76,7 +75,7 @@ public class ConceptDialog extends Dialog
     private SchemaMeta schemaMeta;
     private ConceptInterface conceptInterface;
 
-    private Map conceptWidgetInterfaces;
+    private Map<String,ConceptPropertyWidgetInterface> conceptWidgetInterfaces;
 
     private Composite propertiesComposite;
 
@@ -96,9 +95,9 @@ public class ConceptDialog extends Dialog
         this.schemaMeta = schemaMeta;
 
         log=LogWriter.getInstance();
-        props=Props.getInstance();
+        props=PropsUI.getInstance();
 
-        conceptWidgetInterfaces = new Hashtable();
+        conceptWidgetInterfaces = new Hashtable<String,ConceptPropertyWidgetInterface>();
 	}
 
 	public String open()

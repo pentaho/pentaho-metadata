@@ -14,11 +14,10 @@ package org.pentaho.pms.mql;
 
 import java.util.List;
 
+import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.SchemaMeta;
-
-import be.ibridge.kettle.core.database.DatabaseMeta;
 
 public interface MQLQuery {
 
@@ -38,7 +37,7 @@ public interface MQLQuery {
  
   public void setDisableDistinct(boolean value);
   
-  public List<? extends Selection> getSelections();
+  public List<Selection> getSelections();
   
   public void setSelections(List<Selection> list);
  

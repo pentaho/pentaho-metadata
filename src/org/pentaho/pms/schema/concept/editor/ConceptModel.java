@@ -72,7 +72,7 @@ public class ConceptModel implements IConceptModel {
       return Collections.EMPTY_LIST;
     }
     // otherwise, start the recursion
-    List path = new ArrayList();
+    List<String> path = new ArrayList<String>();
     getPropertySourceInternal(concept, id, path);
     return path;
   }
@@ -81,7 +81,7 @@ public class ConceptModel implements IConceptModel {
    * Recursively searches related concepts (i.e. itself, its parent, its security parent, and its inherited). Returns
    * the concept which has contributed the property with <code>id</code> to the leaf concept.
    */
-  protected void getPropertySourceInternal(final ConceptInterface concept, final String id, final List path) {
+  protected void getPropertySourceInternal(final ConceptInterface concept, final String id, final List<String> path) {
     Map childPropertiesMap = concept.getChildPropertyInterfaces();
     if (childPropertiesMap.containsKey(id)) {
       path.add("source");
@@ -144,7 +144,7 @@ public class ConceptModel implements IConceptModel {
         throw new IllegalArgumentException("illegal argument");
       }
     }
-    return new HashSet(Arrays.asList(ids));
+    return new HashSet<String>(Arrays.asList(ids));
   }
 
   public Map getPropertyMap(final int relType) {

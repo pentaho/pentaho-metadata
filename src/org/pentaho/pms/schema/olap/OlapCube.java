@@ -16,24 +16,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.pentaho.di.core.changed.ChangedFlag;
 import org.pentaho.pms.schema.BusinessTable;
-
-import be.ibridge.kettle.core.ChangedFlag;
 
 public class OlapCube extends ChangedFlag implements Cloneable
 {
     private String name;
     private BusinessTable businessTable;
     
-    private List olapDimensionUsages;
-    private List olapMeasures;
+    private List<OlapDimensionUsage> olapDimensionUsages;
+    private List<OlapMeasure> olapMeasures;
     
     // TODO: private dimensions
     
     public OlapCube()
     {
-        olapDimensionUsages = new ArrayList();
-        olapMeasures = new ArrayList();
+        olapDimensionUsages = new ArrayList<OlapDimensionUsage>();
+        olapMeasures = new ArrayList<OlapMeasure>();
     }
     
     public Object clone()
@@ -44,13 +43,13 @@ public class OlapCube extends ChangedFlag implements Cloneable
         for (int i=0;i<olapDimensionUsages.size();i++)
         {
             OlapDimensionUsage usage = (OlapDimensionUsage) olapDimensionUsages.get(i);
-            olapCube.olapDimensionUsages.add(usage.clone());
+            olapCube.olapDimensionUsages.add((OlapDimensionUsage)usage.clone());
         }
         
         for (int i=0;i<olapMeasures.size();i++)
         {
             OlapMeasure measure = (OlapMeasure)olapMeasures.get(i);
-            olapCube.olapMeasures.add( measure.clone() );
+            olapCube.olapMeasures.add( (OlapMeasure)measure.clone() );
         }
         
         if (businessTable!=null) olapCube.businessTable = businessTable; // no cloning here please!
@@ -98,7 +97,7 @@ public class OlapCube extends ChangedFlag implements Cloneable
     /**
      * @return the olapDimensionUsages
      */
-    public List getOlapDimensionUsages()
+    public List<OlapDimensionUsage> getOlapDimensionUsages()
     {
         return olapDimensionUsages;
     }
@@ -106,7 +105,7 @@ public class OlapCube extends ChangedFlag implements Cloneable
     /**
      * @param olapDimensionUsages the olapDimensionUsages to set
      */
-    public void setOlapDimensionUsages(List olapDimensionUsages)
+    public void setOlapDimensionUsages(List<OlapDimensionUsage> olapDimensionUsages)
     {
         this.olapDimensionUsages = olapDimensionUsages;
     }
@@ -114,7 +113,7 @@ public class OlapCube extends ChangedFlag implements Cloneable
     /**
      * @return the olapMeasures
      */
-    public List getOlapMeasures()
+    public List<OlapMeasure> getOlapMeasures()
     {
         return olapMeasures;
     }
@@ -122,7 +121,7 @@ public class OlapCube extends ChangedFlag implements Cloneable
     /**
      * @param olapMeasures the olapMeasures to set
      */
-    public void setOlapMeasures(List olapMeasures)
+    public void setOlapMeasures(List<OlapMeasure> olapMeasures)
     {
         this.olapMeasures = olapMeasures;
     }
@@ -140,7 +139,7 @@ public class OlapCube extends ChangedFlag implements Cloneable
     public String[] getUnusedColumnNames(String locale)
     {
         String[] allColumnNames = businessTable.getColumnNames(locale);
-        List names = new ArrayList();
+        List<String> names = new ArrayList<String>();
         names.addAll(Arrays.asList(allColumnNames));
         
         for (int i=names.size()-1;i>=0;i--)

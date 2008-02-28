@@ -66,27 +66,27 @@ public interface ConceptInterface
     /**
      * @return the map of  property name/interfaces for this concept interfaces, but also the parent (grand-parent, etc) property interface(s).
      */
-    public Map getPropertyInterfaces();
+    public Map<String,ConceptPropertyInterface> getPropertyInterfaces();
 
     /**
      * @return the map of property name/interfaces for the class implementing this concept interface, ONLY the child properties
      */
-    public Map getChildPropertyInterfaces();
+    public Map<String,ConceptPropertyInterface> getChildPropertyInterfaces();
 
     /**
      * @return the map of property name/interfaces for the class implementing this concept interface: ONLY the parents (grand-parent, etc) properties
      */
-    public Map getParentPropertyInterfaces();
+    public Map<String,ConceptPropertyInterface> getParentPropertyInterfaces();
 
     /**
      * @return the map of property name/interfaces for the class implementing this concept interface: ONLY the inherited (physical column) properties
      */
-    public Map getInheritedPropertyInterfaces();
+    public Map<String,ConceptPropertyInterface> getInheritedPropertyInterfaces();
 
     /**
      * @return the map of property name/interfaces for the class implementing this concept interface: ONLY the inherited (physical column) properties
      */
-    public Map getSecurityPropertyInterfaces();
+    public Map<String,ConceptPropertyInterface> getSecurityPropertyInterfaces();
 
     /**
      * @param property the property to add to the map, using the name of the property as the entry in the property interface map.

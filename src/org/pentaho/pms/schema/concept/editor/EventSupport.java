@@ -29,7 +29,7 @@ public class EventSupport {
 
   // ~ Methods =========================================================================================================
 
-  private HashSet listeners = new HashSet();
+  private HashSet<Object> listeners = new HashSet<Object>();
 
   public synchronized void addListener(final Object listener) {
     listeners.add(listener);

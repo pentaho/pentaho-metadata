@@ -3,8 +3,7 @@ package org.pentaho.pms.schema.concept.editor;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.DeleteNotAllowedException;
-
-import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
+import org.pentaho.pms.util.ObjectAlreadyExistsException;
 
 /**
  * Wraps the tree of concepts stored in the schema meta. This model is ONLY concerned with querying or changing the

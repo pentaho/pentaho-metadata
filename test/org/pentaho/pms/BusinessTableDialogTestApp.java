@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.pentaho.di.ui.core.PropsUI;
 import org.pentaho.pms.locale.LocaleMeta;
 import org.pentaho.pms.locale.Locales;
 import org.pentaho.pms.schema.BusinessColumn;
@@ -43,219 +44,246 @@ import org.pentaho.pms.schema.concept.types.localstring.LocalizedStringSettings;
 import org.pentaho.pms.schema.concept.types.string.ConceptPropertyString;
 import org.pentaho.pms.schema.dialog.BusinessTableDialog;
 import org.pentaho.pms.util.Const;
+import org.pentaho.pms.util.ObjectAlreadyExistsException;
 
-import be.ibridge.kettle.core.Props;
-import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
-import be.ibridge.kettle.core.util.EnvUtil;
+public class BusinessTableDialogTestApp extends ApplicationWindow
+{
+	// ~ Static fields/initializers
+	// ======================================================================================
 
-public class BusinessTableDialogTestApp extends ApplicationWindow {
-  // ~ Static fields/initializers ======================================================================================
+	private static final Log logger = LogFactory.getLog(BusinessTableDialogTestApp.class);
 
-  private static final Log logger = LogFactory.getLog(BusinessTableDialogTestApp.class);
+	// ~ Instance fields
+	// =================================================================================================
 
-  // ~ Instance fields =================================================================================================
+	private IConceptModel conceptModel;
 
-  private IConceptModel conceptModel;
+	private ITableModel tableModel;
 
-  private ITableModel tableModel;
+	private Map<String,Locales> context = new HashMap<String,Locales>();
 
-  private Map context = new HashMap();
+	private BusinessTable tab;
 
-  private BusinessTable tab;
+	private SchemaMeta schemaMeta;
 
-  private SchemaMeta schemaMeta;
+	private Locales locales;
 
-  private Locales locales;
+	// ~ Constructors
+	// ====================================================================================================
 
-  // ~ Constructors ====================================================================================================
+	public BusinessTableDialogTestApp()
+	{
+		super(null);
+		try
+		{
+			initModel();
+		} catch (ObjectAlreadyExistsException e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
 
-  public BusinessTableDialogTestApp() {
-    super(null);
-    initModel();
-  }
+	// ~ Methods
+	// =========================================================================================================
 
-  // ~ Methods =========================================================================================================
+	protected void initModel() throws ObjectAlreadyExistsException
+	{
+		conceptModel = new ConceptModel(new Concept());
+		LocalizedStringSettings s1 = new LocalizedStringSettings();
+		s1.setLocaleString("en_US", "chicken");
+		s1.setLocaleString("es_ES", "pollo");
+		conceptModel.setProperty(new ConceptPropertyLocalizedString(DefaultPropertyID.NAME.getId(), s1));
 
-  protected void initModel() {
-    conceptModel = new ConceptModel(new Concept());
-    LocalizedStringSettings s1 = new LocalizedStringSettings();
-    s1.setLocaleString("en_US", "chicken");
-    s1.setLocaleString("es_ES", "pollo");
-    conceptModel.setProperty(new ConceptPropertyLocalizedString(DefaultPropertyID.NAME.getId(), s1));
+		LocalizedStringSettings s2 = new LocalizedStringSettings();
+		s2.setLocaleString("en_US", "Where is the library?");
+		s2.setLocaleString("es_ES", "¿Dónde está la biblioteca?");
+		conceptModel
+				.setProperty(new ConceptPropertyLocalizedString(DefaultPropertyID.DESCRIPTION.getId(), s2));
+		conceptModel.setProperty(new ConceptPropertyColumnWidth(DefaultPropertyID.COLUMN_WIDTH.getId(),
+				ColumnWidth.INCHES));
+		conceptModel.setProperty(new ConceptPropertyString(DefaultPropertyID.TARGET_SCHEMA.getId(),
+				"overridden_table"));
+		Concept parentConcept = new Concept();
+		ConceptPropertyInterface prop1 = new ConceptPropertyString(DefaultPropertyID.FORMULA.getId(), "e=mc2");
+		parentConcept.addProperty(prop1);
+		ConceptPropertyInterface prop2 = new ConceptPropertyString(DefaultPropertyID.TARGET_SCHEMA.getId(),
+				"test_schema");
+		parentConcept.addProperty(prop2);
+		conceptModel.setRelatedConcept(parentConcept, IConceptModel.REL_PARENT);
 
-    LocalizedStringSettings s2 = new LocalizedStringSettings();
-    s2.setLocaleString("en_US", "Where is the library?");
-    s2.setLocaleString("es_ES", "¿Dónde está la biblioteca?");
-    conceptModel.setProperty(new ConceptPropertyLocalizedString(DefaultPropertyID.DESCRIPTION.getId(), s2));
-    conceptModel
-        .setProperty(new ConceptPropertyColumnWidth(DefaultPropertyID.COLUMN_WIDTH.getId(), ColumnWidth.INCHES));
-    conceptModel.setProperty(new ConceptPropertyString(DefaultPropertyID.TARGET_SCHEMA.getId(), "overridden_table"));
-    Concept parentConcept = new Concept();
-    ConceptPropertyInterface prop1 = new ConceptPropertyString(DefaultPropertyID.FORMULA.getId(), "e=mc2");
-    parentConcept.addProperty(prop1);
-    ConceptPropertyInterface prop2 = new ConceptPropertyString(DefaultPropertyID.TARGET_SCHEMA.getId(), "test_schema");
-    parentConcept.addProperty(prop2);
-    conceptModel.setRelatedConcept(parentConcept, IConceptModel.REL_PARENT);
+		Concept secConcept = new Concept();
+		// ConceptPropertyInterface sec1 = new
+		// ConceptPropertySecurity(DefaultPropertyID.SECURITY.getId(), new
+		// Security());
+		// secConcept.addProperty(sec1);
+		ConceptPropertyInterface sec2 = new ConceptPropertyString(DefaultPropertyID.TARGET_TABLE.getId(),
+				"test_table");
+		secConcept.addProperty(sec2);
+		conceptModel.setRelatedConcept(secConcept, IConceptModel.REL_INHERITED);
 
-    Concept secConcept = new Concept();
-    //    ConceptPropertyInterface sec1 = new ConceptPropertySecurity(DefaultPropertyID.SECURITY.getId(), new Security());
-    //    secConcept.addProperty(sec1);
-    ConceptPropertyInterface sec2 = new ConceptPropertyString(DefaultPropertyID.TARGET_TABLE.getId(), "test_table");
-    secConcept.addProperty(sec2);
-    conceptModel.setRelatedConcept(secConcept, IConceptModel.REL_INHERITED);
+		Concept inConcept = new Concept();
+		ConceptPropertyInterface in1 = new ConceptPropertyBoolean(DefaultPropertyID.EXACT.getId(), true);
+		inConcept.addProperty(in1);
+		ConceptPropertyInterface in2 = new ConceptPropertyString(DefaultPropertyID.TARGET_TABLE.getId(),
+				"test_table");
+		inConcept.addProperty(in2);
+		conceptModel.setRelatedConcept(inConcept, IConceptModel.REL_SECURITY);
 
-    Concept inConcept = new Concept();
-    ConceptPropertyInterface in1 = new ConceptPropertyBoolean(DefaultPropertyID.EXACT.getId(), true);
-    inConcept.addProperty(in1);
-    ConceptPropertyInterface in2 = new ConceptPropertyString(DefaultPropertyID.TARGET_TABLE.getId(), "test_table");
-    inConcept.addProperty(in2);
-    conceptModel.setRelatedConcept(inConcept, IConceptModel.REL_SECURITY);
+		locales = new Locales();
+		// locales.addLocale(new LocaleMeta(Locales.EN_US,
+		// Messages.getString("Locales.USER_LOCALE_DESCRIPTION"), 1, true));
+		locales.addLocale(new LocaleMeta("fr_FR", "French (France)", 2, true));
+		locales.addLocale(new LocaleMeta("it_IT", "Italian (Italy)", 3, true));
+		locales.addLocale(new LocaleMeta("es_ES", "Spanish (Spain)", 4, true));
+		locales.addLocale(new LocaleMeta("de_DE", "German (Germany)", 5, true));
+		schemaMeta = new SchemaMeta();
+		schemaMeta.setLocales(locales);
+		conceptModel.addConceptModificationListener(new IConceptModificationListener()
+		{
+			public void conceptModified(final ConceptModificationEvent e)
+			{
+				BusinessTableDialogTestApp.this.conceptModified(e);
+			}
+		});
 
-    locales = new Locales();
-    //    locales.addLocale(new LocaleMeta(Locales.EN_US, Messages.getString("Locales.USER_LOCALE_DESCRIPTION"), 1, true));
-    locales.addLocale(new LocaleMeta("fr_FR", "French (France)", 2, true));
-    locales.addLocale(new LocaleMeta("it_IT", "Italian (Italy)", 3, true));
-    locales.addLocale(new LocaleMeta("es_ES", "Spanish (Spain)", 4, true));
-    locales.addLocale(new LocaleMeta("de_DE", "German (Germany)", 5, true));
-    schemaMeta = new SchemaMeta();
-    schemaMeta.setLocales(locales);
-    conceptModel.addConceptModificationListener(new IConceptModificationListener() {
-      public void conceptModified(final ConceptModificationEvent e) {
-        BusinessTableDialogTestApp.this.conceptModified(e);
-      }
-    });
+		context.put("locales", schemaMeta.getLocales());
 
-    context.put("locales", schemaMeta.getLocales());
+		tab = new BusinessTable("PT_TEST_TABLE_1");
 
-    tab = new BusinessTable("PT_TEST_TABLE_1");
-    try {
-      BusinessColumn pc1 = new BusinessColumn("COL_1");
-      Concept c1 = new Concept();
-      LocalizedStringSettings s10 = new LocalizedStringSettings();
-      s10.setLocaleString("en_US", "beans");
-      s10.setLocaleString("es_ES", "frijoles");
-      c1.addProperty(new ConceptPropertyLocalizedString(DefaultPropertyID.NAME.getId(), s10));
-      pc1.setConcept(c1);
+		BusinessColumn pc1 = new BusinessColumn("COL_1");
+		Concept c1 = new Concept();
+		LocalizedStringSettings s10 = new LocalizedStringSettings();
+		s10.setLocaleString("en_US", "beans");
+		s10.setLocaleString("es_ES", "frijoles");
+		c1.addProperty(new ConceptPropertyLocalizedString(DefaultPropertyID.NAME.getId(), s10));
+		pc1.setConcept(c1);
 
-      tab.addBusinessColumn(pc1);
-      //    tab.addBusinessColumn(new BusinessColumn("COL_2"));
-      //    tab.addBusinessColumn(new BusinessColumn("COL_3"));
+		tab.addBusinessColumn(pc1);
+		// tab.addBusinessColumn(new BusinessColumn("COL_2"));
+		// tab.addBusinessColumn(new BusinessColumn("COL_3"));
 
-    } catch (ObjectAlreadyExistsException e1) {
-      if (logger.isErrorEnabled()) {
-        // TODO Auto-generated catch block
-        logger.error("an exception occurred", e1);
-      }
-    }
+		BusinessTable tab = new BusinessTable("my_Business_table");
+		BusinessColumn col1 = new BusinessColumn("my_col1");
+		BusinessColumn col2 = new BusinessColumn("my_col2");
 
-    BusinessTable tab = new BusinessTable("my_Business_table");
-    BusinessColumn col1 = new BusinessColumn("my_col1");
-    BusinessColumn col2 = new BusinessColumn("my_col2");
-    try {
-      tab.addBusinessColumn(col1);
-      tab.addBusinessColumn(col2);
-    } catch (ObjectAlreadyExistsException e1) {
-      if (logger.isErrorEnabled()) {
-        // TODO Auto-generated catch block
-        logger.error("an exception occurred", e1);
-      }
-    }
+		tab.addBusinessColumn(col1);
+		tab.addBusinessColumn(col2);
 
-    tableModel = new BusinessTableModel(tab, schemaMeta.getActiveModel());
-    tableModel.setParent(new PhysicalTable("customers"));
+		tableModel = new BusinessTableModel(tab, schemaMeta.getActiveModel());
+		tableModel.setParent(new PhysicalTable("customers"));
 
-  }
+	}
 
-  protected void conceptModified(final ConceptModificationEvent e) {
-    if (logger.isDebugEnabled()) {
-      logger.debug("heard concept modified event: " + e);
-    }
-  }
+	protected void conceptModified(final ConceptModificationEvent e)
+	{
+		if (logger.isDebugEnabled())
+		{
+			logger.debug("heard concept modified event: " + e);
+		}
+	}
 
-  public void run() {
-    EnvUtil.environmentInit();
-    if (!Props.isInitialized()) {
-      Const.checkPentahoMetadataDirectory();
-      Props.init(new Display(), Const.getPropertiesFile());
-    }
-    setBlockOnOpen(true);
-    open();
-    Display.getCurrent().dispose();
-  }
+	public void run()
+	{
+		if (!PropsUI.isInitialized())
+		{
+			Const.checkPentahoMetadataDirectory();
+			PropsUI.init(new Display(), Const.getPropertiesFile());
+		}
+		setBlockOnOpen(true);
+		open();
+		Display.getCurrent().dispose();
+	}
 
-  protected Point getInitialSize() {
-    return new Point(300, 300);
-  }
+	protected Point getInitialSize()
+	{
+		return new Point(300, 300);
+	}
 
-  protected Control createContents(final Composite parent) {
-    Composite c0 = new Composite(parent, SWT.NONE);
-    c0.setLayout(new FormLayout());
+	protected Control createContents(final Composite parent)
+	{
+		Composite c0 = new Composite(parent, SWT.NONE);
+		c0.setLayout(new FormLayout());
 
-    // let the table diag operate on copy of the original in case they cancel
-    ITableModel copy = new BusinessTableModel((BusinessTable) tab.clone(), schemaMeta.getActiveModel());
+		// let the table diag operate on copy of the original in case they
+		// cancel
+		ITableModel copy = new BusinessTableModel((BusinessTable) tab.clone(), schemaMeta.getActiveModel());
 
-    if (logger.isDebugEnabled()) {
-      logger.debug("orig table model: " + tableModel);
-    }
+		if (logger.isDebugEnabled())
+		{
+			logger.debug("orig table model: " + tableModel);
+		}
 
-    final BusinessTableDialog diag = new BusinessTableDialog(this.getShell(), tab, schemaMeta);
+		final BusinessTableDialog diag = new BusinessTableDialog(this.getShell(), tab, schemaMeta);
 
-    if (logger.isDebugEnabled()) {
-      logger.debug("mod'ed table model: " + copy);
-    }
+		if (logger.isDebugEnabled())
+		{
+			logger.debug("mod'ed table model: " + copy);
+		}
 
-    //    final TableColumnTreeWidget t = new TableColumnTreeWidget(c0, SWT.NONE, tableModel, true);
+		// final TableColumnTreeWidget t = new TableColumnTreeWidget(c0,
+		// SWT.NONE, tableModel, true);
 
-    final Button b = new Button(c0, SWT.NONE);
-    FormData fdButton = new FormData();
-    fdButton.left = new FormAttachment(0, 10);
-    fdButton.top = new FormAttachment(0, 10);
-    b.setLayoutData(fdButton);
+		final Button b = new Button(c0, SWT.NONE);
+		FormData fdButton = new FormData();
+		fdButton.left = new FormAttachment(0, 10);
+		fdButton.top = new FormAttachment(0, 10);
+		b.setLayoutData(fdButton);
 
-    //    FormData fdTree = new FormData();
-    //    fdTree.left = new FormAttachment(0, 10);
-    //    fdTree.top = new FormAttachment(b, 10);
-    //    t.setLayoutData(fdTree);
+		// FormData fdTree = new FormData();
+		// fdTree.left = new FormAttachment(0, 10);
+		// fdTree.top = new FormAttachment(b, 10);
+		// t.setLayoutData(fdTree);
 
-    b.setText("Go");
-    b.addSelectionListener(new SelectionListener() {
-      public void widgetDefaultSelected(SelectionEvent arg0) {
-      }
+		b.setText("Go");
+		b.addSelectionListener(new SelectionListener()
+		{
+			public void widgetDefaultSelected(SelectionEvent arg0)
+			{
+			}
 
-      public void widgetSelected(SelectionEvent arg0) {
-        int result = diag.open();
-        if (Window.OK == result) {
-          if (logger.isDebugEnabled()) {
-            logger.debug("user clicked ok; time to save");
-          }
-          saveTable();
-        } else {
-          if (logger.isDebugEnabled()) {
-            logger.debug("user clicked cancel");
-          }
-        }
-      }
+			public void widgetSelected(SelectionEvent arg0)
+			{
+				int result = diag.open();
+				if (Window.OK == result)
+				{
+					if (logger.isDebugEnabled())
+					{
+						logger.debug("user clicked ok; time to save");
+					}
+					saveTable();
+				} else
+				{
+					if (logger.isDebugEnabled())
+					{
+						logger.debug("user clicked cancel");
+					}
+				}
+			}
 
-    });
+		});
 
-    return c0;
-  }
+		return c0;
+	}
 
-  private void saveTable() {
-    if (logger.isDebugEnabled()) {
-      logger.debug("saving table");
-    }
+	private void saveTable()
+	{
+		if (logger.isDebugEnabled())
+		{
+			logger.debug("saving table");
+		}
 
-  }
+	}
 
-  public static void main(final String[] args) {
-    new BusinessTableDialogTestApp().run();
-  }
+	public static void main(final String[] args)
+	{
+		new BusinessTableDialogTestApp().run();
+	}
 
-  protected void configureShell(final Shell shell) {
-    super.configureShell(shell);
-    shell.setText("Business Table Dialog Test Application");
-    shell.setImage(Constants.getImageRegistry(Display.getCurrent()).get("concept-editor-app"));
-  }
+	protected void configureShell(final Shell shell)
+	{
+		super.configureShell(shell);
+		shell.setText("Business Table Dialog Test Application");
+		shell.setImage(Constants.getImageRegistry(Display.getCurrent()).get("concept-editor-app"));
+	}
 
 }

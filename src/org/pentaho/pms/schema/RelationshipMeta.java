@@ -28,14 +28,12 @@
 package org.pentaho.pms.schema;
 import java.util.List;
 
+import org.pentaho.di.core.changed.ChangedFlag;
+import org.pentaho.di.core.changed.ChangedFlagInterface;
+import org.pentaho.di.core.xml.XMLHandler;
+import org.pentaho.di.core.xml.XMLInterface;
 import org.pentaho.pms.util.Const;
 import org.w3c.dom.Node;
-
-import be.ibridge.kettle.core.ChangedFlag;
-import be.ibridge.kettle.core.ChangedFlagInterface;
-import be.ibridge.kettle.core.XMLHandler;
-import be.ibridge.kettle.core.XMLInterface;
-import be.ibridge.kettle.core.database.DatabaseMeta;
 
 /*
  * Created on 28-jan-2004

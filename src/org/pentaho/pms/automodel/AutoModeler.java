@@ -1,5 +1,7 @@
 package org.pentaho.pms.automodel;
 
+import org.pentaho.di.core.database.Database;
+import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
@@ -8,11 +10,9 @@ import org.pentaho.pms.schema.PhysicalColumn;
 import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.util.Const;
+import org.pentaho.pms.util.ObjectAlreadyExistsException;
 import org.pentaho.pms.util.Settings;
 
-import be.ibridge.kettle.core.database.Database;
-import be.ibridge.kettle.core.database.DatabaseMeta;
-import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
 
 /**
  * This class will help in the automatic generation of a metadata model.<br>

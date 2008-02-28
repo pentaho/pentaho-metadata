@@ -27,14 +27,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.pentaho.di.core.changed.ChangedFlag;
+import org.pentaho.di.ui.core.PropsUI;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyWidgetInterface;
 import org.pentaho.pms.util.Const;
-
-import be.ibridge.kettle.core.ChangedFlag;
-import be.ibridge.kettle.core.Props;
 
 public class ConceptPropertyDateWidget extends ChangedFlag implements ConceptPropertyWidgetInterface
 {
@@ -138,9 +137,9 @@ public class ConceptPropertyDateWidget extends ChangedFlag implements ConceptPro
         year.setFocus();
     }
 
-    public static final Control getControl(Composite composite, ConceptInterface concept, final String name, Control lastControl, Map conceptPropertyInterfaces)
+    public static final Control getControl(Composite composite, ConceptInterface concept, final String name, Control lastControl, Map<String,ConceptPropertyWidgetInterface> conceptPropertyInterfaces)
     {
-        Props props = Props.getInstance();
+        PropsUI props = PropsUI.getInstance();
         ConceptPropertyInterface property = concept.getProperty(name);
 
         Composite dateComposite = new Composite(composite, SWT.NONE);

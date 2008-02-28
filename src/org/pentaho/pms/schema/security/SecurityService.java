@@ -26,17 +26,16 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.pentaho.di.core.changed.ChangedFlag;
+import org.pentaho.di.core.exception.KettleException;
+import org.pentaho.di.core.exception.KettleXMLException;
+import org.pentaho.di.core.logging.LogWriter;
+import org.pentaho.di.core.xml.XMLHandler;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.util.Const;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-
-import be.ibridge.kettle.core.ChangedFlag;
-import be.ibridge.kettle.core.LogWriter;
-import be.ibridge.kettle.core.XMLHandler;
-import be.ibridge.kettle.core.exception.KettleException;
-import be.ibridge.kettle.core.exception.KettleXMLException;
 
 public class SecurityService extends ChangedFlag implements Cloneable {
   
@@ -328,6 +327,7 @@ public class SecurityService extends ChangedFlag implements Cloneable {
 
         log.logDetailed(toString(), Messages.getString("SecurityService.INFO_START_READING_WEBSERVER_REPLY")); //$NON-NLS-1$
         result = getMethod.getResponseBodyAsString();
+        
         log.logBasic(toString(), Messages.getString("SecurityService.INFO_FINISHED_READING_RESPONSE", Integer.toString(result.length()))); //$NON-NLS-1$ 
 
       } else if (status == HttpStatus.SC_UNAUTHORIZED) {
@@ -442,8 +442,8 @@ public class SecurityService extends ChangedFlag implements Cloneable {
     this.filename = filename;
   }
 
-  public List getUsers() {
-    List users = new ArrayList();
+  public List<String> getUsers() {
+    List<String> users = new ArrayList<String>();
     if (hasService() || hasFile()) {
       try {
         Node contentNode = getContent();
@@ -466,8 +466,8 @@ public class SecurityService extends ChangedFlag implements Cloneable {
     return users;
   }
   
-  public List getRoles() {
-    List roles = new ArrayList();
+  public List<String> getRoles() {
+    List<String> roles = new ArrayList<String>();
     if (hasService() || hasFile()) {
       try {
         Node contentNode = getContent();
@@ -490,8 +490,8 @@ public class SecurityService extends ChangedFlag implements Cloneable {
     return roles;
   }
 
-  public List getAcls() {
-    List acls = new ArrayList();
+  public List<SecurityACL> getAcls() {
+    List<SecurityACL> acls = new ArrayList<SecurityACL>();
     if (hasService() || hasFile()) {
       try {
         Node contentNode = getContent();

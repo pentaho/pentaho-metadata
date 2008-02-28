@@ -26,16 +26,16 @@
  **********************************************************************/
 
 package org.pentaho.pms.schema;
+import org.pentaho.di.core.changed.ChangedFlagInterface;
+import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
+import org.pentaho.pms.util.ObjectAlreadyExistsException;
+import org.pentaho.pms.util.UniqueArrayList;
+import org.pentaho.pms.util.UniqueList;
 
-import be.ibridge.kettle.core.ChangedFlagInterface;
-import be.ibridge.kettle.core.database.DatabaseMeta;
-import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
-import be.ibridge.kettle.core.list.UniqueArrayList;
-import be.ibridge.kettle.core.list.UniqueList;
 
 
 /**
@@ -46,9 +46,9 @@ import be.ibridge.kettle.core.list.UniqueList;
 public class PhysicalTable extends ConceptUtilityBase implements Cloneable, ChangedFlagInterface, ConceptUtilityInterface
 {
 	private DatabaseMeta databaseMeta;
-	private UniqueList   physicalColumns;
+	private UniqueList<PhysicalColumn>   physicalColumns;
 
-	public PhysicalTable(String id, String targetSchema, String targetTable, DatabaseMeta databaseMeta, UniqueArrayList columns)
+	public PhysicalTable(String id, String targetSchema, String targetTable, DatabaseMeta databaseMeta, UniqueList<PhysicalColumn> columns)
 	{
         super(id);
 		this.databaseMeta = databaseMeta;
@@ -60,12 +60,12 @@ public class PhysicalTable extends ConceptUtilityBase implements Cloneable, Chan
 
 	public PhysicalTable()
 	{
-		this(null, null, null, null, new UniqueArrayList());
+		this(null, null, null, null, new UniqueArrayList<PhysicalColumn>());
 	}
 
     public PhysicalTable(String id)
     {
-        this(id, null, null, null, new UniqueArrayList());
+        this(id, null, null, null, new UniqueArrayList<PhysicalColumn>());
     }
 
     /**
@@ -83,7 +83,7 @@ public class PhysicalTable extends ConceptUtilityBase implements Cloneable, Chan
 		{
 			PhysicalTable retval   = (PhysicalTable)super.clone();
             retval.setConcept((ConceptInterface) getConcept().clone()); // deep copy of all properties
-            retval.setPhysicalColumns(new UniqueArrayList()); // clear all columns: deep copy as well.
+            retval.setPhysicalColumns(new UniqueArrayList<PhysicalColumn>()); // clear all columns: deep copy as well.
             for (int i=0;i<nrPhysicalColumns();i++)
             {
                 PhysicalColumn physicalColumn = getPhysicalColumn(i);
@@ -119,13 +119,13 @@ public class PhysicalTable extends ConceptUtilityBase implements Cloneable, Chan
 		return databaseMeta;
 	}
 
-	public void setPhysicalColumns(UniqueList physicalColumns)
+	public void setPhysicalColumns(UniqueList<PhysicalColumn> physicalColumns)
 	{
 		this.physicalColumns = physicalColumns;
         setChanged();
 	}
 
-	public UniqueList getPhysicalColumns()
+	public UniqueList<PhysicalColumn> getPhysicalColumns()
 	{
 		return physicalColumns;
 	}
@@ -262,5 +262,4 @@ public class PhysicalTable extends ConceptUtilityBase implements Cloneable, Chan
         
         for (int i=0;i<nrPhysicalColumns();i++) getPhysicalColumn(i).clearChanged();
     }
-   
 }

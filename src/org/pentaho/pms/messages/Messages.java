@@ -23,14 +23,14 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.pentaho.pms.locale.util.LocaleHelper;
+import org.pentaho.pms.messages.util.LocaleHelper;
 
 public class Messages {
     private static final String BUNDLE_NAME = "org.pentaho.pms.locale.messages";//$NON-NLS-1$
 
-    private static final Map locales = Collections.synchronizedMap(new HashMap());
+    private static final Map<Locale,ResourceBundle> locales = Collections.synchronizedMap(new HashMap<Locale,ResourceBundle>());
 
-    protected static Map getLocales() {
+    protected static Map<Locale,ResourceBundle> getLocales() {
         return locales;
     }
 

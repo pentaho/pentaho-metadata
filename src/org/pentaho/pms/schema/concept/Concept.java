@@ -24,26 +24,25 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.pentaho.di.core.changed.ChangedFlag;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 import org.pentaho.pms.schema.concept.types.localstring.ConceptPropertyLocalizedString;
 import org.pentaho.pms.schema.concept.types.localstring.LocalizedStringSettings;
 import org.pentaho.pms.schema.concept.types.security.ConceptPropertySecurity;
 
-import be.ibridge.kettle.core.ChangedFlag;
-
 public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
 {
     private String name;
 
-    private Map childPropertyInterfaces;
+    private Map<String,ConceptPropertyInterface> childPropertyInterfaces;
     private ConceptInterface parentInterface;
     private ConceptInterface inheritedInterface;
     private ConceptInterface securityParentInterface;
 
     public Concept()
     {
-        this.childPropertyInterfaces = new Hashtable();
+        this.childPropertyInterfaces = new Hashtable<String,ConceptPropertyInterface>();
     }
 
     public Concept(String name)
@@ -150,24 +149,24 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
         this.name = name;
     }
 
-    public Map getChildPropertyInterfaces()
+    public Map<String,ConceptPropertyInterface> getChildPropertyInterfaces()
     {
         return childPropertyInterfaces;
     }
 
-    public Map getParentPropertyInterfaces()
+    public Map<String,ConceptPropertyInterface> getParentPropertyInterfaces()
     {
         if (parentInterface==null) return null;
         return parentInterface.getPropertyInterfaces();
     }
 
-    public Map getInheritedPropertyInterfaces()
+    public Map<String,ConceptPropertyInterface> getInheritedPropertyInterfaces()
     {
         if (inheritedInterface==null) return null;
         return inheritedInterface.getPropertyInterfaces();
     }
 
-    public Map getSecurityPropertyInterfaces()
+    public Map<String,ConceptPropertyInterface> getSecurityPropertyInterfaces()
     {
         if (securityParentInterface==null) return null;
         return securityParentInterface.getPropertyInterfaces();
@@ -176,9 +175,9 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
     /**
      * @return a read-only list of properties: please modify using the child properties
      */
-    public Map getPropertyInterfaces()
+    public Map<String,ConceptPropertyInterface> getPropertyInterfaces()
     {
-        Map all = new Hashtable();
+        Map<String,ConceptPropertyInterface> all = new Hashtable<String,ConceptPropertyInterface>();
 
         // Properties inherited from the "logical relationship": BusinessColumn inherits from Physical Column, B.Table from Ph.Table
         //
@@ -289,13 +288,13 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
         return getSortedPropertyIDs(getPropertyInterfaces());
     }
 
-    private static final String[] getSortedPropertyIDs(Map map)
+    private static final String[] getSortedPropertyIDs(Map<String,?> map)
     {
-        Set keySet = map.keySet();
-        List list = new ArrayList(keySet);
-        Comparator comparator = new Comparator()
+        Set<String> keySet = map.keySet();
+        List<String> list = new ArrayList<String>(keySet);
+        Comparator<String> comparator = new Comparator<String>()
         {
-            public int compare(Object o1, Object o2)
+            public int compare(String o1, String o2)
             {
                 String one = (String) o1;
                 String two = (String) o2;
@@ -431,7 +430,7 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
      */
     public String[] getUsedLocale()
     {
-        Map locales = new Hashtable();
+        Map<String,String> locales = new Hashtable<String,String>();
         String[] propertyNames = getChildPropertyIDs();
         for (int i = 0; i < propertyNames.length; i++)
         {
@@ -445,7 +444,7 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
             }
         }
 
-        Set keySet = locales.keySet();
+        Set<String> keySet = locales.keySet();
         return (String[])keySet.toArray(new String[keySet.size()]);
     }
 
@@ -456,7 +455,7 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
      */
     public ConceptPropertyInterface[] getLocalizedProperties(String locale)
     {
-        List propertiesList = new ArrayList();
+        List<ConceptPropertyInterface> propertiesList = new ArrayList<ConceptPropertyInterface>();
 
         String[] propertyNames = getChildPropertyIDs();
         for (int i = 0; i < propertyNames.length; i++)

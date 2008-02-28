@@ -4,13 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import junit.framework.TestCase;
+
 import org.pentaho.commons.connection.memory.MemoryMetaData;
+import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.mql.ExtendedMetaData;
-import org.pentaho.pms.mql.MQLQueryImpl;
 import org.pentaho.pms.mql.MappedQuery;
 import org.pentaho.pms.mql.Path;
 import org.pentaho.pms.mql.SQLGenerator;
 import org.pentaho.pms.mql.Selection;
+import org.pentaho.pms.mql.MQLQueryImpl;
 import org.pentaho.pms.mql.WhereCondition;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
@@ -19,10 +22,6 @@ import org.pentaho.pms.schema.PhysicalColumn;
 import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.RelationshipMeta;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
-
-import be.ibridge.kettle.core.database.DatabaseMeta;
-
-import junit.framework.TestCase;
 
 public class MQLQueryImplTest  extends TestCase {
   

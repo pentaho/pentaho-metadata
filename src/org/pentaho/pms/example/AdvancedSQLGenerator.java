@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.example.AdvancedMQLQuery.AliasedSelection;
 import org.pentaho.pms.messages.Messages;
@@ -18,8 +19,6 @@ import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.RelationshipMeta;
 import org.pentaho.pms.util.Const;
-
-import be.ibridge.kettle.core.database.DatabaseMeta;
 
 /**
  * This class demonstrates extending SQLGenerator.  The example here
@@ -46,7 +45,7 @@ public class AdvancedSQLGenerator extends SQLGenerator {
     }
   }
   
-  public MappedQuery getQuery(BusinessModel model, List<AdvancedMQLQuery.AliasedSelection> selections, List<WhereCondition> constraints, DatabaseMeta databaseMeta, boolean disableDistinct, String locale) throws PentahoMetadataException { 
+  public MappedQuery getQuery(BusinessModel model, List<Selection> selections, List<WhereCondition> constraints, DatabaseMeta databaseMeta, boolean disableDistinct, String locale) throws PentahoMetadataException { 
     Map<String,String> columnsMap = new HashMap<String,String>();
     if (model == null || selections.size() == 0) {
       return null;
@@ -58,7 +57,7 @@ public class AdvancedSQLGenerator extends SQLGenerator {
     Map<String, List<Selection>> listlookup = new HashMap<String, List<Selection>>();
     // default + alias lists
     for (int i = 0; i < selections.size(); i++) {
-      AliasedSelection sel = selections.get(i);
+      AliasedSelection sel = (AliasedSelection)selections.get(i);
       if (sel.alias == null) {
         sel.alias = DEFAULT_ALIAS;
       } 
@@ -147,7 +146,7 @@ public class AdvancedSQLGenerator extends SQLGenerator {
       } else {
         sql.append("          "); //$NON-NLS-1$
       }
-      sql.append(getFunctionTableAndColumnForSQL(model, selections.get(i), databaseMeta, locale));
+      sql.append(getFunctionTableAndColumnForSQL(model, (AliasedSelection)selections.get(i), databaseMeta, locale));
       sql.append(" AS "); //$NON-NLS-1$
 
       // in some database implementations, the "as" name has a finite length;

@@ -64,15 +64,15 @@ import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.schema.concept.editor.PhysicalTableModel;
 import org.pentaho.pms.schema.concept.editor.PropertyNavigationWidget;
 import org.pentaho.pms.schema.concept.editor.PropertyWidgetManager2;
+import org.pentaho.pms.util.ObjectAlreadyExistsException;
 import org.pentaho.pms.util.Settings;
 
-import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
 
 public class PhysicalTableDialog extends AbstractTableDialog {
 
   private static final Log logger = LogFactory.getLog(PhysicalTableDialog.class);
 
-  HashMap modificationsMap = new HashMap();
+  HashMap<Object,Object> modificationsMap = new HashMap<Object,Object>();
 
   public PhysicalTableDialog(Shell parent, PhysicalColumn origPhysicalColumn, SchemaMeta schemaMeta) {
     super(parent);
@@ -200,8 +200,8 @@ public class PhysicalTableDialog extends AbstractTableDialog {
     }
     
     // Remove any columns from the original physical table that were removed from the working copy.
-    ArrayList entriesToRemove = new ArrayList();
-    Set entrySet = modificationsMap.entrySet();
+    ArrayList<Map.Entry> entriesToRemove = new ArrayList<Map.Entry>();
+    Set<Map.Entry<Object, Object>> entrySet = modificationsMap.entrySet();
     for (Iterator iterator = entrySet.iterator(); iterator.hasNext();) {
       boolean found = false;
       Map.Entry entry = (Map.Entry)iterator.next();

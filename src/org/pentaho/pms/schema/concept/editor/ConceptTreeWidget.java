@@ -34,8 +34,8 @@ import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.Concept;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.DeleteNotAllowedException;
+import org.pentaho.pms.util.ObjectAlreadyExistsException;
 
-import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
 
 public class ConceptTreeWidget extends Composite implements ISelectionProvider {
 

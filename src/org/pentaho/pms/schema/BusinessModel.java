@@ -11,53 +11,39 @@
  */
 package org.pentaho.pms.schema;
 
+import java.awt.Rectangle;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.Stack;
-import java.util.Vector;
 
-import org.pentaho.pms.core.exception.PentahoMetadataException;
+import org.pentaho.di.core.NotePadMeta;
+import org.pentaho.di.core.changed.ChangedFlagInterface;
+import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.di.core.gui.Point;
 import org.pentaho.pms.messages.Messages;
-import org.pentaho.pms.mql.MappedQuery;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.schema.olap.OlapCube;
 import org.pentaho.pms.schema.olap.OlapDimension;
 import org.pentaho.pms.util.Const;
+import org.pentaho.pms.util.ObjectAlreadyExistsException;
+import org.pentaho.pms.util.UniqueArrayList;
+import org.pentaho.pms.util.UniqueList;
 
-import be.ibridge.kettle.core.ChangedFlagInterface;
-import be.ibridge.kettle.core.NotePadMeta;
-import be.ibridge.kettle.core.Point;
-import be.ibridge.kettle.core.Rectangle;
-import be.ibridge.kettle.core.TransAction;
-import be.ibridge.kettle.core.database.DatabaseMeta;
-import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
-import be.ibridge.kettle.core.list.UniqueArrayList;
-import be.ibridge.kettle.core.list.UniqueList;
-import be.ibridge.kettle.spoon.UndoInterface;
-import be.ibridge.kettle.trans.TransMeta;
-import be.ibridge.kettle.trans.TransPreviewFactory;
-import be.ibridge.kettle.trans.step.tableinput.TableInputMeta;
 
 public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInterface, Cloneable,
-    ConceptUtilityInterface, UndoInterface {
+    ConceptUtilityInterface {
 
-  private UniqueList businessTables;
+  private UniqueList<BusinessTable> businessTables;
 
-  private List relationships;
+  private List<RelationshipMeta> relationships;
 
-  private List notes;
+  private List<NotePadMeta> notes;
 
-  private UniqueList olapDimensions;
+  private UniqueList<OlapDimension> olapDimensions;
 
-  private UniqueList olapCubes;
+  private UniqueList<OlapCube> olapCubes;
 
   private BusinessCategory rootCategory;
 
@@ -67,11 +53,11 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   public BusinessModel() {
     super();
-    this.businessTables = new UniqueArrayList();
-    this.relationships = new ArrayList();
-    this.notes = new ArrayList();
-    this.olapDimensions = new UniqueArrayList();
-    this.olapCubes = new UniqueArrayList();
+    this.businessTables = new UniqueArrayList<BusinessTable>();
+    this.relationships = new ArrayList<RelationshipMeta>();
+    this.notes = new ArrayList<NotePadMeta>();
+    this.olapDimensions = new UniqueArrayList<OlapDimension>();
+    this.olapCubes = new UniqueArrayList<OlapCube>();
 
     BusinessCategory businessCategory = new BusinessCategory();
     businessCategory.setRootCategory(true);
@@ -86,7 +72,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
       setId(id);
     } catch (ObjectAlreadyExistsException e) {
       // Ignore this one, the class doesn't have any listeners yet so it's impossible for an exception to be thrown.
-    }
+  }
   }
 
   /**
@@ -227,7 +213,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
   /**
    * @param notes the notes to set
    */
-  public void setNotes(List notes) {
+  public void setNotes(List<NotePadMeta> notes) {
     this.notes = notes;
   }
 
@@ -278,7 +264,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
     for (i = 0; i < nrBusinessTables(); i++) {
       BusinessTable ti = getBusinessTable(i);
       Point p = ti.getLocation();
-      if (rect.contains(p))
+      if (rect.contains(p.x,p.y))
         ti.setSelected(true);
     }
   }
@@ -467,7 +453,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
   }
 
   public ArrayList getModelTables() {
-    ArrayList modelTables = new ArrayList();
+    ArrayList<BusinessTable> modelTables = new ArrayList<BusinessTable>();
 
     for (int x = 0; x < nrRelationships(); x++) {
       RelationshipMeta hi = getRelationship(x);
@@ -607,8 +593,8 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
    *
    * @return A list containing all the selected & drawn job entries.
    */
-  public List getSelectedDrawnBusinessTableList() {
-    List list = new ArrayList();
+  public List<BusinessTable> getSelectedDrawnBusinessTableList() {
+    List<BusinessTable> list = new ArrayList<BusinessTable>();
 
     for (int i = 0; i < nrBusinessTables(); i++) {
       BusinessTable businessTable = getBusinessTable(i);
@@ -734,17 +720,17 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
    *
    * @return a UniqueList of all business columns in this model
    */
-  public UniqueList getAllBusinessColumns() {
-    UniqueList columns = new UniqueArrayList();
+  public UniqueList<BusinessColumn> getAllBusinessColumns() {
+    UniqueList<BusinessColumn> columns = new UniqueArrayList<BusinessColumn>();
 
     for (int i = 0; i < nrBusinessTables(); i++) {
       BusinessTable businessTable = getBusinessTable(i);
       for (int j = 0; j < businessTable.nrBusinessColumns(); j++) {
         try {
-          columns.add(businessTable.getBusinessColumn(j));
+        	  columns.add(businessTable.getBusinessColumn(j));
         } catch (ObjectAlreadyExistsException e) {
           throw new RuntimeException(e);
-        }
+          }
       }
     }
     return columns;
@@ -788,15 +774,15 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
    * @return a "flat" representation of the categories. Note: it is a List<BusinessColumn>
    */
   public List getFlatCategoriesView(String locale) {
-    List strings = new ArrayList();
-    Stack categoriesPath = new Stack();
+    List<BusinessColumnString> strings = new ArrayList<BusinessColumnString>();
+    Stack<BusinessCategory> categoriesPath = new Stack<BusinessCategory>();
 
     getFlatCategoriesView(strings, categoriesPath, rootCategory, locale);
 
     return strings;
   }
 
-  private void getFlatCategoriesView(List strings, Stack categoriesPath, BusinessCategory parentCategory, String locale) {
+  private void getFlatCategoriesView(List<BusinessColumnString> strings, Stack<BusinessCategory> categoriesPath, BusinessCategory parentCategory, String locale) {
     // Add the category id itself...
     StringBuffer pathString = new StringBuffer();
     for (int i = 0; i < categoriesPath.size(); i++) {
@@ -974,7 +960,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
   /**
    * @return the olapDimensions
    */
-  public List getOlapDimensions() {
+  public List<OlapDimension> getOlapDimensions() {
     return olapDimensions.getList();
   }
 
@@ -1003,7 +989,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
   /**
    * @return the olapCubes
    */
-  public List getOlapCubes() {
+  public List<OlapCube> getOlapCubes() {
     return olapCubes.getList();
   }
 
@@ -1013,37 +999,6 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
       if (cube.getName().equalsIgnoreCase(name))
         return cube;
     }
-    return null;
-  }
-
-  public void addUndo(Object[] from, Object[] to, int[] pos, Point[] prev, Point[] curr, int type_of_change,
-      boolean nextAlso) {
-  }
-
-  public int getMaxUndo() {
-    return 0;
-  }
-
-  public TransAction nextUndo() {
-    return null;
-  }
-
-  public TransAction previousUndo() {
-    return null;
-  }
-
-  public void setMaxUndo(int mu) {
-  }
-
-  public TransAction viewNextUndo() {
-    return null;
-  }
-
-  public TransAction viewPreviousUndo() {
-    return null;
-  }
-
-  public TransAction viewThisUndo() {
     return null;
   }
 

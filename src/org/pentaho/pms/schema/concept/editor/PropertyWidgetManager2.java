@@ -40,7 +40,7 @@ public class PropertyWidgetManager2 extends Composite implements ISelectionChang
 
   private Layout layout;
 
-  private Map widgets = new HashMap();
+  private Map<String,IPropertyEditorWidget> widgets = new HashMap<String,IPropertyEditorWidget>();
 
   private Composite widgetArea;
 
@@ -48,7 +48,7 @@ public class PropertyWidgetManager2 extends Composite implements ISelectionChang
 
   private ScrolledComposite widgetAreaWrapper;
 
-  private Map groupNameWidgets = new HashMap();
+  private Map<String,Control> groupNameWidgets = new HashMap<String,Control>();
 
   private SecurityReference securityReference;
 

@@ -1,5 +1,11 @@
 package org.pentaho.pms.automodel;
 
+import org.apache.commons.lang.StringUtils;
+import org.pentaho.di.core.database.Database;
+import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.di.core.exception.KettleException;
+import org.pentaho.di.core.row.RowMetaInterface;
+import org.pentaho.di.core.row.ValueMetaInterface;
 import org.pentaho.pms.schema.PhysicalColumn;
 import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
@@ -7,20 +13,17 @@ import org.pentaho.pms.schema.concept.types.datatype.DataTypeSettings;
 import org.pentaho.pms.schema.concept.types.fieldtype.FieldTypeSettings;
 import org.pentaho.pms.schema.concept.types.tabletype.TableTypeSettings;
 import org.pentaho.pms.util.Const;
+import org.pentaho.pms.util.ObjectAlreadyExistsException;
 import org.pentaho.pms.util.Settings;
+import org.pentaho.pms.util.UniqueArrayList;
+import org.pentaho.pms.util.UniqueList;
 
-import be.ibridge.kettle.core.Row;
-import be.ibridge.kettle.core.database.Database;
-import be.ibridge.kettle.core.database.DatabaseMeta;
-import be.ibridge.kettle.core.exception.KettleException;
-import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
-import be.ibridge.kettle.core.list.UniqueArrayList;
-import be.ibridge.kettle.core.value.Value;
-
-public class PhysicalTableImporter {
-	public static PhysicalTable importTableDefinition(Database database, String schemaName, String tableName, String locale)
-			throws KettleException {
-		UniqueArrayList fields = new UniqueArrayList();
+public class PhysicalTableImporter
+{
+	public static PhysicalTable importTableDefinition(Database database, String schemaName, String tableName,
+			String locale) throws KettleException
+	{
+		UniqueList<PhysicalColumn> fields = new UniqueArrayList<PhysicalColumn>();
 
 		String id = tableName;
 		String tablename = tableName;
@@ -33,28 +36,35 @@ public class PhysicalTableImporter {
 		if (Settings.isAnIdUppercase())
 			id = id.toUpperCase();
 
-		PhysicalTable physicalTable = new PhysicalTable(id, schemaName, tableName, database.getDatabaseMeta(), fields);
+		PhysicalTable physicalTable = new PhysicalTable(id, schemaName, tableName,
+				database.getDatabaseMeta(), fields);
 
 		// Also set a localized description...
 		String niceName = beautifyName(tablename);
 		physicalTable.getConcept().setName(locale, niceName);
 
 		DatabaseMeta dbMeta = database.getDatabaseMeta();
-		String schemaTableCombination = dbMeta.getSchemaTableCombination(dbMeta.quoteField(schemaName), dbMeta
-				.quoteField(tableName));
+		String schemaTableCombination = dbMeta.getSchemaTableCombination(dbMeta.quoteField(schemaName),
+				dbMeta.quoteField(tableName));
 
-		Row row = database.getTableFields(schemaTableCombination);
+		RowMetaInterface row = database.getTableFields(schemaTableCombination);
 
-		if (row != null && row.size() > 0) {
-			for (int i = 0; i < row.size(); i++) {
-				Value v = row.getValue(i);
+		if (row != null && row.size() > 0)
+		{
+			for (int i = 0; i < row.size(); i++)
+			{
+				ValueMetaInterface v = row.getValueMeta(i);
 				PhysicalColumn physicalColumn = importPhysicalColumnDefinition(v, physicalTable, locale);
-				try {
+				try
+				{
 					fields.add(physicalColumn);
-				} catch (ObjectAlreadyExistsException e) {
-					// Don't add this column
+
+				} catch (ObjectAlreadyExistsException e)
+				{
+				    // Don't add this column
 					// TODO: show error dialog.
 				}
+
 			}
 		}
 		String upper = tablename.toUpperCase();
@@ -65,11 +75,14 @@ public class PhysicalTableImporter {
 		return physicalTable;
 	}
 
-	public static final String beautifyName(String name) {
-		return new Value("niceName", name).replace("_", " ").initcap().getString(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	public static final String beautifyName(String name)
+	{
+		return StringUtils.capitalize(name.replace("_", " ")); //$NON-NLS-1$
 	}
 
-	private static PhysicalColumn importPhysicalColumnDefinition(Value v, PhysicalTable physicalTable, String locale) {
+	private static PhysicalColumn importPhysicalColumnDefinition(ValueMetaInterface v,
+			PhysicalTable physicalTable, String locale)
+	{
 		// The id
 		//
 		String id = Settings.getPhysicalColumnIDPrefix() + v.getName();
@@ -86,8 +99,8 @@ public class PhysicalTableImporter {
 
 		// Create a physical column.
 		//
-		PhysicalColumn physicalColumn = new PhysicalColumn(v.getName(), dbname, fieldType, AggregationSettings.NONE,
-				physicalTable);
+		PhysicalColumn physicalColumn = new PhysicalColumn(v.getName(), dbname, fieldType,
+				AggregationSettings.NONE, physicalTable);
 
 		// Set the localized name...
 		//
@@ -104,32 +117,34 @@ public class PhysicalTableImporter {
 		return physicalColumn;
 	}
 
-	private static DataTypeSettings getDataTypeSettings(Value v) {
+	private static DataTypeSettings getDataTypeSettings(ValueMetaInterface v)
+	{
 		DataTypeSettings dataTypeSettings = new DataTypeSettings(DataTypeSettings.DATA_TYPE_STRING);
-		switch (v.getType()) {
-		case Value.VALUE_TYPE_BIGNUMBER:
-		case Value.VALUE_TYPE_INTEGER:
-		case Value.VALUE_TYPE_NUMBER:
+		switch (v.getType())
+		{
+		case ValueMetaInterface.TYPE_BIGNUMBER:
+		case ValueMetaInterface.TYPE_INTEGER:
+		case ValueMetaInterface.TYPE_NUMBER:
 			dataTypeSettings.setType(DataTypeSettings.DATA_TYPE_NUMERIC);
 			break;
 
-		case Value.VALUE_TYPE_BINARY:
+		case ValueMetaInterface.TYPE_BINARY:
 			dataTypeSettings.setType(DataTypeSettings.DATA_TYPE_BINARY);
 			break;
 
-		case Value.VALUE_TYPE_BOOLEAN:
+		case ValueMetaInterface.TYPE_BOOLEAN:
 			dataTypeSettings.setType(DataTypeSettings.DATA_TYPE_BOOLEAN);
 			break;
 
-		case Value.VALUE_TYPE_DATE:
+		case ValueMetaInterface.TYPE_DATE:
 			dataTypeSettings.setType(DataTypeSettings.DATA_TYPE_DATE);
 			break;
 
-		case Value.VALUE_TYPE_STRING:
+		case ValueMetaInterface.TYPE_STRING:
 			dataTypeSettings.setType(DataTypeSettings.DATA_TYPE_STRING);
 			break;
 
-		case Value.VALUE_TYPE_NONE:
+		case ValueMetaInterface.TYPE_NONE:
 			dataTypeSettings.setType(DataTypeSettings.DATA_TYPE_UNKNOWN);
 			break;
 

@@ -33,6 +33,15 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.di.core.variables.Variables;
+import org.pentaho.di.ui.core.PropsUI;
+import org.pentaho.di.ui.core.dialog.EnterSelectionDialog;
+import org.pentaho.di.ui.core.dialog.EnterStringDialog;
+import org.pentaho.di.ui.core.widget.ColumnInfo;
+import org.pentaho.di.ui.core.widget.LabelText;
+import org.pentaho.di.ui.core.widget.TableView;
+import org.pentaho.di.ui.core.widget.TreeMemory;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.mql.SQLGenerator;
 import org.pentaho.pms.schema.BusinessColumn;
@@ -49,15 +58,6 @@ import org.pentaho.pms.schema.olap.OlapMeasure;
 import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.GUIResource;
 
-import be.ibridge.kettle.core.ColumnInfo;
-import be.ibridge.kettle.core.Props;
-import be.ibridge.kettle.core.database.DatabaseMeta;
-import be.ibridge.kettle.core.dialog.EnterSelectionDialog;
-import be.ibridge.kettle.core.dialog.EnterStringDialog;
-import be.ibridge.kettle.core.widget.LabelText;
-import be.ibridge.kettle.core.widget.TableView;
-import be.ibridge.kettle.core.widget.TreeMemory;
-
 /**
  * This class allows concepts in a model to be edited and linked to parents.
  * 
@@ -71,7 +71,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
 
     private static final String STRING_OLAP_TREE = "DimensionsTree";  //$NON-NLS-1$
 
-    private Props props;
+    private PropsUI props;
 	private Shell shell;
     
     private SashForm   sashform;
@@ -96,7 +96,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
 		super(parent, style);
         this.metaEditor = metaEditor;
 		shell=parent.getShell();
-        props = Props.getInstance();
+        props = PropsUI.getInstance();
         props.setLook(this);
 
         middle = props.getMiddlePct();
@@ -645,7 +645,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
              {
                new ColumnInfo(Messages.getString("MetaEditorOlap.USER_DIMNENSION_NAME"),        ColumnInfo.COLUMN_TYPE_TEXT, false, true), //$NON-NLS-1$
              };
-        final TableView dimensions = new TableView(compDynamic, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI, dimensionColumns, 1, true, null, props );
+        final TableView dimensions = new TableView(new Variables(),compDynamic, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI, dimensionColumns, 1, true, null, props );
         FormData fdDimensions = new FormData();
         fdDimensions.left   = new FormAttachment(0,0);
         fdDimensions.right  = new FormAttachment(30, 0);
@@ -659,7 +659,7 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
              new ColumnInfo(Messages.getString("MetaEditorOlap.USER_COLUMN_NAME"),          ColumnInfo.COLUMN_TYPE_TEXT, false, true), //$NON-NLS-1$
              new ColumnInfo(Messages.getString("MetaEditorOlap.USER_FORMULA_COLUMN"),     ColumnInfo.COLUMN_TYPE_TEXT, false, true), //$NON-NLS-1$
            };
-        final TableView measures = new TableView(compDynamic, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI, measureColumns, 1, true, null, props );
+        final TableView measures = new TableView(new Variables(),compDynamic, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI, measureColumns, 1, true, null, props );
         FormData fdMeasures = new FormData();
         fdMeasures.left   = new FormAttachment(30, Const.MARGIN);
         fdMeasures.right  = new FormAttachment(100, 0);
@@ -689,11 +689,11 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
     {
         // Pick one from the available dimensions...
         BusinessModel activeModel = metaEditor.getSchemaMeta().getActiveModel();
-        List dimensions = activeModel.getOlapDimensions();
-        List usages = cube.getOlapDimensionUsages();
+        List<OlapDimension> dimensions = activeModel.getOlapDimensions();
+        List<OlapDimensionUsage> usages = cube.getOlapDimensionUsages();
         
         // Get a list of unused shared/public olap dimensions
-        List unUsed = new ArrayList();
+        List<OlapDimension> unUsed = new ArrayList<OlapDimension>();
         unUsed.addAll(dimensions);
         
         for (int u=0;u<usages.size();u++)

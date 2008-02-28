@@ -79,7 +79,7 @@ public abstract class AbstractTableDialog extends Dialog implements ISelectionCh
 
   protected Composite cardComposite;
 
-  protected Map propertyEditorContext = new HashMap();
+  protected Map<String,Locales> propertyEditorContext = new HashMap<String,Locales>();
 
   protected ConceptModelRegistry conceptModelRegistry = new ConceptModelRegistry();
 

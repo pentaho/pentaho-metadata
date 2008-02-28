@@ -16,19 +16,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.pentaho.di.core.changed.ChangedFlag;
 import org.pentaho.pms.messages.Messages;
-
-import be.ibridge.kettle.core.ChangedFlag;
 
 public class Locales extends ChangedFlag
 {
     public static final String EN_US = "en_US"; //$NON-NLS-1$
     
-    private   List           localeList;
+    private   List<LocaleInterface>           localeList;
     
     public Locales()
     {
-        localeList = new ArrayList();
+        localeList = new ArrayList<LocaleInterface>();
         
         setDefault();
     }
@@ -52,7 +51,7 @@ public class Locales extends ChangedFlag
     /**
      * @param locales the locales to set
      */
-    public void setLocaleList(List locales)
+    public void setLocaleList(List<LocaleInterface> locales)
     {
         this.localeList = locales;
     }

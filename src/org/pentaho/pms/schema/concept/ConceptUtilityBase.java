@@ -18,9 +18,13 @@ import java.util.List;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.pentaho.di.core.changed.ChangedFlag;
+import org.pentaho.pms.core.event.AllowsIDChangeListenersInterface;
+import org.pentaho.pms.core.event.IDChangedEvent;
+import org.pentaho.pms.core.event.IDChangedListener;
 import org.pentaho.pms.messages.Messages;
-import org.pentaho.pms.schema.RequiredProperties;
 import org.pentaho.pms.schema.DefaultProperty;
+import org.pentaho.pms.schema.RequiredProperties;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.schema.concept.types.aggregation.ConceptPropertyAggregation;
 import org.pentaho.pms.schema.concept.types.bool.ConceptPropertyBoolean;
@@ -35,25 +39,22 @@ import org.pentaho.pms.schema.concept.types.tabletype.ConceptPropertyTableType;
 import org.pentaho.pms.schema.concept.types.tabletype.TableTypeSettings;
 import org.pentaho.pms.schema.security.Security;
 import org.pentaho.pms.util.Const;
-
-import be.ibridge.kettle.core.ChangedFlag;
-import be.ibridge.kettle.core.changes.AllowsIDChangeListenersInterface;
-import be.ibridge.kettle.core.changes.IDChangedEvent;
-import be.ibridge.kettle.core.changes.IDChangedListener;
-import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
-import be.ibridge.kettle.core.list.UniqueList;
+import org.pentaho.pms.util.ObjectAlreadyExistsException;
+import org.pentaho.pms.util.UniqueList;
 
 public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeListenersInterface {
 
-  // TODO: Create a default locale in the metadata instead of just saying English is the default!
-  //       NOTE: please see http://jira.pentaho.org/browse/PMD-166 for more information
+  // TODO: Create a default locale in the metadata instead of just saying
+  // English is the default!
+  // NOTE: please see http://jira.pentaho.org/browse/PMD-166 for more
+  // information
   private static final String DEFAULT_LOCALE = "en_US"; //$NON-NLS-1$
 
   private String id;
 
   private ConceptInterface concept;
 
-  protected transient List idChangedListeners;
+  protected transient List<IDChangedListener> idChangedListeners;
 
   public ConceptUtilityBase() {
     this(null);
@@ -62,7 +63,7 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
   public ConceptUtilityBase(String id) {
     super();
     this.concept = new Concept();
-    this.idChangedListeners = new ArrayList();
+    this.idChangedListeners = new ArrayList<IDChangedListener>();
     this.id = id;
     addDefaultProperties();
   }
@@ -74,11 +75,11 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
     if (this == obj) {
       return true;
     }
-    
+
     if (!obj.getClass().equals(this.getClass())) {
       return false;
     }
-    
+
     ConceptUtilityBase rhs = (ConceptUtilityBase) obj;
 
     String lhsId = null != id ? id.toUpperCase() : null;
@@ -115,14 +116,17 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
   }
 
   /**
-   * @param id the id to set
-   * @throws ObjectAlreadyExistsException in case the ID already exists in a parent list (UniqueList)
+   * @param id
+   *            the id to set
+   * @throws ObjectAlreadyExistsException
+   *             in case the ID already exists in a parent list (UniqueList)
    */
   public void setId(String id) throws ObjectAlreadyExistsException {
     // Verify uniqueness BEFORE we change the ID!
     // We do this by calling the changed listener.
     // The verifyer needs to be somewhere else.
-    // That is because we don't want this class to "know" about the parent list in which it is contained.
+    // That is because we don't want this class to "know" about the parent
+    // list in which it is contained.
     //
     for (int i = 0; i < idChangedListeners.size(); i++) {
       IDChangedListener listener = (IDChangedListener) idChangedListeners.get(i);
@@ -145,7 +149,8 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
   }
 
   /**
-   * @param concept The concept to set
+   * @param concept
+   *            The concept to set
    */
   public void setConcept(ConceptInterface concept) {
     this.concept = concept;
@@ -153,11 +158,14 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
   }
 
   /**
-   * Returns the display name for the concept using the specified locale.
-   * If the concept doesn't have a display name given the specified locale,
-   * the default locale will be used
-   * @param locale The prefered locale to go for
-   * @return The localized name or the id if nothing was found for that or the default locale
+   * Returns the display name for the concept using the specified locale. If
+   * the concept doesn't have a display name given the specified locale, the
+   * default locale will be used
+   * 
+   * @param locale
+   *            The prefered locale to go for
+   * @return The localized name or the id if nothing was found for that or the
+   *         default locale
    */
   public String getDisplayName(String locale) {
     // The display name is currently the same as the regular name
@@ -166,32 +174,39 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
 
   /**
    * Set the localized name of the object
-   *
-   * @param locale The prefered locale to go for
-   * @param name the name to set
+   * 
+   * @param locale
+   *            The prefered locale to go for
+   * @param name
+   *            the name to set
    */
   public void setName(String locale, String name) {
     concept.setName(locale, name);
   }
 
   /**
-   * Returns the name for the concept using the specified locale.
-   * If the concept doesn't have a name given the specified locale,
-   *   the default locale will be used
-   * @param locale The prefered locale to go for
-   * @return The localized name or the id if nothing was found for that or the default locale
+   * Returns the name for the concept using the specified locale. If the
+   * concept doesn't have a name given the specified locale, the default
+   * locale will be used
+   * 
+   * @param locale
+   *            The prefered locale to go for
+   * @return The localized name or the id if nothing was found for that or the
+   *         default locale
    */
   public String getName(String locale) {
     String name = internalGetName(locale);
-    // If the name is empty and the default locale isn't virtually the same as the locale...
+    // If the name is empty and the default locale isn't virtually the same
+    // as the locale...
     if (Const.isEmpty(name) && !DEFAULT_LOCALE.startsWith(locale)) {
       name = internalGetName(DEFAULT_LOCALE);
     }
     return (Const.isEmpty(name) ? id : name);
   }
-  
+
   /**
-   * Used to check for the concept's name by using recursively less specific locales
+   * Used to check for the concept's name by using recursively less specific
+   * locales
    */
   private String internalGetName(String locale) {
     String name = concept.getName(locale);
@@ -203,21 +218,27 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
 
   /**
    * Set the localized description of the object
-   * @param locale The prefered locale to go for
-   * @param description the description to set
-   *
+   * 
+   * @param locale
+   *            The prefered locale to go for
+   * @param description
+   *            the description to set
+   * 
    */
   public void setDescription(String locale, String description) {
     concept.setDescription(locale, description);
   }
 
   /**
-   * @param locale The prefered locale to go for
-   * @return The localized description or null if nothing was found for that locale
+   * @param locale
+   *            The prefered locale to go for
+   * @return The localized description or null if nothing was found for that
+   *         locale
    */
   public String getDescription(String locale) {
     String description = concept.getDescription(locale);
-    // If the description is empty and the default locale isn't virtually the same as the locale...
+    // If the description is empty and the default locale isn't virtually
+    // the same as the locale...
     if (Const.isEmpty(description) && DEFAULT_LOCALE.indexOf(locale) != 0) {
       description = internalGetDescription(DEFAULT_LOCALE);
     }
@@ -225,7 +246,8 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
   }
 
   /**
-   * Used to look for the description using recursively less specific locale information
+   * Used to look for the description using recursively less specific locale
+   * information
    */
   private String internalGetDescription(String locale) {
     String description = concept.getDescription(locale);
@@ -235,7 +257,6 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
     return description;
   }
 
-  
   public String getTargetSchema() {
     ConceptPropertyInterface property = concept.getProperty(DefaultPropertyID.TARGET_SCHEMA.getId());
     if (property != null)
@@ -302,12 +323,13 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
     }
   }
 
-  //    ConceptPropertyInterface property = concept.getChildProperty(DefaultPropertyID..getId());
-  //    if (null != property) {
-  //      property.setValue(type);
-  //    } else {
-  //      concept.addProperty(new (DefaultPropertyID..getId(), type));
-  //    }
+  // ConceptPropertyInterface property =
+  // concept.getChildProperty(DefaultPropertyID..getId());
+  // if (null != property) {
+  // property.setValue(type);
+  // } else {
+  // concept.addProperty(new (DefaultPropertyID..getId(), type));
+  // }
 
   public boolean isDimensionTable() {
     return getTableType().isDimension();
@@ -360,7 +382,8 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
   }
 
   /**
-   * @param columnType the column type to set
+   * @param columnType
+   *            the column type to set
    */
   public void setFieldType(FieldTypeSettings fieldType) {
     ConceptPropertyInterface property = concept.getChildProperty(DefaultPropertyID.FIELD_TYPE.getId());

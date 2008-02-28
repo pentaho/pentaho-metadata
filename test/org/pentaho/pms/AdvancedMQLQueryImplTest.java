@@ -3,18 +3,16 @@ package org.pentaho.pms;
 import java.util.ArrayList;
 import java.util.List;
 
+import junit.framework.TestCase;
+
+import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.example.AdvancedMQLQuery;
-import org.pentaho.pms.mql.MQLQueryImpl;
 import org.pentaho.pms.mql.Path;
 import org.pentaho.pms.mql.SQLGenerator;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.RelationshipMeta;
-
-import be.ibridge.kettle.core.database.DatabaseMeta;
-
-import junit.framework.TestCase;
 
 public class AdvancedMQLQueryImplTest  extends TestCase {
   

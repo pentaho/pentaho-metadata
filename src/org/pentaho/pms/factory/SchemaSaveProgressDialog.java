@@ -24,15 +24,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Shell;
+import org.pentaho.di.core.logging.LogWriter;
+import org.pentaho.di.ui.core.dialog.ErrorDialog;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.editor.MetaEditor;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.Settings;
-
-import be.ibridge.kettle.core.LogWriter;
-import be.ibridge.kettle.core.dialog.ErrorDialog;
 
 /**
  * Takes care of displaying a dialog that will handle the wait while saving the schema...

@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.pentaho.di.ui.core.PropsUI;
 import org.pentaho.pms.locale.LocaleMeta;
 import org.pentaho.pms.locale.Locales;
 import org.pentaho.pms.schema.PhysicalColumn;
@@ -42,10 +43,8 @@ import org.pentaho.pms.schema.concept.types.localstring.LocalizedStringSettings;
 import org.pentaho.pms.schema.concept.types.string.ConceptPropertyString;
 import org.pentaho.pms.schema.dialog.PhysicalTableDialog;
 import org.pentaho.pms.util.Const;
+import org.pentaho.pms.util.ObjectAlreadyExistsException;
 
-import be.ibridge.kettle.core.Props;
-import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
-import be.ibridge.kettle.core.util.EnvUtil;
 
 public class PhysicalTableDialogTestApp extends ApplicationWindow {
   // ~ Static fields/initializers ======================================================================================
@@ -58,7 +57,7 @@ public class PhysicalTableDialogTestApp extends ApplicationWindow {
 
   private ITableModel tableModel;
 
-  private Map context = new HashMap();
+  private Map<String,Locales> context = new HashMap<String,Locales>();
 
   private PhysicalTable tab;
 
@@ -171,10 +170,9 @@ public class PhysicalTableDialogTestApp extends ApplicationWindow {
   }
 
   public void run() {
-    EnvUtil.environmentInit();
-    if (!Props.isInitialized()) {
+    if (!PropsUI.isInitialized()) {
       Const.checkPentahoMetadataDirectory();
-      Props.init(new Display(), Const.getPropertiesFile());
+      PropsUI.init(new Display(), Const.getPropertiesFile());
     }
     setBlockOnOpen(true);
     open();

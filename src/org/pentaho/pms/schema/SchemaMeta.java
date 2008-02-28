@@ -38,9 +38,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.locale.Locales;
 import org.pentaho.pms.schema.concept.Concept;
 import org.pentaho.pms.schema.concept.ConceptInterface;
+import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.schema.concept.DefaultPropertyID;
 import org.pentaho.pms.schema.concept.types.alignment.AlignmentSettings;
 import org.pentaho.pms.schema.concept.types.alignment.ConceptPropertyAlignment;
@@ -50,25 +52,23 @@ import org.pentaho.pms.schema.concept.types.font.ConceptPropertyFont;
 import org.pentaho.pms.schema.concept.types.font.FontSettings;
 import org.pentaho.pms.schema.security.SecurityReference;
 import org.pentaho.pms.util.Const;
+import org.pentaho.pms.util.ObjectAlreadyExistsException;
 import org.pentaho.pms.util.Settings;
-
-import be.ibridge.kettle.core.database.DatabaseMeta;
-import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
-import be.ibridge.kettle.core.list.UniqueArrayList;
-import be.ibridge.kettle.core.list.UniqueList;
+import org.pentaho.pms.util.UniqueArrayList;
+import org.pentaho.pms.util.UniqueList;
 
 public class SchemaMeta {
   private String name;
 
   public String domainName;
 
-  public UniqueList databases;
+  public UniqueList<DatabaseMeta>  databases;
 
-  private UniqueList tables;
+  private UniqueList<PhysicalTable> tables;
 
-  private UniqueList businessModels;
+  private UniqueList<BusinessModel> businessModels;
 
-  private UniqueList concepts;
+  private UniqueList<ConceptInterface> concepts;
 
   private Locales locales;
 
@@ -85,10 +85,10 @@ public class SchemaMeta {
   }
 
   public void clear() {
-    databases = new UniqueArrayList();
-    tables = new UniqueArrayList();
-    businessModels = new UniqueArrayList();
-    concepts = new UniqueArrayList();
+    databases = new UniqueArrayList<DatabaseMeta>();
+    tables = new UniqueArrayList<PhysicalTable>();
+    businessModels = new UniqueArrayList<BusinessModel>();
+    concepts = new UniqueArrayList<ConceptInterface>();
     locales = new Locales();
     securityReference = new SecurityReference();
 
@@ -365,15 +365,15 @@ public class SchemaMeta {
     return findPhysicalTable(nameToFind);
   }
 
-  public int indexOfDatabase(Object ci) {
+  public int indexOfDatabase(DatabaseMeta ci) {
     return databases.indexOf(ci);
   }
 
-  public int indexOfTable(Object ti) {
+  public int indexOfTable(PhysicalTable ti) {
     return tables.indexOf(ti);
   }
 
-  public int indexOfBusinessModel(Object model) {
+  public int indexOfBusinessModel(BusinessModel model) {
     return businessModels.indexOf(model);
   }
 
@@ -423,16 +423,16 @@ public class SchemaMeta {
     return this.getClass().getName();
   }
 
-  public UniqueList getDatabases() {
+  public UniqueList<DatabaseMeta> getDatabases() {
     return databases;
   }
 
-  public UniqueList getTables() {
+  public UniqueList<PhysicalTable> getTables() {
     return tables;
   }
 
   public PhysicalTable[] getTablesOnDatabase(DatabaseMeta databaseMeta) {
-    List allTables = new ArrayList();
+    List<PhysicalTable> allTables = new ArrayList<PhysicalTable>();
     for (int i = 0; i < nrTables(); i++) {
       PhysicalTable table = getTable(i);
       if (table.getDatabaseMeta().equals(databaseMeta))
@@ -455,7 +455,7 @@ public class SchemaMeta {
     this.activeModel = activeModel;
   }
 
-  public UniqueList getBusinessModels() {
+  public UniqueList<BusinessModel> getBusinessModels() {
     return businessModels;
   }
 
@@ -533,14 +533,14 @@ public class SchemaMeta {
    * @return all the locale that are used in the schema
    */
   public String[] getUsedLocale() {
-    Map allLocales = new Hashtable();
+    Map<String,String> allLocales = new Hashtable<String,String>();
     for (int i = 0; i < nrBusinessModels(); i++) {
       String[] usedLocale = getModel(i).getConcept().getUsedLocale();
       for (int j = 0; j < usedLocale.length; j++)
         allLocales.put(usedLocale[i], ""); //$NON-NLS-1$
     }
 
-    Set keySet = allLocales.keySet();
+    Set<String> keySet = allLocales.keySet();
     return (String[]) keySet.toArray(new String[keySet.size()]);
   }
 
@@ -631,8 +631,8 @@ public class SchemaMeta {
   /**
    * @return a list of all used conceptUtilityInterfaces
    */
-  public List getConceptUtilityInterfaces() {
-    List list = new ArrayList();
+  public List<ConceptUtilityInterface> getConceptUtilityInterfaces() {
+    List<ConceptUtilityInterface> list = new ArrayList<ConceptUtilityInterface>();
 
     // The physical tables
     for (int i = 0; i < nrTables(); i++)

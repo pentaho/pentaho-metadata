@@ -44,6 +44,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.locale.Locales;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessModel;
@@ -53,9 +54,7 @@ import org.pentaho.pms.schema.concept.editor.ConceptModel;
 import org.pentaho.pms.schema.concept.editor.IConceptModel;
 import org.pentaho.pms.schema.concept.editor.PropertyNavigationWidget;
 import org.pentaho.pms.schema.concept.editor.PropertyWidgetManager2;
-
-import be.ibridge.kettle.core.database.DatabaseMeta;
-import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
+import org.pentaho.pms.util.ObjectAlreadyExistsException;
 
 /***
  * Represents a business model
@@ -69,7 +68,7 @@ public class BusinessModelDialog extends Dialog {
 
   protected String activeLocale;
 
-  protected Map propertyEditorContext = new HashMap();
+  protected Map<String,Locales> propertyEditorContext = new HashMap<String,Locales>();
 
   private Text wId;
 
@@ -200,10 +199,10 @@ public class BusinessModelDialog extends Dialog {
       }
     });
 
-    List list2 = new ArrayList();
+    List<Object> list2 = new ArrayList<Object>();
     list2.add(dummyConInstance);
     list2.addAll(schemaMeta.getDatabases().getList());
-
+    
     comboViewer.setInput(list2);
 
     comboViewer.setLabelProvider(new LabelProvider() {

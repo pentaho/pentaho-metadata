@@ -31,18 +31,18 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.pentaho.di.core.logging.LogWriter;
+import org.pentaho.di.ui.core.PropsUI;
+import org.pentaho.di.ui.core.gui.WindowProperty;
+import org.pentaho.di.ui.trans.step.BaseStepDialog;
 import org.pentaho.pms.locale.Locales;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
+import org.pentaho.pms.schema.concept.types.ConceptPropertyWidgetInterface;
 import org.pentaho.pms.schema.security.SecurityReference;
 import org.pentaho.pms.util.Const;
-
-import be.ibridge.kettle.core.LogWriter;
-import be.ibridge.kettle.core.Props;
-import be.ibridge.kettle.core.WindowProperty;
-import be.ibridge.kettle.trans.step.BaseStepDialog;
 
 
 /***
@@ -60,14 +60,14 @@ public class EditConceptPropertyDialog extends Dialog
 
 	private Shell         shell;
 	
-    private Props props;
+    private PropsUI props;
 
     private ConceptInterface concept;
     private ConceptPropertyInterface property;
 
     private ConceptPropertyType type;
 
-    private Map conceptPropertyInterfaces;
+    private Map<String,ConceptPropertyWidgetInterface> conceptPropertyInterfaces;
 
     private Locales locales;
 
@@ -82,9 +82,9 @@ public class EditConceptPropertyDialog extends Dialog
         this.securityReference = securityReference;
 
         log=LogWriter.getInstance();
-        props=Props.getInstance();
+        props=PropsUI.getInstance();
         
-        conceptPropertyInterfaces = new Hashtable();
+        conceptPropertyInterfaces = new Hashtable<String,ConceptPropertyWidgetInterface>();
         type = property.getType();
 	}
 

@@ -15,15 +15,14 @@ package org.pentaho.pms.schema.olap;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pentaho.di.core.changed.ChangedFlag;
 import org.pentaho.pms.schema.BusinessColumn;
-
-import be.ibridge.kettle.core.ChangedFlag;
 
 public class OlapHierarchyLevel extends ChangedFlag implements Cloneable
 {
     private String name;
     private BusinessColumn referenceColumn; // Also has the business table of-course.
-    private List businessColumns;
+    private List<BusinessColumn> businessColumns;
     private boolean havingUniqueMembers;
     
     private OlapHierarchy olapHierarchy;
@@ -32,7 +31,7 @@ public class OlapHierarchyLevel extends ChangedFlag implements Cloneable
     {
         super();
         this.olapHierarchy = olapHierarchy;
-        businessColumns = new ArrayList();
+        businessColumns = new ArrayList<BusinessColumn>();
     }
     
     /**
@@ -40,7 +39,7 @@ public class OlapHierarchyLevel extends ChangedFlag implements Cloneable
      * @param referenceColumn
      * @param businessColumns
      */
-    public OlapHierarchyLevel(OlapHierarchy olapHierarchy, String name, BusinessColumn referenceColumn, List businessColumns)
+    public OlapHierarchyLevel(OlapHierarchy olapHierarchy, String name, BusinessColumn referenceColumn, List<BusinessColumn> businessColumns)
     {
         this(olapHierarchy);
         this.name = name;
@@ -57,7 +56,7 @@ public class OlapHierarchyLevel extends ChangedFlag implements Cloneable
         for (int i=0;i<businessColumns.size();i++)
         {
             BusinessColumn businessColumn = (BusinessColumn) businessColumns.get(i);
-            hierarchyLevel.businessColumns.add(businessColumn.clone());
+            hierarchyLevel.businessColumns.add((BusinessColumn)businessColumn.clone());
         }
         hierarchyLevel.havingUniqueMembers = havingUniqueMembers;
         
@@ -72,7 +71,7 @@ public class OlapHierarchyLevel extends ChangedFlag implements Cloneable
     /**
      * @return the businessColumns
      */
-    public List getBusinessColumns()
+    public List<BusinessColumn> getBusinessColumns()
     {
         return businessColumns;
     }
@@ -80,7 +79,7 @@ public class OlapHierarchyLevel extends ChangedFlag implements Cloneable
     /**
      * @param businessColumns the businessColumns to set
      */
-    public void setBusinessColumns(List businessColumns)
+    public void setBusinessColumns(List<BusinessColumn> businessColumns)
     {
         this.businessColumns = businessColumns;
     }

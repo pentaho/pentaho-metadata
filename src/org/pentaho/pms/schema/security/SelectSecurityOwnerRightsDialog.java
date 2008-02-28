@@ -56,14 +56,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.pentaho.di.ui.core.PropsUI;
+import org.pentaho.di.ui.core.gui.WindowProperty;
+import org.pentaho.di.ui.core.widget.TreeMemory;
+import org.pentaho.di.ui.trans.step.BaseStepDialog;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.GUIResource;
-
-import be.ibridge.kettle.core.Props;
-import be.ibridge.kettle.core.WindowProperty;
-import be.ibridge.kettle.core.widget.TreeMemory;
-import be.ibridge.kettle.trans.step.BaseStepDialog;
 
 
 
@@ -102,7 +101,7 @@ public class SelectSecurityOwnerRightsDialog extends Dialog
 
     public boolean open()
 	{
-        Props props = Props.getInstance();
+        PropsUI props = PropsUI.getInstance();
 		Shell parent = getParent();
 		Display display = parent.getDisplay();
 
@@ -166,8 +165,8 @@ public class SelectSecurityOwnerRightsDialog extends Dialog
         }
 
         Control lastControl = wFilter;
-        final List checkBoxes = new ArrayList();
-        final List masks = new ArrayList();
+        final List<Button> checkBoxes = new ArrayList<Button>();
+        final List<Integer> masks = new ArrayList<Integer>();
         
         for (int i=0;i<securityReference.getAcls().size();i++)
         {
@@ -382,7 +381,7 @@ public class SelectSecurityOwnerRightsDialog extends Dialog
 
     public void dispose()
 	{
-        Props.getInstance().setScreen(new WindowProperty(shell));
+        PropsUI.getInstance().setScreen(new WindowProperty(shell));
         shell.dispose();
 	}
 	

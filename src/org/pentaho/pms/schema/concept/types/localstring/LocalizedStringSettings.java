@@ -24,14 +24,14 @@ public class LocalizedStringSettings implements Cloneable
 {
     public static final LocalizedStringSettings EMPTY = new LocalizedStringSettings();
 
-    private Map localeStringMap;
+    private Map<String,String> localeStringMap;
 
     /**
      * @param localeStringMap
      */
     public LocalizedStringSettings()
     {
-        localeStringMap=new Hashtable(5);
+        localeStringMap=new Hashtable<String,String>(5);
     }
 
     public Object clone() throws CloneNotSupportedException
@@ -50,7 +50,7 @@ public class LocalizedStringSettings implements Cloneable
     /**
      * @param localeStringMap
      */
-    public LocalizedStringSettings(Map localeStringMap)
+    public LocalizedStringSettings(Map<String,String> localeStringMap)
     {
         this.localeStringMap = localeStringMap;
     }
@@ -87,7 +87,7 @@ public class LocalizedStringSettings implements Cloneable
     /**
      * @param localeStringMap the localeStringMap to set
      */
-    public void setLocaleStringMap(Map localeStringMap)
+    public void setLocaleStringMap(Map<String,String> localeStringMap)
     {
         this.localeStringMap = localeStringMap;
     }

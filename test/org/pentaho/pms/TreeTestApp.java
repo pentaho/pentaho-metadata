@@ -11,6 +11,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TreeColumn;
+import org.pentaho.di.core.DBCache;
+import org.pentaho.di.ui.core.PropsUI;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
 import org.pentaho.pms.jface.tree.ITreeNodeChangedListener;
@@ -24,15 +26,12 @@ import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.GUIResource;
 import org.pentaho.pms.util.Settings;
 
-import be.ibridge.kettle.core.DBCache;
-import be.ibridge.kettle.core.Props;
-
 public class TreeTestApp extends ApplicationWindow {
 
   // ~ Static fields/initializers ======================================================================================
 
   private static final Log logger = LogFactory.getLog(TreeTestApp.class);
-  private Props props;
+  private PropsUI props;
 
   // ~ Instance fields =================================================================================================
   
@@ -54,11 +53,11 @@ public class TreeTestApp extends ApplicationWindow {
   }
 
   private void init(){
-    if (!Props.isInitialized()) {
+    if (!PropsUI.isInitialized()) {
       Const.checkPentahoMetadataDirectory();
-      Props.init(this.getShell().getDisplay(), Const.getPropertiesFile()); // things to remember...
+      PropsUI.init(this.getShell().getDisplay(), Const.getPropertiesFile()); // things to remember...
     }
-    props = Props.getInstance();
+    props = PropsUI.getInstance();
     GUIResource.getInstance().reload();
     DBCache.getInstance().setActive(props.useDBCache());    
 

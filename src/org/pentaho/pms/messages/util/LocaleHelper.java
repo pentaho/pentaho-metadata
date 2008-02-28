@@ -16,7 +16,7 @@ import java.util.Locale;
 
 public class LocaleHelper {
 
-    private static final ThreadLocal threadLocales = new ThreadLocal();
+    private static final ThreadLocal<Locale> threadLocales = new ThreadLocal<Locale>();
 
     private static Locale defaultLocale;
 

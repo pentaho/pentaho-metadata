@@ -16,17 +16,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.pentaho.di.core.changed.ChangedFlag;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessTable;
-
-import be.ibridge.kettle.core.ChangedFlag;
 
 public class OlapHierarchy extends ChangedFlag implements Cloneable
 {
     private String         name;
     private BusinessTable  businessTable;
     private BusinessColumn primaryKey;
-    private List           hierarchyLevels;
+    private List<OlapHierarchyLevel>           hierarchyLevels;
     private boolean        havingAll;
     
     private OlapDimension  olapDimension;
@@ -40,7 +39,7 @@ public class OlapHierarchy extends ChangedFlag implements Cloneable
     {
         super();
         this.olapDimension = olapDimension;
-        hierarchyLevels = new ArrayList();  
+        hierarchyLevels = new ArrayList<OlapHierarchyLevel>();  
         havingAll = true; // Set the default to true, said Julian
     }
     
@@ -48,7 +47,7 @@ public class OlapHierarchy extends ChangedFlag implements Cloneable
      * @param name
      * @param hierarchyLevels
      */
-    public OlapHierarchy(OlapDimension olapDimension, String name, List hierarchyLevels)
+    public OlapHierarchy(OlapDimension olapDimension, String name, List<OlapHierarchyLevel> hierarchyLevels)
     {
         this(olapDimension);
         this.name = name;
@@ -65,7 +64,7 @@ public class OlapHierarchy extends ChangedFlag implements Cloneable
         for (int i=0;i<hierarchyLevels.size();i++)
         {
             OlapHierarchyLevel hierarchyLevel = (OlapHierarchyLevel) hierarchyLevels.get(i); 
-            hierarchy.hierarchyLevels.add(hierarchyLevel.clone());
+            hierarchy.hierarchyLevels.add((OlapHierarchyLevel)hierarchyLevel.clone());
         }
         hierarchy.havingAll = havingAll;
         
@@ -80,7 +79,7 @@ public class OlapHierarchy extends ChangedFlag implements Cloneable
     /**
      * @return the hierarchyLevels
      */
-    public List getHierarchyLevels()
+    public List<OlapHierarchyLevel> getHierarchyLevels()
     {
         return hierarchyLevels;
     }
@@ -88,7 +87,7 @@ public class OlapHierarchy extends ChangedFlag implements Cloneable
     /**
      * @param hierarchyLevels the hierarchyLevels to set
      */
-    public void setHierarchyLevels(List hierarchyLevels)
+    public void setHierarchyLevels(List<OlapHierarchyLevel> hierarchyLevels)
     {
         this.hierarchyLevels = hierarchyLevels;
     }
@@ -186,7 +185,7 @@ public class OlapHierarchy extends ChangedFlag implements Cloneable
     public String[] getUnusedColumnNames(String locale)
     {
         String[] allColumnNames = businessTable.getColumnNames(locale);
-        List names = new ArrayList();
+        List<String> names = new ArrayList<String>();
         names.addAll(Arrays.asList(allColumnNames));
         
         for (int i=names.size()-1;i>=0;i--)

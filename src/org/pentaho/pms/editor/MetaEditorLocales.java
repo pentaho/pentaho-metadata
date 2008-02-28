@@ -24,20 +24,20 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TableItem;
+import org.pentaho.di.core.variables.Variables;
+import org.pentaho.di.ui.core.PropsUI;
+import org.pentaho.di.ui.core.widget.ColumnInfo;
+import org.pentaho.di.ui.core.widget.TableView;
+import org.pentaho.di.ui.trans.step.BaseStepDialog;
 import org.pentaho.pms.locale.LocaleInterface;
 import org.pentaho.pms.locale.LocaleMeta;
 import org.pentaho.pms.locale.Locales;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.util.Const;
 
-import be.ibridge.kettle.core.ColumnInfo;
-import be.ibridge.kettle.core.Props;
-import be.ibridge.kettle.core.widget.TableView;
-import be.ibridge.kettle.trans.step.BaseStepDialog;
-
 public class MetaEditorLocales extends Composite
 {
-	private Props props;
+	private PropsUI props;
 	
 	private TableView wLocales;
 	private Button wRefresh;
@@ -51,7 +51,7 @@ public class MetaEditorLocales extends Composite
 		super(parent, style);
 		this.metaEditor = metaEditor;
 
-        props = Props.getInstance();
+        props = PropsUI.getInstance();
 
 		FormLayout formLayout = new FormLayout ();
 		formLayout.marginWidth  = Const.FORM_MARGIN;
@@ -96,7 +96,7 @@ public class MetaEditorLocales extends Composite
             new ColumnInfo(Messages.getString("MetaEditorLocales.USER_ORDER"),                 ColumnInfo.COLUMN_TYPE_TEXT, false, false), //$NON-NLS-1$
             new ColumnInfo(Messages.getString("MetaEditorLocales.USER_ACTIVE"),                ColumnInfo.COLUMN_TYPE_CCOMBO, new String[] { "Y", "N" }, false), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
           };
-        wLocales=new TableView(this, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI, colLocales, 1, false, lsMod, props );
+        wLocales=new TableView(new Variables(),this, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI, colLocales, 1, false, lsMod, props );
         FormData fdLocales = new FormData();
         fdLocales.left   = new FormAttachment(0,0);
         fdLocales.right  = new FormAttachment(100, 0);

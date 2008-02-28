@@ -14,6 +14,7 @@ package org.pentaho.pms.schema.concept.test;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.pentaho.pms.schema.concept.Concept;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
@@ -43,7 +44,7 @@ public class TestConcept
         Concept nameConcept = new Concept("NameConcept", stringConcept); //$NON-NLS-1$
         nameConcept.addProperty(new ConceptPropertyNumber("field.data.length", 35)); //$NON-NLS-1$
         
-        ArrayList values = new ArrayList(nameConcept.getPropertyInterfaces().values());
+        List<ConceptPropertyInterface> values = new ArrayList<ConceptPropertyInterface>(nameConcept.getPropertyInterfaces().values());
         for (int i = 0; i < values.size(); i++)
         {
             ConceptPropertyInterface property = (ConceptPropertyInterface) values.get(i);

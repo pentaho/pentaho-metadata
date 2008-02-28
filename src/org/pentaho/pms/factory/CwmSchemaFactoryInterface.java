@@ -14,6 +14,9 @@ package org.pentaho.pms.factory;
 
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.pentaho.di.core.NotePadMeta;
+import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.di.core.exception.KettleXMLException;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.cwm.pentaho.meta.behavioral.CwmParameter;
 import org.pentaho.pms.cwm.pentaho.meta.businessinformation.CwmDescription;
@@ -44,10 +47,6 @@ import org.pentaho.pms.schema.olap.OlapDimension;
 import org.pentaho.pms.schema.olap.OlapHierarchy;
 import org.pentaho.pms.schema.olap.OlapHierarchyLevel;
 import org.pentaho.pms.schema.security.SecurityService;
-
-import be.ibridge.kettle.core.NotePadMeta;
-import be.ibridge.kettle.core.database.DatabaseMeta;
-import be.ibridge.kettle.core.exception.KettleXMLException;
 
 public interface CwmSchemaFactoryInterface {
 

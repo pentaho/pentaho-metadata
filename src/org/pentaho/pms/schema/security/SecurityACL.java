@@ -12,12 +12,11 @@
 */
 package org.pentaho.pms.schema.security;
 
+import org.pentaho.di.core.xml.XMLHandler;
 import org.pentaho.pms.util.Const;
 import org.w3c.dom.Node;
 
-import be.ibridge.kettle.core.XMLHandler;
-
-public class SecurityACL implements Cloneable, Comparable
+public class SecurityACL implements Cloneable, Comparable<SecurityACL>
 {
     private String name;
     private int    mask;
@@ -49,9 +48,9 @@ public class SecurityACL implements Cloneable, Comparable
         }
     }
 
-    public int compareTo(Object o)
+    public int compareTo(SecurityACL o)
     {
-        SecurityACL other = (SecurityACL) o;
+        SecurityACL other = o;
         return mask-other.mask;
     }
     

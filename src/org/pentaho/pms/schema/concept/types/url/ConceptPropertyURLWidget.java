@@ -25,16 +25,15 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Link;
+import org.pentaho.di.core.changed.ChangedFlag;
+import org.pentaho.di.ui.core.PropsUI;
+import org.pentaho.di.ui.core.dialog.EnterStringDialog;
+import org.pentaho.di.ui.core.dialog.ErrorDialog;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyWidgetInterface;
 import org.pentaho.pms.util.Const;
-
-import be.ibridge.kettle.core.ChangedFlag;
-import be.ibridge.kettle.core.Props;
-import be.ibridge.kettle.core.dialog.EnterStringDialog;
-import be.ibridge.kettle.core.dialog.ErrorDialog;
 
 public class ConceptPropertyURLWidget  extends ChangedFlag implements ConceptPropertyWidgetInterface
 {
@@ -143,9 +142,9 @@ public class ConceptPropertyURLWidget  extends ChangedFlag implements ConceptPro
     }
 
 
-    public static final Control getControl(final Composite composite, ConceptInterface concept, final String name, Control lastControl, Map conceptPropertyInterfaces)
+    public static final Control getControl(final Composite composite, ConceptInterface concept, final String name, Control lastControl, Map<String,ConceptPropertyWidgetInterface> conceptPropertyInterfaces)
     {
-        final Props props = Props.getInstance();
+        final PropsUI props = PropsUI.getInstance();
         final ConceptPropertyInterface property = concept.getProperty(name);
 
         final StringBuffer url = new StringBuffer();

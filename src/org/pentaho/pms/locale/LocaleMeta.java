@@ -12,9 +12,9 @@
 */
 package org.pentaho.pms.locale;
 
-import be.ibridge.kettle.core.ChangedFlag;
+import org.pentaho.di.core.changed.ChangedFlag;
 
-public class LocaleMeta extends ChangedFlag implements LocaleInterface, Comparable
+public class LocaleMeta extends ChangedFlag implements LocaleInterface
 {
     private String  code;
     private String  description;
@@ -113,7 +113,7 @@ public class LocaleMeta extends ChangedFlag implements LocaleInterface, Comparab
         setChanged(false);   
     }
 
-    public int compareTo(Object obj)
+    public int compareTo(LocaleInterface obj)
     {
         LocaleMeta locale = (LocaleMeta) obj;
         if (order==locale.order) return code.compareTo(locale.code);

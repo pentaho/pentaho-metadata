@@ -32,6 +32,7 @@
 
 package org.pentaho.pms.editor;
 
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -62,6 +63,17 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Shell;
+import org.pentaho.di.core.DescriptionInterface;
+import org.pentaho.di.core.NotePadMeta;
+import org.pentaho.di.core.dnd.DragAndDropContainer;
+import org.pentaho.di.core.dnd.XMLTransfer;
+import org.pentaho.di.core.gui.Point;
+import org.pentaho.di.core.gui.Redrawable;
+import org.pentaho.di.core.gui.SnapAllignDistribute;
+import org.pentaho.di.core.logging.LogWriter;
+import org.pentaho.di.ui.core.PropsUI;
+import org.pentaho.di.ui.core.dialog.EnterTextDialog;
+import org.pentaho.di.ui.core.dialog.ErrorDialog;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
@@ -72,19 +84,6 @@ import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.schema.concept.editor.Constants;
 import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.GUIResource;
-
-import be.ibridge.kettle.core.DescriptionInterface;
-import be.ibridge.kettle.core.DragAndDropContainer;
-import be.ibridge.kettle.core.LogWriter;
-import be.ibridge.kettle.core.NotePadMeta;
-import be.ibridge.kettle.core.Point;
-import be.ibridge.kettle.core.Props;
-import be.ibridge.kettle.core.Rectangle;
-import be.ibridge.kettle.core.Redrawable;
-import be.ibridge.kettle.core.SnapAllignDistribute;
-import be.ibridge.kettle.core.XMLTransfer;
-import be.ibridge.kettle.core.dialog.EnterTextDialog;
-import be.ibridge.kettle.core.dialog.ErrorDialog;
 
 public class MetaEditorGraph extends Canvas implements Redrawable {
   private static final int HOP_SEL_MARGIN = 9;
@@ -129,7 +128,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
 
   private Rectangle selrect;
 
-  private Props props;
+  private PropsUI props;
 
   private Menu mPop;
 
@@ -140,7 +139,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
     this.metaEditor = pm;
     metaEditorGraph = this;
 
-    props = Props.getInstance();
+    props = PropsUI.getInstance();
 
     iconsize = props.getIconSize();
 
@@ -1127,7 +1126,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
     }
     String[] tokens = strSrc.split("\\s"); //$NON-NLS-1$
     String result = "";
-    ArrayList textRuns = new ArrayList();
+    ArrayList<String> textRuns = new ArrayList<String>();
     for (int i=0; i<tokens.length; i++) {
       if (gc.textExtent(result + tokens[i]).x < frameWidth) {
         result = result + " " + tokens[i]; //$NON-NLS-1$
@@ -1587,7 +1586,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
   private SnapAllignDistribute createSnapAllignDistribute() {
     BusinessModel activeModel = metaEditor.getSchemaMeta().getActiveModel();
 
-    List elements;
+    List<BusinessTable> elements;
     int[] indices;
 
     if (activeModel != null) {
@@ -1595,11 +1594,12 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
       indices = activeModel.getBusinessTableIndexes((BusinessTable[]) elements.toArray(new BusinessTable[elements
           .size()]));
     } else {
-      elements = new ArrayList();
+      elements = new ArrayList<BusinessTable>();
       indices = new int[] {};
     }
-
-    return new SnapAllignDistribute(activeModel, elements, indices, null, this);
+		// null in position 1 and 4 are related. The old code had null in the
+		// 4th position which meant that the 1st argument was originally ignored.
+    return new SnapAllignDistribute(null, elements, indices, null, this);
   }
 
   void snaptogrid(int size) {

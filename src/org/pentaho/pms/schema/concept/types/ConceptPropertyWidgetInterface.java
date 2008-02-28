@@ -12,10 +12,9 @@
 */
 package org.pentaho.pms.schema.concept.types;
 
+import org.pentaho.di.core.changed.ChangedFlagInterface;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
-
-import be.ibridge.kettle.core.ChangedFlagInterface;
 
 public interface ConceptPropertyWidgetInterface extends ChangedFlagInterface
 {

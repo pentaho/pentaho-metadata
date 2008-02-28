@@ -167,7 +167,7 @@ public class PropertyTreeWidget extends TreeViewer implements ISelectionProvider
     }
 
     protected PropertyTreeNode[] makeTreeNodesFromGroupNames(final Object[] groupNames) {
-      List propertyTreeNodes = new ArrayList();
+      List<PropertyTreeNode> propertyTreeNodes = new ArrayList<PropertyTreeNode>();
       for (int i = 0; i < groupNames.length; i++) {
         propertyTreeNodes.add(new GroupNode((String) groupNames[i]));
       }
@@ -175,7 +175,7 @@ public class PropertyTreeWidget extends TreeViewer implements ISelectionProvider
     }
 
     protected PropertyTreeNode[] makeTreeNodesFromPropertyIds(final Object[] propertyIds) {
-      List propertyTreeNodes = new ArrayList();
+      List<PropertyTreeNode> propertyTreeNodes = new ArrayList<PropertyTreeNode>();
       for (int i = 0; i < propertyIds.length; i++) {
         propertyTreeNodes.add(new PropertyNode((String) propertyIds[i]));
       }

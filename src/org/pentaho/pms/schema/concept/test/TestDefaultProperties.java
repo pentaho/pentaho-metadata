@@ -14,6 +14,8 @@ package org.pentaho.pms.schema.concept.test;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.pentaho.di.core.Props;
+import org.pentaho.di.ui.core.PropsUI;
 import org.pentaho.pms.locale.Locales;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessColumn;
@@ -28,9 +30,6 @@ import org.pentaho.pms.schema.concept.types.font.ConceptPropertyFont;
 import org.pentaho.pms.schema.concept.types.font.FontSettings;
 import org.pentaho.pms.schema.security.SecurityReference;
 
-import be.ibridge.kettle.core.Props;
-import be.ibridge.kettle.core.util.EnvUtil;
-
 public class TestDefaultProperties
 {
 
@@ -43,8 +42,7 @@ public class TestDefaultProperties
         //
         Display display = new Display();
         Shell shell = new Shell(display);
-        EnvUtil.environmentInit();
-        Props.init(display, Props.TYPE_PROPERTIES_MENU);
+        PropsUI.init(display, PropsUI.TYPE_PROPERTIES_MENU);
         
         // Test the default properties dialog...
         RequiredProperties requiredProperties = new RequiredProperties();

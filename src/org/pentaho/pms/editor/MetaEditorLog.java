@@ -11,7 +11,7 @@
  * the license for the specific language governing your rights and limitations.
 */
 package org.pentaho.pms.editor;
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -29,17 +29,16 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.pentaho.di.core.logging.LogWriter;
+import org.pentaho.di.ui.core.PropsUI;
+import org.pentaho.di.ui.spoon.dialog.LogSettingsDialog;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.GUIResource;
 
-import be.ibridge.kettle.core.LogWriter;
-import be.ibridge.kettle.core.Props;
-import be.ibridge.kettle.spoon.dialog.LogSettingsDialog;
-
 public class MetaEditorLog extends Composite
 {
-	private Props props;
+	private PropsUI props;
 	private Shell shell;
 	private Display display;
 	private LogWriter log;
@@ -54,7 +53,7 @@ public class MetaEditorLog extends Composite
 	private SelectionListener lsRefresh, lsClear, lsLog;
 	private StringBuffer message;
 
-	private FileInputStream in;
+	private InputStream in;
 
 	public MetaEditorLog(Composite parent, int style, String fname)
 	{
@@ -62,7 +61,7 @@ public class MetaEditorLog extends Composite
 		shell=parent.getShell();
 		log=LogWriter.getInstance();
 		display=shell.getDisplay();
-        props = Props.getInstance();
+        props = PropsUI.getInstance();
 		
 		FormLayout formLayout = new FormLayout ();
 		formLayout.marginWidth  = Const.FORM_MARGIN;

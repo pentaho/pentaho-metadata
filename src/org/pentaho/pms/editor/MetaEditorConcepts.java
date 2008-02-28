@@ -38,6 +38,16 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.pentaho.di.core.logging.LogWriter;
+import org.pentaho.di.core.variables.Variables;
+import org.pentaho.di.ui.core.PropsUI;
+import org.pentaho.di.ui.core.dialog.EnterSelectionDialog;
+import org.pentaho.di.ui.core.dialog.EnterStringDialog;
+import org.pentaho.di.ui.core.dialog.ErrorDialog;
+import org.pentaho.di.ui.core.widget.ColumnInfo;
+import org.pentaho.di.ui.core.widget.TableView;
+import org.pentaho.di.ui.core.widget.TreeMemory;
+import org.pentaho.di.ui.trans.step.BaseStepDialog;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.concept.Concept;
@@ -50,17 +60,8 @@ import org.pentaho.pms.schema.concept.dialog.EditConceptPropertyDialog;
 import org.pentaho.pms.schema.concept.dialog.NewPropertyDialog;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 import org.pentaho.pms.util.Const;
+import org.pentaho.pms.util.ObjectAlreadyExistsException;
 
-import be.ibridge.kettle.core.ColumnInfo;
-import be.ibridge.kettle.core.LogWriter;
-import be.ibridge.kettle.core.Props;
-import be.ibridge.kettle.core.dialog.EnterSelectionDialog;
-import be.ibridge.kettle.core.dialog.EnterStringDialog;
-import be.ibridge.kettle.core.dialog.ErrorDialog;
-import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
-import be.ibridge.kettle.core.widget.TableView;
-import be.ibridge.kettle.core.widget.TreeMemory;
-import be.ibridge.kettle.trans.step.BaseStepDialog;
 
 /**
  * This class allows concepts in a model to be edited and linked to parents.
@@ -73,7 +74,7 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
     public static final String STRING_CONCEPTS = Messages.getString("MetaEditorConcepts.USER_CONCEPTS"); //$NON-NLS-1$
     private static final String STRING_CONCEPTS_TREE = "ConceptsTree";  //$NON-NLS-1$
 
-    private Props props;
+    private PropsUI props;
 	private Shell shell;
     
     private ConceptInterface activeConcept;
@@ -110,7 +111,7 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
 		super(parent, style);
         this.metaEditor = metaEditor;
 		shell=parent.getShell();
-        props = Props.getInstance();
+        props = PropsUI.getInstance();
         log = LogWriter.getInstance();
 
         // Fill the complete tab with the sash-form.
@@ -294,7 +295,7 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
             new ColumnInfo(Messages.getString("MetaEditorConcepts.USER_PROPERTY_TYPE"),         ColumnInfo.COLUMN_TYPE_TEXT, false, true), //$NON-NLS-1$
             new ColumnInfo(Messages.getString("MetaEditorConcepts.USER_VALUE"),                 ColumnInfo.COLUMN_TYPE_TEXT, false, true), //$NON-NLS-1$
           };
-        wPProps=new TableView(compConcept, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI, colPProps, 1, true, null, props );
+        wPProps=new TableView(new Variables(), compConcept, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI, colPProps, 1, true, null, props );
         FormData fdPProps = new FormData();
         fdPProps.left   = new FormAttachment(0,0);
         fdPProps.right  = new FormAttachment(100, 0);
@@ -392,7 +393,7 @@ public class MetaEditorConcepts extends Composite implements DialogGetDataInterf
         colProps[0].setSelectionAdapter(selID);
         colProps[0].setToolTip(Messages.getString("MetaEditorConcepts.USER_SELECT_DEFAULT_PROPERTY_IDS")); //$NON-NLS-1$ 
 
-        wProps=new TableView(compConcept, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI, colProps, 1, true, null, props ); // a read-only table
+        wProps=new TableView(new Variables(),compConcept, SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI, colProps, 1, true, null, props ); // a read-only table
         FormData fdProps = new FormData();
         fdProps.left   = new FormAttachment(delProp, 2*margin);
         fdProps.right  = new FormAttachment(100, 0);

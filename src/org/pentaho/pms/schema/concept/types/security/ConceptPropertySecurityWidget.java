@@ -24,6 +24,11 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TableItem;
+import org.pentaho.di.core.changed.ChangedFlag;
+import org.pentaho.di.core.variables.Variables;
+import org.pentaho.di.ui.core.PropsUI;
+import org.pentaho.di.ui.core.widget.ColumnInfo;
+import org.pentaho.di.ui.core.widget.TableView;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
@@ -33,11 +38,6 @@ import org.pentaho.pms.schema.security.SecurityOwner;
 import org.pentaho.pms.schema.security.SecurityReference;
 import org.pentaho.pms.schema.security.SelectSecurityOwnerRightsDialog;
 import org.pentaho.pms.util.Const;
-
-import be.ibridge.kettle.core.ChangedFlag;
-import be.ibridge.kettle.core.ColumnInfo;
-import be.ibridge.kettle.core.Props;
-import be.ibridge.kettle.core.widget.TableView;
 
 public class ConceptPropertySecurityWidget extends ChangedFlag implements ConceptPropertyWidgetInterface
 {
@@ -104,9 +104,9 @@ public class ConceptPropertySecurityWidget extends ChangedFlag implements Concep
         tableView.setFocusOnFirstEditableField();
     }
 
-    public static final Control getControl(final Composite composite, ConceptInterface concept, final String name, Control lastControl, Map conceptPropertyInterfaces, final SecurityReference securityReference)
+    public static final Control getControl(final Composite composite, ConceptInterface concept, final String name, Control lastControl, Map<String,ConceptPropertyWidgetInterface> conceptPropertyInterfaces, final SecurityReference securityReference)
     {
-        Props props = Props.getInstance();
+        PropsUI props = PropsUI.getInstance();
         ConceptPropertyInterface property = concept.getProperty(name);
         final Security security = (Security)property.getValue();
         // Set buttons to the right of the screen...
@@ -163,7 +163,7 @@ public class ConceptPropertySecurityWidget extends ChangedFlag implements Concep
               new ColumnInfo(Messages.getString("ConceptPropertySecurityWidget.USER_RIGHTS"),      ColumnInfo.COLUMN_TYPE_TEXT, false, true), //$NON-NLS-1$
            };
                                     
-        final TableView wFields=new TableView( composite, 
+        final TableView wFields=new TableView( new Variables(),composite, 
                                           SWT.BORDER | SWT.FULL_SELECTION | SWT.MULTI, 
                                           colinf, 
                                           0,  

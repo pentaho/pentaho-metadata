@@ -2,6 +2,7 @@ package org.pentaho.pms.schema.concept.editor;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -24,7 +25,7 @@ public class SecurityTablePermEditor extends ScrolledComposite implements ISelec
 
   SecurityTableViewer securityTableViewer;
   SecurityReference securityReference;
-  ArrayList buttons = new ArrayList();
+  List<Button> buttons = new ArrayList<Button>();
   Composite nestedComposite;
   boolean allowEditing = true;
   

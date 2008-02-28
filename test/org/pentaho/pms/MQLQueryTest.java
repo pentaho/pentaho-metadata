@@ -17,6 +17,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 
+import junit.framework.TestCase;
+
+import org.pentaho.di.core.database.DatabaseInterface;
+import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.factory.CwmSchemaFactory;
@@ -24,20 +28,15 @@ import org.pentaho.pms.mql.MQLQuery;
 import org.pentaho.pms.mql.MQLQueryFactory;
 import org.pentaho.pms.mql.MQLQueryImpl;
 import org.pentaho.pms.mql.MappedQuery;
+import org.pentaho.pms.mql.OrderBy;
 import org.pentaho.pms.mql.PMSFormula;
 import org.pentaho.pms.mql.Selection;
 import org.pentaho.pms.mql.WhereCondition;
-import org.pentaho.pms.mql.OrderBy;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.util.Const;
-
-import be.ibridge.kettle.core.database.DatabaseInterface;
-import be.ibridge.kettle.core.database.DatabaseMeta;
-
-import junit.framework.TestCase;
 
 public class MQLQueryTest extends TestCase {
   
@@ -536,7 +535,7 @@ public class MQLQueryTest extends TestCase {
     assertNotNull(mqlquery.getModel());
     assertEquals("Orders", mqlquery.getModel().getId() ); //$NON-NLS-1$
     
-    List<? extends Selection> selections = ((MQLQueryImpl)mqlquery).getSelections();
+    List<? extends Selection> selections = mqlquery.getSelections();
     
     assertNotNull(selections);
     assertEquals(2, selections.size());

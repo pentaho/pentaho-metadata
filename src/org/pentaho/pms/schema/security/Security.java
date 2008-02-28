@@ -17,12 +17,11 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import org.pentaho.di.core.xml.XMLHandler;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.util.Const;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-
-import be.ibridge.kettle.core.XMLHandler;
 
 /**
  * Contains a mapping between a SecurityOwner (named user or role) and the rights (integer : masks with ACLs)
@@ -31,18 +30,18 @@ import be.ibridge.kettle.core.XMLHandler;
  */
 public class Security implements Cloneable
 {
-    private Map ownerAclMap;
+    private Map<SecurityOwner,Integer> ownerAclMap;
     
     public Security()
     {
-        ownerAclMap = new Hashtable();
+        ownerAclMap = new Hashtable<SecurityOwner,Integer>();
     }
 
     /**
      * @param aclSets
      * @param securityReference
      */
-    public Security(Map aclSets)
+    public Security(Map<SecurityOwner,Integer> aclSets)
     {
         super();
         this.ownerAclMap = aclSets;
@@ -153,7 +152,7 @@ public class Security implements Cloneable
      */
     public void putOwnerRights(SecurityOwner owner, int rights)
     {
-        ownerAclMap.put(owner, new Integer(rights));
+        ownerAclMap.put(owner, rights);
     }
     
     /**
@@ -178,9 +177,9 @@ public class Security implements Cloneable
     /**
      * @return a list of all the owners in the map
      */
-    public List getOwners()
+    public List<SecurityOwner> getOwners()
     {
-        return new ArrayList(ownerAclMap.keySet());
+        return new ArrayList<SecurityOwner>(ownerAclMap.keySet());
     }
 
     /**
@@ -194,7 +193,7 @@ public class Security implements Cloneable
     /**
      * @param aclSets the aclSets to set
      */
-    public void setOwnerAclMap(Map aclSets)
+    public void setOwnerAclMap(Map<SecurityOwner,Integer> aclSets)
     {
         this.ownerAclMap = aclSets;
     }

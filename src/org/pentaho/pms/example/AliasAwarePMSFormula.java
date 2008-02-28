@@ -16,14 +16,14 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.mql.PMSFormula;
 import org.pentaho.pms.mql.SQLGenerator;
+import org.pentaho.pms.mql.Selection;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
-
-import be.ibridge.kettle.core.database.DatabaseMeta;
 
 /**
  * This class manages the two types of formulas which appear in the metadata system.  Both of 
@@ -45,7 +45,7 @@ public class AliasAwarePMSFormula extends PMSFormula {
   
   private static final Log logger = LogFactory.getLog(AliasAwarePMSFormula.class);
   
-  private List<AdvancedMQLQuery.AliasedSelection> selections;
+  private List<Selection> selections;
   private String aliasName;
   
   /**
@@ -55,7 +55,7 @@ public class AliasAwarePMSFormula extends PMSFormula {
    * @param formulaString formula string
    * @throws PentahoMetadataException throws an exception if we're missing anything important
    */
-  public AliasAwarePMSFormula(BusinessModel model, DatabaseMeta databaseMeta, String formulaString, List<AdvancedMQLQuery.AliasedSelection> selections) throws PentahoMetadataException {
+  public AliasAwarePMSFormula(BusinessModel model, DatabaseMeta databaseMeta, String formulaString, List<Selection> selections) throws PentahoMetadataException {
     super(model, databaseMeta, formulaString);
     this.selections = selections;
   }
@@ -115,7 +115,8 @@ public class AliasAwarePMSFormula extends PMSFormula {
     
     // first see if fieldName is an alias
     boolean aliasFound = false;
-    for (AdvancedMQLQuery.AliasedSelection selection : selections) {
+    for (Selection selection : selections) {
+      AdvancedMQLQuery.AliasedSelection aliasedSelection = (AdvancedMQLQuery.AliasedSelection)selection;
       //selection.getAlias()
     }
 //    if (fieldName != null && fieldName.indexOf("\\.")) {

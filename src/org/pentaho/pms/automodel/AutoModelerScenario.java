@@ -3,16 +3,15 @@ package org.pentaho.pms.automodel;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.di.core.database.DatabaseMetaInformation;
+import org.pentaho.di.core.exception.KettleDatabaseException;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.RelationshipMeta;
 import org.pentaho.pms.schema.SchemaMeta;
-
-import be.ibridge.kettle.core.database.DatabaseMeta;
-import be.ibridge.kettle.core.database.DatabaseMetaInformation;
-import be.ibridge.kettle.core.exception.KettleDatabaseException;
 
 public class AutoModelerScenario  {
 
@@ -93,7 +92,7 @@ public class AutoModelerScenario  {
 			// Present this table to the user and ask for a selection of a second table...
 			// The list is assembled like this:
 			//
-			List tables = new ArrayList();
+			List<BusinessTable> tables = new ArrayList<BusinessTable>();
 			for (int t=0;t<model.nrBusinessTables();t++) {
 				BusinessTable table = model.getBusinessTable(t);
 				if (leftTable!=table) {

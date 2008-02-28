@@ -17,7 +17,7 @@ import java.util.Map;
 
 import org.jfree.formula.DefaultFormulaContext;
 import org.jfree.formula.typing.Type;
-
+import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.mql.dialect.DB2Dialect;
 import org.pentaho.pms.mql.dialect.DefaultSQLDialect;
@@ -27,9 +27,6 @@ import org.pentaho.pms.mql.dialect.MySQLDialect;
 import org.pentaho.pms.mql.dialect.OracleDialect;
 import org.pentaho.pms.mql.dialect.PostgreSQLDialect;
 import org.pentaho.pms.mql.dialect.SQLDialectInterface;
-
-
-import be.ibridge.kettle.core.database.DatabaseMeta;
 
 /**
  * This is a singleton class that manages PMSFormula's context.
@@ -54,7 +51,7 @@ public class PMSFormulaContext extends DefaultFormulaContext {
     return singleton;
   }
   
-  private Map supportedDialects = new HashMap();
+  private Map<String,SQLDialectInterface> supportedDialects = new HashMap<String,SQLDialectInterface>();
   
   /**
    * private constructor, for now supported functions and operators are hardcoded, in the future

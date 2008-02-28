@@ -12,9 +12,9 @@
 */
 package org.pentaho.pms.locale;
 
-import be.ibridge.kettle.core.ChangedFlagInterface;
+import org.pentaho.di.core.changed.ChangedFlagInterface;
 
-public interface LocaleInterface extends ChangedFlagInterface
+public interface LocaleInterface extends ChangedFlagInterface,Comparable<LocaleInterface>
 {
     public void setCode(String code);
     public String getCode();

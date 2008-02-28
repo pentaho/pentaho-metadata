@@ -23,8 +23,8 @@ import org.pentaho.pms.schema.PhysicalColumn;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.schema.concept.editor.ITableModel;
 import org.pentaho.pms.util.Const;
+import org.pentaho.pms.util.ObjectAlreadyExistsException;
 
-import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
 
 public class AddBusinessColumnDialog extends TitleAreaDialog {
 
@@ -102,7 +102,7 @@ public class AddBusinessColumnDialog extends TitleAreaDialog {
   private void addUnusedColumns() {
     ConceptUtilityInterface busCols[] = tableModel.getColumns();
 
-    java.util.List busColIds = new ArrayList();
+    java.util.List<String>busColIds = new ArrayList<String>();
     for (int i = 0; i < busCols.length; i++) {
       busColIds.add(busCols[i].getId());
     }
@@ -110,7 +110,7 @@ public class AddBusinessColumnDialog extends TitleAreaDialog {
 
     ConceptUtilityInterface[] phyCols = tableModel.getParentAsTableModel().getColumns();
 
-    java.util.List newBusCols = new ArrayList();
+    java.util.List<ConceptUtilityInterface> newBusCols = new ArrayList<ConceptUtilityInterface>();
     for (int i = 0; i < phyCols.length; i++) {
       PhysicalColumn column = (PhysicalColumn) phyCols[i];
 

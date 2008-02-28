@@ -14,6 +14,7 @@ package org.pentaho.pms.schema;
 
 import java.util.List;
 
+import org.pentaho.di.core.xml.XMLHandler;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.schema.concept.types.datatype.DataTypeSettings;
@@ -24,8 +25,6 @@ import org.pentaho.pms.schema.olap.OlapHierarchy;
 import org.pentaho.pms.schema.olap.OlapHierarchyLevel;
 import org.pentaho.pms.schema.olap.OlapMeasure;
 import org.pentaho.pms.util.Const;
-
-import be.ibridge.kettle.core.XMLHandler;
 
 public class MondrianModelExporter
 {

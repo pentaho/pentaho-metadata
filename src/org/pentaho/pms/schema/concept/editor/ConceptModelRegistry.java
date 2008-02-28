@@ -29,7 +29,7 @@ public class ConceptModelRegistry {
   /**
    * Keys are <code>ConceptInterface</code> instances. Values are <code>IConceptModel</code> instances.
    */
-  private Map map = new IdentityHashMap();
+  private Map<ConceptInterface,IConceptModel> map = new IdentityHashMap<ConceptInterface,IConceptModel>();
 
   // ~ Constructors ====================================================================================================
 

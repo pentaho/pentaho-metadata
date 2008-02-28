@@ -35,14 +35,13 @@ package org.pentaho.pms.schema;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.schema.concept.types.fieldtype.FieldTypeSettings;
-
-import be.ibridge.kettle.core.database.DatabaseMeta;
 
 
 public class PhysicalColumn extends ConceptUtilityBase implements ConceptUtilityInterface, Cloneable

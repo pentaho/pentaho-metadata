@@ -26,7 +26,7 @@ public class PropertyEditorWidgetFactory {
 
   private static final Map propertyEditorMap;
 
-  private static final Class[] constructorParamTypes = { Composite.class, Integer.TYPE, IConceptModel.class,
+  private static final Class<?>[] constructorParamTypes = { Composite.class, Integer.TYPE, IConceptModel.class,
       String.class, Map.class };
 
   // ~ Instance fields =================================================================================================
@@ -36,7 +36,7 @@ public class PropertyEditorWidgetFactory {
   // ~ Methods =========================================================================================================
 
   static {
-    HashMap propertyEditors = new HashMap();
+    HashMap<ConceptPropertyType,Class<?>> propertyEditors = new HashMap<ConceptPropertyType,Class<?>>();
     propertyEditors.put(ConceptPropertyType.STRING, StringPropertyEditorWidget.class);
     propertyEditors.put(ConceptPropertyType.DATE, DatePropertyEditorWidget.class);
     propertyEditors.put(ConceptPropertyType.NUMBER, NumberPropertyEditorWidget.class);
@@ -59,13 +59,13 @@ public class PropertyEditorWidgetFactory {
       final int style, final IConceptModel conceptModel, final String propertyId, final Map context,
       SecurityReference securityReference) {
 
-    Class clazz = (Class) propertyEditorMap.get(propertyType);
+    Class<?> clazz = (Class) propertyEditorMap.get(propertyType);
     if (null == clazz) {
       return null;
     }
     Constructor cons = null;
     try {
-      ArrayList constParams = new ArrayList(Arrays.asList(constructorParamTypes));
+      ArrayList<Class<?>> constParams = new ArrayList<Class<?>>(Arrays.asList(constructorParamTypes));
       if (clazz == SecurityPropertyEditorWidget.class) {
         constParams.add(SecurityReference.class);
       }
@@ -90,7 +90,7 @@ public class PropertyEditorWidgetFactory {
         logger.debug("conceptModel = " + conceptModel);
         logger.debug("propertyId = " + propertyId);
       }
-      ArrayList constructorArgs = new ArrayList();
+      ArrayList<Object> constructorArgs = new ArrayList<Object>();
       constructorArgs.add(parent);
       constructorArgs.add(new Integer(style));
       constructorArgs.add(conceptModel);

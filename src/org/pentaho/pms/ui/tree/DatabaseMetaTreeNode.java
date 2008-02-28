@@ -23,13 +23,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.graphics.Image;
+import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.di.core.dnd.DragAndDropContainer;
 import org.pentaho.pms.jface.tree.ITreeNode;
 import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.util.GUIResource;
-
-import be.ibridge.kettle.core.DragAndDropContainer;
-import be.ibridge.kettle.core.database.DatabaseMeta;
 
 /**
  * @author wseyler

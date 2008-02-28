@@ -188,7 +188,7 @@ public class AddPropertyDialog extends TitleAreaDialog {
       }
     });
 
-    List list2 = new ArrayList();
+    List<Object> list2 = new ArrayList<Object>();
     list2.add("");
     list2.addAll(Arrays.asList(ConceptPropertyType.propertyTypes));
 

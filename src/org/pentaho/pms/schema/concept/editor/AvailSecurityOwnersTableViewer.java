@@ -1,6 +1,7 @@
 package org.pentaho.pms.schema.concept.editor;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class AvailSecurityOwnersTableViewer extends TableViewer {
   static final int TYPE_COLUMN_ID = 0;
   static final int NAME_COLUMN_ID = 1;
   
-  ArrayList allUnassignedUsersAndRoles = new ArrayList();
+  List<SecurityOwner> allUnassignedUsersAndRoles = new ArrayList<SecurityOwner>();
   SecurityReference securityReference;
   
   class MyContentProvider implements IStructuredContentProvider {
@@ -45,7 +46,7 @@ public class AvailSecurityOwnersTableViewer extends TableViewer {
       if (security != null) {
         List owners = security.getOwners();
         
-        ArrayList users = new ArrayList(securityReference.getUsers());
+        List<String> users = new ArrayList<String>(securityReference.getUsers());
         for (Iterator iterator = owners.iterator(); iterator.hasNext();) {
           SecurityOwner securityOwner = (SecurityOwner)iterator.next();
           if (securityOwner.getOwnerType() == SecurityOwner.OWNER_TYPE_USER) {
@@ -57,7 +58,7 @@ public class AvailSecurityOwnersTableViewer extends TableViewer {
           allUnassignedUsersAndRoles.add(new SecurityOwner(SecurityOwner.OWNER_TYPE_USER, userName));
         }
         
-        ArrayList roles = new ArrayList(securityReference.getRoles());
+        List<String> roles = new ArrayList<String>(securityReference.getRoles());
         for (Iterator iterator = owners.iterator(); iterator.hasNext();) {
           SecurityOwner securityOwner = (SecurityOwner)iterator.next();
           if (securityOwner.getOwnerType() == SecurityOwner.OWNER_TYPE_ROLE) {
@@ -144,7 +145,9 @@ public class AvailSecurityOwnersTableViewer extends TableViewer {
   
   public SecurityOwner[] getSelectedOwners(){
     StructuredSelection selection = (StructuredSelection)getSelection();
-    return (SecurityOwner[])selection.toList().toArray(new SecurityOwner[0]);
+    @SuppressWarnings("all")
+    Collection <SecurityOwner> c = selection.toList();
+    return c.toArray(new SecurityOwner[0]);
   }
   
   public void addOwner(SecurityOwner owner) {

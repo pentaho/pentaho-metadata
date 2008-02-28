@@ -36,15 +36,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FontDialog;
 import org.eclipse.swt.widgets.Shell;
+import org.pentaho.di.core.changed.ChangedFlag;
+import org.pentaho.di.ui.core.PropsUI;
+import org.pentaho.di.ui.core.gui.ManagedFont;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyWidgetInterface;
 import org.pentaho.pms.util.Const;
-
-import be.ibridge.kettle.core.ChangedFlag;
-import be.ibridge.kettle.core.ManagedFont;
-import be.ibridge.kettle.core.Props;
 
 public class ConceptPropertyFontWidget extends ChangedFlag implements ConceptPropertyWidgetInterface
 {
@@ -107,7 +106,7 @@ public class ConceptPropertyFontWidget extends ChangedFlag implements ConceptPro
         FontSettings value;
         if ( property.getValue()==null)
         {
-            FontData fontData = Props.getInstance().getDefaultFont();
+            FontData fontData = PropsUI.getInstance().getDefaultFont();
             value = new FontSettings(fontData.getName(), fontData.getHeight(), (fontData.getStyle() & SWT.BOLD)!=0, (fontData.getStyle() & SWT.ITALIC)!=0);
         }
         else
@@ -158,9 +157,9 @@ public class ConceptPropertyFontWidget extends ChangedFlag implements ConceptPro
 
 
     
-    public static final Control getControl(final Composite composite, ConceptInterface concept, final String name, Control lastControl, Map conceptPropertyInterfaces)
+    public static final Control getControl(final Composite composite, ConceptInterface concept, final String name, Control lastControl, Map<String,ConceptPropertyWidgetInterface> conceptPropertyInterfaces)
     {
-        final Props props = Props.getInstance();
+        final PropsUI props = PropsUI.getInstance();
         ConceptPropertyInterface property = concept.getProperty(name); 
         
         final ManagedFont managedFont = new ManagedFont(null, false); // Gets set right after

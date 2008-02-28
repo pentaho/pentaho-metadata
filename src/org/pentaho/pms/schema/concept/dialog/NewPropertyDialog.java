@@ -28,17 +28,16 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.pentaho.di.core.logging.LogWriter;
+import org.pentaho.di.ui.core.PropsUI;
+import org.pentaho.di.ui.core.gui.WindowProperty;
+import org.pentaho.di.ui.trans.step.BaseStepDialog;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.DefaultPropertyID;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 import org.pentaho.pms.util.Const;
-
-import be.ibridge.kettle.core.LogWriter;
-import be.ibridge.kettle.core.Props;
-import be.ibridge.kettle.core.WindowProperty;
-import be.ibridge.kettle.trans.step.BaseStepDialog;
 
 
 public class NewPropertyDialog extends Dialog
@@ -68,7 +67,7 @@ public class NewPropertyDialog extends Dialog
 
 	private Shell shell;
 	
-    private Props props;
+    private PropsUI propsUI;
 
     private String title;
     private String message;
@@ -84,7 +83,7 @@ public class NewPropertyDialog extends Dialog
         this.message = message;
 
         log=LogWriter.getInstance();
-        props=Props.getInstance();
+        propsUI=PropsUI.getInstance();
         
         defaults = DefaultPropertyID.getDefaults();
         property = null;
@@ -96,7 +95,7 @@ public class NewPropertyDialog extends Dialog
 		Display display = parent.getDisplay();
 		
 		shell = new Shell(parent, SWT.DIALOG_TRIM | SWT.RESIZE | SWT.MAX | SWT.MIN);
- 		props.setLook(shell);
+ 		propsUI.setLook(shell);
         
         log.logDebug(this.getClass().getName(), Messages.getString("General.DEBUG_OPENING_DIALOG")); //$NON-NLS-1$
 
@@ -128,7 +127,7 @@ public class NewPropertyDialog extends Dialog
         //
         wName=new Text(shell, SWT.LEFT | SWT.BORDER);
         wName.setToolTipText(Messages.getString("NewPropertyDialog.USER_SPECIFY_NAME")); //$NON-NLS-1$
-        props.setLook(wName);
+        propsUI.setLook(wName);
         fdName=new FormData();
         fdName.left   = new FormAttachment(0, 0);
         fdName.right  = new FormAttachment(middle, 0);
@@ -138,7 +137,7 @@ public class NewPropertyDialog extends Dialog
 
         wNameLabel=new Label(shell, SWT.LEFT);
         wNameLabel.setText(Messages.getString("NewPropertyDialog.USER_PROPERTY_NAME")); //$NON-NLS-1$
-        props.setLook(wNameLabel);
+        propsUI.setLook(wNameLabel);
         fdNameLabel=new FormData();
         fdNameLabel.left   = new FormAttachment(0, 0);
         fdNameLabel.right  = new FormAttachment(middle, 0);
@@ -148,7 +147,7 @@ public class NewPropertyDialog extends Dialog
         // Use a default property
         //
         wUseDefault=new Button(shell, SWT.CHECK);
-        props.setLook(wUseDefault);
+        propsUI.setLook(wUseDefault);
         wUseDefault.setText(Messages.getString("NewPropertyDialog.USER_USE_DEFAULT_PROPERTY")); //$NON-NLS-1$
         wUseDefault.setSelection(true);
         fdUseDefault=new FormData();
@@ -158,7 +157,7 @@ public class NewPropertyDialog extends Dialog
         wUseDefault.setLayoutData(fdUseDefault);
 
         wDefaults=new List(shell, SWT.LEFT | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-        props.setLook(wDefaults);
+        propsUI.setLook(wDefaults);
         fdDefaults=new FormData();
         fdDefaults.left   = new FormAttachment(0, 0);
         fdDefaults.right  = new FormAttachment(middle, 0);
@@ -183,7 +182,7 @@ public class NewPropertyDialog extends Dialog
 
         wTypeLabel=new Label(shell, SWT.LEFT);
         wTypeLabel.setText(Messages.getString("NewPropertyDialog.USER_PROPERTY_TYPE")); //$NON-NLS-1$
-        props.setLook(wTypeLabel);
+        propsUI.setLook(wTypeLabel);
         fdTypeLabel=new FormData();
         fdTypeLabel.left   = new FormAttachment(middle, margin);
         fdTypeLabel.right  = new FormAttachment(100, 0);
@@ -192,7 +191,7 @@ public class NewPropertyDialog extends Dialog
         //wTypeLabel.setEnabled(false);
         
         wTypes=new List(shell, SWT.LEFT | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-        props.setLook(wTypes);
+        propsUI.setLook(wTypes);
         fdTypes=new FormData();
         fdTypes.left   = new FormAttachment(middle, margin);
         fdTypes.right  = new FormAttachment(100, 0);
@@ -263,7 +262,7 @@ public class NewPropertyDialog extends Dialog
 		// Detect X or ALT-F4 or something that kills this window...
 		shell.addShellListener(	new ShellAdapter() { public void shellClosed(ShellEvent e) { cancel(); } } );
 	
-		WindowProperty winprop = props.getScreen(shell.getText());
+		WindowProperty winprop = propsUI.getScreen(shell.getText());
 		if (winprop!=null) winprop.setShell(shell); else shell.pack();
 				
 		shell.open();

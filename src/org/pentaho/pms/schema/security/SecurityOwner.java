@@ -13,10 +13,9 @@
 package org.pentaho.pms.schema.security;
 
 
+import org.pentaho.di.core.xml.XMLHandler;
 import org.pentaho.pms.messages.Messages;
 import org.w3c.dom.Node;
-
-import be.ibridge.kettle.core.XMLHandler;
 
 
 /**

@@ -18,10 +18,9 @@ import org.jfree.formula.lvalues.LValue;
 import org.jfree.formula.lvalues.TypeValuePair;
 import org.jfree.formula.parser.FormulaParser;
 import org.jfree.formula.parser.ParseException;
-
-import be.ibridge.kettle.core.Row;
-import be.ibridge.kettle.core.exception.KettleException;
-import be.ibridge.kettle.core.value.Value;
+import org.pentaho.di.compatibility.Row;
+import org.pentaho.di.compatibility.Value;
+import org.pentaho.di.core.exception.KettleException;
 
 public class SimpleTest
 {
@@ -113,7 +112,7 @@ public class SimpleTest
 
     public static void main(String[] args) throws KettleException, ParseException, EvaluationException
     {
-        List rows = new ArrayList();
+        List<Row> rows = new ArrayList<Row>();
         
         Row r1 = new Row();
         r1.addValue(new Value("year", (long)2007)); //$NON-NLS-1$

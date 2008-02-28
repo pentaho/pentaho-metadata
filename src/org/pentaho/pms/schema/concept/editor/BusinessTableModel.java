@@ -11,9 +11,9 @@ import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
+import org.pentaho.pms.util.ObjectAlreadyExistsException;
+import org.pentaho.pms.util.UniqueList;
 
-import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
-import be.ibridge.kettle.core.list.UniqueList;
 
 public class BusinessTableModel extends AbstractTableModel {
 

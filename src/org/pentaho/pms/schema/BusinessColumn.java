@@ -16,19 +16,16 @@ import java.util.Iterator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.pms.core.exception.PentahoMetadataException;
+import org.pentaho.di.core.changed.ChangedFlagInterface;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
-import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.util.Const;
+import org.pentaho.pms.util.ObjectAlreadyExistsException;
 import org.pentaho.pms.util.Settings;
+import org.pentaho.pms.util.UniqueList;
 
-import be.ibridge.kettle.core.ChangedFlagInterface;
-import be.ibridge.kettle.core.database.DatabaseMeta;
-import be.ibridge.kettle.core.list.ObjectAlreadyExistsException;
-import be.ibridge.kettle.core.list.UniqueList;
 
 public class BusinessColumn extends ConceptUtilityBase implements ChangedFlagInterface, ConceptUtilityInterface, Cloneable
 {
