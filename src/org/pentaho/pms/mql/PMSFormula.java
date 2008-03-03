@@ -33,6 +33,7 @@ import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.mql.dialect.FormulaTraversalInterface;
+import org.pentaho.pms.mql.dialect.SQLDialectFactory;
 import org.pentaho.pms.mql.dialect.SQLDialectInterface;
 import org.pentaho.pms.mql.dialect.SQLFunctionGeneratorInterface;
 import org.pentaho.pms.mql.dialect.SQLOperatorGeneratorInterface;
@@ -113,7 +114,7 @@ public class PMSFormula implements FormulaTraversalInterface {
       throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0002_NO_DATABASE_META_PROVIDED")); //$NON-NLS-1$
     }
     
-    this.sqlDialect = formulaContext.getSQLDialect(databaseMeta);
+    this.sqlDialect = SQLDialectFactory.getSQLDialect(databaseMeta);
     
     if (sqlDialect == null) {
       throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0018_DATABASE_DIALECT_NOT_FOUND", databaseMeta.getDatabaseTypeDesc())); //$NON-NLS-1$
@@ -150,7 +151,7 @@ public class PMSFormula implements FormulaTraversalInterface {
       throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0004_NO_BUSINESS_TABLE_PROVIDED")); //$NON-NLS-1$
     }
     
-    this.sqlDialect = formulaContext.getSQLDialect(databaseMeta);
+    this.sqlDialect = SQLDialectFactory.getSQLDialect(databaseMeta);
     
     if (sqlDialect == null) {
       throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0017_DATABASE_DIALECT_NOT_FOUND", databaseMeta.getDatabaseTypeDesc())); //$NON-NLS-1$
@@ -186,7 +187,7 @@ public class PMSFormula implements FormulaTraversalInterface {
       throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0002_NO_DATABASE_META_PROVIDED")); //$NON-NLS-1$
     }
     
-    this.sqlDialect = formulaContext.getSQLDialect(databaseMeta);
+    this.sqlDialect = SQLDialectFactory.getSQLDialect(databaseMeta);
     
     if (sqlDialect == null) {
       throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0017_DATABASE_DIALECT_NOT_FOUND", databaseMeta.getDatabaseTypeDesc())); //$NON-NLS-1$

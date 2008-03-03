@@ -251,7 +251,7 @@ public class MQLQueryImplTest  extends TestCase {
       myTest.addConstraint(WhereCondition.operators[0], "[bt1.bc1] > 25"); //$NON-NLS-1$
 
       MappedQuery query = myTest.getQuery();
-      assertEquals(query.getQuery(), 
+      assertEquals(
           "SELECT \n"                          //$NON-NLS-1$
           + "          SUM(bt1.pc1) AS COL0\n" //$NON-NLS-1$
           + "         ,bt2.pc2 AS COL1\n"      //$NON-NLS-1$
@@ -260,12 +260,17 @@ public class MQLQueryImplTest  extends TestCase {
           + "          pt1 bt1\n"              //$NON-NLS-1$
           + "         ,pt2 bt2\n"              //$NON-NLS-1$
           + "WHERE \n"                         //$NON-NLS-1$
-          + "          bt1.pc1 = bt2.pc2\n"    //$NON-NLS-1$
+          + "          (\n"                    //$NON-NLS-1$
+          + "             bt1.pc1 = bt2.pc2\n" //$NON-NLS-1$
+          + "          )\n"                    //$NON-NLS-1$
           + "GROUP BY \n"                      //$NON-NLS-1$
           + "          bt2.pc2\n"              //$NON-NLS-1$
-          + "         , bt2.pc2  * 2\n"              //$NON-NLS-1$
+          + "         , bt2.pc2  * 2\n"        //$NON-NLS-1$
           + "HAVING \n"                        //$NON-NLS-1$
-          + "           (  SUM(bt1.pc1)  > 25 ) \n" //$NON-NLS-1$
+          + "          (\n"                    //$NON-NLS-1$
+          + "              SUM(bt1.pc1)  > 25\n" //$NON-NLS-1$
+          + "          )\n", //$NON-NLS-1$
+          query.getQuery()
           );
       Map map = query.getMap();
       assertNotNull(map);
@@ -274,7 +279,7 @@ public class MQLQueryImplTest  extends TestCase {
       assertEquals(map.get("COL1"), "bc2");  //$NON-NLS-1$ //$NON-NLS-2$
       assertEquals(map.get("COL2"), "bce2"); //$NON-NLS-1$ //$NON-NLS-2$
       
-      assertEquals(query.getDisplayQuery(),
+      assertEquals(
           "SELECT \n"                        //$NON-NLS-1$
         + "          SUM(bt1.pc1) AS bc1\n"  //$NON-NLS-1$
         + "         ,bt2.pc2 AS bc2\n"       //$NON-NLS-1$
@@ -283,12 +288,17 @@ public class MQLQueryImplTest  extends TestCase {
         + "          pt1 bt1\n"              //$NON-NLS-1$
         + "         ,pt2 bt2\n"              //$NON-NLS-1$
         + "WHERE \n"                         //$NON-NLS-1$
-        + "          bt1.pc1 = bt2.pc2\n"    //$NON-NLS-1$
+        + "          (\n"                    //$NON-NLS-1$
+        + "             bt1.pc1 = bt2.pc2\n" //$NON-NLS-1$
+        + "          )\n"                    //$NON-NLS-1$
         + "GROUP BY \n"                      //$NON-NLS-1$
         + "          bt2.pc2\n"              //$NON-NLS-1$
         + "         , bt2.pc2  * 2\n"        //$NON-NLS-1$
         + "HAVING \n"                        //$NON-NLS-1$
-        + "           (  SUM(bt1.pc1)  > 25 ) \n" //$NON-NLS-1$
+        + "          (\n"                    //$NON-NLS-1$        
+        + "              SUM(bt1.pc1)  > 25\n" //$NON-NLS-1$
+        + "          )\n",                   //$NON-NLS-1$
+        query.getDisplayQuery()
       );
 
       MemoryMetaData mmd = new MemoryMetaData(
@@ -554,7 +564,7 @@ public class MQLQueryImplTest  extends TestCase {
     myTest.addSelection(new Selection(bc4));
 
     MappedQuery query = myTest.getQuery();
-    assertEquals(query.getQuery(), 
+    assertEquals( 
         "SELECT DISTINCT \n" //$NON-NLS-1$
         + "          bt1.pc1 AS COL0\n" //$NON-NLS-1$
         + "         ,bt4.pc4 AS COL1\n" //$NON-NLS-1$
@@ -564,9 +574,17 @@ public class MQLQueryImplTest  extends TestCase {
         + "         ,pt3 bt3\n" //$NON-NLS-1$
         + "         ,pt4 bt4\n" //$NON-NLS-1$
         + "WHERE \n" //$NON-NLS-1$
-        + "          bt2.pc2 = bt3.pc3\n" //$NON-NLS-1$
-        + "      AND bt3.pc3 = bt4.pc4\n" //$NON-NLS-1$
-        + "      AND bt1.pc1 = bt2.pc2\n"); //$NON-NLS-1$
+        + "          (\n"
+        + "             bt2.pc2 = bt3.pc3\n" //$NON-NLS-1$
+        + "          )\n"
+        + "      AND (\n"
+        + "             bt3.pc3 = bt4.pc4\n" //$NON-NLS-1$
+        + "          )\n"
+        + "      AND (\n" 
+        + "             bt1.pc1 = bt2.pc2\n"
+        + "          )\n",
+        query.getQuery()    
+    ); //$NON-NLS-1$
   }
 
   public static String subsetsToString(List subsets) {

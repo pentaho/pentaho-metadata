@@ -90,4 +90,12 @@ public interface SQLDialectInterface {
    */
   public String getDateSQL(int year, int month, int day);
   
+  /**
+   * this method renders a SQLQueryModel to a string
+   * 
+   * @param model the model to generate sql from
+   * 
+   * @return dialect specific sql 
+   */
+  public String generateSelectStatement(SQLQueryModel model);
 }

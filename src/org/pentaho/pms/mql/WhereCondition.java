@@ -108,6 +108,15 @@ public class WhereCondition extends ConceptUtilityBase implements ConceptUtility
   public String getOperator() {
     return operator;
   }
+  
+  /**
+   * return the formula for this object
+   *
+   * @return formula object
+   */
+  public PMSFormula getPMSFormula() {
+    return formula;
+  }
 
   /**
    * return the condition, ie "A = B"

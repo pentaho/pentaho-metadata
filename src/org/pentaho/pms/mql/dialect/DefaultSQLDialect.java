@@ -23,6 +23,11 @@ import org.jfree.formula.lvalues.StaticValue;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.messages.Messages;
+import org.pentaho.pms.mql.dialect.SQLQueryModel.SQLOrderBy;
+import org.pentaho.pms.mql.dialect.SQLQueryModel.SQLSelection;
+import org.pentaho.pms.mql.dialect.SQLQueryModel.SQLTable;
+import org.pentaho.pms.mql.dialect.SQLQueryModel.SQLWhereFormula;
+import org.pentaho.pms.util.Const;
 
 /**
  * This is the Default SQL Dialect Class that implements SQLDialectInterface.
@@ -331,5 +336,202 @@ public class DefaultSQLDialect implements SQLDialectInterface {
    */
   public String quoteStringLiteral(Object str) {
     return "'" + str + "'"; //$NON-NLS-1$  //$NON-NLS-2$
+  }
+  
+  //
+  // The following methods generate SQL based on a SQLQueryModel object. 
+  //
+  
+  /**
+   * generates the SELECT portion of the SQL statement
+   * 
+   * @param query query model
+   * @param sql string buffer
+   */
+  protected void generateSelect(SQLQueryModel query, StringBuilder sql) {
+    sql.append("SELECT "); //$NON-NLS-1$
+    if (query.getDistinct()) {
+      sql.append("DISTINCT "); //$NON-NLS-1$
+    }
+    sql.append(Const.CR);
+    boolean first = true;
+    for (SQLSelection selection : query.getSelections()) {
+      if (first) {
+        first = false;
+        sql.append("          "); //$NON-NLS-1$
+      } else {
+        sql.append("         ,"); //$NON-NLS-1$
+      }
+      sql.append(selection.getFormula());
+      if (selection.getAlias() != null) {
+        sql.append(" AS "); //$NON-NLS-1$
+        sql.append(selection.getAlias());
+      }
+      sql.append(Const.CR);
+    }
+  }
+
+  /**
+   * generates the FROM portion of the SQL statement
+   * 
+   * @param query query model
+   * @param sql string buffer
+   */
+  protected void generateFrom(SQLQueryModel query, StringBuilder sql) {
+    sql.append("FROM ").append(Const.CR); //$NON-NLS-1$
+    boolean first = true;
+    for (SQLTable table : query.getTables()) {
+      if (first) {
+        first = false;
+        sql.append("          "); //$NON-NLS-1$
+      } else {
+        sql.append("         ,"); //$NON-NLS-1$
+      }
+      sql.append(table.getTableName());
+      if (table.getAlias() != null) {
+        sql.append(" "); //$NON-NLS-1$
+        sql.append(table.getAlias());
+      }
+      sql.append(Const.CR);
+    }      
+  }
+  
+  /**
+   * generates the WHERE portion of the SQL statement
+   * 
+   * @param query query model
+   * @param sql string buffer
+   */
+  protected void generateWhere(SQLQueryModel query, StringBuilder sql) {
+    if (query.getWhereFormulas().size() > 0) {
+      sql.append("WHERE ").append(Const.CR); //$NON-NLS-1$
+      boolean first = true;
+      for (SQLWhereFormula whereFormula : query.getWhereFormulas()) {
+        if (first) {
+          first = false;
+          sql.append("          ("); //$NON-NLS-1$
+        } else {
+          sql.append("      "); //$NON-NLS-1$
+          sql.append(whereFormula.getOperator());
+          sql.append(" ("); //$NON-NLS-1$
+        }
+        sql.append(Const.CR);
+        sql.append("             "); //$NON-NLS-1$
+        sql.append(whereFormula.getFormula());
+        sql.append(Const.CR);
+        sql.append("          )").append(Const.CR); //$NON-NLS-1$
+      }      
+    }
+  }
+  
+  /**
+   * generates the GROUP BY portion of the SQL statement
+   * 
+   * @param query query model
+   * @param sql string buffer
+   */
+  protected void generateGroupBy(SQLQueryModel query, StringBuilder sql) {
+    if (query.getGroupBys().size() > 0) {
+      sql.append("GROUP BY ").append(Const.CR); //$NON-NLS-1$
+      boolean first = true;
+      for (SQLSelection groupby : query.getGroupBys()) {
+        if (first) {
+          first = false;
+          sql.append("          "); //$NON-NLS-1$
+        } else {
+          sql.append("         ,"); //$NON-NLS-1$
+        }
+        
+        // only render the alias or the formula
+        if (groupby.getAlias() != null) {
+          sql.append(groupby.getAlias());
+        } else {
+          sql.append(groupby.getFormula());            
+        }
+        sql.append(Const.CR);
+      }
+    }
+  }
+  
+  /**
+   * generates the HAVING portion of the SQL statement
+   * 
+   * @param query query model
+   * @param sql string buffer
+   */
+  protected void generateHaving(SQLQueryModel query, StringBuilder sql) {
+    if (query.getHavings().size() > 0) {
+      sql.append("HAVING ").append(Const.CR); //$NON-NLS-1$
+      boolean first = true;
+      for (SQLWhereFormula havingFormula : query.getHavings()) {
+        if (first) {
+          first = false;
+          sql.append("          ("); //$NON-NLS-1$
+        } else {
+          sql.append("      "); //$NON-NLS-1$
+          sql.append(havingFormula.getOperator());
+          sql.append(" ("); //$NON-NLS-1$
+        }
+        sql.append(Const.CR);
+        sql.append("             "); //$NON-NLS-1$
+        sql.append(havingFormula.getFormula());
+        sql.append(Const.CR);
+        sql.append("          )").append(Const.CR); //$NON-NLS-1$
+      }      
+    }
+  }
+  
+  /**
+   * generates the HAVING portion of the SQL statement
+   * 
+   * @param query query model
+   * @param sql string buffer
+   */
+  protected void generateOrderBy(SQLQueryModel query, StringBuilder sql) {
+    if (query.getOrderBys().size() > 0) {
+      sql.append("ORDER BY ").append(Const.CR); //$NON-NLS-1$
+      boolean first = true;
+      for (SQLOrderBy orderby : query.getOrderBys()) {
+        if (first) {
+          first = false;
+          sql.append("          "); //$NON-NLS-1$
+        } else {
+          sql.append("         ,"); //$NON-NLS-1$
+        }
+        if (orderby.getSelection().getAlias() != null) {
+          sql.append(orderby.getSelection().getAlias());
+        } else {
+          sql.append(orderby.getSelection().getFormula());
+        }
+        if (orderby.getOrder() != null) {
+          sql.append(" "); //$NON-NLS-1$
+          switch(orderby.getOrder()) {
+            case ASCENDING:
+              sql.append("ASC"); //$NON-NLS-1$
+            case DESCENDING:
+              sql.append("DESC"); //$NON-NLS-1$
+            default:
+              throw new RuntimeException("unsupported order type: " + orderby.getOrder());
+          }
+        }
+        sql.append(Const.CR);
+      }
+    }
+  }
+  
+  /**
+   * generates a sql query based on the SQLQueryModel object
+   * @param query
+   * @return
+   */
+  public String generateSelectStatement(SQLQueryModel query) {
+    StringBuilder sql = new StringBuilder();
+    generateSelect(query, sql);
+    generateFrom(query, sql);
+    generateWhere(query, sql);
+    generateGroupBy(query, sql);
+    generateHaving(query, sql);
+    generateOrderBy(query, sql);
+    return sql.toString();
   }
 }

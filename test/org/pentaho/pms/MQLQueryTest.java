@@ -447,7 +447,7 @@ public class MQLQueryTest extends TestCase {
       
       MappedQuery query = mqlquery.getQuery();
       String sqlQuery = query.getQuery();
-      assertTrue(sqlQuery.indexOf(">= '1-01-2007' )") >= 0); //$NON-NLS-1$
+      assertTrue(sqlQuery.indexOf(">= '1-01-2007'") >= 0); //$NON-NLS-1$
       
       // now replace with oracle database metadata
       DatabaseMeta meta = (DatabaseMeta)((MQLQueryImpl)mqlquery).getDatabaseMeta().clone();
@@ -466,7 +466,7 @@ public class MQLQueryTest extends TestCase {
       
       query = mqlquery.getQuery();
       sqlQuery = query.getQuery();
-      assertTrue(sqlQuery.indexOf(">= TO_DATE('1-01-2007','YYYY-MM-DD') )") >= 0); //$NON-NLS-1$
+      assertTrue(sqlQuery.indexOf(">= TO_DATE('1-01-2007','YYYY-MM-DD')") >= 0); //$NON-NLS-1$
     } catch (Exception e) {
       e.printStackTrace();
       fail();

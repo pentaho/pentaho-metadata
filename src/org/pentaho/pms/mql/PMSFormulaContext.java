@@ -12,21 +12,9 @@
 */
 package org.pentaho.pms.mql;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jfree.formula.DefaultFormulaContext;
 import org.jfree.formula.typing.Type;
-import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.messages.Messages;
-import org.pentaho.pms.mql.dialect.DB2Dialect;
-import org.pentaho.pms.mql.dialect.DefaultSQLDialect;
-import org.pentaho.pms.mql.dialect.MSAccessDialect;
-import org.pentaho.pms.mql.dialect.MSSQLDialect;
-import org.pentaho.pms.mql.dialect.MySQLDialect;
-import org.pentaho.pms.mql.dialect.OracleDialect;
-import org.pentaho.pms.mql.dialect.PostgreSQLDialect;
-import org.pentaho.pms.mql.dialect.SQLDialectInterface;
 
 /**
  * This is a singleton class that manages PMSFormula's context.
@@ -49,34 +37,6 @@ public class PMSFormulaContext extends DefaultFormulaContext {
    */
   public static PMSFormulaContext getInstance() {
     return singleton;
-  }
-  
-  private Map<String,SQLDialectInterface> supportedDialects = new HashMap<String,SQLDialectInterface>();
-  
-  /**
-   * private constructor, for now supported functions and operators are hardcoded, in the future
-   * this may be moved to a config file
-   */
-  private PMSFormulaContext() {
-    addDialect(new DefaultSQLDialect());
-    addDialect(new OracleDialect());
-    addDialect(new MSSQLDialect());
-    addDialect(new DB2Dialect());
-    addDialect(new PostgreSQLDialect());
-    addDialect(new MySQLDialect());
-    addDialect(new MSAccessDialect());
-  }
-  
-  private void addDialect(SQLDialectInterface dialect) {
-     supportedDialects.put(dialect.getDatabaseType(), dialect);
-  }
-  
-  public SQLDialectInterface getSQLDialect(DatabaseMeta databaseMeta) {
-    SQLDialectInterface sqlDialect = (SQLDialectInterface)supportedDialects.get(databaseMeta.getDatabaseTypeDesc());
-    if (sqlDialect == null) {
-      sqlDialect = (SQLDialectInterface)supportedDialects.get("GENERIC"); //$NON-NLS-1$
-    }
-    return sqlDialect;
   }
 
   /**

@@ -14,12 +14,15 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.messages.Messages;
+import org.pentaho.pms.mql.dialect.SQLDialectFactory;
+import org.pentaho.pms.mql.dialect.SQLDialectInterface;
+import org.pentaho.pms.mql.dialect.SQLQueryModel;
+import org.pentaho.pms.mql.dialect.SQLQueryModel.OrderType;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.RelationshipMeta;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
-import org.pentaho.pms.util.Const;
 
 /**
  * This class contains the SQL generation algorithm.
@@ -68,207 +71,115 @@ public class SQLGenerator {
    * @param locale locale string
    * @param columnsMap map of column aliases to populate
    */
-  public void generateSelect(StringBuffer sql, BusinessModel model, DatabaseMeta databaseMeta, List<? extends Selection> selections, boolean disableDistinct, boolean group, String locale, Map<String, String> columnsMap) {
-    
-    sql.append("SELECT "); //$NON-NLS-1$
-    
-    if (!disableDistinct && !group) {
-      sql.append("DISTINCT "); //$NON-NLS-1$
-    }
-    sql.append(Const.CR);
-
+  public void generateSelect(SQLQueryModel query, BusinessModel model, DatabaseMeta databaseMeta, List<Selection> selections, boolean disableDistinct, boolean group, String locale, Map<String, String> columnsMap) {
+    query.setDistinct(!disableDistinct && !group);
     for (int i = 0; i < selections.size(); i++) {
-      if (i > 0) {
-        sql.append("         ,"); //$NON-NLS-1$
-      } else {
-        sql.append("          "); //$NON-NLS-1$
-      }
-      sql.append(getBusinessColumnSQL(model, selections.get(i).getBusinessColumn(), databaseMeta, locale));
-      sql.append(" AS "); //$NON-NLS-1$
-
       // in some database implementations, the "as" name has a finite length;
       // for instance, oracle cannot handle a name longer than 30 characters. 
       // So, we map a short name here to the longer id, and replace the id
       // later in the resultset metadata. 
-
+      String alias = null;
       if(columnsMap != null){
         columnsMap.put("COL" + Integer.toString(i), selections.get(i).getBusinessColumn().getId()); //$NON-NLS-1$
-        sql.append(databaseMeta.quoteField("COL" + Integer.toString(i))); //$NON-NLS-1$
+        alias = databaseMeta.quoteField("COL" + Integer.toString(i)); //$NON-NLS-1$
       }else{
-        sql.append(databaseMeta.quoteField(selections.get(i).getBusinessColumn().getId()));
+        alias = databaseMeta.quoteField(selections.get(i).getBusinessColumn().getId());
       }
-      sql.append(Const.CR);
+      query.addSelection(getBusinessColumnSQL(model, selections.get(i).getBusinessColumn(), databaseMeta, locale), alias);
     }
   }
   
   /**
-   * This method traverses the set of included business tables 
-   * and renders those tables to the SQL string buffer.
+   * This method first traverses the set of included business tables 
+   * and renders those tables to the SQL string buffer. Second, it traverses
+   * the list of joins and renders those in the WHERE clause. Finally, it 
+   * traverses the constraints and adds them to the where or having clauses.
    * 
-   * @param sql sql string buffer
+   * @param query sql query model
    * @param usedBusinessTables used business tables in query
+   * @param model the current business model
+   * @param path the join path
+   * @param conditions the where conditions 
    * @param databaseMeta database metadata
    * @param locale locale string
    */
-  public void generateFrom(StringBuffer sql, List<BusinessTable> usedBusinessTables, DatabaseMeta databaseMeta, String locale) {
-    
-    sql.append("FROM ").append(Const.CR); //$NON-NLS-1$
-    
+  public void generateFromAndWhere(SQLQueryModel query, List<BusinessTable> usedBusinessTables, BusinessModel model, Path path, List<WhereCondition> conditions, DatabaseMeta databaseMeta, String locale) throws PentahoMetadataException {
+
+    // FROM TABLES
     for (int i = 0; i < usedBusinessTables.size(); i++) {
       BusinessTable businessTable = usedBusinessTables.get(i);
-      if (i > 0) {
-        sql.append("         ,"); //$NON-NLS-1$
-      } else {
-        sql.append("          "); //$NON-NLS-1$
-      }
       String schemaName = null;
       if (businessTable.getTargetSchema() != null) {
         schemaName = databaseMeta.quoteField(businessTable.getTargetSchema());
       }
       String tableName = databaseMeta.quoteField(businessTable.getTargetTable());
-      sql.append(databaseMeta.getSchemaTableCombination(schemaName, tableName) + " " //$NON-NLS-1$
-          + databaseMeta.quoteField(businessTable.getDisplayName(locale)));
-      sql.append(Const.CR);
+      query.addTable(databaseMeta.getSchemaTableCombination(schemaName, tableName),
+          databaseMeta.quoteField(businessTable.getDisplayName(locale)));
     }
-  }
-  
-  public boolean generateJoins(StringBuffer sql, BusinessModel model, Path path, DatabaseMeta databaseMeta, String locale) {
-    boolean whereAdded = false;
+    
+    // JOIN CONDITIONS
     if (path != null) {
       for (int i = 0; i < path.size(); i++) {
-        if (!whereAdded) {
-          sql.append("WHERE ").append(Const.CR); //$NON-NLS-1$
-          whereAdded = true;
-        }
         RelationshipMeta relation = path.getRelationship(i);
-
-        if (i > 0) {
-          sql.append("      AND "); //$NON-NLS-1$
-        } else {
-          sql.append("          "); //$NON-NLS-1$
-        }
-        sql.append(getJoin(model, relation, databaseMeta, locale));
-        sql.append(Const.CR);
+        query.addWhereFormula(getJoin(model, relation, databaseMeta, locale), "AND"); //$NON-NLS-1$
       }
     }
-    return whereAdded;
-  }
-  
-  /**
-   * This method renders all WhereCondition's that are not part of an aggregate column.
-
-   * @param sql sql string buffer
-   * @param whereAdded
-   * @param conditions
-   * @param locale
-   * @throws PentahoMetadataException
-   */
-  public void generateWhere(StringBuffer sql, boolean whereAdded, List<WhereCondition> conditions, String locale) throws PentahoMetadataException {
-    // WHERE from conditions
-    //
+    
+    // WHERE CONDITIONS
     if (conditions != null) {
-      boolean bracketOpen = false;
-      boolean justOpened = false;
+      boolean first = true;
       for (WhereCondition condition : conditions) {
         // The ones with aggregates in it are for the HAVING clause
-        //
         if (!condition.hasAggregate()) {
-          if (!whereAdded) {
-            sql.append("WHERE ").append(Const.CR); //$NON-NLS-1$
-            whereAdded = true;
-            justOpened = true;
-          } else if (!bracketOpen) {
-            sql.append("      AND ( ").append(Const.CR); //$NON-NLS-1$
-            bracketOpen = true;
-            justOpened = true;
-          }
-          sql.append("             ").append(condition.getWhereClause(locale, !justOpened)); //$NON-NLS-1$
-          sql.append(Const.CR);
-          justOpened = false;
-        }
-      }
-      if (bracketOpen) {
-        sql.append("          )").append(Const.CR); //$NON-NLS-1$
-      }
-    }
-  }
-  
-  public void generateGroupBy(StringBuffer sql, BusinessModel model, List<? extends Selection> selections, DatabaseMeta databaseMeta, String locale) {
-    boolean groupByAdded = false;
-    boolean first = true;
-    for (Selection selection : selections) {
-      BusinessColumn businessColumn = selection.getBusinessColumn();
-
-      if (!businessColumn.hasAggregate()) {
-        if (!groupByAdded) {
-          sql.append("GROUP BY ").append(Const.CR); //$NON-NLS-1$
-          groupByAdded = true;
-        }
-
-        if (!first) {
-          sql.append("         ,"); //$NON-NLS-1$
+          query.addWhereFormula(condition.getPMSFormula().generateSQL(locale), first ? "AND" : condition.getOperator()); //$NON-NLS-1$
+          first = false;
         } else {
-          sql.append("          "); //$NON-NLS-1$
-        }
-        first = false;
-        sql.append(getBusinessColumnSQL(model, businessColumn, databaseMeta, locale));
-        sql.append(Const.CR);
-      }
-    }
-  }
-  
-  public void generateHaving(StringBuffer sql, List<WhereCondition> conditions, String locale) throws PentahoMetadataException {
-    if (conditions != null) {
-      boolean havingAdded = false;
-      boolean justOpened = false;
-      // boolean first=true;
-      for (WhereCondition condition : conditions) {
-        if (condition.hasAggregate()) {
-          if (!havingAdded) {
-            sql.append("HAVING ").append(Const.CR); //$NON-NLS-1$
-            havingAdded = true;
-            justOpened = true;
-          }
-          // if (!first) sql+=" AND "; else sql+=" ";
-          // first=false;
-          sql.append(condition.getWhereClause(locale, !justOpened));
-          sql.append(Const.CR);
-          justOpened = false;
+          query.addHavingFormula(condition.getPMSFormula().generateSQL(locale), condition.getOperator());
         }
       }
     }
-
-  }
-  
-  public void generateOrderBy(StringBuffer sql, BusinessModel model, List<OrderBy> orderBy, DatabaseMeta databaseMeta, String locale) {
-    if (orderBy != null) {
-      boolean orderByAdded = false;
-      boolean first = true;
-      for (OrderBy orderItem : orderBy) {
-        BusinessColumn businessColumn = orderItem.getBusinessColumn();
-
-        if (!orderByAdded) {
-          sql.append("ORDER BY ").append(Const.CR); //$NON-NLS-1$
-          orderByAdded = true;
-        }
-
-        if (!first) {
-          sql.append("         ,"); //$NON-NLS-1$
-        } else {
-          sql.append("          "); //$NON-NLS-1$
-        }
-        first = false;
-        sql.append(getBusinessColumnSQL(model, businessColumn, databaseMeta, locale));
-        if (!orderItem.isAscending()) {
-          sql.append(" DESC"); //$NON-NLS-1$
-        }
-        sql.append(Const.CR);
-      }
-    }
-
   }
   
   /**
+   * this method adds the group by statements to the query model
+   * 
+   * @param query sql query model
+   * @param model business model
+   * @param selections list of selections
+   * @param databaseMeta database info
+   * @param locale locale string
+   */
+  public void generateGroupBy(SQLQueryModel query, BusinessModel model, List<Selection> selections, DatabaseMeta databaseMeta, String locale) {
+    // can be moved to selection loop
+    for (Selection selection : selections) {
+      BusinessColumn businessColumn = selection.getBusinessColumn();
+      if (!businessColumn.hasAggregate()) {
+        query.addGroupBy(getBusinessColumnSQL(model, businessColumn, databaseMeta, locale), null);
+      }
+    }
+  }
+  
+  /**
+   * this method adds the order by statements to the query model
+   * 
+   * @param query sql query model
+   * @param model business model
+   * @param orderBy list of order bys
+   * @param databaseMeta database info
+   * @param locale locale string
+   */
+  public void generateOrderBy(SQLQueryModel query, BusinessModel model, List<OrderBy> orderBy, DatabaseMeta databaseMeta, String locale) {
+    if (orderBy != null) {
+      for (OrderBy orderItem : orderBy) {
+        BusinessColumn businessColumn = orderItem.getBusinessColumn();
+        query.addOrderBy(getBusinessColumnSQL(model, businessColumn, databaseMeta, locale), null, !orderItem.isAscending() ? OrderType.DESCENDING : null); //$NON-NLS-1$
+      }
+    }
+  }
+  
+  /**
+   * returns the generated SQL and additional metadata
+   * 
    * @param selections The selected business columns
    * @param conditions the conditions to apply (null = no conditions)
    * @param orderBy the ordering (null = no order by clause)
@@ -278,9 +189,9 @@ public class SQLGenerator {
    * are no groupings.
    * @return a SQL query based on a column selection, conditions and a locale
    */
-  public MappedQuery getSQL(BusinessModel model, List<? extends Selection> selections, List<WhereCondition> conditions, List<OrderBy> orderBy, DatabaseMeta databaseMeta, String locale, boolean disableDistinct) throws PentahoMetadataException {
-
-    StringBuffer sql = new StringBuffer();
+  public MappedQuery getSQL(BusinessModel model, List<Selection> selections, List<WhereCondition> conditions, List<OrderBy> orderBy, DatabaseMeta databaseMeta, String locale, boolean disableDistinct) throws PentahoMetadataException {
+    SQLQueryModel query = new SQLQueryModel();
+    //StringBuffer sql = new StringBuffer();
     Map<String,String> columnsMap = new HashMap<String,String>();
     
     // These are the tables involved in the field selection:
@@ -305,36 +216,20 @@ public class SQLGenerator {
 
       boolean group = hasFactsInIt(selections, conditions);
 
-      // generate the sql
-      
-      // SELECT
-      generateSelect(sql, model, databaseMeta, selections, disableDistinct, group, locale, columnsMap);
-      
-      // FROM
-      generateFrom(sql, usedBusinessTables, databaseMeta, locale);
-      
-      // WHERE
-      boolean whereAdded = generateJoins(sql, model, path, databaseMeta, locale);
-      
-      generateWhere(sql, whereAdded, conditions, locale);
-
+      generateSelect(query, model, databaseMeta, selections, disableDistinct, group, locale, columnsMap);
+      generateFromAndWhere(query, usedBusinessTables, model, path, conditions, databaseMeta, locale);
       if (group) {
-
-        // GROUP BY
-        generateGroupBy(sql, model, selections, databaseMeta, locale);
-        // HAVING
-        generateHaving(sql, conditions, locale);
-        
+        generateGroupBy(query, model, selections, databaseMeta, locale);
       }
-      
-      // ORDER BY
-      generateOrderBy(sql, model, orderBy, databaseMeta, locale);
+      generateOrderBy(query, model, orderBy, databaseMeta, locale);
     }
 
-    return new MappedQuery(sql.toString(), columnsMap, selections);
+    SQLDialectInterface dialect = SQLDialectFactory.getSQLDialect(databaseMeta);
+   
+    return new MappedQuery(dialect.generateSelectStatement(query), columnsMap, selections);
   }
 
-  protected List<BusinessTable> getTablesInvolved(List<? extends Selection> selections, List<WhereCondition> conditions) {
+  protected List<BusinessTable> getTablesInvolved(List<Selection> selections, List<WhereCondition> conditions) {
     Set<BusinessTable> treeSet = new TreeSet<BusinessTable>();
 
     for (Selection selection : selections) {
@@ -353,7 +248,7 @@ public class SQLGenerator {
     return new ArrayList<BusinessTable>(treeSet);
   }
   
-  public boolean hasFactsInIt(List<? extends Selection> selections, List<? extends WhereCondition> conditions) {
+  public boolean hasFactsInIt(List<Selection> selections, List<WhereCondition> conditions) {
     for (Selection selection : selections) {
       if (selection.getBusinessColumn().hasAggregate())
         return true;
