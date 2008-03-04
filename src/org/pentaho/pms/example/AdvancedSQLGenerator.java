@@ -257,7 +257,7 @@ public class AdvancedSQLGenerator extends SQLGenerator {
           
           if (selection.getBusinessColumn().hasAggregate()) // For the having clause, for example: HAVING sum(turnover) > 100
           {
-              return getFunction(selection.getBusinessColumn(), databaseMeta)+"("+tableColumn+")"; //$NON-NLS-1$ //$NON-NLS-2$
+              return getFunctionExpression(selection.getBusinessColumn(), tableColumn, databaseMeta);
           }
           else
           {

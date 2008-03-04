@@ -437,7 +437,7 @@ public class SQLGenerator {
           
           if (column.hasAggregate()) // For the having clause, for example: HAVING sum(turnover) > 100
           {
-              return getFunction(column, databaseMeta)+"("+tableColumn+")"; //$NON-NLS-1$ //$NON-NLS-2$
+              return getFunctionExpression(column, tableColumn, databaseMeta);
           }
           else
           {
@@ -446,11 +446,23 @@ public class SQLGenerator {
       }
   }
 
+  public static String getFunctionExpression(BusinessColumn column, String tableColumn, DatabaseMeta databaseMeta) {
+      String expression=getFunction(column, databaseMeta); //$NON-NLS-1$
+      
+      switch(column.getAggregationType().getType()) {
+          case AggregationSettings.TYPE_AGGREGATION_COUNT_DISTINCT : expression+="(DISTINCT "+tableColumn+")"; break;   //$NON-NLS-1$ //$NON-NLS-2$
+          default: expression+="("+tableColumn+")"; break;  //$NON-NLS-1$ //$NON-NLS-2$
+      }
+      
+      return expression;
+  }
+  
   public static String getFunction(BusinessColumn column, DatabaseMeta databaseMeta) {
       String fn=""; //$NON-NLS-1$
       
       switch(column.getAggregationType().getType()) {
           case AggregationSettings.TYPE_AGGREGATION_AVERAGE: fn=databaseMeta.getFunctionAverage(); break;
+          case AggregationSettings.TYPE_AGGREGATION_COUNT_DISTINCT :
           case AggregationSettings.TYPE_AGGREGATION_COUNT  : fn=databaseMeta.getFunctionCount(); break;
           case AggregationSettings.TYPE_AGGREGATION_MAXIMUM: fn=databaseMeta.getFunctionMaximum(); break;
           case AggregationSettings.TYPE_AGGREGATION_MINIMUM: fn=databaseMeta.getFunctionMinimum(); break;
