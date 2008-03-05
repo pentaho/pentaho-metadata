@@ -508,8 +508,10 @@ public class DefaultSQLDialect implements SQLDialectInterface {
           switch(orderby.getOrder()) {
             case ASCENDING:
               sql.append("ASC"); //$NON-NLS-1$
+              break;
             case DESCENDING:
               sql.append("DESC"); //$NON-NLS-1$
+              break;
             default:
               throw new RuntimeException("unsupported order type: " + orderby.getOrder());
           }
