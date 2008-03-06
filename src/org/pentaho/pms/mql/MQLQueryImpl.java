@@ -150,7 +150,7 @@ public class MQLQueryImpl implements MQLQuery {
           "MQLQuery.ERROR_0016_BUSINESS_COLUMN_NOT_FOUND", businessCategory.getId(), columnId)); //$NON-NLS-1$ 
     }
 
-    OrderBy orderBy = new OrderBy(businessColumn, ascending);
+    OrderBy orderBy = new OrderBy(new Selection(businessColumn), ascending);
     order.add(orderBy);
   }
 
@@ -207,12 +207,12 @@ public class MQLQueryImpl implements MQLQuery {
     try {
 
       if (schemaMeta == null) {
-        logger.error(Messages.getString("MQLQuery.ERROR_0002_META_SCHEMA_NULL")); //$NON-NLS-1$
+        logger.error(Messages.getErrorString("MQLQuery.ERROR_0002_META_SCHEMA_NULL")); //$NON-NLS-1$
         return false;
       }
 
       if (model == null) {
-        logger.error(Messages.getString("MQLQuery.ERROR_0003_BUSINESS_MODEL_NULL")); //$NON-NLS-1$
+        logger.error(Messages.getErrorString("MQLQuery.ERROR_0003_BUSINESS_MODEL_NULL")); //$NON-NLS-1$
         return false;
       }
 
@@ -228,7 +228,7 @@ public class MQLQueryImpl implements MQLQuery {
         domainIdElement.appendChild(doc.createTextNode(data));
         mqlElement.appendChild(domainIdElement);
       } else {
-        logger.error(Messages.getString("MQLQuery.ERROR_0004_DOMAIN_ID_NULL")); //$NON-NLS-1$
+        logger.error(Messages.getErrorString("MQLQuery.ERROR_0004_DOMAIN_ID_NULL")); //$NON-NLS-1$
         return false;
       }
 
@@ -239,7 +239,7 @@ public class MQLQueryImpl implements MQLQuery {
         modelIdElement.appendChild(doc.createTextNode(data));
         mqlElement.appendChild(modelIdElement);
       } else {
-        logger.error(Messages.getString("MQLQuery.ERROR_0005_MODEL_ID_NULL")); //$NON-NLS-1$
+        logger.error(Messages.getErrorString("MQLQuery.ERROR_0005_MODEL_ID_NULL")); //$NON-NLS-1$
         return false;
       }
 
@@ -249,132 +249,137 @@ public class MQLQueryImpl implements MQLQuery {
         modelNameElement.appendChild(doc.createTextNode(data));
         mqlElement.appendChild(modelNameElement);
       } else {
-        logger.error(Messages.getString("MQLQuery.ERROR_0006_MODEL_NAME_NULL")); //$NON-NLS-1$
+        logger.error(Messages.getErrorString("MQLQuery.ERROR_0006_MODEL_NAME_NULL")); //$NON-NLS-1$
         return false;
       }
 
       // Add additional options
       Element optionsElement = doc.createElement("options"); //$NON-NLS-1$
       mqlElement.appendChild(optionsElement);
-      Element disableDistinct = doc.createElement("disable_distinct"); //$NON-NLS-1$
-      data = Boolean.toString(this.disableDistinct);
-      disableDistinct.appendChild(doc.createTextNode(data));
-      optionsElement.appendChild(disableDistinct);
-      
+      addOptionsToDocument(doc, optionsElement);      
       
       // insert the selections
       Element selectionsElement = doc.createElement("selections"); //$NON-NLS-1$
+      for (Selection selection : selections) {
+        Element selectionElement = doc.createElement("selection"); //$NON-NLS-1$
+        addSelectionToDocument(doc, selection, selectionElement);
+        selectionsElement.appendChild(selectionElement);
+      }
       mqlElement.appendChild(selectionsElement);
       
-      Element selectionElement;
-      Element element;
-      for (Selection selection : selections) {
-        BusinessColumn column = selection.getBusinessColumn();
-        if (column.getBusinessTable() != null) {
-          selectionElement = doc.createElement("selection"); //$NON-NLS-1$
-
-          element = doc.createElement("view"); //$NON-NLS-1$
-
-          // element.appendChild( doc.createTextNode( column.getBusinessTable().getId() ) );
-          //
-          // Work-around for PMD-93 - not using BusinessView in the MQL.
-          BusinessCategory rootCat = model.getRootCategory();
-          BusinessCategory businessCategory = rootCat.findBusinessCategoryForBusinessColumn(column);
-          element.appendChild(doc.createTextNode(businessCategory.getId()));
-
-          selectionElement.appendChild(element);
-
-          element = doc.createElement("column"); //$NON-NLS-1$
-          element.appendChild(doc.createTextNode(column.getId()));
-          selectionElement.appendChild(element);
-
-          selectionsElement.appendChild(selectionElement);
-        }
-      }
       // insert the contraints
-      Element contraintsElement = doc.createElement("constraints"); //$NON-NLS-1$
-      mqlElement.appendChild(contraintsElement);
-      Element constraintElement;
+      Element constraintsElement = doc.createElement("constraints"); //$NON-NLS-1$
       for (WhereCondition condition : constraints) {
-        constraintElement = doc.createElement("constraint"); //$NON-NLS-1$
-
-        element = doc.createElement("operator"); //$NON-NLS-1$
-        element.appendChild(doc.createTextNode(condition.getOperator() == null ? "" : condition.getOperator())); //$NON-NLS-1$
-        constraintElement.appendChild(element);
-
-        element = doc.createElement("condition"); //$NON-NLS-1$
-        element.appendChild(doc.createTextNode(condition.getCondition()));
-        constraintElement.appendChild(element);
-
-        // Save the localized names...
-        /* 
-         * TODO
-         String[] locales = condition.getConcept().getUsedLocale();
-         
-         element = doc.createElement( "name" );
-         for (int i=0;i<locales.length;i++) {
-         String name = condition.getName(locales[i]);
-         if (!Const.isEmpty( name) ) {
-         Element locElement = doc.createElement("locale");
-         locElement.appendChild( doc.createTextNode(locales[i]) );
-         element.appendChild(locElement);
-         Element valElement = doc.createElement("value");
-         locElement.appendChild( doc.createTextNode(name) );
-         element.appendChild(valElement);
-         }
-         }
-         constraintElement.appendChild( element );
-
-         element = doc.createElement( "description" );
-         for (int i=0;i<locales.length;i++) {
-         String description = condition.getDescription(locales[i]);
-         if (!Const.isEmpty( description) ) {
-         Element locElement = doc.createElement("locale");
-         locElement.appendChild( doc.createTextNode(locales[i]) );
-         element.appendChild(locElement);
-         Element valElement = doc.createElement("value");
-         locElement.appendChild( doc.createTextNode(description) );
-         element.appendChild(valElement);
-         }
-         }
-         constraintElement.appendChild( element );
-         */
-
-        contraintsElement.appendChild(constraintElement);
+        Element constraintElement = doc.createElement("constraint"); //$NON-NLS-1$
+        addConstraintToDocument(doc, condition, constraintElement);
+        constraintsElement.appendChild(constraintElement);
       }
-      // insert the contraints
+      mqlElement.appendChild(constraintsElement);
+      
+      // insert the orders
       Element ordersElement = doc.createElement("orders"); //$NON-NLS-1$
-      mqlElement.appendChild(ordersElement);
-      Element orderElement;
       for (OrderBy orderBy : order) {
-        orderElement = doc.createElement("order"); //$NON-NLS-1$
-
-        element = doc.createElement("direction"); //$NON-NLS-1$
-        element.appendChild(doc.createTextNode(orderBy.isAscending() ? "asc" : "desc")); //$NON-NLS-1$ //$NON-NLS-2$
-        orderElement.appendChild(element);
-
-        // Work-around for PMD-93 - Need this to be better into the future...
-        element = doc.createElement("view_id"); //$NON-NLS-1$
-        BusinessCategory rootCat = model.getRootCategory();
-        BusinessCategory businessView = rootCat.findBusinessCategoryForBusinessColumn(orderBy.getBusinessColumn());
-        element.appendChild(doc.createTextNode(businessView.getId()));
-
-        orderElement.appendChild(element);
-
-        element = doc.createElement("column_id"); //$NON-NLS-1$
-        element.appendChild(doc.createTextNode(orderBy.getBusinessColumn().getId()));
-        orderElement.appendChild(element);
-
+        Element orderElement = doc.createElement("order"); //$NON-NLS-1$
+        addOrderByToDocument(doc, orderBy, orderElement);
         ordersElement.appendChild(orderElement);
+        
       }
-
+      mqlElement.appendChild(ordersElement);
+      
     } catch (Exception e) {
       logger.error(Messages.getErrorString("MQLQuery.ERROR_0011_ADD_TO_DOCUMENT_FAILED"), e); //$NON-NLS-1$
     }
     return true;
 
   }
+  
+  protected void addOptionsToDocument(Document doc, Element optionsElement) {
+    Element disableDistinct = doc.createElement("disable_distinct"); //$NON-NLS-1$
+    String data = Boolean.toString(this.disableDistinct);
+    disableDistinct.appendChild(doc.createTextNode(data));
+    optionsElement.appendChild(disableDistinct);
+  }
 
+  protected void addSelectionToDocument(Document doc, Selection selection, Element selectionElement) {
+    BusinessColumn column = selection.getBusinessColumn();
+    Element element = doc.createElement("view"); //$NON-NLS-1$
+
+    // element.appendChild( doc.createTextNode( column.getBusinessTable().getId() ) );
+    //
+    // Work-around for PMD-93 - not using BusinessView in the MQL.
+    BusinessCategory rootCat = model.getRootCategory();
+    BusinessCategory businessCategory = rootCat.findBusinessCategoryForBusinessColumn(column);
+    element.appendChild(doc.createTextNode(businessCategory.getId()));
+
+    selectionElement.appendChild(element);
+
+    element = doc.createElement("column"); //$NON-NLS-1$
+    element.appendChild(doc.createTextNode(column.getId()));
+    selectionElement.appendChild(element);
+  }
+  
+  protected void addConstraintToDocument(Document doc, WhereCondition condition, Element constraintElement) {
+    Element element = doc.createElement("operator"); //$NON-NLS-1$
+    element.appendChild(doc.createTextNode(condition.getOperator() == null ? "" : condition.getOperator())); //$NON-NLS-1$
+    constraintElement.appendChild(element);
+
+    element = doc.createElement("condition"); //$NON-NLS-1$
+    element.appendChild(doc.createTextNode(condition.getCondition()));
+    constraintElement.appendChild(element);
+
+    // Save the localized names...
+    /* 
+     * TODO
+     String[] locales = condition.getConcept().getUsedLocale();
+     
+     element = doc.createElement( "name" );
+     for (int i=0;i<locales.length;i++) {
+     String name = condition.getName(locales[i]);
+     if (!Const.isEmpty( name) ) {
+     Element locElement = doc.createElement("locale");
+     locElement.appendChild( doc.createTextNode(locales[i]) );
+     element.appendChild(locElement);
+     Element valElement = doc.createElement("value");
+     locElement.appendChild( doc.createTextNode(name) );
+     element.appendChild(valElement);
+     }
+     }
+     constraintElement.appendChild( element );
+
+     element = doc.createElement( "description" );
+     for (int i=0;i<locales.length;i++) {
+     String description = condition.getDescription(locales[i]);
+     if (!Const.isEmpty( description) ) {
+     Element locElement = doc.createElement("locale");
+     locElement.appendChild( doc.createTextNode(locales[i]) );
+     element.appendChild(locElement);
+     Element valElement = doc.createElement("value");
+     locElement.appendChild( doc.createTextNode(description) );
+     element.appendChild(valElement);
+     }
+     }
+     constraintElement.appendChild( element );
+     */
+  }
+
+  protected void addOrderByToDocument(Document doc, OrderBy orderBy, Element orderElement) {
+    Element element = doc.createElement("direction"); //$NON-NLS-1$
+    element.appendChild(doc.createTextNode(orderBy.isAscending() ? "asc" : "desc")); //$NON-NLS-1$ //$NON-NLS-2$
+    orderElement.appendChild(element);
+
+    // Work-around for PMD-93 - Need this to be better into the future...
+    element = doc.createElement("view_id"); //$NON-NLS-1$
+    BusinessCategory rootCat = model.getRootCategory();
+    BusinessCategory businessView = rootCat.findBusinessCategoryForBusinessColumn(orderBy.getSelection().getBusinessColumn());
+    element.appendChild(doc.createTextNode(businessView.getId()));
+
+    orderElement.appendChild(element);
+
+    element = doc.createElement("column_id"); //$NON-NLS-1$
+    element.appendChild(doc.createTextNode(orderBy.getSelection().getBusinessColumn().getId()));
+    orderElement.appendChild(element);
+  }
+  
   public void fromXML(String XML) throws PentahoMetadataException {
     if (XML == null) {
       throw new PentahoMetadataException(Messages.getErrorString("MQLQuery.ERROR_0017_XML_NULL")); //$NON-NLS-1$
@@ -396,6 +401,29 @@ public class MQLQueryImpl implements MQLQuery {
       throw new PentahoMetadataException(iex);
     }
     fromXML(doc);
+  }
+  
+  public void fromXML(String XML, SchemaMeta localSchemaMeta) throws PentahoMetadataException {
+    if (XML == null) {
+      throw new PentahoMetadataException(Messages.getErrorString("MQLQuery.ERROR_0017_XML_NULL")); //$NON-NLS-1$
+    }
+    DocumentBuilderFactory dbf;
+    DocumentBuilder db;
+    Document doc;
+
+    // Check and open XML document
+    dbf = DocumentBuilderFactory.newInstance();
+    try {
+      db = dbf.newDocumentBuilder();
+      doc = db.parse(new InputSource(new java.io.StringReader(XML)));
+    } catch (ParserConfigurationException pcx) {
+      throw new PentahoMetadataException(pcx);
+    } catch (SAXException sex) {
+      throw new PentahoMetadataException(sex);
+    } catch (IOException iex) {
+      throw new PentahoMetadataException(iex);
+    }
+    fromXML(doc, localSchemaMeta);
   }
   
   public void fromXML(Document doc) throws PentahoMetadataException {
@@ -423,11 +451,17 @@ public class MQLQueryImpl implements MQLQuery {
     if (cwmSchemaFactory == null) {
       cwmSchemaFactory = Settings.getCwmSchemaFactory();
     }
-    schemaMeta = cwmSchemaFactory.getSchemaMeta(cwm);
 
+    fromXML(doc, cwmSchemaFactory.getSchemaMeta(cwm));
+  }
+  
+  public void fromXML(Document doc, SchemaMeta localSchemaMeta) throws PentahoMetadataException {
+    
+    schemaMeta = localSchemaMeta;
+    
     // get the model id
     String modelId = getElementText(doc, "model_id"); //$NON-NLS-1$
-    model = schemaMeta.findModel(modelId); // This is the business model that was selected.
+    model = localSchemaMeta.findModel(modelId); // This is the business model that was selected.
 
     if (model == null) {
       throw new PentahoMetadataException(Messages.getErrorString("MQLQuery.ERROR_0009_MODEL_NOT_FOUND", modelId)); //$NON-NLS-1$

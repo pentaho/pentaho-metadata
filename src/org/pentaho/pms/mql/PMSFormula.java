@@ -90,6 +90,10 @@ public class PMSFormula implements FormulaTraversalInterface {
   
   private boolean isValidated = false;
   
+  private boolean allowAggregateFunctions = false;
+  
+  private boolean hasAggregateFunction = false;
+  
   /** the string to parse */
   private String formulaString;
   
@@ -405,9 +409,14 @@ public class PMSFormula implements FormulaTraversalInterface {
         SQLFunctionGeneratorInterface gen = sqlDialect.getFunctionSQLGenerator(f.getFunctionName());
         gen.validateFunction(f);
         // note, if aggregator function, we should make sure it is part of the table formula vs. conditional formula
-        if (table == null && sqlDialect.isAggregateFunction(f.getFunctionName())) {
+        if (!allowAggregateFunctions && table == null && sqlDialect.isAggregateFunction(f.getFunctionName())) {
           throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0013_AGGREGATE_USAGE_ERROR", f.getFunctionName(), formulaString)); //$NON-NLS-1$
         }
+
+        if (sqlDialect.isAggregateFunction(f.getFunctionName())) {
+          hasAggregateFunction = true;
+        }
+        
         // validate functions parameters
         if (f.getChildValues() != null && f.getChildValues().length > 0) {
           validateAndResolveObjectModel(f.getChildValues()[0]);
@@ -565,7 +574,27 @@ public class PMSFormula implements FormulaTraversalInterface {
    * 
    * @return list of business columns referenced in the formula
    */
-  public List getBusinessColumns() {
+  public List<BusinessColumn> getBusinessColumns() {
     return businessColumnList;
+  }
+  
+  /**
+   * returns true if pms formula contains agg functions.
+   * run parseAndValidate() before running this method
+   * 
+   * @return hasAggregateFunction
+   */
+  public boolean hasAggregateFunction() {
+    return hasAggregateFunction;
+  }
+  
+  /**
+   * allows overriding of default behavior, which doesn't allow
+   * aggregate functions to be used.
+   * 
+   * @param allowAggregateFunctions
+   */
+  public void setAllowAggregateFunctions(boolean allowAggregateFunctions) {
+    this.allowAggregateFunctions = allowAggregateFunctions;
   }
 }

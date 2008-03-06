@@ -12,37 +12,34 @@
 */
 package org.pentaho.pms.mql;
 
-import org.pentaho.pms.schema.BusinessColumn;
-
 /**
- * Contains a business column an the sort direction, used to specify the sorting of that column.
+ * Contains a selection and the sort direction, used to specify the sorting of that column.
  * 
  * @author Matt
  *
  */
 public class OrderBy
 {
-    private BusinessColumn businessColumn;
+    private Selection selection;
     private boolean ascending;
 
     /**
-     * @param businessColumn the business column to sort on (ascending)
+     * @param selection the selection to sort on (ascending)
      */
-    public OrderBy(BusinessColumn businessColumn)
-    {
+    public OrderBy(Selection selection) {
         super();
-        this.businessColumn = businessColumn;
+        this.selection = selection;
         this.ascending = true;
     }
     
     /**
-     * @param businessColumn the business column to sort on 
+     * @param selection the selection to sort on 
      * @param ascending true if you want to sort ascending, false if you want to sort descending
      */
-    public OrderBy(BusinessColumn businessColumn, boolean ascending)
+    public OrderBy(Selection selection, boolean ascending)
     {
         super();
-        this.businessColumn = businessColumn;
+        this.selection = selection;
         this.ascending = ascending;
     }
 
@@ -63,19 +60,19 @@ public class OrderBy
     }
 
     /**
-     * @return the businessColumn to sort on
+     * @return the selection to sort on
      */
-    public BusinessColumn getBusinessColumn()
+    public Selection getSelection()
     {
-        return businessColumn;
+        return selection;
     }
 
     /**
-     * @param businessColumn the businessColumn to sort on
+     * @param selection the selection to sort on
      */
-    public void setBusinessColumn(BusinessColumn businessColumn)
+    public void setSelection(Selection selection)
     {
-        this.businessColumn = businessColumn;
+        this.selection = selection;
     }
     
     

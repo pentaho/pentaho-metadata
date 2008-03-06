@@ -16,6 +16,7 @@ import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.mql.dialect.SQLDialectFactory;
 import org.pentaho.pms.mql.dialect.SQLDialectInterface;
 import org.pentaho.pms.mql.dialect.SQLQueryModel;
+import org.pentaho.pms.mql.dialect.SQLQueryModel.OrderType;
 
 import junit.framework.TestCase;
 
@@ -31,11 +32,16 @@ public class SQLQueryTest extends TestCase {
     SQLQueryModel query = new SQLQueryModel();
     query.addSelection("t1.c1", "col1");
     query.addSelection("sum(t1.c2)", "col2");
+    query.addSelection("t1.c3", "col3");
+    query.addSelection("t1.c4", "col4");
+    
     query.addTable("t1", null);
     query.addGroupBy(null, "col1");
     query.addHavingFormula("col2 > 10", "AND");
     query.addWhereFormula("col1 < 3", "AND");
     query.addOrderBy(null, "col2", null);
+    query.addOrderBy(null, "col3", OrderType.ASCENDING);
+    query.addOrderBy(null, "col4", OrderType.DESCENDING);
     
     DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
     SQLDialectInterface dialect = SQLDialectFactory.getSQLDialect(databaseMeta);
@@ -44,7 +50,9 @@ public class SQLQueryTest extends TestCase {
     assertEquals(
         "SELECT DISTINCT \n" + 
         "          t1.c1 AS col1\n" + 
-        "         ,sum(t1.c2) AS col2\n" + 
+        "         ,sum(t1.c2) AS col2\n" +
+        "         ,t1.c3 AS col3\n" + 
+        "         ,t1.c4 AS col4\n" + 
         "FROM \n" + 
         "          t1\n" + 
         "WHERE \n" + 
@@ -58,12 +66,15 @@ public class SQLQueryTest extends TestCase {
         "             col2 > 10\n" + 
         "          )\n" + 
         "ORDER BY \n" + 
-        "          col2\n",
+        "          col2\n" +
+        "         ,col3 ASC\n" +
+        "         ,col4 DESC\n"
+        ,
         sql);
     
     // printOutJava(sql);
   }  
-  
+
   public static void printOutJava(String sql) {
     String lines[] = sql.split("\n");
     for (int i = 0; i < lines.length; i++) {

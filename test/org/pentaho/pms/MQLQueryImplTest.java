@@ -238,15 +238,15 @@ public class MQLQueryImplTest  extends TestCase {
     try {
 
       BusinessModel model = buildDefaultModel();
-      BusinessColumn bc0 = model.getBusinessTable(0).getBusinessColumn(0);
-      bc0.setAggregationType(AggregationSettings.SUM);
-      BusinessColumn bc1 = model.getBusinessTable(1).getBusinessColumn(0);
-      BusinessColumn bc2 = model.getBusinessTable(1).getBusinessColumn(1);
+      BusinessColumn bc1 = model.findBusinessColumn("bc1");
+      bc1.setAggregationType(AggregationSettings.SUM);
+      BusinessColumn bc2 = model.findBusinessColumn("bc2");
+      BusinessColumn bce2 = model.findBusinessColumn("bce2");
       DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
       MQLQueryImpl myTest = new MQLQueryImpl(null, model, databaseMeta, "en_US");  //$NON-NLS-1$
-      myTest.addSelection(new Selection(bc0));
       myTest.addSelection(new Selection(bc1));
       myTest.addSelection(new Selection(bc2));
+      myTest.addSelection(new Selection(bce2));
       
       myTest.addConstraint(WhereCondition.operators[0], "[bt1.bc1] > 25"); //$NON-NLS-1$
 

@@ -556,9 +556,9 @@ public class MQLQueryTest extends TestCase {
     OrderBy order = (OrderBy)orders.get(0);
     
     assertEquals(true, order.isAscending());
-    assertNotNull(order.getBusinessColumn());
-    assertEquals("BT_CUSTOMERS", order.getBusinessColumn().getBusinessTable().getId()); //$NON-NLS-1$
-    assertEquals("BC_CUSTOMERS_COUNTRY", order.getBusinessColumn().getId()); //$NON-NLS-1$
+    assertNotNull(order.getSelection().getBusinessColumn());
+    assertEquals("BT_CUSTOMERS", order.getSelection().getBusinessColumn().getBusinessTable().getId()); //$NON-NLS-1$
+    assertEquals("BC_CUSTOMERS_COUNTRY", order.getSelection().getBusinessColumn().getId()); //$NON-NLS-1$
     
     // NOW TEST XML OUTPUT
     try {

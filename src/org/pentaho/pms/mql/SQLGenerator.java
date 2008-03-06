@@ -171,7 +171,7 @@ public class SQLGenerator {
   public void generateOrderBy(SQLQueryModel query, BusinessModel model, List<OrderBy> orderBy, DatabaseMeta databaseMeta, String locale) {
     if (orderBy != null) {
       for (OrderBy orderItem : orderBy) {
-        BusinessColumn businessColumn = orderItem.getBusinessColumn();
+        BusinessColumn businessColumn = orderItem.getSelection().getBusinessColumn();
         query.addOrderBy(getBusinessColumnSQL(model, businessColumn, databaseMeta, locale), null, !orderItem.isAscending() ? OrderType.DESCENDING : null); //$NON-NLS-1$
       }
     }
