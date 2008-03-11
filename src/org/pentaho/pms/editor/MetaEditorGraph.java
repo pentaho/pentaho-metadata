@@ -932,13 +932,17 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
           });
           MenuItem miSetLocale = new MenuItem(mPop, SWT.CASCADE);
           miSetLocale.setText(Messages.getString("MetaEditorGraph.USER_SET_LOCALE")); //$NON-NLS-1$
-          miSetLocale.addSelectionListener(new SelectionAdapter() {
+          // Disabling this feature until we implement it.
+          miSetLocale.setEnabled(false);          
+          /* Commenting the code below until we implement setLocale
+            miSetLocale.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
               selrect = null;
               // TODO implement setLocale
               log.logError("Not Implemented", "Set Locale functionality not yet implemented"); //$NON-NLS-1$ //$NON-NLS-2$
             }
           });
+          */
         }
       }
     }
