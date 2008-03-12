@@ -2,23 +2,31 @@ package org.pentaho.pms.example;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.example.AdvancedMQLQuery.AliasedSelection;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.mql.MappedQuery;
+import org.pentaho.pms.mql.OrderBy;
 import org.pentaho.pms.mql.PMSFormula;
 import org.pentaho.pms.mql.Path;
 import org.pentaho.pms.mql.SQLGenerator;
 import org.pentaho.pms.mql.Selection;
 import org.pentaho.pms.mql.WhereCondition;
+import org.pentaho.pms.mql.dialect.SQLDialectFactory;
+import org.pentaho.pms.mql.dialect.SQLDialectInterface;
+import org.pentaho.pms.mql.dialect.SQLQueryModel;
+import org.pentaho.pms.mql.dialect.SQLQueryModel.OrderType;
+import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.RelationshipMeta;
-import org.pentaho.pms.util.Const;
 
 /**
  * This class demonstrates extending SQLGenerator.  The example here
@@ -29,7 +37,7 @@ import org.pentaho.pms.util.Const;
  */
 public class AdvancedSQLGenerator extends SQLGenerator {
 
-  private static final String DEFAULT_ALIAS = "__DEFAULT__"; //$NON-NLS-1$
+  public static final String DEFAULT_ALIAS = "__DEFAULT__"; //$NON-NLS-1$
   
   class AliasedPathBusinessTable {
     String alias;
@@ -45,19 +53,40 @@ public class AdvancedSQLGenerator extends SQLGenerator {
     }
   }
   
-  public MappedQuery getQuery(BusinessModel model, List<Selection> selections, List<WhereCondition> constraints, DatabaseMeta databaseMeta, boolean disableDistinct, String locale) throws PentahoMetadataException { 
+  public MappedQuery getQuery(
+      BusinessModel model, 
+      List<Selection> selections,
+      List<WhereCondition> constraints,
+      List<OrderBy> orderbys,
+      DatabaseMeta databaseMeta, 
+      boolean disableDistinct, 
+      String locale) throws PentahoMetadataException 
+  { 
     Map<String,String> columnsMap = new HashMap<String,String>();
     if (model == null || selections.size() == 0) {
       return null;
     }
+    
     // implement SQL generation here
     List<Selection> defaultList = null;
     List<List<Selection>> lists = new ArrayList<List<Selection>>();
     List<String> aliasNames = new ArrayList<String>();
     Map<String, List<Selection>> listlookup = new HashMap<String, List<Selection>>();
+    
+    List<Selection> selectionsAndOrderBys = new ArrayList<Selection>();
+    selectionsAndOrderBys.addAll(selections);
+    for (OrderBy orderBy : orderbys) {
+      selectionsAndOrderBys.add(orderBy.getSelection());
+    }
+    
     // default + alias lists
-    for (int i = 0; i < selections.size(); i++) {
-      AliasedSelection sel = (AliasedSelection)selections.get(i);
+    for (Selection selection : selectionsAndOrderBys) {
+      AliasedSelection sel = (AliasedSelection)selection;
+      
+      if (sel.hasFormula()) {
+        sel.initPMSFormula(model, databaseMeta, selections);
+      }
+      
       if (sel.alias == null) {
         sel.alias = DEFAULT_ALIAS;
       } 
@@ -86,7 +115,7 @@ public class AdvancedSQLGenerator extends SQLGenerator {
     // generate paths for all the lists
     List<AliasedRelationshipMeta> allRelationships = new ArrayList<AliasedRelationshipMeta>();
     
-    List<BusinessTable> defaultTables = getTablesInvolved(defaultList, new ArrayList<WhereCondition>());
+    List<BusinessTable> defaultTables = getTablesInvolved(defaultList, constraints);
     Path defaultPath = getShortestPathBetween(model, defaultTables);
     List<BusinessTable> tbls = defaultPath.getUsedTables();
     List<AliasedPathBusinessTable> allTables = new ArrayList<AliasedPathBusinessTable>();
@@ -122,92 +151,118 @@ public class AdvancedSQLGenerator extends SQLGenerator {
       }
       
     }
-    
-    StringBuffer sql = new StringBuffer();
-    
-    // SELECT
-    
-    //
-    sql.append("SELECT "); //$NON-NLS-1$
-
-    //
-    // Add the fields...
-    //
+    SQLQueryModel sqlquery = new SQLQueryModel();
     boolean group = hasFactsInIt(selections, constraints);
 
-    if (!disableDistinct && !group) {
-      sql.append("DISTINCT "); //$NON-NLS-1$
-    }
-    sql.append(Const.CR);
-
+    // SELECT
+    
+    sqlquery.setDistinct(!disableDistinct && !group);
     for (int i = 0; i < selections.size(); i++) {
-      if (i > 0) {
-        sql.append("         ,"); //$NON-NLS-1$
+      AliasedSelection selection = (AliasedSelection)selections.get(i);
+      String formula;
+      if (selection.hasFormula()) {
+        try {
+          
+          formula = selection.getPMSFormula().generateSQL(locale);
+        } catch (PentahoMetadataException e) {
+          throw new RuntimeException(e);
+        }
       } else {
-        sql.append("          "); //$NON-NLS-1$
+        formula = getFunctionTableAndColumnForSQL(model, selection, databaseMeta, locale);
       }
-      sql.append(getFunctionTableAndColumnForSQL(model, (AliasedSelection)selections.get(i), databaseMeta, locale));
-      sql.append(" AS "); //$NON-NLS-1$
 
       // in some database implementations, the "as" name has a finite length;
       // for instance, oracle cannot handle a name longer than 30 characters. 
       // So, we map a short name here to the longer id, and replace the id
       // later in the resultset metadata. 
-
+      String alias = null;
       if(columnsMap != null){
-        columnsMap.put("COL" + Integer.toString(i), selections.get(i).getBusinessColumn().getId()); //$NON-NLS-1$
-        sql.append(databaseMeta.quoteField("COL" + Integer.toString(i))); //$NON-NLS-1$
+        if (selections.get(i).getBusinessColumn() != null) {
+          
+          // BIG TODO: map bizcol correctly
+          
+          columnsMap.put("COL" + Integer.toString(i), selections.get(i).getBusinessColumn().getId()); //$NON-NLS-1$
+        }
+        alias = databaseMeta.quoteField("COL" + Integer.toString(i)); //$NON-NLS-1$
       }else{
-        sql.append(databaseMeta.quoteField(selections.get(i).getBusinessColumn().getId()));
+        alias = databaseMeta.quoteField(selections.get(i).getBusinessColumn().getId());
       }
-      sql.append(Const.CR);
+      sqlquery.addSelection(formula, alias);
     }
 
+    // FROM
     
-    // FROM 
-    sql.append("FROM\n\n"); //$NON-NLS-1$
     for (int i = 0; i < allTables.size(); i++) {
       AliasedPathBusinessTable tbl = (AliasedPathBusinessTable)allTables.get(i);
       // if __DEFAULT__, no alias
       // otherwise TABLE_ALIAS
-      if (i != 0) {
-        sql.append(",\n"); //$NON-NLS-1$
-      }
       String alias = tbl.table.getDisplayName(locale);
       if (!tbl.alias.equals(DEFAULT_ALIAS)) {
         alias = alias + "_" + tbl.alias; //$NON-NLS-1$
       }
-      
       String schemaName = null;
       if (tbl.table.getTargetSchema() != null) {
         schemaName = databaseMeta.quoteField(tbl.table.getTargetSchema());
       }
       String tableName = databaseMeta.quoteField(tbl.table.getTargetTable());
-      sql.append(databaseMeta.getSchemaTableCombination(schemaName, tableName));
-      sql.append(" "); //$NON-NLS-1$
-      sql.append(databaseMeta.quoteField(alias));
+      sqlquery.addTable(databaseMeta.getSchemaTableCombination(schemaName, tableName), databaseMeta.quoteField(alias));
+      
     }
-    sql.append("\n\n"); //$NON-NLS-1$
-    boolean whereAdded = false;
-    int nr = 0;
-    for (int i = 0; i < allRelationships.size(); i++, nr++) {
-      if (!whereAdded) {
-        sql.append("WHERE " + Const.CR); //$NON-NLS-1$
-        whereAdded = true;
-      }
-      AliasedRelationshipMeta relation = allRelationships.get(i);
-
-      if (nr > 0) {
-        sql.append("      AND "); //$NON-NLS-1$
-      } else
-        sql.append("          "); //$NON-NLS-1$
-      sql.append(getJoin(relation, databaseMeta, locale));
-      sql.append(Const.CR);
-    }
-
-    System.out.println(sql);
-    MappedQuery query = new MappedQuery(sql.toString(), null, selections);
     
+    // JOINS
+    
+    for (int i = 0; i < allRelationships.size(); i++) {
+      AliasedRelationshipMeta relation = allRelationships.get(i);
+      String join = getJoin(relation, databaseMeta, locale);
+      sqlquery.addWhereFormula(join, "AND");
+    }
+
+    // WHERE CONDITIONS
+
+    if (constraints != null) {
+      boolean first = true;
+      for (WhereCondition constraint : constraints) {
+        // The ones with aggregates in it are for the HAVING clause
+        if (!constraint.hasAggregate() && !constraint.getPMSFormula().hasAggregateFunction()) {
+          sqlquery.addWhereFormula(constraint.getPMSFormula().generateSQL(locale), first ? "AND" : constraint.getOperator()); //$NON-NLS-1$
+          first = false;
+        } else {
+          sqlquery.addHavingFormula(constraint.getPMSFormula().generateSQL(locale), constraint.getOperator());
+        }
+      }
+    }
+
+    // GROUP BY
+    if (group) {
+      // can be moved to selection loop
+      for (Selection selection : selections) {
+        // BusinessColumn businessColumn = selection.getBusinessColumn();
+        AliasedSelection aliasedSelection = (AliasedSelection)selection;
+        if (!aliasedSelection.hasAggregate()) {
+          sqlquery.addGroupBy(getFunctionTableAndColumnForSQL(model, aliasedSelection, databaseMeta, locale), null);
+        }
+      }
+    }
+    
+    // ORDER BY
+    if (orderbys != null) {
+      for (OrderBy orderItem : orderbys) {
+        AliasedSelection selection = (AliasedSelection)orderItem.getSelection();
+        String sqlSelection = null;
+        if (!selection.hasFormula()) {
+          sqlSelection = getFunctionTableAndColumnForSQL(model, selection, databaseMeta, locale);
+        } else {
+          sqlSelection = selection.getPMSFormula().generateSQL(locale);
+        }
+        sqlquery.addOrderBy(sqlSelection, null, !orderItem.isAscending() ? OrderType.DESCENDING : null); //$NON-NLS-1$
+      }
+    }
+    
+    
+    SQLDialectInterface dialect = SQLDialectFactory.getSQLDialect(databaseMeta);
+    String sql = dialect.generateSelectStatement(sqlquery);
+
+    MappedQuery query = new MappedQuery(sql, null, selections);
     
     // defaultPath.getUsedTables();
     
@@ -221,13 +276,58 @@ public class AdvancedSQLGenerator extends SQLGenerator {
     return query;
   }
   
+  public boolean hasFactsInIt(List<Selection> selections, List<WhereCondition> conditions) {
+    for (Selection selection : selections) {
+      AliasedSelection aliasedSelection = (AliasedSelection)selection;
+      if (aliasedSelection.hasAggregate()) {
+        return true;
+      }
+    }
+    if (conditions != null) {
+      for (WhereCondition condition : conditions) {
+        if (condition.hasAggregate())
+          return true;
+      }
+    }
+    return false;
+  }
+  
+  protected List<BusinessTable> getTablesInvolved(List<Selection> selections, List<WhereCondition> conditions) {
+    Set<BusinessTable> treeSet = new TreeSet<BusinessTable>();
+
+    for (Selection selection : selections) {
+      AliasedSelection aliasedSelection = (AliasedSelection)selection;
+      if (aliasedSelection.hasFormula()) {
+        List cols = aliasedSelection.getPMSFormula().getBusinessColumns();
+        Iterator iter = cols.iterator();
+        while (iter.hasNext()) {
+          BusinessColumn col = (BusinessColumn)iter.next();
+          BusinessTable businessTable = col.getBusinessTable();
+          treeSet.add(businessTable); //$NON-NLS-1$
+        }
+      } else {
+        BusinessTable businessTable = selection.getBusinessColumn().getBusinessTable();
+        treeSet.add(businessTable); //$NON-NLS-1$
+      }
+    }
+    for(WhereCondition condition : conditions) {
+      List cols = condition.getBusinessColumns();
+      Iterator iter = cols.iterator();
+      while (iter.hasNext()) {
+        BusinessColumn col = (BusinessColumn)iter.next();
+        BusinessTable businessTable = col.getBusinessTable();
+        treeSet.add(businessTable); //$NON-NLS-1$
+      }
+    }
+    return new ArrayList<BusinessTable>(treeSet);
+  }
+  
   // we should do something with this other than a static method that is alias aware.  
   // The folks that call this should be alias aware or not, and call a different method possibly?
   // this is primarily due to the context that would need to get passed into PMSFormula
   // we don't want the pentaho MQL solution to ever come across aliases, etc. 
   public static String getFunctionTableAndColumnForSQL(BusinessModel businessModel, AliasedSelection selection, DatabaseMeta databaseMeta, String locale) {
-      if (selection.getBusinessColumn().isExact())
-      { 
+      if (selection.getBusinessColumn().isExact()) { 
         // convert to sql using libformula subsystem
         try {
           // we'll need to pass in some context to PMSFormula so it can resolve aliases if necessary
@@ -239,9 +339,7 @@ public class AdvancedSQLGenerator extends SQLGenerator {
           // eventually throw any errors
           throw new RuntimeException(Messages.getErrorString("BusinessColumn.ERROR_0001_FAILED_TO_PARSE_FORMULA", selection.getBusinessColumn().getFormula())); //$NON-NLS-1$  
         }
-      }
-      else
-      {
+      } else {
           String tableColumn = ""; //$NON-NLS-1$
           
           // TODO: WPG: is this correct?  shouldn't we be getting an alias for the table vs. it's display name?
@@ -271,13 +369,10 @@ public class AdvancedSQLGenerator extends SQLGenerator {
   {
     String join=""; //$NON-NLS-1$
     
-    if (relation.relation.isComplex())
-    {
+    if (relation.relation.isComplex()) {
       throw new PentahoMetadataException("unsupported"); //$NON-NLS-1$
       // join = relation.getComplexJoin();
-    } else
-      if (relation.relation.getTableFrom() != null && relation.relation.getTableTo() != null && relation.relation.getFieldFrom() !=null && relation.relation.getFieldTo() != null)
-    {
+    } else if (relation.relation.getTableFrom() != null && relation.relation.getTableTo() != null && relation.relation.getFieldFrom() !=null && relation.relation.getFieldTo() != null) {
         String leftAlias = relation.relation.getTableTo().getDisplayName(locale);
         if (!relation.leftAlias.equals(DEFAULT_ALIAS)) {
           leftAlias = leftAlias + "_" + relation.leftAlias; //$NON-NLS-1$
@@ -288,19 +383,18 @@ public class AdvancedSQLGenerator extends SQLGenerator {
           rightAlias = rightAlias + "_" + relation.rightAlias; //$NON-NLS-1$
         }             
         
+        // Left side
+        join  = databaseMeta.quoteField(rightAlias );
+        join += "."; //$NON-NLS-1$
+        join += databaseMeta.quoteField( relation.relation.getFieldFrom().getFormula() );
         
-            // Left side
-            join  = databaseMeta.quoteField(rightAlias );
-            join += "."; //$NON-NLS-1$
-            join += databaseMeta.quoteField( relation.relation.getFieldFrom().getFormula() );
-            
-            // Equals
-            join += " = "; //$NON-NLS-1$
-            
-            // Right side
-            join += databaseMeta.quoteField(leftAlias );
-            join += "."; //$NON-NLS-1$
-            join += databaseMeta.quoteField( relation.relation.getFieldTo().getFormula() );
+        // Equals
+        join += " = "; //$NON-NLS-1$
+        
+        // Right side
+        join += databaseMeta.quoteField(leftAlias );
+        join += "."; //$NON-NLS-1$
+        join += databaseMeta.quoteField( relation.relation.getFieldTo().getFormula() );
     }
     
     return join;
@@ -380,27 +474,4 @@ public class AdvancedSQLGenerator extends SQLGenerator {
       }
     }
   }
-
-  
-//  public BusinessTable[] getTablesInvolved(BusinessColumn fields[], WhereCondition conditions[]) {
-//    Hashtable lookup = new Hashtable();
-//
-//    for (int i = 0; i < fields.length; i++) {
-//      BusinessTable businessTable = fields[i].getBusinessTable();
-//      lookup.put(businessTable, "OK"); //$NON-NLS-1$
-//    }
-//    for (int i = 0; i < conditions.length; i++) {
-//      List cols = conditions[i].getBusinessColumns();
-//      Iterator iter = cols.iterator();
-//      while (iter.hasNext()) {
-//        BusinessColumn col = (BusinessColumn)iter.next();
-//        BusinessTable businessTable = col.getBusinessTable();
-//        lookup.put(businessTable, "OK"); //$NON-NLS-1$
-//      }
-//    }
-//
-//    Set keySet = lookup.keySet();
-//    return (BusinessTable[]) keySet.toArray(new BusinessTable[keySet.size()]);
-//  }
-
 }

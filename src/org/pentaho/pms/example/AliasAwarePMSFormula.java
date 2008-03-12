@@ -12,14 +12,17 @@
 */
 package org.pentaho.pms.example;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
+import org.pentaho.pms.example.AdvancedMQLQuery.AliasedSelection;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.mql.PMSFormula;
-import org.pentaho.pms.mql.SQLGenerator;
 import org.pentaho.pms.mql.Selection;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
@@ -55,9 +58,10 @@ public class AliasAwarePMSFormula extends PMSFormula {
    * @param formulaString formula string
    * @throws PentahoMetadataException throws an exception if we're missing anything important
    */
-  public AliasAwarePMSFormula(BusinessModel model, DatabaseMeta databaseMeta, String formulaString, List<Selection> selections) throws PentahoMetadataException {
+  public AliasAwarePMSFormula(BusinessModel model, DatabaseMeta databaseMeta, String formulaString, List<Selection> selections, String aliasName) throws PentahoMetadataException {
     super(model, databaseMeta, formulaString);
     this.selections = selections;
+    this.aliasName = aliasName;
   }
   
   /**
@@ -71,20 +75,7 @@ public class AliasAwarePMSFormula extends PMSFormula {
     super(model, table, databaseMeta, formulaString);    
     this.aliasName = aliasName;
   }
-  
-//  
-//  
-//  /**
-//   * constructor
-//   * 
-//   * @param model business model for business column lookup
-//   * @param formulaString formula string
-//   * @throws PentahoMetadataException throws an exception if we're missing anything important
-//   */
-//  public AliasAwarePMSFormula(BusinessModel model, String formulaString) throws PentahoMetadataException {
-//    super(model, formulaString);
-//  }
-  
+
   /**
    * constructor which also takes a specific business table for resolving fields
    * 
@@ -98,6 +89,7 @@ public class AliasAwarePMSFormula extends PMSFormula {
     this.aliasName = aliasName;
   }
 
+  private Map<String, AdvancedMQLQuery.AliasedSelection> aliasedSelectionMap = new HashMap<String, AdvancedMQLQuery.AliasedSelection>();
   
   /**
    * We support unqualified business columns if a business table is provided.
@@ -114,27 +106,50 @@ public class AliasAwarePMSFormula extends PMSFormula {
     // figure out what context we are in, 
     
     // first see if fieldName is an alias
-    boolean aliasFound = false;
-    for (Selection selection : selections) {
-      AdvancedMQLQuery.AliasedSelection aliasedSelection = (AdvancedMQLQuery.AliasedSelection)selection;
-      //selection.getAlias()
+    if (selections != null && fieldName != null && fieldName.indexOf(".") >= 0) {
+      String names[] = fieldName.split("\\.");
+      for (Selection selection : selections) {
+        AdvancedMQLQuery.AliasedSelection aliasedSelection = (AdvancedMQLQuery.AliasedSelection)selection;
+        if (aliasedSelection.getAlias() != null && aliasedSelection.getAlias().equals(names[0])) {
+          // now search for the business column
+          BusinessColumn column = getBusinessModel().findBusinessColumn(names[1]);
+          if (column != null) {
+            // add to aliased selection map.
+            
+            // create a new seletion object.  bizcol portion of name may not appear
+            // in selections, but alias must appear in selections to be a valid entry.
+            
+            AdvancedMQLQuery.AliasedSelection sel = new AdvancedMQLQuery.AliasedSelection(column, aliasedSelection.getAlias());
+            aliasedSelectionMap.put(fieldName, sel);
+            
+            // add to the list of business columns which is used for path generation
+            getBusinessColumns().add(column);
+            return;
+          } else {
+            throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0011_INVALID_FIELDNAME",fieldName)); //$NON-NLS-1$
+          }
+        }
+      }
     }
-//    if (fieldName != null && fieldName.indexOf("\\.")) {
-//      
-//    }
-    if (!aliasFound) {
-      super.addField(fieldName);
-    }
+    super.addField(fieldName);
   }
 
-  
-  
   /**
    * need to make this context lookup alias aware
    */
   protected void renderContextLookup(StringBuffer sb, String contextName, String locale) {
     BusinessColumn column = (BusinessColumn)getBusinessColumnMap().get(contextName);
     if (column == null) {
+      
+      // first see if we are an aliased column
+      AdvancedMQLQuery.AliasedSelection sel = aliasedSelectionMap.get(contextName);
+      if (sel != null) {
+        sb.append(" "); //$NON-NLS-1$
+        sb.append(AdvancedSQLGenerator.getFunctionTableAndColumnForSQL(getBusinessModel(), sel, getDatabaseMeta(), locale));
+        sb.append(" "); //$NON-NLS-1$
+        return;
+      }
+    
       // we have a physical column function, we need to evaluate it
       // in a special way due to aggregations and such
       
@@ -149,8 +164,10 @@ public class AliasAwarePMSFormula extends PMSFormula {
       
     } else {
       // render the column sql
+      AliasedSelection selection = new AliasedSelection(column, aliasName);
+      
       sb.append(" "); //$NON-NLS-1$
-      sb.append(SQLGenerator.getBusinessColumnSQL(getBusinessModel(), column, getDatabaseMeta(), locale));
+      sb.append(AdvancedSQLGenerator.getFunctionTableAndColumnForSQL(getBusinessModel(), selection, getDatabaseMeta(), locale));
       sb.append(" "); //$NON-NLS-1$
     }
   }
