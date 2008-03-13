@@ -110,10 +110,18 @@ public class RelationshipDialog extends Dialog {
   private FormData fdlComplex, fdComplex;
 
   private Label wlComplexJoin;
-
   private Text wComplexJoin;
-
   private FormData fdlComplexJoin, fdComplexJoin;
+
+  private Label wlDescription;
+  private Text wDescription;
+  private FormData fdlDescription, fdDescription;
+
+  private Label wlJoinType;
+  private CCombo wJoinType;
+  
+  private Label wlJoinOrderKey;
+  private Text  wJoinOrderKey;
 
   private Button wOK, wCancel;
 
@@ -130,6 +138,8 @@ public class RelationshipDialog extends Dialog {
   private ModifyListener lsMod;
 
   private boolean changed, backupComplex;
+
+private FormData fdlJoinType;
 
   public RelationshipDialog(Shell parent, int style, LogWriter l, RelationshipMeta relationshipMeta,
       BusinessModel businessModel) {
@@ -168,19 +178,12 @@ public class RelationshipDialog extends Dialog {
     int length = 350;
     int margin = Const.MARGIN;
 
+    //////////////////////////////////////////////////////////////////////
     // From step line
-    wlFrom = new Label(shell, SWT.RIGHT);
-    wlFrom.setText(Messages.getString("RelationshipDialog.USER_FROM_TABLE_FIELD")); //$NON-NLS-1$
-    props.setLook(wlFrom);
-    fdlFrom = new FormData();
-    fdlFrom.left = new FormAttachment(0, 0);
-    fdlFrom.right = new FormAttachment(middle, -margin);
-    fdlFrom.top = new FormAttachment(0, margin);
-    wlFrom.setLayoutData(fdlFrom);
+    //
     wFrom = new CCombo(shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
     wFrom.setText(Messages.getString("RelationshipDialog.USER_SELECT_SOURCE_TABLE")); //$NON-NLS-1$
     props.setLook(wFrom);
-
     for (int i = 0; i < businessModel.nrBusinessTables(); i++) {
       BusinessTable ti = businessModel.getBusinessTable(i);
       wFrom.add(ti.getId());
@@ -193,38 +196,41 @@ public class RelationshipDialog extends Dialog {
         refreshFromFields();
       }
     });
-
     fdFrom = new FormData();
-    fdFrom.left = new FormAttachment(middle, 0);
+    fdFrom.left = new FormAttachment(middle, margin);
     fdFrom.top = new FormAttachment(0, margin);
     fdFrom.right = new FormAttachment(60, 0);
     wFrom.setLayoutData(fdFrom);
 
+    wlFrom = new Label(shell, SWT.RIGHT);
+    wlFrom.setText(Messages.getString("RelationshipDialog.USER_FROM_TABLE_FIELD")); //$NON-NLS-1$
+    props.setLook(wlFrom);
+    fdlFrom = new FormData();
+    fdlFrom.left = new FormAttachment(0, 0);
+    fdlFrom.right = new FormAttachment(middle, -margin);
+    fdlFrom.top = new FormAttachment(wFrom, 0, SWT.CENTER);
+    wlFrom.setLayoutData(fdlFrom);
+
+    //////////////////////////////////////////////////////////////////////
+    // From field...
+    //
     wFromField = new CCombo(shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
     wFromField.setText(""); //$NON-NLS-1$
     props.setLook(wFromField);
     refreshFromFields();
     wFromField.addModifyListener(lsMod);
-
     fdFromField = new FormData();
     fdFromField.left = new FormAttachment(wFrom, margin * 2);
     fdFromField.top = new FormAttachment(0, margin);
     fdFromField.right = new FormAttachment(100, 0);
     wFromField.setLayoutData(fdFromField);
 
+    //////////////////////////////////////////////////////////////////////
     // To line
-    wlTo = new Label(shell, SWT.RIGHT);
-    wlTo.setText(Messages.getString("RelationshipDialog.USER_TO_TABLE_FIELD")); //$NON-NLS-1$
-    props.setLook(wlTo);
-    fdlTo = new FormData();
-    fdlTo.left = new FormAttachment(0, 0);
-    fdlTo.right = new FormAttachment(middle, -margin);
-    fdlTo.top = new FormAttachment(wFrom, margin);
-    wlTo.setLayoutData(fdlTo);
+    //
     wTo = new CCombo(shell, SWT.BORDER | SWT.READ_ONLY);
     wTo.setText(Messages.getString("RelationshipDialog.USER_SELECT_DESTINATION_TABLE")); //$NON-NLS-1$
     props.setLook(wTo);
-
     for (int i = 0; i < businessModel.nrBusinessTables(); i++) {
       BusinessTable ti = businessModel.getBusinessTable(i);
       wTo.add(ti.getId());
@@ -237,26 +243,38 @@ public class RelationshipDialog extends Dialog {
         refreshToFields();
       }
     });
-
     fdTo = new FormData();
-    fdTo.left = new FormAttachment(middle, 0);
+    fdTo.left = new FormAttachment(middle, margin);
     fdTo.top = new FormAttachment(wFrom, margin);
     fdTo.right = new FormAttachment(60, 0);
     wTo.setLayoutData(fdTo);
 
+    wlTo = new Label(shell, SWT.RIGHT);
+    wlTo.setText(Messages.getString("RelationshipDialog.USER_TO_TABLE_FIELD")); //$NON-NLS-1$
+    props.setLook(wlTo);
+    fdlTo = new FormData();
+    fdlTo.left = new FormAttachment(0, 0);
+    fdlTo.right = new FormAttachment(middle, -margin);
+    fdlTo.top = new FormAttachment(wTo, 0, SWT.CENTER);
+    wlTo.setLayoutData(fdlTo);
+
+    //////////////////////////////////////////////////////////////////////
     // ToField step line
+    //
     wToField = new CCombo(shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
     wToField.setText(Messages.getString("RelationshipDialog.USER_SELECT_THE_FIELD")); //$NON-NLS-1$
     props.setLook(wToField);
     refreshToFields();
     wToField.addModifyListener(lsMod);
-
     fdToField = new FormData();
     fdToField.left = new FormAttachment(wTo, margin * 2);
     fdToField.top = new FormAttachment(wFromField, margin);
     fdToField.right = new FormAttachment(100, 0);
     wToField.setLayoutData(fdToField);
 
+    //////////////////////////////////////////////////////////////////////
+    // The "Guess matching fields" button
+    //
     wGuess = new Button(shell, SWT.PUSH);
     wGuess.setText(Messages.getString("RelationshipDialog.USER_GUESS_MATCHING_FIELDS")); //$NON-NLS-1$
     lsGuess = new Listener() {
@@ -270,29 +288,18 @@ public class RelationshipDialog extends Dialog {
     fdGuess.top = new FormAttachment(wToField, margin);
     wGuess.setLayoutData(fdGuess);
 
+    //////////////////////////////////////////////////////////////////////
     // Relation line
-    wlRelation = new Label(shell, SWT.RIGHT);
-    wlRelation.setText(Messages.getString("RelationshipDialog.USER_RELATIONSHIP")); //$NON-NLS-1$
-    props.setLook(wlRelation);
-    fdlRelation = new FormData();
-    fdlRelation.left = new FormAttachment(0, 0);
-    fdlRelation.right = new FormAttachment(middle, -margin);
-    fdlRelation.top = new FormAttachment(wGuess, margin * 2);
-    wlRelation.setLayoutData(fdlRelation);
+    //
     wRelation = new CCombo(shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
     props.setLook(wRelation);
-
-    for (int i = 0; i < RelationshipMeta.typeRelationshipDesc.length; i++) {
-      wRelation.add(RelationshipMeta.typeRelationshipDesc[i]);
-    }
-    wRelation.addModifyListener(lsMod);
-
+    wRelation.setItems(RelationshipMeta.typeRelationshipDesc);
     fdRelation = new FormData();
-    fdRelation.left = new FormAttachment(middle, 0);
-    fdRelation.top = new FormAttachment(wGuess, margin * 2);
+    fdRelation.left = new FormAttachment(middle, margin);
+    fdRelation.top = new FormAttachment(wGuess, margin * 6);
     fdRelation.right = new FormAttachment(60, 0);
     wRelation.setLayoutData(fdRelation);
-
+    
     wGuessRel = new Button(shell, SWT.PUSH);
     wGuessRel.setText(Messages.getString("RelationshipDialog.USER_GUESS_RELATIONSHIP")); //$NON-NLS-1$
     lsGuessRel = new Listener() {
@@ -303,24 +310,68 @@ public class RelationshipDialog extends Dialog {
     wGuessRel.addListener(SWT.Selection, lsGuessRel);
     fdGuessRel = new FormData();
     fdGuessRel.left = new FormAttachment(wRelation, margin * 2);
-    fdGuessRel.top = new FormAttachment(wGuess, margin * 2);
+    fdGuessRel.top = new FormAttachment(wRelation, 0, SWT.CENTER);
     wGuessRel.setLayoutData(fdGuessRel);
 
-    // Complex checkbox
-    wlComplex = new Label(shell, SWT.RIGHT);
-    wlComplex.setText(Messages.getString("RelationshipDialog.USER_COMPLEX_JOIN")); //$NON-NLS-1$
-    props.setLook(wlComplex);
-    fdlComplex = new FormData();
-    fdlComplex.left = new FormAttachment(0, 0);
-    fdlComplex.right = new FormAttachment(middle, -margin);
-    fdlComplex.top = new FormAttachment(wGuessRel, margin);
-    wlComplex.setLayoutData(fdlComplex);
+    wlRelation = new Label(shell, SWT.RIGHT);
+    wlRelation.setText(Messages.getString("RelationshipDialog.USER_RELATIONSHIP")); //$NON-NLS-1$
+    props.setLook(wlRelation);
+    fdlRelation = new FormData();
+    fdlRelation.left = new FormAttachment(0, 0);
+    fdlRelation.right = new FormAttachment(middle, -margin);
+    fdlRelation.top = new FormAttachment(wRelation, 0, SWT.CENTER);
+    wlRelation.setLayoutData(fdlRelation);
+
+    //////////////////////////////////////////////////////////////////////
+    // JoinType line
+    //
+    wJoinType = new CCombo(shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER | SWT.READ_ONLY);
+    props.setLook(wJoinType);
+    wJoinType.setItems(RelationshipMeta.typeJoinDesc);
+    wJoinType.addModifyListener(lsMod);
+    FormData fdJoinType = new FormData();
+    fdJoinType.left = new FormAttachment(middle, 0);
+    fdJoinType.top = new FormAttachment(wGuessRel, margin * 2);
+    fdJoinType.right = new FormAttachment(60, 0);
+    wJoinType.setLayoutData(fdJoinType);
+    wlJoinType = new Label(shell, SWT.RIGHT);
+    wlJoinType.setText(Messages.getString("RelationshipDialog.USER_JOINTYPE")); //$NON-NLS-1$
+    props.setLook(wlJoinType);
+    fdlJoinType = new FormData();
+    fdlJoinType.left = new FormAttachment(0, 0);
+    fdlJoinType.right = new FormAttachment(middle, -margin);
+    fdlJoinType.top = new FormAttachment(wJoinType, 0, SWT.CENTER);
+    wlJoinType.setLayoutData(fdlJoinType);
+
+    //////////////////////////////////////////////////////////////////////
+    // Add the join sort order next to the join type...
+    //
+    wlJoinOrderKey = new Label(shell, SWT.LEFT);
+    wlJoinOrderKey.setText(Messages.getString("RelationshipDialog.USER_JOIN_SORT_KEY")); //$NON-NLS-1$
+    props.setLook(wlJoinOrderKey);
+    FormData fdlJoinOrderKey = new FormData();
+    fdlJoinOrderKey.left = new FormAttachment(wJoinType, margin*2);
+    fdlJoinOrderKey.top = new FormAttachment(wJoinType, 0, SWT.CENTER);
+    wlJoinOrderKey.setLayoutData(fdlJoinOrderKey);
+    
+    wJoinOrderKey = new Text(shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
+    props.setLook(wJoinOrderKey);
+    wJoinOrderKey.addModifyListener(lsMod);
+    FormData fdJoinOrderKey = new FormData();
+    fdJoinOrderKey.left = new FormAttachment(wlJoinOrderKey, margin);
+    fdJoinOrderKey.top = new FormAttachment(wJoinType, 0, SWT.CENTER);
+    fdJoinOrderKey.right = new FormAttachment(100, 0);
+    wJoinOrderKey.setLayoutData(fdJoinOrderKey);
+
+    
+    //////////////////////////////////////////////////////////////////////
+    // Complex check box
+    //
     wComplex = new Button(shell, SWT.CHECK);
     props.setLook(wComplex);
     fdComplex = new FormData();
     fdComplex.left = new FormAttachment(middle, 0);
-    fdComplex.right = new FormAttachment(0, middle + length);
-    fdComplex.top = new FormAttachment(wGuessRel, margin);
+    fdComplex.top = new FormAttachment(wJoinType, margin*6);
     wComplex.setLayoutData(fdComplex);
     wComplex.addSelectionListener(new SelectionAdapter() {
       public void widgetSelected(SelectionEvent e) {
@@ -330,6 +381,16 @@ public class RelationshipDialog extends Dialog {
       }
     });
 
+    wlComplex = new Label(shell, SWT.RIGHT);
+    wlComplex.setText(Messages.getString("RelationshipDialog.USER_COMPLEX_JOIN")); //$NON-NLS-1$
+    props.setLook(wlComplex);
+    fdlComplex = new FormData();
+    fdlComplex.left = new FormAttachment(0, 0);
+    fdlComplex.right = new FormAttachment(middle, -margin);
+    fdlComplex.top = new FormAttachment(wComplex, 0, SWT.CENTER);
+    wlComplex.setLayoutData(fdlComplex);
+
+    
     // ComplexJoin line
     wlComplexJoin = new Label(shell, SWT.RIGHT);
     wlComplexJoin.setText(Messages.getString("RelationshipDialog.USER_COMPLEX_JOIN_EXPRESSION")); //$NON-NLS-1$
@@ -344,12 +405,33 @@ public class RelationshipDialog extends Dialog {
     props.setLook(wComplexJoin);
     wComplexJoin.addModifyListener(lsMod);
     fdComplexJoin = new FormData();
-    fdComplexJoin.left = new FormAttachment(0, 0);
+    fdComplexJoin.left = new FormAttachment(middle, margin);
     fdComplexJoin.right = new FormAttachment(100, 0);
     fdComplexJoin.top = new FormAttachment(wlComplexJoin, margin);
-    fdComplexJoin.bottom = new FormAttachment(100, -50);
+    fdComplexJoin.bottom = new FormAttachment(wlComplexJoin, 100);
     wComplexJoin.setLayoutData(fdComplexJoin);
 
+    // Description
+    wlDescription = new Label(shell, SWT.RIGHT);
+    wlDescription.setText(Messages.getString("RelationshipDialog.USER_DESCRIPTION")); //$NON-NLS-1$
+    props.setLook(wlDescription);
+    fdlDescription = new FormData();
+    fdlDescription.left = new FormAttachment(0, 0);
+    fdlDescription.right = new FormAttachment(middle, -margin);
+    fdlDescription.top = new FormAttachment(wComplexJoin, margin);
+    wlDescription.setLayoutData(fdlDescription);
+    wDescription = new Text(shell, SWT.MULTI | SWT.LEFT | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+    wDescription.setText(""); //$NON-NLS-1$
+    props.setLook(wDescription);
+    wDescription.addModifyListener(lsMod);
+    fdDescription = new FormData();
+    fdDescription.left = new FormAttachment(middle, margin);
+    fdDescription.right = new FormAttachment(100, 0);
+    fdDescription.top = new FormAttachment(wlDescription, margin);
+    fdDescription.bottom = new FormAttachment(100, -50);
+    wDescription.setLayoutData(fdDescription);
+
+    
     // Some buttons
     wOK = new Button(shell, SWT.PUSH);
     wOK.setText(Messages.getString("General.USER_OK")); //$NON-NLS-1$
@@ -369,7 +451,24 @@ public class RelationshipDialog extends Dialog {
         ok();
       }
     };
-
+    
+    // If someone changes the relationship, we automatically modify the join type.
+    //
+    wRelation.addSelectionListener(new SelectionAdapter() {
+    	public void widgetSelected(SelectionEvent arg0) {
+    		wJoinType.select(RelationshipMeta.getJoinType(wRelation.getSelectionIndex()));
+		}
+	});
+    
+    // If someone changes the join type (informational only) we change the relationship.
+    // This is a lossy process, but it's better than nothing.
+    //
+    wJoinType.addSelectionListener(new SelectionAdapter() {
+    	public void widgetSelected(SelectionEvent event) {
+    		wRelation.select(RelationshipMeta.getRelationType(wJoinType.getSelectionIndex()));
+		}
+	});
+    
     wOK.addListener(SWT.Selection, lsOK);
     wCancel.addListener(SWT.Selection, lsCancel);
 
@@ -383,6 +482,8 @@ public class RelationshipDialog extends Dialog {
     getData();
     relationshipMeta.setChanged(changed);
 
+    shell.layout();
+    
     WindowProperty winprop = props.getScreen(shell.getText());
     if (winprop != null)
       winprop.setShell(shell);
@@ -465,10 +566,14 @@ public class RelationshipDialog extends Dialog {
     }
 
     wRelation.select(relationshipMeta.getType());
+    wJoinType.select(relationshipMeta.getJoinType());
     wComplex.setSelection(relationshipMeta.isComplex());
     if (relationshipMeta.getComplexJoin() != null)
       wComplexJoin.setText(relationshipMeta.getComplexJoin());
     setComplex();
+    
+    wDescription.setText(Const.NVL(relationshipMeta.getDescription(), ""));
+    wJoinOrderKey.setText(Const.NVL(relationshipMeta.getJoinOrderKey(), ""));
   }
 
   private void cancel() {
@@ -495,8 +600,11 @@ public class RelationshipDialog extends Dialog {
     }
 
     relationshipMeta.setType(wRelation.getSelectionIndex());
-
+    
     relationshipMeta.setComplexJoin(wComplexJoin.getText());
+    
+    relationshipMeta.setDescription(wDescription.getText());
+    relationshipMeta.setJoinOrderKey(wJoinOrderKey.getText());
 
     if (relationshipMeta.getTableFrom() == null) {
       MessageBox mb = new MessageBox(shell, SWT.YES | SWT.ICON_WARNING);

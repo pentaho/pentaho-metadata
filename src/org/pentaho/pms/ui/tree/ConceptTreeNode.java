@@ -136,6 +136,7 @@ public abstract class ConceptTreeNode extends TreeNode {
    *            the list of business objects from the business model that we
    *            will sync with
    */
+  @SuppressWarnings("unchecked")
   public void sync(UniqueList modelList) {
     if (fChildren == null) {
       getChildren();
@@ -184,6 +185,7 @@ public abstract class ConceptTreeNode extends TreeNode {
 
   }
 
+  @SuppressWarnings("unchecked")
   protected void syncIndexing(UniqueList modelList) {
 
     // make copy of list so removals doesn't cause a problem

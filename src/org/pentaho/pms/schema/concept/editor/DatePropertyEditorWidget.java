@@ -7,9 +7,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DateTime;
 
 /**
- * TODO mlowery can't find where this widget is actually used
+ * This widget is used to allow the users to enter dates.
+ * If you want to create properties like "Creation date", etc.
+ * 
  * @author mlowery
- * @deprecated can't find where this widget is actually used
  */
 public class DatePropertyEditorWidget extends AbstractPropertyEditorWidget {
 

@@ -6,14 +6,15 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eclipse.jface.fieldassist.DecoratedField;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
-import org.eclipse.jface.fieldassist.TextControlCreator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Composite;
@@ -21,6 +22,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.pentaho.pms.messages.Messages;
+import org.pentaho.pms.util.Const;
 
 public class UrlPropertyEditorWidget extends AbstractPropertyEditorWidget implements FocusListener {
 
@@ -66,27 +69,29 @@ public class UrlPropertyEditorWidget extends AbstractPropertyEditorWidget implem
       }
     });
 
-    final DecoratedField field = new DecoratedField(parent, SWT.BORDER, new TextControlCreator());
-    urlField = (Text) field.getControl();
-
+    urlField = new Text(parent, SWT.BORDER);
+    final ControlDecoration controlDecoration = new ControlDecoration(urlField, SWT.TOP | SWT.RIGHT);
+    
     final FieldDecorationRegistry registry = FieldDecorationRegistry.getDefault();
-    field
-        .addFieldDecoration(registry.getFieldDecoration(FieldDecorationRegistry.DEC_ERROR), SWT.TOP | SWT.RIGHT, false);
-    field.hideDecoration(registry.getFieldDecoration(FieldDecorationRegistry.DEC_ERROR));
+    FieldDecoration fieldDecoration = registry.getFieldDecoration(FieldDecorationRegistry.DEC_ERROR);
+    Image decorationImage = fieldDecoration.getImage();
+    controlDecoration.setImage(decorationImage);
+    controlDecoration.setDescriptionText(fieldDecoration.getDescription());
+    controlDecoration.hide();
 
-    urlLabel = new Label(parent, SWT.NONE);
+    urlLabel = new Label(parent, SWT.LEFT);
     urlLabel.setText("URL (including http://):");
 
-    FormData fd2 = new FormData();
-    fd2.left = new FormAttachment(urlLabel, 10);
-    fd2.top = new FormAttachment(0, 0);
-    fd2.right = new FormAttachment(100, 0);
-    field.getLayoutControl().setLayoutData(fd2);
+    FormData fdLabel = new FormData();
+    fdLabel.left = new FormAttachment(0, 0);
+    fdLabel.top = new FormAttachment(urlField, 0, SWT.CENTER);
+    urlLabel.setLayoutData(fdLabel);
 
-    FormData fd1 = new FormData();
-    fd1.left = new FormAttachment(0, 0);
-    fd1.top = new FormAttachment(urlField, 0, SWT.CENTER);
-    urlLabel.setLayoutData(fd1);
+    FormData fdField = new FormData();
+    fdField.left = new FormAttachment(urlLabel, 10);
+    fdField.top = new FormAttachment(0, 0);
+    fdField.right = new FormAttachment(100, -decorationImage.getBounds().width);
+    urlField.setLayoutData(fdField);
 
     Listener listener = new Listener() {
       public void handleEvent(final Event e) {
@@ -103,10 +108,16 @@ public class UrlPropertyEditorWidget extends AbstractPropertyEditorWidget implem
           if (logger.isDebugEnabled()) {
             logger.debug("urlField contains a invalid URL (" + text + ")");
           }
-          field.showDecoration(registry.getFieldDecoration(FieldDecorationRegistry.DEC_ERROR));
+          controlDecoration.show();
+          if (Const.isEmpty(text)) {
+        	  controlDecoration.showHoverText(Messages.getString("UrlPropertyEditorWidget.USER_FEEDBACK_MESSAGE_URL_CANT_BE_EMPTY", text));
+          } else {
+        	  controlDecoration.showHoverText(Messages.getString("UrlPropertyEditorWidget.USER_FEEDBACK_MESSAGE_NOT_A_VALID_URL", text));
+          }
           return;
         }
-        field.hideDecoration(registry.getFieldDecoration(FieldDecorationRegistry.DEC_ERROR));
+        controlDecoration.hide();
+        controlDecoration.hideHover();
       }
     };
 

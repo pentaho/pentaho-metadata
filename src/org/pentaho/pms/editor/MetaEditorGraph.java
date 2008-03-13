@@ -55,6 +55,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.LineAttributes;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -131,6 +132,9 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
   private PropsUI props;
 
   private Menu mPop;
+  
+  private static LineAttributes unknownRelationshipLineAttributes =
+	  new LineAttributes(1.0f, SWT.CAP_FLAT, SWT.JOIN_MITER, SWT.LINE_CUSTOM, new float[] { 3.0f, 3.0f, }, 3.0f, 3.0f);
 
   public MetaEditorGraph(Composite par, int style, MetaEditor pm) {
     super(par, style);
@@ -977,7 +981,7 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
       if (hi != null) // We clicked on a HOP!
       {
         // Set the tooltip for the hop:
-        setToolTipText(hi.toString());
+        setToolTipText(Const.NVL(hi.getDescription(), hi.toString()));
       } else {
         setToolTipText(null);
       }
@@ -1411,8 +1415,22 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
     Point X = real2screen(line[0], line[1]);
     Point Y = real2screen(line[2], line[3]);
 
+    if (ri.getType()==RelationshipMeta.TYPE_RELATIONSHIP_UNDEFINED) {
+    	gc.setLineAttributes(unknownRelationshipLineAttributes);
+    }
+    
     // Main line connecting the 2 entities (tables)
     gc.drawLine(X.x, X.y, Y.x, Y.y);
+    
+    // If there is a join order key set, draw that...
+    //
+    if (!Const.isEmpty(ri.getJoinOrderKey())) {
+    	Point middle = new Point( (X.x+Y.x)/2, (X.y+Y.y)/2);
+    	Color oldColor = gc.getForeground();
+    	gc.setForeground(GUIResource.getInstance().getColorBlue());
+    	gc.drawText(ri.getJoinOrderKey(), middle.x, middle.y, SWT.DRAW_TRANSPARENT);
+    	gc.setForeground(oldColor);
+    }
 
     Point a, b, c;
     Point a2, b2, c2;
@@ -1545,7 +1563,8 @@ public class MetaEditorGraph extends Canvas implements Redrawable {
 
       gc.drawOval(a2.x, a2.y, Const.SYMBOLSIZE, Const.SYMBOLSIZE);
     }
-
+    
+	gc.setLineStyle(SWT.LINE_SOLID);
   }
 
   private boolean pointOnLine(int x, int y, int line[]) {

@@ -14,6 +14,7 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.messages.Messages;
+import org.pentaho.pms.mql.dialect.JoinType;
 import org.pentaho.pms.mql.dialect.SQLDialectFactory;
 import org.pentaho.pms.mql.dialect.SQLDialectInterface;
 import org.pentaho.pms.mql.dialect.SQLQueryModel;
@@ -121,7 +122,18 @@ public class SQLGenerator {
     if (path != null) {
       for (int i = 0; i < path.size(); i++) {
         RelationshipMeta relation = path.getRelationship(i);
-        query.addWhereFormula(getJoin(model, relation, databaseMeta, locale), "AND"); //$NON-NLS-1$
+        String joinFormula = getJoin(model, relation, databaseMeta, locale);
+        String joinOrderKey = relation.getJoinOrderKey();
+        JoinType joinType;
+        switch(relation.getJoinType()) {
+        case RelationshipMeta.TYPE_JOIN_LEFT_OUTER : joinType = JoinType.LEFT_OUTER_JOIN; break;
+        case RelationshipMeta.TYPE_JOIN_RIGHT_OUTER : joinType = JoinType.RIGHT_OUTER_JOIN; break;
+        case RelationshipMeta.TYPE_JOIN_FULL_OUTER : joinType = JoinType.FULL_OUTER_JOIN; break;
+        default: joinType = JoinType.INNER_JOIN; break;
+        }
+        
+        query.addJoin(relation.getTableFrom().getDisplayName(locale), relation.getTableTo().getDisplayName(locale), joinType, joinFormula, joinOrderKey);
+        // query.addWhereFormula(joinFormula, "AND"); //$NON-NLS-1$
       }
     }
     

@@ -1149,8 +1149,17 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         }
         
         // And then the type of relationship between the two tables...
+        //
         pairs.add(cwm.createTaggedValue(CWM.TAG_RELATIONSHIP_TYPE, relationshipMeta.getTypeDesc()));
+
+        // Save the relationship join order key
+        //
+        pairs.add(cwm.createTaggedValue(CWM.TAG_RELATIONSHIP_JOIN_ORDER_KEY, relationshipMeta.getJoinOrderKey()));
         
+        // Save the relationship description too
+        //
+        pairs.add(cwm.createTaggedValue(CWM.TAG_RELATIONSHIP_DESCRIPTION, relationshipMeta.getDescription()));
+
         // add the relationship to the schema 
         @SuppressWarnings("unchecked")
         Collection<CwmKeyRelationship> cr = cwmSchema.getOwnedElement();
@@ -1213,6 +1222,12 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         //
         String relType = CWM.findFirstTaggedValue(relationship.getTaggedValue(), CWM.TAG_RELATIONSHIP_TYPE);
         relationshipMeta.setType(relType);
+        
+        String joinOrderKey = CWM.findFirstTaggedValue(relationship.getTaggedValue(), CWM.TAG_RELATIONSHIP_JOIN_ORDER_KEY);
+        relationshipMeta.setJoinOrderKey(joinOrderKey);
+        
+        String description = CWM.findFirstTaggedValue(relationship.getTaggedValue(), CWM.TAG_RELATIONSHIP_DESCRIPTION);
+        relationshipMeta.setDescription(description);
         
         return relationshipMeta;
     }

@@ -47,6 +47,8 @@ public class RelationshipMeta extends ChangedFlag implements Cloneable, XMLInter
 	private int type;
 	private boolean complex;
 	private String complex_join;
+	private String joinOrderKey;
+	private String description;
 	
 	public final static int TYPE_RELATIONSHIP_UNDEFINED = 0;
 	public final static int TYPE_RELATIONSHIP_1_N       = 1;
@@ -57,10 +59,21 @@ public class RelationshipMeta extends ChangedFlag implements Cloneable, XMLInter
 	public final static int TYPE_RELATIONSHIP_0_1       = 6;
 	public final static int TYPE_RELATIONSHIP_1_0       = 7;
 	public final static int TYPE_RELATIONSHIP_N_N       = 8;
+	public final static int TYPE_RELATIONSHIP_0_0       = 9;
 	
 	public final static String typeRelationshipDesc[] = 
 		{
-			"undefined", "1:N", "N:1", "1:1", "0:N", "N:0", "0:1", "1:0", "N:N" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
+			"undefined", "1:N", "N:1", "1:1", "0:N", "N:0", "0:1", "1:0", "N:N", "0:0" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$ // $NON-NLS-10$
+		};
+	
+	public final static int TYPE_JOIN_INNER       = 0;
+	public final static int TYPE_JOIN_LEFT_OUTER  = 1;
+	public final static int TYPE_JOIN_RIGHT_OUTER = 2;
+	public final static int TYPE_JOIN_FULL_OUTER  = 3;
+	
+	public final static String typeJoinDesc[] =
+		{
+			"Inner", "Left outer", "Right outer", "Full outer",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		};
 	
     public RelationshipMeta()
@@ -110,6 +123,8 @@ public class RelationshipMeta extends ChangedFlag implements Cloneable, XMLInter
 			type         = getType(XMLHandler.getTagValue(relnode, "type")); //$NON-NLS-1$
 			complex      = "Y".equalsIgnoreCase(XMLHandler.getTagValue(relnode, "complex")); //$NON-NLS-1$ //$NON-NLS-2$
 			complex_join = XMLHandler.getTagValue(relnode, "complex_join"); //$NON-NLS-1$
+			joinOrderKey = XMLHandler.getTagValue(relnode, "join_order_key"); //$NON-NLS-1$
+			description  = XMLHandler.getTagValue(relnode, "description"); //$NON-NLS-1$
 			
 			return true;
 		}
@@ -131,6 +146,8 @@ public class RelationshipMeta extends ChangedFlag implements Cloneable, XMLInter
 		retval+="        "+XMLHandler.addTagValue("type",         getTypeDesc()); //$NON-NLS-1$ //$NON-NLS-2$
 		retval+="        "+XMLHandler.addTagValue("complex",      complex); //$NON-NLS-1$ //$NON-NLS-2$
 		retval+="        "+XMLHandler.addTagValue("complex_join", complex_join); //$NON-NLS-1$ //$NON-NLS-2$
+		retval+="        "+XMLHandler.addTagValue("join_order_key", joinOrderKey); //$NON-NLS-1$ //$NON-NLS-2$
+		retval+="        "+XMLHandler.addTagValue("description",  description); //$NON-NLS-1$ //$NON-NLS-2$
 		retval+="        </relationship>"+Const.CR; //$NON-NLS-1$
 		
 		return retval;
@@ -303,7 +320,8 @@ public class RelationshipMeta extends ChangedFlag implements Cloneable, XMLInter
 			case TYPE_RELATIONSHIP_0_N       : type = TYPE_RELATIONSHIP_N_0; break;
 			case TYPE_RELATIONSHIP_N_0       : type = TYPE_RELATIONSHIP_0_N; break;
 			case TYPE_RELATIONSHIP_0_1       : type = TYPE_RELATIONSHIP_1_0; break;
-			case TYPE_RELATIONSHIP_1_0       : type = TYPE_RELATIONSHIP_0_1; break;		
+			case TYPE_RELATIONSHIP_1_0       : type = TYPE_RELATIONSHIP_0_1; break;
+			case TYPE_RELATIONSHIP_0_0       : break;
 		}
 	}
 	
@@ -346,4 +364,78 @@ public class RelationshipMeta extends ChangedFlag implements Cloneable, XMLInter
     {
         setChanged(false);
     }
+    
+	/**
+	 * @return the joinType : inner, left outer, right outer or full outer
+	 */
+	public int getJoinType() {
+		return getJoinType(type);
+	}
+	
+	/**
+	 * Calculate the mapping between the relationship type and the join type.
+	 * @param relationshipType the type of relationship
+	 * @return the join type (inner, left outer, right outer or full outer)
+	 */
+	public static int getJoinType(int relationshipType) {
+		switch(relationshipType) {
+		case TYPE_RELATIONSHIP_0_N : return TYPE_JOIN_LEFT_OUTER;
+		case TYPE_RELATIONSHIP_N_0 : return TYPE_JOIN_RIGHT_OUTER;
+		case TYPE_RELATIONSHIP_0_1 : return TYPE_JOIN_LEFT_OUTER;
+		case TYPE_RELATIONSHIP_1_0 : return TYPE_JOIN_RIGHT_OUTER;
+		case TYPE_RELATIONSHIP_0_0 : return TYPE_JOIN_FULL_OUTER;
+
+		default: return TYPE_JOIN_INNER;
+		}
+	}
+	
+	/**
+	 * Calculate the mapping between the relationship type and the join type.
+	 * @param joinType the type of join
+	 * @return the relationship type (mapped to the N variations)
+	 */
+	public static int getRelationType(int joinType) {
+		switch(joinType) {
+		case TYPE_JOIN_LEFT_OUTER  : return TYPE_RELATIONSHIP_0_N;
+		case TYPE_JOIN_RIGHT_OUTER : return TYPE_RELATIONSHIP_N_0;
+		case TYPE_JOIN_FULL_OUTER  : return TYPE_RELATIONSHIP_0_0;
+		default                    : return TYPE_RELATIONSHIP_N_N;
+		}
+	}
+	
+	public String getJoinTypeDesc() {
+		return typeJoinDesc[getJoinType()];
+	}
+
+	public boolean isOuterJoin() {
+		return getJoinType()!=TYPE_JOIN_INNER;
+	}
+
+	/**
+	 * @return the joinOrderKey
+	 */
+	public String getJoinOrderKey() {
+		return joinOrderKey;
+	}
+
+	/**
+	 * @param joinOrderKey the joinOrderKey to set
+	 */
+	public void setJoinOrderKey(String joinOrderKey) {
+		this.joinOrderKey = joinOrderKey;
+	}
+
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
 }

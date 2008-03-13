@@ -35,10 +35,10 @@ public class RelationshipsTreeNode extends ConceptTreeNode {
   }
   
   public void removeDomainChild(Object domainObject){
-    List children = new ArrayList();
+    List<ITreeNode> children = new ArrayList<ITreeNode>();
     
     // make copy of list so removals doesn't cause a problem
-    Iterator childIter = fChildren.iterator();
+    Iterator<ITreeNode> childIter = fChildren.iterator();
     while ( childIter.hasNext() )
       children.add(childIter.next());
 
@@ -57,8 +57,8 @@ public class RelationshipsTreeNode extends ConceptTreeNode {
     }
     
     // make copy of list so removals doesn't cause a problem
-    Iterator childIter = fChildren.iterator();
-    List children = new ArrayList();
+    Iterator<ITreeNode> childIter = fChildren.iterator();
+    List<ITreeNode> children = new ArrayList<ITreeNode>();
     while ( childIter.hasNext() )
       children.add(childIter.next());
     

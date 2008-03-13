@@ -18,6 +18,7 @@ import org.jfree.formula.typing.coretypes.NumberType;
 import org.jfree.formula.typing.coretypes.TextType;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.messages.Messages;
+import org.pentaho.pms.mql.PMSFormula;
 
 /**
  * This is the default implementation of the SQLFunctionGeneratorInterface.

@@ -200,6 +200,12 @@ public class CWM
 
     /** tag to store value of the relationship type, for example 1:1, 1:N, N:N, 0:N, etc. */
     public static final String TAG_RELATIONSHIP_TYPE = "RELATIONSHIP_TYPE"; //$NON-NLS-1$
+    
+    /** tag to store value of the relationship join order key */
+    public static final String TAG_RELATIONSHIP_JOIN_ORDER_KEY = "RELATIONSHIP_JOIN_ORDER_KEY"; // $NON-NLS-1$ 
+
+    /** tag to store the description the relationship */
+    public static final String TAG_RELATIONSHIP_DESCRIPTION = "RELATIONSHIP_DESCRIPTION"; // $NON-NLS-1$ 
 
     /* 
      * Extra DOCUMENT information, added through tag-value pairs 

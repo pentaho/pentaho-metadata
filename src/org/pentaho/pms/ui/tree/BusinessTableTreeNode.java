@@ -38,10 +38,10 @@ public class BusinessTableTreeNode extends ConceptTreeNode {
   }
   
   public void removeDomainChild(Object domainObject){
-    List children = new ArrayList();
+    List<ITreeNode> children = new ArrayList<ITreeNode>();
     
     // make copy of list so removals doesn't cause a problem
-    Iterator childIter = fChildren.iterator();
+    Iterator<ITreeNode> childIter = fChildren.iterator();
     while ( childIter.hasNext() )
       children.add(childIter.next());
 

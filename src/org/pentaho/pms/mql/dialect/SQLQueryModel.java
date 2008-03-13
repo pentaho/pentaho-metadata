@@ -25,11 +25,6 @@ import java.util.List;
 public class SQLQueryModel {
   
     /**
-     * defines the type of joins availabe in a select statement 
-     */
-    public enum JoinType { JOIN, LEFT_OUTER_JOIN, RIGHT_OUTER_JOIN };
-
-    /**
      * defines the type of ordering available in a select statement
      */
     public enum OrderType { ASCENDING, DESCENDING };
@@ -135,6 +130,7 @@ public class SQLQueryModel {
       }
     }
 
+    
     /**
      * inner class that defines the ORDER BY portion of a SQL query
      */ 
@@ -172,10 +168,13 @@ public class SQLQueryModel {
 
     private List<SQLTable> tables = new ArrayList<SQLTable>();
     private List<SQLTable> ulTables = Collections.unmodifiableList(tables);
-    
+
     private List<SQLWhereFormula> whereFormulas = new ArrayList<SQLWhereFormula>();
     private List<SQLWhereFormula> ulWhereFormulas = Collections.unmodifiableList(whereFormulas);
-    
+
+    private List<SQLJoin> joins = new ArrayList<SQLJoin>();
+    private List<SQLJoin> ulJoins = Collections.unmodifiableList(joins);
+
     private List<SQLSelection> groupbys = new ArrayList<SQLSelection>();
     private List<SQLSelection> ulGroupbys = Collections.unmodifiableList(groupbys);
     
@@ -322,5 +321,38 @@ public class SQLQueryModel {
      */
     public void addOrderBy(String formula, String alias, OrderType order) {
       orderbys.add(new SQLOrderBy(new SQLSelection(formula, alias), order));
+    }
+    
+    /**
+     * Returns an uneditable list of table joins 
+     * @return the joins
+     */
+    public List<SQLJoin> getJoins() {
+      return ulJoins;
+    }
+    
+    /**
+     * Add a join between 2 tables, specifying the join formula as well as the join type
+     * @param leftTablename the name of the left table in the join
+     * @param rightTablename the name of the right table in the join
+     * @param joinType the join type (inner, left outer, right outer, full outer)
+     * @param formula the join condition (formula)
+     * @param joinOrderKey the join order key
+     */
+    public void addJoin(String leftTablename, String rightTablename, JoinType joinType, String formula, String joinOrderKey) {
+      SQLWhereFormula sqlWhereFormula = new SQLWhereFormula(formula, null);
+      SQLJoin join = new SQLJoin(leftTablename, rightTablename, sqlWhereFormula, joinType, joinOrderKey);
+      joins.add(join);
+    }
+    
+    /**
+     * Verifies all joins to see if there is one that is an outer join (left outer, right outer or full outer join type)
+     * @return true if there is at least one join in the query model that is not an inner join. False if this is not the case.
+     */
+    public boolean containsOuterJoins() {
+    	for (SQLJoin join : joins) {
+    		if (join.getJoinType()!=JoinType.INNER_JOIN) return true;
+    	}
+    	return false;
     }
 }

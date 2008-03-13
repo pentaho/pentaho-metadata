@@ -1,8 +1,8 @@
 package org.pentaho.pms;
 
-import org.pentaho.pms.messages.Messages;
-
 import junit.framework.TestCase;
+
+import org.pentaho.pms.messages.Messages;
 
 /**
  * Tests the MetaData version of the localices messages to ensure we are getting the 

@@ -5,14 +5,15 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eclipse.jface.fieldassist.DecoratedField;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
-import org.eclipse.jface.fieldassist.TextControlCreator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.widgets.Composite;
@@ -20,6 +21,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.pentaho.pms.messages.Messages;
+import org.pentaho.pms.util.Const;
 
 public class NumberPropertyEditorWidget extends AbstractPropertyEditorWidget implements FocusListener{ 
 
@@ -55,27 +58,30 @@ public class NumberPropertyEditorWidget extends AbstractPropertyEditorWidget imp
       }
     });
 
-    final DecoratedField field = new DecoratedField(parent, SWT.BORDER, new TextControlCreator());
-    numberField = (Text) field.getControl();
-
+    // final DecoratedField field = new DecoratedField(parent, SWT.BORDER, new TextControlCreator());
+    numberField = new Text(parent, SWT.BORDER);
+    final ControlDecoration controlDecoration = new ControlDecoration(numberField, SWT.TOP | SWT.RIGHT);
+    
     final FieldDecorationRegistry registry = FieldDecorationRegistry.getDefault();
-    field
-        .addFieldDecoration(registry.getFieldDecoration(FieldDecorationRegistry.DEC_ERROR), SWT.TOP | SWT.RIGHT, false);
-    field.hideDecoration(registry.getFieldDecoration(FieldDecorationRegistry.DEC_ERROR));
+    FieldDecoration fieldDecoration = registry.getFieldDecoration(FieldDecorationRegistry.DEC_ERROR);
+    Image decorationImage = fieldDecoration.getImage();
+    controlDecoration.setImage(decorationImage);
+    controlDecoration.setDescriptionText(fieldDecoration.getDescription());
+    controlDecoration.hide();
 
-    numberLabel = new Label(parent, SWT.NONE);
+    numberLabel = new Label(parent, SWT.LEFT);
     numberLabel.setText("Value:");
 
-    FormData fd2 = new FormData();
-    fd2.left = new FormAttachment(numberLabel, 10);
-    fd2.top = new FormAttachment(0, 0);
-    fd2.right = new FormAttachment(100, 0);
-    field.getLayoutControl().setLayoutData(fd2);
+    FormData fdLabel = new FormData();
+    fdLabel.left = new FormAttachment(0, 0);
+    fdLabel.top = new FormAttachment(numberField, 0, SWT.CENTER);
+    numberLabel.setLayoutData(fdLabel);
 
     FormData fd1 = new FormData();
     fd1.left = new FormAttachment(0, 0);
-    fd1.top = new FormAttachment(numberField, 0, SWT.CENTER);
-    numberLabel.setLayoutData(fd1);
+    fd1.top = new FormAttachment(0, 0);
+    fd1.right= new FormAttachment(100, -decorationImage.getBounds().width);
+    numberField.setLayoutData(fd1);
 
     Listener listener = new Listener() {
       public void handleEvent(final Event e) {
@@ -92,10 +98,16 @@ public class NumberPropertyEditorWidget extends AbstractPropertyEditorWidget imp
           if (logger.isDebugEnabled()) {
             logger.debug("numberField contains a invalid BigDecimal (" + text + ")");
           }
-          field.showDecoration(registry.getFieldDecoration(FieldDecorationRegistry.DEC_ERROR));
+          controlDecoration.show();
+          if (Const.isEmpty(text)) {
+        	  controlDecoration.showHoverText(Messages.getString("NumberPropertyEditorWidget.USER_FEEDBACK_MESSAGE_NUMBER_CANT_BE_EMPTY", text));
+          } else {
+        	  controlDecoration.showHoverText(Messages.getString("NumberPropertyEditorWidget.USER_FEEDBACK_MESSAGE_NOT_A_BIGNUMBER", text));
+          }
           return;
         }
-        field.hideDecoration(registry.getFieldDecoration(FieldDecorationRegistry.DEC_ERROR));
+        controlDecoration.hide();
+        controlDecoration.hideHover();
       }
     };
 

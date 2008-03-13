@@ -13,7 +13,10 @@
 package org.pentaho.pms.mql.dialect;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -425,6 +428,32 @@ public class DefaultSQLDialect implements SQLDialectInterface {
   }
   
   /**
+   * Generates the WHERE clause portion of the SQL statement.<br>
+   * In this case, we generate the joins between the tables.<br>
+   * <br>
+   * Important: this method only applies to regular models, not outer-join scenarios!<br>
+   * 
+   * @param query query model
+   * @param sql string buffer
+   */
+  protected void generateJoins(SQLQueryModel query, StringBuilder sql) {
+    if (query.getJoins().size() > 0) {
+      sql.append("WHERE ").append(Const.CR); //$NON-NLS-1$
+      boolean first = true;
+      for (SQLJoin join : query.getJoins()) {
+        if (first) {
+          first = false;
+        } else {
+        	// You always "AND" join conditions...
+        	//
+          sql.append("      AND ( "); //$NON-NLS-1$
+        }
+        sql.append(join.getSqlWhereFormula().getFormula());
+        sql.append(" )").append(Const.CR); //$NON-NLS-1$
+      }
+    }
+  }
+  /**
    * generates the GROUP BY portion of the SQL statement
    * 
    * @param query query model
@@ -522,6 +551,107 @@ public class DefaultSQLDialect implements SQLDialectInterface {
   }
   
   /**
+   * Generates the outer joins portion of the query.<br>
+   * <br>
+   * We added the joins in a particular order that we simply unroll here.<br>
+   * 
+   * @param query query model
+   * @param sql string buffer
+   */
+  protected void generateOuterJoin(SQLQueryModel query, StringBuilder sql) {
+	  if (query.getJoins().size()==0) return;
+	  
+	  // Before this location we had the "SELECT x,y,z" part of the query in sql.
+	  // Now we're going to add the join syntax
+	  // It's important that we sort the joins to make sure the join order, intended by the model designer is used.
+	  // The rule is:
+	  // - If there is no sort order key specified and it's an inner join, we take the inner joins first
+	  // - If there is a sort order key specified, we sort on that.
+	  // 
+	  // Obviously, it's possible to get hybrid situations, but there is little we can do about that.
+	  // It might be a good idea to include a model verification system module that checks this.
+	  //
+	  
+	  // First the sort: reverse ordered by join order key (or inner join capability)
+	  //
+	  List<SQLJoin> sortedJoins = new ArrayList<SQLJoin>(query.getJoins());
+	  Collections.sort(sortedJoins);
+	  
+	  // OK, so we need to create a recursive call to add the nested Join statements...
+	  //
+	  String joinClause = getJoinClause(sortedJoins, 0, new ArrayList<String>());
+	  
+	  sql.append(Const.CR).append("FROM ").append(joinClause).append(Const.CR);
+  }
+  
+  /**
+   * Create join clause from back to front in the sorted joins list...
+   * @return the nested join clause
+   */
+  private String getJoinClause(List<SQLJoin> sortedJoins, int index, List<String> usedTables) {
+	StringBuilder clause = new StringBuilder();
+	String indent = Const.rightPad(" ", (index+1)+3);
+	SQLJoin join = sortedJoins.get(index);
+	String leftTablename = join.getLeftTablename();
+	String rightTablename = join.getRightTablename();
+	JoinType joinType = join.getJoinType();
+	
+	// We want to calculate this clause depth-first.  That means we first add
+	// the tables in the nested queries and then see which (left or right) fits with it.
+	// If needed, we have to flip left-outer and right-outer join syntax.
+	//
+	String rightClause;
+	
+	if (index<sortedJoins.size()-1) {
+		rightClause = getJoinClause(sortedJoins, index+1, usedTables);
+	} else {
+		rightClause = rightTablename;
+	}
+
+	// Now see if the left table name is already used in the nested right clause.
+	// If so, we need to flip left and right, including the left/right outer join.
+	//
+	if (usedTables.contains(leftTablename)) {
+		leftTablename=join.getRightTablename();
+		rightTablename=join.getLeftTablename();
+		if (join.getJoinType().equals(JoinType.LEFT_OUTER_JOIN)) joinType=JoinType.RIGHT_OUTER_JOIN;
+		else if (join.getJoinType().equals(JoinType.RIGHT_OUTER_JOIN)) joinType=JoinType.LEFT_OUTER_JOIN;
+	}
+
+	// The left hand side of the join clause...
+	//
+	clause.append(leftTablename);
+	usedTables.add(leftTablename);
+	
+	// Now add the JOIN syntax
+	//
+	switch(joinType) {
+	case INNER_JOIN : clause.append(" JOIN "); break;
+	case LEFT_OUTER_JOIN : clause.append(" LEFT OUTER JOIN "); break;
+	case RIGHT_OUTER_JOIN : clause.append(" RIGHT OUTER JOIN "); break;
+	case FULL_OUTER_JOIN : clause.append(" FULL OUTER JOIN "); break;
+	}
+
+	// Now, we generate the clause in one go...
+	//
+	if (index<sortedJoins.size()-1) {
+		clause.append(Const.CR).append(indent).append(" ( ").append(Const.CR).append(indent).append("  ");
+		clause.append(rightClause);
+		clause.append(indent).append(" ) ");
+	} else {
+		clause.append(rightTablename);
+		usedTables.add(rightTablename);
+	}
+		  
+	// finally add the ON () part
+	//
+	SQLWhereFormula joinFormula = join.getSqlWhereFormula();
+	clause.append(Const.CR).append(indent).append(" ON ( ").append(joinFormula.getFormula()).append(" )").append(Const.CR);
+	
+	return clause.toString();
+  }
+
+/**
    * generates a sql query based on the SQLQueryModel object
    * @param query
    * @return
@@ -529,11 +659,22 @@ public class DefaultSQLDialect implements SQLDialectInterface {
   public String generateSelectStatement(SQLQueryModel query) {
     StringBuilder sql = new StringBuilder();
     generateSelect(query, sql);
-    generateFrom(query, sql);
+    
+    if (query.containsOuterJoins()) {
+    	// If the query contains out joins, we use a different syntax
+    	//
+    	generateOuterJoin(query, sql);
+    } else {
+    	// This is the "classic" join syntax
+	    generateFrom(query, sql);
+	    generateJoins(query, sql);
+    }
+    
     generateWhere(query, sql);
     generateGroupBy(query, sql);
     generateHaving(query, sql);
     generateOrderBy(query, sql);
+    
     return sql.toString();
   }
 }

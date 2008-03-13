@@ -12,13 +12,13 @@
 */
 package org.pentaho.pms;
 
+import junit.framework.TestCase;
+
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.mql.dialect.SQLDialectFactory;
 import org.pentaho.pms.mql.dialect.SQLDialectInterface;
 import org.pentaho.pms.mql.dialect.SQLQueryModel;
 import org.pentaho.pms.mql.dialect.SQLQueryModel.OrderType;
-
-import junit.framework.TestCase;
 
 /**
  * Tests SQLQueryModel and sql query generation.

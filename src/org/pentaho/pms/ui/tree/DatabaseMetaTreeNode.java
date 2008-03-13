@@ -67,10 +67,10 @@ public class DatabaseMetaTreeNode extends ConceptTreeNode {
   }
   
   public void removeDomainChild(Object domainObject){
-    List children = new ArrayList();
+    List<ITreeNode> children = new ArrayList<ITreeNode>();
     
     // make copy of list so removals doesn't cause a problem
-    Iterator childIter = fChildren.iterator();
+    Iterator<ITreeNode> childIter = fChildren.iterator();
     while ( childIter.hasNext() )
       children.add(childIter.next());
 
@@ -89,7 +89,7 @@ public class DatabaseMetaTreeNode extends ConceptTreeNode {
     // schemaMeta, we can't persist the sort order of physical tables, so sort is not 
     // in the Connection tree; hence, the logic for preserving indexes is absent from this 
     // ConceptTreeNode subclass. We should probably fix up the model so that we 
-    // can oversome this limitation in the future. 
+    // can overcome this limitation in the future. 
     
     if (fChildren == null){
       getChildren();
@@ -97,8 +97,8 @@ public class DatabaseMetaTreeNode extends ConceptTreeNode {
     
     
     // make copy of list so removals doesn't cause a problem
-    Iterator childIter = fChildren.iterator();
-    List children = new ArrayList();
+    Iterator<ITreeNode> childIter = fChildren.iterator();
+    List<ITreeNode> children = new ArrayList<ITreeNode>();
     while ( childIter.hasNext() )
       children.add(childIter.next());
     
