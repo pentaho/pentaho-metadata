@@ -109,7 +109,7 @@ public class AdvancedMQLQueryImplTest  extends TestCase {
     myTest.addSelection(new AdvancedMQLQuery.AliasedSelection(bc1, null));
     myTest.addSelection(new AdvancedMQLQuery.AliasedSelection(bc1, "alias1"));
     myTest.addSelection(new AdvancedMQLQuery.AliasedSelection(bc3, null));
-    //myTest.addSelection(new AdvancedMQLQuery.AliasedSelection("[alias1.bc1] * 3"));
+    myTest.addSelection(new AdvancedMQLQuery.AliasedSelection("[alias1.bc1] * 3"));
     
     
     myTest.addConstraint("AND", "[alias1.bc1] > 10");
@@ -188,11 +188,11 @@ public class AdvancedMQLQueryImplTest  extends TestCase {
     AdvancedMQLQuery myTest = new AdvancedMQLQuery(null, model, databaseMeta, "en_US");
 
     myTest.addSelection(new AdvancedMQLQuery.AliasedSelection(bc1, "alias1"));
-    //myTest.addSelection(new AdvancedMQLQuery.AliasedSelection("SUM([bt3.bc3])"));
+    myTest.addSelection(new AdvancedMQLQuery.AliasedSelection("SUM([bt3.bc3])"));
     
     myTest.addConstraint("AND", "SUM([bt3.bc3]) > 30");
     
-    //myTest.addOrderBy(new AdvancedMQLQuery.AliasedSelection("SUM([bt3.bc3])"), true);
+    myTest.addOrderBy(new AdvancedMQLQuery.AliasedSelection("SUM([bt3.bc3])"), true);
     
     // SQLQueryTest.printOutJava(myTest.getQuery().getQuery());
     
@@ -277,8 +277,8 @@ public class AdvancedMQLQueryImplTest  extends TestCase {
     myTest.addSelection(new AdvancedMQLQuery.AliasedSelection(bc1, null));
     myTest.addSelection(new AdvancedMQLQuery.AliasedSelection(bce2, null));
     
-    //myTest.addOrderBy(new AdvancedMQLQuery.AliasedSelection(bc1, null), true);
-    //myTest.addOrderBy(new AdvancedMQLQuery.AliasedSelection(bce2, "alias1"), true);
+    myTest.addOrderBy(new AdvancedMQLQuery.AliasedSelection(bc1, null), true);
+    myTest.addOrderBy(new AdvancedMQLQuery.AliasedSelection(bce2, "alias1"), true);
     
     myTest.addConstraint("OR", "[alias1.bce2] > 10");
     // SQLQueryTest.printOutJava(myTest.getQuery().getQuery());
