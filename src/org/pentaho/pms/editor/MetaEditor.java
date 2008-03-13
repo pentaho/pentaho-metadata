@@ -338,6 +338,9 @@ public class MetaEditor implements SelectionListener {
     shell.layout();
     getMainListener().handleEvent(null); // Force everything to match the
     // current state
+    
+
+    shell.setMaximized(true);
 
     disp.addFilter(SWT.KeyDown, new Listener() {
       public void handleEvent(Event arg0) {
