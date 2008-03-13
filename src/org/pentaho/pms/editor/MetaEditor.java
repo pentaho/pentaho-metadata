@@ -628,6 +628,9 @@ public class MetaEditor implements SelectionListener {
   }
 
   public void exportToXMI() {
+	  exportToXMI(null);
+  }
+  public void exportToXMI(String forcedFilename) {
     boolean goAhead = true;
 
     if (Const.isEmpty(schemaMeta.getDomainName())) {
@@ -650,12 +653,15 @@ public class MetaEditor implements SelectionListener {
       }
     }
     if (goAhead) {
-      FileDialog dialog = new FileDialog(shell, SWT.SAVE);
-      dialog.setFilterExtensions(new String[] { "*.xmi", "*.xml", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      dialog
-          .setFilterNames(new String[] {
-              Messages.getString("MetaEditor.USER_XMI_FILES"), Messages.getString("MetaEditor.USER_XML_FILES"), Messages.getString("MetaEditor.USER_ALL_FILES") }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-      String filename = dialog.open();
+      String filename;
+      if (forcedFilename==null) {
+	      FileDialog dialog = new FileDialog(shell, SWT.SAVE);
+	      dialog.setFilterExtensions(new String[] { "*.xmi", "*.xml", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	      dialog.setFilterNames(new String[] { Messages.getString("MetaEditor.USER_XMI_FILES"), Messages.getString("MetaEditor.USER_XML_FILES"), Messages.getString("MetaEditor.USER_ALL_FILES") }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	      filename = dialog.open();
+      } else {
+    	  filename = forcedFilename;
+      }
       if (filename != null) {
         if (!filename.toLowerCase().endsWith(".xmi") && !filename.toLowerCase().endsWith(".xml")) //$NON-NLS-1$ //$NON-NLS-2$
         {
@@ -2958,6 +2964,15 @@ public class MetaEditor implements SelectionListener {
       props.addLastFile(LastUsedFile.FILE_TYPE_SCHEMA, domainName, Const.FILE_SEPARATOR, false, ""); //$NON-NLS-1$
       saveSettings();
       addMenuLast();
+      
+      // For safety, we're going to dump the domain also to a backup file as XMI
+      // The directory name is hard coded for the time being.
+      //
+      File backupDir = new File(Const.XMI_BACKUP_DIRECTORY); 
+      if (!backupDir.exists()) {
+    	  backupDir.mkdir();
+      }
+      exportToXMI(Const.XMI_BACKUP_DIRECTORY+Const.FILE_SEPARATOR+domainName); // $NON-NLS-1$
 
       schemaMeta.clearChanged();
       setShellText();
