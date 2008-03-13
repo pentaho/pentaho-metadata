@@ -2965,15 +2965,6 @@ public class MetaEditor implements SelectionListener {
       saveSettings();
       addMenuLast();
       
-      // For safety, we're going to dump the domain also to a backup file as XMI
-      // The directory name is hard coded for the time being.
-      //
-      File backupDir = new File(Const.XMI_BACKUP_DIRECTORY); 
-      if (!backupDir.exists()) {
-    	  backupDir.mkdir();
-      }
-      exportToXMI(Const.XMI_BACKUP_DIRECTORY+Const.FILE_SEPARATOR+domainName); // $NON-NLS-1$
-
       schemaMeta.clearChanged();
       setShellText();
       log.logDebug(APPLICATION_NAME, Messages.getString("MetaEditor.DEBUG_FILE_WRITTEN_TO_REPOSITORY", domainName)); //$NON-NLS-1$
