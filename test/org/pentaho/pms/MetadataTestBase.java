@@ -5,6 +5,11 @@ import junit.framework.TestCase;
 import org.pentaho.di.core.database.DatabaseMeta;
 
 public class MetadataTestBase extends TestCase {
+	
+	public void testOracleDatabaseMeta() {
+		assertEquals(createOracleDatabaseMeta().getDatabaseType(), DatabaseMeta.TYPE_DATABASE_ORACLE);
+	}
+	
 	public static DatabaseMeta createOracleDatabaseMeta() {
 		return new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
 	}

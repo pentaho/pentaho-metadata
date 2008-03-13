@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.pentaho.commons.connection.memory.MemoryMetaData;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.mql.ExtendedMetaData;
@@ -23,7 +21,7 @@ import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.RelationshipMeta;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 
-public class MQLQueryImplTest  extends TestCase {
+public class MQLQueryImplTest  extends MetadataTestBase {
   
   public void testGetShortestPathBetween() throws Exception {
     
@@ -231,7 +229,7 @@ public class MQLQueryImplTest  extends TestCase {
     DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
     String joinSQL = sqlGenerator.getJoin(model, rl1, databaseMeta, locale);
 
-    assertEquals(joinSQL, " bt1.pc1  =  bt2.pc2 ");//$NON-NLS-1$
+    assertEqualsIgnoreWhitespaces(joinSQL, " bt1.pc1  =  bt2.pc2 ");//$NON-NLS-1$
   } 
   
   public void testGroupBySQLGeneration() {
@@ -251,7 +249,7 @@ public class MQLQueryImplTest  extends TestCase {
       myTest.addConstraint(WhereCondition.operators[0], "[bt1.bc1] > 25"); //$NON-NLS-1$
 
       MappedQuery query = myTest.getQuery();
-      assertEquals(
+      assertEqualsIgnoreWhitespaces(
           "SELECT \n"                          //$NON-NLS-1$
           + "          SUM(bt1.pc1) AS COL0\n" //$NON-NLS-1$
           + "         ,bt2.pc2 AS COL1\n"      //$NON-NLS-1$
@@ -279,7 +277,7 @@ public class MQLQueryImplTest  extends TestCase {
       assertEquals(map.get("COL1"), "bc2");  //$NON-NLS-1$ //$NON-NLS-2$
       assertEquals(map.get("COL2"), "bce2"); //$NON-NLS-1$ //$NON-NLS-2$
       
-      assertEquals(
+      assertEqualsIgnoreWhitespaces(
           "SELECT \n"                        //$NON-NLS-1$
         + "          SUM(bt1.pc1) AS bc1\n"  //$NON-NLS-1$
         + "         ,bt2.pc2 AS bc2\n"       //$NON-NLS-1$
@@ -564,7 +562,7 @@ public class MQLQueryImplTest  extends TestCase {
     myTest.addSelection(new Selection(bc4));
 
     MappedQuery query = myTest.getQuery();
-    assertEquals( 
+    assertEqualsIgnoreWhitespaces( 
         "SELECT DISTINCT \n" //$NON-NLS-1$
         + "          bt1.pc1 AS COL0\n" //$NON-NLS-1$
         + "         ,bt4.pc4 AS COL1\n" //$NON-NLS-1$

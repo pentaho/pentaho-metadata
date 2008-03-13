@@ -443,6 +443,7 @@ public class DefaultSQLDialect implements SQLDialectInterface {
       for (SQLJoin join : query.getJoins()) {
         if (first) {
           first = false;
+          sql.append("          ( "); //$NON-NLS-1$
         } else {
         	// You always "AND" join conditions...
         	//
