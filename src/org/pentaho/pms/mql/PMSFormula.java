@@ -228,7 +228,7 @@ public class PMSFormula implements FormulaTraversalInterface {
     return databaseMeta;
   }
   
-  protected List<BusinessTable> getBusinessTables() {
+  public List<BusinessTable> getBusinessTables() {
     return tables;
   }
   

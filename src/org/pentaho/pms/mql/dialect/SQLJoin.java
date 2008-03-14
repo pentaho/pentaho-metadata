@@ -11,21 +11,27 @@ import org.pentaho.pms.util.Const;
      */
     public class SQLJoin implements Comparable<SQLJoin> {
     	private String leftTablename;
+    	private String leftTableAlias;
     	private String rightTablename;
+    	private String rightTableAlias;
     	private SQLWhereFormula sqlWhereFormula;
     	private JoinType joinType;
     	private String joinOrderKey;
     	
 		/**
 		 * @param leftTablename the name of the left join table
+		 * @param leftTableAlias the alias of the left join table
 		 * @param rightTablename the name of the right join table
+		 * @param rightTableAlias the alias of the right join table
 		 * @param sqlWhereFormula the SQL formula to do the join (the operator is ignored)
 		 * @param joinType the join type (inner, left outer, right outer, full outer)
 		 * @param joinOrderKey the join order key
 		 */
-		public SQLJoin(String leftTablename, String rightTablename, SQLWhereFormula sqlWhereFormula, JoinType joinType, String joinOrderKey) {
+		public SQLJoin(String leftTablename, String leftTableAlias, String rightTablename, String rightTableAlias, SQLWhereFormula sqlWhereFormula, JoinType joinType, String joinOrderKey) {
 			this.leftTablename = leftTablename;
+			this.leftTableAlias = leftTableAlias;
 			this.rightTablename = rightTablename;
+			this.rightTableAlias = rightTableAlias;
 			this.sqlWhereFormula = sqlWhereFormula;
 			this.joinType = joinType;
 			this.joinOrderKey = joinOrderKey;
@@ -153,5 +159,33 @@ import org.pentaho.pms.util.Const;
 			else {
 				return -getJoinOrderKey().compareTo(other.getJoinOrderKey());
 			}
+		}
+
+		/**
+		 * @return the leftTableAlias
+		 */
+		public String getLeftTableAlias() {
+			return leftTableAlias;
+		}
+
+		/**
+		 * @param leftTableAlias the leftTableAlias to set
+		 */
+		public void setLeftTableAlias(String leftTableAlias) {
+			this.leftTableAlias = leftTableAlias;
+		}
+
+		/**
+		 * @return the rightTableAlias
+		 */
+		public String getRightTableAlias() {
+			return rightTableAlias;
+		}
+
+		/**
+		 * @param rightTableAlias the rightTableAlias to set
+		 */
+		public void setRightTableAlias(String rightTableAlias) {
+			this.rightTableAlias = rightTableAlias;
 		}
     }

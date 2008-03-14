@@ -224,7 +224,9 @@ public class AdvancedSQLGenerator extends SQLGenerator {
       for (WhereCondition constraint : constraints) {
         // The ones with aggregates in it are for the HAVING clause
         if (!constraint.hasAggregate() && !constraint.getPMSFormula().hasAggregateFunction()) {
-          sqlquery.addWhereFormula(constraint.getPMSFormula().generateSQL(locale), first ? "AND" : constraint.getOperator()); //$NON-NLS-1$
+          String sql = constraint.getPMSFormula().generateSQL(locale);
+          String[] usedTables = constraint.getPMSFormula().getBusinessTableIDs();
+          sqlquery.addWhereFormula(sql, first ? "AND" : constraint.getOperator(), usedTables); //$NON-NLS-1$
           first = false;
         } else {
           sqlquery.addHavingFormula(constraint.getPMSFormula().generateSQL(locale), constraint.getOperator());

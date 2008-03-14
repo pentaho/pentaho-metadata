@@ -381,9 +381,9 @@ public class SQLQueryModel {
      * @param formula the join condition (formula)
      * @param joinOrderKey the join order key
      */
-    public void addJoin(String leftTablename, String rightTablename, JoinType joinType, String formula, String joinOrderKey) {
+    public void addJoin(String leftTablename, String leftTableAlias, String rightTablename, String rightTableAlias, JoinType joinType, String formula, String joinOrderKey) {
       SQLWhereFormula sqlWhereFormula = new SQLWhereFormula(formula, null);
-      SQLJoin join = new SQLJoin(leftTablename, rightTablename, sqlWhereFormula, joinType, joinOrderKey);
+      SQLJoin join = new SQLJoin(leftTablename, leftTableAlias, rightTablename, rightTableAlias, sqlWhereFormula, joinType, joinOrderKey);
       joins.add(join);
     }
     

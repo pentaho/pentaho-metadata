@@ -133,7 +133,12 @@ public class SQLGenerator {
         default: joinType = JoinType.INNER_JOIN; break;
         }
         
-        query.addJoin(relation.getTableFrom().getId(), relation.getTableTo().getId(), joinType, joinFormula, joinOrderKey);
+        String leftTableName = databaseMeta.getQuotedSchemaTableCombination(relation.getTableFrom().getTargetSchema(), relation.getTableFrom().getTargetTable());
+        String leftTableAlias = relation.getTableFrom().getId();
+        String rightTableName = databaseMeta.getQuotedSchemaTableCombination(relation.getTableTo().getTargetSchema(), relation.getTableTo().getTargetTable());
+        String rightTableAlias = relation.getTableTo().getId();
+        
+        query.addJoin(leftTableName, leftTableAlias, rightTableName, rightTableAlias, joinType, joinFormula, joinOrderKey);
         // query.addWhereFormula(joinFormula, "AND"); //$NON-NLS-1$
       }
     }

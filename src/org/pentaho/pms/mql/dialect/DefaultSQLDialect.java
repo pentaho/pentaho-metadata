@@ -562,9 +562,17 @@ public class DefaultSQLDialect implements SQLDialectInterface {
    * 
    * @param query query model
    * @param sql string buffer
+ * @return 
    */
-  protected void generateOuterJoin(SQLQueryModel query, StringBuilder sql) {
-	  if (query.getJoins().size()==0) return;
+  protected List<SQLWhereFormula> generateOuterJoin(SQLQueryModel query, StringBuilder sql) {
+	  
+	  // Keep track of the SQL where formula we used in the joins
+	  //
+	  List<SQLWhereFormula> usedSQLWhereFormula = new ArrayList<SQLWhereFormula>();
+	  
+	  // If there are no joins, we just stop right here: return empty list.
+	  //
+	  if (query.getJoins().size()==0) return usedSQLWhereFormula;
 	  
 	  // Before this location we had the "SELECT x,y,z" part of the query in sql.
 	  // Now we're going to add the join syntax
@@ -582,23 +590,29 @@ public class DefaultSQLDialect implements SQLDialectInterface {
 	  List<SQLJoin> sortedJoins = new ArrayList<SQLJoin>(query.getJoins());
 	  Collections.sort(sortedJoins);
 	  
+	  
 	  // OK, so we need to create a recursive call to add the nested Join statements...
 	  //
-	  String joinClause = getJoinClause(sortedJoins, 0, new ArrayList<String>());
+	  String joinClause = getJoinClause(query, sortedJoins, 0, new ArrayList<String>(), usedSQLWhereFormula);
 	  
 	  sql.append(Const.CR).append("FROM ").append(joinClause).append(Const.CR);
+	  
+	  return usedSQLWhereFormula;
   }
   
   /**
    * Create join clause from back to front in the sorted joins list...
+ * @param usedSQLWhereFormula 
    * @return the nested join clause
    */
-  private String getJoinClause(List<SQLJoin> sortedJoins, int index, List<String> usedTables) {
+  private String getJoinClause(SQLQueryModel query, List<SQLJoin> sortedJoins, int index, List<String> usedTables, List<SQLWhereFormula> usedSQLWhereFormula) {
 	StringBuilder clause = new StringBuilder();
 	String indent = Const.rightPad(" ", (index+1)+3);
 	SQLJoin join = sortedJoins.get(index);
 	String leftTablename = join.getLeftTablename();
+	String leftTableAlias = join.getLeftTableAlias();
 	String rightTablename = join.getRightTablename();
+	String rightTableAlias = join.getRightTableAlias();
 	JoinType joinType = join.getJoinType();
 	
 	// We want to calculate this clause depth-first.  That means we first add
@@ -608,7 +622,7 @@ public class DefaultSQLDialect implements SQLDialectInterface {
 	String rightClause;
 	
 	if (index<sortedJoins.size()-1) {
-		rightClause = getJoinClause(sortedJoins, index+1, usedTables);
+		rightClause = getJoinClause(query, sortedJoins, index+1, usedTables, usedSQLWhereFormula);
 	} else {
 		rightClause = rightTablename;
 	}
@@ -618,7 +632,9 @@ public class DefaultSQLDialect implements SQLDialectInterface {
 	//
 	if (usedTables.contains(leftTablename)) {
 		leftTablename=join.getRightTablename();
+		leftTableAlias=join.getRightTableAlias();
 		rightTablename=join.getLeftTablename();
+		rightTableAlias=join.getLeftTableAlias();
 		if (join.getJoinType().equals(JoinType.LEFT_OUTER_JOIN)) joinType=JoinType.RIGHT_OUTER_JOIN;
 		else if (join.getJoinType().equals(JoinType.RIGHT_OUTER_JOIN)) joinType=JoinType.LEFT_OUTER_JOIN;
 	}
@@ -627,6 +643,7 @@ public class DefaultSQLDialect implements SQLDialectInterface {
 	//
 	clause.append(leftTablename);
 	usedTables.add(leftTablename);
+	if (!Const.isEmpty(leftTableAlias)) clause.append(" ").append(leftTableAlias);
 	
 	// Now add the JOIN syntax
 	//
@@ -646,12 +663,34 @@ public class DefaultSQLDialect implements SQLDialectInterface {
 	} else {
 		clause.append(rightTablename);
 		usedTables.add(rightTablename);
+		if (!Const.isEmpty(rightTableAlias)) clause.append(" ").append(rightTableAlias);
 	}
 		  
 	// finally add the ON () part
 	//
 	SQLWhereFormula joinFormula = join.getSqlWhereFormula();
-	clause.append(Const.CR).append(indent).append(" ON ( ").append(joinFormula.getFormula()).append(" )").append(Const.CR);
+	clause.append(Const.CR).append(indent).append(" ON ( ");
+	clause.append(joinFormula.getFormula());
+	
+	// Now see if there are any SQL where conditions that apply to either two tables...
+	//
+	/*
+	for (SQLWhereFormula sqlWhereFormula : query.getWhereFormulas()) {
+		boolean allInvolvedAvailableHere = true;
+		for (String involvedTable : sqlWhereFormula.involvedTables) {
+			if (!involvedTable.equalsIgnoreCase(leftTablename) && !involvedTable.equalsIgnoreCase(rightTablename)) {
+				allInvolvedAvailableHere=false;
+			}
+		}
+		// If all the involved tables are (usually 1) is part of this join, we specify the condition here...
+		if (allInvolvedAvailableHere) {
+			clause.append(" AND ( ").append(sqlWhereFormula.getFormula()).append(" ) ");
+			// Remember that we did use it...
+			usedSQLWhereFormula.add(sqlWhereFormula);
+		}
+	}
+	*/
+	clause.append(" )").append(Const.CR);
 	
 	return clause.toString();
   }
@@ -665,10 +704,10 @@ public class DefaultSQLDialect implements SQLDialectInterface {
     StringBuilder sql = new StringBuilder();
     generateSelect(query, sql);
     
+    List<SQLWhereFormula> usedSQLWhereFormula = null;
+    
     if (query.containsOuterJoins()) {
-    	// If the query contains out joins, we use a different syntax
-    	//
-    	generateOuterJoin(query, sql);
+    	usedSQLWhereFormula = generateOuterJoin(query, sql);
     } else {
     	// This is the "classic" join syntax
 	    generateFrom(query, sql);
