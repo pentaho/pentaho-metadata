@@ -67,7 +67,7 @@ public class PMSFormula implements FormulaTraversalInterface {
    * the fields in the formula without a explicit table mentioned 
    * will be mapped to this table.
    */
-  private BusinessTable table = null;
+  private List<BusinessTable> tables;
   
   /** the model in which the formula will resolve business tables and columns */
   private BusinessModel model = null;
@@ -109,6 +109,7 @@ public class PMSFormula implements FormulaTraversalInterface {
     this.model = model;
     this.formulaString = formulaString;
     this.databaseMeta = databaseMeta;
+    this.tables = new ArrayList<BusinessTable>();
     
     if (model == null) {
       throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0001_NO_BUSINESS_MODEL_PROVIDED")); //$NON-NLS-1$
@@ -141,7 +142,8 @@ public class PMSFormula implements FormulaTraversalInterface {
     this.model = model;
     this.formulaString = formulaString;
     this.databaseMeta = databaseMeta;
-    this.table = table;
+    this.tables = new ArrayList<BusinessTable>();
+    this.tables.add(table);
     
     if (model == null) {
       throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0001_NO_BUSINESS_MODEL_PROVIDED")); //$NON-NLS-1$
@@ -178,6 +180,7 @@ public class PMSFormula implements FormulaTraversalInterface {
     
     this.model = model;
     this.formulaString = formulaString;
+    this.tables = new ArrayList<BusinessTable>();
     
     if (model == null) {
       throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0001_NO_BUSINESS_MODEL_PROVIDED")); //$NON-NLS-1$
@@ -214,7 +217,7 @@ public class PMSFormula implements FormulaTraversalInterface {
     
     this(model, formulaString);
     
-    this.table = table;
+    this.tables.add(table);
     
     if (table == null) {
       throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0004_NO_BUSINESS_TABLE_PROVIDED")); //$NON-NLS-1$
@@ -225,8 +228,8 @@ public class PMSFormula implements FormulaTraversalInterface {
     return databaseMeta;
   }
   
-  protected BusinessTable getBusinessTable() {
-    return table;
+  protected List<BusinessTable> getBusinessTables() {
+    return tables;
   }
   
   protected BusinessModel getBusinessModel() {
@@ -293,29 +296,29 @@ public class PMSFormula implements FormulaTraversalInterface {
         
         // expecting <PHYSICAL COLUMN>
         
-        if (table == null) {
+        if (tables == null) {
           throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0009_FIELDNAME_ERROR_NO_BUSINESS_TABLE", fieldName)); //$NON-NLS-1$
         }
         
         // note, this column name is the "physical column name" vs. the "business column name"
         // look through all the business columns and verify the column name matches an existing
         // business column.
-        for (int i=0;i<table.nrBusinessColumns();i++) {
-            BusinessColumn businessColumn = table.getBusinessColumn(i);
-            
-            // this matches how business column renders it's sql, i'm not a big fan though.
-            // instead i would prefer this:
-            //   if (businessColumn.getPhysicalColumn().getId().equals(fieldName)) {
-            //     break;  
-            //   }
-            
-            if (!businessColumn.isExact() && fieldName.equals(businessColumn.getFormula())) {
-              // we've found it, but we don't do anything due to aggregation issues later
-              return;
-            }
+        for (BusinessTable businessTable : tables) {
+	        for (BusinessColumn businessColumn : businessTable.getBusinessColumns()) {
+	            // this matches how business column renders it's sql, i'm not a big fan though.
+	            // instead i would prefer this:
+	            //   if (businessColumn.getPhysicalColumn().getId().equals(fieldName)) {
+	            //     break;  
+	            //   }
+	            
+	            if (!businessColumn.isExact() && fieldName.equals(businessColumn.getFormula())) {
+	              // we've found it, but we don't do anything due to aggregation issues later
+	              return;
+	            }
+	        }
         }
         
-        throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0010_FIELDNAME_ERROR_COLUMN_NOT_FOUND", fieldName, fieldName ,table.getId()));//$NON-NLS-1$
+        throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0010_FIELDNAME_ERROR_COLUMN_NOT_FOUND", fieldName, fieldName, getBusinessTableIDs().toString()));//$NON-NLS-1$
         
       } else {
       
@@ -325,33 +328,55 @@ public class PMSFormula implements FormulaTraversalInterface {
           throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0011_INVALID_FIELDNAME",fieldName)); //$NON-NLS-1$
         }
         
-        // first lookup the category, and if not present, look up the business table that the column belongs to.
+        // first lookup the business table that the column belongs to.
         // finally check to see if the column exists in its parent, if no column is found, throw an exception.
-
-        BusinessCategory category = model.getRootCategory().findBusinessCategory(tblcol[0]);
         BusinessColumn column = null;
+        BusinessTable businessTable = null;
+        for (BusinessTable table : tables) {
+	        if (table.getId().equalsIgnoreCase(tblcol[0])) {
+	        	// This is the table involved...
+	        	businessTable = table;
+	        	break;
+	        }
+        }
 
-        if (category != null) {
-
-          // note, this lookup assumes that business categories are one level, not hierarchial
-          column = category.findBusinessColumn(tblcol[1]);
+        if (businessTable!= null) {
+          // Find the column in that table...
+          column = businessTable.findBusinessColumn(tblcol[1]);
           if (column == null) {
             throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0019_FIELDNAME_ERROR_CAT_COLUMN_NOT_FOUND", fieldName, tblcol[0], tblcol[1])); //$NON-NLS-1$
           }
 
         } else {
           
-          // trying for backward compatibility of business tables, which was the old way of doing things
-          
+          // Look up the business table by ID
+          // 
           BusinessTable bizTable = model.findBusinessTable(tblcol[0]);
-
           if (bizTable == null) {
-            throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0012_FIELDNAME_ERROR_PARENT_NOT_FOUND", fieldName, tblcol[0])); //$NON-NLS-1$
+        	  
+        	// OK, now we try to look for the business category if someone was actually stupid enough to do that...
+        	//
+        	BusinessCategory businessCategory = model.getRootCategory().findBusinessCategory(tblcol[0]);
+        	if (businessCategory==null) {
+        		throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0012_FIELDNAME_ERROR_PARENT_NOT_FOUND", fieldName, tblcol[0])); //$NON-NLS-1$
+        	}
+        	
+        	// What do you know, it worked.
+        	// Now look up the column.
+        	column = businessCategory.findBusinessColumn(tblcol[1]);
+        	if (column==null) {
+	            throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0010_FIELDNAME_ERROR_COLUMN_NOT_FOUND", fieldName, tblcol[1], tblcol[0])); //$NON-NLS-1$
+        	}
           }
-
-          column = bizTable.findBusinessColumn(tblcol[1]);
-          if (column == null) {
-            throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0010_FIELDNAME_ERROR_COLUMN_NOT_FOUND", fieldName, tblcol[1], tblcol[0])); //$NON-NLS-1$
+          else {
+	          column = bizTable.findBusinessColumn(tblcol[1]);
+	          if (column == null) {
+	            throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0010_FIELDNAME_ERROR_COLUMN_NOT_FOUND", fieldName, tblcol[1], tblcol[0])); //$NON-NLS-1$
+	          }
+	          // This means that the business table is not in the list of used tables...
+	          // Add it here...
+	          // 
+	          tables.add(bizTable);
           }
         }
 
@@ -409,7 +434,7 @@ public class PMSFormula implements FormulaTraversalInterface {
         SQLFunctionGeneratorInterface gen = sqlDialect.getFunctionSQLGenerator(f.getFunctionName());
         gen.validateFunction(f);
         // note, if aggregator function, we should make sure it is part of the table formula vs. conditional formula
-        if (!allowAggregateFunctions && table == null && sqlDialect.isAggregateFunction(f.getFunctionName())) {
+        if (!allowAggregateFunctions && tables == null && sqlDialect.isAggregateFunction(f.getFunctionName())) {
           throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0013_AGGREGATE_USAGE_ERROR", f.getFunctionName(), formulaString)); //$NON-NLS-1$
         }
 
@@ -539,16 +564,19 @@ public class PMSFormula implements FormulaTraversalInterface {
       String tableColumn = ""; //$NON-NLS-1$
       sb.append(" "); //$NON-NLS-1$
       
-      // Todo: WPG: is this correct?  shouldn't we be getting an alias for the table vs. it's display name?
-      sb.append(databaseMeta.quoteField(table.getDisplayName(locale)));
-      sb.append("."); //$NON-NLS-1$
+      BusinessTable businessTable = findBusinessTableForContextName(contextName, locale);
+      if (businessTable!=null) {
+	      sb.append(databaseMeta.quoteField(businessTable.getId()));
+	      sb.append("."); //$NON-NLS-1$
+      }
       sb.append(databaseMeta.quoteField(contextName));
       sb.append(" "); //$NON-NLS-1$
       
     } else {
       // render the column sql
       sb.append(" "); //$NON-NLS-1$
-      sb.append(SQLGenerator.getBusinessColumnSQL(model, column, databaseMeta, locale));
+      SQLAndTables sqlAndTables = SQLGenerator.getBusinessColumnSQL(model, column, databaseMeta, locale);
+      sb.append(sqlAndTables.getSql());
       sb.append(" "); //$NON-NLS-1$
     }
   }
@@ -578,6 +606,19 @@ public class PMSFormula implements FormulaTraversalInterface {
     return businessColumnList;
   }
   
+
+  /**
+   * @return the IDs of the used business tables
+   */
+  public String[] getBusinessTableIDs() {
+	  String[] names = new String[tables.size()];
+	  for (int i=0;i<tables.size();i++) {
+		  names[i] = tables.get(i).getId();
+	  }
+	  return names;
+  }
+
+  
   /**
    * returns true if pms formula contains agg functions.
    * run parseAndValidate() before running this method
@@ -597,4 +638,39 @@ public class PMSFormula implements FormulaTraversalInterface {
   public void setAllowAggregateFunctions(boolean allowAggregateFunctions) {
     this.allowAggregateFunctions = allowAggregateFunctions;
   }
+  
+  /**
+   * Find the business table associated with the context name.<br>
+   * We look for it in the tables list by looking at the column IDs, the column display names, and by looking at the physical column formula<br>
+   * @param contextName the context name
+   * @param locale the locale to look in
+   * @return the business table or null if nothing was found.
+   */
+  protected BusinessTable findBusinessTableForContextName(String contextName, String locale) {
+      BusinessTable businessTable = null;
+      for (BusinessTable table : getBusinessTables()) {
+    	  // Search by column ID
+    	  //
+    	  BusinessColumn c = table.findBusinessColumn(contextName);
+    	  // Search by column name
+    	  //
+    	  if (c==null) {
+    		  c = table.findBusinessColumn(locale, contextName);
+    	  }
+    	  // Search by physical column name / formula...
+    	  //
+    	  for (BusinessColumn col : table.getBusinessColumns()) {
+    		  if (col.getFormula()!=null && col.getFormula().equals(contextName)) {
+    			  c=col;
+    			  break;
+    		  }
+    	  }
+    	  
+    	  // If we found a valid column, we found the business table...
+    	  //
+    	  if (c!=null) businessTable = c.getBusinessTable();
+      }
+      return businessTable;
+  }
+
 }

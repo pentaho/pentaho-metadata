@@ -43,6 +43,7 @@ import org.pentaho.di.ui.core.widget.LabelText;
 import org.pentaho.di.ui.core.widget.TableView;
 import org.pentaho.di.ui.core.widget.TreeMemory;
 import org.pentaho.pms.messages.Messages;
+import org.pentaho.pms.mql.SQLAndTables;
 import org.pentaho.pms.mql.SQLGenerator;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
@@ -389,7 +390,8 @@ public class MetaEditorOlap extends Composite implements DialogGetDataInterface
         props.setLook(key);
         BusinessColumn primaryKey = hierarchy.getPrimaryKey();
         DatabaseMeta databaseMeta = hierarchy.getPrimaryKey().getPhysicalColumn().getTable().getDatabaseMeta();
-        String columnSQL = SQLGenerator.getBusinessColumnSQL(metaEditor.getSchemaMeta().getActiveModel(), primaryKey, databaseMeta, locale);
+        SQLAndTables sqlAndTables = SQLGenerator.getBusinessColumnSQL(metaEditor.getSchemaMeta().getActiveModel(), primaryKey, databaseMeta, locale);
+        String columnSQL = sqlAndTables.getSql();
         key.setText(primaryKey.getDisplayName(locale)+" : "+Const.NVL(columnSQL,"?") ); //$NON-NLS-1$
         key.setToolTipText(Messages.getString("MetaEditorOlap.USER_SELECTED_PRIMARY_KEY_COLUMN")); //$NON-NLS-1$
         key.setEditable(false);

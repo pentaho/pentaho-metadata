@@ -149,43 +149,43 @@ public class MQLQueryTest extends TestCase {
     BusinessTable table = ordersModel.findBusinessTable("BT_ORDER_DETAILS"); //$NON-NLS-1$
     handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
         "SUM([QUANTITYORDERED]*[PRICEEACH])", //$NON-NLS-1$
-        "SUM( \"Order Details\".QUANTITYORDERED  *  \"Order Details\".PRICEEACH )"); //$NON-NLS-1$
+        "SUM( BT_ORDER_DETAILS.QUANTITYORDERED  *  BT_ORDER_DETAILS.PRICEEACH )"); //$NON-NLS-1$
 
     handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
         "SUM([QUANTITYORDERED])", //$NON-NLS-1$
-        "SUM( \"Order Details\".QUANTITYORDERED )"); //$NON-NLS-1$
+        "SUM( BT_ORDER_DETAILS.QUANTITYORDERED )"); //$NON-NLS-1$
 
     handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
         "COUNT([QUANTITYORDERED]*[PRICEEACH])", //$NON-NLS-1$
-        "COUNT( \"Order Details\".QUANTITYORDERED  *  \"Order Details\".PRICEEACH )"); //$NON-NLS-1$
+        "COUNT( BT_ORDER_DETAILS.QUANTITYORDERED  *  BT_ORDER_DETAILS.PRICEEACH )"); //$NON-NLS-1$
 
     handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
         "COUNT([PRICEEACH])", //$NON-NLS-1$
-        "COUNT( \"Order Details\".PRICEEACH )"); //$NON-NLS-1$
+        "COUNT( BT_ORDER_DETAILS.PRICEEACH )"); //$NON-NLS-1$
     
     handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
         "AVG([QUANTITYORDERED]*[PRICEEACH])", //$NON-NLS-1$
-        "AVG( \"Order Details\".QUANTITYORDERED  *  \"Order Details\".PRICEEACH )"); //$NON-NLS-1$
+        "AVG( BT_ORDER_DETAILS.QUANTITYORDERED  *  BT_ORDER_DETAILS.PRICEEACH )"); //$NON-NLS-1$
 
     handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
         "AVG([QUANTITYORDERED])", //$NON-NLS-1$
-        "AVG( \"Order Details\".QUANTITYORDERED )"); //$NON-NLS-1$
+        "AVG( BT_ORDER_DETAILS.QUANTITYORDERED )"); //$NON-NLS-1$
     
     handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
         "MIN([QUANTITYORDERED]*[PRICEEACH])", //$NON-NLS-1$
-        "MIN( \"Order Details\".QUANTITYORDERED  *  \"Order Details\".PRICEEACH )"); //$NON-NLS-1$
+        "MIN( BT_ORDER_DETAILS.QUANTITYORDERED  *  BT_ORDER_DETAILS.PRICEEACH )"); //$NON-NLS-1$
     
     handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
         "MIN([PRICEEACH])", //$NON-NLS-1$
-        "MIN( \"Order Details\".PRICEEACH )"); //$NON-NLS-1$
+        "MIN( BT_ORDER_DETAILS.PRICEEACH )"); //$NON-NLS-1$
     
     handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
         "MAX([QUANTITYORDERED]*[PRICEEACH])", //$NON-NLS-1$
-        "MAX( \"Order Details\".QUANTITYORDERED  *  \"Order Details\".PRICEEACH )"); //$NON-NLS-1$
+        "MAX( BT_ORDER_DETAILS.QUANTITYORDERED  *  BT_ORDER_DETAILS.PRICEEACH )"); //$NON-NLS-1$
 
     handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
         "MAX([QUANTITYORDERED])", //$NON-NLS-1$
-        "MAX( \"Order Details\".QUANTITYORDERED )"); //$NON-NLS-1$
+        "MAX( BT_ORDER_DETAILS.QUANTITYORDERED )"); //$NON-NLS-1$
 
   }
   
@@ -329,8 +329,8 @@ public class MQLQueryTest extends TestCase {
       "[BT_CUSTOMERS.BC_CUSTOMERS_CUSTOMERNAME] = \"EuroCars\")", //$NON-NLS-1$
       
       // expected hypersonic sql
-      "( (((4 * (2 + 3)) - (( Customers.COUNTRY  * 2) / 3)) <> 1000) AND " + //$NON-NLS-1$
-      "( Customers.CUSTOMERNAME  = 'EuroCars') )" //$NON-NLS-1$
+      "( (((4 * (2 + 3)) - (( BT_CUSTOMERS.COUNTRY  * 2) / 3)) <> 1000) AND " + //$NON-NLS-1$
+      "( BT_CUSTOMERS.CUSTOMERNAME  = 'EuroCars') )" //$NON-NLS-1$
     );
   }
   
@@ -354,8 +354,8 @@ public class MQLQueryTest extends TestCase {
       "IN([BT_CUSTOMERS.BC_CUSTOMERS_CUSTOMERNAME];\"EuroCars1\";\"EuroCars2\";\"EuroCars3\"))", //$NON-NLS-1$
       
       // expected hypersonic sql
-      "( (((4 * (2 + 3)) - (( Customers.COUNTRY  * 2) / 3)) <> 1000) AND " + //$NON-NLS-1$
-      " Customers.CUSTOMERNAME  IN ( 'EuroCars1' , 'EuroCars2' , 'EuroCars3' )  )" //$NON-NLS-1$
+      "( (((4 * (2 + 3)) - (( BT_CUSTOMERS.COUNTRY  * 2) / 3)) <> 1000) AND " + //$NON-NLS-1$
+      " BT_CUSTOMERS.CUSTOMERNAME  IN ( 'EuroCars1' , 'EuroCars2' , 'EuroCars3' )  )" //$NON-NLS-1$
     );
   }
   
@@ -365,25 +365,25 @@ public class MQLQueryTest extends TestCase {
       "LIKE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"%US%\")", //$NON-NLS-1$
 
       // expected hypersonic sql
-      "(  Customers.COUNTRY  LIKE '%US%' )" //$NON-NLS-1$
+      "(  BT_CUSTOMERS.COUNTRY  LIKE '%US%' )" //$NON-NLS-1$
     );
   }
   
   public void testLike() {
     handleFormula(ordersModel, "Hypersonic", //$NON-NLS-1$ 
         "LIKE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"%\")" //$NON-NLS-1$
-        ,"Customers.COUNTRY  LIKE '%'" //$NON-NLS-1$
+        ,"BT_CUSTOMERS.COUNTRY  LIKE '%'" //$NON-NLS-1$
       );
   }
 
   public void testCase() {
     handleFormula(ordersModel, "Hypersonic", //$NON-NLS-1$ 
         "CASE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]=\"US\"; \"USA\";[BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]=\"JAPAN\"; \"Japan\")" //$NON-NLS-1$
-        ,"CASE  WHEN  Customers.COUNTRY  = 'US' THEN 'USA' WHEN  Customers.COUNTRY  = 'JAPAN' THEN 'Japan' END" //$NON-NLS-1$
+        ,"CASE  WHEN  BT_CUSTOMERS.COUNTRY  = 'US' THEN 'USA' WHEN  BT_CUSTOMERS.COUNTRY  = 'JAPAN' THEN 'Japan' END" //$NON-NLS-1$
       );
     handleFormula(ordersModel, "Hypersonic", //$NON-NLS-1$ 
         "CASE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]=\"US\"; \"USA\";[BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]=\"JAPAN\"; \"Japan\"; \"Canada\")" //$NON-NLS-1$
-        ,"CASE  WHEN  Customers.COUNTRY  = 'US' THEN 'USA' WHEN  Customers.COUNTRY  = 'JAPAN' THEN 'Japan' ELSE 'Canada' END" //$NON-NLS-1$
+        ,"CASE  WHEN  BT_CUSTOMERS.COUNTRY  = 'US' THEN 'USA' WHEN  BT_CUSTOMERS.COUNTRY  = 'JAPAN' THEN 'Japan' ELSE 'Canada' END" //$NON-NLS-1$
       );
     handleFormulaFailure(ordersModel, "Hypersonic", //$NON-NLS-1$ 
         "CASE()" //$NON-NLS-1$
@@ -398,11 +398,11 @@ public class MQLQueryTest extends TestCase {
   public void testCoalesce() {
     handleFormula(ordersModel, "Hypersonic", //$NON-NLS-1$ 
         "COALESCE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]; \"USA\")" //$NON-NLS-1$
-        ,"COALESCE( Customers.COUNTRY  , 'USA')" //$NON-NLS-1$
+        ,"COALESCE( BT_CUSTOMERS.COUNTRY  , 'USA')" //$NON-NLS-1$
       );
     handleFormula(ordersModel, "Hypersonic", //$NON-NLS-1$ 
         "COALESCE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY])" //$NON-NLS-1$
-        ,"COALESCE( Customers.COUNTRY )" //$NON-NLS-1$
+        ,"COALESCE( BT_CUSTOMERS.COUNTRY )" //$NON-NLS-1$
       );
     handleFormulaFailure(ordersModel, "Hypersonic", //$NON-NLS-1$ 
         "COALESCE()" //$NON-NLS-1$
@@ -414,7 +414,7 @@ public class MQLQueryTest extends TestCase {
   public void testNoFunction() {
     handleFormula(ordersModel, "Hypersonic", //$NON-NLS-1$ 
         "[BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]" //$NON-NLS-1$
-        ,"Customers.COUNTRY" //$NON-NLS-1$
+        ,"BT_CUSTOMERS.COUNTRY" //$NON-NLS-1$
       );
   }
   

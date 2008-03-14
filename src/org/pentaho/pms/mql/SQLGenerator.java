@@ -86,7 +86,8 @@ public class SQLGenerator {
       }else{
         alias = databaseMeta.quoteField(selections.get(i).getBusinessColumn().getId());
       }
-      query.addSelection(getBusinessColumnSQL(model, selections.get(i).getBusinessColumn(), databaseMeta, locale), alias);
+      SQLAndTables sqlAndTables = getBusinessColumnSQL(model, selections.get(i).getBusinessColumn(), databaseMeta, locale);
+      query.addSelection(sqlAndTables.getSql(), alias);
     }
   }
   
@@ -115,7 +116,7 @@ public class SQLGenerator {
       }
       String tableName = databaseMeta.quoteField(businessTable.getTargetTable());
       query.addTable(databaseMeta.getSchemaTableCombination(schemaName, tableName),
-          databaseMeta.quoteField(businessTable.getDisplayName(locale)));
+          databaseMeta.quoteField(businessTable.getId()));
     }
     
     // JOIN CONDITIONS
@@ -132,7 +133,7 @@ public class SQLGenerator {
         default: joinType = JoinType.INNER_JOIN; break;
         }
         
-        query.addJoin(relation.getTableFrom().getDisplayName(locale), relation.getTableTo().getDisplayName(locale), joinType, joinFormula, joinOrderKey);
+        query.addJoin(relation.getTableFrom().getId(), relation.getTableTo().getId(), joinType, joinFormula, joinOrderKey);
         // query.addWhereFormula(joinFormula, "AND"); //$NON-NLS-1$
       }
     }
@@ -143,7 +144,8 @@ public class SQLGenerator {
       for (WhereCondition condition : conditions) {
         // The ones with aggregates in it are for the HAVING clause
         if (!condition.hasAggregate()) {
-          query.addWhereFormula(condition.getPMSFormula().generateSQL(locale), first ? "AND" : condition.getOperator()); //$NON-NLS-1$
+          String[] usedTables = condition.getPMSFormula().getBusinessTableIDs();
+          query.addWhereFormula(condition.getPMSFormula().generateSQL(locale), first ? "AND" : condition.getOperator(), usedTables); //$NON-NLS-1$
           first = false;
         } else {
           query.addHavingFormula(condition.getPMSFormula().generateSQL(locale), condition.getOperator());
@@ -166,7 +168,8 @@ public class SQLGenerator {
     for (Selection selection : selections) {
       BusinessColumn businessColumn = selection.getBusinessColumn();
       if (!businessColumn.hasAggregate()) {
-        query.addGroupBy(getBusinessColumnSQL(model, businessColumn, databaseMeta, locale), null);
+    	SQLAndTables sqlAndTables = getBusinessColumnSQL(model, businessColumn, databaseMeta, locale);
+        query.addGroupBy(sqlAndTables.getSql(), null);
       }
     }
   }
@@ -180,11 +183,30 @@ public class SQLGenerator {
    * @param databaseMeta database info
    * @param locale locale string
    */
-  public void generateOrderBy(SQLQueryModel query, BusinessModel model, List<OrderBy> orderBy, DatabaseMeta databaseMeta, String locale) {
+  public void generateOrderBy(SQLQueryModel query, BusinessModel model, List<OrderBy> orderBy, DatabaseMeta databaseMeta, String locale, Map<String,String> columnsMap) {
     if (orderBy != null) {
       for (OrderBy orderItem : orderBy) {
         BusinessColumn businessColumn = orderItem.getSelection().getBusinessColumn();
-        query.addOrderBy(getBusinessColumnSQL(model, businessColumn, databaseMeta, locale), null, !orderItem.isAscending() ? OrderType.DESCENDING : null); //$NON-NLS-1$
+        String alias=null;
+        if (columnsMap!=null) {
+	        // The column map is a unique mapping of Column alias to the column ID
+	        // Here we have the column ID and we need the alias.
+	        // We need to do the order by on the alias, not the column name itself.
+        	// For most databases, it can be both, but the alias is more standard.
+        	//
+        	// Using the column name and not the alias caused an issue on Apache Derby.
+	        //
+	        for (String key : columnsMap.keySet()) {
+	        	String value = columnsMap.get(key);
+	        	if (value.equals(businessColumn.getId())) {
+	        		// Found it: the alias is the key
+	        		alias = key;
+	        		break;
+	        	}
+	        }
+        }
+        SQLAndTables sqlAndTables = getBusinessColumnSQL(model, businessColumn, databaseMeta, locale);
+        query.addOrderBy(sqlAndTables.getSql(), alias, !orderItem.isAscending() ? OrderType.DESCENDING : null); //$NON-NLS-1$
       }
     }
   }
@@ -207,7 +229,7 @@ public class SQLGenerator {
     Map<String,String> columnsMap = new HashMap<String,String>();
     
     // These are the tables involved in the field selection:
-    List<BusinessTable> tabs = getTablesInvolved(selections, conditions);
+    List<BusinessTable> tabs = getTablesInvolved(model, selections, conditions, databaseMeta, locale);
 
     // Now get the shortest path between these tables.
     Path path = getShortestPathBetween(model, tabs);
@@ -233,7 +255,7 @@ public class SQLGenerator {
       if (group) {
         generateGroupBy(query, model, selections, databaseMeta, locale);
       }
-      generateOrderBy(query, model, orderBy, databaseMeta, locale);
+      generateOrderBy(query, model, orderBy, databaseMeta, locale, columnsMap);
     }
 
     SQLDialectInterface dialect = SQLDialectFactory.getSQLDialect(databaseMeta);
@@ -241,12 +263,20 @@ public class SQLGenerator {
     return new MappedQuery(dialect.generateSelectStatement(query), columnsMap, selections);
   }
 
-  protected List<BusinessTable> getTablesInvolved(List<Selection> selections, List<WhereCondition> conditions) {
+  protected List<BusinessTable> getTablesInvolved(BusinessModel model, List<Selection> selections, List<WhereCondition> conditions, DatabaseMeta databaseMeta, String locale) {
     Set<BusinessTable> treeSet = new TreeSet<BusinessTable>();
 
     for (Selection selection : selections) {
-      BusinessTable businessTable = selection.getBusinessColumn().getBusinessTable();
-      treeSet.add(businessTable); //$NON-NLS-1$
+      // We need to figure out which tables are involved in the formula.
+      // This could simply be the parent table, but it could also be another one too.
+      // 
+      // If we want to know all the tables involved in the query, we need to parse all the formula first
+      // TODO: We re-use the static method below, maybe there is a better way to clean this up a bit.
+      //
+      SQLAndTables sqlAndTables = getBusinessColumnSQL(model, selection.getBusinessColumn(), databaseMeta, locale);
+      for (BusinessTable businessTable : sqlAndTables.getUsedTables()) {
+    	  treeSet.add(businessTable); //$NON-NLS-1$
+      }
     }
     for(WhereCondition condition : conditions) {
       List cols = condition.getBusinessColumns();
@@ -419,7 +449,7 @@ public class SQLGenerator {
     return retval;
   }
 
-  public static String getBusinessColumnSQL(BusinessModel businessModel, BusinessColumn column, DatabaseMeta databaseMeta, String locale)
+  public static SQLAndTables getBusinessColumnSQL(BusinessModel businessModel, BusinessColumn column, DatabaseMeta databaseMeta, String locale)
   {
       if (column.isExact())
       { 
@@ -428,20 +458,19 @@ public class SQLGenerator {
           // we'll need to pass in some context to PMSFormula so it can resolve aliases if necessary
           PMSFormula formula = new PMSFormula(businessModel, column.getBusinessTable(), databaseMeta, column.getFormula());
           formula.parseAndValidate();
-          return formula.generateSQL(locale);
+          return new SQLAndTables(formula.generateSQL(locale), formula.getBusinessTables());
         } catch (PentahoMetadataException e) {
           // this is for backwards compatibility.
           // eventually throw any errors
           logger.error(Messages.getErrorString("BusinessColumn.ERROR_0001_FAILED_TO_PARSE_FORMULA", column.getFormula()), e); //$NON-NLS-1$
         }
-        return column.getFormula();
+        return new SQLAndTables(column.getFormula(), column.getBusinessTable());
       }
       else
       {
           String tableColumn = ""; //$NON-NLS-1$
           
-          // TODO: WPG: is this correct?  shouldn't we be getting an alias for the table vs. it's display name?
-          tableColumn += databaseMeta.quoteField( column.getBusinessTable().getDisplayName(locale) );
+          tableColumn += databaseMeta.quoteField( column.getBusinessTable().getId() );
           tableColumn += "."; //$NON-NLS-1$
           
           // TODO: WPG: instead of using formula, shouldn't we use the physical column's name?
@@ -449,11 +478,11 @@ public class SQLGenerator {
           
           if (column.hasAggregate()) // For the having clause, for example: HAVING sum(turnover) > 100
           {
-              return getFunctionExpression(column, tableColumn, databaseMeta);
+              return new SQLAndTables(getFunctionExpression(column, tableColumn, databaseMeta), column.getBusinessTable());
           }
           else
           {
-              return tableColumn;
+              return new SQLAndTables(tableColumn,column.getBusinessTable());
           }
       }
   }
@@ -503,7 +532,7 @@ public class SQLGenerator {
     {
             
         // Left side
-        join  = databaseMeta.quoteField( relation.getFieldFrom().getBusinessTable().getDisplayName(locale) );
+        join  = databaseMeta.quoteField( relation.getFieldFrom().getBusinessTable().getId() );
         join += "."; //$NON-NLS-1$
         join += databaseMeta.quoteField( relation.getFieldFrom().getFormula() );
         
@@ -511,7 +540,7 @@ public class SQLGenerator {
         join += " = "; //$NON-NLS-1$
         
         // Right side
-        join += databaseMeta.quoteField( relation.getFieldTo().getBusinessTable().getDisplayName(locale) );
+        join += databaseMeta.quoteField( relation.getFieldTo().getBusinessTable().getId() );
         join += "."; //$NON-NLS-1$
         join += databaseMeta.quoteField( relation.getFieldTo().getFormula() );
     }

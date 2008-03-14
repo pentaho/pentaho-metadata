@@ -156,9 +156,15 @@ public class AliasAwarePMSFormula extends PMSFormula {
       String tableColumn = ""; //$NON-NLS-1$
       sb.append(" "); //$NON-NLS-1$
       
-      // Todo: WPG: is this correct?  shouldn't we be getting an alias for the table vs. it's display name?
-      sb.append(getDatabaseMeta().quoteField(getBusinessTable().getDisplayName(locale)));
-      sb.append("."); //$NON-NLS-1$
+      // Find the business table related to this contextName.
+      // It could be a display name in a certain locale, it could be a column id.
+      // Let's find it in the list of tables...
+      //
+      BusinessTable businessTable = findBusinessTableForContextName(contextName, locale);
+      if (businessTable!=null) {
+	      sb.append(getDatabaseMeta().quoteField(businessTable.getId()));
+	      sb.append("."); //$NON-NLS-1$
+      }
       sb.append(getDatabaseMeta().quoteField(contextName));
       sb.append(" "); //$NON-NLS-1$
       

@@ -393,7 +393,7 @@ public class CWM
             try {
             		pentahoPackage = (PentahoPackage) refPackage;
             } catch (Exception e) {
-            	
+            	e.printStackTrace();
             }
             
             if( pentahoPackage == null ) {

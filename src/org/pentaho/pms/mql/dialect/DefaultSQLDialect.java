@@ -407,7 +407,11 @@ public class DefaultSQLDialect implements SQLDialectInterface {
    */
   protected void generateWhere(SQLQueryModel query, StringBuilder sql) {
     if (query.getWhereFormulas().size() > 0) {
-      sql.append("WHERE ").append(Const.CR); //$NON-NLS-1$
+      if (query.getJoins().size()==0 || query.containsOuterJoins()) {
+    	  sql.append("WHERE ").append(Const.CR); //$NON-NLS-1$
+      } else {
+    	  sql.append("      AND ").append(Const.CR); //$NON-NLS-1$
+      }
       boolean first = true;
       for (SQLWhereFormula whereFormula : query.getWhereFormulas()) {
         if (first) {

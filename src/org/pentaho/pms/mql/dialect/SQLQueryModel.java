@@ -102,10 +102,16 @@ public class SQLQueryModel {
     public static class SQLWhereFormula {
       String formula;
       String operator;
-      
+      String[] involvedTables;
+
       public SQLWhereFormula(String formula, String operator) {
+    	this(formula,operator,null);
+      }
+
+      public SQLWhereFormula(String formula, String operator, String[] involvedTables) {
         this.formula = formula;
         this.operator = operator;
+        this.involvedTables = involvedTables;
         if (this.operator == null) {
           this.operator = "AND";
         }
@@ -128,6 +134,20 @@ public class SQLQueryModel {
       public String getOperator() {
         return operator;
       }
+
+	/**
+	 * @return the involvedTables
+	 */
+	public String[] getInvolvedTables() {
+		return involvedTables;
+	}
+
+	/**
+	 * @param involvedTables the involvedTables to set
+	 */
+	public void setInvolvedTables(String[] involvedTables) {
+		this.involvedTables = involvedTables;
+	}
     }
 
     
@@ -263,6 +283,17 @@ public class SQLQueryModel {
     }
 
     /**
+     * adds a where formula to the select statement. Note that the formula 
+     * should already be in dialect specific form.
+     * 
+     * @param formula where formula
+     * @param operation operator that combines where formulas
+     */
+    public void addWhereFormula(String formula, String operation, String[] involvedTables) {
+      whereFormulas.add(new SQLWhereFormula(formula, operation, involvedTables));
+    }
+
+    /**
      * returns an uneditable list of group bys
      * 
      * @return group bys
@@ -301,7 +332,18 @@ public class SQLQueryModel {
     public void addHavingFormula(String formula, String operation) {
       havings.add(new SQLWhereFormula(formula, operation));
     }
-    
+
+    /**
+     * adds a having formula to the select statement
+     * 
+     * @param formula the having formula
+     * @param operation the operation to combine having formulas
+     * @param involvedTables the tables involved in this formula
+     */
+    public void addHavingFormula(String formula, String operation, String[] involvedTables) {
+      havings.add(new SQLWhereFormula(formula, operation, involvedTables));
+    }
+
     /**
      * returns an uneditable list of order by statements
      * 
