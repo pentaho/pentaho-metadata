@@ -578,6 +578,13 @@ public class PMSFormula implements FormulaTraversalInterface {
       SQLAndTables sqlAndTables = SQLGenerator.getBusinessColumnSQL(model, column, databaseMeta, locale);
       sb.append(sqlAndTables.getSql());
       sb.append(" "); //$NON-NLS-1$
+      
+      // We need to make sure to add the used tables to this list (recursive use-case).
+      // Only if they are not in there yet though.
+      //
+      for (BusinessTable businessTable : sqlAndTables.getUsedTables()) {
+    	  if (!tables.contains(businessTable)) tables.add(businessTable);
+      }
     }
   }
   
