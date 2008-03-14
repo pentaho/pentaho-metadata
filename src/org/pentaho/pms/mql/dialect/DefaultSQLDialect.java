@@ -404,30 +404,33 @@ public class DefaultSQLDialect implements SQLDialectInterface {
    * 
    * @param query query model
    * @param sql string buffer
+   * @param usedSQLWhereFormula the where formula that are already used by the outer join algorithm. (no need to list these again)
    */
-  protected void generateWhere(SQLQueryModel query, StringBuilder sql) {
+  protected void generateWhere(SQLQueryModel query, StringBuilder sql, List<SQLWhereFormula> usedSQLWhereFormula) {
     if (query.getWhereFormulas().size() > 0) {
-      if (query.getJoins().size()==0 || query.containsOuterJoins()) {
-    	  sql.append("WHERE ").append(Const.CR); //$NON-NLS-1$
-      } else {
-    	  sql.append("      AND ").append(Const.CR); //$NON-NLS-1$
-      }
       boolean first = true;
       for (SQLWhereFormula whereFormula : query.getWhereFormulas()) {
-        if (first) {
-          first = false;
-          sql.append("          ("); //$NON-NLS-1$
-        } else {
-          sql.append("      "); //$NON-NLS-1$
-          sql.append(whereFormula.getOperator());
-          sql.append(" ("); //$NON-NLS-1$
-        }
-        sql.append(Const.CR);
-        sql.append("             "); //$NON-NLS-1$
-        sql.append(whereFormula.getFormula());
-        sql.append(Const.CR);
-        sql.append("          )").append(Const.CR); //$NON-NLS-1$
-      }      
+    	if (!usedSQLWhereFormula.contains(whereFormula)) {
+	      if (first) {
+	        first = false;
+	        if (query.getJoins().size()==0 || query.containsOuterJoins()) {
+	        	sql.append("WHERE ").append(Const.CR); //$NON-NLS-1$
+	        } else {
+	        	sql.append("      AND ").append(Const.CR); //$NON-NLS-1$
+	        }
+	        sql.append("          ("); //$NON-NLS-1$
+	      } else {
+	        sql.append("      "); //$NON-NLS-1$
+	        sql.append(whereFormula.getOperator());
+	        sql.append(" ("); //$NON-NLS-1$
+	      }
+	      sql.append(Const.CR);
+	      sql.append("             "); //$NON-NLS-1$
+	      sql.append(whereFormula.getFormula());
+	      sql.append(Const.CR);
+	      sql.append("          )").append(Const.CR); //$NON-NLS-1$
+	    }
+      }
     }
   }
   
@@ -442,8 +445,8 @@ public class DefaultSQLDialect implements SQLDialectInterface {
    */
   protected void generateJoins(SQLQueryModel query, StringBuilder sql) {
     if (query.getJoins().size() > 0) {
-      sql.append("WHERE ").append(Const.CR); //$NON-NLS-1$
       boolean first = true;
+      sql.append("WHERE ").append(Const.CR); //$NON-NLS-1$
       for (SQLJoin join : query.getJoins()) {
         if (first) {
           first = false;
@@ -674,22 +677,22 @@ public class DefaultSQLDialect implements SQLDialectInterface {
 	
 	// Now see if there are any SQL where conditions that apply to either two tables...
 	//
-	/*
 	for (SQLWhereFormula sqlWhereFormula : query.getWhereFormulas()) {
-		boolean allInvolvedAvailableHere = true;
-		for (String involvedTable : sqlWhereFormula.involvedTables) {
-			if (!involvedTable.equalsIgnoreCase(leftTablename) && !involvedTable.equalsIgnoreCase(rightTablename)) {
-				allInvolvedAvailableHere=false;
+		if (!usedSQLWhereFormula.contains(sqlWhereFormula)) {
+			boolean allInvolvedAvailableHere = true;
+			for (String involvedTable : sqlWhereFormula.involvedTables) {
+				if (!involvedTable.equalsIgnoreCase(leftTablename) && !involvedTable.equalsIgnoreCase(rightTablename)) {
+					allInvolvedAvailableHere=false;
+				}
+			}
+			// If all the involved tables are (usually 1) is part of this join, we specify the condition here...
+			if (allInvolvedAvailableHere) {
+				clause.append(" AND ( ").append(sqlWhereFormula.getFormula()).append(" ) ");
+				// Remember that we did use it...
+				usedSQLWhereFormula.add(sqlWhereFormula);
 			}
 		}
-		// If all the involved tables are (usually 1) is part of this join, we specify the condition here...
-		if (allInvolvedAvailableHere) {
-			clause.append(" AND ( ").append(sqlWhereFormula.getFormula()).append(" ) ");
-			// Remember that we did use it...
-			usedSQLWhereFormula.add(sqlWhereFormula);
-		}
 	}
-	*/
 	clause.append(" )").append(Const.CR);
 	
 	return clause.toString();
@@ -704,7 +707,7 @@ public class DefaultSQLDialect implements SQLDialectInterface {
     StringBuilder sql = new StringBuilder();
     generateSelect(query, sql);
     
-    List<SQLWhereFormula> usedSQLWhereFormula = null;
+    List<SQLWhereFormula> usedSQLWhereFormula = new ArrayList<SQLWhereFormula>();
     
     if (query.containsOuterJoins()) {
     	usedSQLWhereFormula = generateOuterJoin(query, sql);
@@ -714,7 +717,7 @@ public class DefaultSQLDialect implements SQLDialectInterface {
 	    generateJoins(query, sql);
     }
     
-    generateWhere(query, sql);
+    generateWhere(query, sql, usedSQLWhereFormula);
     generateGroupBy(query, sql);
     generateHaving(query, sql);
     generateOrderBy(query, sql);
