@@ -11,7 +11,6 @@ import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.RelationshipMeta;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
-import org.pentaho.pms.schema.concept.types.fieldtype.FieldTypeSettings;
 import org.pentaho.pms.util.ObjectAlreadyExistsException;
 
 public class ComplexExpressionsTests extends MetadataTestBase {
