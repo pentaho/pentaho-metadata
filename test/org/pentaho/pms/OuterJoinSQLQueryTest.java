@@ -242,4 +242,40 @@ public class OuterJoinSQLQueryTest extends MetadataTestBase {
     	sql);
   }  
   
+  /**
+   * Test an OUTER JOIN scenario with 4 tables.<br>
+   * - T1-T2 : a left outer join (to be executed second)<br> 
+   * - T2-T3 : an inner join (to be executed first)<br>
+   * - T2-T4 : an cross join (to be executed last) (==full outer join)<br>
+   * <br>
+   */
+  public void test4TablesWithOuterJoins() {
+    SQLQueryModel query = new SQLQueryModel();
+    query.addSelection("t1.pk", "t1_pk");  // $NON-NLS-1$ $NON-NLS-2$
+    query.addSelection("t2.pk", "t2_pk");  // $NON-NLS-1$ $NON-NLS-2$
+    query.addSelection("t3.pk", "t3_pk");  // $NON-NLS-1$ $NON-NLS-2$
+    query.addSelection("t4.pk", "t4_pk");  // $NON-NLS-1$ $NON-NLS-2$
+    query.addTable("t1", null);   // $NON-NLS-1$ 
+    query.addTable("t2", null);   // $NON-NLS-1$ 
+    query.addTable("t3", null);   // $NON-NLS-1$ 
+    query.addTable("t4", null);   // $NON-NLS-1$ 
+    query.addJoin("t1", null, "t2", null, JoinType.LEFT_OUTER_JOIN, "t1.pk = t2.fk", "A");  // $NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
+    query.addJoin("t2", null, "t3", null, JoinType.INNER_JOIN, "t2.pk = t3.fk", "B");  // $NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
+    query.addJoin("t2", null, "t4", null, JoinType.FULL_OUTER_JOIN, "t2.pk = t4.fk", "C");  // $NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
+    query.addOrderBy(null, "t2_pk", OrderType.ASCENDING);   // $NON-NLS-1$ 
+    
+    SQLDialectInterface dialect = SQLDialectFactory.getSQLDialect(createOracleDatabaseMeta());
+    
+    String sql = dialect.generateSelectStatement(query);
+    assertEqualsIgnoreWhitespacesAndCase(
+    	"SELECT DISTINCT T1.PK AS T1_PK ,T2.PK AS T2_PK ,T3.PK AS T3_PK ,T4.PK AS T4_PK " +    // $NON-NLS-1$
+    	"FROM T4 FULL OUTER JOIN ( " +    // $NON-NLS-1$
+    	"	T3 JOIN ( " +    // $NON-NLS-1$
+    	"		T1 LEFT OUTER JOIN T2 ON ( T1.PK = T2.FK ) " +    // $NON-NLS-1$
+    	"		) ON ( T2.PK = T3.FK ) " +    // $NON-NLS-1$
+    	"	) ON ( T2.PK = T4.FK ) " +    // $NON-NLS-1$
+    	"ORDER BY T2_PK ASC",   // $NON-NLS-1$ 
+    	sql);
+  }  
+  
 }
