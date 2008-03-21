@@ -36,6 +36,7 @@ import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.SchemaMeta;
+import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.util.Const;
 
 public class MQLQueryTest extends TestCase {
@@ -424,6 +425,84 @@ public class MQLQueryTest extends TestCase {
 //        ,"Customers.COUNTRY  LIKE '%'" //$NON-NLS-1$
 //      );
 //  }
+  
+  /**
+   * In this test we try to see to it :<br>
+   * - that the formula engine picks the 2 specified columns from 2 different business tables<br>
+   * - hat the aggregation for QUANTITYORDERED is SUM() and NOT for BUYPRICE<br>
+   * <br>
+   */
+  public void testMultiTableColumnFormulas() {
+	  String formula = "[BT_ORDER_DETAILS.BC_ORDER_DETAILS_QUANTITYORDERED] * [BT_PRODUCTS.BC_PRODUCTS_BUYPRICE]";
+	  String sql = "SUM(BT_ORDER_DETAILS.QUANTITYORDERED)  *  BT_PRODUCTS.BUYPRICE";
+	  
+	  handleFormula(ordersModel, "Hypersonic", formula, sql);
+  }
+  
+  
+  /**
+   * In this test we try to see to it :<br>
+   * - that the formula engine picks the 2 specified columns from 2 different business tables<br>
+   * - that we calculate the sum of the multiplication
+   * <br>
+   */
+  public void testMultiTableColumnFormulasAggregate() {
+	  BusinessColumn quantityOrdered = ordersModel.findBusinessColumn("BC_ORDER_DETAILS_QUANTITYORDERED");
+	  assertNotNull("Expected to find the business column 'quantity ordered'", quantityOrdered);
+	  BusinessColumn buyPrice = ordersModel.findBusinessColumn("BC_PRODUCTS_BUYPRICE");
+	  assertNotNull("Expected to find the business column 'buy price'", buyPrice);
+	  
+	  // let's remove the aggregations of the quantity ordered...
+	  //
+	  AggregationSettings qaBackup = quantityOrdered.getAggregationType();
+	  AggregationSettings paBackup = buyPrice.getAggregationType();
+	  quantityOrdered.setAggregationType(AggregationSettings.NONE);
+	  buyPrice.setAggregationType(AggregationSettings.NONE);
+
+	  // This changes the expected result...
+	  //
+	  String formula = "SUM( [BT_ORDER_DETAILS.BC_ORDER_DETAILS_QUANTITYORDERED] * [BT_PRODUCTS.BC_PRODUCTS_BUYPRICE] )";
+	  String sql = "SUM( BT_ORDER_DETAILS.QUANTITYORDERED  *  BT_PRODUCTS.BUYPRICE )";
+
+	  handleFormula(ordersModel, "Hypersonic", formula, sql);
+	  
+	  // Set it back to the way it was for further testing.
+	  quantityOrdered.setAggregationType(qaBackup);
+	  buyPrice.setAggregationType(paBackup);
+  }
+  
+  
+  
+  /**
+   * In this test we try to test :<br>
+   * - if the formula engine picks the 2 specified columns from 2 different business tables<br>
+   * - if we calculate the multiplication of the sums
+   * <br>
+   */
+  public void testMultiTableColumnFormulasAggregate2() {
+	  BusinessColumn quantityOrdered = ordersModel.findBusinessColumn("BC_ORDER_DETAILS_QUANTITYORDERED");
+	  assertNotNull("Expected to find the business column 'quantity ordered'", quantityOrdered);
+	  BusinessColumn buyPrice = ordersModel.findBusinessColumn("BC_PRODUCTS_BUYPRICE");
+	  assertNotNull("Expected to find the business column 'buy price'", buyPrice);
+	  
+	  // let's enable the aggregations of the quantity ordered...
+	  //
+	  AggregationSettings qaBackup = quantityOrdered.getAggregationType();
+	  AggregationSettings paBackup = buyPrice.getAggregationType();
+	  quantityOrdered.setAggregationType(AggregationSettings.SUM);
+	  buyPrice.setAggregationType(AggregationSettings.SUM);
+
+	  // This changes the expected result...
+	  //
+	  String formula = "[BT_ORDER_DETAILS.BC_ORDER_DETAILS_QUANTITYORDERED] * [BT_PRODUCTS.BC_PRODUCTS_BUYPRICE]";
+	  String sql = "SUM(BT_ORDER_DETAILS.QUANTITYORDERED)  *  SUM(BT_PRODUCTS.BUYPRICE)";
+
+	  handleFormula(ordersModel, "Hypersonic", formula, sql);
+	  
+	  // Set it back to the way it was for further testing.
+	  quantityOrdered.setAggregationType(qaBackup);
+	  buyPrice.setAggregationType(paBackup);
+  }
   
   public void testMQLQueryFactoryPentahoMetadataException() {
     try {
