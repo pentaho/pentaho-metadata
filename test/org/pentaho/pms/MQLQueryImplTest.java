@@ -13,6 +13,7 @@ import org.pentaho.pms.mql.Path;
 import org.pentaho.pms.mql.SQLGenerator;
 import org.pentaho.pms.mql.Selection;
 import org.pentaho.pms.mql.WhereCondition;
+import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
@@ -648,4 +649,865 @@ public class MQLQueryImplTest  extends MetadataTestBase {
     assertNotNull(subsets);
     assertEquals(0, subsets.size());
   }
+  
+  public void testBusinessColumnFormulaUsingTwoBT() throws Exception {
+    
+    final BusinessModel model = new BusinessModel();
+    model.setId("model_01");
+    BusinessCategory rootCat = new BusinessCategory();
+    rootCat.setRootCategory(true);
+    BusinessCategory mainCat = new BusinessCategory();
+    mainCat.setId("cat_01");
+    rootCat.addBusinessCategory(mainCat);
+    model.setRootCategory(rootCat);
+    
+    final BusinessTable bt1 = new BusinessTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setTargetTable("pt1"); //$NON-NLS-1$
+    final BusinessColumn bc1 = new BusinessColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setFormula("pc1"); //$NON-NLS-1$
+    bc1.setBusinessTable(bt1);
+    bt1.addBusinessColumn(bc1);
+    bt1.setRelativeSize(1);
+    mainCat.addBusinessColumn(bc1);
+    
+    final BusinessTable bt2 = new BusinessTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setTargetTable("pt2"); //$NON-NLS-1$
+    final BusinessColumn bc2 = new BusinessColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setFormula("pc2"); //$NON-NLS-1$
+    bc2.setBusinessTable(bt2);
+    bt2.addBusinessColumn(bc2);
+    mainCat.addBusinessColumn(bc2);
+    
+    final BusinessColumn bce2 = new BusinessColumn();
+    bce2.setId("bce2"); //$NON-NLS-1$
+    bce2.setExact(true);
+    bce2.setFormula("[cat_01.bc2] * [cat_01.bc1]"); //$NON-NLS-1$
+    bce2.setBusinessTable(bt2);
+    bt2.addBusinessColumn(bce2);
+    mainCat.addBusinessColumn(bce2);
+    
+    final RelationshipMeta rl1 = new RelationshipMeta();
+    
+    rl1.setTableFrom(bt1);
+    rl1.setFieldFrom(bc1);
+    rl1.setTableTo(bt2);
+    rl1.setFieldTo(bc2);
+    
+    model.addRelationship(rl1);    
+    
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    MQLQueryImpl myTest = new MQLQueryImpl(null, model, databaseMeta, "en_US"); //$NON-NLS-1$
+    myTest.addSelection(new Selection(bce2));
+
+    MappedQuery query = myTest.getQuery();
+    assertEqualsIgnoreWhitespaces( 
+        "SELECT DISTINCT bt2.pc2 * bt1.pc1 AS COL0 FROM pt1 bt1 ,pt2 bt2 WHERE ( bt1.pc1 = bt2.pc2 )",
+        query.getQuery()    
+    ); //$NON-NLS-1$
+    
+  }
+  
+  /**
+   * Scenario 1: Two Tables are outer joined
+   */
+  public void testOuterJoinScenario1()throws Exception {
+    final BusinessModel model = new BusinessModel();
+    model.setId("model_01");
+    BusinessCategory rootCat = new BusinessCategory();
+    rootCat.setRootCategory(true);
+    BusinessCategory mainCat = new BusinessCategory();
+    mainCat.setId("cat_01");
+    rootCat.addBusinessCategory(mainCat);
+    model.setRootCategory(rootCat);
+    
+    final BusinessTable bt1 = new BusinessTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setTargetTable("pt1"); //$NON-NLS-1$
+    final BusinessColumn bc1 = new BusinessColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setFormula("pc1"); //$NON-NLS-1$
+    bc1.setBusinessTable(bt1);
+    bt1.addBusinessColumn(bc1);
+    bt1.setRelativeSize(1);
+    mainCat.addBusinessColumn(bc1);
+    
+    final BusinessTable bt2 = new BusinessTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setTargetTable("pt2"); //$NON-NLS-1$
+    final BusinessColumn bc2 = new BusinessColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setFormula("pc2"); //$NON-NLS-1$
+    bc2.setBusinessTable(bt2);
+    bt2.addBusinessColumn(bc2);
+    mainCat.addBusinessColumn(bc2);
+    
+    final RelationshipMeta rl1 = new RelationshipMeta();
+    rl1.setType(RelationshipMeta.TYPE_RELATIONSHIP_0_N);
+    rl1.setTableFrom(bt1);
+    rl1.setFieldFrom(bc1);
+    rl1.setTableTo(bt2);
+    rl1.setFieldTo(bc2);
+    
+    model.addRelationship(rl1);    
+
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    MQLQueryImpl myTest = new MQLQueryImpl(null, model, databaseMeta, "en_US"); //$NON-NLS-1$
+    myTest.addSelection(new Selection(bc1));
+    myTest.addSelection(new Selection(bc2));
+    
+    MappedQuery query = myTest.getQuery();
+    assertEqualsIgnoreWhitespaces( 
+        "SELECT DISTINCT bt1.pc1 AS COL0 ,bt2.pc2 AS COL1 FROM pt1 bt1 LEFT OUTER JOIN pt2 bt2 ON ( bt1.pc1 = bt2.pc2 )",
+        query.getQuery()    
+    ); //$NON-NLS-1$
+  }
+  
+  /**
+   * Scenario 1a: Two Tables are outer joined with a constraint
+   */
+  public void testOuterJoinScenario1a() throws Exception {
+    final BusinessModel model = new BusinessModel();
+    model.setId("model_01");
+    BusinessCategory rootCat = new BusinessCategory();
+    rootCat.setRootCategory(true);
+    BusinessCategory mainCat = new BusinessCategory();
+    mainCat.setId("cat_01");
+    rootCat.addBusinessCategory(mainCat);
+    model.setRootCategory(rootCat);
+    
+    final BusinessTable bt1 = new BusinessTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setTargetTable("pt1"); //$NON-NLS-1$
+    final BusinessColumn bc1 = new BusinessColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setFormula("pc1"); //$NON-NLS-1$
+    bc1.setBusinessTable(bt1);
+    bt1.addBusinessColumn(bc1);
+    bt1.setRelativeSize(1);
+    mainCat.addBusinessColumn(bc1);
+    
+    final BusinessTable bt2 = new BusinessTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setTargetTable("pt2"); //$NON-NLS-1$
+    final BusinessColumn bc2 = new BusinessColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setFormula("pc2"); //$NON-NLS-1$
+    bc2.setBusinessTable(bt2);
+    bt2.addBusinessColumn(bc2);
+    mainCat.addBusinessColumn(bc2);
+    
+    final RelationshipMeta rl1 = new RelationshipMeta();
+    rl1.setType(RelationshipMeta.TYPE_RELATIONSHIP_0_N);
+    rl1.setTableFrom(bt1);
+    rl1.setFieldFrom(bc1);
+    rl1.setTableTo(bt2);
+    rl1.setFieldTo(bc2);
+    
+    model.addRelationship(rl1);    
+
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    MQLQueryImpl myTest = new MQLQueryImpl(null, model, databaseMeta, "en_US"); //$NON-NLS-1$
+    myTest.addSelection(new Selection(bc1));
+    myTest.addSelection(new Selection(bc2));
+    myTest.addConstraint("AND", "[cat_01.bc2] > 1");
+    
+    MappedQuery query = myTest.getQuery();
+    assertEqualsIgnoreWhitespaces( 
+        "SELECT DISTINCT bt1.pc1 AS COL0 ,bt2.pc2 AS COL1 FROM pt1 bt1 LEFT OUTER JOIN pt2 bt2 ON ( bt1.pc1 = bt2.pc2 AND ( bt2.pc2 > 1 ) )",
+        query.getQuery()    
+    ); //$NON-NLS-1$
+  }
+
+  /**
+   * Scenario 1b: Two Tables are outer joined with an aggregate
+   */
+  public void testOuterJoinScenario1b() throws Exception {
+    final BusinessModel model = new BusinessModel();
+    model.setId("model_01");
+    BusinessCategory rootCat = new BusinessCategory();
+    rootCat.setRootCategory(true);
+    BusinessCategory mainCat = new BusinessCategory();
+    mainCat.setId("cat_01");
+    rootCat.addBusinessCategory(mainCat);
+    model.setRootCategory(rootCat);
+    
+    final BusinessTable bt1 = new BusinessTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setTargetTable("pt1"); //$NON-NLS-1$
+    final BusinessColumn bc1 = new BusinessColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setFormula("pc1"); //$NON-NLS-1$
+    bc1.setBusinessTable(bt1);
+    bt1.addBusinessColumn(bc1);
+    bt1.setRelativeSize(1);
+    mainCat.addBusinessColumn(bc1);
+    
+    final BusinessTable bt2 = new BusinessTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setTargetTable("pt2"); //$NON-NLS-1$
+    final BusinessColumn bc2 = new BusinessColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setFormula("pc2"); //$NON-NLS-1$
+    bc2.setAggregationType(AggregationSettings.SUM);
+    bc2.setBusinessTable(bt2);
+    bt2.addBusinessColumn(bc2);
+    mainCat.addBusinessColumn(bc2);
+    
+    final RelationshipMeta rl1 = new RelationshipMeta();
+    rl1.setType(RelationshipMeta.TYPE_RELATIONSHIP_0_N);
+    rl1.setTableFrom(bt1);
+    rl1.setFieldFrom(bc1);
+    rl1.setTableTo(bt2);
+    rl1.setFieldTo(bc2);
+    
+    model.addRelationship(rl1);    
+
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    MQLQueryImpl myTest = new MQLQueryImpl(null, model, databaseMeta, "en_US"); //$NON-NLS-1$
+    myTest.addSelection(new Selection(bc1));
+    myTest.addSelection(new Selection(bc2));
+    
+    MappedQuery query = myTest.getQuery();
+    assertEqualsIgnoreWhitespaces( 
+        "SELECT bt1.pc1 AS COL0 ,SUM(bt2.pc2) AS COL1 FROM pt1 bt1 LEFT OUTER JOIN pt2 bt2 ON ( bt1.pc1 = bt2.pc2 ) GROUP BY bt1.pc1",
+        query.getQuery()    
+    ); //$NON-NLS-1$
+  }
+  
+  
+  /**
+   * Scenario 1c: Two Tables are outer joined with an aggregate constraint
+   */
+  public void testOuterJoinScenario1c() throws Exception {
+    final BusinessModel model = new BusinessModel();
+    model.setId("model_01");
+    BusinessCategory rootCat = new BusinessCategory();
+    rootCat.setRootCategory(true);
+    BusinessCategory mainCat = new BusinessCategory();
+    mainCat.setId("cat_01");
+    rootCat.addBusinessCategory(mainCat);
+    model.setRootCategory(rootCat);
+    
+    final BusinessTable bt1 = new BusinessTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setTargetTable("pt1"); //$NON-NLS-1$
+    final BusinessColumn bc1 = new BusinessColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setFormula("pc1"); //$NON-NLS-1$
+    bc1.setBusinessTable(bt1);
+    bt1.addBusinessColumn(bc1);
+    bt1.setRelativeSize(1);
+    mainCat.addBusinessColumn(bc1);
+    
+    final BusinessTable bt2 = new BusinessTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setTargetTable("pt2"); //$NON-NLS-1$
+    final BusinessColumn bc2 = new BusinessColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setFormula("pc2"); //$NON-NLS-1$
+    bc2.setAggregationType(AggregationSettings.SUM);
+    bc2.setBusinessTable(bt2);
+    bt2.addBusinessColumn(bc2);
+    mainCat.addBusinessColumn(bc2);
+    
+    final RelationshipMeta rl1 = new RelationshipMeta();
+    rl1.setType(RelationshipMeta.TYPE_RELATIONSHIP_0_N);
+    rl1.setTableFrom(bt1);
+    rl1.setFieldFrom(bc1);
+    rl1.setTableTo(bt2);
+    rl1.setFieldTo(bc2);
+    
+    model.addRelationship(rl1);    
+
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    MQLQueryImpl myTest = new MQLQueryImpl(null, model, databaseMeta, "en_US"); //$NON-NLS-1$
+    myTest.addSelection(new Selection(bc1));
+    myTest.addSelection(new Selection(bc2));
+    myTest.addConstraint("AND", "[cat_01.bc2] > 1");
+    
+    MappedQuery query = myTest.getQuery();
+    assertEqualsIgnoreWhitespaces( 
+        "SELECT bt1.pc1 AS COL0 ,SUM(bt2.pc2) AS COL1 FROM pt1 bt1 LEFT OUTER JOIN pt2 bt2 ON ( bt1.pc1 = bt2.pc2 ) GROUP BY bt1.pc1 HAVING ( SUM(bt2.pc2) > 1 )",
+        query.getQuery()    
+    ); //$NON-NLS-1$
+  }
+ 
+  /**
+   * Scenario 2: Two Joined Tables are outer joined to a single table
+   */
+  public void testOuterJoinScenario2()throws Exception {
+    final BusinessModel model = new BusinessModel();
+    model.setId("model_01");
+    BusinessCategory rootCat = new BusinessCategory();
+    rootCat.setRootCategory(true);
+    BusinessCategory mainCat = new BusinessCategory();
+    mainCat.setId("cat_01");
+    rootCat.addBusinessCategory(mainCat);
+    model.setRootCategory(rootCat);
+    
+    final BusinessTable bt1 = new BusinessTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setTargetTable("pt1"); //$NON-NLS-1$
+    final BusinessColumn bc1 = new BusinessColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setFormula("pc1"); //$NON-NLS-1$
+    bc1.setBusinessTable(bt1);
+    bt1.addBusinessColumn(bc1);
+    bt1.setRelativeSize(1);
+    mainCat.addBusinessColumn(bc1);
+    
+    final BusinessTable bt2 = new BusinessTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setTargetTable("pt2"); //$NON-NLS-1$
+    final BusinessColumn bc2 = new BusinessColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setFormula("pc2"); //$NON-NLS-1$
+    bc2.setBusinessTable(bt2);
+    bt2.addBusinessColumn(bc2);
+    mainCat.addBusinessColumn(bc2);
+    
+    final BusinessTable bt3 = new BusinessTable();
+    bt3.setId("bt3"); //$NON-NLS-1$
+    bt3.setTargetTable("pt3"); //$NON-NLS-1$
+    final BusinessColumn bc3 = new BusinessColumn();
+    bc3.setId("bc3"); //$NON-NLS-1$
+    bc3.setFormula("pc3"); //$NON-NLS-1$
+    bc3.setBusinessTable(bt3);
+    bt3.addBusinessColumn(bc3);
+    mainCat.addBusinessColumn(bc3);
+    
+    final RelationshipMeta rl1 = new RelationshipMeta();
+    rl1.setType(RelationshipMeta.TYPE_RELATIONSHIP_0_N);
+    rl1.setTableFrom(bt1);
+    rl1.setFieldFrom(bc1);
+    rl1.setTableTo(bt2);
+    rl1.setFieldTo(bc2);
+    
+    model.addRelationship(rl1);    
+
+    final RelationshipMeta rl2 = new RelationshipMeta();
+    rl2.setType(RelationshipMeta.TYPE_RELATIONSHIP_1_N);
+    rl2.setTableFrom(bt2);
+    rl2.setFieldFrom(bc2);
+    rl2.setTableTo(bt3);
+    rl2.setFieldTo(bc3);
+    
+    model.addRelationship(rl2);
+    
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    MQLQueryImpl myTest = new MQLQueryImpl(null, model, databaseMeta, "en_US"); //$NON-NLS-1$
+    myTest.addSelection(new Selection(bc1));
+    myTest.addSelection(new Selection(bc2));
+    myTest.addSelection(new Selection(bc3));
+    
+    MappedQuery query = myTest.getQuery();
+    assertEqualsIgnoreWhitespaces( 
+        "SELECT DISTINCT bt1.pc1 AS COL0 ,bt2.pc2 AS COL1 ,bt3.pc3 AS COL2 FROM pt1 bt1 LEFT OUTER JOIN ( pt2 bt2 JOIN pt3 bt3 ON ( bt2.pc2 = bt3.pc3 ) ) ON ( bt1.pc1 = bt2.pc2 )",
+        query.getQuery()    
+    ); //$NON-NLS-1$
+  }
+
+  /**
+   * Scenario 2a: Two Joined Tables are outer joined to two other tables
+   */
+  public void testOuterJoinScenario2a()throws Exception {
+    final BusinessModel model = new BusinessModel();
+    model.setId("model_01");
+    BusinessCategory rootCat = new BusinessCategory();
+    rootCat.setRootCategory(true);
+    BusinessCategory mainCat = new BusinessCategory();
+    mainCat.setId("cat_01");
+    rootCat.addBusinessCategory(mainCat);
+    model.setRootCategory(rootCat);
+    
+    final BusinessTable bt1 = new BusinessTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setTargetTable("t1"); //$NON-NLS-1$
+    final BusinessColumn bc1 = new BusinessColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setFormula("k"); //$NON-NLS-1$
+    bc1.setBusinessTable(bt1);
+    bt1.addBusinessColumn(bc1);
+    bt1.setRelativeSize(1);
+    mainCat.addBusinessColumn(bc1);
+    
+    final BusinessTable bt2 = new BusinessTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setTargetTable("t2"); //$NON-NLS-1$
+    final BusinessColumn bc2 = new BusinessColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setFormula("k"); //$NON-NLS-1$
+    bc2.setBusinessTable(bt2);
+    bt2.addBusinessColumn(bc2);
+    mainCat.addBusinessColumn(bc2);
+    
+    final BusinessTable bt3 = new BusinessTable();
+    bt3.setId("bt3"); //$NON-NLS-1$
+    bt3.setTargetTable("t3"); //$NON-NLS-1$
+    final BusinessColumn bc3 = new BusinessColumn();
+    bc3.setId("bc3"); //$NON-NLS-1$
+    bc3.setFormula("k"); //$NON-NLS-1$
+    bc3.setBusinessTable(bt3);
+    bt3.addBusinessColumn(bc3);
+    mainCat.addBusinessColumn(bc3);
+    
+    final BusinessTable bt4 = new BusinessTable();
+    bt4.setId("bt4"); //$NON-NLS-1$
+    bt4.setTargetTable("t4"); //$NON-NLS-1$
+    final BusinessColumn bc4 = new BusinessColumn();
+    bc4.setId("bc4"); //$NON-NLS-1$
+    bc4.setFormula("k"); //$NON-NLS-1$
+    bc4.setBusinessTable(bt4);
+    bt4.addBusinessColumn(bc4);
+    mainCat.addBusinessColumn(bc4);
+    
+    final RelationshipMeta rl1 = new RelationshipMeta();
+    rl1.setType(RelationshipMeta.TYPE_RELATIONSHIP_1_N);
+    rl1.setTableFrom(bt1);
+    rl1.setFieldFrom(bc1);
+    rl1.setTableTo(bt2);
+    rl1.setFieldTo(bc2);
+    
+    model.addRelationship(rl1);    
+
+    final RelationshipMeta rl2 = new RelationshipMeta();
+    rl2.setType(RelationshipMeta.TYPE_RELATIONSHIP_0_N);
+    rl2.setTableFrom(bt2);
+    rl2.setFieldFrom(bc2);
+    rl2.setTableTo(bt3);
+    rl2.setFieldTo(bc3);
+    
+    model.addRelationship(rl2);
+
+    final RelationshipMeta rl3 = new RelationshipMeta();
+    rl3.setType(RelationshipMeta.TYPE_RELATIONSHIP_1_N);
+    rl3.setTableFrom(bt3);
+    rl3.setFieldFrom(bc3);
+    rl3.setTableTo(bt4);
+    rl3.setFieldTo(bc4);
+    
+    model.addRelationship(rl3);
+    
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    MQLQueryImpl myTest = new MQLQueryImpl(null, model, databaseMeta, "en_US"); //$NON-NLS-1$
+    myTest.addSelection(new Selection(bc1));
+    myTest.addSelection(new Selection(bc2));
+    myTest.addSelection(new Selection(bc3));
+    myTest.addSelection(new Selection(bc4));
+    
+    MappedQuery query = myTest.getQuery();
+    assertEqualsIgnoreWhitespaces( 
+        "SELECT DISTINCT bt1.k AS COL0 ,bt2.k AS COL1 ,bt3.k AS COL2 ,bt4.k AS COL3 FROM t1 bt1 JOIN ( t2 bt2 LEFT OUTER JOIN ( t3 bt3 JOIN t4 bt4 ON ( bt3.k = bt4.k ) ) ON ( bt2.k = bt3.k ) ) ON ( bt1.k = bt2.k )",
+        query.getQuery()    
+    ); //$NON-NLS-1$
+  }
+  
+  /**
+   * Scenario 3: Three Tables are outer joined
+   */
+  public void testOuterJoinScenario3() throws Exception {
+    final BusinessModel model = new BusinessModel();
+    model.setId("model_01");
+    BusinessCategory rootCat = new BusinessCategory();
+    rootCat.setRootCategory(true);
+    BusinessCategory mainCat = new BusinessCategory();
+    mainCat.setId("cat_01");
+    rootCat.addBusinessCategory(mainCat);
+    model.setRootCategory(rootCat);
+    
+    final BusinessTable bt1 = new BusinessTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setTargetTable("t1"); //$NON-NLS-1$
+    final BusinessColumn bc1 = new BusinessColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setFormula("k"); //$NON-NLS-1$
+    bc1.setBusinessTable(bt1);
+    bt1.addBusinessColumn(bc1);
+    bt1.setRelativeSize(1);
+    mainCat.addBusinessColumn(bc1);
+    
+    final BusinessTable bt2 = new BusinessTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setTargetTable("t2"); //$NON-NLS-1$
+    final BusinessColumn bc2 = new BusinessColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setFormula("k"); //$NON-NLS-1$
+    bc2.setBusinessTable(bt2);
+    bt2.addBusinessColumn(bc2);
+    mainCat.addBusinessColumn(bc2);
+    
+    final BusinessTable bt3 = new BusinessTable();
+    bt3.setId("bt3"); //$NON-NLS-1$
+    bt3.setTargetTable("t3"); //$NON-NLS-1$
+    final BusinessColumn bc3 = new BusinessColumn();
+    bc3.setId("bc3"); //$NON-NLS-1$
+    bc3.setFormula("k"); //$NON-NLS-1$
+    bc3.setBusinessTable(bt3);
+    bt3.addBusinessColumn(bc3);
+    mainCat.addBusinessColumn(bc3);
+    
+    final RelationshipMeta rl1 = new RelationshipMeta();
+    rl1.setType(RelationshipMeta.TYPE_RELATIONSHIP_0_N);
+    rl1.setTableFrom(bt1);
+    rl1.setFieldFrom(bc1);
+    rl1.setTableTo(bt2);
+    rl1.setFieldTo(bc2);
+    
+    model.addRelationship(rl1);    
+
+    final RelationshipMeta rl2 = new RelationshipMeta();
+    rl2.setType(RelationshipMeta.TYPE_RELATIONSHIP_0_N);
+    rl2.setTableFrom(bt2);
+    rl2.setFieldFrom(bc2);
+    rl2.setTableTo(bt3);
+    rl2.setFieldTo(bc3);
+    
+    model.addRelationship(rl2);
+    
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    MQLQueryImpl myTest = new MQLQueryImpl(null, model, databaseMeta, "en_US"); //$NON-NLS-1$
+    myTest.addSelection(new Selection(bc1));
+    myTest.addSelection(new Selection(bc2));
+    myTest.addSelection(new Selection(bc3));
+    
+    MappedQuery query = myTest.getQuery();
+    assertEqualsIgnoreWhitespaces( 
+        "SELECT DISTINCT bt1.k AS COL0 ,bt2.k AS COL1 ,bt3.k AS COL2 FROM t1 bt1 LEFT OUTER JOIN ( t2 bt2 LEFT OUTER JOIN t3 bt3 ON ( bt2.k = bt3.k ) ) ON ( bt1.k = bt2.k )",
+        query.getQuery()    
+    ); //$NON-NLS-1$
+  }
+  
+  /**
+   * Scenario 4: Two outer joins on a single table
+   */
+  public void testOuterJoinScenario4() throws Exception {
+    final BusinessModel model = new BusinessModel();
+    model.setId("model_01");
+    BusinessCategory rootCat = new BusinessCategory();
+    rootCat.setRootCategory(true);
+    BusinessCategory mainCat = new BusinessCategory();
+    mainCat.setId("cat_01");
+    rootCat.addBusinessCategory(mainCat);
+    model.setRootCategory(rootCat);
+    
+    final BusinessTable bt1 = new BusinessTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setTargetTable("t1"); //$NON-NLS-1$
+    final BusinessColumn bc1 = new BusinessColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setFormula("k"); //$NON-NLS-1$
+    bc1.setBusinessTable(bt1);
+    bt1.addBusinessColumn(bc1);
+    bt1.setRelativeSize(1);
+    mainCat.addBusinessColumn(bc1);
+    
+    final BusinessTable bt2 = new BusinessTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setTargetTable("t2"); //$NON-NLS-1$
+    final BusinessColumn bc2 = new BusinessColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setFormula("k"); //$NON-NLS-1$
+    bc2.setBusinessTable(bt2);
+    bt2.addBusinessColumn(bc2);
+    mainCat.addBusinessColumn(bc2);
+    
+    final BusinessTable bt3 = new BusinessTable();
+    bt3.setId("bt3"); //$NON-NLS-1$
+    bt3.setTargetTable("t3"); //$NON-NLS-1$
+    final BusinessColumn bc3 = new BusinessColumn();
+    bc3.setId("bc3"); //$NON-NLS-1$
+    bc3.setFormula("k"); //$NON-NLS-1$
+    bc3.setBusinessTable(bt3);
+    bt3.addBusinessColumn(bc3);
+    mainCat.addBusinessColumn(bc3);
+    
+    final RelationshipMeta rl1 = new RelationshipMeta();
+    rl1.setType(RelationshipMeta.TYPE_RELATIONSHIP_0_N);
+    rl1.setTableFrom(bt1);
+    rl1.setFieldFrom(bc1);
+    rl1.setTableTo(bt2);
+    rl1.setFieldTo(bc2);
+    
+    model.addRelationship(rl1);    
+
+    final RelationshipMeta rl2 = new RelationshipMeta();
+    rl2.setType(RelationshipMeta.TYPE_RELATIONSHIP_0_N);
+    rl2.setTableFrom(bt1);
+    rl2.setFieldFrom(bc1);
+    rl2.setTableTo(bt3);
+    rl2.setFieldTo(bc3);
+    
+    model.addRelationship(rl2);
+    
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    MQLQueryImpl myTest = new MQLQueryImpl(null, model, databaseMeta, "en_US"); //$NON-NLS-1$
+    myTest.addSelection(new Selection(bc1));
+    myTest.addSelection(new Selection(bc2));
+    myTest.addSelection(new Selection(bc3));
+    
+    MappedQuery query = myTest.getQuery();
+    assertEqualsIgnoreWhitespaces( 
+        "SELECT DISTINCT bt1.k AS COL0 ,bt2.k AS COL1 ,bt3.k AS COL2 FROM t2 bt2 RIGHT OUTER JOIN ( t1 bt1 LEFT OUTER JOIN t3 bt3 ON ( bt1.k = bt3.k ) ) ON ( bt1.k = bt2.k )",
+        query.getQuery()    
+    ); //$NON-NLS-1$
+  }
+  
+  /**
+   * Scenario 5: Two outer joins in the opposite direction
+   */
+  public void testOuterJoinScenario5a() throws Exception {
+    final BusinessModel model = new BusinessModel();
+    model.setId("model_01");
+    BusinessCategory rootCat = new BusinessCategory();
+    rootCat.setRootCategory(true);
+    BusinessCategory mainCat = new BusinessCategory();
+    mainCat.setId("cat_01");
+    rootCat.addBusinessCategory(mainCat);
+    model.setRootCategory(rootCat);
+    
+    final BusinessTable bt1 = new BusinessTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setTargetTable("t1"); //$NON-NLS-1$
+    final BusinessColumn bc1 = new BusinessColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setFormula("k"); //$NON-NLS-1$
+    bc1.setBusinessTable(bt1);
+    bt1.addBusinessColumn(bc1);
+    bt1.setRelativeSize(1);
+    mainCat.addBusinessColumn(bc1);
+    
+    final BusinessTable bt2 = new BusinessTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setTargetTable("t2"); //$NON-NLS-1$
+    final BusinessColumn bc2 = new BusinessColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setFormula("k"); //$NON-NLS-1$
+    bc2.setBusinessTable(bt2);
+    bt2.addBusinessColumn(bc2);
+    mainCat.addBusinessColumn(bc2);
+    
+    final BusinessTable bt3 = new BusinessTable();
+    bt3.setId("bt3"); //$NON-NLS-1$
+    bt3.setTargetTable("t3"); //$NON-NLS-1$
+    final BusinessColumn bc3 = new BusinessColumn();
+    bc3.setId("bc3"); //$NON-NLS-1$
+    bc3.setFormula("k"); //$NON-NLS-1$
+    bc3.setBusinessTable(bt3);
+    bt3.addBusinessColumn(bc3);
+    mainCat.addBusinessColumn(bc3);
+    
+    final RelationshipMeta rl1 = new RelationshipMeta();
+    rl1.setType(RelationshipMeta.TYPE_RELATIONSHIP_N_0);
+    rl1.setJoinOrderKey("A");
+    rl1.setTableFrom(bt1);
+    rl1.setFieldFrom(bc1);
+    rl1.setTableTo(bt2);
+    rl1.setFieldTo(bc2);
+    
+    model.addRelationship(rl1);    
+
+    final RelationshipMeta rl2 = new RelationshipMeta();
+    rl2.setType(RelationshipMeta.TYPE_RELATIONSHIP_N_0);
+    rl2.setJoinOrderKey("B");
+    rl2.setTableFrom(bt1);
+    rl2.setFieldFrom(bc1);
+    rl2.setTableTo(bt3);
+    rl2.setFieldTo(bc3);
+    
+    model.addRelationship(rl2);
+    
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    MQLQueryImpl myTest = new MQLQueryImpl(null, model, databaseMeta, "en_US"); //$NON-NLS-1$
+    myTest.addSelection(new Selection(bc1));
+    myTest.addSelection(new Selection(bc2));
+    myTest.addSelection(new Selection(bc3));
+    
+    MappedQuery query = myTest.getQuery();
+    assertEqualsIgnoreWhitespaces( 
+        "SELECT DISTINCT bt1.k AS COL0 ,bt2.k AS COL1 ,bt3.k AS COL2 FROM t3 bt3 LEFT OUTER JOIN ( t1 bt1 RIGHT OUTER JOIN t2 bt2 ON ( bt1.k = bt2.k ) ) ON ( bt1.k = bt3.k )",
+        query.getQuery()    
+    ); //$NON-NLS-1$
+  }
+  
+  /**
+   * Scenario 5: Two outer joins in the opposite direction
+   */
+  public void testOuterJoinScenario5b() throws Exception {
+    final BusinessModel model = new BusinessModel();
+    model.setId("model_01");
+    BusinessCategory rootCat = new BusinessCategory();
+    rootCat.setRootCategory(true);
+    BusinessCategory mainCat = new BusinessCategory();
+    mainCat.setId("cat_01");
+    rootCat.addBusinessCategory(mainCat);
+    model.setRootCategory(rootCat);
+    
+    final BusinessTable bt1 = new BusinessTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setTargetTable("t1"); //$NON-NLS-1$
+    final BusinessColumn bc1 = new BusinessColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setFormula("k"); //$NON-NLS-1$
+    bc1.setBusinessTable(bt1);
+    bt1.addBusinessColumn(bc1);
+    bt1.setRelativeSize(1);
+    mainCat.addBusinessColumn(bc1);
+    
+    final BusinessTable bt2 = new BusinessTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setTargetTable("t2"); //$NON-NLS-1$
+    final BusinessColumn bc2 = new BusinessColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setFormula("k"); //$NON-NLS-1$
+    bc2.setBusinessTable(bt2);
+    bt2.addBusinessColumn(bc2);
+    mainCat.addBusinessColumn(bc2);
+    
+    final BusinessTable bt3 = new BusinessTable();
+    bt3.setId("bt3"); //$NON-NLS-1$
+    bt3.setTargetTable("t3"); //$NON-NLS-1$
+    final BusinessColumn bc3 = new BusinessColumn();
+    bc3.setId("bc3"); //$NON-NLS-1$
+    bc3.setFormula("k"); //$NON-NLS-1$
+    bc3.setBusinessTable(bt3);
+    bt3.addBusinessColumn(bc3);
+    mainCat.addBusinessColumn(bc3);
+    
+    final RelationshipMeta rl1 = new RelationshipMeta();
+    rl1.setType(RelationshipMeta.TYPE_RELATIONSHIP_N_0);
+    rl1.setJoinOrderKey("B");
+    rl1.setTableFrom(bt1);
+    rl1.setFieldFrom(bc1);
+    rl1.setTableTo(bt2);
+    rl1.setFieldTo(bc2);
+    
+    model.addRelationship(rl1);    
+
+    final RelationshipMeta rl2 = new RelationshipMeta();
+    rl2.setType(RelationshipMeta.TYPE_RELATIONSHIP_N_0);
+    rl2.setJoinOrderKey("A");
+    rl2.setTableFrom(bt1);
+    rl2.setFieldFrom(bc1);
+    rl2.setTableTo(bt3);
+    rl2.setFieldTo(bc3);
+    
+    model.addRelationship(rl2);
+    
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    MQLQueryImpl myTest = new MQLQueryImpl(null, model, databaseMeta, "en_US"); //$NON-NLS-1$
+    myTest.addSelection(new Selection(bc1));
+    myTest.addSelection(new Selection(bc2));
+    myTest.addSelection(new Selection(bc3));
+    
+    MappedQuery query = myTest.getQuery();
+    assertEqualsIgnoreWhitespaces( 
+        "SELECT DISTINCT bt1.k AS COL0 ,bt2.k AS COL1 ,bt3.k AS COL2 FROM t2 bt2 LEFT OUTER JOIN ( t1 bt1 RIGHT OUTER JOIN t3 bt3 ON ( bt1.k = bt3.k ) ) ON ( bt1.k = bt2.k )",
+        query.getQuery()    
+    ); //$NON-NLS-1$
+  }
+  
+  /**
+   * Scenario 6: 4 tables outer joined
+   * 
+   * NOTE: This does not work on MYSQL, because FULL OUTER JOIN is not supported.
+   */
+  public void testOuterJoinScenario6() throws Exception {
+    final BusinessModel model = new BusinessModel();
+    model.setId("model_01");
+    BusinessCategory rootCat = new BusinessCategory();
+    rootCat.setRootCategory(true);
+    BusinessCategory mainCat = new BusinessCategory();
+    mainCat.setId("cat_01");
+    rootCat.addBusinessCategory(mainCat);
+    model.setRootCategory(rootCat);
+    
+    final BusinessTable bt1 = new BusinessTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setTargetTable("t1"); //$NON-NLS-1$
+    final BusinessColumn bc1 = new BusinessColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setFormula("k"); //$NON-NLS-1$
+    bc1.setBusinessTable(bt1);
+    bt1.addBusinessColumn(bc1);
+    bt1.setRelativeSize(1);
+    mainCat.addBusinessColumn(bc1);
+    
+    final BusinessTable bt2 = new BusinessTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setTargetTable("t2"); //$NON-NLS-1$
+    final BusinessColumn bc2 = new BusinessColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setFormula("k"); //$NON-NLS-1$
+    bc2.setBusinessTable(bt2);
+    bt2.addBusinessColumn(bc2);
+    mainCat.addBusinessColumn(bc2);
+    
+    final BusinessTable bt3 = new BusinessTable();
+    bt3.setId("bt3"); //$NON-NLS-1$
+    bt3.setTargetTable("t3"); //$NON-NLS-1$
+    final BusinessColumn bc3 = new BusinessColumn();
+    bc3.setId("bc3"); //$NON-NLS-1$
+    bc3.setFormula("k"); //$NON-NLS-1$
+    bc3.setBusinessTable(bt3);
+    bt3.addBusinessColumn(bc3);
+    mainCat.addBusinessColumn(bc3);
+    
+    final BusinessTable bt4 = new BusinessTable();
+    bt4.setId("bt4"); //$NON-NLS-1$
+    bt4.setTargetTable("t4"); //$NON-NLS-1$
+    final BusinessColumn bc4 = new BusinessColumn();
+    bc4.setId("bc4"); //$NON-NLS-1$
+    bc4.setFormula("k"); //$NON-NLS-1$
+    bc4.setBusinessTable(bt4);
+    bt4.addBusinessColumn(bc4);
+    mainCat.addBusinessColumn(bc4);
+    
+    final RelationshipMeta rl1 = new RelationshipMeta();
+    rl1.setType(RelationshipMeta.TYPE_RELATIONSHIP_0_0);
+    rl1.setJoinOrderKey("A");
+    rl1.setTableFrom(bt1);
+    rl1.setFieldFrom(bc1);
+    rl1.setTableTo(bt2);
+    rl1.setFieldTo(bc2);
+    
+    model.addRelationship(rl1);    
+
+    final RelationshipMeta rl2 = new RelationshipMeta();
+    rl2.setType(RelationshipMeta.TYPE_RELATIONSHIP_0_0);
+    rl2.setJoinOrderKey("B");
+    rl2.setTableFrom(bt2);
+    rl2.setFieldFrom(bc2);
+    rl2.setTableTo(bt3);
+    rl2.setFieldTo(bc3);
+    
+    model.addRelationship(rl2);
+    
+    final RelationshipMeta rl3 = new RelationshipMeta();
+    rl3.setType(RelationshipMeta.TYPE_RELATIONSHIP_0_N);
+    rl3.setJoinOrderKey("A");
+    rl3.setTableFrom(bt2);
+    rl3.setFieldFrom(bc2);
+    rl3.setTableTo(bt4);
+    rl3.setFieldTo(bc4);
+    
+    model.addRelationship(rl3);
+    
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    MQLQueryImpl myTest = new MQLQueryImpl(null, model, databaseMeta, "en_US"); //$NON-NLS-1$
+    myTest.addSelection(new Selection(bc1));
+    myTest.addSelection(new Selection(bc2));
+    myTest.addSelection(new Selection(bc3));
+    myTest.addSelection(new Selection(bc3));    
+    
+    MappedQuery query = myTest.getQuery();
+    assertEqualsIgnoreWhitespaces( 
+        "SELECT DISTINCT bt1.k AS COL0 ,bt2.k AS COL1 ,bt3.k AS COL2 ,bt3.k AS COL3 FROM t3 bt3 FULL OUTER JOIN ( t1 bt1 FULL OUTER JOIN t2 bt2 ON ( bt1.k = bt2.k ) ) ON ( bt2.k = bt3.k )",
+        query.getQuery()    
+    ); //$NON-NLS-1$
+  }
+  
 }
