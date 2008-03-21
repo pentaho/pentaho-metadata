@@ -233,8 +233,9 @@ public class SQLGenerator {
     //StringBuffer sql = new StringBuffer();
     Map<String,String> columnsMap = new HashMap<String,String>();
     
-    // These are the tables involved in the field selection:
-    List<BusinessTable> tabs = getTablesInvolved(model, selections, conditions, databaseMeta, locale);
+    // These are the tables involved in the field selection
+    //
+    List<BusinessTable> tabs = getTablesInvolved(model, selections, conditions, orderBy, databaseMeta, locale);
 
     // Now get the shortest path between these tables.
     Path path = getShortestPathBetween(model, tabs);
@@ -268,9 +269,11 @@ public class SQLGenerator {
     return new MappedQuery(dialect.generateSelectStatement(query), columnsMap, selections);
   }
 
-  protected List<BusinessTable> getTablesInvolved(BusinessModel model, List<Selection> selections, List<WhereCondition> conditions, DatabaseMeta databaseMeta, String locale) {
+  protected List<BusinessTable> getTablesInvolved(BusinessModel model, List<Selection> selections, List<WhereCondition> conditions, List<OrderBy> orderBy, DatabaseMeta databaseMeta, String locale) {
     Set<BusinessTable> treeSet = new TreeSet<BusinessTable>();
 
+    // Figure out which tables are involved in the SELECT
+    //
     for (Selection selection : selections) {
       // We need to figure out which tables are involved in the formula.
       // This could simply be the parent table, but it could also be another one too.
@@ -279,10 +282,16 @@ public class SQLGenerator {
       // TODO: We re-use the static method below, maybe there is a better way to clean this up a bit.
       //
       SQLAndTables sqlAndTables = getBusinessColumnSQL(model, selection.getBusinessColumn(), databaseMeta, locale);
+      
+  	  // Add the involved tables to the list...
+  	  //
       for (BusinessTable businessTable : sqlAndTables.getUsedTables()) {
-    	  treeSet.add(businessTable); //$NON-NLS-1$
+    	  treeSet.add(businessTable);
       }
     }
+    
+    // Figure out which tables are involved in the WHERE
+    //
     for(WhereCondition condition : conditions) {
       List cols = condition.getBusinessColumns();
       Iterator iter = cols.iterator();
@@ -292,6 +301,19 @@ public class SQLGenerator {
         treeSet.add(businessTable); //$NON-NLS-1$
       }
     }
+    
+    // Figure out which tables are involved in the ORDER BY
+    //
+    for(OrderBy order : orderBy) {
+    	SQLAndTables sqlAndTables = getBusinessColumnSQL(model, order.getSelection().getBusinessColumn(), databaseMeta, locale);
+    	
+    	// Add the involved tables to the list...
+    	//
+        for (BusinessTable businessTable : sqlAndTables.getUsedTables()) {
+      	  treeSet.add(businessTable);
+        }
+      }
+
     return new ArrayList<BusinessTable>(treeSet);
   }
   
