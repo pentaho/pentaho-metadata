@@ -44,8 +44,8 @@ public class MetadataTestBase extends TestCase {
 		}
 		
 		// Trim the whitespace (max 1) at the front and back too...
-		if (Character.isWhitespace(stripped.charAt(0))) stripped.deleteCharAt(0);
-		if (Character.isWhitespace(stripped.charAt(stripped.length()-1))) stripped.deleteCharAt(stripped.length()-1);
+		if (stripped.length() > 0 && Character.isWhitespace(stripped.charAt(0))) stripped.deleteCharAt(0);
+		if (stripped.length() > 0 && Character.isWhitespace(stripped.charAt(stripped.length()-1))) stripped.deleteCharAt(stripped.length()-1);
 		
 		return stripped.toString();
 	}

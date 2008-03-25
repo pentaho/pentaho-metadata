@@ -22,7 +22,7 @@ import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.RelationshipMeta;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 
-public class MQLQueryImplTest  extends MetadataTestBase {
+public class MQLQueryImplTest extends MetadataTestBase {
   
   public void testGetShortestPathBetween() throws Exception {
     
@@ -1501,11 +1501,11 @@ public class MQLQueryImplTest  extends MetadataTestBase {
     myTest.addSelection(new Selection(bc1));
     myTest.addSelection(new Selection(bc2));
     myTest.addSelection(new Selection(bc3));
-    myTest.addSelection(new Selection(bc3));    
+    myTest.addSelection(new Selection(bc4));    
     
     MappedQuery query = myTest.getQuery();
     assertEqualsIgnoreWhitespaces( 
-        "SELECT DISTINCT bt1.k AS COL0 ,bt2.k AS COL1 ,bt3.k AS COL2 ,bt3.k AS COL3 FROM t3 bt3 FULL OUTER JOIN ( t1 bt1 FULL OUTER JOIN t2 bt2 ON ( bt1.k = bt2.k ) ) ON ( bt2.k = bt3.k )",
+        "SELECT DISTINCT bt1.k AS COL0 ,bt2.k AS COL1 ,bt3.k AS COL2 ,bt4.k AS COL3 FROM t3 bt3 FULL OUTER JOIN ( t1 bt1 FULL OUTER JOIN ( t2 bt2 LEFT OUTER JOIN t4 bt4 ON ( bt2.k = bt4.k ) ) ON ( bt1.k = bt2.k ) ) ON ( bt2.k = bt3.k )",
         query.getQuery()    
     ); //$NON-NLS-1$
   }

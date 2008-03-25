@@ -12,6 +12,7 @@
 */
 package org.pentaho.pms.example;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -145,8 +146,19 @@ public class AliasAwarePMSFormula extends PMSFormula {
       AdvancedMQLQuery.AliasedSelection sel = aliasedSelectionMap.get(contextName);
       if (sel != null) {
         sb.append(" "); //$NON-NLS-1$
-        sb.append(AdvancedSQLGenerator.getFunctionTableAndColumnForSQL(getBusinessModel(), sel, getDatabaseMeta(), locale));
+        AdvancedSQLGenerator.SQLAndAliasedTables sqlAndTables = AdvancedSQLGenerator.getSelectionSQL(getBusinessModel(), sel, getDatabaseMeta(), locale);
+        sb.append(sqlAndTables.getSql());
         sb.append(" "); //$NON-NLS-1$
+        
+        // We need to make sure to add the used tables to this list (recursive use-case).
+        // Only if they are not in there yet though.
+        //
+        for (AdvancedSQLGenerator.AliasedPathBusinessTable aliasedTable : sqlAndTables.getAliasedBusinessTables()) {
+          if (!aliasedTables.contains(aliasedTable)) {
+            aliasedTables.add(aliasedTable);
+          }
+        }
+        
         return;
       }
     
@@ -172,9 +184,38 @@ public class AliasAwarePMSFormula extends PMSFormula {
       // render the column sql
       AliasedSelection selection = new AliasedSelection(column, aliasName);
       
+      // render the column sql
       sb.append(" "); //$NON-NLS-1$
-      sb.append(AdvancedSQLGenerator.getFunctionTableAndColumnForSQL(getBusinessModel(), selection, getDatabaseMeta(), locale));
+      AdvancedSQLGenerator.SQLAndAliasedTables sqlAndTables = AdvancedSQLGenerator.getSelectionSQL(getBusinessModel(), selection, getDatabaseMeta(), locale);
+      sb.append(sqlAndTables.getSql());
       sb.append(" "); //$NON-NLS-1$
+      
+      // We need to make sure to add the used tables to this list (recursive use-case).
+      // Only if they are not in there yet though.
+      //
+      for (AdvancedSQLGenerator.AliasedPathBusinessTable aliasedTable : sqlAndTables.getAliasedBusinessTables()) {
+        if (!aliasedTables.contains(aliasedTable)) {
+          aliasedTables.add(aliasedTable);
+        }
+      }
     }
+  }
+  
+  List<AdvancedSQLGenerator.AliasedPathBusinessTable> aliasedTables = new ArrayList<AdvancedSQLGenerator.AliasedPathBusinessTable>();
+  
+  public String[] getBusinessTableIDs() {
+    throw new UnsupportedOperationException();
+  }
+  
+  public String[] getTableAliasNames() {
+    String tables[] = new String[aliasedTables.size()];
+    for (int i = 0; i < aliasedTables.size(); i++) {
+      tables[i] = aliasedTables.get(i).getAlias();
+    }
+    return tables;
+  }
+  
+  public List<AdvancedSQLGenerator.AliasedPathBusinessTable> getUsedAliasedTables() {
+    return aliasedTables;
   }
 }

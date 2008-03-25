@@ -609,93 +609,114 @@ public class DefaultSQLDialect implements SQLDialectInterface {
    * @return the nested join clause
    */
   private String getJoinClause(SQLQueryModel query, List<SQLJoin> sortedJoins, int index, List<String> usedTables, List<SQLWhereFormula> usedSQLWhereFormula) {
-	StringBuilder clause = new StringBuilder();
-	String indent = Const.rightPad(" ", (index+1)+3);
-	SQLJoin join = sortedJoins.get(index);
-	String leftTablename = join.getLeftTablename();
-	String leftTableAlias = join.getLeftTableAlias();
-	String rightTablename = join.getRightTablename();
-	String rightTableAlias = join.getRightTableAlias();
-	JoinType joinType = join.getJoinType();
-	
-	// We want to calculate this clause depth-first.  That means we first add
-	// the tables in the nested queries and then see which (left or right) fits with it.
-	// If needed, we have to flip left-outer and right-outer join syntax.
-	//
-	String rightClause;
-	
-	if (index<sortedJoins.size()-1) {
-		rightClause = getJoinClause(query, sortedJoins, index+1, usedTables, usedSQLWhereFormula);
-	} else {
-		rightClause = rightTablename;
-	}
+  	StringBuilder clause = new StringBuilder();
+  	String indent = Const.rightPad(" ", (index+1)+3);
+  	SQLJoin join = sortedJoins.get(index);
+    String leftTableNameAndAlias = join.getLeftTablename();
+    String leftTableNameOrAlias = join.getLeftTablename();
+    if (!Const.isEmpty(join.getLeftTableAlias())) {
+      leftTableNameAndAlias += " " + join.getLeftTableAlias();
+      leftTableNameOrAlias = join.getLeftTableAlias();
+    }
 
-	// Now see if the left table name is already used in the nested right clause.
-	// If so, we need to flip left and right, including the left/right outer join.
-	//
-	if (usedTables.contains(leftTablename)) {
-		leftTablename=join.getRightTablename();
-		leftTableAlias=join.getRightTableAlias();
-		rightTablename=join.getLeftTablename();
-		rightTableAlias=join.getLeftTableAlias();
-		if (join.getJoinType().equals(JoinType.LEFT_OUTER_JOIN)) joinType=JoinType.RIGHT_OUTER_JOIN;
-		else if (join.getJoinType().equals(JoinType.RIGHT_OUTER_JOIN)) joinType=JoinType.LEFT_OUTER_JOIN;
-	}
+    String rightTableNameAndAlias = join.getRightTablename();
+    String rightTableNameOrAlias = join.getRightTablename();
+    if (!Const.isEmpty(join.getRightTableAlias())) { 
+      rightTableNameAndAlias += " " + join.getRightTableAlias();
+      rightTableNameOrAlias = join.getRightTableAlias();
+    }
+      
+  	JoinType joinType = join.getJoinType();
+  	
+  	// We want to calculate this clause depth-first.  That means we first add
+  	// the tables in the nested queries and then see which (left or right) fits with it.
+  	// If needed, we have to flip left-outer and right-outer join syntax.
+  	//
+  	String rightClause;
+  	
+  	if (index<sortedJoins.size()-1) {
+  		rightClause = getJoinClause(query, sortedJoins, index+1, usedTables, usedSQLWhereFormula);
+  	} else {
+  		rightClause = rightTableNameAndAlias; // rightTableName; // TODO: OLD BUG?
+  	}
+  
+  	// Now see if the left table name is already used in the nested right clause.
+  	// If so, we need to flip left and right, including the left/right outer join.
+  	//
+  	if (usedTables.contains(leftTableNameOrAlias)) {
+      
+      leftTableNameAndAlias = join.getRightTablename();
+      leftTableNameOrAlias = join.getRightTablename();
+      if (!Const.isEmpty(join.getRightTableAlias())) { 
+        leftTableNameAndAlias += " " + join.getRightTableAlias();
+        leftTableNameOrAlias = join.getRightTableAlias();
+      }
+      
+      rightTableNameAndAlias = join.getLeftTablename();
+      rightTableNameOrAlias = join.getLeftTablename();
+      if (!Const.isEmpty(join.getLeftTableAlias())) { 
+        rightTableNameAndAlias += " " + join.getLeftTableAlias();
+        rightTableNameOrAlias = join.getLeftTableAlias();
+      }
 
-	// The left hand side of the join clause...
-	//
-	clause.append(leftTablename);
-	usedTables.add(leftTablename);
-	if (!Const.isEmpty(leftTableAlias)) clause.append(" ").append(leftTableAlias);
-	
-	// Now add the JOIN syntax
-	//
-	switch(joinType) {
-	case INNER_JOIN : clause.append(" JOIN "); break;
-	case LEFT_OUTER_JOIN : clause.append(" LEFT OUTER JOIN "); break;
-	case RIGHT_OUTER_JOIN : clause.append(" RIGHT OUTER JOIN "); break;
-	case FULL_OUTER_JOIN : clause.append(" FULL OUTER JOIN "); break;
-	}
-
-	// Now, we generate the clause in one go...
-	//
-	if (index<sortedJoins.size()-1) {
-		clause.append(Const.CR).append(indent).append(" ( ").append(Const.CR).append(indent).append("  ");
-		clause.append(rightClause);
-		clause.append(indent).append(" ) ");
-	} else {
-		clause.append(rightTablename);
-		usedTables.add(rightTablename);
-		if (!Const.isEmpty(rightTableAlias)) clause.append(" ").append(rightTableAlias);
-	}
-		  
-	// finally add the ON () part
-	//
-	SQLWhereFormula joinFormula = join.getSqlWhereFormula();
-	clause.append(Const.CR).append(indent).append(" ON ( ");
-	clause.append(joinFormula.getFormula());
-	
-	// Now see if there are any SQL where conditions that apply to either two tables...
-	//
-	for (SQLWhereFormula sqlWhereFormula : query.getWhereFormulas()) {
-		if (!usedSQLWhereFormula.contains(sqlWhereFormula)) {
-			boolean allInvolvedAvailableHere = true;
-			for (String involvedTable : sqlWhereFormula.involvedTables) {
-				if (!involvedTable.equalsIgnoreCase(leftTablename) && !involvedTable.equalsIgnoreCase(rightTablename)) {
-					allInvolvedAvailableHere=false;
-				}
-			}
-			// If all the involved tables are (usually 1) is part of this join, we specify the condition here...
-			if (allInvolvedAvailableHere) {
-				clause.append(" AND ( ").append(sqlWhereFormula.getFormula()).append(" ) ");
-				// Remember that we did use it...
-				usedSQLWhereFormula.add(sqlWhereFormula);
-			}
-		}
-	}
-	clause.append(" )").append(Const.CR);
-	
-	return clause.toString();
+  		if (join.getJoinType().equals(JoinType.LEFT_OUTER_JOIN)) joinType=JoinType.RIGHT_OUTER_JOIN;
+  		else if (join.getJoinType().equals(JoinType.RIGHT_OUTER_JOIN)) joinType=JoinType.LEFT_OUTER_JOIN;
+  	}
+  
+  	// The left hand side of the join clause...
+  	//
+  	clause.append(leftTableNameAndAlias);
+  	usedTables.add(leftTableNameOrAlias);
+  	
+  	// Now add the JOIN syntax
+  	//
+  	switch(joinType) {
+    	case INNER_JOIN : clause.append(" JOIN "); break;
+    	case LEFT_OUTER_JOIN : clause.append(" LEFT OUTER JOIN "); break;
+    	case RIGHT_OUTER_JOIN : clause.append(" RIGHT OUTER JOIN "); break;
+    	case FULL_OUTER_JOIN : clause.append(" FULL OUTER JOIN "); break;
+  	}
+  
+  	// Now, we generate the clause in one go...
+  	//
+  	if (index<sortedJoins.size()-1) {
+  		clause.append(Const.CR).append(indent).append(" ( ").append(Const.CR).append(indent).append("  ");
+  		clause.append(rightClause);
+  		clause.append(indent).append(" ) ");
+  	} else {
+  		clause.append(rightTableNameAndAlias);
+  		usedTables.add(rightTableNameOrAlias);
+//  		if (!Const.isEmpty(rightTableAlias)) clause.append(" ").append(rightTableAlias);
+  	}
+  		  
+  	// finally add the ON () part
+  	//
+    
+  	SQLWhereFormula joinFormula = join.getSqlWhereFormula();
+  	clause.append(Const.CR).append(indent).append(" ON ( ");
+  	clause.append(joinFormula.getFormula());
+  	
+  	// Now see if there are any SQL where conditions that apply to either two tables...
+  	//
+  	for (SQLWhereFormula sqlWhereFormula : query.getWhereFormulas()) {
+  		if (!usedSQLWhereFormula.contains(sqlWhereFormula)) {
+  			boolean allInvolvedAvailableHere = true;
+  			for (String involvedTable : sqlWhereFormula.involvedTables) {
+  				if (!involvedTable.equalsIgnoreCase(leftTableNameOrAlias) && !involvedTable.equalsIgnoreCase(rightTableNameOrAlias)) {
+  					allInvolvedAvailableHere=false;
+  				}
+  			}
+  			// If all the involved tables are (usually 1) is part of this join, we specify the condition here...
+  			if (allInvolvedAvailableHere) {
+  				clause.append(" AND ( ").append(sqlWhereFormula.getFormula()).append(" ) ");
+  				// Remember that we did use it...
+  				usedSQLWhereFormula.add(sqlWhereFormula);
+  			}
+  		}
+  	}
+  	clause.append(" )").append(Const.CR);
+  	
+  	return clause.toString();
   }
 
 /**

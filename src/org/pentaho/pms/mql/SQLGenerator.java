@@ -149,8 +149,10 @@ public class SQLGenerator {
       for (WhereCondition condition : conditions) {
         // The ones with aggregates in it are for the HAVING clause
         if (!condition.hasAggregate()) {
+          
+          String sqlFormula = condition.getPMSFormula().generateSQL(locale);
           String[] usedTables = condition.getPMSFormula().getBusinessTableIDs();
-          query.addWhereFormula(condition.getPMSFormula().generateSQL(locale), first ? "AND" : condition.getOperator(), usedTables); //$NON-NLS-1$
+          query.addWhereFormula(sqlFormula, first ? "AND" : condition.getOperator(), usedTables); //$NON-NLS-1$
           first = false;
         } else {
           query.addHavingFormula(condition.getPMSFormula().generateSQL(locale), condition.getOperator());
