@@ -229,7 +229,7 @@ public class AdvancedSQLGenerator extends SQLGenerator {
 //    }
     for (int i = 0; i < allRelationships.size(); i++) {
       AliasedRelationshipMeta aliasedRelation = allRelationships.get(i);
-      String joinFormula = getJoin(aliasedRelation, databaseMeta, locale);
+      String joinFormula = getJoin(model, aliasedRelation, databaseMeta, locale, selections);
       String joinOrderKey = aliasedRelation.relation.getJoinOrderKey();
       JoinType joinType;
       switch(aliasedRelation.relation.getJoinType()) {
@@ -475,13 +475,30 @@ public class AdvancedSQLGenerator extends SQLGenerator {
       }
   }
     
-  public String getJoin(AliasedRelationshipMeta relation, DatabaseMeta databaseMeta, String locale) throws PentahoMetadataException
+  public String getJoin(BusinessModel businessModel, AliasedRelationshipMeta relation, DatabaseMeta databaseMeta, String locale, List<Selection> selections) throws PentahoMetadataException
   {
     String join=""; //$NON-NLS-1$
     
     if (relation.relation.isComplex()) {
-      throw new PentahoMetadataException("unsupported"); //$NON-NLS-1$
-      // join = relation.getComplexJoin();
+      // parse join as MQL
+      String formulaString = relation.relation.getComplexJoin();
+      AliasAwarePMSFormula formula = new AliasAwarePMSFormula(businessModel, databaseMeta, formulaString, selections, DEFAULT_ALIAS);
+
+      // if we're dealing with an aliased join, inform the formula
+      if (!relation.rightAlias.equals(DEFAULT_ALIAS) || !relation.leftAlias.equals(DEFAULT_ALIAS)) {
+        Map<String, String> businessTableToAliasMap = new HashMap<String, String>();
+        if (!relation.rightAlias.equals(DEFAULT_ALIAS)) {
+          businessTableToAliasMap.put(relation.relation.getTableTo().getId(), relation.rightAlias);
+        } 
+        if (!relation.leftAlias.equals(DEFAULT_ALIAS)) {
+          businessTableToAliasMap.put(relation.relation.getTableFrom().getId(), relation.leftAlias);
+        } 
+        formula.setBusinessTableToAliasMap(businessTableToAliasMap);
+      }
+      
+      formula.parseAndValidate();
+      join = formula.generateSQL(locale);
+      
     } else if (relation.relation.getTableFrom() != null && relation.relation.getTableTo() != null && relation.relation.getFieldFrom() !=null && relation.relation.getFieldTo() != null) {
         String rightAlias = relation.relation.getTableTo().getId();
         if (!relation.rightAlias.equals(DEFAULT_ALIAS)) {

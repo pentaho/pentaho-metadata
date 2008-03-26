@@ -24,6 +24,7 @@ import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.example.AdvancedMQLQuery.AliasedSelection;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.mql.PMSFormula;
+import org.pentaho.pms.mql.SQLGenerator;
 import org.pentaho.pms.mql.Selection;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
@@ -51,7 +52,9 @@ public class AliasAwarePMSFormula extends PMSFormula {
   
   private List<Selection> selections;
   private String aliasName;
-  
+  private Map<String, String> businessTableToAliasMap; 
+  private Map<String, AdvancedMQLQuery.AliasedSelection> aliasedSelectionMap = new HashMap<String, AdvancedMQLQuery.AliasedSelection>();
+
   /**
    * constructor, currently used for testing
    * 
@@ -89,8 +92,10 @@ public class AliasAwarePMSFormula extends PMSFormula {
     super(model, table, formulaString);
     this.aliasName = aliasName;
   }
-
-  private Map<String, AdvancedMQLQuery.AliasedSelection> aliasedSelectionMap = new HashMap<String, AdvancedMQLQuery.AliasedSelection>();
+  
+  public void setBusinessTableToAliasMap(Map<String, String> businessTableToAlias) {
+    this.businessTableToAliasMap = businessTableToAlias;
+  }
   
   /**
    * We support unqualified business columns if a business table is provided.
@@ -139,29 +144,29 @@ public class AliasAwarePMSFormula extends PMSFormula {
    * need to make this context lookup alias aware
    */
   protected void renderContextLookup(StringBuffer sb, String contextName, String locale) {
+    // first see if we are an aliased column
+    AdvancedMQLQuery.AliasedSelection sel = aliasedSelectionMap.get(contextName);
+    if (sel != null) {
+      sb.append(" "); //$NON-NLS-1$
+      AdvancedSQLGenerator.SQLAndAliasedTables sqlAndTables = AdvancedSQLGenerator.getSelectionSQL(getBusinessModel(), sel, getDatabaseMeta(), locale);
+      sb.append(sqlAndTables.getSql());
+      sb.append(" "); //$NON-NLS-1$
+      
+      // We need to make sure to add the used tables to this list (recursive use-case).
+      // Only if they are not in there yet though.
+      //
+      for (AdvancedSQLGenerator.AliasedPathBusinessTable aliasedTable : sqlAndTables.getAliasedBusinessTables()) {
+        if (!aliasedTables.contains(aliasedTable)) {
+          aliasedTables.add(aliasedTable);
+        }
+      }
+      
+      return;
+    }
+
     BusinessColumn column = (BusinessColumn)getBusinessColumnMap().get(contextName);
     if (column == null) {
-      
-      // first see if we are an aliased column
-      AdvancedMQLQuery.AliasedSelection sel = aliasedSelectionMap.get(contextName);
-      if (sel != null) {
-        sb.append(" "); //$NON-NLS-1$
-        AdvancedSQLGenerator.SQLAndAliasedTables sqlAndTables = AdvancedSQLGenerator.getSelectionSQL(getBusinessModel(), sel, getDatabaseMeta(), locale);
-        sb.append(sqlAndTables.getSql());
-        sb.append(" "); //$NON-NLS-1$
         
-        // We need to make sure to add the used tables to this list (recursive use-case).
-        // Only if they are not in there yet though.
-        //
-        for (AdvancedSQLGenerator.AliasedPathBusinessTable aliasedTable : sqlAndTables.getAliasedBusinessTables()) {
-          if (!aliasedTables.contains(aliasedTable)) {
-            aliasedTables.add(aliasedTable);
-          }
-        }
-        
-        return;
-      }
-    
       // we have a physical column function, we need to evaluate it
       // in a special way due to aggregations and such
       
@@ -181,9 +186,18 @@ public class AliasAwarePMSFormula extends PMSFormula {
       sb.append(" "); //$NON-NLS-1$
       
     } else {
+      AliasedSelection selection = null;
+    
+      if (businessTableToAliasMap != null) {
       // render the column sql
-      AliasedSelection selection = new AliasedSelection(column, aliasName);
-      
+        String tmpAliasName = businessTableToAliasMap.get(column.getBusinessTable().getId());
+        if (tmpAliasName == null) {
+          tmpAliasName = aliasName;
+        }
+        selection = new AliasedSelection(column, tmpAliasName);
+      } else {
+        selection = new AliasedSelection(column, aliasName);
+      }
       // render the column sql
       sb.append(" "); //$NON-NLS-1$
       AdvancedSQLGenerator.SQLAndAliasedTables sqlAndTables = AdvancedSQLGenerator.getSelectionSQL(getBusinessModel(), selection, getDatabaseMeta(), locale);

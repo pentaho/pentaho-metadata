@@ -1,9 +1,18 @@
 package org.pentaho.pms;
 
 
+import java.util.Map;
+
+import org.pentaho.commons.connection.memory.MemoryMetaData;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.example.AdvancedMQLQuery;
+import org.pentaho.pms.example.AdvancedSQLGenerator;
+import org.pentaho.pms.mql.ExtendedMetaData;
+import org.pentaho.pms.mql.MQLQueryImpl;
 import org.pentaho.pms.mql.MappedQuery;
+import org.pentaho.pms.mql.SQLGenerator;
+import org.pentaho.pms.mql.Selection;
+import org.pentaho.pms.mql.WhereCondition;
 //import org.pentaho.pms.mql.Selection;
 import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
@@ -113,6 +122,8 @@ public class AdvancedMQLQueryImplTest extends MetadataTestBase {
     
     
     myTest.addConstraint("AND", "[alias1.bc1] > 10");
+    myTest.addConstraint("AND", "[bt3.bc3] > 10");
+    
     // SQLQueryTest.printOutJava(myTest.getQuery().getQuery());
     assertEqualsIgnoreWhitespaces(
         "SELECT DISTINCT " + 
@@ -131,7 +142,8 @@ public class AdvancedMQLQueryImplTest extends MetadataTestBase {
         "AND ( bt3.pc3 = bt2.pc2 ) " +
         "AND ( bt1_alias1.pc1 = bt2_alias1.pc2 ) " +
         "AND ( bt3.pc3 = bt2_alias1.pc2 ) " +
-        "AND ( bt1_alias1.pc1 > 10 )", 
+        "AND ( bt1_alias1.pc1 > 10 ) " +
+        "AND ( bt3.pc3 > 10 )",
         myTest.getQuery().getQuery());
   }
 
@@ -1193,6 +1205,78 @@ public class AdvancedMQLQueryImplTest extends MetadataTestBase {
         query.getQuery()    
     ); //$NON-NLS-1$
   }
+  
+  public void testComplexJoinMQL() throws Exception {
+    
+    String locale = "en_US"; //$NON-NLS-1$
+    
+    final BusinessModel model = new BusinessModel();
+    
+    final BusinessTable bt1 = new BusinessTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    final BusinessColumn bc1 = new BusinessColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setFormula("pc1"); //$NON-NLS-1$
+    bc1.setBusinessTable(bt1);
+    bt1.addBusinessColumn(bc1);
+    
+    final BusinessTable bt2 = new BusinessTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    final BusinessColumn bc2 = new BusinessColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setFormula("pc2"); //$NON-NLS-1$
+    bc2.setBusinessTable(bt2);
+    bt2.addBusinessColumn(bc2);
+
+    final BusinessTable bt3 = new BusinessTable();
+    bt3.setId("bt3"); //$NON-NLS-1$
+
+    final RelationshipMeta rl1 = new RelationshipMeta();
+    
+    rl1.setTableFrom(bt1);
+    rl1.setTableTo(bt2);
+    rl1.setComplexJoin("[bt1.bc1] = [bt2.bc2]"); //$NON-NLS-1$
+    rl1.setComplex(true);
+    
+    final RelationshipMeta rl2 = new RelationshipMeta();
+    
+    rl2.setTableTo(bt2);
+    rl2.setTableFrom(bt3);
+    
+    final RelationshipMeta rl3 = new RelationshipMeta();
+    
+    rl3.setTableTo(bt1);
+    rl3.setTableFrom(bt3);
+    
+    model.addBusinessTable(bt1);
+    model.addBusinessTable(bt2);
+    model.addBusinessTable(bt3);
+    
+    model.addRelationship(rl1);
+    model.addRelationship(rl2);
+    model.addRelationship(rl3);
+    
+    
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    AdvancedMQLQuery myTest = new AdvancedMQLQuery(null, model, databaseMeta, "en_US"); //$NON-NLS-1$
+    myTest.addSelection(new AdvancedMQLQuery.AliasedSelection(bc1, null));
+    myTest.addSelection(new AdvancedMQLQuery.AliasedSelection(bc2, null));
+    
+    MappedQuery query = myTest.getQuery();
+    assertEqualsIgnoreWhitespaces( 
+        "SELECT DISTINCT bt1.pc1 AS COL0 ,bt2.pc2 AS COL1 FROM null bt1 ,null bt2 WHERE ( bt1.pc1 = bt2.pc2 )", //$NON-NLS-1$
+        query.getQuery()    
+    ); 
+    
+    myTest.addSelection(new AdvancedMQLQuery.AliasedSelection(bc2, "alias"));
+    query = myTest.getQuery();
+    assertEqualsIgnoreWhitespaces( 
+        "SELECT DISTINCT bt1.pc1 AS COL0 ,bt2.pc2 AS COL1 ,bt2_alias.pc2 AS COL2 FROM null bt1 ,null bt2 ,null bt2_alias WHERE ( bt1.pc1 = bt2.pc2 ) AND ( bt1.pc1 = bt2_alias.pc2 )", //$NON-NLS-1$
+        query.getQuery()    
+    );
+  } 
+  
+
 
   
 }
