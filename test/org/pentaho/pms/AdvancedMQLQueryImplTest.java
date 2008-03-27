@@ -390,7 +390,7 @@ public class AdvancedMQLQueryImplTest extends MetadataTestBase {
     
     MappedQuery query = myTest.getQuery();
     assertEqualsIgnoreWhitespaces( 
-        "SELECT DISTINCT bt1.k AS COL0 ,bt2.k AS COL1 ,bt2_alias.k AS COL2 FROM t2 bt2 RIGHT OUTER JOIN ( t1 bt1 LEFT OUTER JOIN t2 bt2_alias ON ( bt1.k = bt2_alias.k AND ( bt2_alias.k = 2 ) ) ) ON ( bt1.k = bt2.k ) WHERE ( bt2.k = 1 )",
+        "SELECT DISTINCT bt1.k AS COL0 ,bt2.k AS COL1 ,bt2_alias.k AS COL2 FROM t2 bt2 RIGHT OUTER JOIN ( t1 bt1 LEFT OUTER JOIN t2 bt2_alias ON ( bt1.k = bt2_alias.k AND ( bt2_alias.k = 2 ) ) ) ON ( bt1.k = bt2.k AND ( bt2.k = 1 ) )",
         query.getQuery()    
     ); //$NON-NLS-1$
   }

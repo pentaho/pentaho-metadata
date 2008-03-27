@@ -699,7 +699,7 @@ public class DefaultSQLDialect implements SQLDialectInterface {
   	// Now see if there are any SQL where conditions that apply to either two tables...
   	// NOTE: Don't even bother with this in the case of full outer joins.  In that case we want to delay the condition as long as possible (until outside this JOIN).
   	//
-  	if (!join.getJoinType().equals(JoinType.FULL_OUTER_JOIN)) {
+  	if (!joinType.equals(JoinType.FULL_OUTER_JOIN)) {
 	  	for (SQLWhereFormula sqlWhereFormula : query.getWhereFormulas()) {
 	  		if (!usedSQLWhereFormula.contains(sqlWhereFormula)) {
 	  			boolean allInvolvedAvailableHere = true;
@@ -711,13 +711,13 @@ public class DefaultSQLDialect implements SQLDialectInterface {
 	  			
 	  			// We can't place a constraint on the left table of a left outer join...
 	  			//
-	  			if (join.getJoinType().equals(JoinType.LEFT_OUTER_JOIN) && Const.indexOfString(leftTableNameOrAlias, sqlWhereFormula.involvedTables)>=0) {
+	  			if (joinType.equals(JoinType.LEFT_OUTER_JOIN) && Const.indexOfString(leftTableNameOrAlias, sqlWhereFormula.involvedTables)>=0) {
 	  				allInvolvedAvailableHere = false;
 	  			}
 
 	  			// We can't place a constraint on the right table of a right outer join either...
 	  			//
-	  			if (join.getJoinType().equals(JoinType.RIGHT_OUTER_JOIN) && Const.indexOfString(rightTableNameOrAlias, sqlWhereFormula.involvedTables)>=0) {
+	  			if (joinType.equals(JoinType.RIGHT_OUTER_JOIN) && Const.indexOfString(rightTableNameOrAlias, sqlWhereFormula.involvedTables)>=0) {
 	  				allInvolvedAvailableHere = false;
 	  			}
 
