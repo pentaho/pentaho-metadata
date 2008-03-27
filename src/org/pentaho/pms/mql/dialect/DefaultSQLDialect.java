@@ -697,22 +697,38 @@ public class DefaultSQLDialect implements SQLDialectInterface {
   	clause.append(joinFormula.getFormula());
   	
   	// Now see if there are any SQL where conditions that apply to either two tables...
+  	// NOTE: Don't even bother with this in the case of full outer joins.  In that case we want to delay the condition as long as possible (until outside this JOIN).
   	//
-  	for (SQLWhereFormula sqlWhereFormula : query.getWhereFormulas()) {
-  		if (!usedSQLWhereFormula.contains(sqlWhereFormula)) {
-  			boolean allInvolvedAvailableHere = true;
-  			for (String involvedTable : sqlWhereFormula.involvedTables) {
-  				if (!involvedTable.equalsIgnoreCase(leftTableNameOrAlias) && !involvedTable.equalsIgnoreCase(rightTableNameOrAlias)) {
-  					allInvolvedAvailableHere=false;
-  				}
-  			}
-  			// If all the involved tables are (usually 1) is part of this join, we specify the condition here...
-  			if (allInvolvedAvailableHere) {
-  				clause.append(" AND ( ").append(sqlWhereFormula.getFormula()).append(" ) ");
-  				// Remember that we did use it...
-  				usedSQLWhereFormula.add(sqlWhereFormula);
-  			}
-  		}
+  	if (!join.getJoinType().equals(JoinType.FULL_OUTER_JOIN)) {
+	  	for (SQLWhereFormula sqlWhereFormula : query.getWhereFormulas()) {
+	  		if (!usedSQLWhereFormula.contains(sqlWhereFormula)) {
+	  			boolean allInvolvedAvailableHere = true;
+	  			for (String involvedTable : sqlWhereFormula.involvedTables) {
+	  				if (!involvedTable.equalsIgnoreCase(leftTableNameOrAlias) && !involvedTable.equalsIgnoreCase(rightTableNameOrAlias)) {
+	  					allInvolvedAvailableHere=false;
+	  				}
+	  			}
+	  			
+	  			// We can't place a constraint on the left table of a left outer join...
+	  			//
+	  			if (join.getJoinType().equals(JoinType.LEFT_OUTER_JOIN) && Const.indexOfString(leftTableNameOrAlias, sqlWhereFormula.involvedTables)>=0) {
+	  				allInvolvedAvailableHere = false;
+	  			}
+
+	  			// We can't place a constraint on the right table of a right outer join either...
+	  			//
+	  			if (join.getJoinType().equals(JoinType.RIGHT_OUTER_JOIN) && Const.indexOfString(rightTableNameOrAlias, sqlWhereFormula.involvedTables)>=0) {
+	  				allInvolvedAvailableHere = false;
+	  			}
+
+	  			// If all the involved tables are (usually 1) is part of this join, we specify the condition here...
+	  			if (allInvolvedAvailableHere) {
+	  				clause.append(" AND ( ").append(sqlWhereFormula.getFormula()).append(" ) ");
+	  				// Remember that we did use it...
+	  				usedSQLWhereFormula.add(sqlWhereFormula);
+	  			}
+	  		}
+	  	}
   	}
   	clause.append(" )").append(Const.CR);
   	

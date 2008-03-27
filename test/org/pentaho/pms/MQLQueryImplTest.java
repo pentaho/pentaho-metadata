@@ -940,7 +940,7 @@ public class MQLQueryImplTest extends MetadataTestBase {
    * Scenario 1d: Two Tables are outer joined both with constraints
    */
   
-  public void __testOuterJoinScenario1d() throws Exception {
+  public void testOuterJoinScenario1d() throws Exception {
     final BusinessModel model = new BusinessModel();
     model.setId("model_01");
     BusinessCategory rootCat = new BusinessCategory();
@@ -960,6 +960,7 @@ public class MQLQueryImplTest extends MetadataTestBase {
     bt1.addBusinessColumn(bc1);
     bt1.setRelativeSize(1);
     mainCat.addBusinessColumn(bc1);
+    model.addBusinessTable(bt1);
     
     final BusinessTable bt2 = new BusinessTable();
     bt2.setId("bt2"); //$NON-NLS-1$
@@ -970,6 +971,7 @@ public class MQLQueryImplTest extends MetadataTestBase {
     bc2.setBusinessTable(bt2);
     bt2.addBusinessColumn(bc2);
     mainCat.addBusinessColumn(bc2);
+    model.addBusinessTable(bt2);
     
     final RelationshipMeta rl1 = new RelationshipMeta();
     rl1.setType(RelationshipMeta.TYPE_RELATIONSHIP_0_N);
@@ -984,14 +986,14 @@ public class MQLQueryImplTest extends MetadataTestBase {
     MQLQueryImpl myTest = new MQLQueryImpl(null, model, databaseMeta, "en_US"); //$NON-NLS-1$
     myTest.addSelection(new Selection(bc1));
     myTest.addSelection(new Selection(bc2));
-    myTest.addConstraint("AND", "[cat_01.bc1] > 1");
-    myTest.addConstraint("AND", "[cat_01.bc2] > 1");
+    myTest.addConstraint("AND", "[bt1.bc1] > 1");
+    myTest.addConstraint("AND", "[bt2.bc2] > 1");
     
     MappedQuery query = myTest.getQuery();
     assertEqualsIgnoreWhitespaces( 
-        "SELECT DISTINCT bt1.pc1 AS COL0 ,bt2.pc2 AS COL1 FROM pt1 bt1 LEFT OUTER JOIN pt2 bt2 ON ( bt1.pc1 = bt2.pc2 AND ( bt1.pc1 > 1 ) ) WHERE ( bt2.pc2 > 1 )",
+        "SELECT DISTINCT bt1.pc1 AS COL0 ,bt2.pc2 AS COL1 FROM pt1 bt1 LEFT OUTER JOIN pt2 bt2 ON ( bt1.pc1 = bt2.pc2 AND ( bt2.pc2 > 1 ) ) WHERE ( bt1.pc1 > 1 )",  //$NON-NLS-1$
         query.getQuery()    
-    ); //$NON-NLS-1$
+    ); 
   }
   
   

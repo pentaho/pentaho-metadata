@@ -24,7 +24,6 @@ import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.example.AdvancedMQLQuery.AliasedSelection;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.mql.PMSFormula;
-import org.pentaho.pms.mql.SQLGenerator;
 import org.pentaho.pms.mql.Selection;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;

@@ -1,19 +1,9 @@
 package org.pentaho.pms;
 
 
-import java.util.Map;
-
-import org.pentaho.commons.connection.memory.MemoryMetaData;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.example.AdvancedMQLQuery;
-import org.pentaho.pms.example.AdvancedSQLGenerator;
-import org.pentaho.pms.mql.ExtendedMetaData;
-import org.pentaho.pms.mql.MQLQueryImpl;
 import org.pentaho.pms.mql.MappedQuery;
-import org.pentaho.pms.mql.SQLGenerator;
-import org.pentaho.pms.mql.Selection;
-import org.pentaho.pms.mql.WhereCondition;
-//import org.pentaho.pms.mql.Selection;
 import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
@@ -400,7 +390,7 @@ public class AdvancedMQLQueryImplTest extends MetadataTestBase {
     
     MappedQuery query = myTest.getQuery();
     assertEqualsIgnoreWhitespaces( 
-        "SELECT DISTINCT bt1.k AS COL0 ,bt2.k AS COL1 ,bt2_alias.k AS COL2 FROM t2 bt2 RIGHT OUTER JOIN ( t1 bt1 LEFT OUTER JOIN t2 bt2_alias ON ( bt1.k = bt2_alias.k AND ( bt2_alias.k = 2 ) ) ) ON ( bt1.k = bt2.k AND ( bt2.k = 1 ) )",
+        "SELECT DISTINCT bt1.k AS COL0 ,bt2.k AS COL1 ,bt2_alias.k AS COL2 FROM t2 bt2 RIGHT OUTER JOIN ( t1 bt1 LEFT OUTER JOIN t2 bt2_alias ON ( bt1.k = bt2_alias.k AND ( bt2_alias.k = 2 ) ) ) ON ( bt1.k = bt2.k ) WHERE ( bt2.k = 1 )",
         query.getQuery()    
     ); //$NON-NLS-1$
   }
