@@ -131,6 +131,12 @@ public class AdvancedMQLQuery extends MQLQueryImpl
 		}
 	}
 
+  public AdvancedMQLQuery(String XML, DatabaseMeta databaseMeta, String locale, CwmSchemaFactoryInterface factory)
+  throws PentahoMetadataException
+  {
+    super(XML, databaseMeta, locale, factory);
+  }
+  
 	public AdvancedMQLQuery(String XML, String locale, CwmSchemaFactoryInterface factory)
 			throws PentahoMetadataException
 	{
