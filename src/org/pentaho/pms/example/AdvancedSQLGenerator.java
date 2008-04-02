@@ -188,15 +188,17 @@ public class AdvancedSQLGenerator extends SQLGenerator {
       // later in the resultset metadata. 
       String alias = null;
       if(columnsMap != null){
-        if (selections.get(i).getBusinessColumn() != null) {
+        if (selection.getBusinessColumn() != null && selection.getAlias().equals(DEFAULT_ALIAS)) {
           
           // BIG TODO: map bizcol correctly
           
-          columnsMap.put("COL" + Integer.toString(i), selections.get(i).getBusinessColumn().getId()); //$NON-NLS-1$
+          columnsMap.put("COL" + i, selection.getBusinessColumn().getId()); //$NON-NLS-1$
+        } else {
+          columnsMap.put("COL" + i, "CUSTOM_" +  i);
         }
         alias = databaseMeta.quoteField("COL" + Integer.toString(i)); //$NON-NLS-1$
       }else{
-        alias = databaseMeta.quoteField(selections.get(i).getBusinessColumn().getId());
+        alias = databaseMeta.quoteField(selection.getBusinessColumn().getId());
       }
       sqlquery.addSelection(formula, alias);
     }
@@ -308,7 +310,7 @@ public class AdvancedSQLGenerator extends SQLGenerator {
     SQLDialectInterface dialect = SQLDialectFactory.getSQLDialect(databaseMeta);
     String sql = dialect.generateSelectStatement(sqlquery);
 
-    MappedQuery query = new MappedQuery(sql, null, selections);
+    MappedQuery query = new MappedQuery(sql, columnsMap, selections);
     
     // defaultPath.getUsedTables();
     
