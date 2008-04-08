@@ -329,7 +329,7 @@ public class AdvancedMQLQuery extends MQLQueryImpl
 		List<Selection> aliases = super.getSelections();
 		AliasAwarePMSFormula formula = new AliasAwarePMSFormula(getModel(), getDatabaseMeta(), condition,
 				aliases, AdvancedSQLGenerator.DEFAULT_ALIAS);
-    formula.setAllowAggregateFunctions(true);
+		formula.setAllowAggregateFunctions(true);
 		WhereCondition where = new WhereCondition(formula, operator, condition);
 		getConstraints().add(where);
 	}

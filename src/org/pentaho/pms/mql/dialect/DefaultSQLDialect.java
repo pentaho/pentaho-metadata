@@ -701,7 +701,7 @@ public class DefaultSQLDialect implements SQLDialectInterface {
   	//
   	if (!joinType.equals(JoinType.FULL_OUTER_JOIN)) {
 	  	for (SQLWhereFormula sqlWhereFormula : query.getWhereFormulas()) {
-	  		if (!usedSQLWhereFormula.contains(sqlWhereFormula)) {
+	  		if (!usedSQLWhereFormula.contains(sqlWhereFormula) && !sqlWhereFormula.isContainingAggregate()) {
 	  			boolean allInvolvedAvailableHere = true;
 	  			for (String involvedTable : sqlWhereFormula.involvedTables) {
 	  				if (!involvedTable.equalsIgnoreCase(leftTableNameOrAlias) && !involvedTable.equalsIgnoreCase(rightTableNameOrAlias)) {

@@ -132,12 +132,12 @@ public class WhereCondition extends ConceptUtilityBase implements ConceptUtility
    * 
    * @return list
    */
-  public List getBusinessColumns() {
+  public List<BusinessColumn> getBusinessColumns() {
     return formula.getBusinessColumns();
   }
 
   /**
-   * traverse the field list and see if any of the fields are aggregate
+   * Traverse the field list and see if any of the fields are aggregate
    * fields. we cache hasAgg for future calls
    * 
    * @return true if aggregate
@@ -145,9 +145,9 @@ public class WhereCondition extends ConceptUtilityBase implements ConceptUtility
   public boolean hasAggregate() {
     if (hasAgg == null) {
       hasAgg = Boolean.FALSE;
-      Iterator iter = formula.getBusinessColumns().iterator();
+      Iterator<BusinessColumn> iter = formula.getBusinessColumns().iterator();
       while (iter.hasNext()) {
-        BusinessColumn col = (BusinessColumn) iter.next();
+        BusinessColumn col = iter.next();
         if (col.hasAggregate()) {
           hasAgg = Boolean.TRUE;
           return hasAgg.booleanValue();

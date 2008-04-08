@@ -408,13 +408,13 @@ public class AdvancedSQLGenerator extends SQLGenerator {
     final List<AliasedPathBusinessTable> aliasedTables;
     
     public SQLAndAliasedTables(String sql, AliasedPathBusinessTable aliasedTable) {
-      super(sql, (BusinessTable)null);
+      super(sql, (BusinessTable)null, (BusinessColumn)null);
       aliasedTables = new ArrayList<AliasedPathBusinessTable>();
       aliasedTables.add(aliasedTable);
     }
 
     public SQLAndAliasedTables(String sql, List<AliasedPathBusinessTable> aliasedTables) {
-      super(sql, (BusinessTable)null);
+      super(sql, (BusinessTable)null, (BusinessColumn)null);
       this.aliasedTables = aliasedTables;
     }
 

@@ -174,7 +174,10 @@ public class SQLGenerator {
     // can be moved to selection loop
     for (Selection selection : selections) {
       BusinessColumn businessColumn = selection.getBusinessColumn();
-      if (!businessColumn.hasAggregate()) {
+      
+      // Check if the column has any nested aggregation in there like a calculated column : SUM(a)/SUM(b) with no aggregation set.
+      //
+      if (!hasFactsInIt(model, businessColumn, databaseMeta, locale)) {
     	SQLAndTables sqlAndTables = getBusinessColumnSQL(model, businessColumn, databaseMeta, locale);
         query.addGroupBy(sqlAndTables.getSql(), null);
       }
@@ -256,7 +259,7 @@ public class SQLGenerator {
 
     if (usedBusinessTables.size() > 0) {
 
-      boolean group = hasFactsInIt(selections, conditions);
+      boolean group = hasFactsInIt(model, selections, conditions, databaseMeta, locale);
 
       generateSelect(query, model, databaseMeta, selections, disableDistinct, group, locale, columnsMap);
       generateFromAndWhere(query, usedBusinessTables, model, path, conditions, databaseMeta, locale);
@@ -319,18 +322,62 @@ public class SQLGenerator {
     return new ArrayList<BusinessTable>(treeSet);
   }
   
-  public boolean hasFactsInIt(List<Selection> selections, List<WhereCondition> conditions) {
+  public boolean hasFactsInIt(BusinessModel model, List<Selection> selections, List<WhereCondition> conditions, DatabaseMeta databaseMeta, String locale) {
+	// We don't have to simply check the columns in the selection
+	// If the column is made up of a calculation, we need to verify that there is no aggregation in the calculation too.
+	//
+	// For example, this is the case for the calculation of a ration: SUM(A) / SUM(B).
+	// The resulting ratio will not have an aggregate set (none) but the used business columns (A and B) will have one set.
+	// As such, we need to do this recursively.
+	//
     for (Selection selection : selections) {
-      if (selection.getBusinessColumn().hasAggregate())
-        return true;
+    
+      if (hasFactsInIt(model, selection.getBusinessColumn(), databaseMeta, locale)) {
+    	  return true;
+      }
     }
+    
+    // Verify the conditions in the same way too
+    //
     if (conditions != null) {
       for (WhereCondition condition : conditions) {
-        if (condition.hasAggregate())
-          return true;
+    	  for (BusinessColumn conditionColumn : condition.getBusinessColumns()) {
+    	      if (hasFactsInIt(model, conditionColumn, databaseMeta, locale)) {
+    	    	  return true;
+    	      }
+    	  }
       }
     }
     return false;
+  }
+  
+  /**
+   * See if the business column specified has a fact in it.<br>
+   * We verify the formula specified in the column to see if it contains calculations with any aggregated column.<br>
+   * We even do this nested down through the used business columns in the formula.<br>
+   * 
+   * @param model the business model to reference
+   * @param businessColumn the column to verify for facts
+   * @param databaseMeta the database to reference
+   * @param locale the locale to use
+   * @return true if the business column uses any aggregation in the formula or is aggregated itself.
+   */
+  public boolean hasFactsInIt(BusinessModel model, BusinessColumn businessColumn, DatabaseMeta databaseMeta, String locale) {
+	  if (businessColumn.hasAggregate()) return true;
+
+	  // Parse the formula in the business column to see which tables and columns are involved...
+      //
+      SQLAndTables sqlAndTables = getBusinessColumnSQL(model, businessColumn, databaseMeta, locale);
+      for (BusinessColumn column : sqlAndTables.getUsedColumns()) {
+	      if (column.hasAggregate()) {
+	        return true;
+	      }
+      }
+      
+      // Nothing found
+      //
+      return false;
+
   }
     
   public <T> List<List<T>> getSubsetsOfSize(int size, List<T> list) {
@@ -487,13 +534,16 @@ public class SQLGenerator {
           // we'll need to pass in some context to PMSFormula so it can resolve aliases if necessary
           PMSFormula formula = new PMSFormula(businessModel, column.getBusinessTable(), databaseMeta, column.getFormula());
           formula.parseAndValidate();
-          return new SQLAndTables(formula.generateSQL(locale), formula.getBusinessTables());
+          return new SQLAndTables(formula.generateSQL(locale), formula.getBusinessTables(), formula.getBusinessColumns());
         } catch (PentahoMetadataException e) {
           // this is for backwards compatibility.
           // eventually throw any errors
           logger.error(Messages.getErrorString("BusinessColumn.ERROR_0001_FAILED_TO_PARSE_FORMULA", column.getFormula()), e); //$NON-NLS-1$
+
+          // Report just this table and column as being used along with the formula.
+          //
+          return new SQLAndTables(column.getFormula(), column.getBusinessTable(), column);
         }
-        return new SQLAndTables(column.getFormula(), column.getBusinessTable());
       }
       else
       {
@@ -507,11 +557,11 @@ public class SQLGenerator {
           
           if (column.hasAggregate()) // For the having clause, for example: HAVING sum(turnover) > 100
           {
-              return new SQLAndTables(getFunctionExpression(column, tableColumn, databaseMeta), column.getBusinessTable());
+              return new SQLAndTables(getFunctionExpression(column, tableColumn, databaseMeta), column.getBusinessTable(), column);
           }
           else
           {
-              return new SQLAndTables(tableColumn,column.getBusinessTable());
+              return new SQLAndTables(tableColumn, column.getBusinessTable(), column);
           }
       }
   }

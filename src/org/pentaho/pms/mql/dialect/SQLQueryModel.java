@@ -103,18 +103,20 @@ public class SQLQueryModel {
       String formula;
       String operator;
       String[] involvedTables;
+      boolean containingAggregate;
 
-      public SQLWhereFormula(String formula, String operator) {
-    	this(formula,operator,null);
+      public SQLWhereFormula(String formula, String operator, boolean containingAggregate) {
+    	this(formula,operator,null, containingAggregate);
       }
 
-      public SQLWhereFormula(String formula, String operator, String[] involvedTables) {
+      public SQLWhereFormula(String formula, String operator, String[] involvedTables, boolean containingAggregate) {
         this.formula = formula;
         this.operator = operator;
         this.involvedTables = involvedTables;
         if (this.operator == null) {
           this.operator = "AND";
         }
+        this.containingAggregate = containingAggregate;
       }
       
       /**
@@ -135,19 +137,33 @@ public class SQLQueryModel {
         return operator;
       }
 
-	/**
-	 * @return the involvedTables
-	 */
-	public String[] getInvolvedTables() {
+	  /**
+	   * @return the involvedTables
+	   */
+	  public String[] getInvolvedTables() {
 		return involvedTables;
-	}
+	  }
 
-	/**
-	 * @param involvedTables the involvedTables to set
-	 */
-	public void setInvolvedTables(String[] involvedTables) {
+	  /**
+	   * @param involvedTables the involvedTables to set
+	   */
+	  public void setInvolvedTables(String[] involvedTables) {
 		this.involvedTables = involvedTables;
-	}
+	  }
+
+	  /**
+	   * @return true if the formula contains at least one aggregate
+	   */
+	  public boolean isContainingAggregate() {
+		 return containingAggregate;
+	  }
+
+	  /**
+	   * @param containingAggregate set to true if the formula contains at least one aggregate
+	   */
+	  public void setContainingAggregate(boolean containingAggregate) {
+		this.containingAggregate = containingAggregate;
+	  }
     }
 
     
@@ -279,7 +295,7 @@ public class SQLQueryModel {
      * @param operation operator that combines where formulas
      */
     public void addWhereFormula(String formula, String operation) {
-      whereFormulas.add(new SQLWhereFormula(formula, operation));
+      whereFormulas.add(new SQLWhereFormula(formula, operation, false));
     }
 
     /**
@@ -290,7 +306,7 @@ public class SQLQueryModel {
      * @param operation operator that combines where formulas
      */
     public void addWhereFormula(String formula, String operation, String[] involvedTables) {
-      whereFormulas.add(new SQLWhereFormula(formula, operation, involvedTables));
+      whereFormulas.add(new SQLWhereFormula(formula, operation, involvedTables, false));
     }
 
     /**
@@ -330,7 +346,7 @@ public class SQLQueryModel {
      * @param operation the operation to combine having formulas
      */
     public void addHavingFormula(String formula, String operation) {
-      havings.add(new SQLWhereFormula(formula, operation));
+      havings.add(new SQLWhereFormula(formula, operation, true));
     }
 
     /**
@@ -341,7 +357,7 @@ public class SQLQueryModel {
      * @param involvedTables the tables involved in this formula
      */
     public void addHavingFormula(String formula, String operation, String[] involvedTables) {
-      havings.add(new SQLWhereFormula(formula, operation, involvedTables));
+      havings.add(new SQLWhereFormula(formula, operation, involvedTables, true));
     }
 
     /**
@@ -382,7 +398,7 @@ public class SQLQueryModel {
      * @param joinOrderKey the join order key
      */
     public void addJoin(String leftTablename, String leftTableAlias, String rightTablename, String rightTableAlias, JoinType joinType, String formula, String joinOrderKey) {
-      SQLWhereFormula sqlWhereFormula = new SQLWhereFormula(formula, null);
+      SQLWhereFormula sqlWhereFormula = new SQLWhereFormula(formula, null, false);
       SQLJoin join = new SQLJoin(leftTablename, leftTableAlias, rightTablename, rightTableAlias, sqlWhereFormula, joinType, joinOrderKey);
       joins.add(join);
     }

@@ -3,6 +3,7 @@ package org.pentaho.pms.mql;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessTable;
 
 /**
@@ -15,24 +16,29 @@ public class SQLAndTables {
 	private String sql;
 
 	private List<BusinessTable> usedTables;
+	
+	private List<BusinessColumn> usedColumns;
 
 	/**
 	 * @param sql
 	 * @param usedTables
 	 */
-	public SQLAndTables(String sql, List<BusinessTable> usedTables) {
+	public SQLAndTables(String sql, List<BusinessTable> usedTables, List<BusinessColumn> usedColumns) {
 		this.sql = sql;
 		this.usedTables = usedTables;
+		this.usedColumns = usedColumns;
 	}
 	
 	/**
 	 * @param sql
 	 * @param usedTable
 	 */
-	public SQLAndTables(String sql, BusinessTable usedTable) {
+	public SQLAndTables(String sql, BusinessTable usedTable, BusinessColumn usedColumn) {
 		this.sql = sql;
 		this.usedTables = new ArrayList<BusinessTable>();
 		this.usedTables.add(usedTable);
+		this.usedColumns = new ArrayList<BusinessColumn>();
+		this.usedColumns.add(usedColumn);
 	}
 
 	/**
@@ -63,6 +69,20 @@ public class SQLAndTables {
 	 */
 	public void setUsedTables(List<BusinessTable> usedTables) {
 		this.usedTables = usedTables;
+	}
+
+	/**
+	 * @return the usedColumns
+	 */
+	public List<BusinessColumn> getUsedColumns() {
+		return usedColumns;
+	}
+
+	/**
+	 * @param usedColumns the usedColumns to set
+	 */
+	public void setUsedColumns(List<BusinessColumn> usedColumns) {
+		this.usedColumns = usedColumns;
 	}
 
 }

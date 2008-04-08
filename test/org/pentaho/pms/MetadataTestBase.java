@@ -38,8 +38,16 @@ public class MetadataTestBase extends TestCase {
 				previousWhiteSpace=true;
 			}
 			else {
+				if (c=='(' || c==')' || c=='|' || c=='-' || c=='+' || c=='/' || c=='*' || c=='{' || c=='}' || c==',' ) {
+					int lastIndex = stripped.length()-1;
+					if (stripped.charAt(lastIndex)==' ') {
+						stripped.deleteCharAt(lastIndex);
+					}
+					previousWhiteSpace=true;
+				} else {
+					previousWhiteSpace=false;
+				}
 				stripped.append(c);
-				previousWhiteSpace=false;
 			}
 		}
 		
