@@ -3,6 +3,7 @@ package org.pentaho.pms;
 
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.example.AdvancedMQLQuery;
+import org.pentaho.pms.mql.MQLQueryFactory;
 import org.pentaho.pms.mql.MappedQuery;
 import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
@@ -299,7 +300,6 @@ public class AdvancedMQLQueryImplTest extends MetadataTestBase {
         myTest.getQuery().getQuery());
   }
   
-  
   /**
    * this test generates an advanced mqlquery, generates xml, re-reads the xml
    * and then compares the sql of both to verify the serialization / deserialization
@@ -331,6 +331,71 @@ public class AdvancedMQLQueryImplTest extends MetadataTestBase {
     myReadTest.fromXML(myTest.getXML(), schemaMeta);
     
     assertEquals(myTest.getQuery().getQuery(), myReadTest.getQuery().getQuery());
+
+    AdvancedMQLQuery myReadTest2 = new AdvancedMQLQuery(schemaMeta, model, databaseMeta, "en_US");
+    String xml = "<mql><domain_type>relational</domain_type><domain_id>test_domain</domain_id>" +
+      "<model_id>model_01</model_id><model_name>Model 1</model_name>"+
+      "<options><disable_distinct>false</disable_distinct></options>"+
+      "<selections><selection><view>cat_01</view><column>bc1</column></selection>" +
+      "<selection><alias>Alias1</alias><view>cat_01</view><column>bc1</column></selection></selections>" +
+      "<constraints>   <constraint><operator/> <condition>[cat_01.bc1] =\"1539006\"</condition> </constraint> </constraints></mql>";
+    myReadTest2.fromXML(xml, schemaMeta);
+
+    assertEqualsIgnoreWhitespaces(
+        "SELECT DISTINCT " +
+        "   bt1.pc1 AS COL0," +
+        "   bt1_Alias1.pc1 AS COL1 " +
+        "FROM " +
+        "   pt1 bt1," +
+        "   pt1 bt1_Alias1 " +
+        "WHERE" +
+        "   (bt1.pc1 = '1539006')", 
+        myReadTest2.getQuery().getQuery());
+
+    AdvancedMQLQuery myReadTest3 = new AdvancedMQLQuery(schemaMeta, model, databaseMeta, "en_US");
+    xml = 
+      "<mql>" +
+      "  <domain_type>relational</domain_type>" +
+      "  <domain_id>test_domain</domain_id>" +
+      "  <model_id>model_01</model_id>" +
+      "  <model_name>Model 1</model_name>"+
+      "  <options>" +
+      "    <disable_distinct>false</disable_distinct>" +
+      "  </options>"+
+      "  <selections>" +
+      "    <selection><view>cat_01</view><column>bc1</column></selection>" +
+      "    <selection><view>cat_01</view><column>bc2</column></selection>" +
+      "    <selection><view>cat_01</view><column>bc3</column></selection>" +      
+      "    <selection><formula>[cat_01.bc1] * [cat_01.bc2]</formula></selection>" +
+      "    <selection><formula>[cat_01.bc1] / [cat_01.bc2]</formula></selection>" +
+      "    <selection><formula>[cat_01.bc1] + [cat_01.bc2]</formula></selection>" +
+      "    <selection><formula>[cat_01.bc1] - [cat_01.bc2]</formula></selection>" +      
+      "  </selections>" +
+      "  <constraints>" +
+      "    <constraint><operator/> <condition>[cat_01.bc1] =\"1539006\"</condition> </constraint> " +
+      "  </constraints>" +
+      "</mql>";
+    myReadTest3.fromXML(xml, schemaMeta);
+//    System.out.println(myReadTest3.getQuery().getQuery());
+    assertEqualsIgnoreWhitespaces(
+        "SELECT DISTINCT " +
+        "  bt1.pc1 AS COL0," +
+        "  bt2.pc2 AS COL1," +
+        "  bt3.pc3 AS COL2," +
+        "  bt1.pc1*bt2.pc2 AS COL3," +
+        "  bt1.pc1/bt2.pc2 AS COL4," +
+        "  bt1.pc1+bt2.pc2 AS COL5," +
+        "  bt1.pc1-bt2.pc2 AS COL6 " +
+        "FROM " +
+        "  pt1 bt1," +
+        "  pt2 bt2," +
+        "  pt3 bt3 " +
+        "WHERE" +
+        "  (bt1.pc1 = bt2.pc2)" +
+        "  AND (bt3.pc3 = bt2.pc2)" +
+        "  AND (bt1.pc1 = '1539006')",
+        myReadTest3.getQuery().getQuery());    
+  
   }
   
   
