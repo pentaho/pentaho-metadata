@@ -118,7 +118,7 @@ public class ConceptPropertyColumnWidthWidget extends ChangedFlag implements Con
         typeLabel.setLayoutData(fdTypeLabel);
         
         final CCombo type = new CCombo(composite, SWT.BORDER);
-        type.setItems(ColumnWidth.typeDescriptions);
+        type.setItems(ColumnWidth.getTypeDescriptions());
         type.setToolTipText(Messages.getString("ConceptPropertyColumnWidthWidget.USER_SELECT_PROPERTY_TYPE_WIDTH", name)); //$NON-NLS-1$ 
         props.setLook(type);
         FormData fdType = new FormData();

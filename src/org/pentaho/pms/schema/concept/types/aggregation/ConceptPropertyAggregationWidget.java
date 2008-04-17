@@ -95,7 +95,7 @@ public class ConceptPropertyAggregationWidget extends ChangedFlag implements Con
         ConceptPropertyInterface property = concept.getProperty(name);
 
         final CCombo combo = new CCombo(composite, SWT.BORDER);
-        combo.setItems(AggregationSettings.typeDescriptions);
+        combo.setItems(AggregationSettings.getTypeDescriptions());
         combo.setToolTipText(Messages.getString("ConceptPropertyAggregationWidget.USER_SELECT_PROPERTY_AGGREGATION_RULE", name)); //$NON-NLS-1$ 
         props.setLook(combo);
         FormData fdCombo = new FormData();

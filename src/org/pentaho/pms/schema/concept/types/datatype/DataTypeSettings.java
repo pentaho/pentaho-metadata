@@ -36,8 +36,8 @@ public class DataTypeSettings
     public static final DataTypeSettings IMAGE   = new DataTypeSettings(DATA_TYPE_IMAGE);
     public static final DataTypeSettings URL     = new DataTypeSettings(DATA_TYPE_URL);
 
-    public static final String typeCodes[] = { "Unknown", "String", "Date", "Boolean", "Numeric", "Binary", "Image", "URL", }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
-    public static final String typeDescriptions[] = {
+    private static final String typeCodes[] = { "Unknown", "String", "Date", "Boolean", "Numeric", "Binary", "Image", "URL", }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    private static final String typeDescriptions[] = {
       Messages.getString("DataTypeSettings.USER_UNKNOWN_DESC"),   //$NON-NLS-1$
       Messages.getString("DataTypeSettings.USER_STRING_DESC"),   //$NON-NLS-1$
       Messages.getString("DataTypeSettings.USER_DATE_DESC"),   //$NON-NLS-1$
@@ -179,6 +179,10 @@ public class DataTypeSettings
 
     public int hashCode() {
       return new HashCodeBuilder(23, 227).append(type).append(length).append(precision).toHashCode();
+    }
+
+    public static String[] getTypeDescriptions() {
+      return typeDescriptions.clone();
     }
 
 }

@@ -36,12 +36,12 @@ public class AggregationSettings
     public static final AggregationSettings MINIMUM        = new AggregationSettings(TYPE_AGGREGATION_MINIMUM);
     public static final AggregationSettings MAXIMUM        = new AggregationSettings(TYPE_AGGREGATION_MAXIMUM);
 
-    public static final String typeCodes[] =
+    private static final String typeCodes[] =
         {
             "none", "sum", "average", "count", "count_distinct", "minimum", "maximum",    //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
         };
 
-    public static final String typeDescriptions[] =
+    private static final String typeDescriptions[] =
         {
             Messages.getString("AggregationSettings.USER_NONE_DESC"), //$NON-NLS-1$
             Messages.getString("AggregationSettings.USER_SUM_DESC"), //$NON-NLS-1$
@@ -133,6 +133,10 @@ public class AggregationSettings
     public String getDescription()
     {
         return typeDescriptions[type];
+    }
+
+    public static String[] getTypeDescriptions() {
+      return typeDescriptions.clone();
     }
 
 }

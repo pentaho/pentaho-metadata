@@ -33,8 +33,8 @@ public class FieldTypeSettings
     public static final FieldTypeSettings ATTRIBUTE = new FieldTypeSettings(TYPE_ATTRIBUTE);
 
     public static final FieldTypeSettings types[] = new FieldTypeSettings[] { OTHER, DIMENSION, FACT, KEY, ATTRIBUTE };
-    public static final String typeCodes[] = new String[] { "Other", "Dimension", "Fact", "Key", "Attribute" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-    public static final String typeDescriptions[] = new String[] {
+    private static final String typeCodes[] = new String[] { "Other", "Dimension", "Fact", "Key", "Attribute" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+    private static final String typeDescriptions[] = new String[] {
       Messages.getString("FieldTypeSettings.USER_OTHER_DESC"),   //$NON-NLS-1$
       Messages.getString("FieldTypeSettings.USER_DIMENSION_DESC"),   //$NON-NLS-1$
       Messages.getString("FieldTypeSettings.USER_FACT_DESC"),   //$NON-NLS-1$
@@ -143,5 +143,9 @@ public class FieldTypeSettings
         if (isKey) return KEY;
 
         return DIMENSION;
+    }
+
+    public static String[] getTypeDescriptions() {
+      return typeDescriptions.clone();
     }
 }

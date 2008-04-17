@@ -32,12 +32,12 @@ public class ColumnWidth
     public static final ColumnWidth CM         = new ColumnWidth( TYPE_WIDTH_CM,        10 );
     public static final ColumnWidth POINTS     = new ColumnWidth( TYPE_WIDTH_POINTS,     1 );
 
-    public static final String typeCodes[] =
+    private static final String typeCodes[] =
         {
             "pixels", "percent", "inches", "cm", "points",   //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
         };
 
-    public static final String typeDescriptions[] =
+    private static final String typeDescriptions[] =
         {
             Messages.getString("ColumnWidth.USER_PIXELS_DESC"), Messages.getString("ColumnWidth.USER_PERCENT_DESC"), Messages.getString("ColumnWidth.USER_INCHES_DESC"), Messages.getString("ColumnWidth.USER_CENTIMETERS_DESC"), Messages.getString("ColumnWidth.USER_POINTS_DESC"),     //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
         };
@@ -171,6 +171,10 @@ public class ColumnWidth
     public void setWidth(BigDecimal width)
     {
         this.width = width;
+    }
+
+    public static String[] getTypeDescriptions() {
+      return typeDescriptions.clone();
     }
 
 }

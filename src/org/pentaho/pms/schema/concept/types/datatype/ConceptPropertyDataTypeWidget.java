@@ -130,7 +130,7 @@ public class ConceptPropertyDataTypeWidget  extends ChangedFlag implements Conce
         // A combo with the data type and 2 text fields with length and precision
         //
         final CCombo combo = new CCombo(dataType, SWT.BORDER);
-        combo.setItems(DataTypeSettings.typeDescriptions);
+        combo.setItems(DataTypeSettings.getTypeDescriptions());
         props.setLook(combo);
         FormData fdCombo = new FormData();
         fdCombo.left  = new FormAttachment(0, 0);
