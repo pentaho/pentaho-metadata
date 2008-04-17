@@ -92,7 +92,7 @@
 
 			<classpath refid="cp-meta" />
 		</javadoc>
-		<jar jarfile="${dist.dir}/PentahoMetaData-javadoc-${release.number}.zip" basedir="${build.javadoc.dir}" includes="**/*" excludes="**/Thumbs.db" />
+		<jar jarfile="${dist.dir}/${product.name}-${product.release.type}-javadoc-${product.release.number}${release.status.token}.zip" basedir="${build.javadoc.dir}" includes="**/*" excludes="**/Thumbs.db" />
 	</target>
 
 	<target name="jar-pentaho-metadata" depends="init-dist, compile" description="generate the Pentaho Meta library pentaho-meta.jar">
@@ -164,12 +164,12 @@
 			<fileset dir="${docs}" includes="**/*.pdf **/*.htm **/*.html **/*.png **/*.PNG **/*.swf **/cn_ZN.zip" excludes="**/*.dot **/*.doc **/*.sxw **/*.odt **/*.vpn **/*feature list*" />
 		</copy>
 		
-		<echo>Generating the Pentaho Metadata distribution package PentahoMetaData-${release.number}.zip ...</echo>
-		<zip destfile="${dist.dir}/pentaho-metadata-${release.number}.zip">
+		<echo>Generating the Pentaho Metadata distribution package ${product.name}-${product.release.type}-${product.release.number}${release.status.token}.zip ...</echo>
+		<zip destfile="${dist.dir}/${product.name}-${product.release.type}-${product.release.number}${release.status.token}.zip">
 			<zipfileset dir="${distrib}" prefix="pentaho-metadata-${release.number}" includes="**/*" excludes="**/Thumbs.db" />
 		</zip>
 		
-		<tar destfile="${dist.dir}/pentaho-metadata-${release.number}.tar">
+		<tar destfile="${dist.dir}/${product.name}-${product.release.type}-${product.release.number}${release.status.token}.tar">
 			<tarfileset dir="${distrib}" prefix="pentaho-metadata-${release.number}" mode="755">
 				<include name="**/*.sh"/>
 			</tarfileset>
@@ -180,12 +180,14 @@
 			</tarfileset>
 		</tar>
 		
-		<gzip src="${dist.dir}/pentaho-metadata-${release.number}.tar" zipfile="${dist.dir}/pentaho-metadata-${release.number}.tar.gz"/>
+		<gzip src="${dist.dir}/${product.name}-${product.release.type}-${product.release.number}${release.status.token}.tar" zipfile="${dist.dir}/${product.name}-${product.release.type}-${product.release.number}${release.status.token}.tar.gz"/>
+		<delete file="${dist.dir}/${product.name}-${product.release.type}-${product.release.number}${release.status.token}.tar" />
+
 	</target>
 
-	<target name="zip-pentaho-metadata-src" depends="init-dist" description="generate the PentahoMetaData-src-${release.number}.zip file">
+	<target name="zip-pentaho-metadata-src" depends="init-dist" description="generate the  source zip file">
 		<echo>Generating the Pentaho Metadata source packge zip file (PentahoMetaData-src-${release.number}.zip) ...</echo>
-		<zip destfile="${dist.dir}/pentaho-metadata-src-${release.number}.zip">
+		<zip destfile="${dist.dir}/${product.name}-${product.release.type}-src-${product.release.number}${release.status.token}.zip">
 			<zipfileset dir="src" prefix="pentaho-metadata-src-${release.number}" />
 		</zip>
 	</target>
