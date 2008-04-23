@@ -26,8 +26,9 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eclipse.core.runtime.IProgressMonitor;
+//import org.eclipse.core.runtime.IProgressMonitor;
 import org.pentaho.di.core.NotePadMeta;
+import org.pentaho.di.core.ProgressMonitorListener;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.exception.KettleDatabaseException;
 import org.pentaho.di.core.exception.KettleXMLException;
@@ -145,7 +146,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
      * @param cwm The model to use
      * @param schemaMeta The meta-data to store into the cwm model
      */
-    public void storeSchemaMeta(CWM cwm, SchemaMeta schemaMeta, IProgressMonitor monitor) throws Exception
+    public void storeSchemaMeta(CWM cwm, SchemaMeta schemaMeta, ProgressMonitorListener monitor) throws Exception
     {
         if (!hasAccess(CwmSchemaFactoryInterface.ACCESS_TYPE_SCHEMA_ADMIN, null)) {
           throw new CwmSchemaFactoryException(Messages.getString("CwmSchemaFactory.ERROR_0001_SCHEMA_ADMIN_ACCESS_DENIED")); //$NON-NLS-1$

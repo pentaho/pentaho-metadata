@@ -12,9 +12,8 @@
 */
 package org.pentaho.pms.factory;
 
-
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.pentaho.di.core.NotePadMeta;
+import org.pentaho.di.core.ProgressMonitorListener;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.exception.KettleXMLException;
 import org.pentaho.pms.core.CWM;
@@ -63,7 +62,7 @@ public interface CwmSchemaFactoryInterface {
    * @param schemaMeta The meta-data to store into the cwm model
    * @throws Exception when the model could not be saved.
    */
-  public void storeSchemaMeta(CWM cwm, SchemaMeta schemaMeta, IProgressMonitor monitor) throws Exception;
+  public void storeSchemaMeta(CWM cwm, SchemaMeta schemaMeta, ProgressMonitorListener monitor) throws Exception;
 
   /**
    * Load schema from a CWM model

@@ -380,7 +380,7 @@ public class CWM
             if( cwmPackageM3==null && autoCreate )
             {
                 cwmPackageM3 = repository.createExtent(CWM);
-                BufferedInputStream inputStream = new BufferedInputStream(new FileInputStream("cwm/PentahoCWM.xml")); //$NON-NLS-1$
+                BufferedInputStream inputStream = new BufferedInputStream(getClass().getResourceAsStream("PentahoCWM.xml")); //$NON-NLS-1$
                 XMIReaderFactory.getDefault().createXMIReader().read(inputStream, null, cwmPackageM3);
                 log.logBasic(Messages.getString("CWM.INFO_TITLE"), Messages.getString("CWM.INFO_LOADED_CWM_MODEL")); //$NON-NLS-1$ //$NON-NLS-2$
             }

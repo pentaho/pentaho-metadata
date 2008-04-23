@@ -88,7 +88,7 @@ public class SecurityService extends ChangedFlag implements Cloneable {
     }
   }
 
-  protected Object clone() {
+  public Object clone() {
     try {
       return super.clone();
     } catch (Exception e) {

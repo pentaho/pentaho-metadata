@@ -22,7 +22,6 @@
 	<property name="libswt" location="libswt" />
 	<property name="distrib" location="distrib" />
 	<property name="docs" location="docs" />
-	<property name="cwm" location="cwm" />
 	<property name="jdbc" location="jdbc" />
 	<property name="simple-jndi" location="simple-jndi" />
 	<property name="samples" location="samples" />
@@ -123,10 +122,6 @@
 		<!-- base lib -->
 		<mkdir dir="${distrib}/lib" />
 		<copy todir="${distrib}/lib" file="${dist.dir}/pentaho-meta-${impl.version}.jar" />
-
-		<!-- cwm model-->
-		<mkdir dir="${distrib}/cwm" />
-		<copy todir="${distrib}/cwm" file="${cwm}/PentahoCWM.xml" />
 
 		<!-- jdbc settings-->
 		<mkdir dir="${distrib}/jdbc" />
