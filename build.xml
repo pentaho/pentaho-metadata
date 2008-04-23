@@ -19,7 +19,6 @@
 	<property name="bin" location="bin" />
 	<property name="lib" location="lib" />
 	<property name="libext" location="libext" />
-	<property name="libswt" location="libswt" />
 	<property name="distrib" location="distrib" />
 	<property name="docs" location="docs" />
 	<property name="jdbc" location="jdbc" />
@@ -72,8 +71,6 @@
 			<exclude name="org/pentaho/pms/example/*"/>
 			<classpath id="cp-meta">
 				<fileset dir="${libext}" includes="**/*.jar" />
-				<fileset dir="${libswt}" includes="*.jar" />
-				<fileset dir="${libswt}/win32/" includes="*.jar" />
 			</classpath>
 		</javac>
 		
@@ -145,12 +142,6 @@
 		<mkdir dir="${distrib}/libext" />
 		<copy todir="${distrib}/libext">
 			<fileset dir="${libext}" includes="**/*.jar **/*.zip" excludes="**/.vpn" />
-		</copy>
-
-		<!-- swt libs (jdbc etc) -->
-		<mkdir dir="${distrib}/libswt" />
-		<copy todir="${distrib}/libswt">
-			<fileset dir="${libswt}" includes="**/*" excludes="**/.vpn **/sapjco*.dll" />
 		</copy>
 
 		<!-- documentation -->
