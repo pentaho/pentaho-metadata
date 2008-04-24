@@ -14,8 +14,6 @@
 		<fileset dir="${lib.dir}">
 			<include name="**/*.jar" />
 		</fileset>
-		<fileset dir="${libswt}" includes="*.jar" />
-		<fileset dir="${libswt_os}" includes="*.jar" />
 
 		<fileset dir="${metadata.lib.dir}">
 			<include name="**/*.jar" />
