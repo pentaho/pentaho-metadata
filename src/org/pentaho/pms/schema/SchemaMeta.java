@@ -435,8 +435,9 @@ public class SchemaMeta {
     List<PhysicalTable> allTables = new ArrayList<PhysicalTable>();
     for (int i = 0; i < nrTables(); i++) {
       PhysicalTable table = getTable(i);
-      if (table.getDatabaseMeta().equals(databaseMeta))
+      if ((table.getDatabaseMeta() != null) && (table.getDatabaseMeta().equals(databaseMeta))){
         allTables.add(table);
+      }
     }
     return (PhysicalTable[]) allTables.toArray(new PhysicalTable[allTables.size()]);
   }
