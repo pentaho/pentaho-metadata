@@ -17,10 +17,10 @@ import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
 public class ConceptPropertyAlignment extends ConceptPropertyBase implements Cloneable
 {
-    public static final ConceptPropertyAlignment LEFT      = new ConceptPropertyAlignment("aggregation", AlignmentSettings.LEFT); //$NON-NLS-1$
-    public static final ConceptPropertyAlignment RIGHT     = new ConceptPropertyAlignment("aggregation", AlignmentSettings.RIGHT); //$NON-NLS-1$
-    public static final ConceptPropertyAlignment CENTERED  = new ConceptPropertyAlignment("aggregation", AlignmentSettings.CENTERED); //$NON-NLS-1$
-    public static final ConceptPropertyAlignment JUSTIFIED = new ConceptPropertyAlignment("aggregation", AlignmentSettings.JUSTIFIED); //$NON-NLS-1$
+    public static final ConceptPropertyAlignment LEFT      = new ConceptPropertyAlignment("alignment", AlignmentSettings.LEFT); //$NON-NLS-1$
+    public static final ConceptPropertyAlignment RIGHT     = new ConceptPropertyAlignment("alignment", AlignmentSettings.RIGHT); //$NON-NLS-1$
+    public static final ConceptPropertyAlignment CENTERED  = new ConceptPropertyAlignment("alignment", AlignmentSettings.CENTERED); //$NON-NLS-1$
+    public static final ConceptPropertyAlignment JUSTIFIED = new ConceptPropertyAlignment("alignment", AlignmentSettings.JUSTIFIED); //$NON-NLS-1$
 
     private AlignmentSettings value;
 
