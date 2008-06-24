@@ -2268,7 +2268,9 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         cwmHierarchy.setDimension(cwmOlapDimension);
         
         cwm.addTaggedValue(cwmHierarchy, CWM.TAG_HIERARCHY_BUSINESS_TABLE, olapHierarchy.getBusinessTable().getId());
-        cwm.addTaggedValue(cwmHierarchy, CWM.TAG_HIERARCHY_PRIMARY_KEY, olapHierarchy.getPrimaryKey().getId());
+        if( olapHierarchy.getPrimaryKey() != null ) {
+            cwm.addTaggedValue(cwmHierarchy, CWM.TAG_HIERARCHY_PRIMARY_KEY, olapHierarchy.getPrimaryKey().getId());
+        }
         cwm.addTaggedValue(cwmHierarchy, CWM.TAG_HIERARCHY_HAVING_ALL, olapHierarchy.isHavingAll()?"Y":"N"); //$NON-NLS-1$ //$NON-NLS-2$
         
         // Save the levels of the hierarchy too

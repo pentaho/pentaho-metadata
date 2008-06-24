@@ -82,9 +82,11 @@ public class MondrianModelExporter
                 xml.append(olapHierarchy.isHavingAll()?"true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
                 xml.append("\""); //$NON-NLS-1$
                 
-                xml.append(" primaryKey=\""); //$NON-NLS-1$
-                xml.append(olapHierarchy.getPrimaryKey().getFormula());
-                xml.append("\""); //$NON-NLS-1$
+                if( olapHierarchy.getPrimaryKey() != null ) {
+                    xml.append(" primaryKey=\""); //$NON-NLS-1$
+                    xml.append(olapHierarchy.getPrimaryKey().getFormula());
+                    xml.append("\""); //$NON-NLS-1$
+                }
                 xml.append(">"); //$NON-NLS-1$
                 xml.append(Const.CR);
                 
@@ -204,7 +206,10 @@ public class MondrianModelExporter
                 BusinessTable cubeTable = olapCube.getBusinessTable();
                 RelationshipMeta relationshipMeta = businessModel.findRelationshipUsing(dimTable, cubeTable);
 
-                if (relationshipMeta!=null)
+                if( dimTable.equals( cubeTable ) && relationshipMeta == null ) {
+                	// this is ok
+                } 
+                else if (relationshipMeta!=null)
                 {
                     BusinessColumn keyColumn;
                     if (relationshipMeta.getTableFrom().equals(dimTable))
