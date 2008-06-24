@@ -1,5 +1,6 @@
 package org.pentaho.pms.automodel;
 
+import org.pentaho.di.core.DBCache;
 import org.pentaho.di.core.database.Database;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
@@ -62,10 +63,14 @@ public class AutoModeler {
 			//
 			String bmID = Settings.getBusinessModelIDPrefix()+"_"+Const.replace(modelName, " ", "_").toUpperCase();
 			BusinessModel businessModel = new BusinessModel(bmID);
+			schemaMeta.addModel(businessModel);
 			
 			// Connect to the database...
 			//
 			database.connect();
+			
+			// clear the cache
+			DBCache.getInstance().clear(databaseMeta.getName());
 			
 			for (int i=0;i<tableNames.length;i++) {
 				SchemaTable schemaTable = tableNames[i];
@@ -78,6 +83,7 @@ public class AutoModeler {
 				// At the same time, we will create a business table and add that to the business model...
 				//
 				BusinessTable businessTable = createBusinessTable(physicalTable, locale);
+				businessModel.addBusinessTable(businessTable);
 			}
 
 			// Set the model as active
