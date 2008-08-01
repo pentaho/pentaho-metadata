@@ -40,21 +40,36 @@ import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.util.Const;
 
 public class MQLQueryTest extends TestCase {
-  
+
   BusinessModel ordersModel = null;
+
   CwmSchemaFactory cwmSchemaFactory = null;
-  
+
   public void setUp() {
     if (ordersModel == null || cwmSchemaFactory == null) {
       loadOrdersModel();
     }
   }
+
+  @Override
+  protected void tearDown() throws Exception {
+    deleteFile("mdr.btb");
+    deleteFile("mdr.btd");
+    deleteFile("mdr.btx");
+  }
   
+  private void deleteFile(String filename) {
+    File f = new File(filename);
+    if(f.exists()) {
+      f.delete();
+    }
+  }
+
   public String loadXmlFile(String filename) {
     try {
       File file = new File(filename);
       FileInputStream fileInputStream = new FileInputStream(file);
-      byte bytes[] = new byte[(int)file.length()];
+      byte bytes[] = new byte[(int) file.length()];
       fileInputStream.read(bytes);
       fileInputStream.close();
       String data = new String(bytes, Const.XML_ENCODING);
@@ -65,7 +80,7 @@ public class MQLQueryTest extends TestCase {
     }
     return null;
   }
-  
+
   public void loadOrdersModel() {
     CWM cwm = null;
     try {
@@ -76,11 +91,11 @@ public class MQLQueryTest extends TestCase {
       fail();
     }
     cwmSchemaFactory = new CwmSchemaFactory();
-    
+
     SchemaMeta schemaMeta = cwmSchemaFactory.getSchemaMeta(cwm);
     ordersModel = schemaMeta.findModel("Orders"); //$NON-NLS-1$
   }
-  
+
   public void handleFormula(BusinessModel model, String databaseToTest, String mqlFormula, String expectedSql) {
     // retrieve various databases here
     DatabaseMeta databaseMeta = new DatabaseMeta("", databaseToTest, "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
@@ -96,8 +111,9 @@ public class MQLQueryTest extends TestCase {
       fail();
     }
   }
-  
-  public void handleFormulaFailure(BusinessModel model, String databaseToTest, String mqlFormula, String expectedException) {
+
+  public void handleFormulaFailure(BusinessModel model, String databaseToTest, String mqlFormula,
+      String expectedException) {
     // retrieve various databases here
     DatabaseMeta databaseMeta = new DatabaseMeta("", databaseToTest, "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
     try {
@@ -109,8 +125,9 @@ public class MQLQueryTest extends TestCase {
       assertEquals(e.getMessage(), expectedException);
     }
   }
-  
-  public void handleFormula(BusinessModel model, BusinessTable table, String databaseToTest, String mqlFormula, String expectedSql) {
+
+  public void handleFormula(BusinessModel model, BusinessTable table, String databaseToTest, String mqlFormula,
+      String expectedSql) {
     // retrieve various databases here
     DatabaseMeta databaseMeta = new DatabaseMeta("", databaseToTest, "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
     try {
@@ -125,7 +142,7 @@ public class MQLQueryTest extends TestCase {
       fail();
     }
   }
-  
+
   public void handleWhereCondition(BusinessModel model, String mqlFormula, String expectedSql) {
     try {
       WhereCondition cond = new WhereCondition(model, "", mqlFormula); //$NON-NLS-1$
@@ -145,7 +162,7 @@ public class MQLQueryTest extends TestCase {
       fail();
     }
   }
-  
+
   public void testAggregationFormulas() {
     BusinessTable table = ordersModel.findBusinessTable("BT_ORDER_DETAILS"); //$NON-NLS-1$
     handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
@@ -163,7 +180,7 @@ public class MQLQueryTest extends TestCase {
     handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
         "COUNT([PRICEEACH])", //$NON-NLS-1$
         "COUNT( BT_ORDER_DETAILS.PRICEEACH )"); //$NON-NLS-1$
-    
+
     handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
         "AVG([QUANTITYORDERED]*[PRICEEACH])", //$NON-NLS-1$
         "AVG( BT_ORDER_DETAILS.QUANTITYORDERED  *  BT_ORDER_DETAILS.PRICEEACH )"); //$NON-NLS-1$
@@ -171,15 +188,15 @@ public class MQLQueryTest extends TestCase {
     handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
         "AVG([QUANTITYORDERED])", //$NON-NLS-1$
         "AVG( BT_ORDER_DETAILS.QUANTITYORDERED )"); //$NON-NLS-1$
-    
+
     handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
         "MIN([QUANTITYORDERED]*[PRICEEACH])", //$NON-NLS-1$
         "MIN( BT_ORDER_DETAILS.QUANTITYORDERED  *  BT_ORDER_DETAILS.PRICEEACH )"); //$NON-NLS-1$
-    
+
     handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
         "MIN([PRICEEACH])", //$NON-NLS-1$
         "MIN( BT_ORDER_DETAILS.PRICEEACH )"); //$NON-NLS-1$
-    
+
     handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
         "MAX([QUANTITYORDERED]*[PRICEEACH])", //$NON-NLS-1$
         "MAX( BT_ORDER_DETAILS.QUANTITYORDERED  *  BT_ORDER_DETAILS.PRICEEACH )"); //$NON-NLS-1$
@@ -189,153 +206,152 @@ public class MQLQueryTest extends TestCase {
         "MAX( BT_ORDER_DETAILS.QUANTITYORDERED )"); //$NON-NLS-1$
 
   }
-  
+
   public void testNestedAndOrs() {
     handleFormula(ordersModel, "Oracle", //$NON-NLS-1$
         "AND(1 <> 2; OR(2<> 3; 3<>4); 4<>5)" //$NON-NLS-1$
-        ,"(1 <> 2) AND ((2 <> 3) OR (3 <> 4)) AND (4 <> 5)" //$NON-NLS-1$
-      );
+        , "(1 <> 2) AND ((2 <> 3) OR (3 <> 4)) AND (4 <> 5)" //$NON-NLS-1$
+    );
   }
-  
+
   public void testNotFunction() {
     handleFormula(ordersModel, "Oracle", //$NON-NLS-1$
         "NOT(1 <> 2)" //$NON-NLS-1$
-        ,"NOT(1 <> 2)" //$NON-NLS-1$
-      );
+        , "NOT(1 <> 2)" //$NON-NLS-1$
+    );
     handleFormula(ordersModel, "Oracle", //$NON-NLS-1$
         "NOT(AND(1 <> 2; 2<>3))" //$NON-NLS-1$
-        ,"NOT((1 <> 2) AND (2 <> 3))" //$NON-NLS-1$
-      );
-    
+        , "NOT((1 <> 2) AND (2 <> 3))" //$NON-NLS-1$
+    );
+
     handleFormulaFailure(ordersModel, "Oracle", //$NON-NLS-1$
         "NOT (1 <> 2; 2  <> 3)", //$NON-NLS-1$
         "PMSFormulaContext.ERROR_0002 - Invalid number of parameters for function NOT, expecting 1 params" //$NON-NLS-1$
-      );
+    );
   }
-  
+
   public void testDateFunctionNow() {
     handleFormula(ordersModel, "Oracle", //$NON-NLS-1$
         "NOW()" //$NON-NLS-1$
-        ,"SYSDATE" //$NON-NLS-1$
-      );
-    
+        , "SYSDATE" //$NON-NLS-1$
+    );
+
     handleFormula(ordersModel, "MySQL", //$NON-NLS-1$ 
         "NOW()" //$NON-NLS-1$
-        ,"NOW()" //$NON-NLS-1$
-      );
+        , "NOW()" //$NON-NLS-1$
+    );
 
     handleFormula(ordersModel, "Hypersonic", //$NON-NLS-1$ 
         "NOW()" //$NON-NLS-1$
-        ,"NOW()" //$NON-NLS-1$
-      );
+        , "NOW()" //$NON-NLS-1$
+    );
 
     handleFormula(ordersModel, "DB2", //$NON-NLS-1$ 
         "NOW()" //$NON-NLS-1$
-        ,"( CURRENT DATE )" //$NON-NLS-1$
-      );
+        , "( CURRENT DATE )" //$NON-NLS-1$
+    );
 
     handleFormula(ordersModel, "MSSQL", //$NON-NLS-1$ 
         "NOW()" //$NON-NLS-1$
-        ,"GETDATE()" //$NON-NLS-1$
-      );
-    
+        , "GETDATE()" //$NON-NLS-1$
+    );
+
     handleFormula(ordersModel, "MSAccess", //$NON-NLS-1$ 
         "NOW()" //$NON-NLS-1$
-        ,"NOW()" //$NON-NLS-1$
-      );
-    
+        , "NOW()" //$NON-NLS-1$
+    );
+
     handleFormula(ordersModel, "PostgreSQL", //$NON-NLS-1$ 
         "NOW()" //$NON-NLS-1$
-        ,"now" //$NON-NLS-1$
-      );  
+        , "now" //$NON-NLS-1$
+    );
   }
-  
+
   public void testDateFunctionDate() {
-   
+
     handleFormula(ordersModel, "Oracle", //$NON-NLS-1$
         "DATE(2007;5;23)" //$NON-NLS-1$
-        ,"TO_DATE('2007-05-23','YYYY-MM-DD')" //$NON-NLS-1$
-      );
+        , "TO_DATE('2007-05-23','YYYY-MM-DD')" //$NON-NLS-1$
+    );
     handleFormula(ordersModel, "MySQL", //$NON-NLS-1$ 
         "DATE(2007;5;23)" //$NON-NLS-1$
-        ,"DATE('2007-05-23')" //$NON-NLS-1$
-      );
+        , "DATE('2007-05-23')" //$NON-NLS-1$
+    );
 
     handleFormula(ordersModel, "Hypersonic", //$NON-NLS-1$ 
         "DATE(2007;5;23)" //$NON-NLS-1$
-        ,"'2007-05-23'" //$NON-NLS-1$
-      );
+        , "'2007-05-23'" //$NON-NLS-1$
+    );
 
     handleFormula(ordersModel, "DB2", //$NON-NLS-1$ 
         "DATE(2007;5;23)" //$NON-NLS-1$
-        ,"DATE('2007-05-23')" //$NON-NLS-1$
-      );
+        , "DATE('2007-05-23')" //$NON-NLS-1$
+    );
 
     handleFormula(ordersModel, "MSSQL", //$NON-NLS-1$ 
         "DATE(2007;5;23)" //$NON-NLS-1$
-        ,"'20070523'" //$NON-NLS-1$
-      );
-    
+        , "'20070523'" //$NON-NLS-1$
+    );
+
     handleFormula(ordersModel, "MSAccess", //$NON-NLS-1$ 
         "DATE(2007;5;23)" //$NON-NLS-1$
-        ,"#05/23/2007#" //$NON-NLS-1$
-      );
-    
+        , "#05/23/2007#" //$NON-NLS-1$
+    );
+
     handleFormula(ordersModel, "PostgreSQL", //$NON-NLS-1$ 
         "DATE(2007;5;23)" //$NON-NLS-1$
-        ,"date '2007-05-23'" //$NON-NLS-1$
-      ); 
+        , "date '2007-05-23'" //$NON-NLS-1$
+    );
   }
-  
+
   public void testDateFunctionDateValue() {
     handleFormula(ordersModel, "Oracle", //$NON-NLS-1$
         "DATEVALUE(\"2007-05-23\")" //$NON-NLS-1$
-        ,"TO_DATE('2007-05-23','YYYY-MM-DD')" //$NON-NLS-1$
-      );
+        , "TO_DATE('2007-05-23','YYYY-MM-DD')" //$NON-NLS-1$
+    );
     handleFormula(ordersModel, "MySQL", //$NON-NLS-1$ 
         "DATEVALUE(\"2007-05-23\")" //$NON-NLS-1$
-        ,"DATE('2007-05-23')" //$NON-NLS-1$
-      );
+        , "DATE('2007-05-23')" //$NON-NLS-1$
+    );
 
     handleFormula(ordersModel, "Hypersonic", //$NON-NLS-1$ 
         "DATEVALUE(\"2007-05-23\")" //$NON-NLS-1$
-        ,"'2007-05-23'" //$NON-NLS-1$
-      );
+        , "'2007-05-23'" //$NON-NLS-1$
+    );
 
     handleFormula(ordersModel, "DB2", //$NON-NLS-1$ 
         "DATEVALUE(\"2007-05-23\")" //$NON-NLS-1$
-        ,"DATE('2007-05-23')" //$NON-NLS-1$
-      );
+        , "DATE('2007-05-23')" //$NON-NLS-1$
+    );
 
     handleFormula(ordersModel, "MSSQL", //$NON-NLS-1$ 
         "DATEVALUE(\"2007-05-23\")" //$NON-NLS-1$
-        ,"'20070523'" //$NON-NLS-1$
-      );
-    
+        , "'20070523'" //$NON-NLS-1$
+    );
+
     handleFormula(ordersModel, "MSAccess", //$NON-NLS-1$ 
         "DATEVALUE(\"2007-05-23\")" //$NON-NLS-1$
-        ,"#05/23/2007#" //$NON-NLS-1$
-      );   
-    
+        , "#05/23/2007#" //$NON-NLS-1$
+    );
+
     handleFormula(ordersModel, "PostgreSQL", //$NON-NLS-1$ 
         "DATEVALUE(\"2007-05-23\")" //$NON-NLS-1$
-        ,"date '2007-05-23'" //$NON-NLS-1$
-      ); 
-  }
-  
-  public void testWhereCondition() {
-    handleWhereCondition(ordersModel,
-      // mql formula
-      "AND(4 * (2 + 3) - ([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY] * 2) / 3 <> 1000;" + //$NON-NLS-1$
-      "[BT_CUSTOMERS.BC_CUSTOMERS_CUSTOMERNAME] = \"EuroCars\")", //$NON-NLS-1$
-      
-      // expected hypersonic sql
-      "( (((4 * (2 + 3)) - (( BT_CUSTOMERS.COUNTRY  * 2) / 3)) <> 1000) AND " + //$NON-NLS-1$
-      "( BT_CUSTOMERS.CUSTOMERNAME  = 'EuroCars') )" //$NON-NLS-1$
+        , "date '2007-05-23'" //$NON-NLS-1$
     );
   }
-  
-  
+
+  public void testWhereCondition() {
+    handleWhereCondition(ordersModel,
+    // mql formula
+        "AND(4 * (2 + 3) - ([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY] * 2) / 3 <> 1000;" + //$NON-NLS-1$
+            "[BT_CUSTOMERS.BC_CUSTOMERS_CUSTOMERNAME] = \"EuroCars\")", //$NON-NLS-1$
+
+        // expected hypersonic sql
+        "( (((4 * (2 + 3)) - (( BT_CUSTOMERS.COUNTRY  * 2) / 3)) <> 1000) AND " + //$NON-NLS-1$
+            "( BT_CUSTOMERS.CUSTOMERNAME  = 'EuroCars') )" //$NON-NLS-1$
+    );
+  }
+
   public void testExpectedExceptionCategoryNotFound() {
     String mqlFormula = "[blah_CUSTOMERS.BC_CUSTOMERS_CUSTOMERNAME] = \"EuroCars\")"; //$NON-NLS-1$
     try {
@@ -347,85 +363,86 @@ public class MQLQueryTest extends TestCase {
       assertTrue(e.getMessage().indexOf("blah_CUSTOMERS") >= 0); //$NON-NLS-1$
     }
   }
-  
+
   public void testWhereConditionWithIN() {
     handleWhereCondition(ordersModel,
-      // mql formula
-      "AND(4 * (2 + 3) - ([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY] * 2) / 3 <> 1000;" + //$NON-NLS-1$
-      "IN([BT_CUSTOMERS.BC_CUSTOMERS_CUSTOMERNAME];\"EuroCars1\";\"EuroCars2\";\"EuroCars3\"))", //$NON-NLS-1$
-      
-      // expected hypersonic sql
-      "( (((4 * (2 + 3)) - (( BT_CUSTOMERS.COUNTRY  * 2) / 3)) <> 1000) AND " + //$NON-NLS-1$
-      " BT_CUSTOMERS.CUSTOMERNAME  IN ( 'EuroCars1' , 'EuroCars2' , 'EuroCars3' )  )" //$NON-NLS-1$
-    );
-  }
-  
-  public void testWhereConditionWithLIKE() {
-    handleWhereCondition(ordersModel,
-      // mql formula
-      "LIKE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"%US%\")", //$NON-NLS-1$
+    // mql formula
+        "AND(4 * (2 + 3) - ([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY] * 2) / 3 <> 1000;" + //$NON-NLS-1$
+            "IN([BT_CUSTOMERS.BC_CUSTOMERS_CUSTOMERNAME];\"EuroCars1\";\"EuroCars2\";\"EuroCars3\"))", //$NON-NLS-1$
 
-      // expected hypersonic sql
-      "(  BT_CUSTOMERS.COUNTRY  LIKE '%US%' )" //$NON-NLS-1$
+        // expected hypersonic sql
+        "( (((4 * (2 + 3)) - (( BT_CUSTOMERS.COUNTRY  * 2) / 3)) <> 1000) AND " + //$NON-NLS-1$
+            " BT_CUSTOMERS.CUSTOMERNAME  IN ( 'EuroCars1' , 'EuroCars2' , 'EuroCars3' )  )" //$NON-NLS-1$
     );
   }
-  
+
+  public void testWhereConditionWithLIKE() {
+    handleWhereCondition(ordersModel, // mql formula
+        "LIKE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"%US%\")", //$NON-NLS-1$
+
+        // expected hypersonic sql
+        "(  BT_CUSTOMERS.COUNTRY  LIKE '%US%' )" //$NON-NLS-1$
+    );
+  }
+
   public void testLike() {
     handleFormula(ordersModel, "Hypersonic", //$NON-NLS-1$ 
         "LIKE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"%\")" //$NON-NLS-1$
-        ,"BT_CUSTOMERS.COUNTRY  LIKE '%'" //$NON-NLS-1$
-      );
+        , "BT_CUSTOMERS.COUNTRY  LIKE '%'" //$NON-NLS-1$
+    );
   }
 
   public void testCase() {
     handleFormula(ordersModel, "Hypersonic", //$NON-NLS-1$ 
         "CASE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]=\"US\"; \"USA\";[BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]=\"JAPAN\"; \"Japan\")" //$NON-NLS-1$
-        ,"CASE  WHEN  BT_CUSTOMERS.COUNTRY  = 'US' THEN 'USA' WHEN  BT_CUSTOMERS.COUNTRY  = 'JAPAN' THEN 'Japan' END" //$NON-NLS-1$
-      );
-    handleFormula(ordersModel, "Hypersonic", //$NON-NLS-1$ 
+        , "CASE  WHEN  BT_CUSTOMERS.COUNTRY  = 'US' THEN 'USA' WHEN  BT_CUSTOMERS.COUNTRY  = 'JAPAN' THEN 'Japan' END" //$NON-NLS-1$
+    );
+    handleFormula(
+        ordersModel,
+        "Hypersonic", //$NON-NLS-1$ 
         "CASE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]=\"US\"; \"USA\";[BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]=\"JAPAN\"; \"Japan\"; \"Canada\")" //$NON-NLS-1$
-        ,"CASE  WHEN  BT_CUSTOMERS.COUNTRY  = 'US' THEN 'USA' WHEN  BT_CUSTOMERS.COUNTRY  = 'JAPAN' THEN 'Japan' ELSE 'Canada' END" //$NON-NLS-1$
-      );
+        ,
+        "CASE  WHEN  BT_CUSTOMERS.COUNTRY  = 'US' THEN 'USA' WHEN  BT_CUSTOMERS.COUNTRY  = 'JAPAN' THEN 'Japan' ELSE 'Canada' END" //$NON-NLS-1$
+    );
     handleFormulaFailure(ordersModel, "Hypersonic", //$NON-NLS-1$ 
         "CASE()" //$NON-NLS-1$
-        ,"PMSFormulaContext.ERROR_0002 - Invalid number of parameters for function CASE, expecting 2 params" //$NON-NLS-1$
-      );
+        , "PMSFormulaContext.ERROR_0002 - Invalid number of parameters for function CASE, expecting 2 params" //$NON-NLS-1$
+    );
     handleFormulaFailure(ordersModel, "Hypersonic", //$NON-NLS-1$ 
         "CASE(\"\")" //$NON-NLS-1$
-        ,"PMSFormulaContext.ERROR_0002 - Invalid number of parameters for function CASE, expecting 2 params" //$NON-NLS-1$
-      );
+        , "PMSFormulaContext.ERROR_0002 - Invalid number of parameters for function CASE, expecting 2 params" //$NON-NLS-1$
+    );
   }
-  
+
   public void testCoalesce() {
     handleFormula(ordersModel, "Hypersonic", //$NON-NLS-1$ 
         "COALESCE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]; \"USA\")" //$NON-NLS-1$
-        ,"COALESCE( BT_CUSTOMERS.COUNTRY  , 'USA')" //$NON-NLS-1$
-      );
+        , "COALESCE( BT_CUSTOMERS.COUNTRY  , 'USA')" //$NON-NLS-1$
+    );
     handleFormula(ordersModel, "Hypersonic", //$NON-NLS-1$ 
         "COALESCE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY])" //$NON-NLS-1$
-        ,"COALESCE( BT_CUSTOMERS.COUNTRY )" //$NON-NLS-1$
-      );
+        , "COALESCE( BT_CUSTOMERS.COUNTRY )" //$NON-NLS-1$
+    );
     handleFormulaFailure(ordersModel, "Hypersonic", //$NON-NLS-1$ 
         "COALESCE()" //$NON-NLS-1$
-        ,"PMSFormulaContext.ERROR_0002 - Invalid number of parameters for function COALESCE, expecting 1 params" //$NON-NLS-1$
-      );
+        , "PMSFormulaContext.ERROR_0002 - Invalid number of parameters for function COALESCE, expecting 1 params" //$NON-NLS-1$
+    );
   }
 
-  
   public void testNoFunction() {
     handleFormula(ordersModel, "Hypersonic", //$NON-NLS-1$ 
         "[BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]" //$NON-NLS-1$
-        ,"BT_CUSTOMERS.COUNTRY" //$NON-NLS-1$
-      );
+        , "BT_CUSTOMERS.COUNTRY" //$NON-NLS-1$
+    );
   }
-  
-//  public void testSingleQuotes() {
-//    handleFormula(ordersModel, "Hypersonic", //$NON-NLS-1$ 
-//        "[BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]=\"JAP'AN\"" //$NON-NLS-1$
-//        ,"Customers.COUNTRY  LIKE '%'" //$NON-NLS-1$
-//      );
-//  }
-  
+
+  //  public void testSingleQuotes() {
+  //    handleFormula(ordersModel, "Hypersonic", //$NON-NLS-1$ 
+  //        "[BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]=\"JAP'AN\"" //$NON-NLS-1$
+  //        ,"Customers.COUNTRY  LIKE '%'" //$NON-NLS-1$
+  //      );
+  //  }
+
   /**
    * In this test we try to see to it :<br>
    * - that the formula engine picks the 2 specified columns from 2 different business tables<br>
@@ -433,13 +450,12 @@ public class MQLQueryTest extends TestCase {
    * <br>
    */
   public void testMultiTableColumnFormulas() {
-	  String formula = "[BT_ORDER_DETAILS.BC_ORDER_DETAILS_QUANTITYORDERED] * [BT_PRODUCTS.BC_PRODUCTS_BUYPRICE]";
-	  String sql = "SUM(BT_ORDER_DETAILS.QUANTITYORDERED)  *  BT_PRODUCTS.BUYPRICE";
-	  
-	  handleFormula(ordersModel, "Hypersonic", formula, sql);
+    String formula = "[BT_ORDER_DETAILS.BC_ORDER_DETAILS_QUANTITYORDERED] * [BT_PRODUCTS.BC_PRODUCTS_BUYPRICE]";
+    String sql = "SUM(BT_ORDER_DETAILS.QUANTITYORDERED)  *  BT_PRODUCTS.BUYPRICE";
+
+    handleFormula(ordersModel, "Hypersonic", formula, sql);
   }
-  
-  
+
   /**
    * In this test we try to see to it :<br>
    * - that the formula engine picks the 2 specified columns from 2 different business tables<br>
@@ -447,32 +463,30 @@ public class MQLQueryTest extends TestCase {
    * <br>
    */
   public void testMultiTableColumnFormulasAggregate() {
-	  BusinessColumn quantityOrdered = ordersModel.findBusinessColumn("BC_ORDER_DETAILS_QUANTITYORDERED");
-	  assertNotNull("Expected to find the business column 'quantity ordered'", quantityOrdered);
-	  BusinessColumn buyPrice = ordersModel.findBusinessColumn("BC_PRODUCTS_BUYPRICE");
-	  assertNotNull("Expected to find the business column 'buy price'", buyPrice);
-	  
-	  // let's remove the aggregations of the quantity ordered...
-	  //
-	  AggregationSettings qaBackup = quantityOrdered.getAggregationType();
-	  AggregationSettings paBackup = buyPrice.getAggregationType();
-	  quantityOrdered.setAggregationType(AggregationSettings.NONE);
-	  buyPrice.setAggregationType(AggregationSettings.NONE);
+    BusinessColumn quantityOrdered = ordersModel.findBusinessColumn("BC_ORDER_DETAILS_QUANTITYORDERED");
+    assertNotNull("Expected to find the business column 'quantity ordered'", quantityOrdered);
+    BusinessColumn buyPrice = ordersModel.findBusinessColumn("BC_PRODUCTS_BUYPRICE");
+    assertNotNull("Expected to find the business column 'buy price'", buyPrice);
 
-	  // This changes the expected result...
-	  //
-	  String formula = "SUM( [BT_ORDER_DETAILS.BC_ORDER_DETAILS_QUANTITYORDERED] * [BT_PRODUCTS.BC_PRODUCTS_BUYPRICE] )";
-	  String sql = "SUM( BT_ORDER_DETAILS.QUANTITYORDERED  *  BT_PRODUCTS.BUYPRICE )";
+    // let's remove the aggregations of the quantity ordered...
+    //
+    AggregationSettings qaBackup = quantityOrdered.getAggregationType();
+    AggregationSettings paBackup = buyPrice.getAggregationType();
+    quantityOrdered.setAggregationType(AggregationSettings.NONE);
+    buyPrice.setAggregationType(AggregationSettings.NONE);
 
-	  handleFormula(ordersModel, "Hypersonic", formula, sql);
-	  
-	  // Set it back to the way it was for further testing.
-	  quantityOrdered.setAggregationType(qaBackup);
-	  buyPrice.setAggregationType(paBackup);
+    // This changes the expected result...
+    //
+    String formula = "SUM( [BT_ORDER_DETAILS.BC_ORDER_DETAILS_QUANTITYORDERED] * [BT_PRODUCTS.BC_PRODUCTS_BUYPRICE] )";
+    String sql = "SUM( BT_ORDER_DETAILS.QUANTITYORDERED  *  BT_PRODUCTS.BUYPRICE )";
+
+    handleFormula(ordersModel, "Hypersonic", formula, sql);
+
+    // Set it back to the way it was for further testing.
+    quantityOrdered.setAggregationType(qaBackup);
+    buyPrice.setAggregationType(paBackup);
   }
-  
-  
-  
+
   /**
    * In this test we try to test :<br>
    * - if the formula engine picks the 2 specified columns from 2 different business tables<br>
@@ -480,33 +494,33 @@ public class MQLQueryTest extends TestCase {
    * <br>
    */
   public void testMultiTableColumnFormulasAggregate2() {
-	  BusinessColumn quantityOrdered = ordersModel.findBusinessColumn("BC_ORDER_DETAILS_QUANTITYORDERED");
-	  assertNotNull("Expected to find the business column 'quantity ordered'", quantityOrdered);
-	  BusinessColumn buyPrice = ordersModel.findBusinessColumn("BC_PRODUCTS_BUYPRICE");
-	  assertNotNull("Expected to find the business column 'buy price'", buyPrice);
-	  
-	  // let's enable the aggregations of the quantity ordered...
-	  //
-	  AggregationSettings qaBackup = quantityOrdered.getAggregationType();
-	  AggregationSettings paBackup = buyPrice.getAggregationType();
-	  quantityOrdered.setAggregationType(AggregationSettings.SUM);
-	  buyPrice.setAggregationType(AggregationSettings.SUM);
+    BusinessColumn quantityOrdered = ordersModel.findBusinessColumn("BC_ORDER_DETAILS_QUANTITYORDERED");
+    assertNotNull("Expected to find the business column 'quantity ordered'", quantityOrdered);
+    BusinessColumn buyPrice = ordersModel.findBusinessColumn("BC_PRODUCTS_BUYPRICE");
+    assertNotNull("Expected to find the business column 'buy price'", buyPrice);
 
-	  // This changes the expected result...
-	  //
-	  String formula = "[BT_ORDER_DETAILS.BC_ORDER_DETAILS_QUANTITYORDERED] * [BT_PRODUCTS.BC_PRODUCTS_BUYPRICE]";
-	  String sql = "SUM(BT_ORDER_DETAILS.QUANTITYORDERED)  *  SUM(BT_PRODUCTS.BUYPRICE)";
+    // let's enable the aggregations of the quantity ordered...
+    //
+    AggregationSettings qaBackup = quantityOrdered.getAggregationType();
+    AggregationSettings paBackup = buyPrice.getAggregationType();
+    quantityOrdered.setAggregationType(AggregationSettings.SUM);
+    buyPrice.setAggregationType(AggregationSettings.SUM);
 
-	  handleFormula(ordersModel, "Hypersonic", formula, sql);
-	  
-	  // Set it back to the way it was for further testing.
-	  quantityOrdered.setAggregationType(qaBackup);
-	  buyPrice.setAggregationType(paBackup);
+    // This changes the expected result...
+    //
+    String formula = "[BT_ORDER_DETAILS.BC_ORDER_DETAILS_QUANTITYORDERED] * [BT_PRODUCTS.BC_PRODUCTS_BUYPRICE]";
+    String sql = "SUM(BT_ORDER_DETAILS.QUANTITYORDERED)  *  SUM(BT_PRODUCTS.BUYPRICE)";
+
+    handleFormula(ordersModel, "Hypersonic", formula, sql);
+
+    // Set it back to the way it was for further testing.
+    quantityOrdered.setAggregationType(qaBackup);
+    buyPrice.setAggregationType(paBackup);
   }
-  
+
   public void testMQLQueryFactoryPentahoMetadataException() {
     try {
-      MQLQueryFactory.getMQLQuery(null, null, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
+      MQLQueryFactory.getMQLQuery(null, null, "en_US", cwmSchemaFactory); //$NON-NLS-1$
       fail();
     } catch (PentahoMetadataException e) {
       assertTrue(e.getMessage().indexOf("ERROR_0017 - ") >= 0);
@@ -515,34 +529,34 @@ public class MQLQueryTest extends TestCase {
 
   public void testDatabaseMetaReplacement() {
     // the current sql should have a 'date', while the oracle version should have a DATE()
-    
+
     String mqlfile = "test/org/pentaho/pms/mqlquery03.xmql"; //$NON-NLS-1$
 
     String mqldata = loadXmlFile(mqlfile);
-    
+
     MQLQuery mqlquery = null;
     try {
-      mqlquery = MQLQueryFactory.getMQLQuery(mqldata, null, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
-      
+      mqlquery = MQLQueryFactory.getMQLQuery(mqldata, null, "en_US", cwmSchemaFactory); //$NON-NLS-1$
+
       MappedQuery query = mqlquery.getQuery();
       String sqlQuery = query.getQuery();
       assertTrue(sqlQuery.indexOf(">= '1-01-2007'") >= 0); //$NON-NLS-1$
-      
+
       // now replace with oracle database metadata
-      DatabaseMeta meta = (DatabaseMeta)((MQLQueryImpl)mqlquery).getDatabaseMeta().clone();
-      
+      DatabaseMeta meta = (DatabaseMeta) ((MQLQueryImpl) mqlquery).getDatabaseMeta().clone();
+
       DatabaseInterface di[] = DatabaseMeta.getDatabaseInterfaces();
       DatabaseInterface oracleDI = null;
-      for (int i=0;i<di.length;i++) {
+      for (int i = 0; i < di.length; i++) {
         if (di[i].getDatabaseTypeDesc().toLowerCase().indexOf("oracle") >= 0) { //$NON-NLS-1$
-          oracleDI = (DatabaseInterface)di[i].clone();
+          oracleDI = (DatabaseInterface) di[i].clone();
           break;
         }
       }
       meta.setDatabaseInterface(oracleDI);
-      
-      mqlquery = MQLQueryFactory.getMQLQuery(mqldata, meta, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
-      
+
+      mqlquery = MQLQueryFactory.getMQLQuery(mqldata, meta, "en_US", cwmSchemaFactory); //$NON-NLS-1$
+
       query = mqlquery.getQuery();
       sqlQuery = query.getQuery();
       assertTrue(sqlQuery.indexOf(">= TO_DATE('1-01-2007','YYYY-MM-DD')") >= 0); //$NON-NLS-1$
@@ -551,106 +565,86 @@ public class MQLQueryTest extends TestCase {
       fail();
     }
   }
-  
-  public void testToFromXML() {
-   
-		String mqlfile1 = "test/org/pentaho/pms/mqlquery01.xmql"; //$NON-NLS-1$
+
+  public void testToFromXML() throws PentahoMetadataException {
+
+    String mqlfile1 = "test/org/pentaho/pms/mqlquery01.xmql"; //$NON-NLS-1$
     String mqlfile2 = "test/org/pentaho/pms/mqlquery02.xmql"; //$NON-NLS-1$ // Distinct is off, but otherwise the same
     String mqlfile3 = "test/org/pentaho/pms/mqlquery_oldformat.xmql"; //$NON-NLS-1$
     String mqlfile4 = "test/org/pentaho/pms/mqlquery03.xmql"; //$NON-NLS-1$
-    
+
     String mqldata = loadXmlFile(mqlfile1);
     assertNotNull(mqldata);
     MQLQuery mqlquery = null;
-    try {
-      mqlquery = MQLQueryFactory.getMQLQuery(mqldata, null, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
-    } catch (PentahoMetadataException e) {
-      e.printStackTrace();
-      fail();
-    }
+    mqlquery = MQLQueryFactory.getMQLQuery(mqldata, null, "en_US", cwmSchemaFactory); //$NON-NLS-1$
 
     // Tests parsing the options tag to get the boolean into the MQL query
     mqldata = null;
     mqldata = loadXmlFile(mqlfile2);
     assertNotNull(mqldata);
     MQLQuery mqlquery2 = null;
-    try {
-      mqlquery2 = MQLQueryFactory.getMQLQuery(mqldata, null, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
-      assertEquals(((MQLQueryImpl)mqlquery2).getDisableDistinct(), true);
-    } catch (PentahoMetadataException e) {
-      e.printStackTrace();
-      fail();
-    }
+    mqlquery2 = MQLQueryFactory.getMQLQuery(mqldata, null, "en_US", cwmSchemaFactory); //$NON-NLS-1$
+    assertEquals(((MQLQueryImpl) mqlquery2).getDisableDistinct(), true);
 
     // Tests parsing of conditions
     mqldata = null;
     mqldata = loadXmlFile(mqlfile4);
     assertNotNull(mqldata);
     MQLQuery mqlquery4 = null;
-    try {
-      mqlquery4 = MQLQueryFactory.getMQLQuery(mqldata, null, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
-      assertEquals(mqlquery4.getConstraints().size(), 1);
-    } catch (PentahoMetadataException e) {
-      e.printStackTrace();
-      fail();
-    }
-    
+    mqlquery4 = MQLQueryFactory.getMQLQuery(mqldata, null, "en_US", cwmSchemaFactory); //$NON-NLS-1$
+    assertEquals(mqlquery4.getConstraints().size(), 1);
+
     // Tests parsing an old-format (without options tag) still works, and defaults disableDistinct to false
     mqldata = null;
     mqldata = loadXmlFile(mqlfile3);
     assertNotNull(mqldata);
     MQLQuery mqlquery3 = null;
-    try {
-      mqlquery3 = MQLQueryFactory.getMQLQuery(mqldata, null, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
-      assertEquals(((MQLQueryImpl)mqlquery3).getDisableDistinct(), false);
-    } catch (PentahoMetadataException e) {
-      e.printStackTrace();
-      fail();
-    }
-    
+    mqlquery3 = MQLQueryFactory.getMQLQuery(mqldata, null, "en_US", cwmSchemaFactory); //$NON-NLS-1$
+    assertEquals(((MQLQueryImpl) mqlquery3).getDisableDistinct(), false);
+
     assertNotNull(mqlquery);
-    assertNotNull(((MQLQueryImpl)mqlquery).getSchemaMeta());
-    assertEquals("Orders", ((MQLQueryImpl)mqlquery).getSchemaMeta().getDomainName()); //$NON-NLS-1$
+    assertNotNull(((MQLQueryImpl) mqlquery).getSchemaMeta());
+    assertEquals("Orders", ((MQLQueryImpl) mqlquery).getSchemaMeta().getDomainName()); //$NON-NLS-1$
     assertNotNull(mqlquery.getModel());
-    assertEquals("Orders", mqlquery.getModel().getId() ); //$NON-NLS-1$
-    
+    assertEquals("Orders", mqlquery.getModel().getId()); //$NON-NLS-1$
+
     List<? extends Selection> selections = mqlquery.getSelections();
-    
+
     assertNotNull(selections);
     assertEquals(2, selections.size());
-    
+
     BusinessColumn col1 = selections.get(0).getBusinessColumn();
     assertEquals("BT_CUSTOMERS", col1.getBusinessTable().getId()); //$NON-NLS-1$
     assertEquals("BC_CUSTOMERS_CUSTOMERNAME", col1.getId()); //$NON-NLS-1$
-    
+
     BusinessColumn col2 = selections.get(1).getBusinessColumn();
     assertEquals("BT_CUSTOMERS", col2.getBusinessTable().getId()); //$NON-NLS-1$
     assertEquals("BC_CUSTOMERS_COUNTRY", col2.getId()); //$NON-NLS-1$
-    
-    List orders = ((MQLQueryImpl)mqlquery).getOrder();
-    
+
+    List orders = ((MQLQueryImpl) mqlquery).getOrder();
+
     assertNotNull(orders);
     assertEquals(1, orders.size());
     assertTrue(orders.get(0) instanceof OrderBy);
-    OrderBy order = (OrderBy)orders.get(0);
-    
+    OrderBy order = (OrderBy) orders.get(0);
+
     assertEquals(true, order.isAscending());
     assertNotNull(order.getSelection().getBusinessColumn());
     assertEquals("BT_CUSTOMERS", order.getSelection().getBusinessColumn().getBusinessTable().getId()); //$NON-NLS-1$
     assertEquals("BC_CUSTOMERS_COUNTRY", order.getSelection().getBusinessColumn().getId()); //$NON-NLS-1$
-    
+
     // NOW TEST XML OUTPUT
     try {
       File file = new File(mqlfile1);
       FileInputStream fileInputStream = new FileInputStream(file);
-      byte bytes[] = new byte[(int)file.length()];
+      byte bytes[] = new byte[(int) file.length()];
       fileInputStream.read(bytes);
       fileInputStream.close();
       String data = new String(bytes, Const.XML_ENCODING);
       data = data.replaceAll("[\n\t]", ""); //$NON-NLS-1$ //$NON-NLS-2$
       String xml = mqlquery.getXML();
       assertNotNull(xml);
-      xml = xml.replaceAll("[\n\t]",""); //$NON-NLS-1$ //$NON-NLS-2$
+      xml = xml.replaceAll("[\n\t]", ""); //$NON-NLS-1$ //$NON-NLS-2$
       /*
       System.out.println("Generated XML");
       System.out.println(xml);
@@ -658,54 +652,54 @@ public class MQLQueryTest extends TestCase {
       System.out.println(data);
       */
       assertEquals(data, xml);
-      
+
       // Checks that the rendered XML has the option with true instead of false
       xml = mqlquery2.getXML();
       assertNotNull(xml);
-      xml = xml.replaceAll("[\n\t]",""); //$NON-NLS-1$ //$NON-NLS-2$
+      xml = xml.replaceAll("[\n\t]", ""); //$NON-NLS-1$ //$NON-NLS-2$
 
       assertFalse(data.equals(xml));
-      
+
       // Tests that newly generated XML has the correct false flag in it.
       xml = mqlquery3.getXML();
       assertNotNull(xml);
-      xml = xml.replaceAll("[\n\t]",""); //$NON-NLS-1$ //$NON-NLS-2$
-      
+      xml = xml.replaceAll("[\n\t]", ""); //$NON-NLS-1$ //$NON-NLS-2$
+
       assertEquals(data, xml);
-      
+
     } catch (IOException e) {
       e.printStackTrace();
       fail();
     }
-    
+
     // TEST CONSTRAINT XML OUTPUT
     try {
       File file = new File(mqlfile4);
       FileInputStream fileInputStream = new FileInputStream(file);
-      byte bytes[] = new byte[(int)file.length()];
+      byte bytes[] = new byte[(int) file.length()];
       fileInputStream.read(bytes);
       fileInputStream.close();
       String data = new String(bytes, Const.XML_ENCODING);
       data = data.replaceAll("[\r\n\t]", ""); //$NON-NLS-1$ //$NON-NLS-2$
-      data = data.replaceAll("<!--.*[-][-][>]", "");  //$NON-NLS-1$ //$NON-NLS-2$
+      data = data.replaceAll("<!--.*[-][-][>]", ""); //$NON-NLS-1$ //$NON-NLS-2$
       String xml = mqlquery4.getXML();
       assertNotNull(xml);
-      xml = xml.replaceAll("[\r\n\t]",""); //$NON-NLS-1$ //$NON-NLS-2$
-      xml = xml.replaceAll("<options><disable_distinct>false</disable_distinct></options>", "");  //$NON-NLS-1$ //$NON-NLS-2$
+      xml = xml.replaceAll("[\r\n\t]", ""); //$NON-NLS-1$ //$NON-NLS-2$
+      xml = xml.replaceAll("<options><disable_distinct>false</disable_distinct></options>", ""); //$NON-NLS-1$ //$NON-NLS-2$
       assertEquals(data, xml);
-      
+
     } catch (IOException e) {
       e.printStackTrace();
       fail();
     }
-    
+
     try {
       // Now, look at generated SQL for distinct -vs- no distinct...
       String SQL1 = mqlquery.getQuery().getQuery();
       assertNotNull(SQL1);
       assertTrue(SQL1.startsWith("SELECT DISTINCT"));
       // System.out.println("SQL1: " + SQL1);
-     
+
       String SQL2 = mqlquery2.getQuery().getQuery();
       assertNotNull(SQL2);
       assertFalse(SQL2.startsWith("SELECT DISTINCT"));
@@ -715,42 +709,39 @@ public class MQLQueryTest extends TestCase {
       assertNotNull(SQL3);
       assertTrue(SQL3.startsWith("SELECT DISTINCT"));
       // System.out.println("SQL3: " + SQL3);
-      
+
     } catch (PentahoMetadataException e) {
       e.printStackTrace();
       fail();
     }
-    
-    
+
     // NOW TEST MQL QUERY EXCEPTIONS
-    String mqlfaildata01 = mqldata.replaceAll(
-          "<constraints/>", //$NON-NLS-1$
-          "<constraints>" + //$NON-NLS-1$
-          "   <constraint>" + //$NON-NLS-1$
-          "      <condition></condition>" + //$NON-NLS-1$
-          "   </constraint>" + //$NON-NLS-1$
-          "</constraints>" //$NON-NLS-1$
-        );
-    
-    try {
-      mqlquery = MQLQueryFactory.getMQLQuery(mqlfaildata01, null, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
-      fail();
-    } catch (PentahoMetadataException e) {
-      assertEquals("MQLQuery.ERROR_0001 - Condition not specified in MQL constraint", e.getMessage() ); //$NON-NLS-1$
-    }
-    
-    String mqlfaildata02 = mqldata.replaceAll(
-          "<constraints/>", //$NON-NLS-1$
-          "<constraints>" + //$NON-NLS-1$
-          "   <constraint/>" + //$NON-NLS-1$
-          "</constraints>" //$NON-NLS-1$
-        );
+    String mqlfaildata01 = mqldata.replaceAll("<constraints/>", //$NON-NLS-1$
+        "<constraints>" + //$NON-NLS-1$
+            "   <constraint>" + //$NON-NLS-1$
+            "      <condition></condition>" + //$NON-NLS-1$
+            "   </constraint>" + //$NON-NLS-1$
+            "</constraints>" //$NON-NLS-1$
+    );
 
     try {
-      mqlquery = MQLQueryFactory.getMQLQuery(mqlfaildata01, null, "en_US", cwmSchemaFactory ); //$NON-NLS-1$
+      mqlquery = MQLQueryFactory.getMQLQuery(mqlfaildata01, null, "en_US", cwmSchemaFactory); //$NON-NLS-1$
       fail();
     } catch (PentahoMetadataException e) {
-      assertEquals("MQLQuery.ERROR_0001 - Condition not specified in MQL constraint", e.getMessage() ); //$NON-NLS-1$
+      assertEquals("MQLQuery.ERROR_0001 - Condition not specified in MQL constraint", e.getMessage()); //$NON-NLS-1$
     }
-	}
+
+    String mqlfaildata02 = mqldata.replaceAll("<constraints/>", //$NON-NLS-1$
+        "<constraints>" + //$NON-NLS-1$
+            "   <constraint/>" + //$NON-NLS-1$
+            "</constraints>" //$NON-NLS-1$
+    );
+
+    try {
+      mqlquery = MQLQueryFactory.getMQLQuery(mqlfaildata01, null, "en_US", cwmSchemaFactory); //$NON-NLS-1$
+      fail();
+    } catch (PentahoMetadataException e) {
+      assertEquals("MQLQuery.ERROR_0001 - Condition not specified in MQL constraint", e.getMessage()); //$NON-NLS-1$
+    }
+  }
 }
