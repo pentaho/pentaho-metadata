@@ -25,7 +25,7 @@ import org.pentaho.pms.schema.concept.types.font.ConceptPropertyFont;
 import org.pentaho.pms.schema.concept.types.font.FontSettings;
 import org.pentaho.pms.schema.concept.types.number.ConceptPropertyNumber;
 
-public class TestConcept
+public class TstConcept
 {
 
     /**
