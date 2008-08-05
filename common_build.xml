@@ -1,0 +1,416 @@
+<!--===========================================================================
+    COMMON_BUILD.XML
+    
+    This is the build file that is used across all Pentaho projects that are
+    using the "new and improved" ivy builds.
+    
+    This file contains the default implementation of the ant tasks to 
+    perform a build. This file should be included by the build.xml file 
+    for each project in the Pentaho system. That build file should 
+    redefine any task that is defined in this file IF AND ONLY IF the 
+    functioning of that task should be different for that specific
+    project.
+    
+    NOTE: Any modification to this file should be viewed as a modification
+          the EVERY common_build.xml file (and the change should be copied
+          to all common_build.xml files that can be found)
+============================================================================-->
+<project name="Pentaho Common Build"  basedir="." default="jar" 
+	xmlns:ivy="antlib:org.apache.ivy.ant">
+
+	<!-- Include the antcontrib ant tasks -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+	
+	<!-- Load the properties files in the proper order -->
+	<property file="override.properties" />
+	<property file="build.properties" />
+	
+	<!-- Ivy properties -->
+	<property name="ivy.install.version" value="2.0.0-beta2" />
+	<property name="ivy.default.ivy.user.dir" value="${user.home}/.ivy2" />
+    <property name="ivy.jar.dir" value="${ivy.default.ivy.user.dir}/jars" />
+	<property name="ivy.jar.file" value="${ivy.jar.dir}/ivybeta1.jar" />
+	
+	<!-- Setup the compile classpath -->
+	<path id="classpath">
+		<fileset dir="${lib.dir}">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<!-- Setup the classpath used for testing -->
+	<path id="test.classpath">
+		<fileset dir="${lib.dir}">
+			<include name="*.jar" />
+		</fileset>
+		<fileset dir="${testlib.dir}">
+			<include name="*.jar" />
+		</fileset>
+		<dirset dir="${bin.dir}"/>
+		<dirset dir="${testbin.dir}"/>
+	</path>
+
+
+	<!--=======================================================================
+	    init
+	    
+	    Ensures that all the required directories exist before processing
+	    a build.
+	    ====================================================================-->
+    <target name="init" description="Initializes the build process">
+		<mkdir dir="${bin.dir}"/>
+		<mkdir dir="${testbin.dir}"/>
+		<mkdir dir="${dist.dir}"/>
+	</target>
+
+		
+	<!--=======================================================================
+	    download-ivy
+	    
+	    Automatically downloads the ivy jar file for use by ant
+	    ====================================================================-->
+	<target name="download-ivy" unless="offline" description="Downloads IVY jar file">
+        <mkdir dir="${ivy.jar.dir}"/>
+        <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
+                 dest="${ivy.jar.file}" usetimestamp="true"/>
+	</target>
+	
+
+	<!--=======================================================================
+	    install-ivy
+	    
+	    Installs the ivy jar for use by this ant script
+	    ====================================================================-->
+	<target name="install-ivy" depends="download-ivy" unless="offline" description="Installs IVY tasks for use by this build process">
+        <path id="ivy.lib.path">
+            <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
+        </path>
+        <taskdef resource="org/apache/ivy/ant/antlib.xml"
+                  uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
+    	<ivy:settings url="${ivy.settingsurl}"/>
+    </target>
+	
+
+	<!--=======================================================================
+	    resolve
+	    
+	    Using ivy and the dependencies for the project (defined in the ivy.xml
+	    file), this task will retrieve the needed files and place them into 
+	    the defined directories.
+	    ====================================================================-->
+    <target name="resolve" depends="install-ivy" unless="offline" description="Retrieves all the dependent libraries">
+        <ivy:resolve file="ivy.xml" />
+        <ivy:retrieve conf="default" pattern="${lib.dir}/[module]-[revision].[ext]"/>
+    	<ivy:retrieve conf="test" pattern="${testlib.dir}/[module]-[revision].[ext]"/>
+    </target>
+	
+
+	<!--=======================================================================
+	    report
+	    
+	    Allows ivy to report on the dependencies for this project 
+	    ====================================================================-->
+	<target name="report" depends="install-ivy" unless="offline" description="Uses IVY to report on the dependency information">
+        <ivy:resolve file="ivy.xml" />
+		<ivy:report conf="default" />		
+	</target>
+	
+
+	<!--=======================================================================
+	    publish-local-nojar
+	    
+	    Publishes the jar file for this project to the user's local repository
+	    for download by other projects currently being executed on the user's
+	    system.
+	    ====================================================================-->
+   	<target name="publish-local-nojar" depends="install-ivy" description="Publishes the jar file to the local repository">
+		<ivy:resolve file="ivy.xml" />
+		<ivy:publish resolver="local" pubrevision="${project.revision}" overwrite="true">
+   			<artifacts  pattern="${dist.dir}/[artifact].[ext]" />
+		</ivy:publish>
+	</target>
+		
+
+	<!--=======================================================================
+	    publish-local
+	    
+	    Builds and publishes the jar file for this project to the user's 
+	    local repository for download by other projects currently being 
+	    executed on the user's system.
+	    ====================================================================-->
+	<target name="publish-local" depends="jar, publish-local-nojar" 
+		description="Builds and publishes the jar file to the local repository"/>
+
+
+    <!--=======================================================================
+        publish-pentaho
+    
+        Creates and publishes the jar file for this project to a Maven2 
+        repository. 
+        ====================================================================-->
+	<target name="publish-pentaho" depends="jar, publish-pentaho-nojar" 
+		description="Builds and publishes the jar file to a Maven2 repository"/>
+
+
+	<!--=======================================================================
+	    publish-pentaho-nojar
+	    
+	    Publishes the jar file for this project to a Maven2 repository.
+	    ====================================================================-->
+	<target name="publish-pentaho-nojar" depends="create-pom" description="Publishes the jar file to a Maven2 repository">
+	  <sequential>
+		<fail message="Required jar not present!">
+		   <condition>
+		   	 <isset property="${dist.dir}/${ivy.artifact.id}.jar"/>
+		   </condition>	
+	  	</fail>
+	  	<if>
+	  	  <os family="windows"/>	
+		  	<then>
+				<exec executable="cmd">
+					<arg value="/c" />
+					<arg value="mvn.bat" />
+					<arg value="deploy:deploy-file" />
+					<arg value="-DrepositoryId=${ivy.repository.id}"/>
+					<arg value="-Durl=${ivy.repository.publish}"/>
+					<arg value="-DpomFile=${dist.dir}/pom.xml" />
+					<arg value="-Dfile=${dist.dir}/${ivy.artifact.id}.jar"/>
+				</exec>
+		    </then>
+		  	<else>
+		  		<exec executable="mvn">
+					<arg value="deploy:deploy-file" />
+					<arg value="-DrepositoryId=${ivy.repository.id}"/>
+					<arg value="-Durl=${ivy.repository.publish}"/>
+					<arg value="-DpomFile=${dist.dir}/pom.xml" />
+					<arg value="-Dfile=${dist.dir}/${ivy.artifact.id}.jar"/>
+				</exec>
+		  	</else>	
+	  	</if>  	
+	  </sequential>
+	</target>
+
+
+	<!--=======================================================================
+	    create-pom
+	    
+	    Creates the POM file for publishing the jar file to a Maven2 repository.
+	    ====================================================================-->
+	<target name="create-pom" depends="install-ivy" description="Creates a POM file based on the ivy dependencies">
+		<ivy:makepom ivyfile="./ivy.xml" pomfile="${dist.dir}/pom.xml"/>
+	</target>
+
+
+	<!--=======================================================================
+	    clean-local
+	    
+	    Removes all the libraries that are currently stored in the user's
+	    local repository. 
+	    ====================================================================-->
+	<target name="clean-local" depends="install-ivy" description="Cleans the local ivy repository">
+		<delete dir="${ivy.local.default.root}/${ivy.organisation}/${ivy.module}/${project.revision}"/>
+	</target>
+
+
+	<!--=======================================================================
+	    clean-jars
+	    
+	    Removes all the libraries that have been downloaded for this project
+	    using the ivy dependencies.
+	    ====================================================================-->
+	<target name="clean-jars" description="Cleans the libraries that have been downloaded">
+		<delete dir="${lib.dir}"/>
+		<delete dir="${testlib.dir}"/>
+	</target>
+
+
+	<!--=======================================================================
+	    clean
+	    
+	    Removes all the files generated from the build process.
+	    ====================================================================-->
+	<target name="clean" description="Cleans the files generated from a build">
+		<delete dir="${bin.dir}" />
+		<delete dir="${testbin.dir}" />
+		<delete dir="${dist.dir}" />
+	</target>
+
+
+	<!--=======================================================================
+	    clean-all
+	    
+	    Removes all the libraries that have been downloaded for this project
+	    and all the files generated from the build process.
+	    ====================================================================-->
+	<target name="clean-all" depends="clean, clean-jars" 
+		description="Cleans all the generated/downloaded files"/>
+
+
+	<!--=======================================================================
+	    copy-license-lgpl
+	    
+	    Copies the LGPL license file into the binary directory.
+	    ====================================================================-->
+	<target name="copy-license-lgpl" if="lgpl-license-avail" description="Copies the LGPL license file into the bin directory">
+   		<copy todir="${bin.dir}/META-INF">
+   			<fileset dir="${license.dir}" includes="lgpl-2.1.txt" />
+		</copy>
+	</target>
+
+
+	<!--=======================================================================
+	    copy-license-gpl-parent
+	    
+	    Copies the GPL license file from the parent directory into the 
+	    binary directory.
+	    ====================================================================-->
+	<target name="copy-license-gpl-parent" if="gpl-parent-license-avail" description="Copies the parent's GPL license file into the bin directory">
+   		<copy todir="${bin.dir}/META-INF">
+   			<fileset dir="../.." includes="gpl-2.0.txt" />
+		</copy>
+	</target>
+
+
+	<!--=======================================================================
+	    compile
+	    
+	    Compiles the source code (using the specified options) into the 
+	    binary directory.
+	    
+	    NOTE: This contains multiple sub-tasks which will occur in the 
+	          following order (this is provided for easier overriding by
+	          the build.xml which will include this file)...
+	      - compile.pre      : anything needed to prep for compile
+	      - compile.compile  : the actual compilation step
+	      - compile.src_copy : copying the source into the bin directory
+	      - compile.res_copy : copying the resources into the bin directory
+	      - compile.lic_copy : copying the license information into the bin directory
+	      - compile.post     : anything needed after the compile is done 
+	    ====================================================================-->
+	<target name="compile" 
+		depends="init, resolve, compile.pre, compile.compile, compile.src_copy, compile.res_copy, compile.lic_copy, compile.post"
+	    description="Performs all the steps to prepare the bin directory with a complete compilation"/>
+
+
+	<!--=======================================================================
+	    compile.pre
+	    
+	    Prepares to perform the compile.
+	    ====================================================================-->
+	<target name="compile.pre" description="Prepares the compile"/>
+
+
+	<!--=======================================================================
+	    compile.compile
+	    
+	    Performs the actual compile
+	    ====================================================================-->
+	<target name="compile.compile" depends="init" description="Performs the actual javac compile">
+		<javac destdir="${bin.dir}" debug="${javac.debug}" optimize="${javac.optimize}" 
+			   deprecation="${javac.deprecation}" fork="true" source="${build.source}" 
+			   target="${build.target}">
+			<classpath>
+				<path refid="classpath" />
+			</classpath>
+			<src path="${src.dir}" />
+		</javac>
+	</target>
+
+
+	<!--=======================================================================
+	    compile.src_copy
+	    
+	    Copies the source files to the bin directory
+	    NOTE: if the dont.copy.source variable exists, this step will be
+	          skipped!
+	    ====================================================================-->
+	<target name="compile.src_copy" depends="init" unless="dont.copy.source" description="Copies the source to the bin directory">
+		<copy todir="${bin.dir}" flatten="false">
+			<fileset dir="${src.dir}"/>
+		</copy>
+	</target>
+
+
+	<!--=======================================================================
+	    compile.res_copy
+	    
+	    Copies any needed resources into the bin directory
+	    ====================================================================-->
+	<target name="compile.res_copy" description="Copies the required resource files after a compile"/>
+
+
+	<!--=======================================================================
+	    compile.lic_copy
+	    
+	    Copies the license file(s) into the bin directory
+	    ====================================================================-->
+	<target name="compile.lic_copy" depends="init" description="Copies the required license file to the bin directory">
+		<condition property="lgpl-license-avail">
+			<available file="${license.dir}/lgpl-2.1.txt"/>
+		</condition>
+		<antcall target="copy-license-lgpl"/>
+		<condition property="gpl-parent-license-avail">
+			<available file="../../gpl-2.0.txt"/>
+		</condition>
+		<antcall target="copy-license-gpl-parent"/>
+	</target>
+
+
+	<!--=======================================================================
+	    compile.post
+	    
+	    Performs any needed post-compile tasks
+	    ====================================================================-->
+	<target name="compile.post" description="Post compilation tasks"/>
+
+
+	<!--=======================================================================
+	    jar
+	    
+	    Creates a jar file from the bin directory
+	    ====================================================================-->
+	<target name="jar" depends="compile" description="Jars up the bin directory after a compile">
+		<jar destfile="${dist.dir}/${ivy.artifact.id}.jar">
+			<manifest>
+				<attribute name="Implementation-Title" value="${impl.title}" />
+				<attribute name="Implementation-Version" value="${project.revision}" />
+				<attribute name="Implementation-Vendor" value="${impl.vendor}" />
+				<attribute name="Implementation-ProductID" value="${impl.productID}" />
+			</manifest>
+			<fileset dir="${bin.dir}"/>
+		</jar>
+	</target>
+
+
+	<!--=======================================================================
+	    test
+	    
+	    Compiles and runs all the tests for the project
+	    ====================================================================-->
+	<target name="test" depends="compile" description="Compiles and runs unit tests">
+		<javac destdir="${testbin.dir}" debug="true" optimize="false" source="${build.source}" target="${build.target}" fork="true">
+			<src path="${testsrc.dir}"/>
+			<classpath refid="test.classpath"/>
+		</javac>
+		
+	    <junit printsummary="yes" haltonfailure="yes">
+	      <classpath refid="test.classpath"/>
+	      <formatter type="plain"/>
+	      <batchtest fork="yes" todir="testbin">
+	        <fileset dir="${testsrc.dir}" casesensitive="yes">
+	          <include name="**/Test*.java"/>
+	          <include name="**/*Test.java"/>
+	        </fileset>
+	      </batchtest>
+	    </junit>
+	</target>
+
+
+	<!--=======================================================================
+	    dist
+	    
+	    Creates a distribution of this project
+	    ====================================================================-->
+    <target name="dist" depends="jar" description="Creates a distribution"/>
+		
+</project>

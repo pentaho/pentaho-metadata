@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0">
+  <info organisation="pentaho" module="pentaho-bi-platform-engine-core" revision="2.0-SNAPSHOT" />
+  <configurations>
+    <conf name="default" />
+    <conf name="test" visibility="private" />
+  </configurations>
+  <dependencies defaultconf="default->default">
+    
+    <!--  external dependencies -->
+    <dependency org="commons-collections" name="commons-collections" rev="3.2" />
+    <dependency org="commons-lang" name="commons-lang" rev="2.2" />
+    <dependency org="commons-logging" name="commons-logging" rev="1.1" />
+    <dependency org="commons-pool" name="commons-pool" rev="1.3" />
+    <dependency org="commons-fileupload" name="commons-fileupload" rev="1.0" />
+    <dependency org="commons-codec" name="commons-codec" rev="1.3" />
+    <dependency org="commons-httpclient" name="commons-httpclient" rev="3.0.1" />
+    <dependency org="commons-dbcp" name="commons-dbcp" rev="1.2.1" />
+    <dependency org="commons-net" name="commons-net" rev="1.4.1" transitive="false" />
+    <dependency org="commons-vfs" name="commons-vfs" rev="1.0" transitive="false" />
+    <dependency org="dom4j" name="dom4j" rev="1.6.1" transitive="false" />
+    <dependency org="org.springframework" name="spring" rev="2.0" transitive="false" />
+    <dependency org="simple-jndi" name="simple-jndi" rev="0.11.1" />
+    <dependency org="jfree" name="jcommon" rev="1.0.8"/>
+
+    <dependency org="junit" name="junit" rev="4.4" conf="test->default" />
+    
+    <!-- external dependencies hosted by pentaho -->
+    <dependency org="jug-lgpl" name="jug-lgpl" rev="2.0.0" />
+    <dependency org="javax.activation" name="activation" rev="1.0.2" />
+    <dependency org="org.netbeans" name="jmi" rev="200507110943" />
+    <dependency org="org.netbeans" name="jmiutils" rev="200507110943" />
+    <dependency org="org.netbeans" name="mdrapi" rev="200507110943" />
+    <dependency org="org.netbeans" name="mof" rev="200507110943" />
+    <dependency org="org.netbeans" name="openide-util" rev="200507110943" />
+    <dependency org="org.netbeans" name="nbmdr" rev="200507110943-custom" />
+
+    <!--  internal dependencies -->
+    <dependency org="pentaho" name="pentaho-connections" rev="2.0-SNAPSHOT" changing="true" />
+    <dependency org="pentaho.kettle" name="kettle-engine" rev="3.1.0" />
+    <dependency org="pentaho.kettle" name="kettle-core" rev="3.1.0" />
+    <dependency org="org.pentaho" name="pentaho-cwm" rev="1.5.4" />
+    <dependency org="pentaho.commons" name="pentaho-mql-builder" rev="1.8.0.29" />
+    <dependency org="pentaho.reporting" name="libformula" rev="0.1.12" />
+    <dependency org="pentaho" name="pentaho-publisher" rev="1.6.0" />
+  </dependencies>
+</ivy-module>

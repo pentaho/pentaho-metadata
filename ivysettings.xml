@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivysettings>
+  <property name="ivy.local.default.root" value="${ivy.default.ivy.user.dir}/local" override="true"/>
+
+  <settings defaultResolver="default"/>
+  <include url="${ivy.default.settings.dir}/ivysettings-public.xml"/>
+  <resolvers>
+    <ibiblio name="shared" m2compatible="true" root="http://repo.pentaho.org/artifactory/repo"/>
+  </resolvers>
+  <include url="${ivy.default.settings.dir}/ivysettings-local.xml"/>
+  <include url="${ivy.default.settings.dir}/ivysettings-main-chain.xml"/>
+  <include url="${ivy.default.settings.dir}/ivysettings-default-chain.xml"/>
+</ivysettings>
