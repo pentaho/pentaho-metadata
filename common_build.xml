@@ -442,7 +442,7 @@
 	    
 	    Runs tests in an instrumented environment and produces Cobertura test coverage reports
 	    ====================================================================-->
-	<target name="cobertura" depends="clean-cobertura,cobertura.install,compile,compile-tests,cobertura.instrument-classes,cobertura.test-instrumented,cobertura.xml-report" 
+	<target name="cobertura" depends="clean-cobertura,cobertura.install,compile,compile-tests,cobertura.instrument-classes,cobertura.test-instrumented,cobertura.xml-report,cobertura.html-report" 
 		description="Compile, instrument classes, run the tests and generate Cobertura coverage reports." />
 
 
@@ -528,15 +528,14 @@
 	<!--=======================================================================
 	    cobertura.test-instrumented
 	    
-	    Runs tests against instrumented classes and generates xml and html test reports
+	    Runs tests against instrumented classes and generates xml and html JUnit test reports
 	    ====================================================================-->
-	<target name="cobertura.test-instrumented" depends="init-test-reports,compile,compile-tests">
+	<target name="cobertura.test-instrumented" depends="init-test-reports,cobertura.install,compile,compile-tests,cobertura.instrument-classes">
 		<mkdir dir="${bin.instrumented.dir}" />
 		<junit fork="yes" failureProperty="test.failed">
 
 			<!--
 				Specify the name of the coverage data file to use.
-				The value specified below is the default.
 			-->
 			<sysproperty key="net.sourceforge.cobertura.datafile" file="${coverage.dir}/cobertura.ser" />
 
@@ -572,7 +571,7 @@
 	<!--=======================================================================
 	    cobertura.xml-report
 	    
-	    Produce Cobertura coverage report from results of instrumented tests
+	    Produces machine-readable xml Cobertura coverage report from results of instrumented tests
 	    ====================================================================-->
 	<target name="cobertura.xml-report" depends="cobertura.test-instrumented">
 		<cobertura-report destdir="${coveragereports.xml.dir}" datafile="${coverage.dir}/cobertura.ser" format="xml">
@@ -581,7 +580,19 @@
 			</fileset>
 		</cobertura-report>
 	</target>
-
-
+	
+	
+	<!--=======================================================================
+	    cobertura.html-report
+	    
+	    Produces human-readable html Cobertura coverage report from results of instrumented tests
+	    ====================================================================-->
+	<target name="cobertura.html-report" depends="cobertura.test-instrumented">
+		<cobertura-report destdir="${coveragereports.html.dir}" datafile="${coverage.dir}/cobertura.ser" format="html">
+			<fileset dir="${src.dir}">
+				<include name="**/*.java" />
+			</fileset>
+		</cobertura-report>
+	</target>
 
 </project>
