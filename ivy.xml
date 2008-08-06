@@ -19,7 +19,7 @@
     <dependency org="commons-net" name="commons-net" rev="1.4.1" transitive="false" />
     <dependency org="commons-vfs" name="commons-vfs" rev="1.0" transitive="false" />
     <dependency org="dom4j" name="dom4j" rev="1.6.1" transitive="false" />
-    <dependency org="org.springframework" name="spring" rev="2.0" transitive="false" />
+    <dependency org="org.springframework" name="spring-core" rev="2.0" transitive="false" />
     <dependency org="simple-jndi" name="simple-jndi" rev="0.11.1" />
     <dependency org="jfree" name="jcommon" rev="1.0.8"/>
 
