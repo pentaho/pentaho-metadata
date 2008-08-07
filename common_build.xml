@@ -475,6 +475,16 @@
 
 	
 	<!--=======================================================================
+	    site
+	    
+	    Creates all artifacts necessary to run this project in a continuous 
+	    integration build environment
+	    ====================================================================-->
+	<target name="site" depends="cobertura,dist-javadoc,dist" description="Creates all artifacts necessary to run this project in a continuous 
+	    integration build environment" />
+		
+		
+	<!--=======================================================================
 	    javadoc
 	    
 	    Generates javadoc source documentation for this project
