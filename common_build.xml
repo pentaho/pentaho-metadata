@@ -256,9 +256,18 @@
 	    
 	    Removes all the files generated from the build process.
 	    ====================================================================-->
-	<target name="clean" description="Cleans the files generated from a build" depends="clean-cobertura">
+	<target name="clean" description="Cleans the files generated from a build" depends="clean-cobertura, clean-dist">
 		<delete dir="${bin.dir}" />
 		<delete dir="${testbin.dir}" />
+	</target>
+	
+	
+	<!--=======================================================================
+	    clean-dist
+	    
+	    Removes all dist artifacts
+	    ====================================================================-->
+	<target name="clean-dist" description="Removes all dist artifacts">
 		<delete dir="${dist.dir}" />
 	</target>
 
@@ -463,6 +472,72 @@
 	    Creates a distribution of this project
 	    ====================================================================-->
 	<target name="dist" depends="jar" description="Creates a distribution" />
+
+	
+	<!--=======================================================================
+	    javadoc
+	    
+	    Generates javadoc source documentation for this project
+	    ====================================================================-->
+	<target name="javadoc" depends="javadoc.init, compile">
+		<javadoc destdir="${javadoc.dir}/docs/api" access="public" source="1.5" use="true" notree="false" nonavbar="false" noindex="false" 
+			splitindex="true" author="true" version="true" maxmemory="256M" nodeprecatedlist="false" nodeprecated="false" 
+			packagenames="${javadoc.packages}" sourcepath="${src.dir}" doctitle="${impl.title} API documentation">
+			<link href="http://java.sun.com/j2se/1.5.0/docs/api/" />
+			<classpath refid="classpath" />
+		</javadoc>
+	</target>
+	
+	
+	<!--=======================================================================
+	    dist-javadoc
+	    
+	    Generates zip and targz distributions of the javadoc
+	    ====================================================================-->
+	<target name="dist-javadoc" depends="javadoc.zip, javadoc.targz" description="Generates zip and targz distributions of the javadoc"/>
+	
+	
+	<!--=======================================================================
+	    clean-javadoc
+	    
+	    Removes generated javadoc files (note, this does not remove javadoc distributions.
+	    Use clean-dist to remove artifacts from the dist.dir.
+	    ====================================================================-->
+	<target name="clean-javadoc">
+		<mkdir dir="${javadoc.dir}" />
+	</target>
+	
+	
+	<!--=======================================================================
+	    javadoc.init
+	    
+	    Creates directories for javadoc process
+	    ====================================================================-->
+	<target name="javadoc.init" depends="clean-javadoc">
+		<mkdir dir="${javadoc.dir}" />
+	</target>
+	
+	
+	<!--=======================================================================
+	    javadoc.zip
+	    
+	    Creates a zip of the javadoc for distribution
+	    ====================================================================-->
+	<target name="javadoc.zip" depends="javadoc">
+		<jar jarfile="${dist.dir}/${ivy.artifact.id}-${project.revision}-javadoc.zip" 
+			basedir="${javadoc.dir}" includes="**/*" excludes="**/Thumbs.db" />
+	</target>
+	
+	
+	<!--=======================================================================
+	    javadoc.targz
+	    
+	    Creates a gzipped tar of the javadoc for distribution
+	    ====================================================================-->
+	<target name="javadoc.targz" depends="javadoc">
+		<tar compression="gzip" destfile="${dist.dir}/${ivy.artifact.id}-${project.revision}-javadoc.tar.gz" 
+			basedir="${javadoc.dir}" includes="**/*" excludes="**/Thumbs.db" />
+	</target>
 
 
 	<!--=======================================================================
