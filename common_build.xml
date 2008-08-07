@@ -17,9 +17,6 @@
 ============================================================================-->
 <project name="Pentaho Common Build" basedir="." default="jar" xmlns:ivy="antlib:org.apache.ivy.ant">
 
-	<!-- Include the antcontrib ant tasks -->
-	<taskdef resource="net/sf/antcontrib/antcontrib.properties" />
-
 	<!-- Load the properties files in the proper order -->
 	<property file="override.properties" />
 	<property file="build.properties" />
@@ -28,6 +25,7 @@
 	<property name="build.cache.dir" value="${user.home}/.pentaho_build_cache" />
 	<property name="ivy.build.cache.dir" value="${build.cache.dir}/ivy" />
 	<property name="cobertura.build.cache.dir" value="${build.cache.dir}/cobertura" />
+	<property name="antcontrib.build.cache.dir" value="${build.cache.dir}/ant-contrib" />
 
 	<!-- Ivy properties -->
 	<property name="ivy.install.version" value="2.0.0-beta2" />
@@ -53,6 +51,24 @@
 		<dirset dir="${testbin.dir}" />
 	</path>
 
+	
+	<!--=======================================================================
+	    install-antcontrib
+	    
+	    Use IVY to fetch ant-contrib jar and install ant tasks.
+	    ====================================================================-->	
+	<target name="install-antcontrib" depends="install-ivy">
+		<ivy:retrieve inline="true" organisation="ant-contrib" module="ant-contrib" revision="1.0b2" 
+			pattern="${antcontrib.build.cache.dir}/[module]-[revision].[ext]" />
+		<taskdef resource="net/sf/antcontrib/antlib.xml">
+			<classpath>
+				<fileset dir="${antcontrib.build.cache.dir}">
+					<include name="*.jar" />
+				</fileset>
+			</classpath>
+		</taskdef>
+	</target>
+	
 
 	<!--=======================================================================
 	    init
@@ -64,17 +80,28 @@
 		<mkdir dir="${bin.dir}" />
 		<mkdir dir="${testbin.dir}" />
 		<mkdir dir="${dist.dir}" />
+
+		<available property="ivy.ispresent" file="${ivy.jar.file}" />
 	</target>
 
-
+	
 	<!--=======================================================================
 	    download-ivy
 	    
-	    Automatically downloads the ivy jar file for use by ant
+	    Automatically downloads the ivy jar file for use by ant.  If the user
+	    is offline and does not have the IVY jar, an error message will print
+	    and the build will fail.
 	    ====================================================================-->
-	<target name="download-ivy" unless="offline" description="Downloads IVY jar file">
+	<target name="download-ivy" description="Downloads IVY jar file" depends="offline.check">
 		<mkdir dir="${ivy.build.cache.dir}" />
 		<get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar" dest="${ivy.jar.file}" usetimestamp="true" />
+	</target>
+	<target name="offline.check" if="offline" >
+		<antcall target="print-offline-error"/>
+	</target>
+	<target name="print-offline-error" unless="ivy.ispresent" >
+		<echo message="You are offline and do not have IVY installed.  Please install the IVY jar to ${ivy.jar.file}"/>
+		<fail/>
 	</target>
 
 
@@ -83,12 +110,13 @@
 	    
 	    Installs the ivy jar for use by this ant script
 	    ====================================================================-->
-	<target name="install-ivy" depends="download-ivy" unless="offline" description="Installs IVY tasks for use by this build process">
+	<target name="install-ivy" depends="download-ivy" unless="ivy.isinstalled" description="Installs IVY tasks for use by this build process">
 		<path id="ivy.lib.path">
 			<fileset dir="${ivy.build.cache.dir}" includes="*.jar" />
 		</path>
 		<taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path" />
 		<ivy:settings url="${ivy.settingsurl}" />
+		<property name="ivy.isinstalled" value="true"/>
 	</target>
 
 
@@ -567,7 +595,7 @@
 		</junitreport>
 	</target>
 
-	
+
 	<!--=======================================================================
 	    cobertura.xml-report
 	    
@@ -580,8 +608,8 @@
 			</fileset>
 		</cobertura-report>
 	</target>
-	
-	
+
+
 	<!--=======================================================================
 	    cobertura.html-report
 	    
