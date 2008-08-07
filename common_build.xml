@@ -479,7 +479,7 @@
 	    
 	    Generates javadoc source documentation for this project
 	    ====================================================================-->
-	<target name="javadoc" depends="javadoc.init, compile">
+	<target name="javadoc" depends="javadoc.init, compile" description="Generates javadoc source documentation for this project">
 		<javadoc destdir="${javadoc.dir}/docs/api" access="public" source="1.5" use="true" notree="false" nonavbar="false" noindex="false" 
 			splitindex="true" author="true" version="true" maxmemory="256M" nodeprecatedlist="false" nodeprecated="false" 
 			packagenames="${javadoc.packages}" sourcepath="${src.dir}" doctitle="${impl.title} API documentation">
@@ -503,7 +503,7 @@
 	    Removes generated javadoc files (note, this does not remove javadoc distributions.
 	    Use clean-dist to remove artifacts from the dist.dir.
 	    ====================================================================-->
-	<target name="clean-javadoc">
+	<target name="clean-javadoc" description="Removes non-dist generated javadoc files">
 		<mkdir dir="${javadoc.dir}" />
 	</target>
 	
