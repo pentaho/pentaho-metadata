@@ -256,7 +256,7 @@
 	    
 	    Removes all the files generated from the build process.
 	    ====================================================================-->
-	<target name="clean" description="Cleans the files generated from a build" depends="clean-cobertura, clean-dist">
+	<target name="clean" description="Cleans the files generated from a build" depends="clean-cobertura, clean-javadoc, clean-dist">
 		<delete dir="${bin.dir}" />
 		<delete dir="${testbin.dir}" />
 	</target>
