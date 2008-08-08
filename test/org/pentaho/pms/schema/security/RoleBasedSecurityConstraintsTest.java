@@ -40,7 +40,11 @@ public class RoleBasedSecurityConstraintsTest {
     map.put(new SecurityOwner(SecurityOwner.OWNER_TYPE_ROLE, "roleA"), list2);
     RoleBasedSecurityConstraints c = new RoleBasedSecurityConstraints(map);
     final String res = "OR(blah;AND(IN(roleA;ROLES());blah2))";
-    assertTrue(String.format("actual=%s\nexpected=%s", c.getSingleFormula(), res), res.equals(c.getSingleFormula()));
+    final String res2 = "OR(AND(IN(roleA;ROLES());blah2);blah)";
+    // keys in map are not currently ordered; need to check for both (2 possibilities here)
+    assertTrue(String.format("actual=%s\nexpected=%s or %s", c.getSingleFormula(), res, res2), res.equals(c
+        .getSingleFormula())
+        || res2.equals(c.getSingleFormula()));
   }
 
   @Test
