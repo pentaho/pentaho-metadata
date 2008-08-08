@@ -95,7 +95,7 @@
 	<property name="coveragereports.html.dir" value="${coveragereports.dir}/html" description="Code coverage html reports are placed here" />
 	
 	<!-- Javadoc properties -->
-	<property name="javadoc.dir" value="${basedir}/etc-bin/javadoc" description="Directory where generated javadoc will be placed" />
+	<property name="javadoc.dir" value="${basedir}/javadoc" description="Directory where generated javadoc will be placed" />
 	<property name="javadoc.packagenames" value="org.pentaho.*" description="This property is passed to the packagenames property of the javadoc ant task.  You should customize this for your project." />
 	
 	<!-- Distribution and Assembly properties -->
@@ -583,13 +583,20 @@
 
 
 	<!--=======================================================================
-	    ci
+	    continuous
 	    
-	    Creates all artifacts necessary to run this project in a continuous 
-	    integration build environment
+	    Runs a typical continuous integration build including project dist, javadoc, test, 
+	    and coverage artifacts
 	    ====================================================================-->
-	<target name="ci" depends="cobertura,dist-javadoc,dist" description="Creates all artifacts necessary to run this project in a continuous 
-	    integration build environment" />
+	<target name="continuous" depends="cobertura,dist-javadoc,dist" description="Runs a typical continuous integration build" />
+	
+	
+	<!--=======================================================================
+	    continuous-lite
+	    
+	    Runs a lightweight continuous integration build, producing no artifacts for distrubution.
+	    ====================================================================-->
+	<target name="continuous-lite" depends="cobertura,javadoc" description="Runs a lightweight continuous integration build." />
 
 
 	<!--=======================================================================
