@@ -34,10 +34,10 @@
 		</project>
 	
 		=== build.properties
-		project.revision=1.0-SNAPSHOT  #the version of your project.  This will appear in jar META-INF as well as dist artifact filenames and IVY revision metadata. 
+		project.revision=1.0-SNAPSHOT  #the version of your project.  This will appear in jar META-INF, dist artifact filenames and IVY revision metadata. 
 		ivy.artifact.id=my-project   #IVY metadata describing the name of the artifact
 		impl.title=My Project #English language version of your project name
-
+		
 ============================================================================-->
 <project name="Pentaho Common Build" basedir="." default="jar" xmlns:ivy="antlib:org.apache.ivy.ant">
 
@@ -56,7 +56,8 @@
 
 	<!-- Compile properties -->
 	<property name="src.dir" value="${basedir}/src" description="Project source code directory" />
-	<property name="bin.dir" value="${basedir}/bin" description="Classes compiled from project source code are placed here" />
+	<property name="bin.dir" value="${basedir}/bin" description="Base directory for all non-dist build output" />
+	<property name="classes.dir" value="${bin.dir}/classes" description="Classes compiled from project source code are placed here" />
 	<property name="lib.dir" value="${basedir}/lib" description="Directory that hosts Jar files required to compile project source.  (IVY will populate this directory with required jars)" />
 	
 	<!-- Compiler properties (passed directly to javac ant target) -->
@@ -80,22 +81,23 @@
 
 	<!-- Test properties -->
 	<property name="testsrc.dir" value="${basedir}/test" description="Directory that hosts the test source files" />
-	<property name="testbin.dir" value="${basedir}/testbin" description="Classes compiled from project test code are placed here" />
 	<property name="testlib.dir" value="${basedir}/testlib" description="Directory for jar files needed during unit testing" />
-	<property name="testreports.dir" value="${testbin.dir}/reports/test" description="Base directory that holds all unit test report files" />
+	<property name="testbin.dir" value="${bin.dir}/test" description="Base directory for all test output" />
+	<property name="testclasses.dir" value="${testbin.dir}/classes" description="Classes compiled from project test code are placed here" />
+	<property name="testreports.dir" value="${bin.dir}/reports/test" description="Base directory that holds all unit test report files" />
 	<property name="testreports.xml.dir" value="${testreports.dir}/xml" description="Unit test xml reports are placed here" />
 	<property name="testreports.html.dir" value="${testreports.dir}/html" description="Unit test html reports are placed here" />
 	<property name="junit.haltonfailure" value="yes" description="Fail the build if a test fails"/>
 	
 	<!-- Code Coverage properties -->
-	<property name="bin.instrumented.dir" value="${basedir}/bin-instrumented" description="Directory where instrumented project classes are placed for use by code coverage utility" />
-	<property name="coverage.data.dir" value="${testbin.dir}/coverage-data" description="Temporary data directory used by the code coverage utility" />
-	<property name="coveragereports.dir" value="${testbin.dir}/reports/coverage" description="Base directory for all generated code coverage reports" />
-	<property name="coveragereports.xml.dir" value="${coveragereports.dir}/xml" description="Code coverage xml reports are placed here" />
-	<property name="coveragereports.html.dir" value="${coveragereports.dir}/html" description="Code coverage html reports are placed here" />
+	<property name="instrumented.classes.dir" value="${testbin.dir}/instrumented-classes" description="Directory where instrumented project classes are placed for use by code coverage utility" />
+	<property name="cobertura.data.dir" value="${testbin.dir}/cobertura-bin" description="Temporary data directory used by Cobertura" />
+	<property name="coberturareports.dir" value="${bin.dir}/reports/cobertura" description="Base directory for all generated Cobertura code coverage reports" />
+	<property name="coberturareports.xml.dir" value="${coberturareports.dir}/xml" description="Cobertura xml reports are placed here" />
+	<property name="coberturareports.html.dir" value="${coberturareports.dir}/html" description="Cobertura html reports are placed here" />
 	
 	<!-- Javadoc properties -->
-	<property name="javadoc.dir" value="${basedir}/javadoc" description="Directory where generated javadoc will be placed" />
+	<property name="javadoc.dir" value="${bin.dir}/javadoc" description="Directory where generated javadoc will be placed" />
 	<property name="javadoc.packagenames" value="org.pentaho.*" description="This property is passed to the packagenames property of the javadoc ant task.  You should customize this for your project." />
 	
 	<!-- Distribution and Assembly properties -->
@@ -118,8 +120,8 @@
 		<fileset dir="${testlib.dir}">
 			<include name="*.jar" />
 		</fileset>
-		<dirset dir="${bin.dir}" />
-		<dirset dir="${testbin.dir}" />
+		<dirset dir="${classes.dir}" />
+		<dirset dir="${testclasses.dir}" />
 	</path>
 
 
@@ -147,10 +149,8 @@
 	    a build.
 	    ====================================================================-->
 	<target name="init" description="Initializes the build process">
-		<mkdir dir="${bin.dir}" />
-		<mkdir dir="${testbin.dir}" />
+		<mkdir dir="${classes.dir}" />
 		<mkdir dir="${dist.dir}" />
-
 		<available property="ivy.ispresent" file="${ivy.jar.file}" />
 	</target>
 
@@ -364,9 +364,8 @@
 	    Removes all the files generated from the build process.
 	    ====================================================================-->
 	<target name="clean" description="Cleans all the files generated from a build with the exception of IVY-downloaded jars (see clean-all)" 
-		depends="clean-cobertura, clean-javadoc, clean-dist">
-		<delete dir="${bin.dir}" />
-		<delete dir="${testbin.dir}" />
+		depends="clean-tests, clean-cobertura, clean-javadoc, clean-dist">
+		<delete dir="${classes.dir}" />
 	</target>
 
 
@@ -395,7 +394,7 @@
 	    Copies the LGPL license file into the binary directory.
 	    ====================================================================-->
 	<target name="copy-license-lgpl" if="lgpl-license-avail" description="Copies the LGPL license file into the bin directory">
-		<copy todir="${bin.dir}/META-INF">
+		<copy todir="${classes.dir}/META-INF">
 			<fileset dir="${license.dir}" includes="lgpl-2.1.txt" />
 		</copy>
 	</target>
@@ -408,7 +407,7 @@
 	    binary directory.
 	    ====================================================================-->
 	<target name="copy-license-gpl-parent" if="gpl-parent-license-avail" description="Copies the parent's GPL license file into the bin directory">
-		<copy todir="${bin.dir}/META-INF">
+		<copy todir="${classes.dir}/META-INF">
 			<fileset dir="../.." includes="gpl-2.0.txt" />
 		</copy>
 	</target>
@@ -447,7 +446,7 @@
 	    Performs the actual compile
 	    ====================================================================-->
 	<target name="compile.compile" depends="init" description="Performs the actual javac compile">
-		<javac destdir="${bin.dir}" debug="${javac.debug}" optimize="${javac.optimize}" deprecation="${javac.deprecation}" fork="true" source="${javac.source}" target="${javac.target}">
+		<javac destdir="${classes.dir}" debug="${javac.debug}" optimize="${javac.optimize}" deprecation="${javac.deprecation}" fork="true" source="${javac.source}" target="${javac.target}">
 			<classpath>
 				<path refid="classpath" />
 			</classpath>
@@ -464,7 +463,7 @@
 	          skipped!
 	    ====================================================================-->
 	<target name="compile.src_copy" depends="init" unless="dont.copy.source" description="Copies the source to the bin directory">
-		<copy todir="${bin.dir}" flatten="false">
+		<copy todir="${classes.dir}" flatten="false">
 			<fileset dir="${src.dir}" />
 		</copy>
 	</target>
@@ -516,18 +515,38 @@
 				<attribute name="Implementation-Vendor" value="${impl.vendor}" />
 				<attribute name="Implementation-ProductID" value="${impl.productID}" />
 			</manifest>
-			<fileset dir="${bin.dir}" />
+			<fileset dir="${classes.dir}" />
 		</jar>
 	</target>
 
 
 	<!--=======================================================================
+	    clean-tests
+	    
+	    Removes all files related to tests
+	    ====================================================================-->
+	<target name="clean-tests">
+		<delete dir="${testbin.dir}" />
+	</target>
+	
+	
+	<!--=======================================================================
+	    init-tests
+	    
+	    Compiles project test source
+	    ====================================================================-->
+	<target name="init-tests" depends="clean-tests">
+		<mkdir dir="${testclasses.dir}" />
+	</target>
+	
+	
+	<!--=======================================================================
 	    compile-tests
 	    
-	    Compiles and runs all the tests for the project
+	    Compiles project test source
 	    ====================================================================-->
-	<target name="compile-tests" description="Compiles tests">
-		<javac destdir="${testbin.dir}" debug="true" optimize="false" source="${javac.source}" target="${javac.target}" fork="true">
+	<target name="compile-tests" depends="init-tests" description="Compiles project test source">
+		<javac destdir="${testclasses.dir}" debug="true" optimize="false" source="${javac.source}" target="${javac.target}" fork="true">
 			<src path="${testsrc.dir}" />
 			<classpath refid="test.classpath" />
 		</javac>
@@ -675,9 +694,9 @@
 	    Instruments the application classes used by Cobertura during cobertura.test-instrumented
 	    ====================================================================-->
 	<target name="cobertura.instrument-classes" depends="cobertura.clean-instrumented-classes,cobertura.install,compile">
-		<cobertura-instrument todir="${bin.instrumented.dir}" datafile="${coverage.data.dir}/cobertura.ser">
+		<cobertura-instrument todir="${instrumented.classes.dir}" datafile="${cobertura.data.dir}/cobertura.ser">
 			<ignore regex="org.apache.log4j.*" />
-			<fileset dir="${bin.dir}">
+			<fileset dir="${classes.dir}">
 				<!--
 					Instrument all the application classes, but
 					don't instrument the test classes.
@@ -713,7 +732,7 @@
 	    ====================================================================-->
 	<target name="clean-cobertura" depends="cobertura.clean-instrumented-classes,cobertura.clean-coverage-reports" description="Removes all files created by Cobertura code coverage utility.">
 		<echo message="i'm here!!" />
-		<delete dir="${coverage.data.dir}" />
+		<delete dir="${cobertura.data.dir}" />
 	</target>
 
 
@@ -723,7 +742,7 @@
 		Remove the instrumented classes used by Cobertura
 		====================================================================-->
 	<target name="cobertura.clean-instrumented-classes">
-		<delete dir="${bin.instrumented.dir}" />
+		<delete dir="${instrumented.classes.dir}" />
 	</target>
 
 
@@ -733,7 +752,7 @@
 		Remove all xml and html Cobertura coverage reports
 		====================================================================-->
 	<target name="cobertura.clean-coverage-reports">
-		<delete dir="${coveragereports.dir}" />
+		<delete dir="${coberturareports.dir}" />
 	</target>
 
 
@@ -743,8 +762,8 @@
 		Sets up directories for Cobertura coverage reports
 		====================================================================-->
 	<target name="init-coverage-reports" depends="cobertura.clean-coverage-reports">
-		<mkdir dir="${coveragereports.xml.dir}" />
-		<mkdir dir="${coveragereports.html.dir}" />
+		<mkdir dir="${coberturareports.xml.dir}" />
+		<mkdir dir="${coberturareports.html.dir}" />
 	</target>
 
 
@@ -754,21 +773,21 @@
 	    Runs tests against instrumented classes and generates xml and html JUnit test reports
 	    ====================================================================-->
 	<target name="cobertura.test-instrumented" depends="init-test-reports,cobertura.install,compile,compile-tests,cobertura.instrument-classes">
-		<mkdir dir="${bin.instrumented.dir}" />
+		<mkdir dir="${instrumented.classes.dir}" />
 		<junit fork="yes" failureProperty="test.failed">
 
 			<!--
 				Specify the name of the coverage data file to use.
 			-->
-			<sysproperty key="net.sourceforge.cobertura.datafile" file="${coverage.data.dir}/cobertura.ser" />
+			<sysproperty key="net.sourceforge.cobertura.datafile" file="${cobertura.data.dir}/cobertura.ser" />
 
 			<!--
 				Note the classpath order: instrumented classes are before the
 				original (uninstrumented) classes.  This is important.
 			-->
-			<classpath location="${bin.instrumented.dir}" />
-			<classpath location="${bin.dir}" />
-			<classpath location="${testbin.dir}" />
+			<classpath location="${instrumented.classes.dir}" />
+			<classpath location="${classes.dir}" />
+			<classpath location="${testclasses.dir}" />
 			<classpath refid="test.classpath" />
 			<classpath refid="cobertura.classpath" />
 
@@ -797,7 +816,7 @@
 	    Produces machine-readable xml Cobertura coverage report from results of instrumented tests
 	    ====================================================================-->
 	<target name="cobertura.xml-report" depends="cobertura.test-instrumented">
-		<cobertura-report destdir="${coveragereports.xml.dir}" datafile="${coverage.data.dir}/cobertura.ser" format="xml">
+		<cobertura-report destdir="${coberturareports.xml.dir}" datafile="${cobertura.data.dir}/cobertura.ser" format="xml">
 			<fileset dir="${src.dir}">
 				<include name="**/*.java" />
 			</fileset>
@@ -811,7 +830,7 @@
 	    Produces human-readable html Cobertura coverage report from results of instrumented tests
 	    ====================================================================-->
 	<target name="cobertura.html-report" depends="cobertura.test-instrumented">
-		<cobertura-report destdir="${coveragereports.html.dir}" datafile="${coverage.data.dir}/cobertura.ser" format="html">
+		<cobertura-report destdir="${coberturareports.html.dir}" datafile="${cobertura.data.dir}/cobertura.ser" format="html">
 			<fileset dir="${src.dir}">
 				<include name="**/*.java" />
 			</fileset>
