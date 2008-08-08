@@ -46,22 +46,20 @@
 	<property file="build.properties" description="Properties customized for your particular project belong in this file."/>
 	
 	<!-- =================================================================================
-	     Build Properties
-	     Any of these can be overridden in either build.properties or override.properties
+	     Property Defaults
+	     Any of these properties can be overridden in either build.properties or override.properties
 	     =================================================================================-->
 	     
 	<!-- Project meta properties -->
 	<property name="impl.vendor" value="Pentaho Corporation" description="Jar file metadata describing the jar's vendor"/>
 	<property name="impl.productID" value="" description="Jar file metadata indicating the product ID (this is not the revision)"/>
 
-	<!-- Source properties -->
+	<!-- Compile properties -->
 	<property name="src.dir" value="${basedir}/src" description="Project source code directory" />
 	<property name="bin.dir" value="${basedir}/bin" description="Classes compiled from project source code are placed here" />
 	<property name="lib.dir" value="${basedir}/lib" description="Directory that hosts Jar files required to compile project source.  (IVY will populate this directory with required jars)" />
-	<property name="dist.dir" value="${basedir}/dist" description="Base directory for all project artifacts (jar, zip, tar.gz, etc...)" />
-	<property name="license.dir" value="${basedir}" description="Base directory where this project's license files reside" />
 	
-	<!-- Compile properties (passed directly to javac ant target) -->
+	<!-- Compiler properties (passed directly to javac ant target) -->
 	<property name="javac.debug" value="true" description="Indicates whether source should be compiled with debug information (passed to javac ant task)." />
 	<property name="javac.optimize" value="true" description="Indicates whether source should be compiled with optimization (ignored from Sun JDK1.3 on)" />
 	<property name="javac.deprecation" value="true" description="Indicates whether source should be compiled with deprecation information" />
@@ -82,15 +80,16 @@
 
 	<!-- Test properties -->
 	<property name="testsrc.dir" value="${basedir}/test" description="Directory that hosts the test source files" />
-	<property name="testbin.dir" value="${basedir}/testbin" description="Directory where test classes are placed after compile" />
+	<property name="testbin.dir" value="${basedir}/testbin" description="Classes compiled from project test code are placed here" />
 	<property name="testlib.dir" value="${basedir}/testlib" description="Directory for jar files needed during unit testing" />
 	<property name="testreports.dir" value="${testbin.dir}/reports/test" description="Base directory that holds all unit test report files" />
 	<property name="testreports.xml.dir" value="${testreports.dir}/xml" description="Unit test xml reports are placed here" />
 	<property name="testreports.html.dir" value="${testreports.dir}/html" description="Unit test html reports are placed here" />
+	<property name="junit.haltonfailure" value="yes" description="Fail the build if a test fails"/>
 	
 	<!-- Code Coverage properties -->
-	<property name="bin.instrumented.dir" value="=${basedir}/bin-instrumented" description="Directory where instrumented project classes are placed for use by code coverage utility" />
-	<property name="coverage.data.dir" value="=${testbin.dir}/coverage-data" description="Temporary data directory used by the code coverage utility" />
+	<property name="bin.instrumented.dir" value="${basedir}/bin-instrumented" description="Directory where instrumented project classes are placed for use by code coverage utility" />
+	<property name="coverage.data.dir" value="${testbin.dir}/coverage-data" description="Temporary data directory used by the code coverage utility" />
 	<property name="coveragereports.dir" value="${testbin.dir}/reports/coverage" description="Base directory for all generated code coverage reports" />
 	<property name="coveragereports.xml.dir" value="${coveragereports.dir}/xml" description="Code coverage xml reports are placed here" />
 	<property name="coveragereports.html.dir" value="${coveragereports.dir}/html" description="Code coverage html reports are placed here" />
@@ -98,7 +97,11 @@
 	<!-- Javadoc properties -->
 	<property name="javadoc.dir" value="${basedir}/etc-bin/javadoc" description="Directory where generated javadoc will be placed" />
 	<property name="javadoc.packagenames" value="org.pentaho.*" description="This property is passed to the packagenames property of the javadoc ant task.  You should customize this for your project." />
-
+	
+	<!-- Distribution and Assembly properties -->
+	<property name="dist.dir" value="${basedir}/dist" description="Base directory for all project artifacts (jar, zip, tar.gz, etc...)" />
+	<property name="license.dir" value="${basedir}" description="Base directory where this project's license files reside" />
+	
 	
 	<!-- Setup the compile classpath -->
 	<path id="classpath">
@@ -194,12 +197,20 @@
 	    file), this task will retrieve the needed files and place them into 
 	    the defined directories.
 	    ====================================================================-->
-	<target name="resolve" depends="install-ivy" unless="offline" description="Retrieves all the dependent libraries">
-		<ivy:resolve file="ivy.xml" />
-		<ivy:retrieve conf="default" pattern="${lib.dir}/[module]-[revision].[ext]" />
-		<ivy:retrieve conf="test" pattern="${testlib.dir}/[module]-[revision].[ext]" />
+	<target name="resolve" depends="resolve-default, resolve-test" unless="offline" description="Retrieves all the dependent libraries"/>
+	
+	<target name="resolve-init" depends="install-ivy">
+        <ivy:resolve file="ivy.xml" />
 	</target>
+	
+    <target name="resolve-default" depends="resolve-init" if="lib.dir">
+        <ivy:retrieve conf="default" pattern="${lib.dir}/[module]-[revision].[ext]"/>
+    </target>
 
+    <target name="resolve-test" depends="resolve-init" if="testlib.dir">
+    	<ivy:retrieve conf="test" pattern="${testlib.dir}/[module]-[revision].[ext]"/>
+    </target>
+	
 
 	<!--=======================================================================
 	    report
@@ -221,8 +232,8 @@
 	    ====================================================================-->
 	<target name="publish-local-nojar" depends="install-ivy" description="Publishes the jar file to the local repository">
 		<ivy:resolve file="ivy.xml" />
-		<ivy:publish resolver="local" pubrevision="${project.revision}" overwrite="true">
-			<artifacts pattern="${dist.dir}/[artifact].[ext]" />
+		<ivy:publish resolver="local" pubrevision="${project.revision}" overwrite="true" forcedeliver="true">
+   			<artifacts pattern="${dist.dir}/[artifact]-[revision].[ext]" />
 		</ivy:publish>
 	</target>
 
@@ -252,36 +263,62 @@
 	    Publishes the jar file for this project to a Maven2 repository.
 	    ====================================================================-->
 	<target name="publish-pentaho-nojar" depends="create-pom" description="Publishes the jar file to a Maven2 repository">
-		<sequential>
-			<fail message="Required jar not present!">
-				<condition>
-					<isset property="${dist.dir}/${ivy.artifact.id}.jar" />
-				</condition>
-			</fail>
-			<if>
-				<os family="windows" />
-				<then>
-					<exec executable="cmd">
-						<arg value="/c" />
-						<arg value="mvn.bat" />
-						<arg value="deploy:deploy-file" />
-						<arg value="-DrepositoryId=${ivy.repository.id}" />
-						<arg value="-Durl=${ivy.repository.publish}" />
-						<arg value="-DpomFile=${dist.dir}/pom.xml" />
-						<arg value="-Dfile=${dist.dir}/${ivy.artifact.id}.jar" />
-					</exec>
-				</then>
-				<else>
-					<exec executable="mvn">
-						<arg value="deploy:deploy-file" />
-						<arg value="-DrepositoryId=${ivy.repository.id}" />
-						<arg value="-Durl=${ivy.repository.publish}" />
-						<arg value="-DpomFile=${dist.dir}/pom.xml" />
-						<arg value="-Dfile=${dist.dir}/${ivy.artifact.id}.jar" />
-					</exec>
-				</else>
-			</if>
-		</sequential>
+	  <sequential>
+		<fail message="Required jar not present!">
+		   <condition>
+		   	 <isset property="${dist.dir}/${ivy.artifact.id}-${project.revision}.jar"/>
+		   </condition>	
+	  	</fail>
+	  	<if>
+	  	  <os family="windows"/>	
+		  	<then>
+		  		<!-- first, publish the ivy.xml file -->
+				<exec executable="cmd">
+					<arg value="/c" />
+					<arg value="mvn.bat" />
+					<arg value="deploy:deploy-file" />
+					<arg value="-DrepositoryId=${ivy.repository.id}"/>
+					<arg value="-Durl=${ivy.repository.publish}"/>
+		  			<arg value="-DgroupId=${ivy.artifact.group}"/>
+		  			<arg value="-DartifactId=${ivy.artifact.id}"/>
+		  			<arg value="-Dversion=${project.revision}"/>
+		  			<arg value="-Dpackaging=ivy.xml"/>
+					<arg value="-Dfile=ivy.xml"/>
+				</exec>
+		  		<!-- second, publish the jar file -->
+				<exec executable="cmd">
+					<arg value="/c" />
+					<arg value="mvn.bat" />
+					<arg value="deploy:deploy-file" />
+					<arg value="-DrepositoryId=${ivy.repository.id}"/>
+					<arg value="-Durl=${ivy.repository.publish}"/>
+					<arg value="-DpomFile=${dist.dir}/pom.xml" />
+					<arg value="-Dfile=${dist.dir}/${ivy.artifact.id}-${project.revision}.jar"/>
+				</exec>
+		    </then>
+		  	<else>
+		  		<!-- first, publish the ivy.xml file -->
+		  		<exec executable="mvn">
+					<arg value="deploy:deploy-file" />
+					<arg value="-DrepositoryId=${ivy.repository.id}"/>
+					<arg value="-Durl=${ivy.repository.publish}"/>
+		  			<arg value="-DgroupId=${ivy.artifact.group}"/>
+		  			<arg value="-DartifactId=${ivy.artifact.id}"/>
+		  			<arg value="-Dversion=${project.revision}"/>
+		  			<arg value="-Dpackaging=ivy.xml"/>
+					<arg value="-Dfile=ivy.xml"/>
+				</exec>
+		  		<!-- second, publish the jar file -->
+		  		<exec executable="mvn">
+					<arg value="deploy:deploy-file" />
+					<arg value="-DrepositoryId=${ivy.repository.id}"/>
+					<arg value="-Durl=${ivy.repository.publish}"/>
+					<arg value="-DpomFile=${dist.dir}/pom.xml" />
+					<arg value="-Dfile=${dist.dir}/${ivy.artifact.id}-${project.revision}.jar"/>
+				</exec>
+		  	</else>	
+	  	</if>  	
+	  </sequential>
 	</target>
 
 
@@ -291,7 +328,10 @@
 	    Creates the POM file for publishing the jar file to a Maven2 repository.
 	    ====================================================================-->
 	<target name="create-pom" depends="install-ivy" description="Creates a POM file based on the ivy dependencies">
-		<ivy:makepom ivyfile="./ivy.xml" pomfile="${dist.dir}/pom.xml" />
+		<ivy:makepom ivyfile="./ivy.xml" pomfile="${dist.dir}/pom.xml">
+		   <mapping conf="default" scope="compile"/>
+		   <mapping conf="runtime" scope="runtime"/>
+		</ivy:makepom>
 	</target>
 
 
@@ -302,7 +342,7 @@
 	    local repository. 
 	    ====================================================================-->
 	<target name="clean-local" depends="install-ivy" description="Cleans the local ivy repository">
-		<delete dir="${ivy.local.default.root}/${ivy.organisation}/${ivy.module}/${project.revision}" />
+		<delete dir="${ivy.local.default.root}/${ivy.artifact.group}/${ivy.artifact.id}/${project.revision}"/>
 	</target>
 
 
@@ -323,7 +363,8 @@
 	    
 	    Removes all the files generated from the build process.
 	    ====================================================================-->
-	<target name="clean" description="Cleans the files generated from a build" depends="clean-cobertura, clean-javadoc, clean-dist">
+	<target name="clean" description="Cleans all the files generated from a build with the exception of IVY-downloaded jars (see clean-all)" 
+		depends="clean-cobertura, clean-javadoc, clean-dist">
 		<delete dir="${bin.dir}" />
 		<delete dir="${testbin.dir}" />
 	</target>
@@ -468,7 +509,7 @@
 	    Creates a jar file from the bin directory
 	    ====================================================================-->
 	<target name="jar" depends="compile" description="Jars up the bin directory after a compile">
-		<jar destfile="${dist.dir}/${ivy.artifact.id}.jar">
+		<jar destfile="${dist.dir}/${ivy.artifact.id}-${project.revision}.jar">
 			<manifest>
 				<attribute name="Implementation-Title" value="${impl.title}" />
 				<attribute name="Implementation-Version" value="${project.revision}" />
@@ -499,10 +540,10 @@
 	    Compiles and runs all the tests for the project
 	    ====================================================================-->
 	<target name="test" depends="compile,compile-tests" description="Compiles and runs unit tests">
-		<junit printsummary="yes" haltonfailure="yes">
+		<junit printsummary="yes" haltonfailure="${junit.haltonfailure}">
 			<classpath refid="test.classpath" />
 			<formatter type="plain" />
-			<batchtest fork="yes" todir="testbin">
+			<batchtest fork="yes" todir="${testbin.dir}">
 				<fileset dir="${testsrc.dir}" casesensitive="yes">
 					<include name="**/Test*.java" />
 					<include name="**/*Test.java" />
@@ -579,7 +620,7 @@
 	    Use clean-dist to remove artifacts from the dist.dir.
 	    ====================================================================-->
 	<target name="clean-javadoc" description="Removes non-dist generated javadoc files">
-		<mkdir dir="${javadoc.dir}" />
+		<delete dir="${javadoc.dir}" />
 	</target>
 
 
@@ -664,7 +705,8 @@
 	    Removes all files created by Cobertura code coverage utility
 	    ====================================================================-->
 	<target name="clean-cobertura" depends="cobertura.clean-instrumented-classes,cobertura.clean-coverage-reports" description="Removes all files created by Cobertura code coverage utility.">
-		<delete file="${coverage.data.dir}" />
+		<echo message="i'm here!!" />
+		<delete dir="${coverage.data.dir}" />
 	</target>
 
 
