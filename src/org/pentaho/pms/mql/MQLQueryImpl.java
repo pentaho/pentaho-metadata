@@ -154,12 +154,22 @@ public class MQLQueryImpl implements MQLQuery {
     order.add(orderBy);
   }
 
-	public MappedQuery getQuery() throws PentahoMetadataException  {
+  public MappedQuery getQuery() throws PentahoMetadataException  {
     if (model == null || selections.size() == 0) {
       return null;
     }
-		return sqlGenerator.getSQL(model, selections, constraints, order, getDatabaseMeta(), locale, this.disableDistinct);
-	}
+
+    // generate global row level security constraint
+    WhereCondition securityConstraint = null;
+    if (cwmSchemaFactory != null) {
+      String mqlSecurityConstraint = cwmSchemaFactory.generateRowLevelSecurityConstraint(model);
+      if (mqlSecurityConstraint != null) {
+        securityConstraint = new WhereCondition(model, "AND", mqlSecurityConstraint);
+      }
+    }
+    
+    return sqlGenerator.getSQL(model, selections, constraints, order, getDatabaseMeta(), locale, this.disableDistinct, securityConstraint);
+  }
 
   public String getXML() {
     try {

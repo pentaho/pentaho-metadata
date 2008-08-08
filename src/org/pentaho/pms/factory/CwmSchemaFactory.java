@@ -2384,5 +2384,11 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
       // Subclasses can override this for ACL and Session/Credential checking
       return true;
     }
+
+
+    public String generateRowLevelSecurityConstraint(BusinessModel businessModel) {
+      // subclass this method to implement row level security
+      return null;
+    }
     
 }

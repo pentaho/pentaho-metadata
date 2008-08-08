@@ -220,6 +220,8 @@ public class SQLQueryModel {
     private List<SQLOrderBy> orderbys = new ArrayList<SQLOrderBy>();
     private List<SQLOrderBy> ulOrderbys = Collections.unmodifiableList(orderbys);
     
+    private SQLWhereFormula securityConstraint = null;
+    
     /**
      * true if DISTINCT should appear at the beginning of the select statement
      * 
@@ -338,6 +340,20 @@ public class SQLQueryModel {
       return ulHavings;
     }
  
+    /**
+     * sets the sql representing the security constraint for this SQLQueryModel
+     * 
+     * @param formula the SQL formula
+     * @param having
+     */
+    public void setSecurityConstraint(String formula, boolean having) {
+      this.securityConstraint = new SQLWhereFormula(formula, "AND", having);
+    }
+    
+    public SQLWhereFormula getSecurityConstraint() {
+      return securityConstraint;
+    }
+    
     /**
      * adds a having formula to the select statement
      * 

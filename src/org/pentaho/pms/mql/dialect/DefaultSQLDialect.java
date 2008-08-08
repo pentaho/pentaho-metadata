@@ -407,29 +407,60 @@ public class DefaultSQLDialect implements SQLDialectInterface {
    * @param usedSQLWhereFormula the where formula that are already used by the outer join algorithm. (no need to list these again)
    */
   protected void generateWhere(SQLQueryModel query, StringBuilder sql, List<SQLWhereFormula> usedSQLWhereFormula) {
-    if (query.getWhereFormulas().size() > 0) {
+    
+    boolean addSecurityConstraint = 
+      query.getSecurityConstraint() != null &&
+      !query.getSecurityConstraint().isContainingAggregate();
+    
+    if (query.getWhereFormulas().size() > 0 || addSecurityConstraint) { 
       boolean first = true;
+      
+      boolean whereFormulasRemaining = false;
       for (SQLWhereFormula whereFormula : query.getWhereFormulas()) {
-    	if (!usedSQLWhereFormula.contains(whereFormula)) {
-	      if (first) {
-	        first = false;
-	        if (query.getJoins().size()==0 || query.containsOuterJoins()) {
-	        	sql.append("WHERE ").append(Const.CR); //$NON-NLS-1$
-	        } else {
-	        	sql.append("      AND ").append(Const.CR); //$NON-NLS-1$
-	        }
-	        sql.append("          ("); //$NON-NLS-1$
-	      } else {
-	        sql.append("      "); //$NON-NLS-1$
-	        sql.append(whereFormula.getOperator());
-	        sql.append(" ("); //$NON-NLS-1$
-	      }
-	      sql.append(Const.CR);
-	      sql.append("             "); //$NON-NLS-1$
-	      sql.append(whereFormula.getFormula());
-	      sql.append(Const.CR);
-	      sql.append("          )").append(Const.CR); //$NON-NLS-1$
-	    }
+        if (!usedSQLWhereFormula.contains(whereFormula)) {
+          whereFormulasRemaining = true;
+        }
+      }
+
+      if (whereFormulasRemaining || addSecurityConstraint) {
+        if (query.getJoins().size()==0 || query.containsOuterJoins()) {
+          sql.append("WHERE ").append(Const.CR); //$NON-NLS-1$
+        } else {
+          sql.append("      AND ").append(Const.CR); //$NON-NLS-1$
+        }
+      }
+      
+      if (addSecurityConstraint) {
+        
+        sql.append("        (").append(Const.CR); //$NON-NLS-1$
+        sql.append("          "); //$NON-NLS-1$
+        sql.append(query.getSecurityConstraint().getFormula()).append(Const.CR);
+        
+        if (query.getWhereFormulas().size() > 0) {
+          sql.append("        ) AND (").append(Const.CR); //$NON-NLS-1$
+        }
+      }
+      
+      for (SQLWhereFormula whereFormula : query.getWhereFormulas()) {
+        if (!usedSQLWhereFormula.contains(whereFormula)) {
+          if (first) {
+            sql.append("          ("); //$NON-NLS-1$
+            first = false;
+          } else {
+            sql.append("      "); //$NON-NLS-1$
+            sql.append(whereFormula.getOperator());
+            sql.append(" ("); //$NON-NLS-1$
+          }
+          sql.append(Const.CR);
+          sql.append("             "); //$NON-NLS-1$
+          sql.append(whereFormula.getFormula());
+          sql.append(Const.CR);
+          sql.append("          )").append(Const.CR); //$NON-NLS-1$
+        }
+      }
+      
+      if (addSecurityConstraint) {
+        sql.append("        )").append(Const.CR); //$NON-NLS-1$
       }
     }
   }
@@ -497,8 +528,26 @@ public class DefaultSQLDialect implements SQLDialectInterface {
    * @param sql string buffer
    */
   protected void generateHaving(SQLQueryModel query, StringBuilder sql) {
-    if (query.getHavings().size() > 0) {
+    
+    boolean addSecurityConstraint = 
+      query.getSecurityConstraint() != null &&
+      query.getSecurityConstraint().isContainingAggregate();
+
+    
+    
+    if (query.getHavings().size() > 0 || addSecurityConstraint) { 
+      
       sql.append("HAVING ").append(Const.CR); //$NON-NLS-1$
+
+      if (addSecurityConstraint) {
+        sql.append("        (").append(Const.CR); //$NON-NLS-1$
+        sql.append("          "); //$NON-NLS-1$
+        sql.append(query.getSecurityConstraint().getFormula()).append(Const.CR); //$NON-NLS-1$
+        if (query.getHavings().size() > 0) {
+          sql.append("        ) AND (").append(Const.CR); //$NON-NLS-1$
+        }
+      }
+      
       boolean first = true;
       for (SQLWhereFormula havingFormula : query.getHavings()) {
         if (first) {
@@ -514,7 +563,11 @@ public class DefaultSQLDialect implements SQLDialectInterface {
         sql.append(havingFormula.getFormula());
         sql.append(Const.CR);
         sql.append("          )").append(Const.CR); //$NON-NLS-1$
-      }      
+      }
+      
+      if (addSecurityConstraint) {
+        sql.append("        )").append(Const.CR); //$NON-NLS-1$
+      }
     }
   }
   

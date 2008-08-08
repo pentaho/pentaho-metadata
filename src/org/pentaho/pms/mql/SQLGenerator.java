@@ -231,16 +231,26 @@ public class SQLGenerator {
    * @param locale the locale
    * @param disableDistinct if true, disables default behavior of using DISTINCT when there
    * are no groupings.
+   * @param securityConstraint if provided, applies a global security constraint to the query
+   * 
    * @return a SQL query based on a column selection, conditions and a locale
    */
-  public MappedQuery getSQL(BusinessModel model, List<Selection> selections, List<WhereCondition> conditions, List<OrderBy> orderBy, DatabaseMeta databaseMeta, String locale, boolean disableDistinct) throws PentahoMetadataException {
+  public MappedQuery getSQL(
+      BusinessModel model, 
+      List<Selection> selections, 
+      List<WhereCondition> conditions, 
+      List<OrderBy> orderBy, 
+      DatabaseMeta databaseMeta, 
+      String locale, 
+      boolean disableDistinct, 
+      WhereCondition securityConstraint) throws PentahoMetadataException {
     SQLQueryModel query = new SQLQueryModel();
     //StringBuffer sql = new StringBuffer();
     Map<String,String> columnsMap = new HashMap<String,String>();
     
     // These are the tables involved in the field selection
     //
-    List<BusinessTable> tabs = getTablesInvolved(model, selections, conditions, orderBy, databaseMeta, locale);
+    List<BusinessTable> tabs = getTablesInvolved(model, selections, conditions, orderBy, databaseMeta, locale, securityConstraint);
 
     // Now get the shortest path between these tables.
     Path path = getShortestPathBetween(model, tabs);
@@ -267,6 +277,11 @@ public class SQLGenerator {
         generateGroupBy(query, model, selections, databaseMeta, locale);
       }
       generateOrderBy(query, model, orderBy, databaseMeta, locale, columnsMap);
+      
+      if (securityConstraint != null) {
+        String sqlFormula = securityConstraint.getPMSFormula().generateSQL(locale);
+        query.setSecurityConstraint(sqlFormula, securityConstraint.hasAggregate());
+      }
     }
 
     SQLDialectInterface dialect = SQLDialectFactory.getSQLDialect(databaseMeta);
@@ -274,7 +289,14 @@ public class SQLGenerator {
     return new MappedQuery(dialect.generateSelectStatement(query), columnsMap, selections);
   }
 
-  protected List<BusinessTable> getTablesInvolved(BusinessModel model, List<Selection> selections, List<WhereCondition> conditions, List<OrderBy> orderBy, DatabaseMeta databaseMeta, String locale) {
+  protected List<BusinessTable> getTablesInvolved(
+      BusinessModel model, 
+      List<Selection> selections, 
+      List<WhereCondition> conditions, 
+      List<OrderBy> orderBy, 
+      DatabaseMeta databaseMeta, 
+      String locale,
+      WhereCondition securityConstraint) {
     Set<BusinessTable> treeSet = new TreeSet<BusinessTable>();
 
     // Figure out which tables are involved in the SELECT
@@ -318,7 +340,19 @@ public class SQLGenerator {
       	  treeSet.add(businessTable);
         }
       }
+    
+    // find any tables listed in the security constraint
 
+    if (securityConstraint != null) {
+      List cols = securityConstraint.getBusinessColumns();
+      Iterator iter = cols.iterator();
+      while (iter.hasNext()) {
+        BusinessColumn col = (BusinessColumn)iter.next();
+        BusinessTable businessTable = col.getBusinessTable();
+        treeSet.add(businessTable); //$NON-NLS-1$
+      }
+    }
+    
     return new ArrayList<BusinessTable>(treeSet);
   }
   

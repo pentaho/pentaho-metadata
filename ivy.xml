@@ -13,7 +13,10 @@
     <dependency org="commons-logging" name="commons-logging" rev="1.1" />
     <dependency org="commons-pool" name="commons-pool" rev="1.3" />
     <dependency org="commons-codec" name="commons-codec" rev="1.3" />
-    <dependency org="commons-httpclient" name="commons-httpclient" rev="3.0.1" />
+    <dependency org="commons-httpclient" name="commons-httpclient" rev="3.0.1">
+        <!-- exclude junit 3.8.1 dependency -->
+        <exclude org="junit" name="junit"/>
+    </dependency>
     <dependency org="commons-dbcp" name="commons-dbcp" rev="1.2.1" />
     <dependency org="commons-net" name="commons-net" rev="1.4.1" />
     <dependency org="commons-vfs" name="commons-vfs" rev="1.0" />
@@ -39,7 +42,6 @@
     <dependency org="pentaho.kettle" name="kettle-engine" rev="3.1.0" />
     <dependency org="pentaho.kettle" name="kettle-core" rev="3.1.0" />
     <dependency org="org.pentaho" name="pentaho-cwm" rev="1.5.4" />
-    <dependency org="pentaho.commons" name="pentaho-mql-builder" rev="1.8.0.29" />
     <dependency org="pentaho.reporting" name="libformula" rev="0.1.12" />
     <dependency org="pentaho" name="pentaho-publisher" rev="1.6.0" />
   </dependencies>

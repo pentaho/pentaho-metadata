@@ -410,6 +410,17 @@ public interface CwmSchemaFactoryInterface {
   public void getConceptProperties(CWM cwm, CwmModelElement modelElement, ConceptInterface concept, SchemaMeta schemaMeta);
 
   /**
+   * returns a single MQL Row Level Security constraint string based
+   * on the current business model.  A null returned means that no 
+   * security constraint should be applied
+   *  
+   * @param businessModel the business model
+   * 
+   * @return mql string
+   */
+  public String generateRowLevelSecurityConstraint(BusinessModel businessModel);
+  
+  /**
    * Decides whether you can access the object
    * @param accessType see the access types at the top
    * @param aclHolder An object that has an ACL list
