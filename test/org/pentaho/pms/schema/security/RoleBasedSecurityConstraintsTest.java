@@ -10,11 +10,11 @@ import java.util.Map;
 import org.junit.Test;
 
 /**
- * Unit test for {@link MapBasedSecurityConstraints}.
+ * Unit test for {@link RoleBasedSecurityConstraints}.
  * 
  * @author mlowery
  */
-public class MapBasedSecurityConstraintsTest {
+public class RoleBasedSecurityConstraintsTest {
 
   @Test
   public void testGetConstraintsMap() {
@@ -23,7 +23,7 @@ public class MapBasedSecurityConstraintsTest {
     List<String> list = new ArrayList<String>();
     list.add(FORMULA);
     map.put(null, list);
-    MapBasedSecurityConstraints c = new MapBasedSecurityConstraints(map);
+    RoleBasedSecurityConstraints c = new RoleBasedSecurityConstraints(map);
     assertTrue(map.equals(c.getConstraintsMap()));
   }
 
@@ -38,9 +38,9 @@ public class MapBasedSecurityConstraintsTest {
     list2.add(FORMULA2);
     map.put(null, list);
     map.put(new SecurityOwner(SecurityOwner.OWNER_TYPE_ROLE, "roleA"), list2);
-    MapBasedSecurityConstraints c = new MapBasedSecurityConstraints(map);
+    RoleBasedSecurityConstraints c = new RoleBasedSecurityConstraints(map);
     final String res = "OR(blah;AND(IN(roleA;ROLES());blah2))";
-    assertTrue(res.equals(c.getSingleFormula()));
+    assertTrue(String.format("actual=%s\nexpected=%s", c.getSingleFormula(), res), res.equals(c.getSingleFormula()));
   }
 
   @Test
@@ -51,8 +51,8 @@ public class MapBasedSecurityConstraintsTest {
     List<String> list = new ArrayList<String>();
     list.add(FORMULA);
     map.put(new SecurityOwner(SecurityOwner.OWNER_TYPE_ROLE, ROLE1), list);
-    MapBasedSecurityConstraints mbsc = new MapBasedSecurityConstraints(map);
-    MapBasedSecurityConstraints cloned = (MapBasedSecurityConstraints) mbsc.clone();
+    RoleBasedSecurityConstraints mbsc = new RoleBasedSecurityConstraints(map);
+    RoleBasedSecurityConstraints cloned = (RoleBasedSecurityConstraints) mbsc.clone();
     assertTrue(mbsc != cloned);
     assertTrue(mbsc.equals(cloned));
   }

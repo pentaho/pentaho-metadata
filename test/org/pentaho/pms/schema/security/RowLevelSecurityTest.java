@@ -19,5 +19,25 @@ public class RowLevelSecurityTest {
     assertTrue(rls1 != cloned);
     assertTrue(rls1.equals(cloned));
   }
+  
+  @Test
+  public void testToXml() throws Exception {
+    final String EXPECTED_XML = "<row-level-security><constraints><constraint><owner><null /></owner><formulas><formula><![CDATA[TRUE()]]></formula></formulas></constraint></constraints></row-level-security>";
+    GlobalSecurityConstraints gsc = new GlobalSecurityConstraints("TRUE()");
+    RowLevelSecurity rls1 = new RowLevelSecurity(gsc);
+    String xml = rls1.toXml();
+    assertTrue(String.format("actual=%s\nexpected=%s", xml, EXPECTED_XML), EXPECTED_XML.equals(xml));
+  }
+  
+  @Test
+  public void testFromXml() throws Exception {
+    final String INPUT_XML = "<row-level-security><constraints><constraint><owner><null /></owner><formulas><formula><![CDATA[TRUE()]]></formula></formulas></constraint></constraints></row-level-security>";
+    RowLevelSecurity rls = RowLevelSecurity.fromXML(INPUT_XML);
+    GlobalSecurityConstraints gsc = new GlobalSecurityConstraints("TRUE()");
+    RowLevelSecurity EXPECTED = new RowLevelSecurity(gsc);
+    assertTrue(String.format("actual=%s\nexpected=%s", rls, EXPECTED), EXPECTED.equals(rls));
+    
+  }
+  
 
 }

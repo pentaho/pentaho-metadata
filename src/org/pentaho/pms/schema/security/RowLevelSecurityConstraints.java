@@ -22,6 +22,13 @@ public interface RowLevelSecurityConstraints {
   String getSingleFormula();
   
   /**
+   * Same as {@link #getSingleFormula()} but with all security-related functions "pre-processed". This string should be
+   * suitable for adding to an MQL where clause.
+   * @return the MQL-ready formula
+   */
+  String getMQLFormula(String user, List<String> roles);
+  
+  /**
    * All row level security constraints must be cloneable.
    * @return a cloned object
    * @throws CloneNotSupportedException should never happen

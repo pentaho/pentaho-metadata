@@ -14,7 +14,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
  * 
  * @author mlowery
  */
-public class GlobalSecurityConstraints implements RowLevelSecurityConstraints, Cloneable {
+public class GlobalSecurityConstraints extends AbstractRowLevelSecurityConstraints implements Cloneable {
 
   private String formula;
 

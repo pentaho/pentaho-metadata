@@ -16,9 +16,9 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @author mlowery
  */
-public class MapBasedSecurityConstraints implements RowLevelSecurityConstraints, Cloneable {
+public class RoleBasedSecurityConstraints extends AbstractRowLevelSecurityConstraints implements Cloneable {
 
-  private static final Log logger = LogFactory.getLog(MapBasedSecurityConstraints.class);
+  private static final Log logger = LogFactory.getLog(RoleBasedSecurityConstraints.class);
 
   private Map<SecurityOwner, List<String>> map;
 
@@ -38,7 +38,7 @@ public class MapBasedSecurityConstraints implements RowLevelSecurityConstraints,
 
   private static final String FUNC_USER = "USER()";
 
-  public MapBasedSecurityConstraints(Map<SecurityOwner, List<String>> map) {
+  public RoleBasedSecurityConstraints(Map<SecurityOwner, List<String>> map) {
     super();
     this.map = map;
   }
@@ -97,18 +97,18 @@ public class MapBasedSecurityConstraints implements RowLevelSecurityConstraints,
       List<String> clonedFormulas = new ArrayList<String>((List<String>) entry.getValue());
       newMap.put(clonedOwner, clonedFormulas);
     }
-    return new MapBasedSecurityConstraints(newMap);
+    return new RoleBasedSecurityConstraints(newMap);
   }
 
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof MapBasedSecurityConstraints == false) {
+    if (obj instanceof RoleBasedSecurityConstraints == false) {
       return false;
     }
     if (this == obj) {
       return true;
     }
-    MapBasedSecurityConstraints rhs = (MapBasedSecurityConstraints) obj;
+    RoleBasedSecurityConstraints rhs = (RoleBasedSecurityConstraints) obj;
     return new EqualsBuilder().append(map, rhs.map).isEquals();
 
   }
