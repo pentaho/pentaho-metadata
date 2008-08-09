@@ -881,7 +881,7 @@
 
 
   <!--=======================================================================
-	    cobertura.clean
+	    clean-cobertura
 	    
 	    Removes all files created by Cobertura code coverage utility
 	    ====================================================================-->
@@ -908,18 +908,9 @@
 		Remove all xml and html Cobertura coverage reports
 		====================================================================-->
   <target name="cobertura.clean-coverage-reports">
+    <delete dir="${coberturareports.xml.dir}" />
+    <delete dir="${coberturareports.html.dir}" />
     <delete dir="${coberturareports.dir}" />
-  </target>
-
-
-  <!--=======================================================================
-		cobertura.clean-coverage-reports
-
-		Sets up directories for Cobertura coverage reports
-		====================================================================-->
-  <target name="init-coverage-reports" depends="cobertura.clean-coverage-reports">
-    <mkdir dir="${coberturareports.xml.dir}" />
-    <mkdir dir="${coberturareports.html.dir}" />
   </target>
 
 
