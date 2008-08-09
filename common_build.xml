@@ -15,7 +15,7 @@
           the EVERY common_build.xml file (and the change should be copied
           to all common_build.xml files that can be found)
     
-    FORMATTING: This file should be formatted with indention=2 spaces and wrap at 120 lines
+    FORMATTING: This file should be formatted with indention=2 spaces and wrap lines longer than 120 chars
     
     TO GET STARTED with your project, you will need this file in 
           your project's root directory along with three additional files:
