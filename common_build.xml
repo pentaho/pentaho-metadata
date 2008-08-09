@@ -451,6 +451,7 @@
           description="Cleans all the files generated from a build with the exception of IVY-downloaded jars (see clean-all)"
           depends="clean-tests, clean-cobertura, clean-javadoc, clean-dist">
     <delete dir="${classes.dir}" />
+    <delete dir="${bin.dir}" />
   </target>
 
 
@@ -849,20 +850,33 @@
   <!--=======================================================================
 	    cobertura.install
 	    
-	    Downloads Cobertura jar and installs ant tasks
+	    Downloads and installs Cobertura ant tasks
 	    ====================================================================-->
-  <target name="cobertura.install" unless="offline" depends="install-ivy">
-    <ivy:retrieve inline="true"
-                  organisation="net.sourceforge.cobertura"
-                  module="cobertura"
-                  revision="1.9"
-                  pattern="${cobertura.build.cache.dir}/[module].[ext]" />
+  <target name="cobertura.install" depends="install-ivy,cobertura.download,cobertura.offline-available-check">
     <path id="cobertura.classpath">
       <fileset dir="${cobertura.build.cache.dir}">
         <include name="*.jar" />
       </fileset>
     </path>
     <taskdef classpathref="cobertura.classpath" resource="tasks.properties" />
+  </target>
+  <target name="cobertura.offline-available-check" if="offline">
+    <available property="cobertura.available" file="${cobertura.build.cache.dir}/cobertura.jar" />
+    <fail unless="cobertura.available" message="You are offline and Cobertura jars were not found in ${cobertura.build.cache.dir}.  Cannot execute cobertura target."/>
+  </target>
+  
+  
+  <!--=======================================================================
+	    cobertura.download
+	    
+	    Downloads Cobertura jar via IVY
+	    ====================================================================-->
+  <target name="cobertura.download" unless="offline">
+    <ivy:retrieve inline="true"
+                  organisation="net.sourceforge.cobertura"
+                  module="cobertura"
+                  revision="1.9"
+                  pattern="${cobertura.build.cache.dir}/[module].[ext]" />
   </target>
 
 
@@ -874,7 +888,6 @@
   <target name="clean-cobertura"
           depends="cobertura.clean-instrumented-classes,cobertura.clean-coverage-reports"
           description="Removes all files created by Cobertura code coverage utility.">
-    <echo message="i'm here!!" />
     <delete dir="${cobertura.data.dir}" />
   </target>
 
