@@ -346,7 +346,7 @@
 	    
 	    Publishes the jar file for this project to a Maven2 repository.
 	    ====================================================================-->
-  <target name="publish-pentaho-nojar" depends="create-pom" description="Publishes the jar file to a Maven2 repository">
+  <target name="publish-pentaho-nojar" depends="install-antcontrib,create-pom" description="Publishes the jar file to a Maven2 repository">
     <sequential>
       <fail message="Required jar not present!">
         <condition>
