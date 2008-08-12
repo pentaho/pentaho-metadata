@@ -15,7 +15,10 @@
           the EVERY common_build.xml file (and the change should be copied
           to all common_build.xml files that can be found)
     
-    FORMATTING: This file should be formatted with indention=2 spaces and wrap lines longer than 120 chars
+    FORMATTING: 
+    	ALIGNMENT: This file should be formatted with indention=2 spaces and wrap lines longer than 120 chars
+    	NAMING: targets meant for executed by a user are named single-word or hyphenated.  Internal targets
+    	        are named with '.'.
     
     TO GET STARTED with your project, you will need this file in 
           your project's root directory along with three additional files:
