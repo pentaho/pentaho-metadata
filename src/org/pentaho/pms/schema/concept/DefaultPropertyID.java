@@ -32,11 +32,13 @@ import org.pentaho.pms.schema.concept.types.font.ConceptPropertyFont;
 import org.pentaho.pms.schema.concept.types.localstring.ConceptPropertyLocalizedString;
 import org.pentaho.pms.schema.concept.types.localstring.LocalizedStringSettings;
 import org.pentaho.pms.schema.concept.types.number.ConceptPropertyNumber;
+import org.pentaho.pms.schema.concept.types.rowlevelsecurity.ConceptPropertyRowLevelSecurity;
 import org.pentaho.pms.schema.concept.types.security.ConceptPropertySecurity;
 import org.pentaho.pms.schema.concept.types.string.ConceptPropertyString;
 import org.pentaho.pms.schema.concept.types.tabletype.ConceptPropertyTableType;
 import org.pentaho.pms.schema.concept.types.tabletype.TableTypeSettings;
 import org.pentaho.pms.schema.concept.types.url.ConceptPropertyURL;
+import org.pentaho.pms.schema.security.RowLevelSecurity;
 import org.pentaho.pms.schema.security.Security;
 
 public class DefaultPropertyID
@@ -68,6 +70,7 @@ public class DefaultPropertyID
             new DefaultPropertyID("alignment",         Messages.getString("DefaultPropertyID.USER_TEXT_ALIGNMENT_DESC"), ConceptPropertyType.ALIGNMENT, new ConceptPropertyAlignment("alignment", AlignmentSettings.LEFT)), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             new DefaultPropertyID("column_width",      Messages.getString("DefaultPropertyID.USER_COLUMN_WIDTH_DESC"), ConceptPropertyType.COLUMN_WIDTH, new ConceptPropertyColumnWidth("column_width", ColumnWidth.PIXELS)), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             new DefaultPropertyID("security",          Messages.getString("DefaultPropertyID.USER_SECURITY_INFORMATION_DESC"), ConceptPropertyType.SECURITY, new ConceptPropertySecurity("security", new Security())), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            new DefaultPropertyID("row_level_security",Messages.getString("DefaultPropertyID.USER_ROW_LEVEL_SECURITY_DESC"), ConceptPropertyType.ROW_LEVEL_SECURITY, new ConceptPropertyRowLevelSecurity("row_level_security", new RowLevelSecurity())), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
          };
 
     public static final DefaultPropertyID NAME            = defaults[ 0];
@@ -90,6 +93,7 @@ public class DefaultPropertyID
     public static final DefaultPropertyID ALIGNMENT       = defaults[17];
     public static final DefaultPropertyID COLUMN_WIDTH    = defaults[18];
     public static final DefaultPropertyID SECURITY        = defaults[19];
+    public static final DefaultPropertyID ROW_LEVEL_SECURITY        = defaults[20];
 
 
     /**
@@ -219,6 +223,7 @@ public class DefaultPropertyID
         case ConceptPropertyType.PROPERTY_TYPE_SECURITY         : property = new ConceptPropertySecurity(name, null); break;
         case ConceptPropertyType.PROPERTY_TYPE_ALIGNMENT        : property = new ConceptPropertyAlignment(name, null); break;
         case ConceptPropertyType.PROPERTY_TYPE_COLUMN_WIDTH     : property = new ConceptPropertyColumnWidth(name, null); break;
+        case ConceptPropertyType.PROPERTY_TYPE_ROW_LEVEL_SECURITY     : property = new ConceptPropertyRowLevelSecurity(name, null); break;
         }
         return property;
     }

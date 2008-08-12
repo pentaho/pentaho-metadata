@@ -33,10 +33,12 @@ import org.pentaho.pms.schema.concept.types.datatype.DataTypeSettings;
 import org.pentaho.pms.schema.concept.types.fieldtype.ConceptPropertyFieldType;
 import org.pentaho.pms.schema.concept.types.fieldtype.FieldTypeSettings;
 import org.pentaho.pms.schema.concept.types.number.ConceptPropertyNumber;
+import org.pentaho.pms.schema.concept.types.rowlevelsecurity.ConceptPropertyRowLevelSecurity;
 import org.pentaho.pms.schema.concept.types.security.ConceptPropertySecurity;
 import org.pentaho.pms.schema.concept.types.string.ConceptPropertyString;
 import org.pentaho.pms.schema.concept.types.tabletype.ConceptPropertyTableType;
 import org.pentaho.pms.schema.concept.types.tabletype.TableTypeSettings;
+import org.pentaho.pms.schema.security.RowLevelSecurity;
 import org.pentaho.pms.schema.security.Security;
 import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.ObjectAlreadyExistsException;
@@ -503,6 +505,23 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
       property.setValue(security);
     } else {
       concept.addProperty(new ConceptPropertySecurity(DefaultPropertyID.SECURITY.getId(), security));
+    }
+  }
+  
+  public RowLevelSecurity getRowLevelSecurity() {
+    ConceptPropertyInterface property = concept.getProperty(DefaultPropertyID.ROW_LEVEL_SECURITY.getId());
+    if (property == null || property.getValue() == null) {
+      return new RowLevelSecurity();
+    }
+    return (RowLevelSecurity) property.getValue();
+  }
+
+  public void setRowLevelSecurity(RowLevelSecurity rowLevelSecurity) {
+    ConceptPropertyInterface property = concept.getChildProperty(DefaultPropertyID.ROW_LEVEL_SECURITY.getId());
+    if (null != property) {
+      property.setValue(rowLevelSecurity);
+    } else {
+      concept.addProperty(new ConceptPropertyRowLevelSecurity(DefaultPropertyID.ROW_LEVEL_SECURITY.getId(), rowLevelSecurity));
     }
   }
 

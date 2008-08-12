@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-//import org.eclipse.core.runtime.IProgressMonitor;
 import org.pentaho.di.core.NotePadMeta;
 import org.pentaho.di.core.ProgressMonitorListener;
 import org.pentaho.di.core.database.DatabaseMeta;
@@ -90,6 +89,7 @@ import org.pentaho.pms.schema.concept.types.font.ConceptPropertyFont;
 import org.pentaho.pms.schema.concept.types.font.FontSettings;
 import org.pentaho.pms.schema.concept.types.localstring.LocalizedStringSettings;
 import org.pentaho.pms.schema.concept.types.number.ConceptPropertyNumber;
+import org.pentaho.pms.schema.concept.types.rowlevelsecurity.ConceptPropertyRowLevelSecurity;
 import org.pentaho.pms.schema.concept.types.security.ConceptPropertySecurity;
 import org.pentaho.pms.schema.concept.types.string.ConceptPropertyString;
 import org.pentaho.pms.schema.concept.types.tabletype.ConceptPropertyTableType;
@@ -101,6 +101,7 @@ import org.pentaho.pms.schema.olap.OlapDimensionUsage;
 import org.pentaho.pms.schema.olap.OlapHierarchy;
 import org.pentaho.pms.schema.olap.OlapHierarchyLevel;
 import org.pentaho.pms.schema.olap.OlapMeasure;
+import org.pentaho.pms.schema.security.RowLevelSecurity;
 import org.pentaho.pms.schema.security.Security;
 import org.pentaho.pms.schema.security.SecurityReference;
 import org.pentaho.pms.schema.security.SecurityService;
@@ -1769,6 +1770,25 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                     cwm.setDescription(modelElement, description);
                 }
                 
+                // Save the Row Level Security properties
+                //
+                else
+                if (property.getType().equals(ConceptPropertyType.ROW_LEVEL_SECURITY))
+                {
+                    RowLevelSecurity value= (RowLevelSecurity) property.getValue();
+    
+                    String string = ""; //$NON-NLS-1$
+                    if (value!=null)
+                    {
+                        string = value.toXML();
+                    }
+                    
+                    CwmDescription description = cwm.createDescription(string);
+                    description.setName(property.getId());
+                    description.setType(property.getType().getCode());
+                    cwm.setDescription(modelElement, description);
+                }
+                
                 // Save the alignment properties
                 //
                 else
@@ -2043,6 +2063,26 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                 {
                     Security security = Security.fromXML(value);
                     ConceptPropertyInterface property = new ConceptPropertySecurity(name, security);
+                    concept.addProperty(property);
+                }
+                catch(Exception e)
+                {
+                  logger.error( e.getMessage(), e );
+                }
+              }
+            }
+            
+            // Load the Row Level Security settings properties...
+            //
+            else
+            if (type.equals(ConceptPropertyType.ROW_LEVEL_SECURITY.getCode()))
+            {
+              if (!Const.isEmpty(name) && !Const.isEmpty(value) )
+              {
+                try
+                {
+                    RowLevelSecurity rowLevelSecurity = RowLevelSecurity.fromXML(value);
+                    ConceptPropertyInterface property = new ConceptPropertyRowLevelSecurity(name, rowLevelSecurity);
                     concept.addProperty(property);
                 }
                 catch(Exception e)

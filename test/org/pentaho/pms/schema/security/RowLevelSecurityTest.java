@@ -44,19 +44,19 @@ public class RowLevelSecurityTest {
   @Test
   public void testToXml() throws Exception {
     RowLevelSecurity rls1 = new RowLevelSecurity("TRUE()");
-    String xml1 = rls1.toXml();
+    String xml1 = rls1.toXML();
     assertTrue(String.format("\nactual  =%s\nexpected=%s", xml1, XML_FRAG_GLOBAL), XML_FRAG_GLOBAL.equals(xml1));
 
     final String EXPECTED_XML_2 = XML_FRAG_ROLE_BASED;
     Map<SecurityOwner, String> map = new HashMap<SecurityOwner, String>();
     map.put(new SecurityOwner(SecurityOwner.OWNER_TYPE_ROLE, "Admin"), "TRUE()");
     RowLevelSecurity rls2 = new RowLevelSecurity(map);
-    String xml2 = rls2.toXml();
+    String xml2 = rls2.toXML();
     assertTrue(String.format("\nactual  =%s\nexpected=%s", xml2, EXPECTED_XML_2), EXPECTED_XML_2.equals(xml2));
 
     final String EXPECTED_XML_3 = XML_FRAG_NONE;
     RowLevelSecurity rls3 = new RowLevelSecurity();
-    String xml3 = rls3.toXml();
+    String xml3 = rls3.toXML();
     assertTrue(String.format("\nactual  =%s\nexpected=%s", xml3, EXPECTED_XML_3), EXPECTED_XML_3.equals(xml3));
   }
 

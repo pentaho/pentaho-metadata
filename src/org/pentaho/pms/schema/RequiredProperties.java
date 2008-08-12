@@ -137,6 +137,7 @@ public class RequiredProperties extends ChangedFlag implements ChangedFlagInterf
         propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.NAME));
         propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.DESCRIPTION));
         propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.SECURITY));
+        propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.ROW_LEVEL_SECURITY));
         setDefaultProperties(subject, propertyTypes);
 
         setChanged(false);

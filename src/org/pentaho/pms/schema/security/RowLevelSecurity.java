@@ -149,7 +149,7 @@ public class RowLevelSecurity implements Cloneable {
         "roleBasedConstraintMap", roleBasedConstraintMap).toString();
   }
 
-  public String toXml() {
+  public String toXML() {
     StringBuilder xml = new StringBuilder();
 
     // print rls begin element
