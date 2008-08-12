@@ -194,7 +194,7 @@
 	    Fetch ant-contrib jar and install ant tasks.
 	    ====================================================================-->
   <target name="install-antcontrib">
-    <mkdir dir="${tmp.build.cache.dir}"/>
+    <mkdir dir="${tmp.build.cache.dir}" />
     <get src="http://downloads.sourceforge.net/ant-contrib/ant-contrib-1.0b3-bin.zip"
          dest="${tmp.build.cache.dir}/antcontrib.zip"
          usetimestamp="true" />
@@ -283,7 +283,7 @@
 	    the defined directories.
 	    ====================================================================-->
   <target name="resolve"
-          depends="resolve-default, resolve-test"
+          depends="resolve-default, resolve-test, resolve.confirm"
           unless="offline"
           description="Retrieves all the dependent libraries" />
 
@@ -297,6 +297,16 @@
 
   <target name="resolve-test" depends="resolve-init" unless="offline">
     <ivy:retrieve conf="test" pattern="${testlib.dir}/[module]-[revision].[ext]" />
+  </target>
+  
+  <target name="resolve.confirm" if="offline">
+    <fail message="Build failed since you are offline and the dependency dir ${lib.dir} does not exist.  Please rerun resolve target when online." >
+      <condition>
+        <not>
+          <available file="${lib.dir}" />
+        </not>
+      </condition>
+    </fail>
   </target>
 
 
