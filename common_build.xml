@@ -89,6 +89,9 @@
   <property name="build.cache.dir"
             value="${user.home}/.pentaho_build_cache"
             description="Base dir for runtime jars that are required exclusively by the build process" />
+  <property name="tmp.build.cache.dir"
+            value="${build.cache.dir}/tmp"
+            description="Temporary directory where files are prepared for build cache" />
   <property name="ivy.build.cache.dir"
             value="${build.cache.dir}/ivy"
             description="Directory where the IVY jar is placed after it is auto downloaded by the build" />
@@ -188,14 +191,24 @@
   <!--=======================================================================
 	    install-antcontrib
 	    
-	    Use IVY to fetch ant-contrib jar and install ant tasks.
+	    Fetch ant-contrib jar and install ant tasks.
 	    ====================================================================-->
-  <target name="install-antcontrib" depends="install-ivy">
-    <ivy:retrieve inline="true"
-                  organisation="ant-contrib"
-                  module="ant-contrib"
-                  revision="1.0b2"
-                  pattern="${antcontrib.build.cache.dir}/[module]-[revision].[ext]" />
+  <target name="install-antcontrib">
+    <mkdir dir="${tmp.build.cache.dir}"/>
+    <get src="http://downloads.sourceforge.net/ant-contrib/ant-contrib-1.0b3-bin.zip"
+         dest="${tmp.build.cache.dir}/antcontrib.zip"
+         usetimestamp="true" />
+    <unzip src="${tmp.build.cache.dir}/antcontrib.zip" dest="${tmp.build.cache.dir}">
+      <patternset>
+        <include name="**/*.jar" />
+      </patternset>
+    </unzip>
+    <copy todir="${antcontrib.build.cache.dir}">
+      <fileset dir="${tmp.build.cache.dir}/ant-contrib">
+        <include name="**/*.jar" />
+      </fileset>
+    </copy>
+
     <taskdef resource="net/sf/antcontrib/antlib.xml">
       <classpath>
         <fileset dir="${antcontrib.build.cache.dir}">
@@ -239,28 +252,26 @@
 	    Installs the ivy jar for use by this ant script
 	    ====================================================================-->
   <target name="install-ivy"
-          depends="download-ivy,install-ivy.check,install-ivy.print"
-          if="install-ivy.run"
+          depends="install-antcontrib,download-ivy"
           description="Installs IVY tasks for use by this build process">
-    <path id="ivy.lib.path">
-      <fileset dir="${ivy.build.cache.dir}" includes="*.jar" />
-    </path>
-    <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path" />
-    <ivy:settings url="${ivy.settingsurl}" />
-    <property name="ivy.isinstalled" value="true" />
-  </target>
-  <target name="install-ivy.check">
-    <condition property="install-ivy.run">
-      <not>
-        <or>
-          <isset property="offline" />
-          <isset property="ivy.isinstalled" />
-        </or>
-      </not>
-    </condition>
-  </target>
-  <target name="install-ivy.print" unless="install-ivy.run">
-    <echo message="Skipping IVY install.  You are either in offline mode or IVY tasks have already been installed by the build" />
+    <if>
+      <or>
+        <istrue value="${offline}" />
+        <istrue value="${ivy.isinstalled}" />
+      </or>
+      <then>
+        <echo message="Skipping IVY install.  You are either in offline mode or IVY tasks have already been installed by the build" />
+      </then>
+      <else>
+        <echo message="Installing IVY..." />
+        <path id="ivy.lib.path">
+          <fileset dir="${ivy.build.cache.dir}" includes="*.jar" />
+        </path>
+        <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path" />
+        <ivy:settings url="${ivy.settingsurl}" />
+        <property name="ivy.isinstalled" value="true" />
+      </else>
+    </if>
   </target>
 
 
@@ -346,7 +357,9 @@
 	    
 	    Publishes the jar file for this project to a Maven2 repository.
 	    ====================================================================-->
-  <target name="publish-pentaho-nojar" depends="install-antcontrib,create-pom" description="Publishes the jar file to a Maven2 repository">
+  <target name="publish-pentaho-nojar"
+          depends="install-antcontrib,create-pom"
+          description="Publishes the jar file to a Maven2 repository">
     <sequential>
       <fail message="Required jar not present!">
         <condition>
@@ -862,10 +875,11 @@
   </target>
   <target name="cobertura.offline-available-check" if="offline">
     <available property="cobertura.available" file="${cobertura.build.cache.dir}/cobertura.jar" />
-    <fail unless="cobertura.available" message="You are offline and Cobertura jars were not found in ${cobertura.build.cache.dir}.  Cannot execute cobertura target."/>
+    <fail unless="cobertura.available"
+          message="You are offline and Cobertura jars were not found in ${cobertura.build.cache.dir}.  Cannot execute cobertura target." />
   </target>
-  
-  
+
+
   <!--=======================================================================
 	    cobertura.download
 	    
