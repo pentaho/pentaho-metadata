@@ -193,7 +193,23 @@
 	    
 	    Fetch ant-contrib jar and install ant tasks.
 	    ====================================================================-->
-  <target name="install-antcontrib">
+  <target name="install-antcontrib" depends="antcontrib.download" description="Fetch ant-contrib jar and install ant tasks">
+    <taskdef resource="net/sf/antcontrib/antlib.xml">
+      <classpath>
+        <fileset dir="${antcontrib.build.cache.dir}">
+          <include name="*.jar" />
+        </fileset>
+      </classpath>
+    </taskdef>
+  </target>
+
+  
+  <!--=======================================================================
+	    antcontrib.download
+	    
+	    Fetch ant-contrib jar from sourceforge
+	    ====================================================================-->
+  <target name="antcontrib.download" unless="offline">
     <mkdir dir="${tmp.build.cache.dir}" />
     <get src="http://downloads.sourceforge.net/ant-contrib/ant-contrib-1.0b3-bin.zip"
          dest="${tmp.build.cache.dir}/antcontrib.zip"
@@ -208,17 +224,8 @@
         <include name="**/*.jar" />
       </fileset>
     </copy>
-
-    <taskdef resource="net/sf/antcontrib/antlib.xml">
-      <classpath>
-        <fileset dir="${antcontrib.build.cache.dir}">
-          <include name="*.jar" />
-        </fileset>
-      </classpath>
-    </taskdef>
   </target>
-
-
+  
   <!--=======================================================================
 	    init
 	    
@@ -298,9 +305,9 @@
   <target name="resolve-test" depends="resolve-init" unless="offline">
     <ivy:retrieve conf="test" pattern="${testlib.dir}/[module]-[revision].[ext]" />
   </target>
-  
+
   <target name="resolve.confirm" if="offline">
-    <fail message="Build failed since you are offline and the dependency dir ${lib.dir} does not exist.  Please rerun resolve target when online." >
+    <fail message="Build failed since you are offline and the dependency dir ${lib.dir} does not exist.  Please rerun resolve target when online.">
       <condition>
         <not>
           <available file="${lib.dir}" />
