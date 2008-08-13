@@ -89,7 +89,7 @@ public class RowLevelSecurity implements Cloneable {
   /**
    * See {@link #getType()}. Type will tell you which of three options are in effect: no RLS, global, or role-based.
    */
-  private Map<SecurityOwner, String> roleBasedConstraintMap;
+  private Map<SecurityOwner, String> roleBasedConstraintMap = new HashMap<SecurityOwner, String>();
 
   public RowLevelSecurity(String globalConstraint) {
     this(Type.GLOBAL, globalConstraint, null);
@@ -105,7 +105,11 @@ public class RowLevelSecurity implements Cloneable {
 
   public RowLevelSecurity(Type type, String globalConstraint, Map<SecurityOwner, String> roleBasedConstraintMap) {
     this.globalConstraint = globalConstraint;
-    this.roleBasedConstraintMap = roleBasedConstraintMap;
+    if (roleBasedConstraintMap != null) {
+      this.roleBasedConstraintMap = roleBasedConstraintMap;
+    } else {
+      this.roleBasedConstraintMap = new HashMap<SecurityOwner, String>();
+    }
     this.type = type;
   }
 
@@ -316,7 +320,11 @@ public class RowLevelSecurity implements Cloneable {
   }
 
   public void setRoleBasedConstraintMap(Map<SecurityOwner, String> roleBasedConstraintMap) {
-    this.roleBasedConstraintMap = roleBasedConstraintMap;
+    if (roleBasedConstraintMap != null) {
+      this.roleBasedConstraintMap = roleBasedConstraintMap;
+    } else {
+      this.roleBasedConstraintMap = new HashMap<SecurityOwner, String>();
+    }
   }
 
 }
