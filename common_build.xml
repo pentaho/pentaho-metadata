@@ -16,7 +16,7 @@
           to all common_build.xml files that can be found)
     
     FORMATTING: 
-    	ALIGNMENT: This file should be formatted with indention=2 spaces and wrap lines longer than 120 chars
+    	ALIGNMENT: indent=2 spaces and wrap lines longer than 120 chars
     	NAMING: targets meant for executed by a user are named single-word or hyphenated.  Internal targets
     	        are named with '.'.
     
@@ -118,9 +118,9 @@
             description="IVY metadata describing the originating company or organization" />
 
   <!-- Test properties -->
-  <property name="testsrc.dir" value="${basedir}/test" description="Directory that hosts the test source files" />
+  <property name="testsrc.dir" value="${basedir}/test-src" description="Directory that hosts the test source files" />
   <property name="testlib.dir"
-            value="${basedir}/testlib"
+            value="${basedir}/test-lib"
             description="Directory for jar files needed during unit testing" />
   <property name="testbin.dir" value="${bin.dir}/test" description="Base directory for all test output" />
   <property name="testclasses.dir"
@@ -135,7 +135,7 @@
   <property name="testreports.html.dir"
             value="${testreports.dir}/html"
             description="Unit test html reports are placed here" />
-  <property name="junit.haltonfailure" value="yes" description="Fail the build if a test fails" />
+  <property name="junit.haltonfailure" value="no" description="Fail the build if a test fails" />
 
   <!-- Code Coverage properties -->
   <property name="instrumented.classes.dir"
@@ -196,7 +196,9 @@
 	    
 	    Fetch ant-contrib jar and install ant tasks.
 	    ====================================================================-->
-  <target name="install-antcontrib" depends="antcontrib.download" description="Fetch ant-contrib jar and install ant tasks">
+  <target name="install-antcontrib"
+          depends="antcontrib.download"
+          description="Fetch ant-contrib jar and install ant tasks">
     <taskdef resource="net/sf/antcontrib/antlib.xml">
       <classpath>
         <fileset dir="${antcontrib.build.cache.dir}">
@@ -206,7 +208,7 @@
     </taskdef>
   </target>
 
-  
+
   <!--=======================================================================
 	    antcontrib.download
 	    
@@ -228,7 +230,7 @@
       </fileset>
     </copy>
   </target>
-  
+
   <!--=======================================================================
 	    init
 	    
@@ -301,11 +303,17 @@
     <ivy:resolve file="ivy.xml" />
   </target>
 
-  <target name="resolve-default" depends="resolve-init" unless="offline">
+  <target name="resolve-default"
+          depends="resolve-init"
+          unless="offline"
+          description="Retrieves default configuration dependencies">
     <ivy:retrieve conf="default" pattern="${lib.dir}/[module]-[revision].[ext]" />
   </target>
 
-  <target name="resolve-test" depends="resolve-init" unless="offline">
+  <target name="resolve-test"
+          depends="resolve-init"
+          unless="offline"
+          description="Retrieves test configuration dependencies">
     <ivy:retrieve conf="test" pattern="${testlib.dir}/[module]-[revision].[ext]" />
   </target>
 
@@ -317,6 +325,18 @@
         </not>
       </condition>
     </fail>
+  </target>
+
+
+
+  <!--=======================================================================
+	    ivy-cleancache
+	    
+	    Cleans the IVY cache.  You are erasing IVY's memory.  Run this if you 
+	    want to force IVY to go fetch all your project dependencies from scratch.
+	    ====================================================================-->
+  <target name="ivy-cleancache" depends="install-ivy" description="Cleans the IVY cache">
+    <ivy:cleancache />
   </target>
 
 
@@ -502,9 +522,13 @@
 	    clean-all
 	    
 	    Removes all the libraries that have been downloaded for this project
-	    and all the files generated from the build process.
+	    (both in the project's local lib dirs and IVY cache) and all the files 
+	    generated from the build process.  Essentialy this target completely 
+	    resets the user's project workspace and IVY state.
 	    ====================================================================-->
-  <target name="clean-all" depends="clean, clean-jars" description="Cleans all the generated/downloaded files" />
+  <target name="clean-all"
+          depends="clean,clean-jars,ivy-cleancache"
+          description="Cleans all the generated/downloaded files" />
 
 
   <!--=======================================================================
@@ -956,7 +980,7 @@
   <target name="cobertura.test-instrumented"
           depends="init-test-reports,cobertura.install,compile,compile-tests,cobertura.instrument-classes">
     <mkdir dir="${instrumented.classes.dir}" />
-    <junit fork="yes" failureProperty="test.failed">
+    <junit fork="yes" failureProperty="test.failed" haltonfailure="${junit.haltonfailure}">
 
       <!--
 				Specify the name of the coverage data file to use.
