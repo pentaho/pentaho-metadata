@@ -74,14 +74,14 @@
   <property name="lib.dir"
             value="${basedir}/lib"
             description="Directory that hosts Jar files required to compile project source.  (IVY will populate this directory with required jars)" />
+  <property name="devlib.dir"
+            value="${basedir}/dev-lib"
+            description="Directory for developer to place development Jar files (not affected by clean targets)" />
 
   <!-- Compiler properties (passed directly to javac ant target) -->
   <property name="javac.debug"
             value="true"
             description="Indicates whether source should be compiled with debug information (passed to javac ant task)." />
-  <property name="javac.optimize"
-            value="true"
-            description="Indicates whether source should be compiled with optimization (ignored from Sun JDK1.3 on)" />
   <property name="javac.deprecation"
             value="true"
             description="Indicates whether source should be compiled with deprecation information" />
@@ -104,6 +104,9 @@
   <property name="antcontrib.build.cache.dir"
             value="${build.cache.dir}/ant-contrib"
             description="Directory where the Ant-Contrib jar (and dependencies) is placed after it is auto-downloaded by the build" />
+  <property name="pentaho.build.cache.dir"
+            value="${build.cache.dir}/pentaho"
+            description="Directory where the Pentaho ant tasks jar (and dependencies) is placed after it is auto-downloaded by the build" />
 
   <!-- Ivy properties -->
   <property name="ivy.install.version" value="2.0.0-beta2" description="Specifies the version of IVY to fetch" />
@@ -176,6 +179,9 @@
     <fileset dir="${lib.dir}">
       <include name="*.jar" />
     </fileset>
+    <fileset dir="${devlib.dir}">
+      <include name="*.jar" />
+    </fileset>
   </path>
 
   <!-- Setup the classpath used for testing -->
@@ -240,6 +246,8 @@
   <target name="init" description="Initializes the build process">
     <mkdir dir="${classes.dir}" />
     <mkdir dir="${dist.dir}" />
+    <mkdir dir="${lib.dir}" />
+    <mkdir dir="${devlib.dir}" />
   </target>
 
 
@@ -295,11 +303,11 @@
 	    the defined directories.
 	    ====================================================================-->
   <target name="resolve"
-          depends="resolve-default, resolve-test, resolve.confirm"
+          depends="resolve-default, resolve-test"
           unless="offline"
           description="Retrieves all the dependent libraries" />
 
-  <target name="resolve-init" depends="install-ivy" unless="offline">
+  <target name="resolve-init" depends="install-ivy, resolve.offline-message" unless="offline">
     <ivy:resolve file="ivy.xml" />
   </target>
 
@@ -317,16 +325,10 @@
     <ivy:retrieve conf="test" pattern="${testlib.dir}/[module]-[revision].[ext]" />
   </target>
 
-  <target name="resolve.confirm" if="offline">
-    <fail message="Build failed since you are offline and the dependency dir ${lib.dir} does not exist.  Please rerun resolve target when online.">
-      <condition>
-        <not>
-          <available file="${lib.dir}" />
-        </not>
-      </condition>
-    </fail>
+  <target name="resolve.offline-message" if="offline">
+    <echo level="warning"
+          message="Skipping IVY resolve since you are in offline mode.  This may cause your build to fail due to unsatisfied dependencies." />
   </target>
-
 
 
   <!--=======================================================================
@@ -415,9 +417,11 @@
           depends="install-antcontrib,create-pom"
           description="Publishes the jar file to a Maven2 repository">
     <sequential>
-      <fail message="Required jar not present!">
+      <fail message="No jar found at: ${dist.dir}/${ivy.artifact.id}-${project.revision}.jar">
         <condition>
-          <isset property="${dist.dir}/${ivy.artifact.id}-${project.revision}.jar" />
+          <not>
+            <available file="${dist.dir}/${ivy.artifact.id}-${project.revision}.jar" />
+          </not>
         </condition>
       </fail>
       <if>
@@ -612,7 +616,6 @@
   <target name="compile.compile" depends="init" description="Performs the actual javac compile">
     <javac destdir="${classes.dir}"
            debug="${javac.debug}"
-           optimize="${javac.optimize}"
            deprecation="${javac.deprecation}"
            fork="true"
            source="${javac.source}"
@@ -1058,6 +1061,44 @@
         <include name="**/*.java" />
       </fileset>
     </cobertura-report>
+  </target>
+
+  <!--=======================================================================
+        install-pentaho-ant-tasks
+ 
+        Fetches and installs Pentaho Ant tasks
+      ====================================================================-->
+  <target name="install-pentaho-ant-tasks" depends="install-ivy">
+    <ivy:retrieve inline="true"
+                  organisation="pentaho"
+                  module="pentaho-ant-tasks"
+                  revision="1.1"
+                  pattern="${pentaho.build.cache.dir}/[module].[ext]" />
+    <path id="pentaho-ant-tasks.classpath">
+      <fileset dir="${pentaho.build.cache.dir}">
+        <include name="*.jar" />
+      </fileset>
+    </path>
+    <taskdef name="dot-classpath"
+             description="Builds Eclipse .classpath from ANT classpath"
+             classname="org.pentaho.anttasks.DotClasspath"
+             classpathref="pentaho-ant-tasks.classpath">
+    </taskdef>
+  </target>
+
+  <!--=======================================================================
+        create-dot-classpath
+ 
+        Creates the Eclipse .classpath file from the resolved
+        classpath from Ant.
+      ====================================================================-->
+  <target name="create-dot-classpath"
+          depends="install-pentaho-ant-tasks,init"
+          description="Creates the Eclipse .classpath file">
+    <dot-classpath>
+      <!-- This classpath is the compile classpath from commonbuild -->
+      <classpath refid="classpath" />
+    </dot-classpath>
   </target>
 
 </project>
