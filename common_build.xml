@@ -330,13 +330,27 @@
 
 
   <!--=======================================================================
-	    ivy-cleancache
+	    ivy-clean-cache
 	    
 	    Cleans the IVY cache.  You are erasing IVY's memory.  Run this if you 
 	    want to force IVY to go fetch all your project dependencies from scratch.
+	    WARNING: this will affect all IVY projects, not just the current workspace
 	    ====================================================================-->
-  <target name="ivy-cleancache" depends="install-ivy" description="Cleans the IVY cache">
+  <target name="ivy-clean-cache" depends="install-ivy" description="Cleans the IVY cache">
     <ivy:cleancache />
+  </target>
+
+
+  <!--=======================================================================
+	    ivy-clean-local
+	    
+	    Completely cleans your local repository of any files published locally
+	    by way of publish-local.
+	    WARNING: this is a global action and will affect other IVY projects
+	    currently referencing a locally published dependency
+	    ====================================================================-->
+  <target name="ivy-clean-local" depends="install-ivy" description="cleans the local repository for the current module">
+    <delete dir="${ivy.local.default.root}/" />
   </target>
 
 
@@ -524,10 +538,11 @@
 	    Removes all the libraries that have been downloaded for this project
 	    (both in the project's local lib dirs and IVY cache) and all the files 
 	    generated from the build process.  Essentialy this target completely 
-	    resets the user's project workspace and IVY state.
+	    resets the user's project workspace to a fresh-checkout state as well 
+	    as makes like IVY had never been run.
 	    ====================================================================-->
   <target name="clean-all"
-          depends="clean,clean-jars,ivy-cleancache"
+          depends="clean,clean-jars,ivy-clean-cache,ivy-clean-local"
           description="Cleans all the generated/downloaded files" />
 
 
