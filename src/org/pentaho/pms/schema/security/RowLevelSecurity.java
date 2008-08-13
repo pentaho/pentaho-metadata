@@ -37,6 +37,8 @@ public class RowLevelSecurity implements Cloneable {
     NONE, GLOBAL, ROLEBASED
   }
 
+  private static final String EMPTY_STRING = "";
+
   private static final String CDATA_END = "]]>";
 
   private static final String CDATA_BEGIN = "<![CDATA[";
@@ -84,7 +86,7 @@ public class RowLevelSecurity implements Cloneable {
   /**
    * See {@link #getType()}. Type will tell you which of three options are in effect: no RLS, global, or role-based.
    */
-  private String globalConstraint;
+  private String globalConstraint = EMPTY_STRING;
 
   /**
    * See {@link #getType()}. Type will tell you which of three options are in effect: no RLS, global, or role-based.
@@ -104,12 +106,8 @@ public class RowLevelSecurity implements Cloneable {
   }
 
   public RowLevelSecurity(Type type, String globalConstraint, Map<SecurityOwner, String> roleBasedConstraintMap) {
-    this.globalConstraint = globalConstraint;
-    if (roleBasedConstraintMap != null) {
-      this.roleBasedConstraintMap = roleBasedConstraintMap;
-    } else {
-      this.roleBasedConstraintMap = new HashMap<SecurityOwner, String>();
-    }
+    setGlobalConstraint(globalConstraint);
+    setRoleBasedConstraintMap(roleBasedConstraintMap);
     this.type = type;
   }
 
@@ -167,25 +165,23 @@ public class RowLevelSecurity implements Cloneable {
     }
     xml.append(ELEM_NAME_END);
 
-    if (isGlobal()) {
+    // print global
+    xml.append(START_ELEM_NAME_BEGIN).append(ELEM_FORMULA).append(ELEM_NAME_END);
+    xml.append(CDATA_BEGIN).append(globalConstraint).append(CDATA_END);
+    xml.append(FINISH_ELEM_NAME_BEGIN).append(ELEM_FORMULA).append(ELEM_NAME_END);
+    // print role-based
+    xml.append(START_ELEM_NAME_BEGIN).append(ELEM_ENTRIES).append(ELEM_NAME_END);
+    for (Map.Entry<SecurityOwner, String> entry : roleBasedConstraintMap.entrySet()) {
+      xml.append(START_ELEM_NAME_BEGIN).append(ELEM_ENTRY).append(ELEM_NAME_END);
+      SecurityOwner owner = entry.getKey();
+      String formula = entry.getValue();
+      xml.append(owner.toXML());
       xml.append(START_ELEM_NAME_BEGIN).append(ELEM_FORMULA).append(ELEM_NAME_END);
-      xml.append(CDATA_BEGIN).append(globalConstraint).append(CDATA_END);
+      xml.append(CDATA_BEGIN).append(formula).append(CDATA_END);
       xml.append(FINISH_ELEM_NAME_BEGIN).append(ELEM_FORMULA).append(ELEM_NAME_END);
-    } else if (isRoleBased()) {
-      // print entries
-      xml.append(START_ELEM_NAME_BEGIN).append(ELEM_ENTRIES).append(ELEM_NAME_END);
-      for (Map.Entry<SecurityOwner, String> entry : roleBasedConstraintMap.entrySet()) {
-        xml.append(START_ELEM_NAME_BEGIN).append(ELEM_ENTRY).append(ELEM_NAME_END);
-        SecurityOwner owner = entry.getKey();
-        String formula = entry.getValue();
-        xml.append(owner.toXML());
-        xml.append(START_ELEM_NAME_BEGIN).append(ELEM_FORMULA).append(ELEM_NAME_END);
-        xml.append(CDATA_BEGIN).append(formula).append(CDATA_END);
-        xml.append(FINISH_ELEM_NAME_BEGIN).append(ELEM_FORMULA).append(ELEM_NAME_END);
-        xml.append(FINISH_ELEM_NAME_BEGIN).append(ELEM_ENTRY).append(ELEM_NAME_END);
-      }
-      xml.append(FINISH_ELEM_NAME_BEGIN).append(ELEM_ENTRIES).append(ELEM_NAME_END);
+      xml.append(FINISH_ELEM_NAME_BEGIN).append(ELEM_ENTRY).append(ELEM_NAME_END);
     }
+    xml.append(FINISH_ELEM_NAME_BEGIN).append(ELEM_ENTRIES).append(ELEM_NAME_END);
 
     // print rls end element
     xml.append(FINISH_ELEM_NAME_BEGIN).append(ELEM_ROW_LEVEL_SECURITY).append(ELEM_NAME_END);
@@ -196,27 +192,30 @@ public class RowLevelSecurity implements Cloneable {
   public RowLevelSecurity(Node rlsNode) throws Exception {
     String typeString = rlsNode.getAttributes().getNamedItem(ATTR_TYPE).getTextContent();
     if (ATTR_VALUE_GLOBAL.equals(typeString)) {
-      Node globalFormulaNode = XMLHandler.getSubNode(rlsNode, ELEM_FORMULA);
-      globalConstraint = globalFormulaNode.getTextContent();
       type = Type.GLOBAL;
     } else if (ATTR_VALUE_ROLE_BASED.equals(typeString)) {
-      Map<SecurityOwner, String> map = new HashMap<SecurityOwner, String>();
-      Node entriesNode = XMLHandler.getSubNode(rlsNode, ELEM_ENTRIES);
-      int entryCount = XMLHandler.countNodes(entriesNode, ELEM_ENTRY);
-      for (int i = 0; i < entryCount; i++) {
-        Node entryNode = XMLHandler.getSubNodeByNr(entriesNode, ELEM_ENTRY, i);
-        Node ownerNode = XMLHandler.getSubNode(entryNode, ELEM_OWNER);
-        // build owner using its node constructor
-        SecurityOwner owner = new SecurityOwner(ownerNode);
-        Node formulaNode = XMLHandler.getSubNode(entryNode, ELEM_FORMULA);
-        String formula = formulaNode.getTextContent();
-        map.put(owner, formula);
-      }
-      roleBasedConstraintMap = map;
       type = Type.ROLEBASED;
     } else {
       type = Type.NONE;
     }
+    // global
+    Node globalFormulaNode = XMLHandler.getSubNode(rlsNode, ELEM_FORMULA);
+    globalConstraint = globalFormulaNode.getTextContent();
+    // role-based
+    Map<SecurityOwner, String> map = new HashMap<SecurityOwner, String>();
+    Node entriesNode = XMLHandler.getSubNode(rlsNode, ELEM_ENTRIES);
+    int entryCount = XMLHandler.countNodes(entriesNode, ELEM_ENTRY);
+    for (int i = 0; i < entryCount; i++) {
+      Node entryNode = XMLHandler.getSubNodeByNr(entriesNode, ELEM_ENTRY, i);
+      Node ownerNode = XMLHandler.getSubNode(entryNode, ELEM_OWNER);
+      // build owner using its node constructor
+      SecurityOwner owner = new SecurityOwner(ownerNode);
+      Node formulaNode = XMLHandler.getSubNode(entryNode, ELEM_FORMULA);
+      String formula = formulaNode.getTextContent();
+      map.put(owner, formula);
+    }
+    roleBasedConstraintMap = map;
+
   }
 
   public static RowLevelSecurity fromXML(String value) throws Exception {
@@ -312,7 +311,11 @@ public class RowLevelSecurity implements Cloneable {
   }
 
   public void setGlobalConstraint(String globalConstraint) {
-    this.globalConstraint = globalConstraint;
+    if (globalConstraint != null) {
+      this.globalConstraint = globalConstraint;
+    } else {
+      this.globalConstraint = EMPTY_STRING;
+    }
   }
 
   public Map<SecurityOwner, String> getRoleBasedConstraintMap() {

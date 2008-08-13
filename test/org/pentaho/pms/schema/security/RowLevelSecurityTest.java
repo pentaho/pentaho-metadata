@@ -14,11 +14,11 @@ import org.junit.Test;
  */
 public class RowLevelSecurityTest {
 
-  private static final String XML_FRAG_NONE = "<row-level-security type=\"none\"></row-level-security>";
+  private static final String XML_FRAG_NONE = "<row-level-security type=\"none\"><formula><![CDATA[]]></formula><entries></entries></row-level-security>";
 
-  private static final String XML_FRAG_ROLE_BASED = "<row-level-security type=\"role-based\"><entries><entry><owner><type>role</type><name>Admin</name></owner><formula><![CDATA[TRUE()]]></formula></entry></entries></row-level-security>";
+  private static final String XML_FRAG_ROLE_BASED = "<row-level-security type=\"role-based\"><formula><![CDATA[]]></formula><entries><entry><owner><type>role</type><name>Admin</name></owner><formula><![CDATA[TRUE()]]></formula></entry></entries></row-level-security>";
 
-  private static final String XML_FRAG_GLOBAL = "<row-level-security type=\"global\"><formula><![CDATA[TRUE()]]></formula></row-level-security>";
+  private static final String XML_FRAG_GLOBAL = "<row-level-security type=\"global\"><formula><![CDATA[TRUE()]]></formula><entries></entries></row-level-security>";
 
   @Test
   public void testClone() throws Exception {
