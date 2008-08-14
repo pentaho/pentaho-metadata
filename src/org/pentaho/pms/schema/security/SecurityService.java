@@ -348,8 +348,8 @@ public class SecurityService extends ChangedFlag implements Cloneable {
     } catch (IOException e) {
       
       String msg = Messages.getString("SecurityService.ERROR_0004_ERROR_RETRIEVING_FILE_FROM_HTTP", e.getMessage()); //$NON-NLS-1$
-      log.logError(toString(), msg); 
-      log.logError(toString(), Const.getStackTracker(e));
+//      log.logError(toString(), msg); 
+//      log.logError(toString(), Const.getStackTracker(e));
       throw new PentahoMetadataException(msg, e); 
     
     }
