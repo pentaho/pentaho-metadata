@@ -81,6 +81,8 @@ public class RowLevelSecurity implements Cloneable {
 
   private static final String ATTR_QUOTE = "\"";
 
+  private static final String PARAM_QUOTE = "\"";
+
   private Type type;
 
   /**
@@ -238,7 +240,7 @@ public class RowLevelSecurity implements Cloneable {
       return roleMapToFormula();
     } else {
       // rls is disabled
-      return null;
+      return EMPTY_STRING;
     }
   }
 
@@ -249,9 +251,9 @@ public class RowLevelSecurity implements Cloneable {
       String formula = entry.getValue();
 
       StringBuilder formulaBuf = new StringBuilder();
-      formulaBuf.append(FUNC_AND).append(PARAM_LIST_BEGIN).append(FUNC_IN).append(PARAM_LIST_BEGIN).append(
-          owner.getOwnerName()).append(PARAM_SEPARATOR).append(
-          owner.getOwnerType() == SecurityOwner.OWNER_TYPE_ROLE ? FUNC_ROLES : FUNC_USER).append(PARAM_LIST_END)
+      formulaBuf.append(FUNC_AND).append(PARAM_LIST_BEGIN).append(FUNC_IN).append(PARAM_LIST_BEGIN).append(PARAM_QUOTE)
+          .append(owner.getOwnerName()).append(PARAM_QUOTE).append(PARAM_SEPARATOR).append(
+              owner.getOwnerType() == SecurityOwner.OWNER_TYPE_ROLE ? FUNC_ROLES : FUNC_USER).append(PARAM_LIST_END)
           .append(PARAM_SEPARATOR).append(formula).append(PARAM_LIST_END);
       pieces.add(formulaBuf.toString());
 
@@ -282,10 +284,10 @@ public class RowLevelSecurity implements Cloneable {
   }
 
   protected String expandFunctions(String formula, String user, List<String> roles) {
-    // "expand" USER() function
-    formula = formula.replaceAll("USER()", String.format("\"%s\"", user));
+    // "expand" USER() function (regex: escape parentheses and escape backslash that escapes parentheses
+    formula = formula.replaceAll("USER\\(\\)", String.format("\"%s\"", user));
 
-    // "expand" ROLES() function
+    // "expand" ROLES() function (regex: escape parentheses and escape backslash that escapes parentheses
     StringBuilder buf = new StringBuilder();
     int i = 0;
     for (String role : roles) {
@@ -295,7 +297,7 @@ public class RowLevelSecurity implements Cloneable {
       buf.append(String.format("\"%s\"", role));
       i++;
     }
-    return formula.replaceAll("ROLES()", buf.toString());
+    return formula.replaceAll("ROLES\\(\\)", buf.toString());
   }
 
   public Type getType() {
@@ -328,6 +330,14 @@ public class RowLevelSecurity implements Cloneable {
     } else {
       this.roleBasedConstraintMap = new HashMap<SecurityOwner, String>();
     }
+  }
+  
+  public static void main(String[] args) {
+    String formula = "OR(AND(IN(\"suzy\";USER());[BT_CUSTOMER_W_TER_CUSTOMER_W_TER.BC_CUSTOMER_W_TER_COUNTRY] = \"USA\"))";
+    // "expand" USER() function (regex: escape parentheses and escape backslash that escapes parentheses
+    formula = formula.replaceAll("USER\\(\\)", String.format("\"%s\"", "whatever"));
+
+    System.out.println(formula);
   }
 
 }

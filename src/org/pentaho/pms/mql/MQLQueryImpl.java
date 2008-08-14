@@ -24,6 +24,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.database.DatabaseMeta;
@@ -163,7 +164,7 @@ public class MQLQueryImpl implements MQLQuery {
     WhereCondition securityConstraint = null;
     if (cwmSchemaFactory != null) {
       String mqlSecurityConstraint = cwmSchemaFactory.generateRowLevelSecurityConstraint(model);
-      if (mqlSecurityConstraint != null) {
+      if (StringUtils.isNotBlank(mqlSecurityConstraint)) {
         securityConstraint = new WhereCondition(model, "AND", mqlSecurityConstraint);
       }
     }
