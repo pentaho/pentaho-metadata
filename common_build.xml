@@ -200,10 +200,10 @@
   <!--=======================================================================
 	    install-antcontrib
 	    
-	    Fetch ant-contrib jar and install ant tasks.
+	    (Fetches and) installs ant-contrib tasks.
 	    ====================================================================-->
   <target name="install-antcontrib"
-          depends="antcontrib.download"
+          depends="antcontrib.download-check"
           description="Fetch ant-contrib jar and install ant tasks">
     <taskdef resource="net/sf/antcontrib/antlib.xml">
       <classpath>
@@ -216,11 +216,33 @@
 
 
   <!--=======================================================================
+	    antcontrib.download-check
+	    
+	    Fetches ant-contrib from sourceforge if it is not already present
+	    ====================================================================-->
+  <target name="antcontrib.download-check" unless="offline">
+    <condition property="antcontrib.available">
+      <and>
+        <available file="${antcontrib.build.cache.dir}" />
+        <available classname="net.sf.antcontrib.logic.IfTask">
+          <classpath>
+            <fileset dir="${antcontrib.build.cache.dir}">
+              <include name="*.jar" />
+            </fileset>
+          </classpath>
+        </available>
+      </and>
+    </condition>
+    <antcall target="antcontrib.download" />
+  </target>
+
+
+  <!--=======================================================================
 	    antcontrib.download
 	    
-	    Fetch ant-contrib jar from sourceforge
+	    Fetches ant-contrib from sourceforge
 	    ====================================================================-->
-  <target name="antcontrib.download" unless="offline">
+  <target name="antcontrib.download" unless="antcontrib.available">
     <mkdir dir="${tmp.build.cache.dir}" />
     <get src="http://downloads.sourceforge.net/ant-contrib/ant-contrib-1.0b3-bin.zip"
          dest="${tmp.build.cache.dir}/antcontrib.zip"
@@ -237,6 +259,7 @@
     </copy>
   </target>
 
+
   <!--=======================================================================
 	    init
 	    
@@ -252,27 +275,12 @@
 
 
   <!--=======================================================================
-	    download-ivy
-	    
-	    Automatically downloads the ivy jar file for use by ant.  If the user
-	    is offline and does not have the IVY jar, an error message will print
-	    and the build will fail.
-	    ====================================================================-->
-  <target name="download-ivy" description="Downloads IVY jar file" unless="offline">
-    <mkdir dir="${ivy.build.cache.dir}" />
-    <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
-         dest="${ivy.jar.file}"
-         usetimestamp="true" />
-  </target>
-
-
-  <!--=======================================================================
 	    install-ivy
 	    
-	    Installs the ivy jar for use by this ant script
+	    (Fetches and) installs the IVY jar for use by this ant script
 	    ====================================================================-->
   <target name="install-ivy"
-          depends="install-antcontrib,download-ivy"
+          depends="install-antcontrib,ivy.download-check"
           description="Installs IVY tasks for use by this build process">
     <if>
       <or>
@@ -294,6 +302,42 @@
     </if>
   </target>
 
+
+  <!--=======================================================================
+	    ivy.download-check
+	    
+	    Fetch IVY jar from sourceforge if it is not already present
+	    ====================================================================-->
+  <target name="ivy.download-check" unless="offline">
+    <condition property="ivy.available">
+      <and>
+        <available file="${ivy.build.cache.dir}" />
+        <available classname="org.apache.ivy.ant.IvyTask">
+          <classpath>
+            <fileset dir="${ivy.build.cache.dir}">
+              <include name="*.jar" />
+            </fileset>
+          </classpath>
+        </available>
+      </and>
+    </condition>
+    <antcall target="ivy.download" />
+  </target>
+
+
+  <!--=======================================================================
+	    ivy.download
+	    
+	    Automatically downloads the IVY jar file for use by ant.  If the user
+	    is offline and does not have the IVY jar, an error message will print
+	    and the build will fail.
+	    ====================================================================-->
+  <target name="ivy.download" description="Downloads IVY jar file" unless="ivy.available">
+    <mkdir dir="${ivy.build.cache.dir}" />
+    <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
+         dest="${ivy.jar.file}"
+         usetimestamp="true" />
+  </target>
 
   <!--=======================================================================
 	    resolve
@@ -491,17 +535,6 @@
 
 
   <!--=======================================================================
-	    clean-local
-	    
-	    Removes all the libraries that are currently stored in the user's
-	    local repository. 
-	    ====================================================================-->
-  <target name="clean-local" depends="install-ivy" description="Cleans the local ivy repository">
-    <delete dir="${ivy.local.default.root}/${ivy.artifact.group}/${ivy.artifact.id}/${project.revision}" />
-  </target>
-
-
-  <!--=======================================================================
 	    clean-jars
 	    
 	    Removes all the libraries that have been downloaded for this project
@@ -540,14 +573,10 @@
 	    clean-all
 	    
 	    Removes all the libraries that have been downloaded for this project
-	    (both in the project's local lib dirs and IVY cache) and all the files 
-	    generated from the build process.  Essentialy this target completely 
-	    resets the user's project workspace to a fresh-checkout state as well 
-	    as makes like IVY had never been run.
+	    in the workspace's lib dirs as well as all the files 
+	    generated from the build process.
 	    ====================================================================-->
-  <target name="clean-all"
-          depends="clean,clean-jars,ivy-clean-cache,ivy-clean-local"
-          description="Cleans all the generated/downloaded files" />
+  <target name="clean-all" depends="clean,clean-jars" description="Cleans all the generated and dependency files" />
 
 
   <!--=======================================================================
@@ -596,7 +625,7 @@
 	      - compile.post     : anything needed after the compile is done 
 	    ====================================================================-->
   <target name="compile"
-          depends="init, resolve, compile.pre, compile.compile, compile.src_copy, compile.res_copy, compile.lic_copy, compile.post"
+          depends="init, compile.pre, compile.compile, compile.src_copy, compile.res_copy, compile.lic_copy, compile.post"
           description="Performs all the steps to prepare the bin directory with a complete compilation" />
 
 
@@ -789,7 +818,7 @@
 	    and coverage artifacts
 	    ====================================================================-->
   <target name="continuous"
-          depends="cobertura,dist-javadoc,dist"
+          depends="clean-all,resolve,cobertura,dist-javadoc,dist"
           description="Runs a typical continuous integration build" />
 
 
@@ -799,7 +828,7 @@
 	    Runs a lightweight continuous integration build, producing no artifacts for distrubution.
 	    ====================================================================-->
   <target name="continuous-lite"
-          depends="cobertura,javadoc"
+          depends="clean-all,resolve,cobertura,javadoc"
           description="Runs a lightweight continuous integration build." />
 
 
