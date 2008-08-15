@@ -17,8 +17,8 @@
     
     FORMATTING: 
     	ALIGNMENT: indent=2 spaces and wrap lines longer than 120 chars
-    	NAMING: targets meant for executed by a user are named single-word or hyphenated.  Internal targets
-    	        are named with '.'.
+    	NAMING: targets intended for execution by a user are named single-word
+    	        or hyphenated.  Internal targets use '.' notation.
     
     TO GET STARTED with your project, you will need this file in 
           your project's root directory along with three additional files:
@@ -220,7 +220,7 @@
 	    
 	    Fetches ant-contrib from sourceforge if it is not already present
 	    ====================================================================-->
-  <target name="antcontrib.download-check" unless="offline">
+  <target name="antcontrib.download-check">
     <condition property="antcontrib.available">
       <and>
         <available file="${antcontrib.build.cache.dir}" />
@@ -283,12 +283,9 @@
           depends="install-antcontrib,ivy.download-check"
           description="Installs IVY tasks for use by this build process">
     <if>
-      <or>
-        <istrue value="${offline}" />
-        <istrue value="${ivy.isinstalled}" />
-      </or>
+      <istrue value="${ivy.isinstalled}" />
       <then>
-        <echo message="Skipping IVY install.  You are either in offline mode or IVY tasks have already been installed by the build" />
+        <echo message="Skipping IVY install.  IVY has already been configured by the build" />
       </then>
       <else>
         <echo message="Installing IVY..." />
@@ -308,7 +305,7 @@
 	    
 	    Fetch IVY jar from sourceforge if it is not already present
 	    ====================================================================-->
-  <target name="ivy.download-check" unless="offline">
+  <target name="ivy.download-check">
     <condition property="ivy.available">
       <and>
         <available file="${ivy.build.cache.dir}" />
@@ -328,11 +325,9 @@
   <!--=======================================================================
 	    ivy.download
 	    
-	    Automatically downloads the IVY jar file for use by ant.  If the user
-	    is offline and does not have the IVY jar, an error message will print
-	    and the build will fail.
+	    Downloads the IVY jar file for use by ant.
 	    ====================================================================-->
-  <target name="ivy.download" description="Downloads IVY jar file" unless="ivy.available">
+  <target name="ivy.download" unless="ivy.available">
     <mkdir dir="${ivy.build.cache.dir}" />
     <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
          dest="${ivy.jar.file}"
@@ -346,32 +341,18 @@
 	    file), this task will retrieve the needed files and place them into 
 	    the defined directories.
 	    ====================================================================-->
-  <target name="resolve"
-          depends="resolve-default, resolve-test"
-          unless="offline"
-          description="Retrieves all the dependent libraries" />
+  <target name="resolve" depends="resolve-default, resolve-test" description="Retrieves all the dependent libraries" />
 
-  <target name="resolve-init" depends="install-ivy, resolve.offline-message" unless="offline">
+  <target name="resolve-init" depends="install-ivy">
     <ivy:resolve file="ivy.xml" />
   </target>
 
-  <target name="resolve-default"
-          depends="resolve-init"
-          unless="offline"
-          description="Retrieves default configuration dependencies">
+  <target name="resolve-default" depends="resolve-init" description="Retrieves default configuration dependencies">
     <ivy:retrieve conf="default" pattern="${lib.dir}/[module]-[revision].[ext]" />
   </target>
 
-  <target name="resolve-test"
-          depends="resolve-init"
-          unless="offline"
-          description="Retrieves test configuration dependencies">
+  <target name="resolve-test" depends="resolve-init" description="Retrieves test configuration dependencies">
     <ivy:retrieve conf="test" pattern="${testlib.dir}/[module]-[revision].[ext]" />
-  </target>
-
-  <target name="resolve.offline-message" if="offline">
-    <echo level="warning"
-          message="Skipping IVY resolve since you are in offline mode.  This may cause your build to fail due to unsatisfied dependencies." />
   </target>
 
 
@@ -405,10 +386,7 @@
 	    
 	    Allows ivy to report on the dependencies for this project 
 	    ====================================================================-->
-  <target name="report"
-          depends="install-ivy"
-          unless="offline"
-          description="Uses IVY to report on the dependency information">
+  <target name="report" depends="install-ivy" description="Uses IVY to report on the dependency information">
     <ivy:resolve file="ivy.xml" />
     <ivy:report conf="default" />
   </target>
@@ -956,7 +934,7 @@
 	    
 	    Downloads and installs Cobertura ant tasks
 	    ====================================================================-->
-  <target name="cobertura.install" depends="install-ivy,cobertura.download,cobertura.offline-available-check">
+  <target name="cobertura.install" depends="cobertura.download">
     <path id="cobertura.classpath">
       <fileset dir="${cobertura.build.cache.dir}">
         <include name="*.jar" />
@@ -964,19 +942,35 @@
     </path>
     <taskdef classpathref="cobertura.classpath" resource="tasks.properties" />
   </target>
-  <target name="cobertura.offline-available-check" if="offline">
-    <available property="cobertura.available" file="${cobertura.build.cache.dir}/cobertura.jar" />
-    <fail unless="cobertura.available"
-          message="You are offline and Cobertura jars were not found in ${cobertura.build.cache.dir}.  Cannot execute cobertura target." />
-  </target>
 
+
+  <!--=======================================================================
+	    cobertura.download-check
+	    
+	    Fetches Cobertura from sourceforge if it is not already present
+	    ====================================================================-->
+  <target name="cobertura.download-check">
+    <condition property="cobertura.available">
+      <and>
+        <available file="${cobertura.build.cache.dir}" />
+        <available classname="net.sourceforge.cobertura.ant.InstrumentTask">
+          <classpath>
+            <fileset dir="${cobertura.build.cache.dir}">
+              <include name="*.jar" />
+            </fileset>
+          </classpath>
+        </available>
+      </and>
+    </condition>
+    <antcall target="cobertura.download" />
+  </target>
 
   <!--=======================================================================
 	    cobertura.download
 	    
-	    Downloads Cobertura jar via IVY
+	    Retrieves Cobertura jar via IVY
 	    ====================================================================-->
-  <target name="cobertura.download" unless="offline">
+  <target name="cobertura.download" depends="install-ivy" unless="cobertura.available">
     <ivy:retrieve inline="true"
                   organisation="net.sourceforge.cobertura"
                   module="cobertura"
