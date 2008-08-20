@@ -229,6 +229,71 @@ public class MQLQueryTest extends TestCase {
         "PMSFormulaContext.ERROR_0002 - Invalid number of parameters for function NOT, expecting 1 params" //$NON-NLS-1$
     );
   }
+  
+  public void testBooleanFunctions() {
+    handleFormula(ordersModel, "MySQL", //$NON-NLS-1$ 
+        "TRUE()" //$NON-NLS-1$
+        ,"TRUE" //$NON-NLS-1$
+      );
+    handleFormula(ordersModel, "MySQL", //$NON-NLS-1$ 
+        "FALSE()" //$NON-NLS-1$
+        ,"FALSE" //$NON-NLS-1$
+      );
+    
+    handleFormula(ordersModel, "Oracle", //$NON-NLS-1$
+        "TRUE()" //$NON-NLS-1$
+        ,"1" //$NON-NLS-1$
+      );
+    handleFormula(ordersModel, "Oracle", //$NON-NLS-1$
+        "FALSE()" //$NON-NLS-1$
+        ,"0" //$NON-NLS-1$
+      );
+
+    handleFormula(ordersModel, "Hypersonic", //$NON-NLS-1$ 
+        "TRUE()" //$NON-NLS-1$
+        ,"TRUE" //$NON-NLS-1$
+      );
+    handleFormula(ordersModel, "Hypersonic", //$NON-NLS-1$ 
+        "FALSE()" //$NON-NLS-1$
+        ,"FALSE" //$NON-NLS-1$
+      );
+
+    handleFormula(ordersModel, "DB2", //$NON-NLS-1$ 
+        "TRUE()" //$NON-NLS-1$
+        ,"1" //$NON-NLS-1$
+      );
+    handleFormula(ordersModel, "DB2", //$NON-NLS-1$ 
+        "FALSE()" //$NON-NLS-1$
+        ,"0" //$NON-NLS-1$
+      );
+
+    handleFormula(ordersModel, "MSSQL", //$NON-NLS-1$ 
+        "TRUE()" //$NON-NLS-1$
+        ,"1" //$NON-NLS-1$
+      );
+    handleFormula(ordersModel, "MSSQL", //$NON-NLS-1$ 
+        "FALSE()" //$NON-NLS-1$
+        ,"0" //$NON-NLS-1$
+      );
+    
+    handleFormula(ordersModel, "MSAccess", //$NON-NLS-1$ 
+        "TRUE()" //$NON-NLS-1$
+        ,"TRUE" //$NON-NLS-1$
+      );
+    handleFormula(ordersModel, "MSAccess", //$NON-NLS-1$ 
+        "FALSE()" //$NON-NLS-1$
+        ,"FALSE" //$NON-NLS-1$
+      );
+    
+    handleFormula(ordersModel, "PostgreSQL", //$NON-NLS-1$ 
+        "TRUE()" //$NON-NLS-1$
+        ,"TRUE" //$NON-NLS-1$
+      );
+    handleFormula(ordersModel, "PostgreSQL", //$NON-NLS-1$ 
+        "FALSE()" //$NON-NLS-1$
+        ,"FALSE" //$NON-NLS-1$
+      );
+  }
 
   public void testDateFunctionNow() {
     handleFormula(ordersModel, "Oracle", //$NON-NLS-1$

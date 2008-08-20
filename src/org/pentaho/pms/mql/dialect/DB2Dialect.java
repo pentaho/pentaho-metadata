@@ -31,6 +31,20 @@ public class DB2Dialect extends DefaultSQLDialect {
         sb.append(sql);
       }
     });
+    
+    // db2 specific boolean data type
+    
+    supportedFunctions.put("TRUE", new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_FUNCTION, "TRUE()", 0) { //$NON-NLS-1$ //$NON-NLS-2$
+      public void generateFunctionSQL(FormulaTraversalInterface formula, StringBuffer sb, String locale, FormulaFunction f) throws PentahoMetadataException {
+        sb.append("1");
+      }
+    });
+
+    supportedFunctions.put("FALSE", new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_FUNCTION, "FALSE()", 0) { //$NON-NLS-1$ //$NON-NLS-2$
+      public void generateFunctionSQL(FormulaTraversalInterface formula, StringBuffer sb, String locale, FormulaFunction f) throws PentahoMetadataException {
+        sb.append("0");
+      }
+    });
   }
 
   /**

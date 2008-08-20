@@ -236,6 +236,19 @@ public class DefaultSQLDialect implements SQLDialectInterface {
       }
     });
     
+    // boolean data type
+    
+    supportedFunctions.put("TRUE", new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_FUNCTION, "TRUE()", 0) { //$NON-NLS-1$ //$NON-NLS-2$
+      public void generateFunctionSQL(FormulaTraversalInterface formula, StringBuffer sb, String locale, FormulaFunction f) throws PentahoMetadataException {
+        sb.append("TRUE");
+      }
+    });
+
+    supportedFunctions.put("FALSE", new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_FUNCTION, "FALSE()", 0) { //$NON-NLS-1$ //$NON-NLS-2$
+      public void generateFunctionSQL(FormulaTraversalInterface formula, StringBuffer sb, String locale, FormulaFunction f) throws PentahoMetadataException {
+        sb.append("FALSE");
+      }
+    });
   }
   
   /**
