@@ -11,7 +11,7 @@
     <dependency org="commons-collections" name="commons-collections" rev="3.2" />
     <dependency org="commons-lang" name="commons-lang" rev="2.2" />
     <dependency org="commons-logging" name="commons-logging" rev="1.1" />
-    <dependency org="commons-pool" name="commons-pool" rev="1.3" />
+    <dependency org="commons-pool" name="commons-pool" rev="1.2" />
     <dependency org="commons-codec" name="commons-codec" rev="1.3" />
     <dependency org="commons-httpclient" name="commons-httpclient" rev="3.0.1">
         <!-- exclude junit 3.8.1 dependency -->
@@ -22,8 +22,8 @@
     <dependency org="commons-vfs" name="commons-vfs" rev="1.0" />
     <dependency org="dom4j" name="dom4j" rev="1.6.1" transitive="false" />
     <dependency org="org.springframework" name="spring-core" rev="2.0" transitive="false" />
-    <dependency org="simple-jndi" name="simple-jndi" rev="0.11.1" />
-    <dependency org="jfree" name="jcommon" rev="1.0.8"/>
+    <dependency org="simple-jndi" name="simple-jndi" rev="0.11.3" />
+    <dependency org="jfree" name="jcommon" rev="1.0.12"/>
 
     <dependency org="junit" name="junit" rev="4.4" conf="test->default" />
     
