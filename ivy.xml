@@ -15,16 +15,17 @@
     <dependency org="commons-codec" name="commons-codec" rev="1.3" />
     <dependency org="commons-httpclient" name="commons-httpclient" rev="3.0.1">
         <!-- exclude junit 3.8.1 dependency -->
-        <exclude org="junit" name="junit"/>
+      <exclude org="junit" name="junit" />
     </dependency>
     <dependency org="commons-dbcp" name="commons-dbcp" rev="1.2.1" />
     <dependency org="commons-net" name="commons-net" rev="1.4.1" />
     <dependency org="commons-vfs" name="commons-vfs" rev="1.0" />
-    <dependency org="dom4j" name="dom4j" rev="1.6.1" transitive="false" />
+    <dependency org="dom4j" name="dom4j" rev="1.6.1">
+      <exclude org="xml-apis" name="xml-apis" />
+    </dependency>
     <dependency org="org.springframework" name="spring-core" rev="2.0" transitive="false" />
     <dependency org="simple-jndi" name="simple-jndi" rev="0.11.3" />
-    <dependency org="jfree" name="jcommon" rev="1.0.12"/>
-
+    <dependency org="jfree" name="jcommon" rev="1.0.12" />
     <dependency org="junit" name="junit" rev="4.4" conf="test->default" />
     
     <!-- external dependencies hosted by pentaho -->
