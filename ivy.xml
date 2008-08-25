@@ -40,7 +40,7 @@
 
     <!--  internal dependencies -->
     <dependency org="pentaho" name="pentaho-connections" rev="2.0-SNAPSHOT" changing="true" />
-    <dependency org="pentaho.kettle" name="kettle-engine" rev="3.0.3" />
+    <dependency org="pentaho.kettle" name="kettle-engine" rev="3.1.0" />
     <dependency org="pentaho.kettle" name="kettle-core" rev="3.1.0" />
     <dependency org="pentaho" name="pentaho-cwm" rev="1.5.4" />
     <dependency org="pentaho.reporting" name="libformula" rev="0.1.12" />
