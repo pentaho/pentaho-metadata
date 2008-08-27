@@ -431,12 +431,22 @@
 
 
   <!--=======================================================================
+        ivy.deliver
+    
+        Creates a publishable version of the ivy dependencies file, ivy.xml
+        ====================================================================-->
+  <target name="ivy.deliver" depends="install-ivy,init,resolve">
+    <ivy:deliver conf="*(public)" deliverpattern="${dist.dir}/ivy.xml" />
+  </target>
+
+
+  <!--=======================================================================
 	    publish-pentaho-nojar
 	    
 	    Publishes the jar file for this project to a Maven2 repository.
 	    ====================================================================-->
   <target name="publish-pentaho-nojar"
-          depends="install-antcontrib,create-pom"
+          depends="install-antcontrib,create-pom,ivy.deliver"
           description="Publishes the jar file to a Maven2 repository">
     <sequential>
       <fail message="No jar found at: ${dist.dir}/${ivy.artifact.id}-${project.revision}.jar">
@@ -460,7 +470,7 @@
             <arg value="-DartifactId=${ivy.artifact.id}" />
             <arg value="-Dversion=${project.revision}" />
             <arg value="-Dpackaging=ivy.xml" />
-            <arg value="-Dfile=ivy.xml" />
+            <arg value="-Dfile=${dist.dir}/ivy.xml" />
           </exec>
           <!-- second, publish the jar file -->
           <exec executable="cmd">
@@ -483,7 +493,7 @@
             <arg value="-DartifactId=${ivy.artifact.id}" />
             <arg value="-Dversion=${project.revision}" />
             <arg value="-Dpackaging=ivy.xml" />
-            <arg value="-Dfile=ivy.xml" />
+            <arg value="-Dfile=${dist.dir}/ivy.xml" />
           </exec>
           <!-- second, publish the jar file -->
           <exec executable="mvn">
