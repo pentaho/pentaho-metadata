@@ -271,6 +271,7 @@
     <mkdir dir="${dist.dir}" />
     <mkdir dir="${lib.dir}" />
     <mkdir dir="${devlib.dir}" />
+    <mkdir dir="${testlib.dir}" />
   </target>
 
 
@@ -607,13 +608,12 @@
 	          the build.xml which will include this file)...
 	      - compile.pre      : anything needed to prep for compile
 	      - compile.compile  : the actual compilation step
-	      - compile.src_copy : copying the source into the bin directory
 	      - compile.res_copy : copying the resources into the bin directory
 	      - compile.lic_copy : copying the license information into the bin directory
 	      - compile.post     : anything needed after the compile is done 
 	    ====================================================================-->
   <target name="compile"
-          depends="init, compile.pre, compile.compile, compile.src_copy, compile.res_copy, compile.lic_copy, compile.post"
+          depends="init, compile.pre, compile.compile, compile.res_copy, compile.lic_copy, compile.post"
           description="Performs all the steps to prepare the bin directory with a complete compilation" />
 
 
@@ -642,23 +642,6 @@
       </classpath>
       <src path="${src.dir}" />
     </javac>
-  </target>
-
-
-  <!--=======================================================================
-	    compile.src_copy
-	    
-	    Copies the source files to the bin directory
-	    NOTE: if the dont.copy.source variable exists, this step will be
-	          skipped!
-	    ====================================================================-->
-  <target name="compile.src_copy"
-          depends="init"
-          unless="dont.copy.source"
-          description="Copies the source to the bin directory">
-    <copy todir="${classes.dir}" flatten="false">
-      <fileset dir="${src.dir}" />
-    </copy>
   </target>
 
 
@@ -714,6 +697,38 @@
 
 
   <!--=======================================================================
+	    dist-source
+	    
+	    Generates zip and targz distributions of the javadoc
+	    ====================================================================-->
+  <target name="dist-source"
+          depends="source.zip, source.targz"
+          description="Generates zip and targz distributions of the project source" />
+
+
+  <!--=======================================================================
+	    source.zip
+	    
+	    Creates a zip of the project source for distribution
+	    ====================================================================-->
+  <target name="source.zip" depends="init">
+    <jar jarfile="${dist.dir}/${ivy.artifact.id}-${project.revision}-source.zip" basedir="${src.dir}" />
+  </target>
+
+
+  <!--=======================================================================
+	    source.targz
+	    
+	    Creates a gzipped tar of the project source for distribution
+	    ====================================================================-->
+  <target name="source.targz" depends="init">
+    <tar compression="gzip"
+         destfile="${dist.dir}/${ivy.artifact.id}-${project.revision}-source.tar.gz"
+         basedir="${src.dir}" />
+  </target>
+
+
+  <!--=======================================================================
 	    clean-tests
 	    
 	    Removes all files related to tests
@@ -730,6 +745,7 @@
 	    ====================================================================-->
   <target name="init-tests" depends="clean-tests">
     <mkdir dir="${testclasses.dir}" />
+    <mkdir dir="${testsrc.dir}" />
   </target>
 
 
@@ -748,6 +764,13 @@
       <src path="${testsrc.dir}" />
       <classpath refid="test.classpath" />
     </javac>
+
+    <!-- Copy the non-java files from the source directory to the test classes directory -->
+    <copy todir="${testclasses.dir}">
+      <fileset dir="${testsrc.dir}">
+        <exclude name="**/*.java" />
+      </fileset>
+    </copy>
   </target>
 
 
@@ -1129,8 +1152,18 @@
           depends="install-pentaho-ant-tasks,init"
           description="Creates the Eclipse .classpath file">
     <dot-classpath>
-      <!-- This classpath is the compile classpath from commonbuild -->
-      <classpath refid="classpath" />
+      <!-- Include all lib dirs -->
+      <classpath>
+        <fileset dir="${lib.dir}">
+          <include name="*.jar" />
+        </fileset>
+        <fileset dir="${devlib.dir}">
+          <include name="*.jar" />
+        </fileset>
+        <fileset dir="${testlib.dir}">
+          <include name="*.jar" />
+        </fileset>
+      </classpath>
     </dot-classpath>
   </target>
 
