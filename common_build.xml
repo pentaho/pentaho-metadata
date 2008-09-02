@@ -172,7 +172,20 @@
   <property name="license.dir"
             value="${basedir}"
             description="Base directory where this project's license files reside" />
+  <property name="res.dir"
+            value="${basedir}/res"
+            description="Directory that holds resources not included in the source tree" />
 
+  <!-- Set the os property -->
+  <condition property="isLinux">
+    <os family="unix" />
+  </condition>
+  <condition property="isWindows">
+    <os family="windows" />
+  </condition>
+  <condition property="isMac">
+    <os family="mac" />
+  </condition>
 
   <!-- Setup the compile classpath -->
   <path id="classpath">
@@ -335,6 +348,7 @@
          usetimestamp="true" />
   </target>
 
+
   <!--=======================================================================
 	    resolve
 	    
@@ -344,15 +358,15 @@
 	    ====================================================================-->
   <target name="resolve" depends="resolve-default, resolve-test" description="Retrieves all the dependent libraries" />
 
-  <target name="resolve-init" depends="install-ivy">
-    <ivy:resolve file="ivy.xml" />
-  </target>
+  <target name="resolve-init" depends="install-ivy" />
 
   <target name="resolve-default" depends="resolve-init" description="Retrieves default configuration dependencies">
+    <ivy:resolve file="ivy.xml" conf="default" />
     <ivy:retrieve conf="default" pattern="${lib.dir}/[module]-[revision].[ext]" />
   </target>
 
   <target name="resolve-test" depends="resolve-init" description="Retrieves test configuration dependencies">
+    <ivy:resolve file="ivy.xml" conf="test" />
     <ivy:retrieve conf="test" pattern="${testlib.dir}/[module]-[revision].[ext]" />
   </target>
 
@@ -608,12 +622,13 @@
 	          the build.xml which will include this file)...
 	      - compile.pre      : anything needed to prep for compile
 	      - compile.compile  : the actual compilation step
+	      - compile.src_copy : copying the source into the bin directory
 	      - compile.res_copy : copying the resources into the bin directory
 	      - compile.lic_copy : copying the license information into the bin directory
 	      - compile.post     : anything needed after the compile is done 
 	    ====================================================================-->
   <target name="compile"
-          depends="init, compile.pre, compile.compile, compile.res_copy, compile.lic_copy, compile.post"
+          depends="init, compile.pre, compile.compile, compile.src_copy, compile.res_copy, compile.lic_copy, compile.post"
           description="Performs all the steps to prepare the bin directory with a complete compilation" />
 
 
@@ -648,9 +663,48 @@
   <!--=======================================================================
 	    compile.res_copy
 	    
-	    Copies any needed resources into the bin directory
+	    Copies any needed resources into the classes directory.  Will not
+	    duplicate copying of resources from src tree (handled by compile.src_copy
+	    if jar.include.source is set.
 	    ====================================================================-->
-  <target name="compile.res_copy" description="Copies the required resource files after a compile" />
+  <target name="compile.res_copy" depends="install-antcontrib">
+    <if>
+      <available file="${res.dir}" />
+      <then>
+        <copy todir="${classes.dir}">
+          <fileset dir="${res.dir}" />
+        </copy>
+      </then>
+    </if>
+
+    <if>
+      <not>
+        <isset property="jar.include.source" />
+      </not>
+      <then>
+        <copy todir="${classes.dir}" flatten="false">
+          <fileset dir="${src.dir}" excludes="**/*.java" />
+        </copy>
+      </then>
+    </if>
+  </target>
+
+
+  <!--=======================================================================
+	    compile.src_copy
+	    
+	    Copies the source files to the bin directory
+	    NOTE: if the dont.copy.source variable exists, this step will be
+	          skipped!
+	    ====================================================================-->
+  <target name="compile.src_copy"
+          depends="init"
+          if="jar.include.source"
+          description="Copies the source to the bin directory">
+    <copy todir="${classes.dir}" flatten="false">
+      <fileset dir="${src.dir}" />
+    </copy>
+  </target>
 
 
   <!--=======================================================================
@@ -712,7 +766,7 @@
 	    Creates a zip of the project source for distribution
 	    ====================================================================-->
   <target name="source.zip" depends="init">
-    <jar jarfile="${dist.dir}/${ivy.artifact.id}-${project.revision}-source.zip" basedir="${src.dir}" />
+    <jar jarfile="${dist.dir}/${ivy.artifact.id}-${project.revision}-sources.zip" basedir="${src.dir}" />
   </target>
 
 
@@ -723,7 +777,7 @@
 	    ====================================================================-->
   <target name="source.targz" depends="init">
     <tar compression="gzip"
-         destfile="${dist.dir}/${ivy.artifact.id}-${project.revision}-source.tar.gz"
+         destfile="${dist.dir}/${ivy.artifact.id}-${project.revision}-sources.tar.gz"
          basedir="${src.dir}" />
   </target>
 
@@ -829,8 +883,19 @@
 	    and coverage artifacts
 	    ====================================================================-->
   <target name="continuous"
-          depends="clean-all,resolve,cobertura,dist-javadoc,dist"
+          depends="clean-all,resolve,cobertura,dist-javadoc,dist-source,dist"
           description="Runs a typical continuous integration build" />
+  
+  
+  <!--=======================================================================
+	    continuous-testless
+	    
+	    Runs a typical continuous integration build including project dist, javadoc, test, 
+	    and coverage artifacts
+	    ====================================================================-->
+  <target name="continuous-testless"
+          depends="clean-all,resolve,dist-javadoc,dist-source,dist"
+          description="Runs a typical testless continuous integration build" />
 
 
   <!--=======================================================================
