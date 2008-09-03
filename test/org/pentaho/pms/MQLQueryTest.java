@@ -85,6 +85,7 @@ public class MQLQueryTest extends TestCase {
     CWM cwm = null;
     try {
       cwm = CWM.getInstance("Orders", true); //$NON-NLS-1$
+      assertNotNull(cwm);
       cwm.importFromXMI("samples/orders.xmi"); //$NON-NLS-1$      
     } catch (Exception e) {
       e.printStackTrace();
