@@ -286,7 +286,7 @@ public class SecurityService extends ChangedFlag implements Cloneable {
     }
 
     HttpClient client = new HttpClient();
-    log.logBasic(toString(), Messages.getString("SecurityService.INFO_CONNECTING_TO_URL", urlToUse)); //$NON-NLS-1$
+    log.logDebug(toString(), Messages.getString("SecurityService.INFO_CONNECTING_TO_URL", urlToUse)); //$NON-NLS-1$
 
     // Assume we are using a proxy if proxyHostName is set? 
     // TODO: Mod ui to include check for enable or disable proxy; rather than rely on proxyhostname (post v1)
