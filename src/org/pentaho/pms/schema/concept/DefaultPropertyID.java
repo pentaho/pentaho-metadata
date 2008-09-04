@@ -12,6 +12,8 @@
 */
 package org.pentaho.pms.schema.concept;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
@@ -43,6 +45,7 @@ import org.pentaho.pms.schema.security.Security;
 
 public class DefaultPropertyID
 {
+    private static final Log logger = LogFactory.getLog(DefaultPropertyID.class);
     private ConceptPropertyType type;
     private String id;
     private String description;
@@ -145,7 +148,15 @@ public class DefaultPropertyID
      */
     public ConceptPropertyInterface getDefaultValue()
     {
-        return defaultValue;
+        try
+        {
+          return (ConceptPropertyInterface) defaultValue.clone();
+        }
+        catch (CloneNotSupportedException e)
+        {
+          logger.error("an exception occurred", e);
+          return null;
+        }
     }
 
     /**
