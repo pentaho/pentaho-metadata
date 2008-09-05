@@ -27,7 +27,7 @@ import org.pentaho.pms.mql.dialect.SQLQueryModel.OrderType;
  *
  */
 public class SQLQueryTest extends TestCase {
-  
+  public static final String lineSep = System.getProperty("line.separator");
   public void testSQL() {
     SQLQueryModel query = new SQLQueryModel();
     query.addSelection("t1.c1", "col1");
@@ -48,27 +48,27 @@ public class SQLQueryTest extends TestCase {
     
     String sql = dialect.generateSelectStatement(query);
     assertEquals(
-        "SELECT DISTINCT \n" + 
-        "          t1.c1 AS col1\n" + 
-        "         ,sum(t1.c2) AS col2\n" +
-        "         ,t1.c3 AS col3\n" + 
-        "         ,t1.c4 AS col4\n" + 
-        "FROM \n" + 
-        "          t1\n" + 
-        "WHERE \n" + 
-        "          (\n" + 
-        "             col1 < 3\n" + 
-        "          )\n" + 
-        "GROUP BY \n" + 
-        "          col1\n" + 
-        "HAVING \n" + 
-        "          (\n" + 
-        "             col2 > 10\n" + 
-        "          )\n" + 
-        "ORDER BY \n" + 
-        "          col2\n" +
-        "         ,col3 ASC\n" +
-        "         ,col4 DESC\n"
+        "SELECT DISTINCT " + lineSep +  
+        "          t1.c1 AS col1" + lineSep +  
+        "         ,sum(t1.c2) AS col2" + lineSep + 
+        "         ,t1.c3 AS col3" + lineSep +  
+        "         ,t1.c4 AS col4" + lineSep +  
+        "FROM " + lineSep +  
+        "          t1" + lineSep +  
+        "WHERE " + lineSep +  
+        "          (" + lineSep +  
+        "             col1 < 3" + lineSep +  
+        "          )" + lineSep +  
+        "GROUP BY " + lineSep +  
+        "          col1" + lineSep +  
+        "HAVING " + lineSep +  
+        "          (" + lineSep +  
+        "             col2 > 10" + lineSep +  
+        "          )" + lineSep +  
+        "ORDER BY " + lineSep +  
+        "          col2" + lineSep + 
+        "         ,col3 ASC" + lineSep + 
+        "         ,col4 DESC" + lineSep
         ,
         sql);
     
@@ -99,31 +99,31 @@ public class SQLQueryTest extends TestCase {
     // printOutJava(sql);
     
     assertEquals(
-        "SELECT DISTINCT \n" + 
-        "          t1.c1 AS col1\n" + 
-        "         ,sum(t1.c2) AS col2\n" +
-        "         ,t1.c3 AS col3\n" + 
-        "         ,t1.c4 AS col4\n" + 
-        "FROM \n" + 
-        "          t1\n" + 
-        "WHERE \n" + 
-        "        (\n" + 
-        "          'role' in ('role', 'role2')\n" + 
-        "        ) AND (\n" +         
-        "          (\n" + 
-        "             col1 < 3\n" + 
-        "          )\n" +
-        "        )\n" +         
-        "GROUP BY \n" + 
-        "          col1\n" + 
-        "HAVING \n" + 
-        "          (\n" + 
-        "             col2 > 10\n" + 
-        "          )\n" + 
-        "ORDER BY \n" + 
-        "          col2\n" +
-        "         ,col3 ASC\n" +
-        "         ,col4 DESC\n"
+        "SELECT DISTINCT " + lineSep +  
+        "          t1.c1 AS col1" + lineSep +  
+        "         ,sum(t1.c2) AS col2" + lineSep + 
+        "         ,t1.c3 AS col3" + lineSep +  
+        "         ,t1.c4 AS col4" + lineSep +  
+        "FROM " + lineSep +  
+        "          t1" + lineSep +  
+        "WHERE " + lineSep +  
+        "        (" + lineSep +  
+        "          'role' in ('role', 'role2')" + lineSep +  
+        "        ) AND (" + lineSep +          
+        "          (" + lineSep +  
+        "             col1 < 3" + lineSep +  
+        "          )" + lineSep + 
+        "        )" + lineSep +          
+        "GROUP BY " + lineSep +  
+        "          col1" + lineSep +  
+        "HAVING " + lineSep +  
+        "          (" + lineSep +  
+        "             col2 > 10" + lineSep +  
+        "          )" + lineSep +  
+        "ORDER BY " + lineSep +  
+        "          col2" + lineSep + 
+        "         ,col3 ASC" + lineSep + 
+        "         ,col4 DESC" + lineSep
         ,
         sql);
 
@@ -151,23 +151,23 @@ public class SQLQueryTest extends TestCase {
     // printOutJava(sql);
     
     assertEquals(
-        "SELECT DISTINCT \n" + 
-        "          t1.c1 AS col1\n" + 
-        "         ,sum(t1.c2) AS col2\n" +
-        "         ,t1.c3 AS col3\n" + 
-        "         ,t1.c4 AS col4\n" + 
-        "FROM \n" + 
-        "          t1\n" + 
-        "WHERE \n" + 
-        "        (\n" + 
-        "          'role' in ('role', 'role2')\n" + 
-        "        )\n" +         
-        "GROUP BY \n" + 
-        "          col1\n" + 
-        "ORDER BY \n" + 
-        "          col2\n" +
-        "         ,col3 ASC\n" +
-        "         ,col4 DESC\n"
+        "SELECT DISTINCT " + lineSep +  
+        "          t1.c1 AS col1" + lineSep +  
+        "         ,sum(t1.c2) AS col2" + lineSep + 
+        "         ,t1.c3 AS col3" + lineSep +  
+        "         ,t1.c4 AS col4" + lineSep +  
+        "FROM " + lineSep +  
+        "          t1" + lineSep +  
+        "WHERE " + lineSep +  
+        "        (" + lineSep +  
+        "          'role' in ('role', 'role2')" + lineSep +  
+        "        )" + lineSep +          
+        "GROUP BY " + lineSep +  
+        "          col1" + lineSep +  
+        "ORDER BY " + lineSep +  
+        "          col2" + lineSep + 
+        "         ,col3 ASC" + lineSep + 
+        "         ,col4 DESC" + lineSep
         ,
         sql);
   }
@@ -194,23 +194,23 @@ public class SQLQueryTest extends TestCase {
     // printOutJava(sql);
     
     assertEquals(
-        "SELECT DISTINCT \n" + 
-        "          t1.c1 AS col1\n" + 
-        "         ,sum(t1.c2) AS col2\n" +
-        "         ,t1.c3 AS col3\n" + 
-        "         ,t1.c4 AS col4\n" + 
-        "FROM \n" + 
-        "          t1\n" +        
-        "GROUP BY \n" + 
-        "          col1\n" + 
-        "HAVING \n" + 
-        "        (\n" + 
-        "          'role' in ('role', 'role2')\n" + 
-        "        )\n" +         
-        "ORDER BY \n" + 
-        "          col2\n" +
-        "         ,col3 ASC\n" +
-        "         ,col4 DESC\n"
+        "SELECT DISTINCT " + lineSep +  
+        "          t1.c1 AS col1" + lineSep +  
+        "         ,sum(t1.c2) AS col2" + lineSep + 
+        "         ,t1.c3 AS col3" + lineSep +  
+        "         ,t1.c4 AS col4" + lineSep +  
+        "FROM " + lineSep +  
+        "          t1" + lineSep +         
+        "GROUP BY " + lineSep +  
+        "          col1" + lineSep +  
+        "HAVING " + lineSep +  
+        "        (" + lineSep +  
+        "          'role' in ('role', 'role2')" + lineSep +  
+        "        )" + lineSep +          
+        "ORDER BY " + lineSep +  
+        "          col2" + lineSep + 
+        "         ,col3 ASC" + lineSep + 
+        "         ,col4 DESC" + lineSep
         ,
         sql);
   }  
@@ -240,31 +240,31 @@ public class SQLQueryTest extends TestCase {
     // printOutJava(sql);
     
     assertEquals(
-        "SELECT DISTINCT \n" + 
-        "          t1.c1 AS col1\n" + 
-        "         ,sum(t1.c2) AS col2\n" +
-        "         ,t1.c3 AS col3\n" + 
-        "         ,t1.c4 AS col4\n" + 
-        "FROM \n" + 
-        "          t1\n" + 
-        "WHERE \n" + 
-        "          (\n" + 
-        "             col1 < 3\n" + 
-        "          )\n" +
-        "GROUP BY \n" + 
-        "          col1\n" + 
-        "HAVING \n" + 
-        "        (\n" + 
-        "          'role' in ('role', 'role2')\n" + 
-        "        ) AND (\n" + 
-        "          (\n" + 
-        "             col2 > 10\n" + 
-        "          )\n" + 
-        "        )\n" +  
-        "ORDER BY \n" + 
-        "          col2\n" +
-        "         ,col3 ASC\n" +
-        "         ,col4 DESC\n"
+        "SELECT DISTINCT " + lineSep +  
+        "          t1.c1 AS col1" + lineSep +  
+        "         ,sum(t1.c2) AS col2" + lineSep + 
+        "         ,t1.c3 AS col3" + lineSep +  
+        "         ,t1.c4 AS col4" + lineSep +  
+        "FROM " + lineSep +  
+        "          t1" + lineSep +  
+        "WHERE " + lineSep +  
+        "          (" + lineSep +  
+        "             col1 < 3" + lineSep +  
+        "          )" + lineSep + 
+        "GROUP BY " + lineSep +  
+        "          col1" + lineSep +  
+        "HAVING " + lineSep +  
+        "        (" + lineSep +  
+        "          'role' in ('role', 'role2')" + lineSep +  
+        "        ) AND (" + lineSep +  
+        "          (" + lineSep +  
+        "             col2 > 10" + lineSep +  
+        "          )" + lineSep +  
+        "        )" + lineSep +   
+        "ORDER BY " + lineSep +  
+        "          col2" + lineSep + 
+        "         ,col3 ASC" + lineSep + 
+        "         ,col4 DESC" + lineSep
         ,
         sql);
 
