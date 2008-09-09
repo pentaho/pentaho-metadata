@@ -117,10 +117,10 @@
             description="The URL to the current release of SVN Ant" />
   <property name="svnant.use-javahl"
             value="false"
-            description="Set this to true if you want svnant to prefer JNI JavaHL binding over the command line client for native svn support" />
+            description="Prefer JNI JavaHL binding over the command line client for native svn support" />
   <property name="svnant.use-svnkit"
-            value="false"
-            description="Set this to true if you want svnant to prefer SVNKit binding over the command line client for native svn support" />
+            value="true"
+            description="Prefer SVNKit binding over the command line client for native svn support (defaults to true)" />
 
   <!-- Test properties -->
   <property name="testsrc.dir" value="${basedir}/test-src" description="Directory that hosts the test source files" />
@@ -577,7 +577,30 @@
         ====================================================================-->
   <target name="publish-pentaho"
           depends="dist, publish-pentaho-nojar"
-          description="Builds and publishes the jar file to a Maven2 repository" />
+          description="Builds and publishes the jar file to a Maven2 repository">
+  </target>
+
+
+  <!--=======================================================================
+	    publish-pentaho-nojar
+	    
+	    Publishes the jar file for this project to a Maven2 repository.
+	    ====================================================================-->
+  <target name="publish-pentaho-nojar"
+          depends="install-antcontrib,create-pom,ivy.deliver"
+          description="Publishes the jar file to a Maven2 repository">
+    <antcall target="maven-publish-dependencies">
+      <param name="publish.groupId" value="${ivy.artifact.group}" />
+      <param name="publish.artifactId" value="${ivy.artifact.id}" />
+      <param name="publish.version" value="${project.revision}" />
+      <param name="publish.file" value="${ivy.artifact.ivypathname}" />
+    </antcall>
+
+    <antcall target="maven-publish-artifact">
+      <param name="publish.pomFile" value="${ivy.artifact.pomfile}" />
+      <param name="publish.file" value="${dist.dir}/${ivy.artifact.id}-${project.revision}.jar" />
+    </antcall>
+  </target>
 
 
   <!--=======================================================================
@@ -591,73 +614,93 @@
 
 
   <!--=======================================================================
-	    publish-pentaho-nojar
+	    maven-publish-dependencies
 	    
-	    Publishes the jar file for this project to a Maven2 repository.
+	    A function that deploys an ivy.xml file to a maven repository
 	    ====================================================================-->
-  <target name="publish-pentaho-nojar"
-          depends="install-antcontrib,create-pom,ivy.deliver"
-          description="Publishes the jar file to a Maven2 repository">
+  <target name="maven-publish-dependencies" description="A function that deploys an ivy.xml file to a maven repository">
     <sequential>
-      <fail message="No jar found at: ${dist.dir}/${ivy.artifact.id}-${project.revision}.jar">
+      <fail message="No file found at: ${publish.file}">
         <condition>
           <not>
-            <available file="${dist.dir}/${ivy.artifact.id}-${project.revision}.jar" />
+            <available file="${publish.file}" />
           </not>
         </condition>
       </fail>
+      <echo message="Publishing ${publish.file} to ${ivy.repository.publish}..." />
       <if>
-        <os family="windows" />
+        <isset property="isWindows" />
         <then>
-          <!-- first, publish the ivy.xml file -->
           <exec executable="cmd">
             <arg value="/c" />
             <arg value="mvn.bat" />
             <arg value="deploy:deploy-file" />
             <arg value="-DrepositoryId=${ivy.repository.id}" />
             <arg value="-Durl=${ivy.repository.publish}" />
-            <arg value="-DgroupId=${ivy.artifact.group}" />
-            <arg value="-DartifactId=${ivy.artifact.id}" />
-            <arg value="-Dversion=${project.revision}" />
+            <arg value="-DgroupId=${publish.groupId}" />
+            <arg value="-DartifactId=${publish.artifactId}" />
+            <arg value="-Dversion=${publish.version}" />
             <arg value="-Dpackaging=ivy.xml" />
-            <arg value="-Dfile=${ivy.artifact.ivypathname}" />
-          </exec>
-          <!-- second, publish the jar file -->
-          <exec executable="cmd">
-            <arg value="/c" />
-            <arg value="mvn.bat" />
-            <arg value="deploy:deploy-file" />
-            <arg value="-DrepositoryId=${ivy.repository.id}" />
-            <arg value="-Durl=${ivy.repository.publish}" />
-            <arg value="-DpomFile=${ivy.artifact.pomfile}" />
-            <arg value="-Dfile=${dist.dir}/${ivy.artifact.id}-${project.revision}.jar" />
+            <arg value="-Dfile=${publish.file}" />
           </exec>
         </then>
         <else>
-          <!-- first, publish the ivy.xml file -->
           <exec executable="mvn">
             <arg value="deploy:deploy-file" />
             <arg value="-DrepositoryId=${ivy.repository.id}" />
             <arg value="-Durl=${ivy.repository.publish}" />
-            <arg value="-DgroupId=${ivy.artifact.group}" />
-            <arg value="-DartifactId=${ivy.artifact.id}" />
-            <arg value="-Dversion=${project.revision}" />
+            <arg value="-DgroupId=${publish.groupId}" />
+            <arg value="-DartifactId=${publish.artifactId}" />
+            <arg value="-Dversion=${publish.version}" />
             <arg value="-Dpackaging=ivy.xml" />
-            <arg value="-Dfile=${ivy.artifact.ivypathname}" />
-          </exec>
-          <!-- second, publish the jar file -->
-          <exec executable="mvn">
-            <arg value="deploy:deploy-file" />
-            <arg value="-DrepositoryId=${ivy.repository.id}" />
-            <arg value="-Durl=${ivy.repository.publish}" />
-            <arg value="-DpomFile=${ivy.artifact.pomfile}" />
-            <arg value="-Dfile=${dist.dir}/${ivy.artifact.id}-${project.revision}.jar" />
+            <arg value="-Dfile=${publish.file}" />
           </exec>
         </else>
       </if>
     </sequential>
   </target>
 
+
+  <!--=======================================================================
+	    maven-publish-artifact
+	    
+	    A function that deploys an artifact to a maven repository
+	    ====================================================================-->
+  <target name="maven-publish-artifact">
+    <sequential>
+      <fail message="No file found at: ${publish.file}">
+        <condition>
+          <not>
+            <available file="${publish.file}" />
+          </not>
+        </condition>
+      </fail>
+      <echo message="Publishing ${publish.file} to ${ivy.repository.publish}..." />
+      <if>
+        <isset property="isWindows" />
+        <then>
+          <exec executable="cmd">
+            <arg value="/c" />
+            <arg value="mvn.bat" />
+            <arg value="deploy:deploy-file" />
+            <arg value="-DrepositoryId=${ivy.repository.id}" />
+            <arg value="-Durl=${ivy.repository.publish}" />
+            <arg value="-DpomFile=${publish.pomFile}" />
+            <arg value="-Dfile=${publish.file}" />
+          </exec>
+        </then>
+        <else>
+          <exec executable="mvn">
+            <arg value="deploy:deploy-file" />
+            <arg value="-DrepositoryId=${ivy.repository.id}" />
+            <arg value="-Durl=${ivy.repository.publish}" />
+            <arg value="-DpomFile=${publish.pomFile}" />
+            <arg value="-Dfile=${publish.file}" />
+          </exec>
+        </else>
+      </if>
+    </sequential>
+  </target>
 
   <!--=======================================================================
 	    create-pom
