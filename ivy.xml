@@ -25,7 +25,7 @@
     </dependency>
     <dependency org="org.springframework" name="spring-core" rev="2.0" transitive="false" />
     <dependency org="simple-jndi" name="simple-jndi" rev="0.11.3" />
-    <dependency org="jfree" name="jcommon" rev="1.0.12" />
+    <dependency org="jfree" name="jcommon" rev="1.0.14" />
     <dependency org="junit" name="junit" rev="4.4" conf="test->default" />
     
     <!-- external dependencies hosted by pentaho -->
