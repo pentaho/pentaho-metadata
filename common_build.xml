@@ -121,6 +121,9 @@
   <property name="svnant.use-svnkit"
             value="true"
             description="Prefer SVNKit binding over the command line client for native svn support (defaults to true)" />
+	<property name="default.svn.revision"
+	          value="developer"
+	          description="The default svn revision number to use. If this property is blank, it will be computed."/>
 
   <!-- Test properties -->
   <property name="testsrc.dir" value="${basedir}/test-src" description="Directory that hosts the test source files" />
@@ -366,6 +369,7 @@
     ====================================================================-->
   <target name="install-svnant"
           depends="install-antcontrib, svnant.download-check"
+  	      unless="svn.revision"
           description="Installs SVN ANT tasks for use by this build process">
     <if>
       <istrue value="${svnant.isinstalled}" />
@@ -393,24 +397,50 @@
     <svn javahl="${svnant.use-javahl}" svnkit="${svnant.use-svnkit}">
       <wcVersion path="." />
     </svn>
-    <echo message="Subversion repository url: ${repository.url}" />
   </target>
 
 
   <!--=======================================================================
         svn-revision
     
-        Tests SVN by printing out the repository
+        Determines the SVN revision number. If the default value is defined
+        and is not blank, then it is used. Otherwise the SVN revision number
+        is computed and used.
         ====================================================================-->
   <target name="svn-revision"
-          depends="install-svnant"
+          depends="default-svn-revision, compute-svn-revision"
           description="Prints and sets the SVN revision for the repository at the current dir">
+  	<echo message="SVN Revision Number being used: ${svn.revision}"/>
+  </target>
 
+  <!--=======================================================================
+        default-svn-revision
+    
+        Determines if the default svn revision number should be used and uses
+        it if it in not set to blank.
+        ====================================================================-->
+	<target name="default-svn-revision" depends="install-antcontrib" unless="svn.revision">
+		<if>
+			<equals arg1="${default.svn.revision}" arg2=""/>
+			<else>
+				<echo message="Using default revision number: ${default.svn.revision}"/>
+				<property name="svn.revision" value="${default.svn.revision}"/>
+			</else>
+		</if>
+	</target>
+	
+  <!--=======================================================================
+        compute-svn-revision
+    
+        Computes the SVN revision number.
+        ====================================================================-->
+	<target name="compute-svn-revision" depends="install-svnant" unless="svn.revision">
+		<echo message="Computing the SVN Revision number..."/>
     <svn javahl="${svnant.use-javahl}" svnkit="${svnant.use-svnkit}">
       <status path="." revisionProperty="svn.revision" />
     </svn>
     <echo message="Subversion repository revision: ${svn.revision}" />
-  </target>
+	</target>
 
 
   <!--=======================================================================
