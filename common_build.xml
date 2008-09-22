@@ -506,9 +506,13 @@
 	    file), this task will retrieve the needed files and place them into 
 	    the defined directories.
 	    ====================================================================-->
-  <target name="resolve" depends="clean-jars, resolve-default, resolve-test" description="Retrieves all the dependent libraries" />
+  <target name="resolve" depends="resolve-default, resolve-test" description="Retrieves all the dependent libraries" />
 
-  <target name="resolve-init" depends="install-ivy" />
+  <target name="resolve-init" unless="resolve-init.skip" depends="install-ivy" >
+  	<!-- If this is the 1st time through resolve-init, then we need to clean up the jars -->
+  	<antcall target="clean-jars"/>
+  	<property name="resolve-init.skip" value=""/>
+	</target>
 
   <target name="resolve-default" depends="resolve-init" description="Retrieves default configuration dependencies">
     <ivy:resolve file="ivy.xml" conf="default" />
