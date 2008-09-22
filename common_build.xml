@@ -506,7 +506,7 @@
 	    file), this task will retrieve the needed files and place them into 
 	    the defined directories.
 	    ====================================================================-->
-  <target name="resolve" depends="resolve-default, resolve-test" description="Retrieves all the dependent libraries" />
+  <target name="resolve" depends="clean-jars, resolve-default, resolve-test" description="Retrieves all the dependent libraries" />
 
   <target name="resolve-init" depends="install-ivy" />
 
