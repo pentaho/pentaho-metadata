@@ -39,4 +39,13 @@ public class MSAccessDialect extends DefaultSQLDialect {
   public String getDateSQL(int year, int month, int day) {
     return "#" + displayAsTwoOrMoreDigits(month) + "/" + displayAsTwoOrMoreDigits(day) + "/" + year + "#"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
   }
+  
+  /**
+   * MSAccess has a 64 character limit on table name length
+   * 
+   * @return max table name length
+   */
+  public int getMaxTableNameLength() {
+    return 64;
+  }
 }

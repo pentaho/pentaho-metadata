@@ -101,7 +101,7 @@ public class MQLQueryTest extends TestCase {
     // retrieve various databases here
     DatabaseMeta databaseMeta = new DatabaseMeta("", databaseToTest, "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
     try {
-      PMSFormula formula = new PMSFormula(model, databaseMeta, mqlFormula);
+      PMSFormula formula = new PMSFormula(model, databaseMeta, mqlFormula, null);
       formula.parseAndValidate();
       String sql = formula.generateSQL("en_US"); //$NON-NLS-1$
       assertNotNull(sql);
@@ -118,7 +118,7 @@ public class MQLQueryTest extends TestCase {
     // retrieve various databases here
     DatabaseMeta databaseMeta = new DatabaseMeta("", databaseToTest, "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
     try {
-      PMSFormula formula = new PMSFormula(model, databaseMeta, mqlFormula);
+      PMSFormula formula = new PMSFormula(model, databaseMeta, mqlFormula, null);
       formula.parseAndValidate();
       formula.generateSQL("en_US"); //$NON-NLS-1$
       fail();
@@ -132,7 +132,7 @@ public class MQLQueryTest extends TestCase {
     // retrieve various databases here
     DatabaseMeta databaseMeta = new DatabaseMeta("", databaseToTest, "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
     try {
-      PMSFormula formula = new PMSFormula(model, table, databaseMeta, mqlFormula);
+      PMSFormula formula = new PMSFormula(model, table, databaseMeta, mqlFormula, null);
       formula.parseAndValidate();
       String sql = formula.generateSQL("en_US"); //$NON-NLS-1$
       assertNotNull(sql);

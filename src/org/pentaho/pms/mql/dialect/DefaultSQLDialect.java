@@ -827,4 +827,13 @@ public class DefaultSQLDialect implements SQLDialectInterface {
     
     return sql.toString();
   }
+  
+  /**
+   * default the max table name length to a very large number.
+   * 
+   * @return max table name length
+   */
+  public int getMaxTableNameLength() {
+    return Integer.MAX_VALUE;
+  }
 }

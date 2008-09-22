@@ -62,4 +62,13 @@ public class OracleDialect extends DefaultSQLDialect {
        quoteStringLiteral(year + "-" + displayAsTwoOrMoreDigits(month) + "-" + displayAsTwoOrMoreDigits(day)) + //$NON-NLS-1$ //$NON-NLS-2$
        "," + quoteStringLiteral("YYYY-MM-DD") + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
   }
+  
+  /**
+   * Oracle has a 30 character limit on table name length
+   * 
+   * @return max table name length
+   */
+  public int getMaxTableNameLength() {
+    return 30;
+  }
 }

@@ -34,12 +34,14 @@ package org.pentaho.pms.mql;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
+import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.util.Const;
@@ -85,7 +87,7 @@ public class WhereCondition extends ConceptUtilityBase implements ConceptUtility
       throws PentahoMetadataException {
     this.operator = operator;
     this.condition = condition;
-    this.formula = new PMSFormula(model, databaseMeta, condition);
+    this.formula = new PMSFormula(model, databaseMeta, condition, null);
     formula.parseAndValidate();
   }
 
@@ -96,7 +98,7 @@ public class WhereCondition extends ConceptUtilityBase implements ConceptUtility
   public WhereCondition(BusinessModel model, String operator, String condition) throws PentahoMetadataException {
     this.operator = operator;
     this.condition = condition;
-    this.formula = new PMSFormula(model, condition);
+    this.formula = new PMSFormula(model, condition, null);
     formula.parseAndValidate();
   }
 

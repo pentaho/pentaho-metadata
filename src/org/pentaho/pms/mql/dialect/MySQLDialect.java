@@ -39,4 +39,13 @@ public class MySQLDialect extends DefaultSQLDialect {
            quoteStringLiteral(year + "-" + displayAsTwoOrMoreDigits(month) + "-" + displayAsTwoOrMoreDigits(day)) + //$NON-NLS-1$ //$NON-NLS-2$
            ")"; //$NON-NLS-1$
   }
+  
+  /**
+   * MYSQL has a 64 character limit on table name length
+   * 
+   * @return max table name length
+   */
+  public int getMaxTableNameLength() {
+    return 64;
+  }
 }

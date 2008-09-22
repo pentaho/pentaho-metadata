@@ -98,4 +98,9 @@ public interface SQLDialectInterface {
    * @return dialect specific sql 
    */
   public String generateSelectStatement(SQLQueryModel model);
+  
+  /**
+   * Maximum Table Name Length
+   */
+  public int getMaxTableNameLength();
 }

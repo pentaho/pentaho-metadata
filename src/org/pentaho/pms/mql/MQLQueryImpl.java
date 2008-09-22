@@ -165,7 +165,7 @@ public class MQLQueryImpl implements MQLQuery {
     if (cwmSchemaFactory != null) {
       String mqlSecurityConstraint = cwmSchemaFactory.generateRowLevelSecurityConstraint(model);
       if (StringUtils.isNotBlank(mqlSecurityConstraint)) {
-        securityConstraint = new WhereCondition(model, "AND", mqlSecurityConstraint);
+        securityConstraint = new WhereCondition(model,  getDatabaseMeta(), "AND", mqlSecurityConstraint);
       }
     }
     

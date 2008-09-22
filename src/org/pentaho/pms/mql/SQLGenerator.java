@@ -1,6 +1,7 @@
 package org.pentaho.pms.mql;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -72,7 +73,7 @@ public class SQLGenerator {
    * @param locale locale string
    * @param columnsMap map of column aliases to populate
    */
-  public void generateSelect(SQLQueryModel query, BusinessModel model, DatabaseMeta databaseMeta, List<Selection> selections, boolean disableDistinct, boolean group, String locale, Map<String, String> columnsMap) {
+  public void generateSelect(SQLQueryModel query, BusinessModel model, DatabaseMeta databaseMeta, List<Selection> selections, boolean disableDistinct, boolean group, String locale, Map<BusinessTable, String> tableAliases, Map<String, String> columnsMap) {
     query.setDistinct(!disableDistinct && !group);
     for (int i = 0; i < selections.size(); i++) {
       // in some database implementations, the "as" name has a finite length;
@@ -86,7 +87,7 @@ public class SQLGenerator {
       }else{
         alias = databaseMeta.quoteField(selections.get(i).getBusinessColumn().getId());
       }
-      SQLAndTables sqlAndTables = getBusinessColumnSQL(model, selections.get(i).getBusinessColumn(), databaseMeta, locale);
+      SQLAndTables sqlAndTables = getBusinessColumnSQL(model, selections.get(i).getBusinessColumn(), tableAliases, databaseMeta, locale);
       query.addSelection(sqlAndTables.getSql(), alias);
     }
   }
@@ -105,7 +106,7 @@ public class SQLGenerator {
    * @param databaseMeta database metadata
    * @param locale locale string
    */
-  public void generateFromAndWhere(SQLQueryModel query, List<BusinessTable> usedBusinessTables, BusinessModel model, Path path, List<WhereCondition> conditions, DatabaseMeta databaseMeta, String locale) throws PentahoMetadataException {
+  public void generateFromAndWhere(SQLQueryModel query, List<BusinessTable> usedBusinessTables, BusinessModel model, Path path, List<WhereCondition> conditions, Map<BusinessTable, String> tableAliases, DatabaseMeta databaseMeta, String locale) throws PentahoMetadataException {
 
     // FROM TABLES
     for (int i = 0; i < usedBusinessTables.size(); i++) {
@@ -116,14 +117,14 @@ public class SQLGenerator {
       }
       String tableName = databaseMeta.quoteField(businessTable.getTargetTable());
       query.addTable(databaseMeta.getSchemaTableCombination(schemaName, tableName),
-          databaseMeta.quoteField(businessTable.getId()));
+          databaseMeta.quoteField(tableAliases.get(businessTable)));
     }
     
     // JOIN CONDITIONS
     if (path != null) {
       for (int i = 0; i < path.size(); i++) {
         RelationshipMeta relation = path.getRelationship(i);
-        String joinFormula = getJoin(model, relation, databaseMeta, locale);
+        String joinFormula = getJoin(model, relation, tableAliases, databaseMeta, locale);
         String joinOrderKey = relation.getJoinOrderKey();
         JoinType joinType;
         switch(relation.getJoinType()) {
@@ -147,6 +148,10 @@ public class SQLGenerator {
     if (conditions != null) {
       boolean first = true;
       for (WhereCondition condition : conditions) {
+        
+        // configure formula to use table aliases
+        condition.getPMSFormula().setTableAliases(tableAliases);
+        
         // The ones with aggregates in it are for the HAVING clause
         if (!condition.hasAggregate()) {
           
@@ -170,7 +175,7 @@ public class SQLGenerator {
    * @param databaseMeta database info
    * @param locale locale string
    */
-  public void generateGroupBy(SQLQueryModel query, BusinessModel model, List<Selection> selections, DatabaseMeta databaseMeta, String locale) {
+  public void generateGroupBy(SQLQueryModel query, BusinessModel model, List<Selection> selections, Map<BusinessTable, String> tableAliases, DatabaseMeta databaseMeta, String locale) {
     // can be moved to selection loop
     for (Selection selection : selections) {
       BusinessColumn businessColumn = selection.getBusinessColumn();
@@ -178,7 +183,7 @@ public class SQLGenerator {
       // Check if the column has any nested aggregation in there like a calculated column : SUM(a)/SUM(b) with no aggregation set.
       //
       if (!hasFactsInIt(model, businessColumn, databaseMeta, locale)) {
-    	SQLAndTables sqlAndTables = getBusinessColumnSQL(model, businessColumn, databaseMeta, locale);
+    	SQLAndTables sqlAndTables = getBusinessColumnSQL(model, businessColumn, tableAliases, databaseMeta, locale);
         query.addGroupBy(sqlAndTables.getSql(), null);
       }
     }
@@ -193,7 +198,7 @@ public class SQLGenerator {
    * @param databaseMeta database info
    * @param locale locale string
    */
-  public void generateOrderBy(SQLQueryModel query, BusinessModel model, List<OrderBy> orderBy, DatabaseMeta databaseMeta, String locale, Map<String,String> columnsMap) {
+  public void generateOrderBy(SQLQueryModel query, BusinessModel model, List<OrderBy> orderBy, DatabaseMeta databaseMeta, String locale, Map<BusinessTable, String> tableAliases, Map<String,String> columnsMap) {
     if (orderBy != null) {
       for (OrderBy orderItem : orderBy) {
         BusinessColumn businessColumn = orderItem.getSelection().getBusinessColumn();
@@ -215,10 +220,47 @@ public class SQLGenerator {
 	        	}
 	        }
         }
-        SQLAndTables sqlAndTables = getBusinessColumnSQL(model, businessColumn, databaseMeta, locale);
+        SQLAndTables sqlAndTables = getBusinessColumnSQL(model, businessColumn, tableAliases, databaseMeta, locale);
         query.addOrderBy(sqlAndTables.getSql(), alias, !orderItem.isAscending() ? OrderType.DESCENDING : null); //$NON-NLS-1$
       }
     }
+  }
+  
+  private static String genString(String base, int val) {
+    if (val < 10) {
+      return base + "0" + val;
+    }
+    return base + val;
+  }
+  
+  /**
+   * this method generates a unique alias name, limited to a specific length
+   * 
+   * @param alias The name of the original alias to use
+   * @param maxLength the maximum length the alias can be
+   * @param existingAliases existing aliases
+   * 
+   * @return
+   */
+  public static String generateUniqueAlias(String alias, int maxLength, Collection<String> existingAliases) {
+    if (alias.length() <= maxLength) {
+      if (!existingAliases.contains(alias)) {
+        return alias;
+      } else {
+        if (alias.length() > maxLength - 2) {
+          alias = alias.substring(0, maxLength - 2);
+        }
+      }
+    } else {
+      alias = alias.substring(0, maxLength - 2);
+    }
+
+    int id = 1;
+    String aliasWithId = genString(alias, id);
+    while (existingAliases.contains(aliasWithId)) {
+      aliasWithId = genString(alias, ++id);
+    }
+    return aliasWithId;
   }
   
   /**
@@ -269,16 +311,29 @@ public class SQLGenerator {
 
     if (usedBusinessTables.size() > 0) {
 
+      // generate tableAliases mapping
+      
+      int maxAliasNameWidth = SQLDialectFactory.getSQLDialect(databaseMeta).getMaxTableNameLength();
+      Map<BusinessTable, String> tableAliases = new HashMap<BusinessTable, String>();
+      for (BusinessTable table : usedBusinessTables) {
+        String uniqueAlias = generateUniqueAlias(table.getId(), maxAliasNameWidth, tableAliases.values());
+        tableAliases.put(table, uniqueAlias);
+      }
+      
       boolean group = hasFactsInIt(model, selections, conditions, databaseMeta, locale);
 
-      generateSelect(query, model, databaseMeta, selections, disableDistinct, group, locale, columnsMap);
-      generateFromAndWhere(query, usedBusinessTables, model, path, conditions, databaseMeta, locale);
+      generateSelect(query, model, databaseMeta, selections, disableDistinct, group, locale, tableAliases, columnsMap);
+      generateFromAndWhere(query, usedBusinessTables, model, path, conditions, tableAliases, databaseMeta, locale);
       if (group) {
-        generateGroupBy(query, model, selections, databaseMeta, locale);
+        generateGroupBy(query, model, selections, tableAliases, databaseMeta, locale);
       }
-      generateOrderBy(query, model, orderBy, databaseMeta, locale, columnsMap);
+      generateOrderBy(query, model, orderBy, databaseMeta, locale, tableAliases, columnsMap);
       
       if (securityConstraint != null) {
+        // apply current table aliases
+        securityConstraint.getPMSFormula().setTableAliases(tableAliases);
+        
+        // generate sql
         String sqlFormula = securityConstraint.getPMSFormula().generateSQL(locale);
         query.setSecurityConstraint(sqlFormula, securityConstraint.hasAggregate());
       }
@@ -308,7 +363,9 @@ public class SQLGenerator {
       // If we want to know all the tables involved in the query, we need to parse all the formula first
       // TODO: We re-use the static method below, maybe there is a better way to clean this up a bit.
       //
-      SQLAndTables sqlAndTables = getBusinessColumnSQL(model, selection.getBusinessColumn(), databaseMeta, locale);
+      
+      
+      SQLAndTables sqlAndTables = getBusinessColumnSQL(model, selection.getBusinessColumn(), null, databaseMeta, locale);
       
   	  // Add the involved tables to the list...
   	  //
@@ -332,7 +389,7 @@ public class SQLGenerator {
     // Figure out which tables are involved in the ORDER BY
     //
     for(OrderBy order : orderBy) {
-    	SQLAndTables sqlAndTables = getBusinessColumnSQL(model, order.getSelection().getBusinessColumn(), databaseMeta, locale);
+    	SQLAndTables sqlAndTables = getBusinessColumnSQL(model, order.getSelection().getBusinessColumn(), null, databaseMeta, locale);
     	
     	// Add the involved tables to the list...
     	//
@@ -401,7 +458,7 @@ public class SQLGenerator {
 
 	  // Parse the formula in the business column to see which tables and columns are involved...
       //
-      SQLAndTables sqlAndTables = getBusinessColumnSQL(model, businessColumn, databaseMeta, locale);
+      SQLAndTables sqlAndTables = getBusinessColumnSQL(model, businessColumn, null, databaseMeta, locale);
       for (BusinessColumn column : sqlAndTables.getUsedColumns()) {
 	      if (column.hasAggregate()) {
 	        return true;
@@ -559,14 +616,14 @@ public class SQLGenerator {
     return retval;
   }
 
-  public static SQLAndTables getBusinessColumnSQL(BusinessModel businessModel, BusinessColumn column, DatabaseMeta databaseMeta, String locale)
+  public static SQLAndTables getBusinessColumnSQL(BusinessModel businessModel, BusinessColumn column, Map<BusinessTable, String> tableAliases, DatabaseMeta databaseMeta, String locale)
   {
       if (column.isExact())
       { 
         // convert to sql using libformula subsystem
         try {
           // we'll need to pass in some context to PMSFormula so it can resolve aliases if necessary
-          PMSFormula formula = new PMSFormula(businessModel, column.getBusinessTable(), databaseMeta, column.getFormula());
+          PMSFormula formula = new PMSFormula(businessModel, column.getBusinessTable(), databaseMeta, column.getFormula(), tableAliases);
           formula.parseAndValidate();
           return new SQLAndTables(formula.generateSQL(locale), formula.getBusinessTables(), formula.getBusinessColumns());
         } catch (PentahoMetadataException e) {
@@ -583,7 +640,17 @@ public class SQLGenerator {
       {
           String tableColumn = ""; //$NON-NLS-1$
           
-          tableColumn += databaseMeta.quoteField( column.getBusinessTable().getId() );
+          // this step is required because this method is called in two contexts.  The first
+          // call determines all the tables involved, making it impossible to guarantee
+          // unique aliases.
+          
+          String tableAlias = null;
+          if (tableAliases != null) {
+            tableAlias = tableAliases.get(column.getBusinessTable());
+          } else {
+            tableAlias = column.getBusinessTable().getId(); 
+          }
+          tableColumn += databaseMeta.quoteField( tableAlias );
           tableColumn += "."; //$NON-NLS-1$
           
           // TODO: WPG: instead of using formula, shouldn't we use the physical column's name?
@@ -627,12 +694,12 @@ public class SQLGenerator {
       return fn;
   }
 
-  public String getJoin(BusinessModel businessModel, RelationshipMeta relation, DatabaseMeta databaseMeta, String locale) {
+  public String getJoin(BusinessModel businessModel, RelationshipMeta relation, Map<BusinessTable, String> tableAliases, DatabaseMeta databaseMeta, String locale) {
     String join=""; //$NON-NLS-1$
     if (relation.isComplex()) {
       try {
         // parse join as MQL
-        PMSFormula formula = new PMSFormula(businessModel, databaseMeta, relation.getComplexJoin());
+        PMSFormula formula = new PMSFormula(businessModel, databaseMeta, relation.getComplexJoin(), tableAliases);
         formula.parseAndValidate();
         join = formula.generateSQL(locale);
       } catch(PentahoMetadataException e) {
@@ -645,7 +712,14 @@ public class SQLGenerator {
     {
             
         // Left side
-        join  = databaseMeta.quoteField( relation.getFieldFrom().getBusinessTable().getId() );
+        String leftTableAlias = null;
+        if (tableAliases != null) {
+          leftTableAlias = tableAliases.get(relation.getFieldFrom().getBusinessTable());  
+        } else {
+          leftTableAlias = relation.getFieldFrom().getBusinessTable().getId();
+        }
+      
+        join  = databaseMeta.quoteField( leftTableAlias );
         join += "."; //$NON-NLS-1$
         join += databaseMeta.quoteField( relation.getFieldFrom().getFormula() );
         
@@ -653,7 +727,14 @@ public class SQLGenerator {
         join += " = "; //$NON-NLS-1$
         
         // Right side
-        join += databaseMeta.quoteField( relation.getFieldTo().getBusinessTable().getId() );
+        String rightTableAlias = null;
+        if (tableAliases != null) {
+          rightTableAlias = tableAliases.get(relation.getFieldTo().getBusinessTable());  
+        } else {
+          rightTableAlias = relation.getFieldTo().getBusinessTable().getId();
+        }
+        
+        join += databaseMeta.quoteField( rightTableAlias );
         join += "."; //$NON-NLS-1$
         join += databaseMeta.quoteField( relation.getFieldTo().getFormula() );
     }

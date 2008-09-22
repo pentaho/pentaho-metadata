@@ -62,7 +62,7 @@ public class AliasAwarePMSFormula extends PMSFormula {
    * @throws PentahoMetadataException throws an exception if we're missing anything important
    */
   public AliasAwarePMSFormula(BusinessModel model, DatabaseMeta databaseMeta, String formulaString, List<Selection> selections, String aliasName) throws PentahoMetadataException {
-    super(model, databaseMeta, formulaString);
+    super(model, databaseMeta, formulaString, null);
     this.selections = selections;
     this.aliasName = aliasName;
   }
@@ -75,7 +75,7 @@ public class AliasAwarePMSFormula extends PMSFormula {
    * @throws PentahoMetadataException throws an exception if we're missing anything important
    */
   public AliasAwarePMSFormula(BusinessModel model, BusinessTable table, DatabaseMeta databaseMeta, String formulaString, String aliasName) throws PentahoMetadataException {
-    super(model, table, databaseMeta, formulaString);    
+    super(model, table, databaseMeta, formulaString, null);    
     this.aliasName = aliasName;
   }
 
@@ -88,7 +88,7 @@ public class AliasAwarePMSFormula extends PMSFormula {
    * @throws PentahoMetadataException throws an exception if we're missing anything important
    */
   public AliasAwarePMSFormula(BusinessModel model, BusinessTable table, String formulaString, String aliasName) throws PentahoMetadataException {
-    super(model, table, formulaString);
+    super(model, table, formulaString, null);
     this.aliasName = aliasName;
   }
   

@@ -81,6 +81,9 @@ public class PMSFormula implements FormulaTraversalInterface {
   /** cache of business columns for lookup during SQL generation */
   private Map<String,BusinessColumn> businessColumnMap = new HashMap<String,BusinessColumn>();
   
+  /** table alias map **/
+  private Map<BusinessTable, String> tableAliases;
+  
   /** list of business columns, accessible by other classes */
   private List<BusinessColumn> businessColumnList = new ArrayList<BusinessColumn>();
   
@@ -104,11 +107,12 @@ public class PMSFormula implements FormulaTraversalInterface {
    * @param formulaString formula string
    * @throws PentahoMetadataException throws an exception if we're missing anything important
    */
-  public PMSFormula(BusinessModel model, DatabaseMeta databaseMeta, String formulaString) throws PentahoMetadataException {
+  public PMSFormula(BusinessModel model, DatabaseMeta databaseMeta, String formulaString, Map<BusinessTable, String> tableAliases) throws PentahoMetadataException {
     
     this.model = model;
     this.formulaString = formulaString;
     this.databaseMeta = databaseMeta;
+    this.tableAliases = tableAliases;
     this.tables = new ArrayList<BusinessTable>();
     
     if (model == null) {
@@ -137,11 +141,12 @@ public class PMSFormula implements FormulaTraversalInterface {
    * @param formulaString formula string
    * @throws PentahoMetadataException throws an exception if we're missing anything important
    */
-  public PMSFormula(BusinessModel model, BusinessTable table, DatabaseMeta databaseMeta, String formulaString) throws PentahoMetadataException {
+  public PMSFormula(BusinessModel model, BusinessTable table, DatabaseMeta databaseMeta, String formulaString, Map<BusinessTable, String> tableAliases) throws PentahoMetadataException {
     
     this.model = model;
     this.formulaString = formulaString;
     this.databaseMeta = databaseMeta;
+    this.tableAliases = tableAliases;
     this.tables = new ArrayList<BusinessTable>();
     this.tables.add(table);
     
@@ -176,10 +181,11 @@ public class PMSFormula implements FormulaTraversalInterface {
    * @param formulaString formula string
    * @throws PentahoMetadataException throws an exception if we're missing anything important
    */
-  public PMSFormula(BusinessModel model, String formulaString) throws PentahoMetadataException {
+  public PMSFormula(BusinessModel model, String formulaString, Map<BusinessTable, String> tableAliases) throws PentahoMetadataException {
     
     this.model = model;
     this.formulaString = formulaString;
+    this.tableAliases = tableAliases;
     this.tables = new ArrayList<BusinessTable>();
     
     if (model == null) {
@@ -213,9 +219,9 @@ public class PMSFormula implements FormulaTraversalInterface {
    * @param formulaString formula string
    * @throws PentahoMetadataException throws an exception if we're missing anything important
    */
-  public PMSFormula(BusinessModel model, BusinessTable table, String formulaString) throws PentahoMetadataException {
+  public PMSFormula(BusinessModel model, BusinessTable table, String formulaString, Map<BusinessTable, String> tableAliases) throws PentahoMetadataException {
     
-    this(model, formulaString);
+    this(model, formulaString, tableAliases);
     
     this.tables.add(table);
     
@@ -224,6 +230,10 @@ public class PMSFormula implements FormulaTraversalInterface {
     }
   }
 
+  public void setTableAliases(Map<BusinessTable, String> tableAliases) {
+    this.tableAliases = tableAliases;
+  }
+  
   protected DatabaseMeta getDatabaseMeta() {
     return databaseMeta;
   }
@@ -566,7 +576,16 @@ public class PMSFormula implements FormulaTraversalInterface {
       
       BusinessTable businessTable = findBusinessTableForContextName(contextName, locale);
       if (businessTable!=null) {
-	      sb.append(databaseMeta.quoteField(businessTable.getId()));
+      
+        // use a table alias if available
+      
+        String tableAlias = null;
+        if (tableAliases != null) {
+          tableAlias = tableAliases.get(businessTable.getId());
+        } else {
+          tableAlias = businessTable.getId();
+        }
+	      sb.append(databaseMeta.quoteField(tableAlias));
 	      sb.append("."); //$NON-NLS-1$
       }
       sb.append(databaseMeta.quoteField(contextName));
@@ -575,7 +594,7 @@ public class PMSFormula implements FormulaTraversalInterface {
     } else {
       // render the column sql
       sb.append(" "); //$NON-NLS-1$
-      SQLAndTables sqlAndTables = SQLGenerator.getBusinessColumnSQL(model, column, databaseMeta, locale);
+      SQLAndTables sqlAndTables = SQLGenerator.getBusinessColumnSQL(model, column, tableAliases, databaseMeta, locale);
       sb.append(sqlAndTables.getSql());
       sb.append(" "); //$NON-NLS-1$
       

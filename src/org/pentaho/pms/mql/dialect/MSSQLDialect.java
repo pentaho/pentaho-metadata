@@ -63,4 +63,13 @@ public class MSSQLDialect extends DefaultSQLDialect {
   public String getDateSQL(int year, int month, int day) {
     return quoteStringLiteral(year + displayAsTwoOrMoreDigits(month) + displayAsTwoOrMoreDigits(day)); //$NON-NLS-1$ //$NON-NLS-2$
   }
+  
+  /**
+   * MSSQL has a 128 character limit on table name length
+   * 
+   * @return max table name length
+   */
+  public int getMaxTableNameLength() {
+    return 128;
+  }
 }

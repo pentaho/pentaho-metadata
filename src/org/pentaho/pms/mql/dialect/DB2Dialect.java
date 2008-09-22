@@ -60,6 +60,14 @@ public class DB2Dialect extends DefaultSQLDialect {
     return "DATE(" + //$NON-NLS-1$
         quoteStringLiteral(year + "-" + displayAsTwoOrMoreDigits(month) + "-" + displayAsTwoOrMoreDigits(day)) + //$NON-NLS-1$ //$NON-NLS-2$
         ")"; //$NON-NLS-1$
-    
+  }
+  
+  /**
+   * DB2 has a 30 character limit on table name length
+   * 
+   * @return max table name length
+   */
+  public int getMaxTableNameLength() {
+    return 30;
   }
 }

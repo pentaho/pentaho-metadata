@@ -46,6 +46,14 @@ public class PostgreSQLDialect extends DefaultSQLDialect {
   public String getDateSQL(int year, int month, int day) {
     return "date " + //$NON-NLS-1$
        quoteStringLiteral(year + "-" + displayAsTwoOrMoreDigits(month) + "-" + displayAsTwoOrMoreDigits(day)); //$NON-NLS-1$ //$NON-NLS-2$
-       
+  }
+  
+  /**
+   * PostgreSQL has a 63 character limit on table name length
+   * 
+   * @return max table name length
+   */
+  public int getMaxTableNameLength() {
+    return 63;
   }
 }
