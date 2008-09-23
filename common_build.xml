@@ -660,7 +660,7 @@
       <if>
         <isset property="isWindows" />
         <then>
-          <exec executable="cmd">
+          <exec executable="cmd" failonerror="true">
             <arg value="/c" />
             <arg value="mvn.bat" />
             <arg value="deploy:deploy-file" />
@@ -674,7 +674,7 @@
           </exec>
         </then>
         <else>
-          <exec executable="mvn">
+          <exec executable="mvn" failonerror="true">
             <arg value="deploy:deploy-file" />
             <arg value="-DrepositoryId=${ivy.repository.id}" />
             <arg value="-Durl=${ivy.repository.publish}" />
@@ -708,7 +708,7 @@
       <if>
         <isset property="isWindows" />
         <then>
-          <exec executable="cmd">
+          <exec executable="cmd" failonerror="true">
             <arg value="/c" />
             <arg value="mvn.bat" />
             <arg value="deploy:deploy-file" />
@@ -719,7 +719,7 @@
           </exec>
         </then>
         <else>
-          <exec executable="mvn">
+          <exec executable="mvn" failonerror="true">
             <arg value="deploy:deploy-file" />
             <arg value="-DrepositoryId=${ivy.repository.id}" />
             <arg value="-Durl=${ivy.repository.publish}" />
