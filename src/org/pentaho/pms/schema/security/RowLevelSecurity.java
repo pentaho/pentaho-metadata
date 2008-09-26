@@ -233,6 +233,64 @@ public class RowLevelSecurity implements Cloneable {
     return type == Type.ROLEBASED;
   }
 
+  /**
+   * this method returns an OR'ed list of all the constraints that pertain
+   * to a specific user/role list
+   * 
+   * @param user current user
+   * @param roles current roles
+   * @return OR'ed list of constraints that apply to this user.
+   * 
+   */
+  protected String generateRuleBasedConstraint(String user, List<String> roles) {
+    
+    List<String> pieces = new ArrayList<String>();
+    for (Map.Entry<SecurityOwner, String> entry : roleBasedConstraintMap.entrySet()) {
+      SecurityOwner owner = entry.getKey();
+      String formula = entry.getValue();
+      
+      // if the user or a user role matches this constraint
+      // add it to the pieces list
+      
+      if ((owner.getOwnerType() == SecurityOwner.OWNER_TYPE_USER && 
+          owner.getOwnerName().equals(user)) ||
+          (roles != null && 
+          owner.getOwnerType() == SecurityOwner.OWNER_TYPE_ROLE &&
+          roles.contains(owner.getOwnerName()))) {
+        pieces.add(formula);
+      }
+    }
+    
+    if (pieces.size() == 0) {
+      return "FALSE()";
+    } else if (pieces.size() == 1) {
+      return pieces.get(0);
+    } else {
+      
+      // generate an OR(PIECE0;PIECE1;...) list
+      
+      StringBuilder buf = new StringBuilder();
+      buf.append(FUNC_OR);
+      buf.append(PARAM_LIST_BEGIN);
+      int index = 0;
+      for (String piece : pieces) {
+        if (index > 0) {
+          buf.append(PARAM_SEPARATOR);
+        }
+        buf.append(piece);
+        index++;
+      }
+      buf.append(PARAM_LIST_END);
+      return buf.toString();
+    }
+    
+  }
+
+  /**
+   * WG: Note, this method is not used at the moment, we may in the future use
+   *     this if MQL is partially executed before passing down the SQL to 
+   *     database engines.
+   */
   protected String getIntermediateFormula() {
     if (isGlobal()) {
       return globalConstraint;
@@ -243,7 +301,12 @@ public class RowLevelSecurity implements Cloneable {
       return EMPTY_STRING;
     }
   }
-
+  
+  /**
+   * WG: Note, this method is not used at the moment, we may in the future use
+   *     this if MQL is partially executed before passing down the SQL to 
+   *     database engines.
+   */
   protected String roleMapToFormula() {
     List<String> pieces = new ArrayList<String>();
     for (Map.Entry<SecurityOwner, String> entry : roleBasedConstraintMap.entrySet()) {
@@ -276,11 +339,16 @@ public class RowLevelSecurity implements Cloneable {
 
     return buf.toString();
   }
-
+  
   public String getMQLFormula(String user, List<String> roles) {
-    String formula = getIntermediateFormula();
-    String expandedFormula = expandFunctions(formula, user, roles);
-    return expandedFormula;
+    if (isGlobal()) {
+      return expandFunctions(globalConstraint, user, roles);
+    } else if (isRoleBased()) {
+      return generateRuleBasedConstraint(user, roles);
+    } else {
+      // rls is disabled
+      return EMPTY_STRING;
+    }
   }
 
   protected String expandFunctions(String formula, String user, List<String> roles) {
