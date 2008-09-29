@@ -44,7 +44,7 @@
 		impl.title=My Project #English language version of your project name
 		
 ============================================================================-->
-<project name="Pentaho Common Build" basedir="." default="jar" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="Pentaho Common Build" basedir="." default="dist" xmlns:ivy="antlib:org.apache.ivy.ant">
 
   <!-- Load the properties files in the proper order -->
   <property file="override.properties"
@@ -198,12 +198,10 @@
   <property name="ivy.artifact.ivypathname"
             value="${dist.dir}/ivy.xml"
             description="The full path to the IVY xml file to deploy with the artifact" />
-  
+
   <!-- Build Mode properties -->
-  <property name="release"
-            value="false"
-            description="Set this to true if you want to generate a release artifact" />
-  
+  <property name="release" value="false" description="Set this to true if you want to generate a release artifact" />
+
   <!-- Set the os property -->
   <condition property="isLinux">
     <os family="unix" />
@@ -508,30 +506,30 @@
 	    ====================================================================-->
   <target name="resolve" depends="resolve-default, resolve-test" description="Retrieves all the dependent libraries" />
 
-  <target name="resolve-init" unless="resolve-init.skip" depends="install-ivy" >
-  	<!-- If this is the 1st time through resolve-init, then we need to clean up the jars -->
-  	<antcall target="clean-jars"/>
-  	<property name="resolve-init.skip" value=""/>
-	</target>
+  <target name="resolve-init" unless="resolve-init.skip" depends="install-ivy">
+    <!-- If this is the 1st time through resolve-init, then we need to clean up the jars -->
+    <antcall target="clean-jars" />
+    <property name="resolve-init.skip" value="" />
+  </target>
 
   <target name="resolve-default" depends="resolve-init" description="Retrieves default configuration dependencies">
     <ivy:resolve file="ivy.xml" conf="default" />
-    <ivy:retrieve conf="default" pattern="${lib.dir}/[module]-[revision].[ext]" />
+    <ivy:retrieve conf="default" pattern="${lib.dir}/[module]-[revision](-[classifier]).[ext]" />
   </target>
 
   <target name="resolve-test" depends="resolve-init" description="Retrieves test configuration dependencies">
     <ivy:resolve file="ivy.xml" conf="test" />
-    <ivy:retrieve conf="test" pattern="${testlib.dir}/[module]-[revision].[ext]" />
+    <ivy:retrieve conf="test" pattern="${testlib.dir}/[module]-[revision](-[classifier]).[ext]" />
   </target>
 
   <target name="resolve-codegen" depends="resolve-init">
     <ivy:resolve file="ivy.xml" conf="codegen" />
-    <ivy:retrieve conf="codegen" pattern="${lib.dir}/[module]-[revision].[ext]" />
+    <ivy:retrieve conf="codegen" pattern="${lib.dir}/[module]-[revision](-[classifier]).[ext]" />
   </target>
 
   <target name="resolve-runtime" depends="resolve-init">
     <ivy:resolve file="ivy.xml" conf="runtime" />
-    <ivy:retrieve conf="runtime" pattern="${lib.dir}/[module]-[revision].[ext]" />
+    <ivy:retrieve conf="runtime" pattern="${lib.dir}/[module]-[revision](-[classifier]).[ext]" />
   </target>
 
 
@@ -594,7 +592,7 @@
 	    executed on the user's system.
 	    ====================================================================-->
   <target name="publish-local"
-          depends="dist, publish-local-nojar"
+          depends="dist, dist-source, publish-local-nojar"
           description="Builds and publishes the jar file to the local repository" />
 
 
@@ -625,6 +623,13 @@
       <param name="publish.file" value="${ivy.artifact.ivypathname}" />
     </antcall>
 
+    <antcall target="maven-publish-sources">
+      <param name="publish.groupId" value="${ivy.artifact.group}" />
+      <param name="publish.artifactId" value="${ivy.artifact.id}" />
+      <param name="publish.version" value="${project.revision}" />
+      <param name="publish.file" value="${dist.dir}/${ivy.artifact.id}-${project.revision}-sources.jar" />
+    </antcall>
+
     <antcall target="maven-publish-artifact">
       <param name="publish.pomFile" value="${ivy.artifact.pomfile}" />
       <param name="publish.file" value="${dist.dir}/${ivy.artifact.id}-${project.revision}.jar" />
@@ -647,7 +652,7 @@
 	    
 	    A function that deploys an ivy.xml file to a maven repository
 	    ====================================================================-->
-  <target name="maven-publish-dependencies" description="A function that deploys an ivy.xml file to a maven repository">
+  <target name="maven-publish-dependencies">
     <sequential>
       <fail message="No file found at: ${publish.file}">
         <condition>
@@ -731,6 +736,57 @@
     </sequential>
   </target>
 
+
+  <!--=======================================================================
+	    maven-publish-sources
+	    
+	    A function that deploys a java-sources artifact to a maven repository
+	    ====================================================================-->
+  <target name="maven-publish-sources">
+    <sequential>
+      <fail message="No file found at: ${publish.file}">
+        <condition>
+          <not>
+            <available file="${publish.file}" />
+          </not>
+        </condition>
+      </fail>
+      <echo message="Publishing ${publish.file} to ${ivy.repository.publish}..." />
+      <if>
+        <isset property="isWindows" />
+        <then>
+          <exec executable="cmd" failonerror="true">
+            <arg value="/c" />
+            <arg value="mvn.bat" />
+            <arg value="deploy:deploy-file" />
+            <arg value="-DrepositoryId=${ivy.repository.id}" />
+            <arg value="-Durl=${ivy.repository.publish}" />
+            <arg value="-DgroupId=${publish.groupId}" />
+            <arg value="-DartifactId=${publish.artifactId}" />
+            <arg value="-Dversion=${publish.version}" />
+            <arg value="-DgeneratePom=false" />
+            <arg value="-Dpackaging=java-source" />
+            <arg value="-Dfile=${publish.file}" />
+          </exec>
+        </then>
+        <else>
+          <exec executable="mvn" failonerror="true">
+            <arg value="deploy:deploy-file" />
+            <arg value="-DrepositoryId=${ivy.repository.id}" />
+            <arg value="-Durl=${ivy.repository.publish}" />
+            <arg value="-DgroupId=${publish.groupId}" />
+            <arg value="-DartifactId=${publish.artifactId}" />
+            <arg value="-Dversion=${publish.version}" />
+            <arg value="-DgeneratePom=true" />
+            <arg value="-Dpackaging=java-source" />
+            <arg value="-Dfile=${publish.file}" />
+          </exec>
+        </else>
+      </if>
+    </sequential>
+  </target>
+
+
   <!--=======================================================================
 	    create-pom
 	    
@@ -809,11 +865,11 @@
 	    Copies the GPL license file from the parent directory into the 
 	    binary directory.
 	    ====================================================================-->
-  <target name="copy-license-gpl-parent"
-          if="gpl-parent-license-avail"
-          description="Copies the parent's GPL license file into the bin directory">
+  <target name="copy-license-gpl"
+          if="gpl-license-avail"
+          description="Copies the GPL license file into the bin directory">
     <copy todir="${classes.dir}/META-INF">
-      <fileset dir="../.." includes="gpl-2.0.txt" />
+      <fileset dir="${license.dir}" includes="gpl-2.0.txt" />
     </copy>
   </target>
 
@@ -924,10 +980,10 @@
       <available file="${license.dir}/lgpl-2.1.txt" />
     </condition>
     <antcall target="copy-license-lgpl" />
-    <condition property="gpl-parent-license-avail">
-      <available file="../../gpl-2.0.txt" />
+    <condition property="gpl-license-avail">
+      <available file="${license.dir}/gpl-2.0.txt" />
     </condition>
-    <antcall target="copy-license-gpl-parent" />
+    <antcall target="copy-license-gpl" />
   </target>
 
 
@@ -963,17 +1019,17 @@
 	    Generates zip and targz distributions of the javadoc
 	    ====================================================================-->
   <target name="dist-source"
-          depends="source.zip, source.targz"
+          depends="source.jar, source.targz"
           description="Generates zip and targz distributions of the project source" />
 
 
   <!--=======================================================================
-	    source.zip
+	    source.jar
 	    
-	    Creates a zip of the project source for distribution
+	    Creates a jar of the project source for distribution
 	    ====================================================================-->
-  <target name="source.zip" depends="init">
-    <jar jarfile="${dist.dir}/${ivy.artifact.id}-${project.revision}-sources.zip" basedir="${src.dir}" />
+  <target name="source.jar" depends="init">
+    <jar jarfile="${dist.dir}/${ivy.artifact.id}-${project.revision}-sources.jar" basedir="${src.dir}" />
   </target>
 
 
