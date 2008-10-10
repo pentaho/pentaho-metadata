@@ -1,5 +1,5 @@
 <!--===========================================================================
-    COMMON_BUILD.XML
+    COMMON_BUILD.XML (version 20081010)
     
     This is the build file that is used across all Pentaho projects that are
     using the "new and improved" ivy builds.
