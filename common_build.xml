@@ -507,7 +507,8 @@
   <target name="resolve" depends="resolve-default, resolve-test" description="Retrieves all the dependent libraries" />
 
   <target name="resolve-init" unless="resolve-init.skip" depends="install-ivy">
-    <!-- If this is the 1st time through resolve-init, then we need to clean up the jars -->
+    <!-- If this is the 1st time through resolve-init, then we need to clean up the jars
+-->
     <antcall target="clean-jars" />
     <property name="resolve-init.skip" value="" />
   </target>
@@ -556,6 +557,35 @@
   <target name="ivy-clean-local" depends="install-ivy" description="cleans the local repository for the current module">
     <delete dir="${ivy.local.default.root}/" />
   </target>
+  
+  
+  <!--=======================================================================
+	    ivy-clean-pentaho
+	    
+	    Completely cleans your IVY cache and local repository of pentaho-specific files.
+	    WARNING: this is a global action and will affect other IVY projects
+	    currently referencing a locally published dependency
+	    ====================================================================-->
+  <target name="ivy-clean-pentaho" depends="install-ivy" description="cleans the IVY cache and local repository of Pentaho-specific files">
+    <for param="dir">
+	  <path>
+	    <dirset dir="${ivy.local.default.root}" includes="*pentaho*"/>
+	    <dirset dir="${ivy.default.ivy.user.dir}/cache" includes="*pentaho*"/>
+	  </path>
+	   <sequential>
+	   	 <delete dir ="@{dir}" includeemptydirs="true"/>
+	  </sequential>
+	</for>
+	<for param="file">
+	  <path>
+	    <fileset dir="${ivy.local.default.root}" includes="*pentaho*"/>
+	    <fileset dir="${ivy.default.ivy.user.dir}/cache" includes="*pentaho*"/>
+	  </path>
+	   <sequential>
+	   	 <delete file ="@{file}"/>
+	  </sequential>
+	</for>
+  </target>    
 
 
   <!--=======================================================================
@@ -1082,7 +1112,8 @@
       <classpath refid="test.classpath" />
     </javac>
 
-    <!-- Copy the non-java files from the source directory to the test classes directory -->
+    <!-- Copy the non-java files from the source directory to the test classes directory
+-->
     <copy todir="${testclasses.dir}">
       <fileset dir="${testsrc.dir}">
         <exclude name="**/*.java" />
