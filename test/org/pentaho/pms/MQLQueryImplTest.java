@@ -1635,10 +1635,22 @@ public class MQLQueryImplTest extends MetadataTestBase {
     bt5.setTargetTable("pt5"); //$NON-NLS-1$
     final BusinessColumn bc5 = new BusinessColumn();
     bc5.setId("bc5"); //$NON-NLS-1$
-    bc5.setFormula("pc5"); //$NON-NLS-1$
+    // bc5.setFormula("pc5"); //$NON-NLS-1$
+    bc5.setFormula("pc5");
     bc5.setBusinessTable(bt5);
     bt5.addBusinessColumn(bc5);
     bt5.setRelativeSize(1);
+
+    final BusinessColumn bc6 = new BusinessColumn();
+    bc6.setId("bc6"); //$NON-NLS-1$
+    // bc5.setFormula("pc5"); //$NON-NLS-1$
+    bc6.setExact(true);
+    bc6.setFormula("SUM([pc5]*2)");
+    bc6.setAggregationType(AggregationSettings.SUM);
+    bc6.setBusinessTable(bt5);
+    bt5.addBusinessColumn(bc6);
+    bt5.setRelativeSize(1);
+
     final RelationshipMeta rl1 = new RelationshipMeta();
     
     rl1.setTableFrom(bt1);
@@ -1709,6 +1721,32 @@ public class MQLQueryImplTest extends MetadataTestBase {
         + "          )",
         query.getQuery()    
     ); //$NON-NLS-1$
+
+    //
+    // This tests the physical column aliasing
+    //
+    
+    myTest = new MQLQueryImpl(null, model, databaseMeta, "en_US"); //$NON-NLS-1$
+    myTest.addSelection(new Selection(bc4));
+    myTest.addSelection(new Selection(bc6));
+    
+    query = myTest.getQuery();
+
+    assertEqualsIgnoreWhitespaces( 
+          "SELECT \n" 
+        + "             metadata_business_table_very01.pc4 AS COL0 \n"
+        + "           , SUM( metadata_business_table_very02.pc5  * 2) AS COL1 \n"
+        + "FROM \n" 
+        + "             pt4 metadata_business_table_very01 \n" 
+        + "            ,pt5 metadata_business_table_very02 \n"
+        + "WHERE \n"
+        + "             (\n" 
+        + "                metadata_business_table_very01.pc4 = metadata_business_table_very02.pc5 "
+    		+ "             )\n" 
+        + "GROUP BY \n"  
+        + "             metadata_business_table_very01.pc4 \n",
+        query.getQuery()    
+    );
   }
   
 }

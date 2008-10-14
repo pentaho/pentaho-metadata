@@ -581,7 +581,7 @@ public class PMSFormula implements FormulaTraversalInterface {
       
         String tableAlias = null;
         if (tableAliases != null) {
-          tableAlias = tableAliases.get(businessTable.getId());
+          tableAlias = tableAliases.get(businessTable);
         } else {
           tableAlias = businessTable.getId();
         }
