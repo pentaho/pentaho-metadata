@@ -609,7 +609,7 @@
   <target name="publish-local-nojar" depends="install-ivy" description="Publishes the jar file to the local repository">
     <ivy:resolve file="${ivy.artifact.ivyfilename}" />
     <ivy:publish resolver="local" pubrevision="${project.revision}" overwrite="true" forcedeliver="true">
-      <artifacts pattern="${dist.dir}/[artifact]-[revision].[ext]" />
+      <artifacts pattern="${dist.dir}/[artifact]-[revision](-[classifier]).[ext]" />
     </ivy:publish>
   </target>
 
