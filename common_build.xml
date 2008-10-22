@@ -498,13 +498,39 @@
 
 
   <!--=======================================================================
+	    ivy.check-releasable
+	    
+	    Verifies that there are no SNAPSHOT dependencies defined in the ivy xml.
+	    If there are SNAPSHOTS, fail the release build.
+	    ====================================================================-->
+  <target name="ivy.check-releasable">
+    <if>
+      <istrue value="${release}" />
+      <then>
+        <ivy:artifactproperty conf="*" name="dep.[module]/[artifact]-[revision]" value="[revision]" />
+
+        <propertyselector property="violator.list" match="dep\..*SNAPSHOT.*" select="\0" casesensitive="false" />
+
+        <fail message="Release not possible, you have dependencies on non-released artifacts: ${violator.list}">
+          <condition>
+            <isset property="${violator.list}" />
+          </condition>
+        </fail>
+      </then>
+    </if>
+  </target>
+
+
+  <!--=======================================================================
 	    resolve
 	    
 	    Using ivy and the dependencies for the project (defined in the ivy.xml
 	    file), this task will retrieve the needed files and place them into 
 	    the defined directories.
 	    ====================================================================-->
-  <target name="resolve" depends="resolve-default, resolve-test" description="Retrieves all the dependent libraries" />
+  <target name="resolve"
+          depends="resolve-default, resolve-test, ivy.check-releasable"
+          description="Retrieves all the dependent libraries" />
 
   <target name="resolve-init" unless="resolve-init.skip" depends="install-ivy">
     <!-- If this is the 1st time through resolve-init, then we need to clean up the jars
@@ -557,8 +583,8 @@
   <target name="ivy-clean-local" depends="install-ivy" description="cleans the local repository for the current module">
     <delete dir="${ivy.local.default.root}/" />
   </target>
-  
-  
+
+
   <!--=======================================================================
 	    ivy-clean-pentaho
 	    
@@ -566,26 +592,28 @@
 	    WARNING: this is a global action and will affect other IVY projects
 	    currently referencing a locally published dependency
 	    ====================================================================-->
-  <target name="ivy-clean-pentaho" depends="install-ivy" description="cleans the IVY cache and local repository of Pentaho-specific files">
+  <target name="ivy-clean-pentaho"
+          depends="install-ivy"
+          description="cleans the IVY cache and local repository of Pentaho-specific files">
     <for param="dir">
-	  <path>
-	    <dirset dir="${ivy.local.default.root}" includes="*pentaho*"/>
-	    <dirset dir="${ivy.default.ivy.user.dir}/cache" includes="*pentaho*"/>
-	  </path>
-	   <sequential>
-	   	 <delete dir ="@{dir}" includeemptydirs="true"/>
-	  </sequential>
-	</for>
-	<for param="file">
-	  <path>
-	    <fileset dir="${ivy.local.default.root}" includes="*pentaho*"/>
-	    <fileset dir="${ivy.default.ivy.user.dir}/cache" includes="*pentaho*"/>
-	  </path>
-	   <sequential>
-	   	 <delete file ="@{file}"/>
-	  </sequential>
-	</for>
-  </target>    
+      <path>
+        <dirset dir="${ivy.local.default.root}" includes="*pentaho*" />
+        <dirset dir="${ivy.default.ivy.user.dir}/cache" includes="*pentaho*" />
+      </path>
+      <sequential>
+        <delete dir="@{dir}" includeemptydirs="true" />
+      </sequential>
+    </for>
+    <for param="file">
+      <path>
+        <fileset dir="${ivy.local.default.root}" includes="*pentaho*" />
+        <fileset dir="${ivy.default.ivy.user.dir}/cache" includes="*pentaho*" />
+      </path>
+      <sequential>
+        <delete file="@{file}" />
+      </sequential>
+    </for>
+  </target>
 
 
   <!--=======================================================================
