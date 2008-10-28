@@ -434,6 +434,31 @@
       </else>
     </if>
   </target>
+  
+  <!--=================================================================================
+       version-properties: common Ant driven version file generation.  Projects that produce
+       a package or packages should run this target.  Projects that produce
+       jars only should NOT.
+   ===================================================================================-->
+  <target name="version-properties" depends="set-build.id">
+    <tstamp>
+      <format property="build.time" pattern="yyyy/MM/dd hh:mm aa"/>
+    </tstamp>
+      <propertyfile
+              file="version.properties" comment="Release Build version info">
+          <entry key="release.major.number" value="${release.major.number}" />  
+          <entry key="release.minor.number" value="${release.minor.number}" />
+          <entry key="release.milestone.number" value="${release.milestone.number}" />
+          <entry key="release.candidate.token" value="${release.candidate.token}" />
+          <entry key="impl.vendor" value="${impl.vendor}" />
+          <entry key="impl.version" value="${release.major.number}.${release.minor.number}.${release.milestone.number}.${build.id}" />
+          <entry key="impl.title" value="${impl.title}" />
+          <entry key="buildDate" value="${build.time}"/>
+          <entry key="svn.revision" value="${build.id}"/>        
+          <entry key="release.build.number" default="0" type="int" operation="+" value="1" pattern="0000"/>
+      </propertyfile>
+      <property file="${basedir}/version.properties"/>
+  </target>
 
 
   <!--=======================================================================
@@ -1228,6 +1253,15 @@
   <target name="continuous-lite"
           depends="clean-all,resolve,cobertura,javadoc"
           description="Runs a lightweight continuous integration build." />
+
+  <!--=======================================================================
+        continuous-release
+        
+        Runs a release build including versioning, project dist and javadoc.
+        ====================================================================-->
+    <target name="continuous-release"
+            depends="clean-all,version-properties,resolve,dist-javadoc,dist-source,dist"
+            description="Runs a typical testless continuous integration build with a version file" />
 
 
   <!--=======================================================================
