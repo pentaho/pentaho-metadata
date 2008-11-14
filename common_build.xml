@@ -686,7 +686,7 @@
         repository. 
         ====================================================================-->
   <target name="publish-pentaho"
-          depends="dist, publish-pentaho-nojar"
+          depends="dist, dist-source, publish-pentaho-nojar"
           description="Builds and publishes the jar file to a Maven2 repository">
   </target>
 
