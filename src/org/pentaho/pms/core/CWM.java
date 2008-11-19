@@ -1339,22 +1339,76 @@ public class CWM
         return relationalPackage;
     }
 
-    public void exportToXMI(String filename) throws IOException
+    public void exportToXMI(String filename) throws IOException, CWMException, MalformedXMIException
     {
-        XMIWriterFactory factory = XMIWriterFactory.getDefault();
-        XMIWriter writer = factory.createXMIWriter();
-        writer.getConfiguration().setEncoding(Const.XML_ENCODING);
-        writer.write(new FileOutputStream(filename), getPentahoPackage(), "1.2"); //$NON-NLS-1$
+        if (isReversingOrder()) {
+          // if reverse order bug, write twice
+          XMIWriterFactory factory = XMIWriterFactory.getDefault();
+          XMIWriter writer = factory.createXMIWriter();
+          writer.getConfiguration().setEncoding(Const.XML_ENCODING);
+          ByteArrayOutputStream stream = new ByteArrayOutputStream(250000); // start with 250k
+          writer.write(stream, getPentahoPackage(), "1.2"); //$NON-NLS-1$
+          stream.close();
+
+          String tmpDomain = "__tmpdomain__" + domainName + "__";
+          try {          
+            if (exists(tmpDomain)) {
+              CWM cwm = getInstance(tmpDomain);
+              cwm.removeDomain();
+            }
+            String xmi = stream.toString(Const.XML_ENCODING);
+            CWM cwmInstance = getInstance(tmpDomain);
+            cwmInstance.importFromXMIString(xmi);
+            writer.write(new FileOutputStream(filename), cwmInstance.getPentahoPackage(), "1.2"); //$NON-NLS-1$
+          } finally {
+            if (exists(tmpDomain)) {
+              CWM cwm = getInstance(tmpDomain);
+              cwm.removeDomain();
+            }
+          }
+        } else {
+          XMIWriterFactory factory = XMIWriterFactory.getDefault();
+          XMIWriter writer = factory.createXMIWriter();
+          writer.getConfiguration().setEncoding(Const.XML_ENCODING);
+          writer.write(new FileOutputStream(filename), getPentahoPackage(), "1.2"); //$NON-NLS-1$
+        }
     }
     
-    public String getXMI() throws IOException
+    public String getXMI() throws IOException, CWMException, MalformedXMIException
     {
-        XMIWriterFactory factory = XMIWriterFactory.getDefault();
-        XMIWriter writer = factory.createXMIWriter();
-        writer.getConfiguration().setEncoding(Const.XML_ENCODING);
-        ByteArrayOutputStream stream = new ByteArrayOutputStream(250000); // start with 250k
-        writer.write(stream, getPentahoPackage(), "1.2"); //$NON-NLS-1$
-        stream.close();
+      XMIWriterFactory factory = XMIWriterFactory.getDefault();
+      XMIWriter writer = factory.createXMIWriter();
+      writer.getConfiguration().setEncoding(Const.XML_ENCODING);
+      ByteArrayOutputStream stream = new ByteArrayOutputStream(250000); // start with 250k
+      writer.write(stream, getPentahoPackage(), "1.2"); //$NON-NLS-1$
+      stream.close();
+      
+      if (isReversingOrder()) {
+          // if reverse order bug, write twice
+          String tmpDomain = "__tmpdomain__" + domainName + "__";
+          try {          
+            
+            if (exists(tmpDomain)) {
+              CWM cwm = getInstance(tmpDomain);
+              cwm.removeDomain();
+            }
+            String xmi = stream.toString(Const.XML_ENCODING);
+            CWM cwmInstance = getInstance(tmpDomain);
+            cwmInstance.importFromXMIString(xmi);
+            
+            stream = new ByteArrayOutputStream(250000); // start with 250k
+            writer.write(stream, cwmInstance.getPentahoPackage(), "1.2"); //$NON-NLS-1$
+            stream.close();
+            
+          } finally {
+            
+            if (exists(tmpDomain)) {
+              CWM cwm = getInstance(tmpDomain);
+              cwm.removeDomain();
+            }
+            
+          }
+        }
         
         return stream.toString();
     }

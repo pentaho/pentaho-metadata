@@ -757,8 +757,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         }
         
         // Also store the categories...
-        // --> Store in reverse order, MDR has it backward :-)
-        for (int i=businessModel.getRootCategory().nrBusinessCategories()-1;i>=0;i--)
+        for (int i=0;i<businessModel.getRootCategory().nrBusinessCategories();i++)
         {
             BusinessCategory businessCategory = businessModel.getRootCategory().getBusinessCategory(i);
             storeBusinessCategory(cwm, businessCategory, null, cwmSchema);
@@ -894,6 +893,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         if (cwm.isReversingOrder())
         {
             Collections.reverse(businessModel.getBusinessTables().getList());
+            Collections.reverse(businessModel.getRootCategory().getBusinessCategories().getList());
         }
 
         return businessModel;
@@ -1418,6 +1418,11 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                 }
             }
             
+        }
+        
+        if (cwm.isReversingOrder()) {
+            Collections.reverse(businessCategory.getBusinessCategories().getList());
+            Collections.reverse(businessCategory.getBusinessColumns().getList());
         }
         
         return businessCategory;
