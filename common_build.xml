@@ -239,6 +239,9 @@
     <fileset dir="${lib.dir}">
       <include name="*.jar" />
     </fileset>
+    <fileset dir="${devlib.dir}">
+      <include name="*" />
+    </fileset>
     <fileset dir="${testlib.dir}">
       <include name="*.jar" />
     </fileset>
