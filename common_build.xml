@@ -199,6 +199,9 @@
             value="${dist.dir}/ivy.xml"
             description="The full path to the IVY xml file to deploy with the artifact" />
 
+  <!-- Main-Class manifest property -->
+  <property name="main.class" value="false" description="Set this to the java main class if you want a Main-Class attribute in the manifest" />
+	
   <!-- Build Mode properties -->
   <property name="release" value="false" description="Set this to true if you want to generate a release artifact" />
 
@@ -1087,15 +1090,33 @@
 	    Creates a jar file from the bin directory
 	    ====================================================================-->
   <target name="jar" depends="compile,set-build.id" description="Jars up the bin directory after a compile">
-    <jar destfile="${dist.dir}/${ivy.artifact.id}-${project.revision}.jar">
-      <manifest>
-        <attribute name="Implementation-Title" value="${impl.title}" />
-        <attribute name="Implementation-Version" value="${project.revision}.${build.id}" />
-        <attribute name="Implementation-Vendor" value="${impl.vendor}" />
-        <attribute name="Implementation-ProductID" value="${impl.productID}" />
-      </manifest>
-      <fileset dir="${classes.dir}" />
-    </jar>
+  	<if>
+      <equals arg1="${main.class}" arg2="false"/>
+      <then>
+      	<!-- main.class is not defined, so we will omit it from the manifest -->
+      	<jar destfile="${dist.dir}/${ivy.artifact.id}-${project.revision}.jar">
+          <manifest>
+            <attribute name="Implementation-Title" value="${impl.title}" />
+            <attribute name="Implementation-Version" value="${project.revision}.${build.id}" />
+            <attribute name="Implementation-Vendor" value="${impl.vendor}" />
+            <attribute name="Implementation-ProductID" value="${impl.productID}" />
+          </manifest>
+          <fileset dir="${classes.dir}" />
+        </jar>
+      </then>
+      <else>
+      	<jar destfile="${dist.dir}/${ivy.artifact.id}-${project.revision}.jar">
+          <manifest>
+            <attribute name="Implementation-Title" value="${impl.title}" />
+            <attribute name="Implementation-Version" value="${project.revision}.${build.id}" />
+            <attribute name="Implementation-Vendor" value="${impl.vendor}" />
+            <attribute name="Implementation-ProductID" value="${impl.productID}" />
+            <attribute name="Main-Class" value="${main.class}" />
+          </manifest>
+          <fileset dir="${classes.dir}" />
+        </jar>
+      </else>
+    </if>
   </target>
 
 
