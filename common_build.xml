@@ -141,6 +141,7 @@
             value="${testreports.dir}/html"
             description="Unit test html reports are placed here" />
   <property name="junit.haltonfailure" value="no" description="Fail the build if a test fails" />
+  <property name="headless.unittest" value="true" description="Runs the unit tests in headless mode" />
 
   <!-- Code Coverage properties -->
   <property name="instrumented.classes.dir"
@@ -1206,6 +1207,7 @@
 	    ====================================================================-->
   <target name="test" depends="compile,compile-tests" description="Compiles and runs unit tests">
     <junit printsummary="yes" haltonfailure="${junit.haltonfailure}">
+      <sysproperty key="java.awt.headless" value="${headless.unittest}"/>
       <classpath refid="test.classpath" />
       <formatter type="plain" />
       <batchtest fork="yes" todir="${testbin.dir}">
@@ -1500,10 +1502,9 @@
           depends="init-test-reports,cobertura.install,compile,compile-tests,cobertura.instrument-classes">
     <mkdir dir="${instrumented.classes.dir}" />
     <junit fork="yes" failureProperty="test.failed" haltonfailure="${junit.haltonfailure}">
+      <sysproperty key="java.awt.headless" value="${headless.unittest}"/>
 
-      <!--
-				Specify the name of the coverage data file to use.
-			-->
+      <!-- Specify the name of the coverage data file to use. -->
       <sysproperty key="net.sourceforge.cobertura.datafile" file="${cobertura.data.dir}/cobertura.ser" />
 
       <!--
