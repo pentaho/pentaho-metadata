@@ -44,7 +44,58 @@
 		impl.title=My Project #English language version of your project name
 		
 ============================================================================-->
+
+
 <project name="Pentaho Common Build" basedir="." default="dist" xmlns:ivy="antlib:org.apache.ivy.ant">
+  <description>
+-------------------------------------------------------------------------------
+     Common Build file provides tasks needed to perform a project build. 
+     It is typically not used directly but imported by each project's build.xml
+     file.  The build.xml file can override tasks when customization is required. 
+      
+MAIN TARGETS
+============
+  * clean / clean-all : 
+    remove all artifacts of the build, clean-all adds the removal
+    of any library or jar dependencies downloaded as part of the build
+    
+  * resolve :
+    download/refresh library or jar dependencies needed for the build (uses Apache IVY)
+    
+  * compile :
+    run javac on the project's source
+    
+  * jar :
+    creates a jar file
+    
+  * dist :
+    creates all project distributables
+    
+  * test :
+    runs JUnit tests from your project's test source
+    
+SPECIAL TARGETS
+============
+  * publish-local :
+    builds a jar for your project and registers it with the local artifact repository isolated 
+    to your machine at $HOME/.ivy2/local.  Further executions of the the resolve target by this
+    or other projects will find your published jar.
+    
+  * ivy-clean* :
+    this family of targets helps reset your IVY environment in the event that you are having
+    difficulty resolving dependencies
+    
+TYPICAL TARGET SEQUENCE
+============    
+  * clean-all resolve dist :
+    a good start to build all project distributables from scratch.  Note that jar dependencies
+    will not be downloaded unless you explicitly run the resolve target.  We made the resolution
+    and retrieval completely discretionary since there are many situations in which
+    you will not want to get or refresh dependencies, e.g. if you are offline with no Internet
+    access.  In such case, you could just run "dist" if the set of jars you already have are 
+    sufficient.
+    
+  </description>
 
   <!-- Load the properties files in the proper order -->
   <property file="override.properties"
@@ -200,28 +251,28 @@
             value="${dist.dir}/ivy.xml"
             description="The full path to the IVY xml file to deploy with the artifact" />
 
-	<!-- Load the manifest file (if any) as a properties file -->
-	<property name="dist.manifest.file" value="${dist.dir}/MANIFEST.MF" description="The manifest file that will be generated as part of the build" />
-	<property name="manifest.file" value="${res.dir}/META-INF/MANIFEST.MF" description="The location of the MANIFEST.MF file for this application." />
-	<property file="${manifest.file}" description="Loads the manifest information from the manifest file as a properties file." />
+  <!-- Load the manifest file (if any) as a properties file -->
+  <property name="dist.manifest.file" value="${dist.dir}/MANIFEST.MF" description="The manifest file that will be generated as part of the build" />
+  <property name="manifest.file" value="${res.dir}/META-INF/MANIFEST.MF" description="The location of the MANIFEST.MF file for this application." />
+  <property file="${manifest.file}" description="Loads the manifest information from the manifest file as a properties file." />
 
-	<!-- Set the project revision number to the value in the manifest file (if it has not
+  <!-- Set the project revision number to the value in the manifest file (if it has not
 	     been specified in the properties file -->
-	<property name="project.revision" value="${Implementation-Version}" description="Sets the version number of the project based on the Implementation-Version found in the manifest file (if one is supplied and nothing is specified in the build.properties)" />
-	<fail message="A project revision number has not been determined!">
-		<condition>
-			<matches string="${project.revision}" pattern="\$\{.*\}" />
-		</condition>
-	</fail>
+  <property name="project.revision" value="${Implementation-Version}" description="Sets the version number of the project based on the Implementation-Version found in the manifest file (if one is supplied and nothing is specified in the build.properties)" />
+  <fail message="A project revision number has not been determined!">
+    <condition>
+      <matches string="${project.revision}" pattern="\$\{.*\}" />
+    </condition>
+  </fail>
 
-	<!-- Set the project title to the value in the manifest file (if it has not
+  <!-- Set the project title to the value in the manifest file (if it has not
 	     been specified in the properties file -->
-	<property name="impl.title" value="${Implementation-Title}" description="Sets the title of the project based on the Implementation-Title found in the manifest file (if one is supplied and nothing is specified in the build.properties)" />
-	<fail message="A project title has not been determined!">
-		<condition>
-			<matches string="${impl.title}" pattern="\$\{.*\}" />
-		</condition>
-	</fail>
+  <property name="impl.title" value="${Implementation-Title}" description="Sets the title of the project based on the Implementation-Title found in the manifest file (if one is supplied and nothing is specified in the build.properties)" />
+  <fail message="A project title has not been determined!">
+    <condition>
+      <matches string="${impl.title}" pattern="\$\{.*\}" />
+    </condition>
+  </fail>
 
   <!-- Build Mode properties -->
   <property name="release" value="false" description="Set this to true if you want to generate a release artifact" />
@@ -280,8 +331,7 @@
 	    (Fetches and) installs ant-contrib tasks.
 	    ====================================================================-->
   <target name="install-antcontrib"
-          depends="antcontrib.download-check"
-          description="Fetch ant-contrib jar and install ant tasks">
+          depends="antcontrib.download-check">
     <taskdef resource="net/sf/antcontrib/antlib.xml">
       <classpath>
         <fileset dir="${antcontrib.build.cache.dir}">
@@ -343,7 +393,7 @@
 	    Ensures that all the required directories exist before processing
 	    a build.
 	    ====================================================================-->
-  <target name="init" description="Initializes the build process">
+  <target name="init">
     <mkdir dir="${classes.dir}" />
     <mkdir dir="${dist.dir}" />
     <mkdir dir="${lib.dir}" />
@@ -395,8 +445,7 @@
     (Fetches and) installs the SVN ANT for use by this ant script
     ====================================================================-->
   <target name="install-svnant"
-          depends="install-antcontrib, svnant.download-check"
-          description="Installs SVN ANT tasks for use by this build process">
+          depends="install-antcontrib, svnant.download-check">
     <if>
       <istrue value="${svnant.isinstalled}" />
       <then>
@@ -430,11 +479,10 @@
   <!--=======================================================================
         svn-revision
     
-        Tests SVN by printing out the repository
+        Prints and sets the SVN revision for the repository at the current dir (if svn.revision is not set)
         ====================================================================-->
   <target name="svn-revision"
-          depends="install-svnant"
-          description="Prints and sets the SVN revision for the repository at the current dir (if svn.revision is not set)">
+          depends="install-svnant">
 
     <svn javahl="${svnant.use-javahl}" svnkit="${svnant.use-svnkit}">
       <status path="." revisionProperty="svn.revision" />
@@ -461,7 +509,7 @@
       </else>
     </if>
   </target>
-  
+
   <!--=================================================================================
        version-properties: common Ant driven version file generation.  Projects that produce
        a package or packages should run this target.  Projects that produce
@@ -471,20 +519,20 @@
     <tstamp>
       <format property="build.time" pattern="yyyy/MM/dd hh:mm aa"/>
     </tstamp>
-      <propertyfile
+    <propertyfile
               file="version.properties" comment="Release Build version info">
-          <entry key="release.major.number" value="${release.major.number}" />  
-          <entry key="release.minor.number" value="${release.minor.number}" />
-          <entry key="release.milestone.number" value="${release.milestone.number}" />
-          <entry key="release.candidate.token" value="${release.candidate.token}" />
-          <entry key="impl.vendor" value="${impl.vendor}" />
-          <entry key="impl.version" value="${release.major.number}.${release.minor.number}.${release.milestone.number}.${build.id}" />
-          <entry key="impl.title" value="${impl.title}" />
-          <entry key="buildDate" value="${build.time}"/>
-          <entry key="svn.revision" value="${build.id}"/>        
-          <entry key="release.build.number" default="0" type="int" operation="+" value="1" pattern="0000"/>
-      </propertyfile>
-      <property file="${basedir}/version.properties"/>
+      <entry key="release.major.number" value="${release.major.number}" />
+      <entry key="release.minor.number" value="${release.minor.number}" />
+      <entry key="release.milestone.number" value="${release.milestone.number}" />
+      <entry key="release.candidate.token" value="${release.candidate.token}" />
+      <entry key="impl.vendor" value="${impl.vendor}" />
+      <entry key="impl.version" value="${release.major.number}.${release.minor.number}.${release.milestone.number}.${build.id}" />
+      <entry key="impl.title" value="${impl.title}" />
+      <entry key="buildDate" value="${build.time}"/>
+      <entry key="svn.revision" value="${build.id}"/>
+      <entry key="release.build.number" default="0" type="int" operation="+" value="1" pattern="0000"/>
+    </propertyfile>
+    <property file="${basedir}/version.properties"/>
   </target>
 
 
@@ -494,8 +542,7 @@
 	    (Fetches and) installs the IVY jar for use by this ant script
 	    ====================================================================-->
   <target name="install-ivy"
-          depends="install-antcontrib,ivy.download-check"
-          description="Installs IVY tasks for use by this build process">
+          depends="install-antcontrib,ivy.download-check">
     <if>
       <istrue value="${ivy.isinstalled}" />
       <then>
@@ -555,19 +602,18 @@
 	    Verifies that there are no SNAPSHOT dependencies defined in the ivy xml.
 	    If there are SNAPSHOTS, fail the release build.
 	    ====================================================================-->
-  <target name="ivy.check-releasable">
+  <target name="ivy.check-releasable" depends="install-ivy, install-antcontrib">
     <if>
       <istrue value="${release}" />
       <then>
-        <ivy:artifactproperty conf="*" name="dep.[module]/[artifact]-[revision]" value="[revision]" />
+        <sequential>
+          <ivy:artifactproperty conf="*" name="dep.[module]/[artifact]-[revision]" value="[revision]" />
 
-        <propertyselector property="violator.list" match="dep\..*SNAPSHOT.*" select="\0" casesensitive="false" />
+          <propertyselector property="violators" match="dep\..*SNAPSHOT.*" select="\0" casesensitive="false" />
 
-        <fail message="Release not possible, you have dependencies on non-released artifacts: ${violator.list}">
-          <condition>
-            <isset property="${violator.list}" />
-          </condition>
-        </fail>
+          <fail if="violators"
+                message="Release not possible, you have dependencies on non-released artifacts: ${violators}" />
+        </sequential>
       </then>
     </if>
   </target>
@@ -591,12 +637,12 @@
     <property name="resolve-init.skip" value="" />
   </target>
 
-  <target name="resolve-default" depends="resolve-init" description="Retrieves default configuration dependencies">
+  <target name="resolve-default" depends="resolve-init">
     <ivy:resolve file="ivy.xml" conf="default" />
     <ivy:retrieve conf="default" pattern="${lib.dir}/[module]-[revision](-[classifier]).[ext]" />
   </target>
 
-  <target name="resolve-test" depends="resolve-init" description="Retrieves test configuration dependencies">
+  <target name="resolve-test" depends="resolve-init">
     <ivy:resolve file="ivy.xml" conf="test" />
     <ivy:retrieve conf="test" pattern="${testlib.dir}/[module]-[revision](-[classifier]).[ext]" />
   </target>
@@ -619,7 +665,7 @@
 	    want to force IVY to go fetch all your project dependencies from scratch.
 	    WARNING: this will affect all IVY projects, not just the current workspace
 	    ====================================================================-->
-  <target name="ivy-clean-cache" depends="install-ivy" description="Cleans the IVY cache">
+  <target name="ivy-clean-cache" depends="install-ivy">
     <ivy:cleancache />
   </target>
 
@@ -632,7 +678,7 @@
 	    WARNING: this is a global action and will affect other IVY projects
 	    currently referencing a locally published dependency
 	    ====================================================================-->
-  <target name="ivy-clean-local" depends="install-ivy" description="cleans the local repository for the current module">
+  <target name="ivy-clean-local" depends="install-ivy">
     <delete dir="${ivy.local.default.root}/" />
   </target>
 
@@ -645,8 +691,7 @@
 	    currently referencing a locally published dependency
 	    ====================================================================-->
   <target name="ivy-clean-pentaho"
-          depends="install-ivy"
-          description="cleans the IVY cache and local repository of Pentaho-specific files">
+          depends="install-ivy">
     <for param="dir">
       <path>
         <dirset dir="${ivy.local.default.root}" includes="*pentaho*" />
@@ -673,7 +718,7 @@
 	    
 	    Allows ivy to report on the dependencies for this project 
 	    ====================================================================-->
-  <target name="report" depends="install-ivy" description="Uses IVY to report on the dependency information">
+  <target name="report" depends="install-ivy">
     <ivy:resolve file="ivy.xml" />
     <ivy:report conf="default" />
   </target>
@@ -686,7 +731,7 @@
 	    for download by other projects currently being executed on the user's
 	    system.
 	    ====================================================================-->
-  <target name="publish-local-nojar" depends="install-ivy" description="Publishes the jar file to the local repository">
+  <target name="publish-local-nojar" depends="install-ivy">
     <ivy:resolve file="${ivy.artifact.ivyfilename}" />
     <ivy:publish resolver="local" pubrevision="${project.revision}" overwrite="true" forcedeliver="true">
       <artifacts pattern="${dist.dir}/[artifact]-[revision](-[classifier]).[ext]" />
@@ -713,8 +758,7 @@
         repository. 
         ====================================================================-->
   <target name="publish-pentaho"
-          depends="dist, dist-source, publish-pentaho-nojar"
-          description="Builds and publishes the jar file to a Maven2 repository">
+          depends="dist, dist-source, publish-pentaho-nojar">
   </target>
 
 
@@ -724,8 +768,7 @@
 	    Publishes the jar file for this project to a Maven2 repository.
 	    ====================================================================-->
   <target name="publish-pentaho-nojar"
-          depends="install-antcontrib,create-pom,ivy.deliver"
-          description="Publishes the jar file to a Maven2 repository">
+          depends="install-antcontrib,create-pom,ivy.deliver">
     <antcall target="maven-publish-dependencies">
       <param name="publish.groupId" value="${ivy.artifact.group}" />
       <param name="publish.artifactId" value="${ivy.artifact.id}" />
@@ -752,7 +795,7 @@
     
         Creates a publishable version of the ivy dependencies file, ivy.xml
         ====================================================================-->
-  <target name="ivy.deliver" depends="install-ivy,init,resolve">
+  <target name="ivy.deliver">
     <ivy:deliver conf="*(public)" deliverpattern="${dist.dir}/ivy.xml" />
   </target>
 
@@ -902,7 +945,7 @@
 	    
 	    Creates the POM file for publishing the jar file to a Maven2 repository.
 	    ====================================================================-->
-  <target name="create-pom" depends="install-ivy" description="Creates a POM file based on the ivy dependencies">
+  <target name="create-pom" depends="install-ivy">
     <ivy:makepom ivyfile="./ivy.xml" pomfile="${dist.dir}/pom.xml">
       <mapping conf="default" scope="compile" />
       <mapping conf="runtime" scope="runtime" />
@@ -916,7 +959,7 @@
 	    Removes all the libraries that have been downloaded for this project
 	    using the ivy dependencies.
 	    ====================================================================-->
-  <target name="clean-jars" description="Cleans the libraries that have been downloaded">
+  <target name="clean-jars">
     <delete dir="${lib.dir}" />
     <delete dir="${testlib.dir}" />
   </target>
@@ -940,7 +983,7 @@
 	    
 	    Removes all dist artifacts
 	    ====================================================================-->
-  <target name="clean-dist" description="Removes all dist artifacts">
+  <target name="clean-dist">
     <delete dir="${dist.dir}" />
   </target>
 
@@ -961,8 +1004,7 @@
 	    Copies the LGPL license file into the binary directory.
 	    ====================================================================-->
   <target name="copy-license-lgpl"
-          if="lgpl-license-avail"
-          description="Copies the LGPL license file into the bin directory">
+          if="lgpl-license-avail">
     <copy todir="${classes.dir}/META-INF">
       <fileset dir="${license.dir}" includes="lgpl-2.1.txt" />
     </copy>
@@ -976,8 +1018,7 @@
 	    binary directory.
 	    ====================================================================-->
   <target name="copy-license-gpl"
-          if="gpl-license-avail"
-          description="Copies the GPL license file into the bin directory">
+          if="gpl-license-avail">
     <copy todir="${classes.dir}/META-INF">
       <fileset dir="${license.dir}" includes="gpl-2.0.txt" />
     </copy>
@@ -1010,7 +1051,7 @@
 	    
 	    Prepares to perform the compile.
 	    ====================================================================-->
-  <target name="compile.pre" description="Prepares the compile" />
+  <target name="compile.pre"/>
 
 
   <!--=======================================================================
@@ -1018,7 +1059,7 @@
 	    
 	    Performs the actual compile
 	    ====================================================================-->
-  <target name="compile.compile" depends="init" description="Performs the actual javac compile">
+  <target name="compile.compile" depends="init">
     <javac destdir="${classes.dir}"
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
@@ -1072,8 +1113,7 @@
 	    ====================================================================-->
   <target name="compile.src_copy"
           depends="init"
-          if="jar.include.source"
-          description="Copies the source to the bin directory">
+          if="jar.include.source">
     <copy todir="${classes.dir}" flatten="false">
       <fileset dir="${src.dir}" />
     </copy>
@@ -1085,7 +1125,7 @@
 	    
 	    Copies the license file(s) into the bin directory
 	    ====================================================================-->
-  <target name="compile.lic_copy" depends="init" description="Copies the required license file to the bin directory">
+  <target name="compile.lic_copy" depends="init">
     <condition property="lgpl-license-avail">
       <available file="${license.dir}/lgpl-2.1.txt" />
     </condition>
@@ -1102,7 +1142,7 @@
 	    
 	    Performs any needed post-compile tasks
 	    ====================================================================-->
-  <target name="compile.post" description="Post compilation tasks" />
+  <target name="compile.post"/>
 
 
   <!--=======================================================================
@@ -1111,40 +1151,39 @@
 	    Creates a jar file from the bin directory
 	    ====================================================================-->
   <target name="jar" depends="compile,set-build.id,generate.manifest" description="Jars up the bin directory after a compile">
-   	<jar destfile="${dist.dir}/${ivy.artifact.id}-${project.revision}.jar" manifest="${dist.manifest.file}">
+    <jar destfile="${dist.dir}/${ivy.artifact.id}-${project.revision}.jar" manifest="${dist.manifest.file}">
       <fileset dir="${classes.dir}" />
     </jar>
   </target>
 
 
-	<!--=======================================================================
+  <!--=======================================================================
 	    generate.manifest
 	    
 	    Creates a new manifest file if one is not specified, or updates
 	    an existing manifest file if one is specified.
 	    ====================================================================-->
-	<target name="generate.manifest" depends="init,set-build.id">
-		<delete file="${dist.manifest.file}" />		
-		<touch file="${dist.manifest.file}" />
-		<copy file="${manifest.file}" tofile="${dist.manifest.file}" overwrite="true" failonerror="false" />
+  <target name="generate.manifest" depends="init,set-build.id">
+    <delete file="${dist.manifest.file}" />
+    <touch file="${dist.manifest.file}" />
+    <copy file="${manifest.file}" tofile="${dist.manifest.file}" overwrite="true" failonerror="false" />
 
-		<manifest file="${dist.manifest.file}" mode="update">
-			<attribute name="Implementation-Title" value="${impl.title}" />
-			<attribute name="Implementation-Version" value="${project.revision}.${build.id}" />
-			<attribute name="Implementation-Vendor" value="${impl.vendor}" />
-			<attribute name="Implementation-ProductID" value="${impl.productID}" />
-		</manifest>
-	</target>
+    <manifest file="${dist.manifest.file}" mode="update">
+      <attribute name="Implementation-Title" value="${impl.title}" />
+      <attribute name="Implementation-Version" value="${project.revision}.${build.id}" />
+      <attribute name="Implementation-Vendor" value="${impl.vendor}" />
+      <attribute name="Implementation-ProductID" value="${impl.productID}" />
+    </manifest>
+  </target>
 
-	
-	<!--=======================================================================
+
+  <!--=======================================================================
 	    dist-source
 	    
 	    Generates zip and targz distributions of the javadoc
 	    ====================================================================-->
   <target name="dist-source"
-          depends="source.jar, source.targz"
-          description="Generates zip and targz distributions of the project source" />
+          depends="source.jar, source.targz" />
 
 
   <!--=======================================================================
@@ -1195,7 +1234,7 @@
 	    
 	    Compiles project test source
 	    ====================================================================-->
-  <target name="compile-tests" depends="init-tests" description="Compiles project test source">
+  <target name="compile-tests" depends="init-tests">
     <javac destdir="${testclasses.dir}"
            debug="true"
            optimize="false"
@@ -1272,8 +1311,7 @@
 	    and coverage artifacts
 	    ====================================================================-->
   <target name="continuous"
-          depends="clean-all,resolve,cobertura,dist-javadoc,dist-source,dist"
-          description="Runs a typical continuous integration build" />
+          depends="clean-all,resolve,cobertura,dist-javadoc,dist-source,dist"/>
 
 
   <!--=======================================================================
@@ -1283,27 +1321,7 @@
 	    and coverage artifacts
 	    ====================================================================-->
   <target name="continuous-testless"
-          depends="clean-all,resolve,dist-javadoc,dist-source,dist"
-          description="Runs a typical testless continuous integration build" />
-
-
-  <!--=======================================================================
-	    continuous-lite
-	    
-	    Runs a lightweight continuous integration build, producing no artifacts for distrubution.
-	    ====================================================================-->
-  <target name="continuous-lite"
-          depends="clean-all,resolve,cobertura,javadoc"
-          description="Runs a lightweight continuous integration build." />
-
-  <!--=======================================================================
-        continuous-release
-        
-        Runs a release build including versioning, project dist and javadoc.
-        ====================================================================-->
-    <target name="continuous-release"
-            depends="clean-all,version-properties,resolve,dist-javadoc,dist-source,dist"
-            description="Runs a typical testless continuous integration build with a version file" />
+          depends="clean-all,resolve,dist-javadoc,dist-source,dist"/>
 
 
   <!--=======================================================================
@@ -1312,8 +1330,7 @@
 	    Generates javadoc source documentation for this project
 	    ====================================================================-->
   <target name="javadoc"
-          depends="javadoc.init, compile"
-          description="Generates javadoc source documentation for this project">
+          depends="javadoc.init, compile">
     <javadoc destdir="${javadoc.dir}/docs/api"
              access="public"
              source="1.5"
@@ -1342,8 +1359,7 @@
 	    Generates zip and targz distributions of the javadoc
 	    ====================================================================-->
   <target name="dist-javadoc"
-          depends="javadoc.zip, javadoc.targz"
-          description="Generates zip and targz distributions of the javadoc" />
+          depends="javadoc.zip, javadoc.targz" />
 
 
   <!--=======================================================================
@@ -1352,7 +1368,7 @@
 	    Removes generated javadoc files (note, this does not remove javadoc distributions.
 	    Use clean-dist to remove artifacts from the dist.dir.
 	    ====================================================================-->
-  <target name="clean-javadoc" description="Removes non-dist generated javadoc files">
+  <target name="clean-javadoc">
     <delete dir="${javadoc.dir}" />
   </target>
 
@@ -1400,8 +1416,7 @@
 	    Runs tests in an instrumented environment and produces Cobertura test coverage reports
 	    ====================================================================-->
   <target name="cobertura"
-          depends="clean-cobertura,cobertura.install,compile,compile-tests,cobertura.instrument-classes,cobertura.test-instrumented,cobertura.xml-report,cobertura.html-report"
-          description="Compile, instrument classes, run the tests and generate Cobertura coverage reports." />
+          depends="clean-cobertura,cobertura.install,compile,compile-tests,cobertura.instrument-classes,cobertura.test-instrumented,cobertura.xml-report,cobertura.html-report"/>
 
 
   <!--=======================================================================
@@ -1481,8 +1496,7 @@
 	    Removes all files created by Cobertura code coverage utility
 	    ====================================================================-->
   <target name="clean-cobertura"
-          depends="cobertura.clean-instrumented-classes,cobertura.clean-coverage-reports"
-          description="Removes all files created by Cobertura code coverage utility.">
+          depends="cobertura.clean-instrumented-classes,cobertura.clean-coverage-reports">
     <delete dir="${cobertura.data.dir}" />
   </target>
 
@@ -1611,8 +1625,7 @@
         classpath from Ant.
       ====================================================================-->
   <target name="create-dot-classpath"
-          depends="install-pentaho-ant-tasks,init"
-          description="Creates the Eclipse .classpath file">
+          depends="install-pentaho-ant-tasks,init">
     <dot-classpath>
       <!-- Include all lib dirs -->
       <classpath>
