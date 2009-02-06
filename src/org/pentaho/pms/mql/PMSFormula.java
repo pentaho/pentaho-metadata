@@ -429,7 +429,7 @@ public class PMSFormula implements FormulaTraversalInterface {
       validateAndResolveObjectModel(t.getOptimizedHeadValue());
       for (int i = 0; i < t.getOperators().length; i++) {
         validateAndResolveObjectModel(t.getOperators()[i]);
-        validateAndResolveObjectModel(t.getOperators()[i]);
+        validateAndResolveObjectModel(t.getOperands()[i]);
       }
     } else if (val instanceof ContextLookup) {
       ContextLookup l = (ContextLookup)val;
@@ -524,7 +524,7 @@ public class PMSFormula implements FormulaTraversalInterface {
       generateSQL(t, t.getOptimizedHeadValue(), sb, locale);
       for (int i = 0; i < t.getOperators().length; i++) {
         generateSQL(t, t.getOperators()[i], sb, locale);
-        generateSQL(t, t.getOperators()[i], sb, locale);
+        generateSQL(t, t.getOperands()[i], sb, locale);
       }
       if (addParens) {
         sb.append(")"); //$NON-NLS-1$
