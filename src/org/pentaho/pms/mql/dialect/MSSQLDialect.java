@@ -12,8 +12,8 @@
 */
 package org.pentaho.pms.mql.dialect;
 
-import org.jfree.formula.lvalues.FormulaFunction;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
+import org.pentaho.reporting.libraries.formula.lvalues.FormulaFunction;
 
 /**
  * Microsoft SQL Server Implementation of Metadata SQL Dialect

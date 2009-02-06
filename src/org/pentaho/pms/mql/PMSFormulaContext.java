@@ -12,9 +12,9 @@
 */
 package org.pentaho.pms.mql;
 
-import org.jfree.formula.DefaultFormulaContext;
-import org.jfree.formula.typing.Type;
 import org.pentaho.pms.messages.Messages;
+import org.pentaho.reporting.libraries.formula.DefaultFormulaContext;
+import org.pentaho.reporting.libraries.formula.typing.Type;
 
 /**
  * This is a singleton class that manages PMSFormula's context.

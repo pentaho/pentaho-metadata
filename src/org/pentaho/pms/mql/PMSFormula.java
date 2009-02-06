@@ -19,16 +19,6 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jfree.formula.EvaluationException;
-import org.jfree.formula.Formula;
-import org.jfree.formula.lvalues.ContextLookup;
-import org.jfree.formula.lvalues.FormulaFunction;
-import org.jfree.formula.lvalues.LValue;
-import org.jfree.formula.lvalues.StaticValue;
-import org.jfree.formula.lvalues.Term;
-import org.jfree.formula.operators.InfixOperator;
-import org.jfree.formula.parser.ParseException;
-import org.jfree.formula.typing.coretypes.TextType;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.messages.Messages;
@@ -41,6 +31,16 @@ import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
+import org.pentaho.reporting.libraries.formula.EvaluationException;
+import org.pentaho.reporting.libraries.formula.Formula;
+import org.pentaho.reporting.libraries.formula.lvalues.ContextLookup;
+import org.pentaho.reporting.libraries.formula.lvalues.FormulaFunction;
+import org.pentaho.reporting.libraries.formula.lvalues.LValue;
+import org.pentaho.reporting.libraries.formula.lvalues.StaticValue;
+import org.pentaho.reporting.libraries.formula.lvalues.Term;
+import org.pentaho.reporting.libraries.formula.operators.InfixOperator;
+import org.pentaho.reporting.libraries.formula.parser.ParseException;
+import org.pentaho.reporting.libraries.formula.typing.coretypes.TextType;
 
 /**
  * This class manages the two types of formulas which appear in the metadata system.  Both of 
@@ -427,9 +427,9 @@ public class PMSFormula implements FormulaTraversalInterface {
     if (val instanceof Term) {
       Term t = (Term)val;
       validateAndResolveObjectModel(t.getOptimizedHeadValue());
-      for (int i = 0; i < t.getOptimizedOperators().length; i++) {
-        validateAndResolveObjectModel(t.getOptimizedOperators()[i]);
-        validateAndResolveObjectModel(t.getOptimizedOperands()[i]);
+      for (int i = 0; i < t.getOperators().length; i++) {
+        validateAndResolveObjectModel(t.getOperators()[i]);
+        validateAndResolveObjectModel(t.getOperators()[i]);
       }
     } else if (val instanceof ContextLookup) {
       ContextLookup l = (ContextLookup)val;
@@ -517,14 +517,14 @@ public class PMSFormula implements FormulaTraversalInterface {
     if (val instanceof Term) {
       Term t = (Term)val;
       // parens are required if both parent and current are sql infix
-      boolean addParens = (t.getOptimizedOperators().length > 1 || requiresParens(parent, t.getOptimizedOperators()[0]));
+      boolean addParens = (t.getOperators().length > 1 || requiresParens(parent, t.getOperators()[0]));
       if (addParens) {
         sb.append("("); //$NON-NLS-1$
       }
       generateSQL(t, t.getOptimizedHeadValue(), sb, locale);
-      for (int i = 0; i < t.getOptimizedOperators().length; i++) {
-        generateSQL(t, t.getOptimizedOperators()[i], sb, locale);
-        generateSQL(t, t.getOptimizedOperands()[i], sb, locale);
+      for (int i = 0; i < t.getOperators().length; i++) {
+        generateSQL(t, t.getOperators()[i], sb, locale);
+        generateSQL(t, t.getOperators()[i], sb, locale);
       }
       if (addParens) {
         sb.append(")"); //$NON-NLS-1$

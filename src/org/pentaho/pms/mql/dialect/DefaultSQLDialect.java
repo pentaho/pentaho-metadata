@@ -21,8 +21,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jfree.formula.lvalues.FormulaFunction;
-import org.jfree.formula.lvalues.StaticValue;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.messages.Messages;
@@ -31,6 +29,8 @@ import org.pentaho.pms.mql.dialect.SQLQueryModel.SQLSelection;
 import org.pentaho.pms.mql.dialect.SQLQueryModel.SQLTable;
 import org.pentaho.pms.mql.dialect.SQLQueryModel.SQLWhereFormula;
 import org.pentaho.pms.util.Const;
+import org.pentaho.reporting.libraries.formula.lvalues.FormulaFunction;
+import org.pentaho.reporting.libraries.formula.lvalues.StaticValue;
 
 /**
  * This is the Default SQL Dialect Class that implements SQLDialectInterface.
