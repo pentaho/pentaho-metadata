@@ -452,26 +452,31 @@ public class DefaultSQLDialect implements SQLDialectInterface {
         sql.append(query.getSecurityConstraint().getFormula()).append(Const.CR);
         
         if (query.getWhereFormulas().size() > 0) {
-          sql.append("        ) AND (").append(Const.CR); //$NON-NLS-1$
+          sql.append("        ) AND ").append(Const.CR); //$NON-NLS-1$
         }
       }
+
+      if(query.getWhereFormulas().size() > 0){
+        sql.append("        (").append(Const.CR); //$NON-NLS-1$
       
-      for (SQLWhereFormula whereFormula : query.getWhereFormulas()) {
-        if (!usedSQLWhereFormula.contains(whereFormula)) {
-          if (first) {
-            sql.append("          ("); //$NON-NLS-1$
-            first = false;
-          } else {
-            sql.append("      "); //$NON-NLS-1$
-            sql.append(whereFormula.getOperator());
-            sql.append(" ("); //$NON-NLS-1$
+        for (SQLWhereFormula whereFormula : query.getWhereFormulas()) {
+          if (!usedSQLWhereFormula.contains(whereFormula)) {
+            if (first) {
+              sql.append("          ("); //$NON-NLS-1$
+              first = false;
+            } else {
+              sql.append("      "); //$NON-NLS-1$
+              sql.append(whereFormula.getOperator());
+              sql.append(" ("); //$NON-NLS-1$
+            }
+            sql.append(Const.CR);
+            sql.append("             "); //$NON-NLS-1$
+            sql.append(whereFormula.getFormula());
+            sql.append(Const.CR);
+            sql.append("          )").append(Const.CR); //$NON-NLS-1$
           }
-          sql.append(Const.CR);
-          sql.append("             "); //$NON-NLS-1$
-          sql.append(whereFormula.getFormula());
-          sql.append(Const.CR);
-          sql.append("          )").append(Const.CR); //$NON-NLS-1$
         }
+        sql.append("        )").append(Const.CR); //$NON-NLS-1$
       }
       
       if (addSecurityConstraint) {
