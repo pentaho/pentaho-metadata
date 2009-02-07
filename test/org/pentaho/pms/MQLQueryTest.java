@@ -154,7 +154,7 @@ public class MQLQueryTest extends TestCase {
       System.out.println("-----------");
       System.out.println("Expected SQL: [" + expectedSql + "]");
       System.out.println("-----------");
-      System.out.println("Actual SQL: [" + sql + "]");
+      System.out.println("Actual SQL:   [" + sql + "]");
       System.out.println("-----------");
       */
       assertEquals(expectedSql, sql);
@@ -413,8 +413,8 @@ public class MQLQueryTest extends TestCase {
             "[BT_CUSTOMERS.BC_CUSTOMERS_CUSTOMERNAME] = \"EuroCars\")", //$NON-NLS-1$
 
         // expected hypersonic sql
-        "( (((4 * (2 + 3)) - (( BT_CUSTOMERS.COUNTRY  * 2) / 3)) <> 1000) AND " + //$NON-NLS-1$
-            "( BT_CUSTOMERS.CUSTOMERNAME  = 'EuroCars') )" //$NON-NLS-1$
+        "( (4 * (2 + 3) - ( BT_CUSTOMERS.COUNTRY  * 2) / 3 <> 1000) AND" + //$NON-NLS-1$
+                " ( BT_CUSTOMERS.CUSTOMERNAME  = 'EuroCars') )" //$NON-NLS-1$
     );
   }
 
@@ -437,7 +437,7 @@ public class MQLQueryTest extends TestCase {
             "IN([BT_CUSTOMERS.BC_CUSTOMERS_CUSTOMERNAME];\"EuroCars1\";\"EuroCars2\";\"EuroCars3\"))", //$NON-NLS-1$
 
         // expected hypersonic sql
-        "( (((4 * (2 + 3)) - (( BT_CUSTOMERS.COUNTRY  * 2) / 3)) <> 1000) AND " + //$NON-NLS-1$
+        "( (4 * (2 + 3) - ( BT_CUSTOMERS.COUNTRY  * 2) / 3 <> 1000) AND " + //$NON-NLS-1$
             " BT_CUSTOMERS.CUSTOMERNAME  IN ( 'EuroCars1' , 'EuroCars2' , 'EuroCars3' )  )" //$NON-NLS-1$
     );
   }

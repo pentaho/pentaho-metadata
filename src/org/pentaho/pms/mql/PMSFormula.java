@@ -426,7 +426,7 @@ public class PMSFormula implements FormulaTraversalInterface {
   private void validateAndResolveObjectModel(Object val) throws PentahoMetadataException {
     if (val instanceof Term) {
       Term t = (Term)val;
-      validateAndResolveObjectModel(t.getOptimizedHeadValue());
+      validateAndResolveObjectModel(t.getHeadValue());
       for (int i = 0; i < t.getOperators().length; i++) {
         validateAndResolveObjectModel(t.getOperators()[i]);
         validateAndResolveObjectModel(t.getOperands()[i]);
@@ -521,7 +521,7 @@ public class PMSFormula implements FormulaTraversalInterface {
       if (addParens) {
         sb.append("("); //$NON-NLS-1$
       }
-      generateSQL(t, t.getOptimizedHeadValue(), sb, locale);
+      generateSQL(t, t.getHeadValue(), sb, locale);
       for (int i = 0; i < t.getOperators().length; i++) {
         generateSQL(t, t.getOperators()[i], sb, locale);
         generateSQL(t, t.getOperands()[i], sb, locale);
