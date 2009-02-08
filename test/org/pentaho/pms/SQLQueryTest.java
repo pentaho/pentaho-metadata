@@ -26,7 +26,7 @@ import org.pentaho.pms.mql.dialect.SQLQueryModel.OrderType;
  * @author Will Gorman (wgorman@pentaho.org)
  *
  */
-public class SQLQueryTest extends TestCase {
+public class SQLQueryTest extends MetadataTestBase {
   public static final String lineSep = System.getProperty("line.separator");
   public void testSQL() {
     SQLQueryModel query = new SQLQueryModel();
@@ -47,7 +47,7 @@ public class SQLQueryTest extends TestCase {
     SQLDialectInterface dialect = SQLDialectFactory.getSQLDialect(databaseMeta);
     
     String sql = dialect.generateSelectStatement(query);
-    assertEquals(
+    assertEqualsIgnoreWhitespacesAndCase(
         "SELECT DISTINCT " + lineSep +  
         "          t1.c1 AS col1" + lineSep +  
         "         ,sum(t1.c2) AS col2" + lineSep + 
@@ -57,7 +57,9 @@ public class SQLQueryTest extends TestCase {
         "          t1" + lineSep +  
         "WHERE " + lineSep +  
         "          (" + lineSep +  
+        "          (" + lineSep +  
         "             col1 < 3" + lineSep +  
+        "          )" + lineSep +  
         "          )" + lineSep +  
         "GROUP BY " + lineSep +  
         "          col1" + lineSep +  
@@ -98,7 +100,7 @@ public class SQLQueryTest extends TestCase {
     
     // printOutJava(sql);
     
-    assertEquals(
+    assertEqualsIgnoreWhitespacesAndCase(
         "SELECT DISTINCT " + lineSep +  
         "          t1.c1 AS col1" + lineSep +  
         "         ,sum(t1.c2) AS col2" + lineSep + 
@@ -113,7 +115,7 @@ public class SQLQueryTest extends TestCase {
         "          (" + lineSep +  
         "             col1 < 3" + lineSep +  
         "          )" + lineSep + 
-        "        )" + lineSep +          
+        "        )" + lineSep +        
         "GROUP BY " + lineSep +  
         "          col1" + lineSep +  
         "HAVING " + lineSep +  
@@ -239,7 +241,7 @@ public class SQLQueryTest extends TestCase {
     
     // printOutJava(sql);
     
-    assertEquals(
+    assertEqualsIgnoreWhitespacesAndCase(
         "SELECT DISTINCT " + lineSep +  
         "          t1.c1 AS col1" + lineSep +  
         "         ,sum(t1.c2) AS col2" + lineSep + 
@@ -249,7 +251,9 @@ public class SQLQueryTest extends TestCase {
         "          t1" + lineSep +  
         "WHERE " + lineSep +  
         "          (" + lineSep +  
+        "          (" + lineSep +  
         "             col1 < 3" + lineSep +  
+        "          )" + lineSep + 
         "          )" + lineSep + 
         "GROUP BY " + lineSep +  
         "          col1" + lineSep +  

@@ -33,7 +33,7 @@ public class ComplexExpressionsTests extends MetadataTestBase {
 		myTest.addConstraint("AND", "[bt2.bce2] > 5");
 		MappedQuery query = myTest.getQuery();
 		assertEqualsIgnoreWhitespaces(
-				"SELECT DISTINCT bt1.pc1 AS COL0 FROM pt1 bt1 ,pt2 bt2 WHERE ( bt1.pc1 = bt2.pc2 ) AND ( bt2.pc2 * bt1.pc1 > 5 )", //$NON-NLS-1$ 
+				"SELECT DISTINCT bt1.pc1 AS COL0 FROM pt1 bt1 ,pt2 bt2 WHERE ( bt1.pc1 = bt2.pc2 ) AND (( bt2.pc2 * bt1.pc1 > 5 ))", //$NON-NLS-1$ 
 				query.getQuery());
 	}
   

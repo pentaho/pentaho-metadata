@@ -991,7 +991,7 @@ public class MQLQueryImplTest extends MetadataTestBase {
     
     MappedQuery query = myTest.getQuery();
     assertEqualsIgnoreWhitespaces( 
-        "SELECT DISTINCT bt1.pc1 AS COL0 ,bt2.pc2 AS COL1 FROM pt1 bt1 LEFT OUTER JOIN pt2 bt2 ON ( bt1.pc1 = bt2.pc2 AND ( bt2.pc2 > 1 ) ) WHERE ( bt1.pc1 > 1 )",  //$NON-NLS-1$
+        "SELECT DISTINCT bt1.pc1 AS COL0 ,bt2.pc2 AS COL1 FROM pt1 bt1 LEFT OUTER JOIN pt2 bt2 ON ( bt1.pc1 = bt2.pc2 AND ( bt2.pc2 > 1 ) ) WHERE (( bt1.pc1 > 1 ))",  //$NON-NLS-1$
         query.getQuery()    
     ); 
   }
@@ -1717,7 +1717,9 @@ public class MQLQueryImplTest extends MetadataTestBase {
         + "             metadata_business_table_very01.pc1 = metadata_business_table_very02.pc2\n"
         + "          )\n"
         + "      AND (\n"
+        + "          (\n"
         + "             metadata_business_table_very01.pc1 > 25"
+        + "          )"
         + "          )",
         query.getQuery()    
     ); //$NON-NLS-1$

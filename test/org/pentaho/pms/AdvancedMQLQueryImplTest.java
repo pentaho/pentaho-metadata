@@ -133,8 +133,8 @@ public class AdvancedMQLQueryImplTest extends MetadataTestBase {
         "AND ( bt3.pc3 = bt2.pc2 ) " +
         "AND ( bt1_alias1.pc1 = bt2_alias1.pc2 ) " +
         "AND ( bt3.pc3 = bt2_alias1.pc2 ) " +
-        "AND ( bt1_alias1.pc1 > 10 ) " +
-        "AND ( bt3.pc3 > 10 )",
+        "AND (( bt1_alias1.pc1 > 10 ) " +
+        "AND ( bt3.pc3 > 10 ))",
         myTest.getQuery().getQuery());
   }
 
@@ -246,9 +246,9 @@ public class AdvancedMQLQueryImplTest extends MetadataTestBase {
         "      AND (\n" + 
         "             bt1_alias1.pc1 = bt2.pc2\n" + 
         "          )\n" + 
-        "      AND (\n" + 
+        "      AND ((\n" + 
         "              bt2.pc2  > 10\n" + 
-        "          )\n" + 
+        "          ))\n" + 
         "GROUP BY \n" + 
         "          bt2.pc2\n" + 
         "HAVING \n" + 
@@ -291,9 +291,9 @@ public class AdvancedMQLQueryImplTest extends MetadataTestBase {
         "      AND (\n" + 
         "             bt1.pc1 = bt2_alias1.pc2\n" + 
         "          )\n" + 
-        "      AND (\n" + 
+        "      AND ((\n" + 
         "               bt2_alias1.pc2  * 2  > 10\n" + 
-        "          )\n" +
+        "          ))\n" +
         "ORDER BY \n" + 
         "          bt1.pc1\n" + 
         "         , bt2_alias1.pc2  * 2\n",
@@ -349,7 +349,7 @@ public class AdvancedMQLQueryImplTest extends MetadataTestBase {
         "   pt1 bt1," +
         "   pt1 bt1_Alias1 " +
         "WHERE" +
-        "   (bt1.pc1 = '1539006')", 
+        "   ((bt1.pc1 = '1539006'))", 
         myReadTest2.getQuery().getQuery());
 
     AdvancedMQLQuery myReadTest3 = new AdvancedMQLQuery(schemaMeta, model, databaseMeta, "en_US");
@@ -393,7 +393,7 @@ public class AdvancedMQLQueryImplTest extends MetadataTestBase {
         "WHERE" +
         "  (bt1.pc1 = bt2.pc2)" +
         "  AND (bt3.pc3 = bt2.pc2)" +
-        "  AND (bt1.pc1 = '1539006')",
+        "  AND ((bt1.pc1 = '1539006'))",
         myReadTest3.getQuery().getQuery());    
   
   }
