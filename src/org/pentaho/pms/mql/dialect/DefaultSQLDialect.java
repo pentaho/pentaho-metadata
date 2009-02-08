@@ -453,10 +453,12 @@ public class DefaultSQLDialect implements SQLDialectInterface {
         
         if (query.getWhereFormulas().size() > 0) {
           sql.append("        ) AND ").append(Const.CR); //$NON-NLS-1$
+        } else {
+          sql.append("        )").append(Const.CR); //$NON-NLS-1$
         }
       }
 
-      if(query.getWhereFormulas().size() > 0){
+      if(query.getWhereFormulas().size() > 0 && usedSQLWhereFormula.size() < query.getWhereFormulas().size()){
         sql.append("        (").append(Const.CR); //$NON-NLS-1$
       
         for (SQLWhereFormula whereFormula : query.getWhereFormulas()) {
@@ -479,9 +481,6 @@ public class DefaultSQLDialect implements SQLDialectInterface {
         sql.append("        )").append(Const.CR); //$NON-NLS-1$
       }
       
-      if (addSecurityConstraint) {
-        sql.append("        )").append(Const.CR); //$NON-NLS-1$
-      }
     }
   }
   
