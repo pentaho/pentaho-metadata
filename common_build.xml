@@ -692,6 +692,7 @@ TYPICAL TARGET SEQUENCE
 	    ====================================================================-->
   <target name="ivy-clean-pentaho"
           depends="install-ivy">
+  	<mkdir dir="${ivy.local.default.root}" /> <!-- just in case it doesn't exist -->
     <for param="dir">
       <path>
         <dirset dir="${ivy.local.default.root}" includes="*pentaho*" />
