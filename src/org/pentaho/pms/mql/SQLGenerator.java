@@ -579,21 +579,43 @@ public class SQLGenerator {
 
   protected List<BusinessTable> getNonSelectedTables(BusinessModel model, List<BusinessTable> selectedTables) {
     List<BusinessTableNeighbours> extra = new ArrayList<BusinessTableNeighbours>(model.nrBusinessTables());
+    List<BusinessTable> unused = new ArrayList<BusinessTable>();
+    List<BusinessTable> used = new ArrayList<BusinessTable>(selectedTables);
+    
+    // the first part of this algorithm looks for all the tables that are connected to the selected 
+    // tables in any way.  We loop through all the tables until there are no more connections
+    
     for (int i = 0; i < model.nrBusinessTables(); i++) {
-      BusinessTable check = model.getBusinessTable(i);
-      boolean found = false;
-      for (int j = 0; j < selectedTables.size(); j++) {
-        BusinessTable businessTable = selectedTables.get(j);
-        if (check.equals(businessTable)) {
-          found = true;
+      unused.add(model.getBusinessTable(i));
+    }
+    
+    boolean anyFound = true;
+    
+    // iterate over the list until there are no more neighbors
+    while (anyFound) {
+      anyFound = false;
+      Iterator<BusinessTable> iter = unused.iterator();
+      while (iter.hasNext()) {
+        boolean found = false;        
+        BusinessTable check = iter.next(); // unused.get(i);
+        for (int j = 0; j < used.size(); j++) {
+          BusinessTable businessTable = used.get(j);
+          if (check.equals(businessTable)) {
+            found = true;
+          }
         }
-      }
-
-      if (!found) {
-        BusinessTableNeighbours btn = new BusinessTableNeighbours();
-        btn.businessTable = check;
-        btn.nrNeighbours = model.getNrNeighbours(check, selectedTables);
-        extra.add(btn);
+        if (!found) {
+          BusinessTableNeighbours btn = new BusinessTableNeighbours();
+          btn.businessTable = check;
+          btn.nrNeighbours = model.getNrNeighbours(check, used);
+          if (btn.nrNeighbours > 0) {
+            extra.add(btn);
+            used.add(check);
+            // remove check from the unused list
+            iter.remove();
+            anyFound = true;
+          }
+        }
       }
     }
 

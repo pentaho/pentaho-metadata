@@ -63,6 +63,127 @@ public class MQLQueryImplTest extends MetadataTestBase {
     assertEquals(path.getRelationship(0), rl1);
     assertEquals(path.getRelationship(1), rl2);
   }
+  
+  public void testThreeSibJoin() throws Exception {
+    
+    final BusinessModel model = new BusinessModel();
+    final BusinessTable bt1 = new BusinessTable();
+    bt1.setId("bt1");  //$NON-NLS-1$
+    final BusinessTable bt2 = new BusinessTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    final BusinessTable bt3 = new BusinessTable();
+    bt3.setId("bt3"); //$NON-NLS-1$
+    final BusinessTable bt5 = new BusinessTable();
+    bt5.setId("bt5"); //$NON-NLS-1$
+    final BusinessTable bt6 = new BusinessTable();
+    bt6.setId("bt6"); //$NON-NLS-1$
+    
+    final RelationshipMeta rl1 = new RelationshipMeta();
+    rl1.setTableFrom(bt1);
+    rl1.setTableTo(bt2);
+    
+    final RelationshipMeta rl2 = new RelationshipMeta();
+    rl2.setTableTo(bt2);
+    rl2.setTableFrom(bt3);
+
+    final RelationshipMeta rl3 = new RelationshipMeta();
+    rl3.setTableTo(bt3);
+    rl3.setTableFrom(bt5);
+
+    final RelationshipMeta rl4 = new RelationshipMeta();
+    rl4.setTableTo(bt5);
+    rl4.setTableFrom(bt6);
+    
+    model.addBusinessTable(bt1);
+    model.addBusinessTable(bt2);
+    model.addBusinessTable(bt3);
+    model.addBusinessTable(bt5);
+    model.addBusinessTable(bt6);
+    model.addRelationship(rl1);
+    model.addRelationship(rl2);
+    model.addRelationship(rl3);
+    model.addRelationship(rl4);
+    
+    SQLGenerator sqlGenerator = new SQLGenerator();
+    List<BusinessTable> tbls = new ArrayList<BusinessTable>();
+    tbls.add(bt1); tbls.add(bt6);
+    Path path = sqlGenerator.getShortestPathBetween(model, tbls);
+    
+    // this should return a path, but it is returning null instead
+    
+    assertEquals(path.size(), 4);
+    assertEquals(path.getRelationship(0), rl3);
+    assertEquals(path.getRelationship(1), rl4); // may be rl3 
+    assertEquals(path.getRelationship(2), rl2); // may be rl5
+    assertEquals(path.getRelationship(3), rl1);
+  }
+  
+  public void testCircularJoin() throws Exception {
+    
+    final BusinessModel model = new BusinessModel();
+    final BusinessTable bt1 = new BusinessTable();
+    bt1.setId("bt1");  //$NON-NLS-1$
+    final BusinessTable bt2 = new BusinessTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    final BusinessTable bt3 = new BusinessTable();
+    bt3.setId("bt3"); //$NON-NLS-1$
+    final BusinessTable bt4 = new BusinessTable();
+    bt4.setId("bt4"); //$NON-NLS-1$
+    final BusinessTable bt5 = new BusinessTable();
+    bt5.setId("bt5"); //$NON-NLS-1$
+    final BusinessTable bt6 = new BusinessTable();
+    bt6.setId("bt6"); //$NON-NLS-1$
+    
+    final RelationshipMeta rl1 = new RelationshipMeta();
+    rl1.setTableFrom(bt1);
+    rl1.setTableTo(bt2);
+    
+    final RelationshipMeta rl2 = new RelationshipMeta();
+    rl2.setTableTo(bt2);
+    rl2.setTableFrom(bt3);
+
+    final RelationshipMeta rl3 = new RelationshipMeta();
+    rl3.setTableTo(bt2);
+    rl3.setTableFrom(bt4);
+
+    final RelationshipMeta rl4 = new RelationshipMeta();
+    rl4.setTableTo(bt3);
+    rl4.setTableFrom(bt5);
+
+    final RelationshipMeta rl5 = new RelationshipMeta();
+    rl5.setTableTo(bt4);
+    rl5.setTableFrom(bt5);
+
+    final RelationshipMeta rl6 = new RelationshipMeta();
+    rl6.setTableTo(bt5);
+    rl6.setTableFrom(bt6);
+    
+    model.addBusinessTable(bt1);
+    model.addBusinessTable(bt2);
+    model.addBusinessTable(bt3);
+    model.addBusinessTable(bt4);
+    model.addBusinessTable(bt5);
+    model.addBusinessTable(bt6);
+    model.addRelationship(rl1);
+    model.addRelationship(rl2);
+    model.addRelationship(rl3);
+    model.addRelationship(rl4);
+    model.addRelationship(rl5);
+    model.addRelationship(rl6);
+    
+    SQLGenerator sqlGenerator = new SQLGenerator();
+    List<BusinessTable> tbls = new ArrayList<BusinessTable>();
+    tbls.add(bt1); tbls.add(bt6);
+    Path path = sqlGenerator.getShortestPathBetween(model, tbls);
+    
+    // this should return a path, but it is returning null instead
+    
+    assertEquals(path.size(), 4);
+    assertEquals(path.getRelationship(0), rl4);
+    assertEquals(path.getRelationship(1), rl6); // may be rl3 
+    assertEquals(path.getRelationship(2), rl2); // may be rl5
+    assertEquals(path.getRelationship(3), rl1);
+  }
 
   public void testGetShortestPathBetween2() throws Exception {
     
