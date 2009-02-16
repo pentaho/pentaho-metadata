@@ -43,7 +43,7 @@
     <dependency org="pentaho.kettle" name="kettle-engine" rev="${dependency.kettle.revision}" />
     <dependency org="pentaho.kettle" name="kettle-core"   rev="${dependency.kettle.revision}" />
     <dependency org="pentaho" name="pentaho-cwm" rev="1.5.4" />
-    <dependency org="pentaho-library" name="libformula" rev="TRUNK-SNAPSHOT" />
+    <dependency org="pentaho" name="libformula" rev="${dependency.libformula.revision}" />
     <dependency org="pentaho" name="pentaho-publisher" rev="1.6.0" />
   </dependencies>
 </ivy-module>
