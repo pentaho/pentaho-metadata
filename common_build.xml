@@ -178,7 +178,7 @@ TYPICAL TARGET SEQUENCE
   <property name="testlib.dir"
             value="${basedir}/test-lib"
             description="Directory for jar files needed during unit testing" />
-  <property name="testbin.dir" value="${bin.dir}/test" description="Base directory for all test output" />
+  <property name="testbin.dir" value="${bin.dir}/test" description="Base directory for all compiler generated test output" />
   <property name="testclasses.dir"
             value="${testbin.dir}/classes"
             description="Classes compiled from project test code are placed here" />
@@ -301,21 +301,21 @@ TYPICAL TARGET SEQUENCE
 
   <!-- Setup the compile classpath -->
   <path id="classpath">
-    <fileset dir="${lib.dir}">
+    <fileset dir="${devlib.dir}">
       <include name="*.jar" />
     </fileset>
-    <fileset dir="${devlib.dir}">
+    <fileset dir="${lib.dir}">
       <include name="*.jar" />
     </fileset>
   </path>
 
   <!-- Setup the classpath used for testing -->
   <path id="test.classpath">
-    <fileset dir="${lib.dir}">
-      <include name="*.jar" />
-    </fileset>
     <fileset dir="${devlib.dir}">
       <include name="*" />
+    </fileset>
+    <fileset dir="${lib.dir}">
+      <include name="*.jar" />
     </fileset>
     <fileset dir="${testlib.dir}">
       <include name="*.jar" />
@@ -1261,18 +1261,24 @@ TYPICAL TARGET SEQUENCE
 	    
 	    Compiles and runs all the tests for the project
 	    ====================================================================-->
-  <target name="test" depends="compile,compile-tests" description="Compiles and runs unit tests">
-    <junit printsummary="yes" haltonfailure="${junit.haltonfailure}">
+  <target name="test" depends="compile,compile-tests, init-test-reports" description="Compiles and runs unit tests">
+    <junit fork="yes" failureProperty="test.failed" haltonfailure="${junit.haltonfailure}" printsummary="yes">
       <sysproperty key="java.awt.headless" value="${headless.unittest}"/>
       <classpath refid="test.classpath" />
-      <formatter type="plain" />
-      <batchtest fork="yes" todir="${testbin.dir}">
+      <formatter type="xml" />
+      <batchtest fork="yes" todir="${testreports.xml.dir}">
         <fileset dir="${testsrc.dir}" casesensitive="yes">
-          <include name="**/Test*.java" />
           <include name="**/*Test.java" />
         </fileset>
       </batchtest>
     </junit>
+      
+    <junitreport todir="${testreports.html.dir}">
+      <fileset dir="${testreports.xml.dir}">
+        <include name="TEST-*.xml" />
+      </fileset>
+      <report format="frames" todir="${testreports.html.dir}" />
+    </junitreport>
   </target>
 
 
@@ -1552,7 +1558,6 @@ TYPICAL TARGET SEQUENCE
       <test name="${testcase}" todir="${testreports.xml.dir}" if="testcase" />
       <batchtest todir="${testreports.xml.dir}" unless="testcase">
         <fileset dir="${testsrc.dir}" casesensitive="yes">
-          <include name="**/*Test.java" />
           <include name="**/*Test.java" />
         </fileset>
       </batchtest>
