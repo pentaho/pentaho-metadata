@@ -118,7 +118,7 @@ public class DefaultSQLFunctionGenerator implements SQLFunctionGeneratorInterfac
     for (int i = 0; i < f.getChildValues().length; i++) {
       if (!(f.getChildValues()[i] instanceof StaticValue) ||
           !(((StaticValue)f.getChildValues()[i]).getValueType() == NumberType.GENERIC_NUMBER)) {
-        throw new PentahoMetadataException(Messages.getErrorString("PMSFormulaContext.ERROR_0003_INVALID_PARAM_TYPE_NOT_STATIC_NUMBER", f.getFunctionName())); //$NON-NLS-1$ //$NON-NLS-2$
+        throw new PentahoMetadataException(Messages.getErrorString("PMSFormulaContext.ERROR_0003_INVALID_PARAM_TYPE_NOT_STATIC_NUMBER", Integer.toString(i+1), f.getFunctionName())); //$NON-NLS-1$
       }
     }
   }
@@ -134,7 +134,7 @@ public class DefaultSQLFunctionGenerator implements SQLFunctionGeneratorInterfac
     for (int i = 0; i < f.getChildValues().length; i++) {
       if (!(f.getChildValues()[i] instanceof StaticValue) ||
           !(((StaticValue)f.getChildValues()[i]).getValueType() instanceof TextType)) {
-        throw new PentahoMetadataException(Messages.getErrorString("PMSFormulaContext.ERROR_0003_INVALID_PARAM_TYPE_NOT_STATIC_NUMBER", f.getFunctionName())); //$NON-NLS-1$ //$NON-NLS-2$
+        throw new PentahoMetadataException(Messages.getErrorString("PMSFormulaContext.ERROR_0004_INVALID_PARAM_TYPE_NOT_STRING", Integer.toString(i+1), f.getFunctionName())); //$NON-NLS-1$
       }
     }
   }

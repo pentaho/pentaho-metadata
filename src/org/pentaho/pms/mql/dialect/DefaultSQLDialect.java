@@ -14,6 +14,7 @@ package org.pentaho.pms.mql.dialect;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.regex.Pattern;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.messages.Messages;
+import org.pentaho.pms.mql.DateMath;
 import org.pentaho.pms.mql.dialect.SQLQueryModel.SQLOrderBy;
 import org.pentaho.pms.mql.dialect.SQLQueryModel.SQLSelection;
 import org.pentaho.pms.mql.dialect.SQLQueryModel.SQLTable;
@@ -163,6 +165,25 @@ public class DefaultSQLDialect implements SQLDialectInterface {
         super.validateFunction(f);
         // check to make sure all three params are of static number type
         verifyAllStaticNumbers(f);
+      }
+    });
+    
+    supportedFunctions.put("DATEMATH", new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_FUNCTION, "DATEMATH", 1) { //$NON-NLS-1$ //$NON-NLS-2$
+      public void generateFunctionSQL(FormulaTraversalInterface formula, StringBuffer sb, String locale, FormulaFunction f) throws PentahoMetadataException {
+        String exp = (String)((StaticValue)f.getChildValues()[0]).getValue();
+        // transform the date expression into an actual date
+        try {
+          Calendar cal = DateMath.calculateDate(exp);
+          sb.append(getDateSQL(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1, cal.get(Calendar.DAY_OF_MONTH)));
+        } catch (IllegalArgumentException ex) {
+          throw new PentahoMetadataException(Messages.getErrorString("DefaultSQLDialect.ERROR_0002_DATE_MATH_SYNTAX_INVALID", exp), ex);
+        }
+      }
+        
+      public void validateFunction(FormulaFunction f) throws PentahoMetadataException {
+        super.validateFunction(f);
+        // check to make sure all three params are of static number type
+        verifyAllStaticStrings(f);
       }
     });
     

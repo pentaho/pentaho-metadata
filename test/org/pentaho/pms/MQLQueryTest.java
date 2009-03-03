@@ -15,6 +15,8 @@ package org.pentaho.pms;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -24,6 +26,7 @@ import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.factory.CwmSchemaFactory;
+import org.pentaho.pms.mql.DateMath;
 import org.pentaho.pms.mql.MQLQuery;
 import org.pentaho.pms.mql.MQLQueryFactory;
 import org.pentaho.pms.mql.MQLQueryImpl;
@@ -164,6 +167,21 @@ public class MQLQueryTest extends TestCase {
     }
   }
 
+  public void testDateFunctionMath() {
+
+    Calendar cal = Calendar.getInstance();
+    cal.set( Calendar.DAY_OF_MONTH, 1);
+      
+    SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+    String dateStr = fmt.format( cal.getTime() );
+
+    handleFormula(ordersModel, "Oracle", //$NON-NLS-1$
+        "DATEMATH(\"0:MS\")" //$NON-NLS-1$
+        , "TO_DATE('"+dateStr+"','YYYY-MM-DD')" //$NON-NLS-1$
+    );
+
+  }
+  
   public void testAggregationFormulas() {
     BusinessTable table = ordersModel.findBusinessTable("BT_ORDER_DETAILS"); //$NON-NLS-1$
     handleFormula(ordersModel, table, "Oracle", //$NON-NLS-1$
