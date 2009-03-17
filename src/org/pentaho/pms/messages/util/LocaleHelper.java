@@ -66,4 +66,44 @@ public class LocaleHelper {
         return textDirection;
     }
 
+    public static String getClosestLocale( String locale, String locales[] ) {
+        // see if this locale is supported
+      if( locales == null || locales.length == 0 ) {
+        return locale;
+      }
+      if( locale == null || locale.length() == 0 ) {
+        return locales[ 0 ];
+      }
+      String localeLanguage = locale.substring(0, 2);
+      String localeCountry = (locale.length() > 4) ? locale.substring(0, 5) : localeLanguage;
+        int looseMatch = -1;
+        int closeMatch = -1;
+        int exactMatch = -1;
+        for( int idx=0; idx<locales.length; idx++ ) {
+          if( locales[idx].equals( locale ) ) {
+            exactMatch = idx;
+            break;
+          }
+          else if( locales[idx].length() > 1 && locales[idx].substring(0, 2).equals( localeLanguage ) ) {
+            looseMatch = idx;
+          }
+          else if( locales[idx].length() > 4 && locales[idx].substring(0, 5).equals( localeCountry ) ) {
+            closeMatch = idx;
+          }
+        }
+        if( exactMatch != -1 ) {
+          // do nothing we have an exact match
+        }
+        else if( closeMatch != - 1) {
+          locale = locales[ closeMatch ];
+        }
+        else if( looseMatch != - 1) {
+          locale = locales[ looseMatch ];
+        }
+        else {
+          // no locale is close , just go with the first?
+          locale = locales[ 0 ];
+        }
+        return locale;
+    }
 }
