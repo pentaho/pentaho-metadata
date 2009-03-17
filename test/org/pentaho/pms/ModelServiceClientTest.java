@@ -7,6 +7,7 @@ import junit.framework.TestCase;
 
 import org.apache.axis2.client.Options;
 import org.apache.axis2.transport.http.HttpTransportProperties;
+import org.junit.Ignore;
 import org.pentaho.pms.schema.v3.client.ModelServiceClient;
 import org.pentaho.pms.schema.v3.model.Category;
 import org.pentaho.pms.schema.v3.model.Column;
@@ -51,6 +52,7 @@ public class ModelServiceClientTest extends TestCase {
     return svc;
   }
   
+  @Ignore
   public void testGetModelClient() throws Exception {
 
     IModelService svc = getModelService("getModel");
@@ -83,6 +85,7 @@ public class ModelServiceClientTest extends TestCase {
     
   }
   
+  @Ignore
   public void testGetModelClientDeep() throws Exception {
 
     IModelService svc = getModelService("getModel");
