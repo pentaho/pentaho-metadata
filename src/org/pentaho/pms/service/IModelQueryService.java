@@ -10,5 +10,5 @@ public interface IModelQueryService {
    * @param mqlQuery
    * @return a serializable {@link IPentahoResultSet}
    */
-  public IPentahoResultSet executeMqlQuery(Model businessModel, String mqlQuery);
+  public IPentahoResultSet executeMqlQuery(Model model, String mqlQuery);
 }

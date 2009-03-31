@@ -11,10 +11,10 @@ public interface IModelManagementService {
   
   /**
    * 
-   * @param metadataConnection
+   * @param dataSource
    * @return
    */
-  public List<Column> getColumns(IDataSource metadataConnection);
+  public List<Column> getColumns(IDataSource dataSource);
   
   /**
    * @param metadataConnection
@@ -23,7 +23,7 @@ public interface IModelManagementService {
   public List<List<String>> getDataSample(IDataSource dataSource, int rows);
   
   /**
-   * Creates a new business view attached to the default domain and model hard-coded
+   * Creates and persists a new category attached to the default domain and model hard-coded
    * by this implementation.  (This method may change in the future to accept model
    * and domain).
    * @param businessVewName The name of the new business view

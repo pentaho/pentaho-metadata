@@ -7,6 +7,11 @@ public class SQLDataSource implements IDataSource {
   private DatabaseMeta databaseMeta;
 
   private String query;
+  
+  public SQLDataSource(DatabaseMeta databaseMeta, String query) {
+    this.databaseMeta = databaseMeta;
+    this.query = query;
+  }
 
   /* (non-Javadoc)
    * @see org.pentaho.pms.schema.v3.physical.IDataSource#getDbMeta()
