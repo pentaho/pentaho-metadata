@@ -9,7 +9,7 @@ import org.pentaho.pms.schema.v3.model.Column;
 import org.pentaho.pms.schema.v3.physical.IDataSource;
 import org.pentaho.pms.schema.v3.physical.SQLDataSource;
 import org.pentaho.pms.service.IModelManagementService;
-import org.pentaho.pms.service.ModelManagementService;
+import org.pentaho.pms.service.JDBCModelManagementService;
 
 
 public class ModelManagementServiceTest {
@@ -31,7 +31,7 @@ public class ModelManagementServiceTest {
     
     DatabaseMeta testDbMeta = new DatabaseMeta(databaseName, databaseType, "JDBC", hostname, databaseName, port, username, password); 
     
-    modelService = new ModelManagementService();
+    modelService = new JDBCModelManagementService();
     
     dataSource = new SQLDataSource(testDbMeta, "SELECT * FROM customer");
   }
@@ -41,6 +41,14 @@ public class ModelManagementServiceTest {
     List<Column> cols = modelService.getColumns(dataSource);
     for(Column col : cols) {
       System.out.println(col.getName() +": "+ col.getDataType());
+    }
+  }
+  
+  @Test
+  public void testGetDataSample() {
+    List<List<String>> dataSample = modelService.getDataSample(dataSource, 10);
+    for(List<String> dataRow : dataSample) {
+      System.out.println(dataRow);
     }
   }
 
