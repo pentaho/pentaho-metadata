@@ -1,4 +1,4 @@
-package org.pentaho.pms;
+package org.pentaho.pms.util;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,7 +20,6 @@ import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.v3.model.Column;
 import org.pentaho.pms.schema.v3.physical.IDataSource;
 import org.pentaho.pms.schema.v3.temp.ModelUtil;
-import org.pentaho.pms.util.ObjectAlreadyExistsException;
 
 public class BusinessModelFactory {
 
