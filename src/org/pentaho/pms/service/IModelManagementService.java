@@ -1,9 +1,7 @@
 package org.pentaho.pms.service;
 
 import java.util.List;
-import java.util.Map;
 
-import org.pentaho.pms.schema.v3.model.Category;
 import org.pentaho.pms.schema.v3.model.Column;
 import org.pentaho.pms.schema.v3.physical.IDataSource;
 
@@ -29,5 +27,5 @@ public interface IModelManagementService {
    * @param businessVewName The name of the new business view
    * @param businessColumns 
    */
-  public Category createCategory(IDataSource dataSource, String businessViewName, List<Column> businessColumns, Map columnCrossRef);
+  public void createCategory(IDataSource dataSource, String categoryName, List<Column> columns);
 }

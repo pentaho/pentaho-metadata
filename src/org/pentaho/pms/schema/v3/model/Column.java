@@ -38,6 +38,10 @@ public class Column extends Envelope {
   
   private Attribute[] attributes;
   
+  private String physicalTableName;
+  
+  private String physicalColumnName;
+  
   /**
    * Returns the field type of this column, e.g. Dimension
    * @return
@@ -84,6 +88,22 @@ public class Column extends Envelope {
    */
   public void setAttributes(Attribute[] attributes) {
     this.attributes = attributes;
+  }
+
+  public String getPhysicalTableName() {
+    return physicalTableName;
+  }
+
+  public void setPhysicalTableName(String physicalTableName) {
+    this.physicalTableName = physicalTableName;
+  }
+  
+  public String getPhysicalColumnName() {
+    return physicalColumnName;
+  }
+
+  public void setPhysicalColumnName(String physicalColumnName) {
+    this.physicalColumnName = physicalColumnName;
   }
   
 }

@@ -19,7 +19,10 @@
 package org.pentaho.pms.schema.v3.temp;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
@@ -153,6 +156,14 @@ public class ModelUtil {
     }
     column.setAttributes(attributes.toArray( new Attribute[attributes.size()]));
     return column;
+  }
+  
+  public static Set<String> getBackingTableNames(Collection<Column> columns) {
+    Set<String> tableNames = new HashSet<String>();
+    for(Column col : columns) {
+      tableNames.add(col.getPhysicalTableName());
+    }
+    return tableNames;
   }
   
   /**

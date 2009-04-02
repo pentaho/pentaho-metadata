@@ -51,5 +51,11 @@ public class ModelManagementServiceTest {
       System.out.println(dataRow);
     }
   }
+  
+  @Test
+  public void testCreateCategory() {
+    List<Column> cols = modelService.getColumns(dataSource);
+    modelService.createCategory(dataSource, "myTestCategory", cols);
+  }
 
 }

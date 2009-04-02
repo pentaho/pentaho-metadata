@@ -8,22 +8,31 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.pentaho.di.core.exception.KettleDatabaseException;
-import org.pentaho.pms.schema.v3.model.Category;
+import org.pentaho.pms.BusinessModelFactory;
+import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.v3.model.Column;
 import org.pentaho.pms.schema.v3.physical.IDataSource;
 import org.pentaho.pms.schema.v3.physical.SQLDataSource;
 
 public class JDBCModelManagementService implements IModelManagementService {
 
-  public Category createCategory(IDataSource dataSource, String businessViewName, List<Column> businessColumns,
-      Map columnCrossRef) {
-    // TODO Auto-generated method stub
-    return null;
+  public void createCategory(IDataSource dataSource, String categoryName, List<Column> columns) {
+    BusinessModelFactory modelFactory = new BusinessModelFactory();
+    try {
+      BusinessModel model = modelFactory.createModelWithCategory(dataSource, categoryName, columns);
+    } catch (Exception e) {
+      //FIXME: probably need a wrapper exception type for this service and throw that here
+      e.printStackTrace();
+    }
+    // TODO: "install" the new model so the model service used by the client will see it when
+    //it lists all known models.
   }
 
+  //TODO: raw jdbc is probably not the right method here.  If we want to
+  //go with jdbc we should look into Spring's jdbc templates or something
+  //like that.  It would cut down on the boilerplate code significantly.
   public List<Column> getColumns(IDataSource dataSource) {
     SQLDataSource sqlDataSource = (SQLDataSource)dataSource;
     List<Column> columns = new ArrayList<Column>();
@@ -42,6 +51,8 @@ public class JDBCModelManagementService implements IModelManagementService {
         Column col = new Column();
         col.setName(resultMeta.getColumnName(i));
         col.setDataType(resultMeta.getColumnTypeName(i));
+        col.setPhysicalTableName(resultMeta.getTableName(i));
+        col.setPhysicalColumnName(resultMeta.getColumnName(i));
         columns.add(col);
       }
 
