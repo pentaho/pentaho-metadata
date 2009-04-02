@@ -10,11 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.di.core.exception.KettleDatabaseException;
-import org.pentaho.pms.BusinessModelFactory;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.v3.model.Column;
 import org.pentaho.pms.schema.v3.physical.IDataSource;
 import org.pentaho.pms.schema.v3.physical.SQLDataSource;
+import org.pentaho.pms.util.BusinessModelFactory;
 
 public class JDBCModelManagementService implements IModelManagementService {
 
