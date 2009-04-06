@@ -1,0 +1,6 @@
+<module>
+
+	<!-- Inherit the core Web Toolkit stuff.                  -->
+    <source path="envelope"/>
+    <source path="model"/>
+</module>
