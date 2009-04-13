@@ -18,6 +18,8 @@
 */
 package org.pentaho.pms.schema.v3.envelope;
 
+import java.io.Serializable;
+
 /**
  * This class is a generic super-class that holds the id, and the localized name and
  * description of an element. This class can be sub-classed by anything needing to
@@ -25,7 +27,7 @@ package org.pentaho.pms.schema.v3.envelope;
  * @author jamesdixon
  *
  */
-public class Envelope {
+public class Envelope implements Serializable{
 
   private String id;
   

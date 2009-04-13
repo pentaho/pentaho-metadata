@@ -18,6 +18,8 @@
 */
 package org.pentaho.pms.schema.v3.model;
 
+import java.io.Serializable;
+
 /**
  * This class represents an attribute of a metadata object.
  * An attribute is made of an id, a value, and a type.
@@ -27,7 +29,12 @@ package org.pentaho.pms.schema.v3.model;
  * @author jamesdixon
  *
  */
-public class Attribute {
+public class Attribute implements Serializable{
+
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 1L;
 
   private String id;
   

@@ -18,6 +18,8 @@
 */
 package org.pentaho.pms.schema.v3.model;
 
+import java.io.Serializable;
+
 import org.pentaho.pms.schema.v3.envelope.Envelope;
 
 /**
@@ -30,7 +32,7 @@ import org.pentaho.pms.schema.v3.envelope.Envelope;
  * @author jamesdixon
  *
  */
-public class Column extends Envelope {
+public class Column extends Envelope implements Serializable{
 
   private String fieldType;
   
