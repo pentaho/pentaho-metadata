@@ -24,7 +24,9 @@ import org.pentaho.pms.schema.v3.temp.ModelUtil;
 public class BusinessModelFactory {
 
   public BusinessModelFactory() {
-    Props.init(Props.TYPE_PROPERTIES_EMPTY);
+    if(!Props.isInitialized()) {
+      Props.init(Props.TYPE_PROPERTIES_EMPTY);
+    }
   }
 
   public BusinessModel createModelWithCategory(IDataSource dataSource, String categoryName, List<Column> columns) throws Exception {
