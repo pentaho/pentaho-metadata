@@ -95,6 +95,7 @@ public class RequiredProperties extends ChangedFlag implements ChangedFlagInterf
         propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.FIELD_TYPE));
         propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.DATA_TYPE));
         propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.AGGREGATION));
+        propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.AGGREGATION_LIST));        
         propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.EXACT));
         propertyTypes.add(new DefaultProperty(subject, DefaultPropertyID.HIDDEN));
 //      gmoran: These are defaulted but not required

@@ -35,7 +35,8 @@ public class ConceptPropertyType
     public static final int PROPERTY_TYPE_SECURITY         = 12;
     public static final int PROPERTY_TYPE_ALIGNMENT        = 13;
     public static final int PROPERTY_TYPE_COLUMN_WIDTH     = 14;
-    public static final int PROPERTY_TYPE_ROW_LEVEL_SECURITY     = 15;
+    public static final int PROPERTY_TYPE_ROW_LEVEL_SECURITY = 15;
+    public static final int PROPERTY_TYPE_AGGREGATION_LIST = 16;
 
     /**
      * These are the core property types to bootstrap the property system.
@@ -58,6 +59,7 @@ public class ConceptPropertyType
             new ConceptPropertyType( PROPERTY_TYPE_ALIGNMENT,        "Alignment",   Messages.getString("ConceptPropertyType.USER_ALIGNMENT_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
             new ConceptPropertyType( PROPERTY_TYPE_COLUMN_WIDTH,     "ColumnWidth", Messages.getString("ConceptPropertyType.USER_COLUMN_WIDTH_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
             new ConceptPropertyType( PROPERTY_TYPE_ROW_LEVEL_SECURITY,     "RowLevelSecurity", Messages.getString("ConceptPropertyType.USER_ROW_LEVEL_SECURITY_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
+            new ConceptPropertyType( PROPERTY_TYPE_AGGREGATION_LIST,     "AggregationList", Messages.getString("ConceptPropertyType.USER_ROW_LEVEL_SECURITY_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
         };
 
     public static final ConceptPropertyType STRING           = propertyTypes[ PROPERTY_TYPE_STRING ];
@@ -76,6 +78,7 @@ public class ConceptPropertyType
     public static final ConceptPropertyType ALIGNMENT        = propertyTypes[ PROPERTY_TYPE_ALIGNMENT ];
     public static final ConceptPropertyType COLUMN_WIDTH     = propertyTypes[ PROPERTY_TYPE_COLUMN_WIDTH];
     public static final ConceptPropertyType ROW_LEVEL_SECURITY     = propertyTypes[ PROPERTY_TYPE_ROW_LEVEL_SECURITY ];
+    public static final ConceptPropertyType AGGREGATION_LIST = propertyTypes[ PROPERTY_TYPE_AGGREGATION_LIST ];
 
     public static final String ISO_DATE_FORMAT = "yyyy/MM/dd'T'HH:mm:ss"; //$NON-NLS-1$
 

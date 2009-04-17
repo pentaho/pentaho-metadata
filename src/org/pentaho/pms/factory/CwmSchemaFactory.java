@@ -73,6 +73,7 @@ import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.schema.concept.types.aggregation.ConceptPropertyAggregation;
+import org.pentaho.pms.schema.concept.types.aggregation.ConceptPropertyAggregationList;
 import org.pentaho.pms.schema.concept.types.alignment.AlignmentSettings;
 import org.pentaho.pms.schema.concept.types.alignment.ConceptPropertyAlignment;
 import org.pentaho.pms.schema.concept.types.bool.ConceptPropertyBoolean;
@@ -1664,6 +1665,18 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                     cwm.setDescription(modelElement, description);
                 }
     
+                // Save the aggregation list properties
+                //
+                else
+                if (property.getType().equals(ConceptPropertyType.AGGREGATION_LIST))
+                {
+                    ConceptPropertyAggregationList value = (ConceptPropertyAggregationList)property;
+                    CwmDescription description = cwm.createDescription(value.toXML());
+                    description.setName(property.getId());
+                    description.setType(property.getType().getCode());
+                    cwm.setDescription(modelElement, description);
+                }
+                
                 // Save the numeric properties
                 //
                 else
@@ -1963,6 +1976,26 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
                     ConceptPropertyAggregation property = new ConceptPropertyAggregation(name, AggregationSettings.getType(value));
                     concept.addProperty(property);
                 }
+            }
+            
+            // Load the Agg List properties...
+            //
+            else
+            if (type.equals(ConceptPropertyType.AGGREGATION_LIST.getCode()))
+            {
+              if (!Const.isEmpty(name) && !Const.isEmpty(value) )
+              {
+                try
+                {
+                  List<AggregationSettings> list = ConceptPropertyAggregationList.fromXML(value);
+                  ConceptPropertyInterface property = new ConceptPropertyAggregationList(name, list);
+                  concept.addProperty(property);
+                }
+                catch(Exception e)
+                {
+                  logger.error( e.getMessage(), e );
+                }
+              }
             }
             
             // Load the number properties...

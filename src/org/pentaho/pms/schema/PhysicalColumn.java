@@ -190,7 +190,7 @@ public class PhysicalColumn extends ConceptUtilityBase implements ConceptUtility
 
     return new EqualsBuilder().appendSuper(super.equals(rhs)).append(lhsFormula, rhsFormula).append(
         getAggregationType(), rhs.getAggregationType()).append(getFieldType(), rhs.getFieldType()).append(
-        physicalTable, rhs.physicalTable).isEquals();
+        physicalTable, rhs.physicalTable).append(getAggregationList(), rhs.getAggregationList()).isEquals();
   }
 
   public int hashCode() {

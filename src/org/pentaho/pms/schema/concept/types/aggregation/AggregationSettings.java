@@ -41,7 +41,7 @@ public class AggregationSettings
             "none", "sum", "average", "count", "count_distinct", "minimum", "maximum",    //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
         };
 
-    private static final String typeDescriptions[] =
+    public static final String typeDescriptions[] =
         {
             Messages.getString("AggregationSettings.USER_NONE_DESC"), //$NON-NLS-1$
             Messages.getString("AggregationSettings.USER_SUM_DESC"), //$NON-NLS-1$

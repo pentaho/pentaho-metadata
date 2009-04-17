@@ -27,6 +27,7 @@ import org.pentaho.pms.schema.DefaultProperty;
 import org.pentaho.pms.schema.RequiredProperties;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.schema.concept.types.aggregation.ConceptPropertyAggregation;
+import org.pentaho.pms.schema.concept.types.aggregation.ConceptPropertyAggregationList;
 import org.pentaho.pms.schema.concept.types.bool.ConceptPropertyBoolean;
 import org.pentaho.pms.schema.concept.types.datatype.ConceptPropertyDataType;
 import org.pentaho.pms.schema.concept.types.datatype.DataTypeSettings;
@@ -418,6 +419,23 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
 
   public String getAggregationTypeDesc() {
     return getAggregationType().getDescription();
+  }
+  
+  public void setAggregationList(List<AggregationSettings> aggregationList) {
+    ConceptPropertyInterface property = concept.getChildProperty(DefaultPropertyID.AGGREGATION_LIST.getId());
+    if (null != property) {
+      property.setValue(aggregationList);
+    } else {
+      concept.addProperty(new ConceptPropertyAggregationList(DefaultPropertyID.AGGREGATION_LIST.getId(), aggregationList));
+    }
+  }
+
+  public List<AggregationSettings> getAggregationList() {
+    ConceptPropertyInterface property = concept.getProperty(DefaultPropertyID.AGGREGATION_LIST.getId());
+    if (property == null || property.getValue() == null) {
+      return null;
+    }
+    return (List<AggregationSettings>) property.getValue();
   }
 
   public void setHidden(boolean hidden) {

@@ -18,6 +18,7 @@ import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.schema.concept.types.aggregation.ConceptPropertyAggregation;
+import org.pentaho.pms.schema.concept.types.aggregation.ConceptPropertyAggregationList;
 import org.pentaho.pms.schema.concept.types.alignment.AlignmentSettings;
 import org.pentaho.pms.schema.concept.types.alignment.ConceptPropertyAlignment;
 import org.pentaho.pms.schema.concept.types.bool.ConceptPropertyBoolean;
@@ -74,6 +75,7 @@ public class DefaultPropertyID
             new DefaultPropertyID("column_width",      Messages.getString("DefaultPropertyID.USER_COLUMN_WIDTH_DESC"), ConceptPropertyType.COLUMN_WIDTH, new ConceptPropertyColumnWidth("column_width", ColumnWidth.PIXELS)), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             new DefaultPropertyID("security",          Messages.getString("DefaultPropertyID.USER_SECURITY_INFORMATION_DESC"), ConceptPropertyType.SECURITY, new ConceptPropertySecurity("security", new Security())), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             new DefaultPropertyID("row_level_security",Messages.getString("DefaultPropertyID.USER_ROW_LEVEL_SECURITY_DESC"), ConceptPropertyType.ROW_LEVEL_SECURITY, new ConceptPropertyRowLevelSecurity("row_level_security", new RowLevelSecurity())), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            new DefaultPropertyID("aggregation_list",  Messages.getString("DefaultPropertyID.USER_AGGREGATION_LIST_DESC"), ConceptPropertyType.AGGREGATION_LIST, new ConceptPropertyAggregationList("aggregation_list", null)), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
          };
 
     public static final DefaultPropertyID NAME            = defaults[ 0];
@@ -97,6 +99,7 @@ public class DefaultPropertyID
     public static final DefaultPropertyID COLUMN_WIDTH    = defaults[18];
     public static final DefaultPropertyID SECURITY        = defaults[19];
     public static final DefaultPropertyID ROW_LEVEL_SECURITY        = defaults[20];
+    public static final DefaultPropertyID AGGREGATION_LIST     = defaults[21];
 
 
     /**
@@ -234,7 +237,8 @@ public class DefaultPropertyID
         case ConceptPropertyType.PROPERTY_TYPE_SECURITY         : property = new ConceptPropertySecurity(name, null); break;
         case ConceptPropertyType.PROPERTY_TYPE_ALIGNMENT        : property = new ConceptPropertyAlignment(name, null); break;
         case ConceptPropertyType.PROPERTY_TYPE_COLUMN_WIDTH     : property = new ConceptPropertyColumnWidth(name, null); break;
-        case ConceptPropertyType.PROPERTY_TYPE_ROW_LEVEL_SECURITY     : property = new ConceptPropertyRowLevelSecurity(name, null); break;
+        case ConceptPropertyType.PROPERTY_TYPE_ROW_LEVEL_SECURITY : property = new ConceptPropertyRowLevelSecurity(name, null); break;
+        case ConceptPropertyType.PROPERTY_TYPE_AGGREGATION_LIST : property = new ConceptPropertyAggregationList(name, null); break;        
         }
         return property;
     }
