@@ -87,7 +87,7 @@ public class SQLGenerator {
       }else{
         alias = databaseMeta.quoteField(selections.get(i).getBusinessColumn().getId());
       }
-      SQLAndTables sqlAndTables = getBusinessColumnSQL(model, selections.get(i).getBusinessColumn(), tableAliases, databaseMeta, locale);
+      SQLAndTables sqlAndTables = getBusinessColumnSQL(model, selections.get(i), tableAliases, databaseMeta, locale);
       query.addSelection(sqlAndTables.getSql(), alias);
     }
   }
@@ -115,7 +115,18 @@ public class SQLGenerator {
       if (businessTable.getTargetSchema() != null) {
         schemaName = databaseMeta.quoteField(businessTable.getTargetSchema());
       }
-      String tableName = databaseMeta.quoteField(businessTable.getTargetTable());
+      
+      // this code allows subselects to drive the physical model.
+      // TODO: make this key off a metadata flag vs. the 
+      // beginning of the table name.
+      
+      String tableName = businessTable.getTargetTable();
+      if (tableName.toLowerCase().startsWith("select ")) {
+        tableName = "(" + tableName + ")"; 
+      } else {
+        tableName = databaseMeta.quoteField(businessTable.getTargetTable());
+      }
+      
       query.addTable(databaseMeta.getSchemaTableCombination(schemaName, tableName),
           databaseMeta.quoteField(tableAliases.get(businessTable)));
     }
@@ -178,12 +189,10 @@ public class SQLGenerator {
   public void generateGroupBy(SQLQueryModel query, BusinessModel model, List<Selection> selections, Map<BusinessTable, String> tableAliases, DatabaseMeta databaseMeta, String locale) {
     // can be moved to selection loop
     for (Selection selection : selections) {
-      BusinessColumn businessColumn = selection.getBusinessColumn();
-      
       // Check if the column has any nested aggregation in there like a calculated column : SUM(a)/SUM(b) with no aggregation set.
       //
-      if (!hasFactsInIt(model, businessColumn, databaseMeta, locale)) {
-    	SQLAndTables sqlAndTables = getBusinessColumnSQL(model, businessColumn, tableAliases, databaseMeta, locale);
+      if (!hasFactsInIt(model, selection, databaseMeta, locale)) {
+    	SQLAndTables sqlAndTables = getBusinessColumnSQL(model, selection, tableAliases, databaseMeta, locale);
         query.addGroupBy(sqlAndTables.getSql(), null);
       }
     }
@@ -220,7 +229,7 @@ public class SQLGenerator {
 	        	}
 	        }
         }
-        SQLAndTables sqlAndTables = getBusinessColumnSQL(model, businessColumn, tableAliases, databaseMeta, locale);
+        SQLAndTables sqlAndTables = getBusinessColumnSQL(model, orderItem.getSelection(), tableAliases, databaseMeta, locale);
         query.addOrderBy(sqlAndTables.getSql(), alias, !orderItem.isAscending() ? OrderType.DESCENDING : null); //$NON-NLS-1$
       }
     }
@@ -365,7 +374,7 @@ public class SQLGenerator {
       //
       
       
-      SQLAndTables sqlAndTables = getBusinessColumnSQL(model, selection.getBusinessColumn(), null, databaseMeta, locale);
+      SQLAndTables sqlAndTables = getBusinessColumnSQL(model, selection, null, databaseMeta, locale);
       
   	  // Add the involved tables to the list...
   	  //
@@ -377,11 +386,9 @@ public class SQLGenerator {
     // Figure out which tables are involved in the WHERE
     //
     for(WhereCondition condition : conditions) {
-      List cols = condition.getBusinessColumns();
-      Iterator iter = cols.iterator();
-      while (iter.hasNext()) {
-        BusinessColumn col = (BusinessColumn)iter.next();
-        BusinessTable businessTable = col.getBusinessTable();
+      List<Selection> cols = condition.getBusinessColumns();
+      for (Selection selection : cols) {
+        BusinessTable businessTable = selection.getBusinessColumn().getBusinessTable();
         treeSet.add(businessTable); //$NON-NLS-1$
       }
     }
@@ -389,7 +396,7 @@ public class SQLGenerator {
     // Figure out which tables are involved in the ORDER BY
     //
     for(OrderBy order : orderBy) {
-    	SQLAndTables sqlAndTables = getBusinessColumnSQL(model, order.getSelection().getBusinessColumn(), null, databaseMeta, locale);
+    	SQLAndTables sqlAndTables = getBusinessColumnSQL(model, order.getSelection(), null, databaseMeta, locale);
     	
     	// Add the involved tables to the list...
     	//
@@ -423,7 +430,7 @@ public class SQLGenerator {
 	//
     for (Selection selection : selections) {
     
-      if (hasFactsInIt(model, selection.getBusinessColumn(), databaseMeta, locale)) {
+      if (hasFactsInIt(model, selection, databaseMeta, locale)) {
     	  return true;
       }
     }
@@ -432,7 +439,7 @@ public class SQLGenerator {
     //
     if (conditions != null) {
       for (WhereCondition condition : conditions) {
-    	  for (BusinessColumn conditionColumn : condition.getBusinessColumns()) {
+    	  for (Selection conditionColumn : condition.getBusinessColumns()) {
     	      if (hasFactsInIt(model, conditionColumn, databaseMeta, locale)) {
     	    	  return true;
     	      }
@@ -453,13 +460,13 @@ public class SQLGenerator {
    * @param locale the locale to use
    * @return true if the business column uses any aggregation in the formula or is aggregated itself.
    */
-  public boolean hasFactsInIt(BusinessModel model, BusinessColumn businessColumn, DatabaseMeta databaseMeta, String locale) {
+  public boolean hasFactsInIt(BusinessModel model, Selection businessColumn, DatabaseMeta databaseMeta, String locale) {
 	  if (businessColumn.hasAggregate()) return true;
 
 	  // Parse the formula in the business column to see which tables and columns are involved...
       //
       SQLAndTables sqlAndTables = getBusinessColumnSQL(model, businessColumn, null, databaseMeta, locale);
-      for (BusinessColumn column : sqlAndTables.getUsedColumns()) {
+      for (Selection column : sqlAndTables.getUsedColumns()) {
 	      if (column.hasAggregate()) {
 	        return true;
 	      }
@@ -638,24 +645,24 @@ public class SQLGenerator {
     return retval;
   }
 
-  public static SQLAndTables getBusinessColumnSQL(BusinessModel businessModel, BusinessColumn column, Map<BusinessTable, String> tableAliases, DatabaseMeta databaseMeta, String locale)
+  public static SQLAndTables getBusinessColumnSQL(BusinessModel businessModel, Selection column, Map<BusinessTable, String> tableAliases, DatabaseMeta databaseMeta, String locale)
   {
-      if (column.isExact())
+      if (column.getBusinessColumn().isExact())
       { 
         // convert to sql using libformula subsystem
         try {
           // we'll need to pass in some context to PMSFormula so it can resolve aliases if necessary
-          PMSFormula formula = new PMSFormula(businessModel, column.getBusinessTable(), databaseMeta, column.getFormula(), tableAliases);
+          PMSFormula formula = new PMSFormula(businessModel, column.getBusinessColumn().getBusinessTable(), databaseMeta, column.getBusinessColumn().getFormula(), tableAliases);
           formula.parseAndValidate();
           return new SQLAndTables(formula.generateSQL(locale), formula.getBusinessTables(), formula.getBusinessColumns());
         } catch (PentahoMetadataException e) {
           // this is for backwards compatibility.
           // eventually throw any errors
-          logger.error(Messages.getErrorString("BusinessColumn.ERROR_0001_FAILED_TO_PARSE_FORMULA", column.getFormula()), e); //$NON-NLS-1$
+          logger.error(Messages.getErrorString("BusinessColumn.ERROR_0001_FAILED_TO_PARSE_FORMULA", column.getBusinessColumn().getFormula()), e); //$NON-NLS-1$
 
           // Report just this table and column as being used along with the formula.
           //
-          return new SQLAndTables(column.getFormula(), column.getBusinessTable(), column);
+          return new SQLAndTables(column.getBusinessColumn().getFormula(), column.getBusinessColumn().getBusinessTable(), column);
         }
       }
       else
@@ -668,31 +675,31 @@ public class SQLGenerator {
           
           String tableAlias = null;
           if (tableAliases != null) {
-            tableAlias = tableAliases.get(column.getBusinessTable());
+            tableAlias = tableAliases.get(column.getBusinessColumn().getBusinessTable());
           } else {
-            tableAlias = column.getBusinessTable().getId(); 
+            tableAlias = column.getBusinessColumn().getBusinessTable().getId(); 
           }
           tableColumn += databaseMeta.quoteField( tableAlias );
           tableColumn += "."; //$NON-NLS-1$
           
           // TODO: WPG: instead of using formula, shouldn't we use the physical column's name?
-          tableColumn += databaseMeta.quoteField( column.getFormula() );
+          tableColumn += databaseMeta.quoteField( column.getBusinessColumn().getFormula() );
           
           if (column.hasAggregate()) // For the having clause, for example: HAVING sum(turnover) > 100
           {
-              return new SQLAndTables(getFunctionExpression(column, tableColumn, databaseMeta), column.getBusinessTable(), column);
+              return new SQLAndTables(getFunctionExpression(column, tableColumn, databaseMeta), column.getBusinessColumn().getBusinessTable(), column);
           }
           else
           {
-              return new SQLAndTables(tableColumn, column.getBusinessTable(), column);
+              return new SQLAndTables(tableColumn, column.getBusinessColumn().getBusinessTable(), column);
           }
       }
   }
 
-  public static String getFunctionExpression(BusinessColumn column, String tableColumn, DatabaseMeta databaseMeta) {
+  public static String getFunctionExpression(Selection column, String tableColumn, DatabaseMeta databaseMeta) {
       String expression=getFunction(column, databaseMeta); //$NON-NLS-1$
       
-      switch(column.getAggregationType().getType()) {
+      switch(column.getActiveAggregationType().getType()) {
           case AggregationSettings.TYPE_AGGREGATION_COUNT_DISTINCT : expression+="(DISTINCT "+tableColumn+")"; break;   //$NON-NLS-1$ //$NON-NLS-2$
           default: expression+="("+tableColumn+")"; break;  //$NON-NLS-1$ //$NON-NLS-2$
       }
@@ -700,10 +707,10 @@ public class SQLGenerator {
       return expression;
   }
   
-  public static String getFunction(BusinessColumn column, DatabaseMeta databaseMeta) {
+  public static String getFunction(Selection column, DatabaseMeta databaseMeta) {
       String fn=""; //$NON-NLS-1$
       
-      switch(column.getAggregationType().getType()) {
+      switch(column.getActiveAggregationType().getType()) {
           case AggregationSettings.TYPE_AGGREGATION_AVERAGE: fn=databaseMeta.getFunctionAverage(); break;
           case AggregationSettings.TYPE_AGGREGATION_COUNT_DISTINCT :
           case AggregationSettings.TYPE_AGGREGATION_COUNT  : fn=databaseMeta.getFunctionCount(); break;

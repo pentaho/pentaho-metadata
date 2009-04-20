@@ -436,6 +436,154 @@ public class MQLQueryImplTest extends MetadataTestBase {
     }
   }
   
+  public void testAggListSQLGeneration() {
+    try {
+
+      BusinessModel model = buildDefaultModel();
+      BusinessColumn bc1 = model.findBusinessColumn("bc1");
+      bc1.setAggregationType(AggregationSettings.SUM);
+      List<AggregationSettings> aggregationList = new ArrayList<AggregationSettings>();
+      aggregationList.add(AggregationSettings.SUM);
+      aggregationList.add(AggregationSettings.COUNT);
+      aggregationList.add(AggregationSettings.NONE);
+      bc1.setAggregationList(aggregationList);
+      
+      BusinessColumn bc2 = model.findBusinessColumn("bc2");
+      BusinessColumn bce2 = model.findBusinessColumn("bce2");
+      DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+      MQLQueryImpl myTest = new MQLQueryImpl(null, model, databaseMeta, "en_US");  //$NON-NLS-1$
+      myTest.addSelection(new Selection(bc1));
+      myTest.addSelection(new Selection(bc2));
+      myTest.addSelection(new Selection(bce2));
+      
+      myTest.addConstraint(WhereCondition.operators[0], "[bt1.bc1] > 25"); //$NON-NLS-1$
+
+      MappedQuery query = myTest.getQuery();
+      assertEqualsIgnoreWhitespaces(
+          "SELECT \n"                          //$NON-NLS-1$
+          + "          SUM(bt1.pc1) AS COL0\n" //$NON-NLS-1$
+          + "         ,bt2.pc2 AS COL1\n"      //$NON-NLS-1$
+          + "         , bt2.pc2  * 2 AS COL2\n"//$NON-NLS-1$
+          + "FROM \n"                          //$NON-NLS-1$
+          + "          pt1 bt1\n"              //$NON-NLS-1$
+          + "         ,pt2 bt2\n"              //$NON-NLS-1$
+          + "WHERE \n"                         //$NON-NLS-1$
+          + "          (\n"                    //$NON-NLS-1$
+          + "             bt1.pc1 = bt2.pc2\n" //$NON-NLS-1$
+          + "          )\n"                    //$NON-NLS-1$
+          + "GROUP BY \n"                      //$NON-NLS-1$
+          + "          bt2.pc2\n"              //$NON-NLS-1$
+          + "         , bt2.pc2  * 2\n"        //$NON-NLS-1$
+          + "HAVING \n"                        //$NON-NLS-1$
+          + "          (\n"                    //$NON-NLS-1$
+          + "              SUM(bt1.pc1)  > 25\n" //$NON-NLS-1$
+          + "          )\n", //$NON-NLS-1$
+          query.getQuery()
+          );
+      Map map = query.getMap();
+      assertNotNull(map);
+      assertEquals(map.size(), 3);
+      assertEquals(map.get("COL0"), "bc1"); //$NON-NLS-1$ //$NON-NLS-2$
+      assertEquals(map.get("COL1"), "bc2");  //$NON-NLS-1$ //$NON-NLS-2$
+      assertEquals(map.get("COL2"), "bce2"); //$NON-NLS-1$ //$NON-NLS-2$
+      
+      assertEqualsIgnoreWhitespaces(
+          "SELECT \n"                        //$NON-NLS-1$
+        + "          SUM(bt1.pc1) AS bc1\n"  //$NON-NLS-1$
+        + "         ,bt2.pc2 AS bc2\n"       //$NON-NLS-1$
+        + "         , bt2.pc2  * 2 AS bce2\n"//$NON-NLS-1$        
+        + "FROM \n"                          //$NON-NLS-1$
+        + "          pt1 bt1\n"              //$NON-NLS-1$
+        + "         ,pt2 bt2\n"              //$NON-NLS-1$
+        + "WHERE \n"                         //$NON-NLS-1$
+        + "          (\n"                    //$NON-NLS-1$
+        + "             bt1.pc1 = bt2.pc2\n" //$NON-NLS-1$
+        + "          )\n"                    //$NON-NLS-1$
+        + "GROUP BY \n"                      //$NON-NLS-1$
+        + "          bt2.pc2\n"              //$NON-NLS-1$
+        + "         , bt2.pc2  * 2\n"        //$NON-NLS-1$
+        + "HAVING \n"                        //$NON-NLS-1$
+        + "          (\n"                    //$NON-NLS-1$        
+        + "              SUM(bt1.pc1)  > 25\n" //$NON-NLS-1$
+        + "          )\n",                   //$NON-NLS-1$
+        query.getDisplayQuery()
+      );
+
+      MemoryMetaData mmd = new MemoryMetaData(
+          new Object[][] {{"COL0", "COL1"}}, //$NON-NLS-1$  //$NON-NLS-2$
+          null
+          );
+      
+      ExtendedMetaData emd = (ExtendedMetaData)query.generateMetadata(mmd);
+      
+      assertEquals("pc1", emd.getAttribute(0, 0, "formula").toString()); //$NON-NLS-1$  //$NON-NLS-2$
+      
+      // select none aggregate
+      
+      MQLQueryImpl myTest2 = new MQLQueryImpl(null, model, databaseMeta, "en_US");  //$NON-NLS-1$
+      myTest2.addSelection(new Selection(bc1, AggregationSettings.NONE));
+      myTest2.addSelection(new Selection(bc2));
+      myTest2.addSelection(new Selection(bce2));
+      
+      myTest2.addConstraint(WhereCondition.operators[0], "[bt1.bc1.none] > 25"); //$NON-NLS-1$
+
+      MappedQuery query2 = myTest2.getQuery();
+      assertEqualsIgnoreWhitespaces(
+          "SELECT DISTINCT \n"                 //$NON-NLS-1$
+          + "          bt1.pc1 AS COL0\n"      //$NON-NLS-1$
+          + "         ,bt2.pc2 AS COL1\n"      //$NON-NLS-1$
+          + "         , bt2.pc2  * 2 AS COL2\n"//$NON-NLS-1$
+          + "FROM \n"                          //$NON-NLS-1$
+          + "          pt1 bt1\n"              //$NON-NLS-1$
+          + "         ,pt2 bt2\n"              //$NON-NLS-1$
+          + "WHERE \n"                         //$NON-NLS-1$
+          + "          (\n"                    //$NON-NLS-1$
+          + "             bt1.pc1 = bt2.pc2\n" //$NON-NLS-1$
+          + "          )\n"                    //$NON-NLS-1$
+          + "AND       ((\n"                    //$NON-NLS-1$
+          + "              bt1.pc1 > 25\n" //$NON-NLS-1$
+          + "          ))\n", //$NON-NLS-1$
+          query2.getQuery()
+        );
+      
+      // select count aggregate
+      MQLQueryImpl myTest3 = new MQLQueryImpl(null, model, databaseMeta, "en_US");  //$NON-NLS-1$
+      myTest3.addSelection(new Selection(bc1, AggregationSettings.COUNT));
+      myTest3.addSelection(new Selection(bc2));
+      myTest3.addSelection(new Selection(bce2));
+      
+      myTest3.addConstraint(WhereCondition.operators[0], "[bt1.bc1.count] > 25"); //$NON-NLS-1$
+
+      MappedQuery query3 = myTest3.getQuery();
+      assertEqualsIgnoreWhitespaces(
+          "SELECT \n"                        //$NON-NLS-1$
+          + "          COUNT(bt1.pc1) AS COL0\n"  //$NON-NLS-1$
+          + "         ,bt2.pc2 AS COL1\n"       //$NON-NLS-1$
+          + "         , bt2.pc2  * 2 AS COL2\n"//$NON-NLS-1$        
+          + "FROM \n"                          //$NON-NLS-1$
+          + "          pt1 bt1\n"              //$NON-NLS-1$
+          + "         ,pt2 bt2\n"              //$NON-NLS-1$
+          + "WHERE \n"                         //$NON-NLS-1$
+          + "          (\n"                    //$NON-NLS-1$
+          + "             bt1.pc1 = bt2.pc2\n" //$NON-NLS-1$
+          + "          )\n"                    //$NON-NLS-1$
+          + "GROUP BY \n"                      //$NON-NLS-1$
+          + "          bt2.pc2\n"              //$NON-NLS-1$
+          + "         , bt2.pc2  * 2\n"        //$NON-NLS-1$
+          + "HAVING \n"                        //$NON-NLS-1$
+          + "          (\n"                    //$NON-NLS-1$        
+          + "              COUNT(bt1.pc1)  > 25\n" //$NON-NLS-1$
+          + "          )\n", //$NON-NLS-1$
+          query3.getQuery()
+        );
+      
+    } catch (Exception e) {
+      e.printStackTrace();
+      fail();
+    }
+  }
+  
+  
   public void testLocale() {
     BusinessModel model = buildDefaultModel();
     DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
@@ -1872,4 +2020,127 @@ public class MQLQueryImplTest extends MetadataTestBase {
     );
   }
   
+  
+  public void testInlineTable() throws Exception {
+    
+    final BusinessModel model = new BusinessModel();
+    
+    final BusinessTable bt1 = new BusinessTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setTargetTable("select * from mytable"); //$NON-NLS-1$
+    final BusinessColumn bc1 = new BusinessColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setFormula("pc1"); //$NON-NLS-1$
+    bc1.setBusinessTable(bt1);
+    bt1.addBusinessColumn(bc1);
+    bt1.setRelativeSize(1);
+    
+    final BusinessTable bt2 = new BusinessTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setTargetTable("pt2"); //$NON-NLS-1$
+    final BusinessColumn bc2 = new BusinessColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setFormula("pc2"); //$NON-NLS-1$
+    bc2.setBusinessTable(bt2);
+    bt2.addBusinessColumn(bc2);
+
+    bt2.setRelativeSize(1);
+    
+    final BusinessTable bt3 = new BusinessTable();
+    bt3.setId("bt3"); //$NON-NLS-1$
+    bt3.setTargetTable("pt3"); //$NON-NLS-1$
+    final BusinessColumn bc3 = new BusinessColumn();
+    bc3.setId("bc3"); //$NON-NLS-1$
+    bc3.setFormula("pc3"); //$NON-NLS-1$
+    bc3.setBusinessTable(bt3);
+    bt3.addBusinessColumn(bc3);
+    bt3.setRelativeSize(1);
+    
+    final BusinessTable bt4 = new BusinessTable();
+    bt4.setId("bt4"); //$NON-NLS-1$
+    bt4.setTargetTable("pt4"); //$NON-NLS-1$
+    final BusinessColumn bc4 = new BusinessColumn();
+    bc4.setId("bc4"); //$NON-NLS-1$
+    bc4.setFormula("pc4"); //$NON-NLS-1$
+    bc4.setBusinessTable(bt4);
+    bt4.addBusinessColumn(bc4);
+    bt4.setRelativeSize(1);
+    
+    final BusinessTable bt5 = new BusinessTable();
+    bt5.setId("bt5"); //$NON-NLS-1$
+    bt5.setTargetTable("pt5"); //$NON-NLS-1$
+    final BusinessColumn bc5 = new BusinessColumn();
+    bc5.setId("bc5"); //$NON-NLS-1$
+    bc5.setFormula("pc5"); //$NON-NLS-1$
+    bc5.setBusinessTable(bt5);
+    bt5.addBusinessColumn(bc5);
+    bt5.setRelativeSize(1);
+    final RelationshipMeta rl1 = new RelationshipMeta();
+    
+    rl1.setTableFrom(bt1);
+    rl1.setFieldFrom(bc1);
+    rl1.setTableTo(bt2);
+    rl1.setFieldTo(bc2);
+    
+    final RelationshipMeta rl2 = new RelationshipMeta();
+    
+    rl2.setTableFrom(bt2);
+    rl2.setFieldFrom(bc2);
+    rl2.setTableTo(bt3);
+    rl2.setFieldTo(bc3);
+
+    final RelationshipMeta rl3 = new RelationshipMeta();
+    
+    rl3.setTableFrom(bt3);
+    rl3.setFieldFrom(bc3);
+    rl3.setTableTo(bt4);
+    rl3.setFieldTo(bc4);
+
+    final RelationshipMeta rl4 = new RelationshipMeta();
+    
+    rl4.setTableFrom(bt4);
+    rl4.setFieldFrom(bc4);
+    rl4.setTableTo(bt5);
+    rl4.setFieldTo(bc5);
+    
+    model.addBusinessTable(bt1);
+    model.addBusinessTable(bt2);
+    model.addBusinessTable(bt3);
+    model.addBusinessTable(bt4);
+    model.addBusinessTable(bt5);
+    
+    model.addRelationship(rl1);
+    model.addRelationship(rl2);
+    model.addRelationship(rl3);
+    model.addRelationship(rl4);
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    MQLQueryImpl myTest = new MQLQueryImpl(null, model, databaseMeta, "en_US"); //$NON-NLS-1$
+    myTest.addSelection(new Selection(bc1));
+    myTest.addSelection(new Selection(bc4));
+
+    MappedQuery query = myTest.getQuery();
+    // System.out.println(query.getQuery());
+    assertEqualsIgnoreWhitespaces( 
+        "SELECT DISTINCT \n" //$NON-NLS-1$
+        + "          bt1.pc1 AS COL0\n" //$NON-NLS-1$
+        + "         ,bt4.pc4 AS COL1\n" //$NON-NLS-1$
+        + "FROM \n" //$NON-NLS-1$
+        + "          (select * from mytable) bt1\n" //$NON-NLS-1$
+        + "         ,pt2 bt2\n" //$NON-NLS-1$
+        + "         ,pt3 bt3\n" //$NON-NLS-1$
+        + "         ,pt4 bt4\n" //$NON-NLS-1$
+        + "WHERE \n" //$NON-NLS-1$
+        + "          (\n"
+        + "             bt2.pc2 = bt3.pc3\n" //$NON-NLS-1$
+        + "          )\n"
+        + "      AND (\n"
+        + "             bt3.pc3 = bt4.pc4\n" //$NON-NLS-1$
+        + "          )\n"
+        + "      AND (\n" 
+        + "             bt1.pc1 = bt2.pc2\n"
+        + "          )\n",
+        query.getQuery()    
+    ); //$NON-NLS-1$
+  }
+
 }

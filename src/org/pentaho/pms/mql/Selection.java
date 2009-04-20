@@ -13,6 +13,7 @@
 package org.pentaho.pms.mql;
 
 import org.pentaho.pms.schema.BusinessColumn;
+import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 
 /**
  * This class defines an MQL selection
@@ -22,9 +23,15 @@ import org.pentaho.pms.schema.BusinessColumn;
 public class Selection {
  
   protected BusinessColumn businessColumn;
-  
+  protected AggregationSettings aggregationType;
+
   public Selection(BusinessColumn businessColumn) {
     this.businessColumn = businessColumn;
+  }
+  
+  public Selection(BusinessColumn businessColumn, AggregationSettings aggregationType) {
+    this.businessColumn = businessColumn;
+    this.aggregationType = aggregationType;
   }
  
   /**
@@ -34,5 +41,22 @@ public class Selection {
    */
   public BusinessColumn getBusinessColumn() {
     return businessColumn;
+  }
+  
+  public AggregationSettings getAggregationType() {
+    return aggregationType;
+  }
+  
+  public boolean hasAggregate() {
+    // this selection is an aggregate if the business column is an aggregate and the agg type is not null
+    return !getActiveAggregationType().equals(AggregationSettings.NONE);
+  }
+  
+  public AggregationSettings getActiveAggregationType() {
+    if (getAggregationType() == null) {
+      return businessColumn.getAggregationType();
+    } else {
+      return getAggregationType();
+    }
   }
 }

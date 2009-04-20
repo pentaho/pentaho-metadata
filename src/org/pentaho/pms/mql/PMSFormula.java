@@ -31,6 +31,7 @@ import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
+import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.reporting.libraries.formula.EvaluationException;
 import org.pentaho.reporting.libraries.formula.Formula;
 import org.pentaho.reporting.libraries.formula.lvalues.ContextLookup;
@@ -79,13 +80,13 @@ public class PMSFormula implements FormulaTraversalInterface {
   private Formula formulaObject = null;
   
   /** cache of business columns for lookup during SQL generation */
-  private Map<String,BusinessColumn> businessColumnMap = new HashMap<String,BusinessColumn>();
+  private Map<String,Selection> businessColumnMap = new HashMap<String,Selection>();
   
   /** table alias map **/
   private Map<BusinessTable, String> tableAliases;
   
   /** list of business columns, accessible by other classes */
-  private List<BusinessColumn> businessColumnList = new ArrayList<BusinessColumn>();
+  private List<Selection> businessColumnList = new ArrayList<Selection>();
   
   /** reference to formulaContext singleton */
   private PMSFormulaContext formulaContext = PMSFormulaContext.getInstance();
@@ -328,13 +329,14 @@ public class PMSFormula implements FormulaTraversalInterface {
 	        }
         }
         
-        throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0010_FIELDNAME_ERROR_COLUMN_NOT_FOUND", fieldName, fieldName, getBusinessTableIDs().toString()));//$NON-NLS-1$
+        throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0010_FIELDNAME_ERROR_COLUMN_NOT_FOUND", fieldName, fieldName, toString(getBusinessTableIDs())));//$NON-NLS-1$
         
       } else {
       
         // expecting <BUSINESS TABLE ID>.<BUSINESS COLUMN ID>
+        // or <BUSINESS TABLE ID>.<BUSINESS COLUMN ID>.<AGGREGATION>
         String tblcol[] = fieldName.split("\\."); //$NON-NLS-1$
-        if (tblcol.length != 2) {
+        if (tblcol.length != 2 && tblcol.length != 3) {
           throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0011_INVALID_FIELDNAME",fieldName)); //$NON-NLS-1$
         }
         
@@ -350,7 +352,7 @@ public class PMSFormula implements FormulaTraversalInterface {
 	        }
         }
 
-        if (businessTable!= null) {
+        if (businessTable != null) {
           // Find the column in that table...
           column = businessTable.findBusinessColumn(tblcol[1]);
           if (column == null) {
@@ -363,22 +365,20 @@ public class PMSFormula implements FormulaTraversalInterface {
           // 
           BusinessTable bizTable = model.findBusinessTable(tblcol[0]);
           if (bizTable == null) {
-        	  
-        	// OK, now we try to look for the business category if someone was actually stupid enough to do that...
-        	//
-        	BusinessCategory businessCategory = model.getRootCategory().findBusinessCategory(tblcol[0]);
-        	if (businessCategory==null) {
-        		throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0012_FIELDNAME_ERROR_PARENT_NOT_FOUND", fieldName, tblcol[0])); //$NON-NLS-1$
-        	}
-        	
-        	// What do you know, it worked.
-        	// Now look up the column.
-        	column = businessCategory.findBusinessColumn(tblcol[1]);
-        	if (column==null) {
-	            throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0010_FIELDNAME_ERROR_COLUMN_NOT_FOUND", fieldName, tblcol[1], tblcol[0])); //$NON-NLS-1$
-        	}
-          }
-          else {
+          	// OK, now we try to look for the business category if someone was actually stupid enough to do that...
+          	//
+          	BusinessCategory businessCategory = model.getRootCategory().findBusinessCategory(tblcol[0]);
+          	if (businessCategory==null) {
+          		throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0012_FIELDNAME_ERROR_PARENT_NOT_FOUND", fieldName, tblcol[0])); //$NON-NLS-1$
+          	}
+          	
+          	// What do you know, it worked.
+          	// Now look up the column.
+          	column = businessCategory.findBusinessColumn(tblcol[1]);
+          	if (column==null) {
+  	            throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0010_FIELDNAME_ERROR_COLUMN_NOT_FOUND", fieldName, tblcol[1], tblcol[0])); //$NON-NLS-1$
+          	}
+          } else {
 	          column = bizTable.findBusinessColumn(tblcol[1]);
 	          if (column == null) {
 	            throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0010_FIELDNAME_ERROR_COLUMN_NOT_FOUND", fieldName, tblcol[1], tblcol[0])); //$NON-NLS-1$
@@ -389,14 +389,38 @@ public class PMSFormula implements FormulaTraversalInterface {
 	          tables.add(bizTable);
           }
         }
+        
+        AggregationSettings aggsetting = null;
+        if (tblcol.length == 3) {
+          String aggregation = tblcol[2];
+          if (aggregation != null) {
+            AggregationSettings setting = AggregationSettings.getType(aggregation);
+            if ((column.getAggregationType() == setting) ||
+                column.getAggregationList() != null &&
+                column.getAggregationList().contains(setting)) {
+              aggsetting = setting;
+            }
+          }
+        }
 
-        businessColumnMap.put(fieldName, column);
-        businessColumnList.add(column);
+        Selection selection =  new Selection(column, aggsetting);
+        
+        businessColumnMap.put(fieldName, selection);
+        businessColumnList.add(selection);
       }
     }
   }
   
-
+  public static String toString(Object[] arr) {
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < arr.length; i++) {
+      if (i != 0) {
+        sb.append(",");
+      }
+      sb.append(arr[i]);
+    }
+    return sb.toString();
+  }
   
   /*
    *  there should be 3 passes over the formula object model:
@@ -566,7 +590,7 @@ public class PMSFormula implements FormulaTraversalInterface {
   }
 
   protected void renderContextLookup(StringBuffer sb, String contextName, String locale) {
-    BusinessColumn column = (BusinessColumn)businessColumnMap.get(contextName);
+    Selection column = (Selection)businessColumnMap.get(contextName);
     if (column == null) {
       // we have a physical column function, we need to evaluate it
       // in a special way due to aggregations and such
@@ -628,7 +652,7 @@ public class PMSFormula implements FormulaTraversalInterface {
    * 
    * @return list of business columns referenced in the formula
    */
-  public List<BusinessColumn> getBusinessColumns() {
+  public List<Selection> getBusinessColumns() {
     return businessColumnList;
   }
   

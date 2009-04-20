@@ -37,6 +37,7 @@ import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.SchemaMeta;
+import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.util.Settings;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -128,17 +129,17 @@ public class MQLQueryImpl implements MQLQuery {
     constraints.add(where);
   }
 
-  public void addOrderBy(String categoryId, String columnId, boolean ascending) throws PentahoMetadataException {
+  public void addOrderBy(String categoryId, String columnId, String aggregation, boolean ascending) throws PentahoMetadataException {
     BusinessCategory rootCat = model.getRootCategory();
     BusinessCategory businessCategory = rootCat.findBusinessCategory(categoryId);
     if (businessCategory == null) {
       throw new PentahoMetadataException(Messages.getErrorString(
           "MQLQuery.ERROR_0014_BUSINESS_CATEGORY_NOT_FOUND", categoryId)); //$NON-NLS-1$ 
     }
-    addOrderBy(businessCategory, columnId, ascending);
+    addOrderBy(businessCategory, columnId, aggregation, ascending);
   }
 
-  public void addOrderBy(BusinessCategory businessCategory, String columnId, boolean ascending)
+  public void addOrderBy(BusinessCategory businessCategory, String columnId, String aggregation, boolean ascending)
       throws PentahoMetadataException {
 
     if (businessCategory == null) {
@@ -151,7 +152,19 @@ public class MQLQueryImpl implements MQLQuery {
           "MQLQuery.ERROR_0016_BUSINESS_COLUMN_NOT_FOUND", businessCategory.getId(), columnId)); //$NON-NLS-1$ 
     }
 
-    OrderBy orderBy = new OrderBy(new Selection(businessColumn), ascending);
+    // this code verifies the aggregation setting provided is a 
+    // valid option
+    AggregationSettings aggsetting = null;
+    if (aggregation != null) {
+      AggregationSettings setting = AggregationSettings.getType(aggregation);
+      if ((businessColumn.getAggregationType() == setting) ||
+          businessColumn.getAggregationList() != null &&
+          businessColumn.getAggregationList().contains(setting)) {
+        aggsetting = setting;
+      }
+    }
+    
+    OrderBy orderBy = new OrderBy(new Selection(businessColumn, aggsetting), ascending);
     order.add(orderBy);
   }
 
@@ -519,9 +532,33 @@ public class MQLQueryImpl implements MQLQuery {
       String columnId = XMLHandler.getNodeValue(nodes.item(0));
       BusinessColumn businessColumn = getModel().findBusinessColumn(columnId);
       if (businessColumn != null) {
-        addSelection(new Selection(businessColumn));
+        AggregationSettings aggsetting = null;
+        NodeList aggnodes = selectionElement.getElementsByTagName("aggregation"); //$NON-NLS-1$
+        if (aggnodes.getLength() > 0) {
+          String aggvalue = XMLHandler.getNodeValue(aggnodes.item(0));
+          AggregationSettings setting = AggregationSettings.getType(aggvalue);
+          if (setting == null) {
+            Messages.getErrorString("MQLQuery.ERROR_0018_AGGREGATE_NOT_RECOGNIZED", columnId, aggvalue);
+          } else {
+            // verify that the setting is one of the options for this business column
+            if ((businessColumn.getAggregationType() == setting) ||
+                businessColumn.getAggregationList() != null &&
+                businessColumn.getAggregationList().contains(setting)) {
+              aggsetting = setting;
+            } else {
+              Messages.getErrorString("MQLQuery.ERROR_0019_INVALID_AGG_FOR_BUSINESS_COL", columnId, aggvalue);
+            }
+          }
+        }
+      
+        addSelection(new Selection(businessColumn, aggsetting));
+      } else {
+        // print a warning message
+        Messages.getErrorString("MQLQuery.ERROR_0020_BUSINESS_COL_NOT_FOUND", columnId);
       }
     }
+    
+    
   }
   
   protected void setOptionsFromXmlNode(Element optionElement) {
@@ -539,6 +576,7 @@ public class MQLQueryImpl implements MQLQuery {
     boolean ascending = true;
     String view_id = null;
     String column_id = null;
+    String aggregation = null;
 
     NodeList nodes = orderElement.getElementsByTagName("direction"); //$NON-NLS-1$
     if (nodes.getLength() > 0) {
@@ -552,9 +590,14 @@ public class MQLQueryImpl implements MQLQuery {
     if (nodes.getLength() > 0) {
       column_id = XMLHandler.getNodeValue(nodes.item(0));
     }
+    
+    nodes = orderElement.getElementsByTagName("aggregation"); //$NON-NLS-1$
+    if (nodes.getLength() > 0) {
+      aggregation = XMLHandler.getNodeValue(nodes.item(0));
+    }
 
     if ((view_id != null) && (column_id != null)) {
-      addOrderBy(view_id, column_id, ascending);
+      addOrderBy(view_id, column_id, aggregation, ascending);
     }
   }
 

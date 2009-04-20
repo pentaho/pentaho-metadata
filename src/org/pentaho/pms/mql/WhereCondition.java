@@ -42,6 +42,7 @@ import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
+import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.util.Const;
 
 public class WhereCondition extends ConceptUtilityBase implements ConceptUtilityInterface {
@@ -132,7 +133,7 @@ public class WhereCondition extends ConceptUtilityBase implements ConceptUtility
    * 
    * @return list
    */
-  public List<BusinessColumn> getBusinessColumns() {
+  public List<Selection> getBusinessColumns() {
     return formula.getBusinessColumns();
   }
 
@@ -145,9 +146,7 @@ public class WhereCondition extends ConceptUtilityBase implements ConceptUtility
   public boolean hasAggregate() {
     if (hasAgg == null) {
       hasAgg = Boolean.FALSE;
-      Iterator<BusinessColumn> iter = formula.getBusinessColumns().iterator();
-      while (iter.hasNext()) {
-        BusinessColumn col = iter.next();
+      for (Selection col : formula.getBusinessColumns()) {
         if (col.hasAggregate()) {
           hasAgg = Boolean.TRUE;
           return hasAgg.booleanValue();

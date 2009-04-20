@@ -346,11 +346,9 @@ public class AdvancedSQLGenerator extends SQLGenerator {
     for (Selection selection : selections) {
       AliasedSelection aliasedSelection = (AliasedSelection)selection;
       if (aliasedSelection.hasFormula()) {
-        List cols = aliasedSelection.getPMSFormula().getBusinessColumns();
-        Iterator iter = cols.iterator();
-        while (iter.hasNext()) {
-          BusinessColumn col = (BusinessColumn)iter.next();
-          BusinessTable businessTable = col.getBusinessTable();
+        List<Selection> cols = aliasedSelection.getPMSFormula().getBusinessColumns();
+        for(Selection sel : cols) {
+          BusinessTable businessTable = sel.getBusinessColumn().getBusinessTable();
           treeSet.add(businessTable); //$NON-NLS-1$
         }
       } else {
@@ -367,11 +365,9 @@ public class AdvancedSQLGenerator extends SQLGenerator {
     }
     if (conditions != null) {
       for(WhereCondition condition : conditions) {
-        List cols = condition.getBusinessColumns();
-        Iterator iter = cols.iterator();
-        while (iter.hasNext()) {
-          BusinessColumn col = (BusinessColumn)iter.next();
-          BusinessTable businessTable = col.getBusinessTable();
+        List<Selection> cols = condition.getBusinessColumns();
+        for (Selection sel : cols) {
+          BusinessTable businessTable = sel.getBusinessColumn().getBusinessTable();
           treeSet.add(businessTable); //$NON-NLS-1$
         }
       }
@@ -383,11 +379,9 @@ public class AdvancedSQLGenerator extends SQLGenerator {
       for(OrderBy order : orderBys) {
         AliasedSelection aliasedSelection = (AliasedSelection)order.getSelection();
         if (aliasedSelection.hasFormula()) {
-          List cols = aliasedSelection.getPMSFormula().getBusinessColumns();
-          Iterator iter = cols.iterator();
-          while (iter.hasNext()) {
-            BusinessColumn col = (BusinessColumn)iter.next();
-            BusinessTable businessTable = col.getBusinessTable();
+          List<Selection> cols = aliasedSelection.getPMSFormula().getBusinessColumns();
+          for (Selection sel : cols) {
+            BusinessTable businessTable = sel.getBusinessColumn().getBusinessTable();
             treeSet.add(businessTable); //$NON-NLS-1$
           }
         } else {
@@ -408,13 +402,13 @@ public class AdvancedSQLGenerator extends SQLGenerator {
     final List<AliasedPathBusinessTable> aliasedTables;
     
     public SQLAndAliasedTables(String sql, AliasedPathBusinessTable aliasedTable) {
-      super(sql, (BusinessTable)null, (BusinessColumn)null);
+      super(sql, (BusinessTable)null, (Selection)null);
       aliasedTables = new ArrayList<AliasedPathBusinessTable>();
       aliasedTables.add(aliasedTable);
     }
 
     public SQLAndAliasedTables(String sql, List<AliasedPathBusinessTable> aliasedTables) {
-      super(sql, (BusinessTable)null, (BusinessColumn)null);
+      super(sql, (BusinessTable)null, (Selection)null);
       this.aliasedTables = aliasedTables;
     }
 
@@ -462,11 +456,11 @@ public class AdvancedSQLGenerator extends SQLGenerator {
           // TODO: WPG: instead of using formula, shouldn't we use the physical column's name?
           tableColumn += databaseMeta.quoteField( selection.getBusinessColumn().getFormula() );
           
-          if (selection.getBusinessColumn().hasAggregate()) // For the having clause, for example: HAVING sum(turnover) > 100
+          if (selection.hasAggregate()) // For the having clause, for example: HAVING sum(turnover) > 100
           {
               // return getFunctionExpression(selection.getBusinessColumn(), tableColumn, databaseMeta);
               return new SQLAndAliasedTables(
-                            getFunctionExpression(selection.getBusinessColumn(), tableColumn, databaseMeta), 
+                            getFunctionExpression(selection, tableColumn, databaseMeta), 
                             new AliasedPathBusinessTable(tblName, selection.getBusinessColumn().getBusinessTable())
                           );
           }

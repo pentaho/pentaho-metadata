@@ -17,13 +17,13 @@ public class SQLAndTables {
 
 	private List<BusinessTable> usedTables;
 	
-	private List<BusinessColumn> usedColumns;
+	private List<Selection> usedColumns;
 
 	/**
 	 * @param sql
 	 * @param usedTables
 	 */
-	public SQLAndTables(String sql, List<BusinessTable> usedTables, List<BusinessColumn> usedColumns) {
+	public SQLAndTables(String sql, List<BusinessTable> usedTables, List<Selection> usedColumns) {
 		this.sql = sql;
 		this.usedTables = usedTables;
 		this.usedColumns = usedColumns;
@@ -33,11 +33,11 @@ public class SQLAndTables {
 	 * @param sql
 	 * @param usedTable
 	 */
-	public SQLAndTables(String sql, BusinessTable usedTable, BusinessColumn usedColumn) {
+	public SQLAndTables(String sql, BusinessTable usedTable, Selection usedColumn) {
 		this.sql = sql;
 		this.usedTables = new ArrayList<BusinessTable>();
 		this.usedTables.add(usedTable);
-		this.usedColumns = new ArrayList<BusinessColumn>();
+		this.usedColumns = new ArrayList<Selection>();
 		this.usedColumns.add(usedColumn);
 	}
 
@@ -74,14 +74,14 @@ public class SQLAndTables {
 	/**
 	 * @return the usedColumns
 	 */
-	public List<BusinessColumn> getUsedColumns() {
+	public List<Selection> getUsedColumns() {
 		return usedColumns;
 	}
 
 	/**
 	 * @param usedColumns the usedColumns to set
 	 */
-	public void setUsedColumns(List<BusinessColumn> usedColumns) {
+	public void setUsedColumns(List<Selection> usedColumns) {
 		this.usedColumns = usedColumns;
 	}
 

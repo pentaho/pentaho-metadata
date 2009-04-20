@@ -91,10 +91,8 @@ public class AdvancedMQLQuery extends MQLQueryImpl
           return hasAgg;
         } else {
         
-          Iterator iter = pmsformula.getBusinessColumns().iterator();
-          while (iter.hasNext()) {
-            BusinessColumn col = (BusinessColumn) iter.next();
-            if (col.hasAggregate()) {
+          for (Selection sel : pmsformula.getBusinessColumns()) {
+            if (sel.hasAggregate()) {
               hasAgg = true;
               return hasAgg;
             }

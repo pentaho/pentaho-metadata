@@ -128,7 +128,7 @@ public class AliasAwarePMSFormula extends PMSFormula {
             aliasedSelectionMap.put(fieldName, sel);
             
             // add to the list of business columns which is used for path generation
-            getBusinessColumns().add(column);
+            getBusinessColumns().add(sel);
             return;
           } else {
             throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0011_INVALID_FIELDNAME",fieldName)); //$NON-NLS-1$
@@ -163,7 +163,7 @@ public class AliasAwarePMSFormula extends PMSFormula {
       return;
     }
 
-    BusinessColumn column = (BusinessColumn)getBusinessColumnMap().get(contextName);
+    Selection column = (Selection)getBusinessColumnMap().get(contextName);
     if (column == null) {
         
       // we have a physical column function, we need to evaluate it
@@ -189,13 +189,13 @@ public class AliasAwarePMSFormula extends PMSFormula {
     
       if (businessTableToAliasMap != null) {
       // render the column sql
-        String tmpAliasName = businessTableToAliasMap.get(column.getBusinessTable().getId());
+        String tmpAliasName = businessTableToAliasMap.get(column.getBusinessColumn().getBusinessTable().getId());
         if (tmpAliasName == null) {
           tmpAliasName = aliasName;
         }
-        selection = new AliasedSelection(column, tmpAliasName);
+        selection = new AliasedSelection(column.getBusinessColumn(), tmpAliasName);
       } else {
-        selection = new AliasedSelection(column, aliasName);
+        selection = new AliasedSelection(column.getBusinessColumn(), aliasName);
       }
       // render the column sql
       sb.append(" "); //$NON-NLS-1$
