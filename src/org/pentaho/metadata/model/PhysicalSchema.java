@@ -3,13 +3,11 @@ package org.pentaho.metadata.model;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.pentaho.pms.schema.PhysicalTable;
-
 public class PhysicalSchema extends Entity {
 
   private PhysicalDataSource source;
 
-  private Collection<PhysicalTable> tables = new ArrayList<PhysicalTable>();
+  private Collection<IPhysicalTable> tables = new ArrayList<IPhysicalTable>();
 
   public PhysicalDataSource getSource() {
     return source;
@@ -19,15 +17,15 @@ public class PhysicalSchema extends Entity {
     this.source = source;
   }
 
-  public Collection<PhysicalTable> getTables() {
+  public Collection<IPhysicalTable> getTables() {
     return tables;
   }
 
-  public void setTables(Collection<PhysicalTable> tables) {
+  public void setTables(Collection<IPhysicalTable> tables) {
     this.tables = tables;
   }
   
-  public void addTable(PhysicalTable table) {
+  public void addTable(IPhysicalTable table) {
     tables.add(table);
   }
 
