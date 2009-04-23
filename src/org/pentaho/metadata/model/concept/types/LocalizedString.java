@@ -1,6 +1,7 @@
 package org.pentaho.metadata.model.concept.types;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -10,6 +11,17 @@ public class LocalizedString {
   public LocalizedString() {
     localeStringMap = new HashMap<String,String>();
   }
+  
+  public LocalizedString(String locale, String value) {
+    this();
+    localeStringMap.put(locale, value);
+  }
+
+  public LocalizedString(String value) {
+    this();
+    localeStringMap.put(Locale.getDefault().toString(), value);
+  }
+
   
   public String getString(String locale) {
       return (String) localeStringMap.get(locale);

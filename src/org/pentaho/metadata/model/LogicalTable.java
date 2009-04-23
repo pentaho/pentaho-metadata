@@ -3,19 +3,47 @@ package org.pentaho.metadata.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LogicalTable extends Entity {
+import org.pentaho.metadata.model.concept.Concept;
+import org.pentaho.metadata.model.concept.IConcept;
+import org.pentaho.metadata.model.LogicalModel;
 
-  private List<LogicalColumn> columns = new ArrayList<LogicalColumn>();
+public class LogicalTable extends Concept {
 
-  public List<LogicalColumn> getColumns() {
-    return columns;
-  }
+  private LogicalModel logicalModel;
+  private IPhysicalTable physicalTable;
+  
+  // needs the security attribute.
+  
+  private List<LogicalColumn> logicalColumns = new ArrayList<LogicalColumn>();
 
-  public void setColumns(List<LogicalColumn> columns) {
-    this.columns = columns;
+  public IPhysicalTable getPhysicalTable() {
+    return physicalTable;
   }
   
-  public void addColumn(LogicalColumn column) {
-    columns.add(column);
+  public void setPhysicalTable(IPhysicalTable physicalTable) {
+    this.physicalTable = physicalTable;
   }
+  
+  public List<LogicalColumn> getLogicalColumns() {
+    return logicalColumns;
+  }
+
+  public void setLogicalColumns(List<LogicalColumn> columns) {
+    this.logicalColumns = columns;
+  }
+  
+  public void addLogicalColumn(LogicalColumn column) {
+    logicalColumns.add(column);
+  }
+  
+  @Override
+  public IConcept getInheritedConcept() {
+    return physicalTable;
+  }
+  
+  @Override
+  public IConcept getSecurityParentConcept() {
+    return logicalModel;
+  }
+
 }

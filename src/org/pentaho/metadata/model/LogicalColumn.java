@@ -1,30 +1,38 @@
 package org.pentaho.metadata.model;
 
-import org.pentaho.pms.schema.PhysicalColumn;
+import org.pentaho.metadata.model.concept.Concept;
+import org.pentaho.metadata.model.concept.IConcept;
+import org.pentaho.metadata.model.concept.types.DataType;
 
-public class LogicalColumn extends Entity {
+public class LogicalColumn extends Concept {
+
+  private LogicalTable logicalTable;
+  private IPhysicalColumn physicalColumn;
   
-  //TODO add to this enum
-  public enum DataType { STRING, INTEGER, FLOAT }
-  
-  private PhysicalColumn physicalColumn;
-  
-  public PhysicalColumn getPhysicalColumn() {
+  public IPhysicalColumn getPhysicalColumn() {
     return physicalColumn;
   }
 
-  public void setPhysicalColumn(PhysicalColumn physicalColumn) {
+  public void setPhysicalColumn(IPhysicalColumn physicalColumn) {
     this.physicalColumn = physicalColumn;
   }
 
-  private DataType dataType;
-  
   public DataType getDataType() {
-    return dataType;
+    return (DataType)getProperty(IPhysicalColumn.DATATYPE_PROPERTY);
   }
 
   public void setDataType(DataType dataType) {
-    this.dataType = dataType;
+    setProperty(IPhysicalColumn.DATATYPE_PROPERTY, dataType);
   };
+  
+  @Override
+  public IConcept getInheritedConcept() {
+    return physicalColumn;
+  }
+  
+  @Override
+  public IConcept getSecurityParentConcept() {
+    return logicalTable;
+  }
 
 }

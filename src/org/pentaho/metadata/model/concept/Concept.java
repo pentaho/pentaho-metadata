@@ -15,8 +15,7 @@ package org.pentaho.metadata.model.concept;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.pentaho.metadata.model.concept.IConcept;
-import org.pentaho.pms.schema.concept.DefaultPropertyID;
+import org.pentaho.metadata.model.concept.types.LocalizedString;
 
 /**
  * This is the base implementation of a concept, and may be used in generic terms
@@ -28,11 +27,13 @@ import org.pentaho.pms.schema.concept.DefaultPropertyID;
  */
 public class Concept implements IConcept {
 
+  protected static String NAME_PROPERTY = "name";
+  protected static String DESCRIPTION_PROPERTY = "description";
+  protected static String SECURITY_PROPERTY = "security";
+  
   Map<String, Object> properties = new HashMap<String, Object>();
   String id;
-  IConcept inherited;
   IConcept parent;
-  IConcept security;
   
   public Map<String, Object> getChildProperties() {
     return properties;
@@ -51,12 +52,9 @@ public class Concept implements IConcept {
   }
   
   public IConcept getInheritedConcept() {
-    return inherited;
+    return null;
   }
   
-  public void setInheritedConcept(IConcept inherited) {
-    this.inherited = inherited;
-  }
 
   public IConcept getParentConcept() {
     return parent;
@@ -66,21 +64,18 @@ public class Concept implements IConcept {
     this.parent = parent;
   }
 
+  
   public IConcept getSecurityParentConcept() {
     return null;
   }
   
-  public void setSecurityParentConcept(IConcept security) {
-    this.security = security;
-  }
-
   public Map<String, Object> getProperties() {
     Map<String,Object> all = new HashMap<String,Object>();
 
     // Properties inherited from the "logical relationship": 
     // BusinessColumn inherits from Physical Column, B.Table from Ph.Table
-    if (inherited != null) {
-      all.putAll(inherited.getProperties());
+    if (getInheritedConcept() != null) {
+      all.putAll(getInheritedConcept().getProperties());
     }
 
     // Properties inherited from the pre-defined concepts like 
@@ -92,10 +87,9 @@ public class Concept implements IConcept {
 
     // The security settings from the security parent: 
     // Business table inherits from Business model, business column from business table
-    if (security != null) {
+    if (getSecurityParentConcept() != null) {
       // Only take over the security information, nothing else
-      String id = DefaultPropertyID.SECURITY.getId();
-      Object securityProperty = (Object) security.getProperty(id);
+      Object securityProperty = (Object) getSecurityParentConcept().getProperty(SECURITY_PROPERTY);
       if (securityProperty!=null) {
         all.put(id, securityProperty);
       }
@@ -118,5 +112,20 @@ public class Concept implements IConcept {
   public void removeChildProperty(String name) {
     properties.remove(name);
   }
-
+  
+  public LocalizedString getName() {
+    return (LocalizedString)getProperty(NAME_PROPERTY);
+  }
+  
+  public void setName(LocalizedString name) {
+    setProperty(NAME_PROPERTY, name);
+  }
+  
+  public LocalizedString getDescription() {
+    return (LocalizedString)getProperty(DESCRIPTION_PROPERTY);
+  }
+  
+  public void setDescription(LocalizedString description) {
+    setProperty(NAME_PROPERTY, description);
+  }
 }

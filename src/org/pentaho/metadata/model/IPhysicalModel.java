@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.pentaho.metadata.model.concept.IConcept;
 
-public interface IPhysicalTable extends IConcept {
-  
-  public List<IPhysicalColumn> getPhysicalColumns();
+public interface IPhysicalModel extends IConcept {
+  public List<? extends IPhysicalTable> getPhysicalTables();
 }

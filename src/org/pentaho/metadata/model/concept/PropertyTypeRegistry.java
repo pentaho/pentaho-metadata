@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
+import org.pentaho.metadata.model.concept.types.TargetTableType;
 import org.pentaho.pms.messages.Messages;
 /**
  * Concept Property Types are now POJOs, but there still needs to be a mechanism for
@@ -41,19 +42,18 @@ public class PropertyTypeRegistry {
   List<Class> propertyTypes = new ArrayList<Class>();
   Map<String, Class> propertyTypeMap = new HashMap<String, Class>();
   List<Class> unmodifiablePropertyTypes = Collections.unmodifiableList(propertyTypes);
-  Map<Class, String> propertyTypeDescription = new HashMap<Class, String>();
   
   public PropertyTypeRegistry() {
     // load these from a spring config file?
-    addPropertyType(String.class, "PropertyDescription." + String.class);
-    addPropertyType(LocalizedString.class, "PropertyDescription." + LocalizedString.class);
-    addPropertyType(DataType.class, "PropertyDescription." + DataType.class);
+    addPropertyType(String.class);
+    addPropertyType(LocalizedString.class);
+    addPropertyType(DataType.class);
+    addPropertyType(TargetTableType.class);
   }
   
-  public void addPropertyType(Class clazz, String descriptionId) {
+  public void addPropertyType(Class clazz) {
     propertyTypes.add(clazz);
     propertyTypeMap.put(clazz.getCanonicalName(), clazz);
-    propertyTypeDescription.put(clazz, descriptionId);
   }
   
   public List<Class> getPropertyTypes() {
@@ -61,7 +61,7 @@ public class PropertyTypeRegistry {
   }
   
   public String getPropertyTypeDescription(Class clazz) {
-    return Messages.getString(propertyTypeDescription.get(clazz));
+    return Messages.getString("PropertyDescription." + clazz.getCanonicalName());
   }
   
   public Class getPropertyType(String type) {
