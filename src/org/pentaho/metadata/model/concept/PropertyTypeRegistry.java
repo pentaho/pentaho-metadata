@@ -16,7 +16,7 @@ import org.pentaho.pms.messages.Messages;
  * @author Will Gorman (wgorman@pentaho.com)
  *
  */
-public class PropertyTypeHelper {
+public class PropertyTypeRegistry {
   
   /*
             new ConceptPropertyType( PROPERTY_TYPE_STRING,           "String",      Messages.getString("ConceptPropertyType.USER_STRING_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
@@ -43,7 +43,7 @@ public class PropertyTypeHelper {
   List<Class> unmodifiablePropertyTypes = Collections.unmodifiableList(propertyTypes);
   Map<Class, String> propertyTypeDescription = new HashMap<Class, String>();
   
-  public PropertyTypeHelper() {
+  public PropertyTypeRegistry() {
     // load these from a spring config file?
     addPropertyType(String.class, "PropertyDescription." + String.class);
     addPropertyType(LocalizedString.class, "PropertyDescription." + LocalizedString.class);
