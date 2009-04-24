@@ -1,5 +1,6 @@
 package org.pentaho.metadata.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.metadata.model.concept.Concept;
@@ -11,7 +12,7 @@ public class SqlPhysicalTable extends Concept implements IPhysicalTable {
   private static final String TARGET_TABLE_PROPERTY = "target_table";
   private static final String TARGET_TABLE_TYPE_PROPERTY = "target_table_type";
   
-  List<IPhysicalColumn> physicalColumns;
+  List<IPhysicalColumn> physicalColumns = new ArrayList<IPhysicalColumn>();
   
   public SqlPhysicalTable() {
     setTargetTableType(TargetTableType.TABLE);

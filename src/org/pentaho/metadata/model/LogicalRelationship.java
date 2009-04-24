@@ -1,6 +1,8 @@
 package org.pentaho.metadata.model;
 
-public class LogicalRelationship extends Entity {
+import org.pentaho.metadata.model.concept.Concept;
+
+public class LogicalRelationship extends Concept {
   
   private LogicalTable fromTable, toTable;
   private LogicalColumn fromColumn, toColumn;

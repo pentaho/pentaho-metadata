@@ -1,5 +1,7 @@
 package org.pentaho.metadata.model;
 
-public class PhysicalDataSource extends Entity {
+import org.pentaho.metadata.model.concept.Concept;
+
+public class PhysicalDataSource extends Concept {
 
 }

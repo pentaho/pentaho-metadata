@@ -5,6 +5,7 @@ import java.util.Locale;
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
@@ -84,9 +85,9 @@ public class ThinModelTest {
         logicalColumn.getDataType());
     
     
-    // TODO: view 
-    
-    
+    Category mainCategory = new Category();
+    mainCategory.setId("CATEGORY");
+    mainCategory.setName(new LocalizedString("Category"));
     
     // replacement for formula / is exact could be 
     // target column + target column type (calculated, exact, etc)
@@ -95,9 +96,6 @@ public class ThinModelTest {
   @Test
   public void testSerializeSqlPhysicalModel() {
     
-    // this is the minimum physical sql model, it could
-    // theoretically be used to execute sql directly.
-    
     SqlPhysicalModel model = new SqlPhysicalModel();
     model.setDatasource("SampleData");
     SqlPhysicalTable table = new SqlPhysicalTable();
@@ -105,13 +103,46 @@ public class ThinModelTest {
     table.setTargetTableType(TargetTableType.INLINE_SQL);
     table.setTargetTable("select * from customers");
     
+    SqlPhysicalColumn column = new SqlPhysicalColumn();
+    column.setTargetColumn("customername");
+    column.setName(new LocalizedString("Customer Name"));
+    column.setDataType(DataType.STRING);
+    
+    table.getPhysicalColumns().add(column);
+    
+    LogicalModel logicalModel = new LogicalModel();
+    model.setId("MODEL");
+    model.setName(new LocalizedString("My Model"));
+    model.setDescription(new LocalizedString("A Description of the Model"));
+    
+    LogicalTable logicalTable = new LogicalTable();
+    logicalTable.setPhysicalTable(table);
+    
+    logicalModel.getLogicalTables().add(logicalTable);
+    
+    LogicalColumn logicalColumn = new LogicalColumn();
+    logicalColumn.setId("LC_CUSTOMERNAME");
+    logicalColumn.setPhysicalColumn(column);
+    
+    logicalTable.addLogicalColumn(logicalColumn);
+    
+    Category mainCategory = new Category();
+    mainCategory.setId("CATEGORY");
+    mainCategory.setName(new LocalizedString("Category"));
+    mainCategory.addLogicalColumn(logicalColumn);
+    
+    logicalModel.getCategories().add(mainCategory);
+    
     Domain domain = new Domain();
     domain.addPhysicalModel(model);
+    domain.addLogicalModel(logicalModel);
     
     // basic tests
     SerializationService service = new SerializationService();
     
     String xml = service.serializeDomain(domain);
+
+    System.out.println(xml);
     
     Domain domain2 = service.deserializeDomain(xml);
     
@@ -120,6 +151,13 @@ public class ThinModelTest {
     Assert.assertEquals("SampleData", model2.getDatasource());
     Assert.assertEquals(1, model.getPhysicalTables().size());
     Assert.assertEquals(TargetTableType.INLINE_SQL, model.getPhysicalTables().get(0).getTargetTableType());
+    
+    Assert.assertEquals(1, domain.getLogicalModels().size());
+    Assert.assertEquals(1, domain.getLogicalModels().get(0).getCategories().size());
+    Assert.assertEquals(1, domain.getLogicalModels().get(0).getCategories().get(0).getLogicalColumns().size());
+    Assert.assertEquals(domain.getLogicalModels().get(0).getLogicalTables().get(0).getLogicalColumns().get(0), 
+                        domain.getLogicalModels().get(0).getCategories().get(0).getLogicalColumns().get(0));
+    Assert.assertEquals("Customer Name", domain.getLogicalModels().get(0).getCategories().get(0).getLogicalColumns().get(0).getName().getString("en_US"));
     
   }
 }

@@ -7,6 +7,7 @@ import org.pentaho.metadata.model.concept.Concept;
 
 public class LogicalModel extends Concept {
   private List<LogicalTable> logicalTables = new ArrayList<LogicalTable>();
+  private List<Category> categories = new ArrayList<Category>();
   
   // TODO: add security
   
@@ -14,5 +15,7 @@ public class LogicalModel extends Concept {
     return logicalTables;
   }
   
-  // should the categories go here? 
+  public List<Category> getCategories() {
+    return categories;
+  }
 }
