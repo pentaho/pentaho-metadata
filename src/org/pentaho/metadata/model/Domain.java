@@ -9,6 +9,7 @@ public class Domain extends Concept {
   
   private List<IPhysicalModel> physicalModels = new ArrayList<IPhysicalModel>();
   private List<LogicalModel> logicalModels = new ArrayList<LogicalModel>();  
+  private List<Concept> concepts = new ArrayList<Concept>();
   
   public List<IPhysicalModel> getPhysicalModels() {
     return physicalModels;
@@ -34,5 +35,16 @@ public class Domain extends Concept {
     logicalModels.add(physicalModel);
   }
 
+  public List<Concept> getConcepts() {
+    return concepts;
+  }
+  
+  public void setConcepts(List<Concept> concepts) {
+    this.concepts = concepts;
+  }
+  
+  public void addConcept(Concept concept) {
+    concepts.add(concept);
+  }
   
 }

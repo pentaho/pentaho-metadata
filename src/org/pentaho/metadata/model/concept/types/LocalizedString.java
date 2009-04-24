@@ -35,4 +35,8 @@ public class LocalizedString {
       return localeStringMap.keySet();
   }
   
+  public Map<String, String> getLocaleStringMap() {
+    return localeStringMap;
+  }
+  
 }
