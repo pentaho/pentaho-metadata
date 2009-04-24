@@ -5,6 +5,7 @@ import java.util.Locale;
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.LogicalTable;
@@ -14,6 +15,7 @@ import org.pentaho.metadata.model.SqlPhysicalTable;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
+import org.pentaho.metadata.util.SerializationService;
 
 public class ThinModelTest {
   
@@ -88,5 +90,36 @@ public class ThinModelTest {
     
     // replacement for formula / is exact could be 
     // target column + target column type (calculated, exact, etc)
+  }
+  
+  @Test
+  public void testSerializeSqlPhysicalModel() {
+    
+    // this is the minimum physical sql model, it could
+    // theoretically be used to execute sql directly.
+    
+    SqlPhysicalModel model = new SqlPhysicalModel();
+    model.setDatasource("SampleData");
+    SqlPhysicalTable table = new SqlPhysicalTable();
+    model.getPhysicalTables().add(table);
+    table.setTargetTableType(TargetTableType.INLINE_SQL);
+    table.setTargetTable("select * from customers");
+    
+    Domain domain = new Domain();
+    domain.addPhysicalModel(model);
+    
+    // basic tests
+    SerializationService service = new SerializationService();
+    
+    String xml = service.serializeDomain(domain);
+    
+    Domain domain2 = service.deserializeDomain(xml);
+    
+    Assert.assertEquals(1, domain2.getPhysicalModels().size());
+    SqlPhysicalModel model2 = (SqlPhysicalModel)domain2.getPhysicalModels().get(0);
+    Assert.assertEquals("SampleData", model2.getDatasource());
+    Assert.assertEquals(1, model.getPhysicalTables().size());
+    Assert.assertEquals(TargetTableType.INLINE_SQL, model.getPhysicalTables().get(0).getTargetTableType());
+    
   }
 }
