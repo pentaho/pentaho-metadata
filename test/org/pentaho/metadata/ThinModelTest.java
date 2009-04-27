@@ -58,6 +58,7 @@ public class ThinModelTest {
     SqlPhysicalColumn column = new SqlPhysicalColumn();
     column.setTargetColumn("customername");
     column.setName(new LocalizedString("Customer Name"));
+    column.setDescription(new LocalizedString("Customer Description"));
     column.setDataType(DataType.STRING);
     
     // logical model 
@@ -106,6 +107,7 @@ public class ThinModelTest {
     SqlPhysicalColumn column = new SqlPhysicalColumn();
     column.setTargetColumn("customername");
     column.setName(new LocalizedString("Customer Name"));
+    column.setDescription(new LocalizedString("Customer Name Desc"));
     column.setDataType(DataType.STRING);
     
     table.getPhysicalColumns().add(column);
@@ -142,7 +144,7 @@ public class ThinModelTest {
     
     String xml = service.serializeDomain(domain);
 
-    System.out.println(xml);
+    // System.out.println(xml);
     
     Domain domain2 = service.deserializeDomain(xml);
     
@@ -158,6 +160,7 @@ public class ThinModelTest {
     Assert.assertEquals(domain.getLogicalModels().get(0).getLogicalTables().get(0).getLogicalColumns().get(0), 
                         domain.getLogicalModels().get(0).getCategories().get(0).getLogicalColumns().get(0));
     Assert.assertEquals("Customer Name", domain.getLogicalModels().get(0).getCategories().get(0).getLogicalColumns().get(0).getName().getString("en_US"));
+    Assert.assertEquals("Customer Name Desc", domain.getLogicalModels().get(0).getCategories().get(0).getLogicalColumns().get(0).getDescription().getString("en_US"));    
     
   }
 }

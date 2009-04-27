@@ -12,6 +12,7 @@
 */
 package org.pentaho.metadata.model.concept;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +26,9 @@ import org.pentaho.metadata.model.concept.types.LocalizedString;
  * @author Will Gorman (wgorman@pentaho.com)
  *
  */
-public class Concept implements IConcept {
+public class Concept implements IConcept, Serializable {
+  
+  private static final long serialVersionUID = -6912836203678095834L;
 
   protected static String NAME_PROPERTY = "name";
   protected static String DESCRIPTION_PROPERTY = "description";
@@ -126,6 +129,6 @@ public class Concept implements IConcept {
   }
   
   public void setDescription(LocalizedString description) {
-    setProperty(NAME_PROPERTY, description);
+    setProperty(DESCRIPTION_PROPERTY, description);
   }
 }
