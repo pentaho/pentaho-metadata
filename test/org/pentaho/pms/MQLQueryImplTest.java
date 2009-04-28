@@ -1916,6 +1916,9 @@ public class MQLQueryImplTest extends MetadataTestBase {
     bc6.setExact(true);
     bc6.setFormula("SUM([pc5]*2)");
     bc6.setAggregationType(AggregationSettings.SUM);
+    
+    
+    //bc6.setAggregationList(list);
     bc6.setBusinessTable(bt5);
     bt5.addBusinessColumn(bc6);
     bt5.setRelativeSize(1);
@@ -2019,6 +2022,176 @@ public class MQLQueryImplTest extends MetadataTestBase {
         query.getQuery()    
     );
   }
+
+  public void testSumFormula() throws Exception {
+    
+    final BusinessModel model = new BusinessModel();
+    
+    final BusinessTable bt1 = new BusinessTable();
+    bt1.setId("metadata_business_table_very_long_name_1"); //$NON-NLS-1$
+    bt1.setTargetTable("pt1"); //$NON-NLS-1$
+    final BusinessColumn bc1 = new BusinessColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setFormula("pc1"); //$NON-NLS-1$
+    bc1.setBusinessTable(bt1);
+    bt1.addBusinessColumn(bc1);
+    bt1.setRelativeSize(1);
+    
+    final BusinessTable bt2 = new BusinessTable();
+    bt2.setId("metadata_business_table_very_long_name_2"); //$NON-NLS-1$
+    bt2.setTargetTable("pt2"); //$NON-NLS-1$
+    final BusinessColumn bc2 = new BusinessColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setFormula("pc2"); //$NON-NLS-1$
+    bc2.setBusinessTable(bt2);
+    bt2.addBusinessColumn(bc2);
+
+    bt2.setRelativeSize(1);
+    
+    final BusinessTable bt3 = new BusinessTable();
+    bt3.setId("metadata_business_table_very_long_name_3"); //$NON-NLS-1$
+    bt3.setTargetTable("pt3"); //$NON-NLS-1$
+    final BusinessColumn bc3 = new BusinessColumn();
+    bc3.setId("bc3"); //$NON-NLS-1$
+    bc3.setFormula("pc3"); //$NON-NLS-1$
+    bc3.setBusinessTable(bt3);
+    bt3.addBusinessColumn(bc3);
+    bt3.setRelativeSize(1);
+    
+    final BusinessTable bt4 = new BusinessTable();
+    bt4.setId("metadata_business_table_very_long_name_4"); //$NON-NLS-1$
+    bt4.setTargetTable("pt4"); //$NON-NLS-1$
+    final BusinessColumn bc4 = new BusinessColumn();
+    bc4.setId("bc4"); //$NON-NLS-1$
+    bc4.setFormula("pc4"); //$NON-NLS-1$
+    bc4.setBusinessTable(bt4);
+    bt4.addBusinessColumn(bc4);
+    bt4.setRelativeSize(1);
+    
+    final BusinessTable bt5 = new BusinessTable();
+    bt5.setId("metadata_business_table_very_long_name_5"); //$NON-NLS-1$
+    bt5.setTargetTable("pt5"); //$NON-NLS-1$
+    final BusinessColumn bc5 = new BusinessColumn();
+    bc5.setId("bc5"); //$NON-NLS-1$
+    // bc5.setFormula("pc5"); //$NON-NLS-1$
+    bc5.setFormula("pc5");
+    bc5.setBusinessTable(bt5);
+    bt5.addBusinessColumn(bc5);
+    bt5.setRelativeSize(1);
+
+    final BusinessColumn bc6 = new BusinessColumn();
+    bc6.setId("bc6"); //$NON-NLS-1$
+    // bc5.setFormula("pc5"); //$NON-NLS-1$
+    bc6.setExact(true);
+    bc6.setFormula("[pc5]*2");
+    bc6.setAggregationType(AggregationSettings.SUM);
+    
+    
+    //bc6.setAggregationList(list);
+    bc6.setBusinessTable(bt5);
+    bt5.addBusinessColumn(bc6);
+    bt5.setRelativeSize(1);
+
+    final RelationshipMeta rl1 = new RelationshipMeta();
+    
+    rl1.setTableFrom(bt1);
+    rl1.setFieldFrom(bc1);
+    rl1.setTableTo(bt2);
+    rl1.setFieldTo(bc2);
+    
+    final RelationshipMeta rl2 = new RelationshipMeta();
+    
+    rl2.setTableFrom(bt2);
+    rl2.setFieldFrom(bc2);
+    rl2.setTableTo(bt3);
+    rl2.setFieldTo(bc3);
+
+    final RelationshipMeta rl3 = new RelationshipMeta();
+    
+    rl3.setTableFrom(bt3);
+    rl3.setFieldFrom(bc3);
+    rl3.setTableTo(bt4);
+    rl3.setFieldTo(bc4);
+
+    final RelationshipMeta rl4 = new RelationshipMeta();
+    
+    rl4.setTableFrom(bt4);
+    rl4.setFieldFrom(bc4);
+    rl4.setTableTo(bt5);
+    rl4.setFieldTo(bc5);
+    
+    model.addBusinessTable(bt1);
+    model.addBusinessTable(bt2);
+    model.addBusinessTable(bt3);
+    model.addBusinessTable(bt4);
+    model.addBusinessTable(bt5);
+    
+    model.addRelationship(rl1);
+    model.addRelationship(rl2);
+    model.addRelationship(rl3);
+    model.addRelationship(rl4);
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    MQLQueryImpl myTest = new MQLQueryImpl(null, model, databaseMeta, "en_US"); //$NON-NLS-1$
+    myTest.addSelection(new Selection(bc1));
+    myTest.addSelection(new Selection(bc4));
+
+    myTest.addConstraint(WhereCondition.operators[0], "[metadata_business_table_very_long_name_1.bc1] > 25"); //$NON-NLS-1$
+    
+    MappedQuery query = myTest.getQuery();
+    assertEqualsIgnoreWhitespaces( 
+        "SELECT DISTINCT \n" //$NON-NLS-1$
+        + "          metadata_business_table_very01.pc1 AS COL0\n" //$NON-NLS-1$
+        + "         ,metadata_business_table_very04.pc4 AS COL1\n" //$NON-NLS-1$
+        + "FROM \n" //$NON-NLS-1$
+        + "          pt1 metadata_business_table_very01\n" //$NON-NLS-1$
+        + "         ,pt2 metadata_business_table_very02\n" //$NON-NLS-1$
+        + "         ,pt3 metadata_business_table_very03\n" //$NON-NLS-1$
+        + "         ,pt4 metadata_business_table_very04\n" //$NON-NLS-1$
+        + "WHERE \n" //$NON-NLS-1$
+        + "          (\n"
+        + "             metadata_business_table_very02.pc2 = metadata_business_table_very03.pc3\n" //$NON-NLS-1$
+        + "          )\n"
+        + "      AND (\n"
+        + "             metadata_business_table_very03.pc3 = metadata_business_table_very04.pc4\n" //$NON-NLS-1$
+        + "          )\n"
+        + "      AND (\n" 
+        + "             metadata_business_table_very01.pc1 = metadata_business_table_very02.pc2\n"
+        + "          )\n"
+        + "      AND (\n"
+        + "          (\n"
+        + "             metadata_business_table_very01.pc1 > 25"
+        + "          )"
+        + "          )",
+        query.getQuery()    
+    ); //$NON-NLS-1$
+
+    //
+    // This tests the physical column aliasing
+    //
+    
+    myTest = new MQLQueryImpl(null, model, databaseMeta, "en_US"); //$NON-NLS-1$
+    myTest.addSelection(new Selection(bc4));
+    myTest.addSelection(new Selection(bc6));
+    
+    query = myTest.getQuery();
+
+    assertEqualsIgnoreWhitespaces( 
+          "SELECT \n" 
+        + "             metadata_business_table_very01.pc4 AS COL0 \n"
+        + "           , SUM( metadata_business_table_very02.pc5  * 2) AS COL1 \n"
+        + "FROM \n" 
+        + "             pt4 metadata_business_table_very01 \n" 
+        + "            ,pt5 metadata_business_table_very02 \n"
+        + "WHERE \n"
+        + "             (\n" 
+        + "                metadata_business_table_very01.pc4 = metadata_business_table_very02.pc5 "
+        + "             )\n" 
+        + "GROUP BY \n"  
+        + "             metadata_business_table_very01.pc4 \n",
+        query.getQuery()    
+    );
+  }
+
   
   
   public void testInlineTable() throws Exception {

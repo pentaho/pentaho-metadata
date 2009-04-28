@@ -654,7 +654,15 @@ public class SQLGenerator {
           // we'll need to pass in some context to PMSFormula so it can resolve aliases if necessary
           PMSFormula formula = new PMSFormula(businessModel, column.getBusinessColumn().getBusinessTable(), databaseMeta, column.getBusinessColumn().getFormula(), tableAliases);
           formula.parseAndValidate();
-          return new SQLAndTables(formula.generateSQL(locale), formula.getBusinessTables(), formula.getBusinessColumns());
+          
+          String formulaSql = formula.generateSQL(locale);
+          
+          // check for old style, where function is hardcoded in the model.
+          if (column.hasAggregate() && !hasAggregateDefinedAlready(formulaSql, databaseMeta)) {
+            formulaSql = getFunctionExpression(column, formulaSql, databaseMeta);
+          }
+          
+          return new SQLAndTables(formulaSql, formula.getBusinessTables(), formula.getBusinessColumns());
         } catch (PentahoMetadataException e) {
           // this is for backwards compatibility.
           // eventually throw any errors
@@ -696,6 +704,18 @@ public class SQLGenerator {
       }
   }
 
+  // This method is for backwards compatibility of already defined
+  // isExact formulas that may contain at the root an aggregate function.
+  private static boolean hasAggregateDefinedAlready(String sql, DatabaseMeta databaseMeta) {
+    String trimmed = sql.trim();
+    return 
+      trimmed.startsWith(databaseMeta.getFunctionAverage() + "(") ||
+      trimmed.startsWith(databaseMeta.getFunctionCount() + "(") ||
+      trimmed.startsWith(databaseMeta.getFunctionMaximum() + "(") ||
+      trimmed.startsWith(databaseMeta.getFunctionMinimum()  + "(") ||
+      trimmed.startsWith(databaseMeta.getFunctionSum() + "(");
+  }
+  
   public static String getFunctionExpression(Selection column, String tableColumn, DatabaseMeta databaseMeta) {
       String expression=getFunction(column, databaseMeta); //$NON-NLS-1$
       
