@@ -340,6 +340,12 @@ public class MQLQueryImpl implements MQLQuery {
     element = doc.createElement("column"); //$NON-NLS-1$
     element.appendChild(doc.createTextNode(column.getId()));
     selectionElement.appendChild(element);
+    
+    if (selection.getAggregationType() != null) {
+      element = doc.createElement("aggregation");
+      element.appendChild(doc.createTextNode(selection.getAggregationType().getCode()));
+      selectionElement.appendChild(element);
+    }
   }
   
   protected void addConstraintToDocument(Document doc, WhereCondition condition, Element constraintElement) {
@@ -402,6 +408,13 @@ public class MQLQueryImpl implements MQLQuery {
     element = doc.createElement("column_id"); //$NON-NLS-1$
     element.appendChild(doc.createTextNode(orderBy.getSelection().getBusinessColumn().getId()));
     orderElement.appendChild(element);
+    
+    if (orderBy.getSelection().getAggregationType() != null) {
+      element = doc.createElement("aggregation");
+      element.appendChild(doc.createTextNode(orderBy.getSelection().getAggregationType().getCode()));
+      orderElement.appendChild(element);
+    }
+    
   }
   
   public void fromXML(String XML) throws PentahoMetadataException {

@@ -14,50 +14,48 @@ package org.pentaho.metadata.model.concept.types;
 
 import org.pentaho.pms.messages.Messages;
 
-public enum DataType
-{
-    UNKNOWN(0, "Unknown", Messages.getString("DataType.USER_UNKNOWN_DESC")),
-    STRING(1, "String", Messages.getString("DataType.USER_STRING_DESC")),
-    DATE(2, "Date", Messages.getString("DataType.USER_DATE_DESC")),
-    BOOLEAN(3, "Boolean", Messages.getString("DataType.USER_BOOLEAN_DESC")),
-    NUMERIC(4, "Numeric", Messages.getString("DataType.USER_NUMERIC_DESC")),
-    BINARY(5, "Binary", Messages.getString("DataType.USER_BINARY_DESC")),
-    IMAGE(6, "Image", Messages.getString("DataType.USER_IMAGE_DESC")),
-    URL(7, "URL", Messages.getString("DataType.USER_URL_DESC"));
+public enum DataType {
+  UNKNOWN(0, "Unknown", Messages.getString("DataType.USER_UNKNOWN_DESC")),
+  STRING(1, "String", Messages.getString("DataType.USER_STRING_DESC")),
+  DATE(2, "Date", Messages.getString("DataType.USER_DATE_DESC")),
+  BOOLEAN(3, "Boolean", Messages.getString("DataType.USER_BOOLEAN_DESC")),
+  NUMERIC(4, "Numeric", Messages.getString("DataType.USER_NUMERIC_DESC")),
+  BINARY(5, "Binary", Messages.getString("DataType.USER_BINARY_DESC")),
+  IMAGE(6, "Image", Messages.getString("DataType.USER_IMAGE_DESC")),
+  URL(7, "URL", Messages.getString("DataType.USER_URL_DESC"));
+  
 
+  private int type;
+  private String name, description;
 
-    private int type;
-    private String name, description;
+  private DataType(int type, String name, String description) {
+    this.type = type;
+    this.name = name;
+    this.description = description;
+  }
 
-    private DataType(int type, String name, String description)
-    {
-        this.type = type;
-        this.name = name;
-        this.description = description;
-    }
+  public int getType() {
+    return type;
+  }
 
-    public int getType() {
-      return type;
-    }
+  public void setType(int type) {
+    this.type = type;
+  }
 
-    public void setType(int type) {
-      this.type = type;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public String getName() {
-      return name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public void setName(String name) {
-      this.name = name;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    public String getDescription() {
-      return description;
-    }
-
-    public void setDescription(String description) {
-      this.description = description;
-    }
+  public void setDescription(String description) {
+    this.description = description;
+  }
 
 }
