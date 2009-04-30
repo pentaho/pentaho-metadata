@@ -5,12 +5,13 @@
     <conf name="default" />
     <conf name="test" visibility="private" />
   </configurations>
-  <dependencies defaultconf="default->default">
   
     <publications>
         <artifact name="${ivy.artifact.id}" type="jar" conf="default"/>
         <artifact name="${ivy.artifact.id}" m:classifier="sources" type="source" ext="jar" conf="source"/>
     </publications>
+    
+  <dependencies defaultconf="default->default">
     
     <!--  external dependencies -->
     <dependency org="commons-collections" name="commons-collections" rev="3.2" />
