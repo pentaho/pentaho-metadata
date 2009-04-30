@@ -1,5 +1,7 @@
 package org.pentaho.metadata.model;
 
+import java.util.List;
+
 import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
@@ -36,15 +38,24 @@ public class SqlPhysicalColumn extends Concept implements IPhysicalColumn {
 
   public void setDataType(DataType dataType) {
     setProperty(IPhysicalColumn.DATATYPE_PROPERTY, dataType);
-  };
+  }
   
   public AggregationType getAggregationType() {
     return (AggregationType)getProperty(IPhysicalColumn.AGGREGATIONTYPE_PROPERTY);
   }
 
-  public void setDataType(AggregationType aggType) {
+  public void setAggregationType(AggregationType aggType) {
     setProperty(IPhysicalColumn.AGGREGATIONTYPE_PROPERTY, aggType);
-  };
+  }
+  
+  @SuppressWarnings("unchecked")
+  public List<AggregationType> getAggregationList() {
+    return (List<AggregationType>)getProperty(IPhysicalColumn.AGGREGATIONTYPE_PROPERTY);
+  }
+
+  public void setAggregationList(List<AggregationType> aggList) {
+    setProperty(IPhysicalColumn.AGGREGATIONTYPE_PROPERTY, aggList);
+  }
 
   
 }

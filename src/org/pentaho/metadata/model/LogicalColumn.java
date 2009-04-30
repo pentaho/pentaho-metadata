@@ -1,5 +1,7 @@
 package org.pentaho.metadata.model;
 
+import java.util.List;
+
 import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.IConcept;
 import org.pentaho.metadata.model.concept.types.AggregationType;
@@ -7,8 +9,20 @@ import org.pentaho.metadata.model.concept.types.DataType;
 
 public class LogicalColumn extends Concept {
 
+  private static final long serialVersionUID = -5818193472199662859L;
+
   private LogicalTable logicalTable;
   private IPhysicalColumn physicalColumn;
+
+  @Override
+  public IConcept getInheritedConcept() {
+    return physicalColumn;
+  }
+  
+  @Override
+  public IConcept getSecurityParentConcept() {
+    return logicalTable;
+  }
   
   public IPhysicalColumn getPhysicalColumn() {
     return physicalColumn;
@@ -30,18 +44,17 @@ public class LogicalColumn extends Concept {
     return (AggregationType)getProperty(IPhysicalColumn.AGGREGATIONTYPE_PROPERTY);
   }
 
-  public void setDataType(AggregationType aggType) {
+  public void setAggregationType(AggregationType aggType) {
     setProperty(IPhysicalColumn.AGGREGATIONTYPE_PROPERTY, aggType);
   };
+  
+  @SuppressWarnings("unchecked")
+  public List<AggregationType> getAggregationList() {
+    return (List<AggregationType>)getProperty(IPhysicalColumn.AGGREGATIONTYPE_PROPERTY);
+  }
 
-  
-  @Override
-  public IConcept getInheritedConcept() {
-    return physicalColumn;
+  public void setAggregationList(List<AggregationType> aggList) {
+    setProperty(IPhysicalColumn.AGGREGATIONTYPE_PROPERTY, aggList);
   }
   
-  @Override
-  public IConcept getSecurityParentConcept() {
-    return logicalTable;
-  }
 }

@@ -17,8 +17,8 @@ import java.util.Set;
 import org.pentaho.metadata.model.Domain;
 
 /**
- * This interface defines a metadata domain repository.  The default implementation stores
- * domains as xml files in system/metadata/domains/*.xml
+ * This interface defines a metadata domain repository, used to maintain a system wide set
+ * of metadata domains.
  * 
  * @author Will Gorman (wgorman@pentaho.com)
  *

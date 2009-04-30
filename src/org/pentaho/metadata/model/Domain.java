@@ -47,4 +47,15 @@ public class Domain extends Concept {
     concepts.add(concept);
   }
   
+  // utility methods
+  
+  public LogicalModel findLogicalModel(String modelId) {
+    for (LogicalModel model : getLogicalModels()) {
+      if (modelId.equals(model.getId())) {
+        return model;
+      }
+    }
+    return null;
+  }
+  
 }

@@ -18,4 +18,14 @@ public class LogicalModel extends Concept {
   public List<Category> getCategories() {
     return categories;
   }
+  
+  public Category findCategory(String categoryId) {
+    for (Category category : getCategories()) {
+      if (categoryId.equals(category.getId())) {
+        return category;
+      }
+    }
+    return null;
+  }
+
 }

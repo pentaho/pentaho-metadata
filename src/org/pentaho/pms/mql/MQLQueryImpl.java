@@ -551,7 +551,7 @@ public class MQLQueryImpl implements MQLQuery {
           String aggvalue = XMLHandler.getNodeValue(aggnodes.item(0));
           AggregationSettings setting = AggregationSettings.getType(aggvalue);
           if (setting == null) {
-            Messages.getErrorString("MQLQuery.ERROR_0018_AGGREGATE_NOT_RECOGNIZED", columnId, aggvalue);
+            Messages.getErrorString("MQLQuery.ERROR_0018_AGG_NOT_RECOGNIZED", columnId, aggvalue);
           } else {
             // verify that the setting is one of the options for this business column
             if ((businessColumn.getAggregationType() == setting) ||
@@ -570,8 +570,6 @@ public class MQLQueryImpl implements MQLQuery {
         Messages.getErrorString("MQLQuery.ERROR_0020_BUSINESS_COL_NOT_FOUND", columnId);
       }
     }
-    
-    
   }
   
   protected void setOptionsFromXmlNode(Element optionElement) {
