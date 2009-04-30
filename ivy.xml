@@ -3,6 +3,7 @@
   <info organisation="${ivy.artifact.group}" module="${ivy.artifact.id}" revision="${project.revision}" />
   <configurations>
     <conf name="default" />
+    <conf name="source" />
     <conf name="test" visibility="private" />
   </configurations>
   
