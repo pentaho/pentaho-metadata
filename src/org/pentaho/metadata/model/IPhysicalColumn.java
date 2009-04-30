@@ -8,12 +8,13 @@ import org.pentaho.metadata.model.concept.types.DataType;
 
 public interface IPhysicalColumn extends IConcept {
   public static final String DATATYPE_PROPERTY = "datatype";
-  public static final String AGGREGATIONTYPE_PROPERTY = "aggregationtype";
-  public static final String AGGREGATIONLIST_PROPERTY = "aggregationlist";
+  public static final String AGGREGATIONTYPE_PROPERTY = "aggregation";
+  public static final String AGGREGATIONLIST_PROPERTY = "aggregation_list";
   public DataType getDataType();
   public void setDataType(DataType dataType);
   public AggregationType getAggregationType();
   public void setAggregationType(AggregationType aggType);
   public List<AggregationType> getAggregationList();
   public void setAggregationList(List<AggregationType> aggList);
+  public IPhysicalTable getPhysicalTable();
 }

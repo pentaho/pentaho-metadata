@@ -7,7 +7,9 @@ import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
 
 public class SqlPhysicalTable extends Concept implements IPhysicalTable {
-  
+
+  private static final long serialVersionUID = -2590635019353532334L;
+
   private static final String TARGET_SCHEMA_PROPERTY = "target_schema";
   private static final String TARGET_TABLE_PROPERTY = "target_table";
   private static final String TARGET_TABLE_TYPE_PROPERTY = "target_table_type";

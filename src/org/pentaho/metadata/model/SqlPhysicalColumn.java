@@ -8,11 +8,16 @@ import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
 
 public class SqlPhysicalColumn extends Concept implements IPhysicalColumn {
-  
-  private static final String TARGET_COLUMN = "target_column";
-  private static final String TARGET_COLUMN_TYPE = "target_column_type";
 
-  public SqlPhysicalColumn() {
+  private static final long serialVersionUID = -9131564777458111496L;
+
+  public static final String TARGET_COLUMN = "target_column";
+  public static final String TARGET_COLUMN_TYPE = "target_column_type";
+
+  private SqlPhysicalTable table;
+  
+  public SqlPhysicalColumn(SqlPhysicalTable table) {
+    this.table = table;
     setTargetColumnType(TargetColumnType.COLUMN_NAME);
   }
   
@@ -57,5 +62,8 @@ public class SqlPhysicalColumn extends Concept implements IPhysicalColumn {
     setProperty(IPhysicalColumn.AGGREGATIONTYPE_PROPERTY, aggList);
   }
 
+  public IPhysicalTable getPhysicalTable() {
+    return table;
+  }
   
 }
