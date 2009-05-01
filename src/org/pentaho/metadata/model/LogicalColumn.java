@@ -9,6 +9,11 @@ import org.pentaho.metadata.model.concept.types.DataType;
 
 public class LogicalColumn extends Concept {
 
+  public LogicalColumn() {
+    super();
+    // TODO Auto-generated constructor stub
+  }
+
   private static final long serialVersionUID = -5818193472199662859L;
 
   private LogicalTable logicalTable;

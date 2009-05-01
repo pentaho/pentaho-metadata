@@ -11,6 +11,11 @@ public class SqlPhysicalModel extends Concept implements IPhysicalModel {
   // representation of database meta, which is required
   // for full backward compatibility.
   
+  public SqlPhysicalModel() {
+    super();
+    // TODO Auto-generated constructor stub
+  }
+
   /** returns a pentaho or JNDI datasource **/
   private String datasource;
   

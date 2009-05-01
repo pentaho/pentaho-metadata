@@ -28,6 +28,11 @@ import org.pentaho.metadata.model.concept.types.LocalizedString;
  */
 public class Concept implements IConcept, Serializable {
   
+  public Concept() {
+    super();
+    // TODO Auto-generated constructor stub
+  }
+
   private static final long serialVersionUID = -6912836203678095834L;
 
   protected static String NAME_PROPERTY = "name";

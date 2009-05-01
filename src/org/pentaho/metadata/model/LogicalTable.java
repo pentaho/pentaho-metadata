@@ -9,6 +9,11 @@ import org.pentaho.metadata.model.LogicalModel;
 
 public class LogicalTable extends Concept {
 
+  public LogicalTable() {
+    super();
+    // TODO Auto-generated constructor stub
+  }
+
   private LogicalModel logicalModel;
   private IPhysicalTable physicalTable;
   

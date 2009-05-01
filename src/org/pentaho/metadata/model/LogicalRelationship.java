@@ -4,6 +4,11 @@ import org.pentaho.metadata.model.concept.Concept;
 
 public class LogicalRelationship extends Concept {
   
+  public LogicalRelationship() {
+    super();
+    // TODO Auto-generated constructor stub
+  }
+
   private LogicalTable fromTable, toTable;
   private LogicalColumn fromColumn, toColumn;
   /* where this relationship falls in relation to others */

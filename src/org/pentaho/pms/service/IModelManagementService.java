@@ -1,7 +1,9 @@
 package org.pentaho.pms.service;
 
+import java.sql.Connection;
 import java.util.List;
 
+import org.pentaho.metadata.model.Domain;
 import org.pentaho.pms.schema.v3.model.Column;
 import org.pentaho.pms.schema.v3.physical.IDataSource;
 
@@ -28,4 +30,15 @@ public interface IModelManagementService {
    * @param businessColumns 
    */
   public void createCategory(IDataSource dataSource, String categoryName, List<Column> columns);
+
+  /**
+   * Generate the model using the connection and a query
+   * 
+   * @param connection
+   * @param query
+   * @return Domain 
+   * @throws 
+   */
+
+  public Domain generateModel(String modelName, Connection connection, String query) throws ModelManagementServiceException;
 }

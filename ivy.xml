@@ -11,7 +11,6 @@
         <artifact name="${ivy.artifact.id}" type="jar" conf="default"/>
         <artifact name="${ivy.artifact.id}" m:classifier="sources" type="source" ext="jar" conf="source"/>
     </publications>
-    
   <dependencies defaultconf="default->default">
     
     <!--  external dependencies -->
@@ -69,6 +68,6 @@
     <dependency org="backport-util-concurrent" name="backport-util-concurrent" conf="test->default" rev="3.1" transitive="false"/>
     <dependency org="org.apache.ws.commons.neethi" name="neethi" rev="2.0.1" conf="test->default" transitive="false"/>
 	<dependency org="woodstox" name="wstx-asl" rev="3.2.4" conf="test->default" transitive="false"/>
-    
+	<dependency org="hsqldb" name="hsqldb" rev="1.8.0.7"  conf="test->default"/>
   </dependencies>
 </ivy-module>

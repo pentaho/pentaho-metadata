@@ -9,6 +9,11 @@ import org.pentaho.metadata.model.concept.types.TargetColumnType;
 
 public class SqlPhysicalColumn extends Concept implements IPhysicalColumn {
 
+  public SqlPhysicalColumn() {
+    super();
+    // TODO Auto-generated constructor stub
+  }
+
   private static final long serialVersionUID = -9131564777458111496L;
 
   public static final String TARGET_COLUMN = "target_column";

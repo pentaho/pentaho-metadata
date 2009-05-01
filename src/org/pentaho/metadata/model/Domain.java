@@ -7,6 +7,11 @@ import org.pentaho.metadata.model.concept.Concept;
 
 public class Domain extends Concept {
   
+  public Domain() {
+    super();
+    // TODO Auto-generated constructor stub
+  }
+
   private List<IPhysicalModel> physicalModels = new ArrayList<IPhysicalModel>();
   private List<LogicalModel> logicalModels = new ArrayList<LogicalModel>();  
   private List<Concept> concepts = new ArrayList<Concept>();

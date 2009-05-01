@@ -15,6 +15,11 @@ public class LogicalModel extends Concept {
     return logicalTables;
   }
   
+  public LogicalModel() {
+    super();
+    // TODO Auto-generated constructor stub
+  }
+
   public List<Category> getCategories() {
     return categories;
   }

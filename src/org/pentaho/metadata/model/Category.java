@@ -8,6 +8,10 @@ import org.pentaho.metadata.model.concept.IConcept;
 
 public class Category extends Concept {
 
+  public Category() {
+    super();
+  }
+
   private static final long serialVersionUID = -2367402604729602739L;
 
   private LogicalModel parent;

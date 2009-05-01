@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.di.core.exception.KettleDatabaseException;
+import org.pentaho.metadata.model.Domain;
+import org.pentaho.metadata.util.SQLModelGenerator;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.v3.model.Column;
 import org.pentaho.pms.schema.v3.physical.IDataSource;
@@ -148,4 +150,10 @@ public class JDBCModelManagementService implements IModelManagementService {
 
     return DriverManager.getConnection(url, username, password);
   }
+
+  public Domain generateModel(String modelName, Connection connection, String query) {
+    SQLModelGenerator generator = new SQLModelGenerator(modelName, connection, query);
+    return generator.generate();
+  }
+ 
 }
