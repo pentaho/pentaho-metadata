@@ -53,6 +53,8 @@ public class ThinModelConverter {
   public static SchemaMeta convertToLegacy(Domain domain) throws ObjectAlreadyExistsException {
     SchemaMeta schemaMeta = new SchemaMeta();
     
+    schemaMeta.setDomainName(domain.getId());
+    
     DatabaseMeta database = null; 
     
     // only support a single database in a domain for now
@@ -141,6 +143,7 @@ public class ThinModelConverter {
       // convert categories
       
       BusinessCategory root = new BusinessCategory();
+      root.setRootCategory(true);
       model.setRootCategory(root);
       
       for (Category category : logicalModel.getCategories()) {

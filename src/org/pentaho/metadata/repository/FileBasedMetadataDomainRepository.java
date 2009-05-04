@@ -38,9 +38,14 @@ public class FileBasedMetadataDomainRepository implements IMetadataDomainReposit
   private static final Log logger = LogFactory.getLog(FileBasedMetadataDomainRepository.class);
   
   private static final String DOMAIN_SUFFIX = ".domain.xml"; //$NON-NLS-1$
-  private static final String DOMAIN_FOLDER = "domains"; //$NON-NLS-1$
+  private static final String DEFAULT_DOMAIN_FOLDER = "domains"; //$NON-NLS-1$
   
-  Map<String, Domain> domains = null;
+  private Map<String, Domain> domains = null;
+  private String domainFolder = null;
+  
+  public void setDomainFolder(String folder) {
+    this.domainFolder = folder;
+  }
   
   public synchronized void storeDomain(Domain domain, boolean overwrite) throws DomainIdNullException, DomainAlreadyExistsException, DomainStorageException {
 
@@ -108,7 +113,10 @@ public class FileBasedMetadataDomainRepository implements IMetadataDomainReposit
   }
   
   protected File getDomainsFolder() {
-    String domainsFolder = DOMAIN_FOLDER;
+    String domainsFolder = DEFAULT_DOMAIN_FOLDER;
+    if (domainFolder != null) {
+      domainsFolder = domainFolder;
+    }
     File folder = new File(domainsFolder);
     return folder;
   }
