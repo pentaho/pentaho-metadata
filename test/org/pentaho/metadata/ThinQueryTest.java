@@ -28,7 +28,7 @@ public class ThinQueryTest {
     
     SqlPhysicalModel model = new SqlPhysicalModel();
     model.setDatasource("SampleData");
-    SqlPhysicalTable table = new SqlPhysicalTable();
+    SqlPhysicalTable table = new SqlPhysicalTable(model);
     table.setId("PT1");
     model.getPhysicalTables().add(table);
     table.setTargetTableType(TargetTableType.INLINE_SQL);

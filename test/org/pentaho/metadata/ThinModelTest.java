@@ -33,7 +33,7 @@ public class ThinModelTest {
     
     SqlPhysicalModel model = new SqlPhysicalModel();
     model.setDatasource("SampleData");
-    SqlPhysicalTable table = new SqlPhysicalTable();
+    SqlPhysicalTable table = new SqlPhysicalTable(model);
     model.getPhysicalTables().add(table);
     table.setTargetTableType(TargetTableType.INLINE_SQL);
     table.setTargetTable("select * from customers");
@@ -55,7 +55,7 @@ public class ThinModelTest {
     
     SqlPhysicalModel model = new SqlPhysicalModel();
     model.setDatasource("SampleData");
-    SqlPhysicalTable table = new SqlPhysicalTable();
+    SqlPhysicalTable table = new SqlPhysicalTable(model);
     table.setId("PT1");
     model.getPhysicalTables().add(table);
     table.setTargetTableType(TargetTableType.INLINE_SQL);
@@ -106,7 +106,7 @@ public class ThinModelTest {
     
     SqlPhysicalModel model = new SqlPhysicalModel();
     model.setDatasource("SampleData");
-    SqlPhysicalTable table = new SqlPhysicalTable();
+    SqlPhysicalTable table = new SqlPhysicalTable(model);
     model.getPhysicalTables().add(table);
     table.setTargetTableType(TargetTableType.INLINE_SQL);
     table.setTargetTable("select * from customers");
@@ -175,7 +175,7 @@ public class ThinModelTest {
     
     SqlPhysicalModel model = new SqlPhysicalModel();
     model.setDatasource("SampleData");
-    SqlPhysicalTable table = new SqlPhysicalTable();
+    SqlPhysicalTable table = new SqlPhysicalTable(model);
     table.setId("PT1");
     model.getPhysicalTables().add(table);
     table.setTargetTableType(TargetTableType.INLINE_SQL);

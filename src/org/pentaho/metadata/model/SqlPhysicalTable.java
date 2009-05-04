@@ -13,11 +13,16 @@ public class SqlPhysicalTable extends Concept implements IPhysicalTable {
   private static final String TARGET_SCHEMA_PROPERTY = "target_schema";
   private static final String TARGET_TABLE_PROPERTY = "target_table";
   private static final String TARGET_TABLE_TYPE_PROPERTY = "target_table_type";
-  
+  SqlPhysicalModel model;
   List<IPhysicalColumn> physicalColumns = new ArrayList<IPhysicalColumn>();
   
-  public SqlPhysicalTable() {
+  public SqlPhysicalTable(SqlPhysicalModel model) {
+    this.model = model;
     setTargetTableType(TargetTableType.TABLE);
+  }
+
+  public IPhysicalModel getPhysicalModel() {
+    return model;
   }
   
   public List<IPhysicalColumn> getPhysicalColumns() {
