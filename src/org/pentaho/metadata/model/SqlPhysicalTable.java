@@ -1,12 +1,13 @@
 package org.pentaho.metadata.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
 
-public class SqlPhysicalTable extends Concept implements IPhysicalTable {
+public class SqlPhysicalTable extends Concept implements IPhysicalTable{
 
   private static final long serialVersionUID = -2590635019353532334L;
 
@@ -19,6 +20,11 @@ public class SqlPhysicalTable extends Concept implements IPhysicalTable {
   public SqlPhysicalTable(SqlPhysicalModel model) {
     this.model = model;
     setTargetTableType(TargetTableType.TABLE);
+  }
+
+  public SqlPhysicalTable() {
+    super();
+    // TODO Auto-generated constructor stub
   }
 
   public IPhysicalModel getPhysicalModel() {

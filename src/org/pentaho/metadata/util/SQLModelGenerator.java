@@ -71,7 +71,7 @@ public class SQLModelGenerator {
   
   public Domain generate(String modelName, Connection connection, String query) {
     SqlPhysicalModel model = new SqlPhysicalModel();
-    String modelID= Settings.getBusinessModelIDPrefix()+ modelName;
+    String modelID = Settings.getBusinessModelIDPrefix()+ modelName;
     model.setId(modelID);
     model.setName(new LocalizedString(modelName));
     model.setDescription(new LocalizedString("A Description of the Model"));
@@ -156,6 +156,7 @@ public class SQLModelGenerator {
       Domain domain = new Domain();
       domain.addPhysicalModel(model);
       domain.addLogicalModel(logicalModel);
+      domain.setId(modelName);
       return domain;
     } catch (SQLException e) {
       return null;

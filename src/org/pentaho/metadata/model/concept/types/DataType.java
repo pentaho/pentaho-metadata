@@ -12,27 +12,26 @@
 */
 package org.pentaho.metadata.model.concept.types;
 
-import org.pentaho.pms.messages.Messages;
 
-public enum DataType {
-  UNKNOWN(0, "Unknown", Messages.getString("DataType.USER_UNKNOWN_DESC")),
-  STRING(1, "String", Messages.getString("DataType.USER_STRING_DESC")),
-  DATE(2, "Date", Messages.getString("DataType.USER_DATE_DESC")),
-  BOOLEAN(3, "Boolean", Messages.getString("DataType.USER_BOOLEAN_DESC")),
-  NUMERIC(4, "Numeric", Messages.getString("DataType.USER_NUMERIC_DESC")),
-  BINARY(5, "Binary", Messages.getString("DataType.USER_BINARY_DESC")),
-  IMAGE(6, "Image", Messages.getString("DataType.USER_IMAGE_DESC")),
-  URL(7, "URL", Messages.getString("DataType.USER_URL_DESC"));
-  
+public enum DataType
+{
+    UNKNOWN(0, "Unknown", "DataType.USER_UNKNOWN_DESC"),
+    STRING(1, "String", "DataType.USER_STRING_DESC"),
+    DATE(2, "Date", "DataType.USER_DATE_DESC"),
+    BOOLEAN(3, "Boolean", "DataType.USER_BOOLEAN_DESC"),
+    NUMERIC(4, "Numeric", "DataType.USER_NUMERIC_DESC"),
+    BINARY(5, "Binary", "DataType.USER_BINARY_DESC"),
+    IMAGE(6, "Image", "DataType.USER_IMAGE_DESC"),
+    URL(7, "URL", "DataType.USER_URL_DESC");
 
   private int type;
   private String name, description;
 
-  private DataType(int type, String name, String description) {
+  DataType(int type, String name, String description) {
     this.type = type;
     this.name = name;
     this.description = description;
-  }
+ }
 
   public int getType() {
     return type;

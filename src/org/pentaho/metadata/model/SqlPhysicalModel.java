@@ -1,11 +1,12 @@
 package org.pentaho.metadata.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.metadata.model.concept.Concept;
 
-public class SqlPhysicalModel extends Concept implements IPhysicalModel {
+public class SqlPhysicalModel extends Concept implements IPhysicalModel{
   
   // this property should be replaced with a thin 
   // representation of database meta, which is required
