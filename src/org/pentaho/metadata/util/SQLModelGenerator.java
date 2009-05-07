@@ -82,6 +82,7 @@ public class SQLModelGenerator {
     model.setDescription(new LocalizedString("A Description of the Model"));
     model.setDatasource(connectionName);
     SqlPhysicalTable table = new SqlPhysicalTable(model);
+    table.setId("INLINE_SQL_1");
     model.getPhysicalTables().add(table);
     table.setTargetTableType(TargetTableType.INLINE_SQL);
     table.setTargetTable(query);
