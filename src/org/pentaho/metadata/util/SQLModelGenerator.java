@@ -77,6 +77,7 @@ public class SQLModelGenerator {
     model.setDescription(new LocalizedString("A Description of the Model"));
     model.setDatasource(modelName);
     SqlPhysicalTable table = new SqlPhysicalTable(model);
+    table.setId("INLINE_SQL_1");
     model.getPhysicalTables().add(table);
     table.setTargetTableType(TargetTableType.INLINE_SQL);
     table.setTargetTable(query);
@@ -122,26 +123,38 @@ public class SQLModelGenerator {
 
       Category mainCategory = new Category();
       LogicalModel logicalModel = new LogicalModel();
+      logicalModel.setId("MODEL_1");
+      logicalModel.setName(new LocalizedString(modelName));
       LogicalTable logicalTable = new LogicalTable();
       
       for(int i=0;i<columnHeader.length;i++) {
-        SqlPhysicalColumn column = new SqlPhysicalColumn();
+        SqlPhysicalColumn column = new SqlPhysicalColumn(table);
+        
+        // should get unique id here
+        
+        column.setId(columnHeader[i]);
         column.setTargetColumn(columnHeader[i]);
         // Get the localized string
         column.setName(new LocalizedString(columnHeader[i]));
         // Map the SQL Column Type to Metadata Column Type
         column.setDataType(converSQLToMetadataColumnType(columnType[i]));
-        String physicalColumnID = Settings.getPhysicalColumnIDPrefix()+ getTableName(query).toUpperCase() + "_" + columnHeader[i];
+        String physicalColumnID = Settings.getPhysicalColumnIDPrefix() + "_" + columnHeader[i];
         column.setId(physicalColumnID);
         table.getPhysicalColumns().add(column);
-        
+                
         logicalTable.setPhysicalTable(table);
+        logicalTable.setId("LOGICAL_TABLE_1");
         logicalModel.getLogicalTables().add(logicalTable);
         
         LogicalColumn logicalColumn = new LogicalColumn();
-        String columnID= Settings.getBusinessColumnIDPrefix()+getTableName(query).toUpperCase();
+        String columnID = Settings.getBusinessColumnIDPrefix();
         logicalColumn.setId(columnID + "_" +columnHeader[i]);
+        
+        // the default name of the logical column.
+        logicalColumn.setName(new LocalizedString(columnHeader[i]));
+        
         logicalColumn.setPhysicalColumn(column);
+        logicalColumn.setLogicalTable(logicalTable);
         
         logicalTable.addLogicalColumn(logicalColumn);
         
@@ -159,10 +172,13 @@ public class SQLModelGenerator {
       domain.setId(modelName);
       return domain;
     } catch (SQLException e) {
+      e.printStackTrace();
       return null;
     } catch (InterruptedException e) {
+      e.printStackTrace();
       return null;
     } catch (Exception e) {
+      e.printStackTrace();
       return null;
     }
   }
@@ -181,13 +197,6 @@ public class SQLModelGenerator {
     } else {
       return DataType.UNKNOWN;
     }
-  }
-  
-  private String getTableName(String query) {
-    int start = query.lastIndexOf("from") + "from".length() + 1;
-    int end = query.indexOf(" ", start);
-    String queryString = query.substring(start, end);
-   return  queryString;
   }
 
   /**

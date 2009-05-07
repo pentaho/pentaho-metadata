@@ -63,4 +63,15 @@ public class Domain extends Concept {
     return null;
   }
   
+  public IPhysicalTable findPhysicalTable(String tableId) {
+    for (IPhysicalModel model : getPhysicalModels()) {
+      for (IPhysicalTable table : model.getPhysicalTables()) {
+        if (tableId.equals(table.getId())) {
+          return table;
+        }
+      }
+    }
+    return null;
+  }
+
 }

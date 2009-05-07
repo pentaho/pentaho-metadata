@@ -32,5 +32,16 @@ public class LogicalModel extends Concept {
     }
     return null;
   }
-
+  
+  public LogicalColumn findLogicalColumn(String columnId) {
+    for (LogicalTable table : getLogicalTables()) {
+      for (LogicalColumn column : table.getLogicalColumns()) {
+        if (columnId.equals(column.getId())) {
+          return column;
+        }
+      }
+    }
+    return null;
+  }
+  
 }

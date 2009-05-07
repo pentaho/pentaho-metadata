@@ -24,7 +24,8 @@ public class SQLModelGeneratorTest {
         ,"pentaho_user", "password"
           ,"jdbc:hsqldb:file:test/solution/system/data/sampledata");
     } catch(Exception e) {
-      
+      e.printStackTrace();
+      Assert.fail();
     }
     SQLModelGenerator generator = new SQLModelGenerator("newdatasource", connection, query);
     Domain domain = generator.generate();  

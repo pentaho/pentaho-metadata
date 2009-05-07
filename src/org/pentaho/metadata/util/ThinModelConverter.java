@@ -268,8 +268,134 @@ public class ThinModelConverter {
     return AggregationSettings.types[aggType.ordinal()];
   }
   
-  public static Domain convertFromLegacy(SchemaMeta meta) {
-    // TODO
+  public static void convertConceptFromLegacy(org.pentaho.pms.schema.concept.ConceptUtilityInterface legacy, IConcept concept) {
+    concept.setId(legacy.getId());
+    for (String propertyName : legacy.getConcept().getChildPropertyIDs()) { // concept.getChildProperties().keySet()) {
+      ConceptPropertyInterface property = legacy.getConcept().getChildProperty(propertyName);
+      Object prop = convertPropertyFromLegacy(propertyName, property);
+      String newPropertyName = convertPropertyNameFromLegacy(propertyName);
+      if (prop != null) {
+        concept.setProperty(propertyName, prop);
+      }
+    }
+  }
+  
+  private static String convertPropertyNameFromLegacy(String propertyName) {
+    if ("formula".equals(propertyName)) {
+      return SqlPhysicalColumn.TARGET_COLUMN;
+    } else if ("exact".equals(propertyName)) {
+      return SqlPhysicalColumn.TARGET_COLUMN_TYPE;
+    } else {
+      return propertyName;
+    }
+  }
+  
+  private static Object convertPropertyFromLegacy(String propertyName, ConceptPropertyInterface property) {
+    if (property instanceof ConceptPropertyString) {
+      return (String) ((ConceptPropertyString)property).getValue();
+    //} else if (property instanceof LocalizedString) {
+    } else if (property instanceof ConceptPropertyLocalizedString) {
+      LocalizedStringSettings settings = (LocalizedStringSettings)((ConceptPropertyLocalizedString)property).getValue();
+      return new LocalizedString(settings.getLocaleStringMap());
+    } else if (property instanceof ConceptPropertyDataType) {
+      DataTypeSettings settings = (DataTypeSettings) ((ConceptPropertyDataType)property).getValue();
+      return DataType.values()[settings.getType()];
+    } else if (property instanceof List) {
+      // TODO: List<AggregationType>
+
+    } else if (property instanceof ConceptPropertyAggregation) {
+      AggregationSettings aggSettings = (AggregationSettings)((ConceptPropertyAggregation)property).getValue();
+      return AggregationType.values()[aggSettings.getType()];
+    } else if (property instanceof ConceptPropertyBoolean) {
+      Boolean boolVal = (Boolean)((ConceptPropertyBoolean)property).getValue();
+      if (propertyName.equals("exact")) {
+        if (boolVal) {
+          return TargetColumnType.OPEN_FORMULA;
+        } else {
+          return TargetColumnType.COLUMN_NAME;
+        }
+      } else {
+        return boolVal;
+      }
+    }
+    
+    logger.error("unsupported property: " + property);
     return null;
+  }
+  
+  public static Domain convertFromLegacy(SchemaMeta schemaMeta) {
+    // SchemaMeta schemaMeta = new SchemaMeta();
+    Domain domain = new Domain();
+    domain.setId(schemaMeta.getDomainName());
+
+    for (DatabaseMeta database : schemaMeta.getDatabases()) {
+      SqlPhysicalModel sqlModel = new SqlPhysicalModel();
+      sqlModel.setDatasource(database.getDatabaseName());
+      
+      PhysicalTable tables[] = schemaMeta.getTablesOnDatabase(database);
+      for (PhysicalTable table : tables) {
+        SqlPhysicalTable sqlTable = new SqlPhysicalTable(sqlModel);
+
+        convertConceptFromLegacy(table, sqlTable);
+
+        // Specify TargetTableType
+        
+        if (table.getTargetTable().toLowerCase().startsWith("select ")) {
+          sqlTable.setTargetTableType(TargetTableType.INLINE_SQL);
+        }
+        
+        for (PhysicalColumn column : table.getPhysicalColumns()) {
+          SqlPhysicalColumn sqlColumn = new SqlPhysicalColumn(sqlTable);
+          convertConceptFromLegacy(table, sqlTable);
+          sqlTable.getPhysicalColumns().add(sqlColumn);
+        }
+        sqlModel.getPhysicalTables().add(sqlTable);
+      }
+      
+      
+      domain.addPhysicalModel(sqlModel);
+    }
+    
+    // convert logical models
+    
+    for (BusinessModel model : schemaMeta.getBusinessModels()) {
+      LogicalModel logicalModel = new LogicalModel();
+      convertConceptFromLegacy(model, logicalModel);
+      for (Object biztable : model.getBusinessTables()) {
+        BusinessTable businessTable = (BusinessTable)biztable;
+        LogicalTable logicalTable = new LogicalTable();
+        IPhysicalTable physicalTable = domain.findPhysicalTable(businessTable.getPhysicalTable().getId());
+        logicalTable.setPhysicalTable(physicalTable);
+        convertConceptFromLegacy(businessTable, logicalTable);
+        
+        for (BusinessColumn column : businessTable.getBusinessColumns()) {
+          LogicalColumn logicalColumn = new LogicalColumn();
+          for (IPhysicalColumn physicalColumn : physicalTable.getPhysicalColumns()) {
+            if (physicalColumn.getId().equals(column.getPhysicalColumn().getId())) {
+              logicalColumn.setPhysicalColumn(physicalColumn);
+            }
+          }
+          logicalColumn.setLogicalTable(logicalTable);
+          convertConceptFromLegacy(column, logicalColumn);
+          logicalTable.getLogicalColumns().add(logicalColumn);
+        }
+        
+        logicalModel.getLogicalTables().add(logicalTable);
+      }
+
+      for (BusinessCategory bizCategory : model.getRootCategory().getBusinessCategories()) {
+        Category category = new Category();
+        convertConceptFromLegacy(bizCategory, category);
+        
+        for (Object bizColumn : bizCategory.getBusinessColumns()) {
+          BusinessColumn businessColumn = (BusinessColumn)bizColumn;
+          category.getLogicalColumns().add(logicalModel.findLogicalColumn(businessColumn.getId()));
+        }
+        
+        logicalModel.getCategories().add(category);
+      }
+      domain.addLogicalModel(logicalModel);
+    }
+    return domain;
   }
 }

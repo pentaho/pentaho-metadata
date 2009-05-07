@@ -25,7 +25,7 @@ public class LogicalColumn extends Concept {
   
   @Override
   public IConcept getSecurityParentConcept() {
-    return logicalTable;
+    return getLogicalTable();
   }
   
   public IPhysicalColumn getPhysicalColumn() {
@@ -59,5 +59,13 @@ public class LogicalColumn extends Concept {
 
   public void setAggregationList(List<AggregationType> aggList) {
     setProperty(IPhysicalColumn.AGGREGATIONTYPE_PROPERTY, aggList);
+  }
+
+  public void setLogicalTable(LogicalTable logicalTable) {
+    this.logicalTable = logicalTable;
+  }
+
+  private LogicalTable getLogicalTable() {
+    return logicalTable;
   }  
 }

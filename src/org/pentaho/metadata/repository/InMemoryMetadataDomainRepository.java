@@ -30,7 +30,7 @@ public class InMemoryMetadataDomainRepository implements IMetadataDomainReposito
   
   private static final Log logger = LogFactory.getLog(InMemoryMetadataDomainRepository.class);
   
-  Map<String, Domain> domains = null;
+  Map<String, Domain> domains = new HashMap<String, Domain>();
   
   public synchronized void storeDomain(Domain domain, boolean overwrite) throws DomainIdNullException, DomainAlreadyExistsException, DomainStorageException {
     // stores a domain to system/metadata/DOMAIN_ID.domain.xml
@@ -54,11 +54,8 @@ public class InMemoryMetadataDomainRepository implements IMetadataDomainReposito
   }
     
   public Domain getDomain(String id) {
-    // for now, lazy load all the domains at once.  We could be smarter,
-    // loading the files as requested.
-    
     if (domains == null) {
-      reloadDomains();
+      return null;
     }
     return domains.get(id);
   }
@@ -76,6 +73,7 @@ public class InMemoryMetadataDomainRepository implements IMetadataDomainReposito
   
   public synchronized void reloadDomains() {
     // can't reload inmemory domains, they are gone
+    domains = new HashMap<String, Domain>();
   }
   
   public synchronized void removeDomain(String domainId) {
