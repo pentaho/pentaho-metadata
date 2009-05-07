@@ -5,9 +5,11 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 
 import org.apache.commons.lang.StringUtils;
 import org.pentaho.di.core.Props;
+import org.pentaho.di.core.row.ValueMetaInterface;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalColumn;
@@ -19,6 +21,7 @@ import org.pentaho.metadata.model.SqlPhysicalTable;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
+import org.pentaho.pms.schema.concept.types.datatype.DataTypeSettings;
 import org.pentaho.pms.util.Settings;
 
 public class SQLModelGenerator {
@@ -88,7 +91,8 @@ public class SQLModelGenerator {
     table.setTargetTable(query);
     
     String[] columnHeader = null;
-    String[] columnType = null;
+    //String[] columnType = null;
+    int[] columnType = null;
       Statement stmt = null;
       ResultSet rs = null;
       try {
@@ -99,9 +103,10 @@ public class SQLModelGenerator {
           rs = stmt.executeQuery(query);
           ResultSetMetaData metadata = rs.getMetaData();
           columnHeader = new String[metadata.getColumnCount()];
-          columnType = new String[metadata.getColumnCount()];
+          //columnType = new String[metadata.getColumnCount()];
+          columnType = new int[metadata.getColumnCount()];
           columnHeader = getColumnNames(metadata);
-          columnType = getColumnTypesNames(metadata);
+          columnType = getColumnTypes(metadata);
         } else {
           throw new SQLModelGeneratorException("Query not valid"); //$NON-NLS-1$
         }
@@ -141,7 +146,7 @@ public class SQLModelGenerator {
         // Get the localized string
         column.setName(new LocalizedString(columnHeader[i]));
         // Map the SQL Column Type to Metadata Column Type
-        column.setDataType(converSQLToMetadataColumnType(columnType[i]));
+        column.setDataType(converDataType(columnType[i]));
         String physicalColumnID = Settings.getPhysicalColumnIDPrefix() + "_" + columnHeader[i];
         column.setId(physicalColumnID);
         table.getPhysicalColumns().add(column);
@@ -184,22 +189,35 @@ public class SQLModelGenerator {
     }
   }
  
-  private DataType converSQLToMetadataColumnType(String sqlColumnType) {
-    if(sqlColumnType.equals("VARCHAR")) {
-      return DataType.STRING;
-    } else if(sqlColumnType.equals("BOOLEAN")) {
-      return DataType.BOOLEAN;
-    } else if(sqlColumnType.equals("INTEGER")) {
+  private static DataType converDataType(int type)
+  {
+    switch (type)
+    {
+    case Types.BIGINT:
+    case Types.INTEGER:
+    case Types.NUMERIC:
       return DataType.NUMERIC;
-    } else if(sqlColumnType.equals("DATE")) {
-      return DataType.DATE;
-    } else if(sqlColumnType.equals("BINARY")) {
+    
+    case Types.BINARY:
       return DataType.BINARY;
-    } else {
+
+    case Types.BOOLEAN:
+      return DataType.BOOLEAN;
+    
+    case Types.DATE:
+    case Types.TIMESTAMP:  
+      return DataType.DATE;
+    
+    case Types.LONGVARCHAR:
+    
+    case Types.VARCHAR:
+      return DataType.STRING;
+
+    default:
       return DataType.UNKNOWN;
     }
   }
-
+  
   /**
    * The following method returns an array of String(java.sql.Types) containing the column types for
    * a given ResultSetMetaData object.
@@ -228,5 +246,20 @@ public class SQLModelGenerator {
     }
 
     return columnNames;
+  }
+  
+  /**
+   * The following method returns an array of int(java.sql.Types) containing the column types for
+   * a given ResultSetMetaData object.
+   */
+  public int[] getColumnTypes(ResultSetMetaData resultSetMetaData) throws SQLException {
+    int columnCount = resultSetMetaData.getColumnCount();
+    int[] columnTypes = new int[columnCount];
+
+    for(int colIndex=1; colIndex<=columnCount; colIndex++){
+      columnTypes[colIndex-1] = resultSetMetaData.getColumnType(colIndex);
+    }
+
+    return columnTypes;
   }
 }
