@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.util.SQLModelGenerator;
+import org.pentaho.metadata.util.SQLModelGeneratorException;
 import org.pentaho.metadata.util.SerializationService;
 
 public class SQLModelGeneratorTest {
@@ -28,8 +29,12 @@ public class SQLModelGeneratorTest {
       Assert.fail();
     }
     SQLModelGenerator generator = new SQLModelGenerator("newdatasource", connection, query);
-    Domain domain = generator.generate();  
-    
+    Domain domain = null;
+    try {
+      domain = generator.generate(); 
+    } catch(SQLModelGeneratorException smge) {
+      Assert.fail();
+    }
     
     // basic tests
     SerializationService service = new SerializationService();

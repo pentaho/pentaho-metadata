@@ -64,12 +64,15 @@ public class SQLModelGenerator {
   public void setQuery(String query) {
     this.query = query;
   }
-
-  public Domain generate() {
+  private boolean validate() {
+    return !StringUtils.isEmpty(this.modelName) && !StringUtils.isEmpty(this.query) && this.connection != null;  
+  }
+  public Domain generate() throws SQLModelGeneratorException {
     return generate(this.modelName, this.connection, this.query);
   }
   
-  public Domain generate(String modelName, Connection connection, String query) {
+  public Domain generate(String modelName, Connection connection, String query) throws SQLModelGeneratorException{
+    if(validate()) {
     SqlPhysicalModel model = new SqlPhysicalModel();
     String modelID = Settings.getBusinessModelIDPrefix()+ modelName;
     model.setId(modelID);
@@ -77,14 +80,12 @@ public class SQLModelGenerator {
     model.setDescription(new LocalizedString("A Description of the Model"));
     model.setDatasource(modelName);
     SqlPhysicalTable table = new SqlPhysicalTable(model);
-    table.setId("INLINE_SQL_1");
     model.getPhysicalTables().add(table);
     table.setTargetTableType(TargetTableType.INLINE_SQL);
     table.setTargetTable(query);
     
     String[] columnHeader = null;
     String[] columnType = null;
-    try {
       Statement stmt = null;
       ResultSet rs = null;
       try {
@@ -99,11 +100,11 @@ public class SQLModelGenerator {
           columnHeader = getColumnNames(metadata);
           columnType = getColumnTypesNames(metadata);
         } else {
-          throw new Exception("Query not valid"); //$NON-NLS-1$
+          throw new SQLModelGeneratorException("Query not valid"); //$NON-NLS-1$
         }
-      } catch (SQLException e) {
+      } catch (Exception e) {
         e.printStackTrace();
-        throw new Exception("Query validation failed", e); //$NON-NLS-1$
+        throw new SQLModelGeneratorException("Query validation failed", e); //$NON-NLS-1$
       } finally {
         try {
           if (rs != null) {
@@ -116,11 +117,11 @@ public class SQLModelGenerator {
             connection.close();
           }
         } catch (SQLException e) {
-          throw new Exception(e);
+          throw new SQLModelGeneratorException(e);
         }
       }
       
-
+      try {
       Category mainCategory = new Category();
       LogicalModel logicalModel = new LogicalModel();
       logicalModel.setId("MODEL_1");
@@ -171,15 +172,12 @@ public class SQLModelGenerator {
       domain.addLogicalModel(logicalModel);
       domain.setId(modelName);
       return domain;
-    } catch (SQLException e) {
-      e.printStackTrace();
-      return null;
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-      return null;
-    } catch (Exception e) {
-      e.printStackTrace();
-      return null;
+
+      } catch(Exception e) {
+        throw new SQLModelGeneratorException(e);
+      }
+    } else {
+      throw new SQLModelGeneratorException("Input Validation Failed");
     }
   }
  
