@@ -28,7 +28,7 @@ public class SQLModelGeneratorTest {
       e.printStackTrace();
       Assert.fail();
     }
-    SQLModelGenerator generator = new SQLModelGenerator("newdatasource", connection, query);
+    SQLModelGenerator generator = new SQLModelGenerator("newdatasource", "SampleData", connection, query);
     Domain domain = null;
     try {
       domain = generator.generate(); 

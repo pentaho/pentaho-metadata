@@ -152,9 +152,9 @@ public class JDBCModelManagementService implements IModelManagementService {
     return DriverManager.getConnection(url, username, password);
   }
 
-  public Domain generateModel(String modelName, Connection connection, String query) throws ModelManagementServiceException {
+  public Domain generateModel(String modelName,  String connectionName, Connection connection, String query) throws ModelManagementServiceException {
     try {
-      SQLModelGenerator generator = new SQLModelGenerator(modelName, connection, query);
+      SQLModelGenerator generator = new SQLModelGenerator(modelName, connectionName, connection, query);
       return generator.generate();
     } catch(SQLModelGeneratorException smge) {
       throw new ModelManagementServiceException(smge);

@@ -40,5 +40,5 @@ public interface IModelManagementService {
    * @throws 
    */
 
-  public Domain generateModel(String modelName, Connection connection, String query) throws ModelManagementServiceException;
+  public Domain generateModel(String modelName, String connectionName, Connection connection, String query) throws ModelManagementServiceException;
 }

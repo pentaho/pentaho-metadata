@@ -25,6 +25,7 @@ public class SQLModelGenerator {
   String modelName;
   Connection connection;
   String query;
+  String connectionName;
   
   public SQLModelGenerator() {
     super();
@@ -33,11 +34,12 @@ public class SQLModelGenerator {
     }
   }
 
-  public SQLModelGenerator(String modelName, Connection connection, String query) {
+  public SQLModelGenerator(String modelName, String connectionName, Connection connection, String query) {
     if(!Props.isInitialized()) {
       Props.init(Props.TYPE_PROPERTIES_EMPTY);
     }
     this.query = query;
+    this.connectionName = connectionName;
     this.connection = connection;
     this.modelName = modelName;
   }
@@ -68,17 +70,17 @@ public class SQLModelGenerator {
     return !StringUtils.isEmpty(this.modelName) && !StringUtils.isEmpty(this.query) && this.connection != null;  
   }
   public Domain generate() throws SQLModelGeneratorException {
-    return generate(this.modelName, this.connection, this.query);
+    return generate(this.modelName, this.connectionName, this.connection, this.query);
   }
   
-  public Domain generate(String modelName, Connection connection, String query) throws SQLModelGeneratorException{
+  public Domain generate(String modelName, String connectionName, Connection connection, String query) throws SQLModelGeneratorException {
     if(validate()) {
     SqlPhysicalModel model = new SqlPhysicalModel();
     String modelID = Settings.getBusinessModelIDPrefix()+ modelName;
     model.setId(modelID);
     model.setName(new LocalizedString(modelName));
     model.setDescription(new LocalizedString("A Description of the Model"));
-    model.setDatasource(modelName);
+    model.setDatasource(connectionName);
     SqlPhysicalTable table = new SqlPhysicalTable(model);
     model.getPhysicalTables().add(table);
     table.setTargetTableType(TargetTableType.INLINE_SQL);
