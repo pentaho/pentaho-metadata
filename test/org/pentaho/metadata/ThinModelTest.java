@@ -17,6 +17,7 @@ import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
 import org.pentaho.metadata.util.SerializationService;
 import org.pentaho.metadata.util.ThinModelConverter;
+import org.pentaho.pms.messages.util.LocaleHelper;
 import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
@@ -50,6 +51,8 @@ public class ThinModelTest {
   @Test
   public void testSqlLogicalModel() {
     
+    String locale = LocaleHelper.getLocale().toString();
+    
     // this sql model is the minimum required for
     // MQL execution
     
@@ -64,16 +67,16 @@ public class ThinModelTest {
     SqlPhysicalColumn column = new SqlPhysicalColumn(table);
     column.setId("PC1");
     column.setTargetColumn("customername");
-    column.setName(new LocalizedString("Customer Name"));
-    column.setDescription(new LocalizedString("Customer Description"));
+    column.setName(new LocalizedString(locale, "Customer Name"));
+    column.setDescription(new LocalizedString(locale, "Customer Description"));
     column.setDataType(DataType.STRING);
     
     // logical model 
     
     LogicalModel logicalModel = new LogicalModel();
     model.setId("MODEL");
-    model.setName(new LocalizedString("My Model"));
-    model.setDescription(new LocalizedString("A Description of the Model"));
+    model.setName(new LocalizedString(locale, "My Model"));
+    model.setDescription(new LocalizedString(locale, "A Description of the Model"));
     
     LogicalTable logicalTable = new LogicalTable();
     logicalTable.setPhysicalTable(table);
@@ -95,7 +98,7 @@ public class ThinModelTest {
     
     Category mainCategory = new Category();
     mainCategory.setId("CATEGORY");
-    mainCategory.setName(new LocalizedString("Category"));
+    mainCategory.setName(new LocalizedString(locale, "Category"));
     
     // replacement for formula / is exact could be 
     // target column + target column type (calculated, exact, etc)
@@ -103,6 +106,8 @@ public class ThinModelTest {
   
   @Test
   public void testSerializeSqlPhysicalModel() {
+    
+    String locale = LocaleHelper.getLocale().toString();
     
     SqlPhysicalModel model = new SqlPhysicalModel();
     model.setDatasource("SampleData");
@@ -113,16 +118,16 @@ public class ThinModelTest {
     
     SqlPhysicalColumn column = new SqlPhysicalColumn(table);
     column.setTargetColumn("customername");
-    column.setName(new LocalizedString("Customer Name"));
-    column.setDescription(new LocalizedString("Customer Name Desc"));
+    column.setName(new LocalizedString(locale, "Customer Name"));
+    column.setDescription(new LocalizedString(locale, "Customer Name Desc"));
     column.setDataType(DataType.STRING);
     
     table.getPhysicalColumns().add(column);
     
     LogicalModel logicalModel = new LogicalModel();
     model.setId("MODEL");
-    model.setName(new LocalizedString("My Model"));
-    model.setDescription(new LocalizedString("A Description of the Model"));
+    model.setName(new LocalizedString(locale, "My Model"));
+    model.setDescription(new LocalizedString(locale, "A Description of the Model"));
     
     LogicalTable logicalTable = new LogicalTable();
     logicalTable.setPhysicalTable(table);
@@ -137,7 +142,7 @@ public class ThinModelTest {
     
     Category mainCategory = new Category();
     mainCategory.setId("CATEGORY");
-    mainCategory.setName(new LocalizedString("Category"));
+    mainCategory.setName(new LocalizedString(locale, "Category"));
     mainCategory.addLogicalColumn(logicalColumn);
     
     logicalModel.getCategories().add(mainCategory);
@@ -173,6 +178,8 @@ public class ThinModelTest {
   
   public Domain getBasicDomain() {
     
+    String locale = LocaleHelper.getLocale().toString();
+    
     SqlPhysicalModel model = new SqlPhysicalModel();
     model.setDatasource("SampleData");
     SqlPhysicalTable table = new SqlPhysicalTable(model);
@@ -184,15 +191,15 @@ public class ThinModelTest {
     SqlPhysicalColumn column = new SqlPhysicalColumn(table);
     column.setId("PC1");
     column.setTargetColumn("customername");
-    column.setName(new LocalizedString("Customer Name"));
-    column.setDescription(new LocalizedString("Customer Name Desc"));
+    column.setName(new LocalizedString(locale, "Customer Name"));
+    column.setDescription(new LocalizedString(locale, "Customer Name Desc"));
     column.setDataType(DataType.STRING);
     table.getPhysicalColumns().add(column);
     
     LogicalModel logicalModel = new LogicalModel();
     logicalModel.setId("MODEL");
-    logicalModel.setName(new LocalizedString("My Model"));
-    logicalModel.setDescription(new LocalizedString("A Description of the Model"));
+    logicalModel.setName(new LocalizedString(locale, "My Model"));
+    logicalModel.setDescription(new LocalizedString(locale, "A Description of the Model"));
     
     LogicalTable logicalTable = new LogicalTable();
     logicalTable.setId("LT");
@@ -208,7 +215,7 @@ public class ThinModelTest {
     
     Category mainCategory = new Category();
     mainCategory.setId("CATEGORY");
-    mainCategory.setName(new LocalizedString("Category"));
+    mainCategory.setName(new LocalizedString(locale, "Category"));
     mainCategory.addLogicalColumn(logicalColumn);
     
     logicalModel.getCategories().add(mainCategory);

@@ -6,10 +6,11 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.pentaho.di.core.Props;
-import org.pentaho.di.core.row.ValueMetaInterface;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalColumn;
@@ -19,9 +20,10 @@ import org.pentaho.metadata.model.SqlPhysicalColumn;
 import org.pentaho.metadata.model.SqlPhysicalModel;
 import org.pentaho.metadata.model.SqlPhysicalTable;
 import org.pentaho.metadata.model.concept.types.DataType;
+import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
-import org.pentaho.pms.schema.concept.types.datatype.DataTypeSettings;
+import org.pentaho.pms.messages.util.LocaleHelper;
 import org.pentaho.pms.util.Settings;
 
 public class SQLModelGenerator {
@@ -77,12 +79,14 @@ public class SQLModelGenerator {
   }
   
   public Domain generate(String modelName, String connectionName, Connection connection, String query) throws SQLModelGeneratorException {
+    
+    LocaleType locale = new LocaleType(LocaleHelper.getLocale().toString(), LocaleHelper.getLocale().getDisplayName());
+    
     if(validate()) {
     SqlPhysicalModel model = new SqlPhysicalModel();
     String modelID = Settings.getBusinessModelIDPrefix()+ modelName;
     model.setId(modelID);
-    model.setName(new LocalizedString(modelName));
-    model.setDescription(new LocalizedString("A Description of the Model"));
+    model.setName(new LocalizedString(locale.getCode(), modelName));
     model.setDatasource(connectionName);
     SqlPhysicalTable table = new SqlPhysicalTable(model);
     table.setId("INLINE_SQL_1");
@@ -133,7 +137,7 @@ public class SQLModelGenerator {
       Category mainCategory = new Category();
       LogicalModel logicalModel = new LogicalModel();
       logicalModel.setId("MODEL_1");
-      logicalModel.setName(new LocalizedString(modelName));
+      logicalModel.setName(new LocalizedString(locale.getCode(), modelName));
       LogicalTable logicalTable = new LogicalTable();
       
       for(int i=0;i<columnHeader.length;i++) {
@@ -144,7 +148,7 @@ public class SQLModelGenerator {
         column.setId(columnHeader[i]);
         column.setTargetColumn(columnHeader[i]);
         // Get the localized string
-        column.setName(new LocalizedString(columnHeader[i]));
+        column.setName(new LocalizedString(locale.getCode(), columnHeader[i]));
         // Map the SQL Column Type to Metadata Column Type
         column.setDataType(converDataType(columnType[i]));
         String physicalColumnID = Settings.getPhysicalColumnIDPrefix() + "_" + columnHeader[i];
@@ -160,7 +164,8 @@ public class SQLModelGenerator {
         logicalColumn.setId(columnID + "_" +columnHeader[i]);
         
         // the default name of the logical column.
-        logicalColumn.setName(new LocalizedString(columnHeader[i]));
+        // this inherits from the physical column.
+        // logicalColumn.setName(new LocalizedString(columnHeader[i]));
         
         logicalColumn.setPhysicalColumn(column);
         logicalColumn.setLogicalTable(logicalTable);
@@ -171,12 +176,16 @@ public class SQLModelGenerator {
       }
       String categoryID= Settings.getBusinessCategoryIDPrefix()+ modelName;
       mainCategory.setId(categoryID);
-      mainCategory.setName(new LocalizedString(modelName));
+      mainCategory.setName(new LocalizedString(locale.getCode(), modelName));
       
       logicalModel.getCategories().add(mainCategory);
       
       Domain domain = new Domain();
       domain.addPhysicalModel(model);
+      
+      List<LocaleType> locales = new ArrayList<LocaleType>();
+      locales.add(locale);
+      domain.setLocales(locales);
       domain.addLogicalModel(logicalModel);
       domain.setId(modelName);
       return domain;

@@ -8,7 +8,7 @@ import java.util.Set;
 public class LocalizedString implements Serializable {
   
   private static final long serialVersionUID = 8214549012790547810L;
-  public static final String DEFAULT_LOCALE = "DEFAULT";
+  
   private Map<String,String> localeStringMap;
   
   public LocalizedString() {
@@ -23,12 +23,6 @@ public class LocalizedString implements Serializable {
     this();
     localeStringMap.put(locale, value);
   }
-
-  public LocalizedString(String value) {
-    this();
-    localeStringMap.put(DEFAULT_LOCALE, value);
-  }
-
   
   public String getString(String locale) {
       return (String) localeStringMap.get(locale);

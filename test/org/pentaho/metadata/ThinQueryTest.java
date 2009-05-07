@@ -21,10 +21,13 @@ import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.metadata.query.model.util.QueryXmlHelper;
 import org.pentaho.metadata.repository.InMemoryMetadataDomainRepository;
 import org.pentaho.metadata.util.ThinModelConverter;
+import org.pentaho.pms.messages.util.LocaleHelper;
 import org.pentaho.pms.mql.MQLQueryImpl;
 
 public class ThinQueryTest {
   public Domain getBasicDomain() {
+    
+    String locale = LocaleHelper.getLocale().toString();
     
     SqlPhysicalModel model = new SqlPhysicalModel();
     model.setDatasource("SampleData");
@@ -37,15 +40,15 @@ public class ThinQueryTest {
     SqlPhysicalColumn column = new SqlPhysicalColumn(table);
     column.setId("PC1");
     column.setTargetColumn("customername");
-    column.setName(new LocalizedString("Customer Name"));
-    column.setDescription(new LocalizedString("Customer Name Desc"));
+    column.setName(new LocalizedString(locale, "Customer Name"));
+    column.setDescription(new LocalizedString(locale, "Customer Name Desc"));
     column.setDataType(DataType.STRING);
     table.getPhysicalColumns().add(column);
     
     LogicalModel logicalModel = new LogicalModel();
     logicalModel.setId("MODEL");
-    logicalModel.setName(new LocalizedString("My Model"));
-    logicalModel.setDescription(new LocalizedString("A Description of the Model"));
+    logicalModel.setName(new LocalizedString(locale, "My Model"));
+    logicalModel.setDescription(new LocalizedString(locale, "A Description of the Model"));
     
     LogicalTable logicalTable = new LogicalTable();
     logicalTable.setId("LT");
@@ -60,7 +63,7 @@ public class ThinQueryTest {
     
     Category mainCategory = new Category();
     mainCategory.setId("CATEGORY");
-    mainCategory.setName(new LocalizedString("Category"));
+    mainCategory.setName(new LocalizedString(locale, "Category"));
     mainCategory.addLogicalColumn(logicalColumn);
     
     logicalModel.getCategories().add(mainCategory);

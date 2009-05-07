@@ -4,8 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.metadata.model.concept.Concept;
+import org.pentaho.metadata.model.concept.types.LocaleType;
 
 public class Domain extends Concept {
+
+  private static final long serialVersionUID = -9093116797722021640L;
+
+  public static final String LOCALES_PROPERTY = "locales";
   
   public Domain() {
     super();
@@ -50,6 +55,15 @@ public class Domain extends Concept {
   
   public void addConcept(Concept concept) {
     concepts.add(concept);
+  }
+  
+  public void setLocales(List<LocaleType> locales) {
+    setProperty(LOCALES_PROPERTY, locales);
+  }
+  
+  @SuppressWarnings("unchecked")
+  public List<LocaleType> getLocales() {
+    return (List<LocaleType>)getProperty(LOCALES_PROPERTY);
   }
   
   // utility methods
