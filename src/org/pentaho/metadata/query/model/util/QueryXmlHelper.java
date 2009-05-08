@@ -327,7 +327,7 @@ public class QueryXmlHelper {
       NodeList aggnodes = selectionElement.getElementsByTagName("aggregation"); //$NON-NLS-1$
       if (aggnodes.getLength() > 0) {
         String aggvalue = XMLHandler.getNodeValue(aggnodes.item(0));
-        AggregationType setting = AggregationType.valueOf(aggvalue);
+        AggregationType setting = AggregationType.valueOf(aggvalue.toUpperCase());
         if (setting == null) {
           Messages.getErrorString("QueryXmlHelper.ERROR_0011_AGG_NOT_RECOGNIZED", columnId, aggvalue);
         } else {
@@ -443,7 +443,7 @@ public class QueryXmlHelper {
     // valid option
     AggregationType aggsetting = null;
     if (aggregation != null) {
-      AggregationType setting = AggregationType.valueOf(aggregation);
+      AggregationType setting = AggregationType.valueOf(aggregation.toUpperCase());
       if ((column.getAggregationType() == setting) ||
           column.getAggregationList() != null &&
           column.getAggregationList().contains(setting)) {
