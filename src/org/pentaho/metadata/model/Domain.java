@@ -1,3 +1,15 @@
+/*
+ * Copyright 2009 Pentaho Corporation.  All rights reserved.
+ * This software was developed by Pentaho Corporation and is provided under the terms
+ * of the Mozilla Public License, Version 1.1, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho
+ * BI Platform.  The Initial Developer is Pentaho Corporation.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+*/
 package org.pentaho.metadata.model;
 
 import java.util.ArrayList;
@@ -6,6 +18,14 @@ import java.util.List;
 import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.types.LocaleType;
 
+/**
+ * The domain object is the root object of a metadata domain.  A domain
+ * may consist of multiple physical and logical models.  Each domain
+ * is normally stored in a separate file for serialization.
+ * 
+ * @author Will Gorman (wgorman@pentaho.com)
+ *
+ */
 public class Domain extends Concept {
 
   private static final long serialVersionUID = -9093116797722021640L;
@@ -14,13 +34,17 @@ public class Domain extends Concept {
   
   public Domain() {
     super();
-    // TODO Auto-generated constructor stub
   }
 
   private List<IPhysicalModel> physicalModels = new ArrayList<IPhysicalModel>();
   private List<LogicalModel> logicalModels = new ArrayList<LogicalModel>();  
   private List<Concept> concepts = new ArrayList<Concept>();
   
+  /**
+   * The physical models stored in this domain.
+   * 
+   * @return physical models
+   */
   public List<IPhysicalModel> getPhysicalModels() {
     return physicalModels;
   }
@@ -33,6 +57,11 @@ public class Domain extends Concept {
     physicalModels.add(physicalModel);
   }
 
+  /**
+   * The logical models stored in this domain.
+   * 
+   * @return logical models
+   */
   public List<LogicalModel> getLogicalModels() {
     return logicalModels;
   }
@@ -45,6 +74,11 @@ public class Domain extends Concept {
     logicalModels.add(physicalModel);
   }
 
+  /**
+   * the list of root concepts available for inheritance within this domain.
+   * 
+   * @return concepts
+   */
   public List<Concept> getConcepts() {
     return concepts;
   }
@@ -61,6 +95,11 @@ public class Domain extends Concept {
     setProperty(LOCALES_PROPERTY, locales);
   }
   
+  /**
+   * return a list of supported locales for this domain.
+   * 
+   * @return supported locales
+   */
   @SuppressWarnings("unchecked")
   public List<LocaleType> getLocales() {
     return (List<LocaleType>)getProperty(LOCALES_PROPERTY);
@@ -68,6 +107,13 @@ public class Domain extends Concept {
   
   // utility methods
   
+  /**
+   * find a logical model via a model id
+   * 
+   * @param modelId the id to find
+   * 
+   * @return logical model
+   */
   public LogicalModel findLogicalModel(String modelId) {
     for (LogicalModel model : getLogicalModels()) {
       if (modelId.equals(model.getId())) {
@@ -77,6 +123,12 @@ public class Domain extends Concept {
     return null;
   }
   
+  /**
+   * find a physical table in the domain
+   *  
+   * @param tableId the table id
+   * @return physical table
+   */
   public IPhysicalTable findPhysicalTable(String tableId) {
     for (IPhysicalModel model : getPhysicalModels()) {
       for (IPhysicalTable table : model.getPhysicalTables()) {

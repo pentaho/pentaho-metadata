@@ -1,3 +1,15 @@
+/*
+ * Copyright 2009 Pentaho Corporation.  All rights reserved.
+ * This software was developed by Pentaho Corporation and is provided under the terms
+ * of the Mozilla Public License, Version 1.1, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho
+ * BI Platform.  The Initial Developer is Pentaho Corporation.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+*/
 package org.pentaho.metadata.model.concept;
 
 import java.util.ArrayList;
@@ -6,8 +18,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
+import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
+import org.pentaho.metadata.model.concept.types.TargetColumnType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
 import org.pentaho.pms.messages.Messages;
 /**
@@ -49,6 +64,9 @@ public class PropertyTypeRegistry {
     addPropertyType(LocalizedString.class);
     addPropertyType(DataType.class);
     addPropertyType(TargetTableType.class);
+    addPropertyType(TargetColumnType.class);
+    addPropertyType(AggregationType.class);
+    addPropertyType(LocaleType.class);
   }
   
   public void addPropertyType(Class clazz) {

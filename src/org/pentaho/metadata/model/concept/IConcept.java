@@ -1,3 +1,15 @@
+/*
+ * Copyright 2009 Pentaho Corporation.  All rights reserved.
+ * This software was developed by Pentaho Corporation and is provided under the terms
+ * of the Mozilla Public License, Version 1.1, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho
+ * BI Platform.  The Initial Developer is Pentaho Corporation.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+*/
 package org.pentaho.metadata.model.concept;
 
 import java.util.Map;
@@ -5,7 +17,7 @@ import java.util.Map;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 
 /**
- * this is the root container for our metadata.  Metadata objects are concepts,
+ * this is the root container for Pentaho Metadata.  Metadata objects are concepts,
  * and concepts may have properties.
  * 
  * Concepts have three forms of inheritance
@@ -18,7 +30,7 @@ import org.pentaho.metadata.model.concept.types.LocalizedString;
  * - the third form is security parent, which is derived from the relationships
  *   of the metadata objects and only applies to the security types.
  * 
- * @author gorman
+ * @author Will Gorman (wgorman@pentaho.com)
  *
  */
 public interface IConcept {
@@ -29,10 +41,16 @@ public interface IConcept {
   /** @param id the property id to set */
   public void setId(String id);
   
+  /** @return get the localized name */
   public LocalizedString getName();
+  
+  /** @param name the localized name of the concept */
   public void setName(LocalizedString name);
 
+  /** @return get the localized description */
   public LocalizedString getDescription();
+  
+  /** @param description the localized description */
   public void setDescription(LocalizedString description);
   
   /**
@@ -46,12 +64,14 @@ public interface IConcept {
 
   /**
    * sets the property
+   * 
    * @param property
    */
   public void setProperty(String name, Object property);
   
   /**
    * removes the property
+   * 
    * @param property
    */
   public void removeChildProperty(String name);

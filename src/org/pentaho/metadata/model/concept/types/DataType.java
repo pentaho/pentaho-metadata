@@ -12,7 +12,12 @@
 */
 package org.pentaho.metadata.model.concept.types;
 
-
+/**
+ * The data type of a physical or logical column.
+ * 
+ * @author Will Gorman (wgorman@pentaho.com)
+ *
+ */
 public enum DataType
 {
     UNKNOWN(0, "Unknown", "DataType.USER_UNKNOWN_DESC"),

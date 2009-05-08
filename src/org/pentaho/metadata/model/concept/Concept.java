@@ -20,8 +20,9 @@ import org.pentaho.metadata.model.concept.types.LocalizedString;
 
 /**
  * This is the base implementation of a concept, and may be used in generic terms
- * when defining parent concepts or modelling metadata.  More concrete implementations
- * extend the Concept class within Pentaho Metadata, found in the metadata.model package
+ * when defining parent concepts or modeling metadata.  More concrete implementations
+ * extend the Concept class within Pentaho Metadata, found in the 
+ * org.pentaho.metadata.model package.
  * 
  * @author Will Gorman (wgorman@pentaho.com)
  *
@@ -30,7 +31,6 @@ public class Concept implements IConcept, Serializable {
   
   public Concept() {
     super();
-    // TODO Auto-generated constructor stub
   }
 
   private static final long serialVersionUID = -6912836203678095834L;
