@@ -1,5 +1,7 @@
 package org.pentaho.metadata;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import org.junit.Assert;
@@ -13,6 +15,7 @@ import org.pentaho.metadata.model.SqlPhysicalColumn;
 import org.pentaho.metadata.model.SqlPhysicalModel;
 import org.pentaho.metadata.model.SqlPhysicalTable;
 import org.pentaho.metadata.model.concept.types.DataType;
+import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
 import org.pentaho.metadata.util.SerializationService;
@@ -225,6 +228,10 @@ public class ThinModelTest {
     domain.addPhysicalModel(model);
     domain.addLogicalModel(logicalModel);
     
+    List<LocaleType> list = new ArrayList<LocaleType>();
+    list.add(new LocaleType(locale, "Locale Description"));
+    domain.setLocales(list);
+    
     return domain;
   }
   
@@ -240,6 +247,9 @@ public class ThinModelTest {
     }
     
     String locale = Locale.getDefault().toString();
+    
+    Assert.assertEquals(1, meta.getLocales().nrLocales());
+    Assert.assertEquals("en_US", meta.getLocales().getLocale(0).getCode());
     
     // verify conversion worked.
     BusinessModel model = meta.findModel("MODEL");

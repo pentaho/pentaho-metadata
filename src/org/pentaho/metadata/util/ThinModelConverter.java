@@ -19,6 +19,7 @@ import org.pentaho.metadata.model.SqlPhysicalTable;
 import org.pentaho.metadata.model.concept.IConcept;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
+import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
@@ -26,7 +27,8 @@ import org.pentaho.metadata.query.model.Constraint;
 import org.pentaho.metadata.query.model.Order;
 import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.Selection;
-import org.pentaho.pms.core.CWM;
+import org.pentaho.pms.locale.LocaleInterface;
+import org.pentaho.pms.locale.LocaleMeta;
 import org.pentaho.pms.mql.MQLQueryImpl;
 import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
@@ -54,6 +56,23 @@ public class ThinModelConverter {
     SchemaMeta schemaMeta = new SchemaMeta();
     
     schemaMeta.setDomainName(domain.getId());
+    
+    // convert locale list
+    if (domain.getLocales() != null) {
+      for (LocaleType localeType : domain.getLocales()) {
+        for (String code : schemaMeta.getLocales().getLocaleCodes()) {
+          if (!code.equals(localeType.getCode())) {
+            LocaleInterface localeInterface = new LocaleMeta();
+            localeInterface.setCode(localeType.getCode());
+            localeInterface.setDescription(localeType.getDescription());
+            localeInterface.setActive(true);
+            schemaMeta.getLocales().addLocale(localeInterface);
+            break;
+          }
+        }
+      }
+    }
+    
     
     DatabaseMeta database = null; 
     
