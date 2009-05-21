@@ -6,16 +6,15 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Locale;
 
-import junit.framework.Assert;
 
 import org.apache.commons.lang.StringUtils;
+import org.junit.Assert;
 import org.junit.Test;
 import org.pentaho.di.core.Props;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
-import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.query.model.CombinationType;
 import org.pentaho.metadata.query.model.Constraint;
 import org.pentaho.metadata.query.model.Order;
@@ -105,10 +104,10 @@ public class SQLModelGeneratorTest {
       Query query = new Query(domain, model);
       
       Category category = model.findCategory(Settings.getBusinessCategoryIDPrefix()+ "newdatasource");
-      LogicalColumn column = category.findLogicalColumn("bc__CUSTOMERNAME");
+      LogicalColumn column = category.findLogicalColumn("bc_CUSTOMERNAME");
       query.getSelections().add(new Selection(category, column, null));
       
-      query.getConstraints().add(new Constraint(CombinationType.AND, "[CATEGORY.bc__CUSTOMERNAME] = \"bob\""));
+      query.getConstraints().add(new Constraint(CombinationType.AND, "[CATEGORY.bc_CUSTOMERNAME] = \"bob\""));
   
       query.getOrders().add(new Order(new Selection(category, column, null), Order.Type.ASC));
       
@@ -143,7 +142,7 @@ public class SQLModelGeneratorTest {
     LogicalColumn column = category.findLogicalColumn("bc_CUSTOMERNAME");
     query.getSelections().add(new Selection(category, column, null));
     
-    query.getConstraints().add(new Constraint(CombinationType.AND, "[CATEGORY.bc_CUSTOMERNAME] = \"bob\""));
+    query.getConstraints().add(new Constraint(CombinationType.AND, "[bc_newdatasource.bc_CUSTOMERNAME] = \"bob\""));
 
     query.getOrders().add(new Order(new Selection(category, column, null), Order.Type.ASC));
     MQLQueryImpl impl = null;
@@ -154,22 +153,37 @@ public class SQLModelGeneratorTest {
       Assert.fail();
     }
     Assert.assertNotNull(impl);
+    printOutJava(impl.getQuery().getQuery());
     Assert.assertEquals(
+        
         "SELECT DISTINCT \n" + 
-        "          LT.customername AS COL0\n" + 
+        "          LOGICAL_TABLE_1.CUSTOMERNAME AS COL0\n" + 
         "FROM \n" + 
-        "          (select * from customers) LT\n" + 
+        "          (select customername from customers where customernumber < 171) LOGICAL_TABLE_1\n" + 
         "WHERE \n" + 
         "        (\n" + 
         "          (\n" + 
-        "              LT.customername  = 'bob'\n" + 
+        "              LOGICAL_TABLE_1.CUSTOMERNAME  = 'bob'\n" + 
         "          )\n" + 
         "        )\n" + 
         "ORDER BY \n" + 
         "          COL0\n",
+        
         impl.getQuery().getQuery()
     );
 
+  }
+  
+  public static void printOutJava(String sql) {
+    String lines[] = sql.split("\n");
+    for (int i = 0; i < lines.length; i++) {
+      System.out.print("        \"" +lines[i]);
+      if (i == lines.length - 1) {
+        System.out.println("\\n\"");
+      } else {
+        System.out.println("\\n\" + ");
+      }
+    }
   }
   
   private Connection getDataSourceConnection(String driverClass, String name, String username, String password, String url) throws Exception {

@@ -134,61 +134,63 @@ public class SQLModelGenerator {
       }
       
       try {
-      Category mainCategory = new Category();
-      LogicalModel logicalModel = new LogicalModel();
-      logicalModel.setId("MODEL_1");
-      logicalModel.setName(new LocalizedString(locale.getCode(), modelName));
-      LogicalTable logicalTable = new LogicalTable();
-      
-      for(int i=0;i<columnHeader.length;i++) {
-        SqlPhysicalColumn column = new SqlPhysicalColumn(table);
-        
-        // should get unique id here
-        
-        column.setId(columnHeader[i]);
-        column.setTargetColumn(columnHeader[i]);
-        // Get the localized string
-        column.setName(new LocalizedString(locale.getCode(), columnHeader[i]));
-        // Map the SQL Column Type to Metadata Column Type
-        column.setDataType(converDataType(columnType[i]));
-        String physicalColumnID = Settings.getPhysicalColumnIDPrefix() + "_" + columnHeader[i];
-        column.setId(physicalColumnID);
-        table.getPhysicalColumns().add(column);
-                
+        Category mainCategory = new Category();
+        String categoryID= Settings.getBusinessCategoryIDPrefix()+ modelName;
+        mainCategory.setId(categoryID);
+        mainCategory.setName(new LocalizedString(locale.getCode(), modelName));
+  
+        LogicalModel logicalModel = new LogicalModel();
+        logicalModel.setId("MODEL_1");
+        logicalModel.setName(new LocalizedString(locale.getCode(), modelName));
+  
+        LogicalTable logicalTable = new LogicalTable();
         logicalTable.setPhysicalTable(table);
         logicalTable.setId("LOGICAL_TABLE_1");
+        
         logicalModel.getLogicalTables().add(logicalTable);
         
-        LogicalColumn logicalColumn = new LogicalColumn();
-        String columnID = Settings.getBusinessColumnIDPrefix();
-        logicalColumn.setId(columnID + "_" +columnHeader[i]);
+        for(int i=0;i<columnHeader.length;i++) {
+          SqlPhysicalColumn column = new SqlPhysicalColumn(table);
+          
+          // should get unique id here
+          
+          column.setId(columnHeader[i]);
+          column.setTargetColumn(columnHeader[i]);
+          // Get the localized string
+          column.setName(new LocalizedString(locale.getCode(), columnHeader[i]));
+          // Map the SQL Column Type to Metadata Column Type
+          column.setDataType(converDataType(columnType[i]));
+          String physicalColumnID = Settings.getPhysicalColumnIDPrefix() + "_" + columnHeader[i];
+          column.setId(physicalColumnID);
+          table.getPhysicalColumns().add(column);
+                  
+          LogicalColumn logicalColumn = new LogicalColumn();
+          String columnID = Settings.getBusinessColumnIDPrefix();
+          logicalColumn.setId(columnID + columnHeader[i]);
+          
+          // the default name of the logical column.
+          // this inherits from the physical column.
+          // logicalColumn.setName(new LocalizedString(columnHeader[i]));
+          
+          logicalColumn.setPhysicalColumn(column);
+          logicalColumn.setLogicalTable(logicalTable);
+          
+          logicalTable.addLogicalColumn(logicalColumn);
+          
+          mainCategory.addLogicalColumn(logicalColumn);
+        }
         
-        // the default name of the logical column.
-        // this inherits from the physical column.
-        // logicalColumn.setName(new LocalizedString(columnHeader[i]));
+        logicalModel.getCategories().add(mainCategory);
         
-        logicalColumn.setPhysicalColumn(column);
-        logicalColumn.setLogicalTable(logicalTable);
+        Domain domain = new Domain();
+        domain.addPhysicalModel(model);
         
-        logicalTable.addLogicalColumn(logicalColumn);
-        
-        mainCategory.addLogicalColumn(logicalColumn);
-      }
-      String categoryID= Settings.getBusinessCategoryIDPrefix()+ modelName;
-      mainCategory.setId(categoryID);
-      mainCategory.setName(new LocalizedString(locale.getCode(), modelName));
-      
-      logicalModel.getCategories().add(mainCategory);
-      
-      Domain domain = new Domain();
-      domain.addPhysicalModel(model);
-      
-      List<LocaleType> locales = new ArrayList<LocaleType>();
-      locales.add(locale);
-      domain.setLocales(locales);
-      domain.addLogicalModel(logicalModel);
-      domain.setId(modelName);
-      return domain;
+        List<LocaleType> locales = new ArrayList<LocaleType>();
+        locales.add(locale);
+        domain.setLocales(locales);
+        domain.addLogicalModel(logicalModel);
+        domain.setId(modelName);
+        return domain;
 
       } catch(Exception e) {
         throw new SQLModelGeneratorException(e);
