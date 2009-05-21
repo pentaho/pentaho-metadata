@@ -36,7 +36,7 @@ public enum DataType
     this.type = type;
     this.name = name;
     this.description = description;
- }
+  }
 
   public int getType() {
     return type;

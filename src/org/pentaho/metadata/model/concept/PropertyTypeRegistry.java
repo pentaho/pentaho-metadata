@@ -12,16 +12,26 @@
 */
 package org.pentaho.metadata.model.concept;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.pentaho.metadata.model.concept.security.RowLevelSecurity;
+import org.pentaho.metadata.model.concept.security.Security;
 import org.pentaho.metadata.model.concept.types.AggregationType;
+import org.pentaho.metadata.model.concept.types.Alignment;
+import org.pentaho.metadata.model.concept.types.Color;
+import org.pentaho.metadata.model.concept.types.ColumnWidth;
 import org.pentaho.metadata.model.concept.types.DataType;
+import org.pentaho.metadata.model.concept.types.FieldType;
+import org.pentaho.metadata.model.concept.types.Font;
 import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
+import org.pentaho.metadata.model.concept.types.TableType;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
 import org.pentaho.pms.messages.Messages;
@@ -66,7 +76,30 @@ public class PropertyTypeRegistry {
     addPropertyType(TargetTableType.class);
     addPropertyType(TargetColumnType.class);
     addPropertyType(AggregationType.class);
-    addPropertyType(LocaleType.class);
+    
+    // this isfor agg lists, 
+    // we will need another way to express lists
+    addPropertyType(List.class);
+    
+    // not used directly
+    // addPropertyType(LocaleType.class);
+    
+    addPropertyType(Alignment.class);
+    addPropertyType(Color.class);
+    addPropertyType(ColumnWidth.class);
+    addPropertyType(FieldType.class);
+    addPropertyType(Font.class);
+    addPropertyType(TableType.class);
+    addPropertyType(RowLevelSecurity.class);
+    addPropertyType(Security.class);
+    addPropertyType(Double.class);
+    addPropertyType(Boolean.class);
+    addPropertyType(Date.class);
+
+    // note that URL is not GWT compatible, we'll need to figure out what to do with this
+    // once we move towards a fully supported thin client metadata editor
+    addPropertyType(URL.class);
+    
   }
   
   public void addPropertyType(Class clazz) {

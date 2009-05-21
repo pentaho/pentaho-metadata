@@ -1,6 +1,10 @@
 package org.pentaho.metadata.util;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,12 +21,21 @@ import org.pentaho.metadata.model.SqlPhysicalColumn;
 import org.pentaho.metadata.model.SqlPhysicalModel;
 import org.pentaho.metadata.model.SqlPhysicalTable;
 import org.pentaho.metadata.model.concept.IConcept;
+import org.pentaho.metadata.model.concept.security.RowLevelSecurity;
+import org.pentaho.metadata.model.concept.security.Security;
+import org.pentaho.metadata.model.concept.security.SecurityOwner;
 import org.pentaho.metadata.model.concept.types.AggregationType;
+import org.pentaho.metadata.model.concept.types.Alignment;
+import org.pentaho.metadata.model.concept.types.Color;
 import org.pentaho.metadata.model.concept.types.DataType;
+import org.pentaho.metadata.model.concept.types.FieldType;
+import org.pentaho.metadata.model.concept.types.Font;
 import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
+import org.pentaho.metadata.model.concept.types.TableType;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
+import org.pentaho.metadata.model.concept.types.ColumnWidth.WidthType;
 import org.pentaho.metadata.query.model.Constraint;
 import org.pentaho.metadata.query.model.Order;
 import org.pentaho.metadata.query.model.Query;
@@ -40,12 +53,29 @@ import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.schema.concept.types.aggregation.ConceptPropertyAggregation;
+import org.pentaho.pms.schema.concept.types.aggregation.ConceptPropertyAggregationList;
+import org.pentaho.pms.schema.concept.types.alignment.AlignmentSettings;
+import org.pentaho.pms.schema.concept.types.alignment.ConceptPropertyAlignment;
 import org.pentaho.pms.schema.concept.types.bool.ConceptPropertyBoolean;
+import org.pentaho.pms.schema.concept.types.color.ColorSettings;
+import org.pentaho.pms.schema.concept.types.color.ConceptPropertyColor;
+import org.pentaho.pms.schema.concept.types.columnwidth.ConceptPropertyColumnWidth;
 import org.pentaho.pms.schema.concept.types.datatype.ConceptPropertyDataType;
 import org.pentaho.pms.schema.concept.types.datatype.DataTypeSettings;
+import org.pentaho.pms.schema.concept.types.date.ConceptPropertyDate;
+import org.pentaho.pms.schema.concept.types.fieldtype.ConceptPropertyFieldType;
+import org.pentaho.pms.schema.concept.types.fieldtype.FieldTypeSettings;
+import org.pentaho.pms.schema.concept.types.font.ConceptPropertyFont;
+import org.pentaho.pms.schema.concept.types.font.FontSettings;
 import org.pentaho.pms.schema.concept.types.localstring.ConceptPropertyLocalizedString;
 import org.pentaho.pms.schema.concept.types.localstring.LocalizedStringSettings;
+import org.pentaho.pms.schema.concept.types.number.ConceptPropertyNumber;
+import org.pentaho.pms.schema.concept.types.rowlevelsecurity.ConceptPropertyRowLevelSecurity;
+import org.pentaho.pms.schema.concept.types.security.ConceptPropertySecurity;
 import org.pentaho.pms.schema.concept.types.string.ConceptPropertyString;
+import org.pentaho.pms.schema.concept.types.tabletype.ConceptPropertyTableType;
+import org.pentaho.pms.schema.concept.types.tabletype.TableTypeSettings;
+import org.pentaho.pms.schema.concept.types.url.ConceptPropertyURL;
 import org.pentaho.pms.util.ObjectAlreadyExistsException;
 
 public class ThinModelConverter {
@@ -310,23 +340,27 @@ public class ThinModelConverter {
   }
   
   private static Object convertPropertyFromLegacy(String propertyName, ConceptPropertyInterface property) {
+
     if (property instanceof ConceptPropertyString) {
-      return (String) ((ConceptPropertyString)property).getValue();
-    //} else if (property instanceof LocalizedString) {
+      return (String) property.getValue();
     } else if (property instanceof ConceptPropertyLocalizedString) {
-      LocalizedStringSettings settings = (LocalizedStringSettings)((ConceptPropertyLocalizedString)property).getValue();
+      LocalizedStringSettings settings = (LocalizedStringSettings)property.getValue();
       return new LocalizedString(settings.getLocaleStringMap());
     } else if (property instanceof ConceptPropertyDataType) {
-      DataTypeSettings settings = (DataTypeSettings) ((ConceptPropertyDataType)property).getValue();
+      DataTypeSettings settings = (DataTypeSettings) property.getValue();
       return DataType.values()[settings.getType()];
-    } else if (property instanceof List) {
-      // TODO: List<AggregationType>
-
+    } else if (property instanceof ConceptPropertyAggregationList) {
+      List<AggregationSettings> orig = (List<AggregationSettings>)property.getValue();
+      List<AggregationType> list = new ArrayList<AggregationType>();
+      for (AggregationSettings setting : orig) {
+        list.add(AggregationType.values()[setting.getType()]);
+      }
+      return list;
     } else if (property instanceof ConceptPropertyAggregation) {
-      AggregationSettings aggSettings = (AggregationSettings)((ConceptPropertyAggregation)property).getValue();
+      AggregationSettings aggSettings = (AggregationSettings)property.getValue();
       return AggregationType.values()[aggSettings.getType()];
     } else if (property instanceof ConceptPropertyBoolean) {
-      Boolean boolVal = (Boolean)((ConceptPropertyBoolean)property).getValue();
+      Boolean boolVal = (Boolean)property.getValue();
       if (propertyName.equals("exact")) {
         if (boolVal) {
           return TargetColumnType.OPEN_FORMULA;
@@ -336,6 +370,55 @@ public class ThinModelConverter {
       } else {
         return boolVal;
       }
+    } else if (property instanceof ConceptPropertySecurity) {
+      org.pentaho.pms.schema.security.Security security = 
+        (org.pentaho.pms.schema.security.Security)property.getValue();
+      Map<SecurityOwner, Integer> map = new HashMap<SecurityOwner, Integer>();
+      for (org.pentaho.pms.schema.security.SecurityOwner owner : security.getOwners()) {
+        SecurityOwner ownerObj = new SecurityOwner(SecurityOwner.OwnerType.values()[owner.getOwnerType()], owner.getOwnerName());
+        Integer val = security.getOwnerRights(owner);
+        map.put(ownerObj, val);
+      }
+      return new Security(map);
+    } else if (property instanceof ConceptPropertyRowLevelSecurity) {
+      org.pentaho.pms.schema.security.RowLevelSecurity security = 
+        (org.pentaho.pms.schema.security.RowLevelSecurity)property.getValue();
+      RowLevelSecurity securityObj = new RowLevelSecurity();
+      securityObj.setType(RowLevelSecurity.Type.values()[security.getType().ordinal()]);
+      securityObj.setGlobalConstraint(security.getGlobalConstraint());
+      
+      Map<SecurityOwner, String> map = new HashMap<SecurityOwner, String>();
+      for (org.pentaho.pms.schema.security.SecurityOwner owner : security.getRoleBasedConstraintMap().keySet()) {
+        SecurityOwner ownerObj = new SecurityOwner(SecurityOwner.OwnerType.values()[owner.getOwnerType()], owner.getOwnerName());
+        map.put(ownerObj, security.getRoleBasedConstraintMap().get(owner));
+      }
+      securityObj.setRoleBasedConstraintMap(map);
+      return securityObj;
+    } else if (property instanceof ConceptPropertyAlignment) {
+      AlignmentSettings alignment = (AlignmentSettings)property.getValue();
+      return Alignment.values()[alignment.getType()];
+    } else if (property instanceof ConceptPropertyColor) {
+      ColorSettings color = (ColorSettings)property.getValue();
+      return new Color(color.getRed(), color.getGreen(), color.getBlue());
+    } else if (property instanceof ConceptPropertyColumnWidth) {
+      org.pentaho.pms.schema.concept.types.columnwidth.ColumnWidth colWidth = 
+        (org.pentaho.pms.schema.concept.types.columnwidth.ColumnWidth)property.getValue();
+      return new org.pentaho.metadata.model.concept.types.ColumnWidth(WidthType.values()[colWidth.getType()], colWidth.getWidth().doubleValue());
+    } else if (property instanceof ConceptPropertyDate) {
+      return property.getValue();
+    } else if (property instanceof ConceptPropertyURL) {
+      return property.getValue();
+    } else if (property instanceof ConceptPropertyFieldType) {
+      FieldTypeSettings fieldType = (FieldTypeSettings)property.getValue();
+      return FieldType.values()[fieldType.getType()];
+    } else if (property instanceof ConceptPropertyTableType) {
+      TableTypeSettings tableType = (TableTypeSettings)property.getValue();
+      return TableType.values()[tableType.getType()];
+    } else if (property instanceof ConceptPropertyFont) {
+      FontSettings font = (FontSettings)property.getValue();
+      return new Font(font.getName(), font.getHeight(), font.isBold(), font.isItalic());
+    } else if (property instanceof ConceptPropertyNumber) {
+      return ((BigDecimal)property.getValue()).doubleValue();
     }
     
     logger.error("unsupported property: " + property);
