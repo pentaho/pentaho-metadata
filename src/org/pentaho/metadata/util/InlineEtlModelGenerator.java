@@ -131,8 +131,8 @@ public class InlineEtlModelGenerator {
       InlineEtlPhysicalColumn column = new InlineEtlPhysicalColumn();
       column.setTable(table);
       column.setId("PC_" + i);
+      column.setFieldName(fieldNames[i]);
       column.setName(new LocalizedString(locale.getCode(), fieldNames[i]));
-      column.setColumnNumber(i);
       column.setDataType(DataType.STRING);
       table.getPhysicalColumns().add(column);
       

@@ -24,6 +24,7 @@ public class InlineEtlPhysicalColumn extends AbstractPhysicalColumn {
   private static final long serialVersionUID = 2960505010295811572L;
 
   public static final String COLUMN_NUMBER = "column_number";
+  public static final String FIELD_NAME = "field_name";
   
   private InlineEtlPhysicalTable table;
   
@@ -35,14 +36,12 @@ public class InlineEtlPhysicalColumn extends AbstractPhysicalColumn {
     return table;
   }
   
-  public Integer getColumnNumber() {
-    return (Integer)getProperty(COLUMN_NUMBER);
+  public String getFieldName() {
+    return (String)getProperty(FIELD_NAME);
   }
   
-  public void setColumnNumber(Integer columnNumber) {
-    setProperty(COLUMN_NUMBER, columnNumber);
+  public void setFieldName(String fieldName) {
+    setProperty(FIELD_NAME, fieldName);
   }
-  
-  
 
 }

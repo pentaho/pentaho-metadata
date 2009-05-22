@@ -14,6 +14,9 @@ package org.pentaho.metadata;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.pentaho.commons.connection.IPentahoResultSet;
+import org.pentaho.di.core.util.EnvUtil;
+import org.pentaho.di.trans.StepLoader;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.InlineEtlPhysicalColumn;
@@ -23,6 +26,9 @@ import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.LogicalTable;
 import org.pentaho.metadata.model.concept.types.DataType;
+import org.pentaho.metadata.query.impl.ietl.InlineEtlQueryExecutor;
+import org.pentaho.metadata.query.model.Query;
+import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.metadata.util.InlineEtlModelGenerator;
 import org.pentaho.pms.messages.util.LocaleHelper;
 
@@ -58,7 +64,7 @@ public class InlineEtlModelGeneratorTest {
     Assert.assertEquals("PC_0", column.getId());
     Assert.assertEquals(DataType.STRING, column.getDataType());
     Assert.assertEquals("Data1", column.getName().getString(locale));
-    Assert.assertEquals(new Integer(0), column.getColumnNumber());
+    Assert.assertEquals("Data1", column.getFieldName());
     
     // TEST LOGICAL MODEL
     
@@ -87,6 +93,41 @@ public class InlineEtlModelGeneratorTest {
     
     Assert.assertEquals(logicalColumn, category.getLogicalColumns().get(0));
     
+  }
+  
+  @Test
+  public void testQueryExecution() throws Exception {
+    
+    EnvUtil.environmentInit();
+    StepLoader.init();
+    
+    InlineEtlModelGenerator gen = new InlineEtlModelGenerator(
+        "testmodel", 
+        "test/solution/system/metadata/csvfiles/example.csv",
+        true,
+        "\"",
+        ","
+    );
+    
+    Domain domain = gen.generate();
+
+    LogicalModel model = domain.getLogicalModels().get(0);
+    Category category = model.getCategories().get(0);
+    Query query = new Query(domain, model);
+
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(0), null));
+    
+    InlineEtlQueryExecutor executor = new InlineEtlQueryExecutor();
+    IPentahoResultSet resultset = executor.executeQuery(query);
+    
+    Assert.assertEquals(5, resultset.getRowCount());
+    Assert.assertEquals(1, resultset.getColumnCount());
+    Assert.assertEquals("bc_0_Data1", resultset.getMetaData().getColumnHeaders()[0][0]);
+    Assert.assertEquals("1", resultset.getValueAt(0, 0));
+    Assert.assertEquals("2", resultset.getValueAt(1, 0));
+    Assert.assertEquals("3", resultset.getValueAt(2, 0));
+    Assert.assertEquals("4", resultset.getValueAt(3, 0));
+    Assert.assertEquals("5", resultset.getValueAt(4, 0));
   }
   
 }
