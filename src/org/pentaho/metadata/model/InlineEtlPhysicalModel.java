@@ -35,7 +35,11 @@ public class InlineEtlPhysicalModel extends Concept implements IPhysicalModel {
   
   // this contains a list of the physical tables
   private List<InlineEtlPhysicalTable> physicalTables = new ArrayList<InlineEtlPhysicalTable>();
-  
+
+  public InlineEtlPhysicalModel() {
+    super();
+  }
+
   public String getFileLocation() {
     return (String)getProperty(FILE_LOCATION);
   }

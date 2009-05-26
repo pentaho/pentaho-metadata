@@ -27,6 +27,9 @@ public class InlineEtlPhysicalColumn extends AbstractPhysicalColumn {
   public static final String FIELD_NAME = "field_name";
   
   private InlineEtlPhysicalTable table;
+  public InlineEtlPhysicalColumn() {
+    super();
+  }
   
   public void setTable(InlineEtlPhysicalTable table) {
     this.table = table;

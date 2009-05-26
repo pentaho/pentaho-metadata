@@ -30,7 +30,12 @@ public class InlineEtlPhysicalTable extends Concept implements IPhysicalTable {
   private InlineEtlPhysicalModel parent;
   
   private List<IPhysicalColumn> physicalColumns = new ArrayList<IPhysicalColumn>();
+
+  public InlineEtlPhysicalTable() {
+    super();
   
+  }
+
   public InlineEtlPhysicalTable(InlineEtlPhysicalModel parent) {
     this.parent = parent;
   }
