@@ -2,6 +2,7 @@ package org.pentaho.metadata.util;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -82,8 +83,6 @@ import org.pentaho.pms.schema.concept.types.tabletype.ConceptPropertyTableType;
 import org.pentaho.pms.schema.concept.types.tabletype.TableTypeSettings;
 import org.pentaho.pms.schema.concept.types.url.ConceptPropertyURL;
 import org.pentaho.pms.util.ObjectAlreadyExistsException;
-
-import edu.emory.mathcs.backport.java.util.Collections;
 
 public class ThinModelConverter {
   
