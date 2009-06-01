@@ -11,12 +11,14 @@ import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.LogicalTable;
+import org.pentaho.metadata.model.SqlDataSource;
 import org.pentaho.metadata.model.SqlPhysicalColumn;
 import org.pentaho.metadata.model.SqlPhysicalModel;
 import org.pentaho.metadata.model.SqlPhysicalTable;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
+import org.pentaho.metadata.model.concept.types.TargetColumnType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
 import org.pentaho.metadata.util.SerializationService;
 import org.pentaho.metadata.util.ThinModelConverter;
@@ -36,7 +38,9 @@ public class ThinModelTest {
     // theoretically be used to execute sql directly.
     
     SqlPhysicalModel model = new SqlPhysicalModel();
-    model.setDatasource("SampleData");
+    SqlDataSource dataSource = new SqlDataSource();
+    dataSource.setDatabaseName("SampleData");
+    model.setDatasource(dataSource);
     SqlPhysicalTable table = new SqlPhysicalTable(model);
     model.getPhysicalTables().add(table);
     table.setTargetTableType(TargetTableType.INLINE_SQL);
@@ -44,7 +48,7 @@ public class ThinModelTest {
     
     // basic tests
     
-    Assert.assertEquals("SampleData", model.getDatasource());
+    Assert.assertEquals("SampleData", model.getDatasource().getDatabaseName());
     Assert.assertEquals(1, model.getPhysicalTables().size());
     Assert.assertEquals(TargetTableType.INLINE_SQL, model.getPhysicalTables().get(0).getTargetTableType());
     Assert.assertEquals("select * from customers", model.getPhysicalTables().get(0).getTargetTable());
@@ -60,7 +64,9 @@ public class ThinModelTest {
     // MQL execution
     
     SqlPhysicalModel model = new SqlPhysicalModel();
-    model.setDatasource("SampleData");
+    SqlDataSource dataSource = new SqlDataSource();
+    dataSource.setDatabaseName("SampleData");
+    model.setDatasource(dataSource);
     SqlPhysicalTable table = new SqlPhysicalTable(model);
     table.setId("PT1");
     model.getPhysicalTables().add(table);
@@ -113,7 +119,9 @@ public class ThinModelTest {
     String locale = LocaleHelper.getLocale().toString();
     
     SqlPhysicalModel model = new SqlPhysicalModel();
-    model.setDatasource("SampleData");
+    SqlDataSource dataSource = new SqlDataSource();
+    dataSource.setDatabaseName("SampleData");
+    model.setDatasource(dataSource);
     SqlPhysicalTable table = new SqlPhysicalTable(model);
     model.getPhysicalTables().add(table);
     table.setTargetTableType(TargetTableType.INLINE_SQL);
@@ -165,7 +173,7 @@ public class ThinModelTest {
     
     Assert.assertEquals(1, domain2.getPhysicalModels().size());
     SqlPhysicalModel model2 = (SqlPhysicalModel)domain2.getPhysicalModels().get(0);
-    Assert.assertEquals("SampleData", model2.getDatasource());
+    Assert.assertEquals("SampleData", model2.getDatasource().getDatabaseName());
     Assert.assertEquals(1, model.getPhysicalTables().size());
     Assert.assertEquals(TargetTableType.INLINE_SQL, model.getPhysicalTables().get(0).getTargetTableType());
     
@@ -184,7 +192,9 @@ public class ThinModelTest {
     String locale = LocaleHelper.getLocale().toString();
     
     SqlPhysicalModel model = new SqlPhysicalModel();
-    model.setDatasource("SampleData");
+    SqlDataSource dataSource = new SqlDataSource();
+    dataSource.setDatabaseName("SampleData");
+    model.setDatasource(dataSource);
     SqlPhysicalTable table = new SqlPhysicalTable(model);
     table.setId("PT1");
     model.getPhysicalTables().add(table);
@@ -213,7 +223,7 @@ public class ThinModelTest {
     LogicalColumn logicalColumn = new LogicalColumn();
     logicalColumn.setId("LC_CUSTOMERNAME");
     logicalColumn.setPhysicalColumn(column);
-    
+    logicalColumn.setLogicalTable(logicalTable);
     logicalTable.addLogicalColumn(logicalColumn);
     
     Category mainCategory = new Category();
@@ -235,8 +245,9 @@ public class ThinModelTest {
     return domain;
   }
   
+  
   @Test
-  public void testToLegacy() {
+  public void testToFromLegacy() {
     Domain domain = getBasicDomain();
     SchemaMeta meta = null;
     try {
@@ -275,6 +286,42 @@ public class ThinModelTest {
     Assert.assertEquals("select * from customers", col.getPhysicalColumn().getTable().getTargetTable());
     Assert.assertEquals("customername", col.getPhysicalColumn().getFormula());
     Assert.assertEquals(false, col.getPhysicalColumn().isExact());
+  
+    Domain domain2 = null;
     
+    try {
+      domain2 = ThinModelConverter.convertFromLegacy(meta);
+    } catch (Exception e){
+      e.printStackTrace();
+      Assert.fail();
+    }
+    
+    Assert.assertEquals(1, domain2.getLocales().size());
+    Assert.assertEquals("en_US", domain2.getLocales().get(0).getCode());
+    
+    // verify conversion worked.
+    LogicalModel logicalModel = domain2.findLogicalModel("MODEL");
+    Assert.assertNotNull(logicalModel);
+    Assert.assertEquals("My Model", logicalModel.getName().getString(locale));
+    Assert.assertEquals("A Description of the Model", logicalModel.getDescription().getString(locale));
+    
+    Category category = logicalModel.findCategory("CATEGORY");
+    Assert.assertNotNull(category);
+    Assert.assertEquals("Category", category.getName().getString(locale));
+    
+    Assert.assertEquals(1, category.getLogicalColumns().size());
+    
+    // this tests the inheritance of physical cols made it through
+    LogicalColumn column = category.getLogicalColumns().get(0);
+    Assert.assertEquals("Customer Name", column.getName().getString(locale));
+    Assert.assertEquals("Customer Name Desc", column.getDescription().getString(locale));
+    Assert.assertNotNull(column.getLogicalTable());
+    Assert.assertEquals("LT", column.getLogicalTable().getId());
+
+    Assert.assertEquals(column.getDataType(), DataType.STRING);
+    Assert.assertEquals("select * from customers", column.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_TABLE));
+    Assert.assertEquals("select * from customers", column.getPhysicalColumn().getPhysicalTable().getProperty(SqlPhysicalTable.TARGET_TABLE));
+    Assert.assertEquals("customername", column.getPhysicalColumn().getProperty(SqlPhysicalColumn.TARGET_COLUMN));
+    Assert.assertEquals(TargetColumnType.COLUMN_NAME, column.getPhysicalColumn().getProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE));
   }
 }

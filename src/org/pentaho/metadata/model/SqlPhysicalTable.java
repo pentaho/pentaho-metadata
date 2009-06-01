@@ -29,9 +29,9 @@ public class SqlPhysicalTable extends Concept implements IPhysicalTable{
 
   private static final long serialVersionUID = -2590635019353532334L;
 
-  private static final String TARGET_SCHEMA_PROPERTY = "target_schema";
-  private static final String TARGET_TABLE_PROPERTY = "target_table";
-  private static final String TARGET_TABLE_TYPE_PROPERTY = "target_table_type";
+  public static final String TARGET_SCHEMA = "target_schema";
+  public static final String TARGET_TABLE = "target_table";
+  public static final String TARGET_TABLE_TYPE = "target_table_type";
 
   SqlPhysicalModel model;
   List<IPhysicalColumn> physicalColumns = new ArrayList<IPhysicalColumn>();
@@ -56,26 +56,26 @@ public class SqlPhysicalTable extends Concept implements IPhysicalTable{
   }
   
   public String getTargetSchema() {
-    return (String)getProperty(TARGET_SCHEMA_PROPERTY);
+    return (String)getProperty(TARGET_SCHEMA);
   }
   
   public void setTargetSchema(String targetSchema) {
-    setProperty(TARGET_SCHEMA_PROPERTY, targetSchema);
+    setProperty(TARGET_SCHEMA, targetSchema);
   }
   
   public String getTargetTable() {
-    return (String)getProperty(TARGET_TABLE_PROPERTY);
+    return (String)getProperty(TARGET_TABLE);
   }
 
   public void setTargetTable(String targetTable) {
-    setProperty(TARGET_TABLE_PROPERTY, targetTable);
+    setProperty(TARGET_TABLE, targetTable);
   }
   
   public TargetTableType getTargetTableType() {
-    return (TargetTableType)getProperty(TARGET_TABLE_TYPE_PROPERTY);
+    return (TargetTableType)getProperty(TARGET_TABLE_TYPE);
   }
   
   public void setTargetTableType(TargetTableType targetTableType) {
-    setProperty(TARGET_TABLE_TYPE_PROPERTY, targetTableType);
+    setProperty(TARGET_TABLE_TYPE, targetTableType);
   }
 }

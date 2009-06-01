@@ -53,6 +53,22 @@ public class LogicalModel extends Concept {
     }
     return null;
   }
+
+  /**
+   * finds a logical table within the model.
+   * 
+   * @param tableId the table to find
+   * @return a logical table object.
+   */
+  public LogicalTable findLogicalTable(String tableId) {
+    for (LogicalTable table : getLogicalTables()) {
+      if (tableId.equals(table.getId())) {
+        return table;
+      }
+    }
+    return null;
+  }
+
   
   /**
    * finds a logical column within the model.

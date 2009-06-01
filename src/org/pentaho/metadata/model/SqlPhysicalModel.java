@@ -25,13 +25,15 @@ import org.pentaho.metadata.model.concept.Concept;
  */
 public class SqlPhysicalModel extends Concept implements IPhysicalModel{
   
+  private static final long serialVersionUID = 8834210720816769790L;
+  
   // this property should be replaced with a thin 
   // representation of database meta, which is required
   // for full backward compatibility.
   
   /** returns a pentaho or JNDI datasource **/
-  private String datasource;
-  
+  private SqlDataSource datasource;
+
   // this contains a list of the physical tables
   private List<SqlPhysicalTable> physicalTables = new ArrayList<SqlPhysicalTable>();
 
@@ -39,11 +41,11 @@ public class SqlPhysicalModel extends Concept implements IPhysicalModel{
     super();
   }
   
-  public void setDatasource(String datasource) {
+  public void setDatasource(SqlDataSource datasource) {
     this.datasource = datasource;
   }
 
-  public String getDatasource() {
+  public SqlDataSource getDatasource() {
     return datasource;
   }
   

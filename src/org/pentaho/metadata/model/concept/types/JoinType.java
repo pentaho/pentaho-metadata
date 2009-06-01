@@ -9,16 +9,28 @@
  * Software distributed under the Mozilla Public License is distributed on an "AS IS"
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
  * the license for the specific language governing your rights and limitations.
-*/
-package org.pentaho.metadata.model;
+ */
+package org.pentaho.metadata.model.concept.types;
 
-import org.pentaho.metadata.model.concept.Concept;
-
-public class PhysicalDataSource extends Concept {
-
-  public PhysicalDataSource() {
-    super();
-    // TODO Auto-generated constructor stub
+/**
+ * The join type between two logical tables.
+ * 
+ * @author Will Gorman (wgorman@pentaho.com)
+ *
+ */
+public enum JoinType {
+  INNER("Inner"), //$NON-NLS-1$
+  LEFT_OUTER("Left outer"), //$NON-NLS-1$
+  RIGHT_OUTER("Right outer"), //$NON-NLS-1$
+  FULL_OUTER("Full outer"); //$NON-NLS-1$
+  
+  String type;
+  
+  private JoinType(String type) {
+    this.type = type;
   }
-
+  
+  public String getType() {
+    return type;
+  }
 }

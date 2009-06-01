@@ -7,6 +7,7 @@ import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.LogicalTable;
+import org.pentaho.metadata.model.SqlDataSource;
 import org.pentaho.metadata.model.SqlPhysicalColumn;
 import org.pentaho.metadata.model.SqlPhysicalModel;
 import org.pentaho.metadata.model.SqlPhysicalTable;
@@ -30,7 +31,9 @@ public class ThinQueryTest {
     String locale = LocaleHelper.getLocale().toString();
     
     SqlPhysicalModel model = new SqlPhysicalModel();
-    model.setDatasource("SampleData");
+    SqlDataSource dataSource = new SqlDataSource();
+    dataSource.setDatabaseName("SampleData");
+    model.setDatasource(dataSource);
     SqlPhysicalTable table = new SqlPhysicalTable(model);
     table.setId("PT1");
     model.getPhysicalTables().add(table);

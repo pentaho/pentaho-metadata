@@ -2,6 +2,7 @@ package org.pentaho.metadata.util;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,10 +17,13 @@ import org.pentaho.metadata.model.IPhysicalModel;
 import org.pentaho.metadata.model.IPhysicalTable;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
+import org.pentaho.metadata.model.LogicalRelationship;
 import org.pentaho.metadata.model.LogicalTable;
+import org.pentaho.metadata.model.SqlDataSource;
 import org.pentaho.metadata.model.SqlPhysicalColumn;
 import org.pentaho.metadata.model.SqlPhysicalModel;
 import org.pentaho.metadata.model.SqlPhysicalTable;
+import org.pentaho.metadata.model.SqlDataSource.DataSourceType;
 import org.pentaho.metadata.model.concept.IConcept;
 import org.pentaho.metadata.model.concept.security.RowLevelSecurity;
 import org.pentaho.metadata.model.concept.security.Security;
@@ -49,6 +53,7 @@ import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.PhysicalColumn;
 import org.pentaho.pms.schema.PhysicalTable;
+import org.pentaho.pms.schema.RelationshipMeta;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
@@ -78,6 +83,8 @@ import org.pentaho.pms.schema.concept.types.tabletype.TableTypeSettings;
 import org.pentaho.pms.schema.concept.types.url.ConceptPropertyURL;
 import org.pentaho.pms.util.ObjectAlreadyExistsException;
 
+import edu.emory.mathcs.backport.java.util.Collections;
+
 public class ThinModelConverter {
   
   private static final Log logger = LogFactory.getLog(ThinModelConverter.class);
@@ -89,16 +96,22 @@ public class ThinModelConverter {
     
     // convert locale list
     if (domain.getLocales() != null) {
+      int order = 0;
       for (LocaleType localeType : domain.getLocales()) {
+        boolean found = false;
         for (String code : schemaMeta.getLocales().getLocaleCodes()) {
-          if (!code.equals(localeType.getCode())) {
-            LocaleInterface localeInterface = new LocaleMeta();
-            localeInterface.setCode(localeType.getCode());
-            localeInterface.setDescription(localeType.getDescription());
-            localeInterface.setActive(true);
-            schemaMeta.getLocales().addLocale(localeInterface);
+          if (code.equals(localeType.getCode())) {
+            found = true;
             break;
-          }
+          } 
+        }
+        if (!found) {
+          LocaleInterface localeInterface = new LocaleMeta();
+          localeInterface.setCode(localeType.getCode());
+          localeInterface.setDescription(localeType.getDescription());
+          localeInterface.setOrder(order++);
+          localeInterface.setActive(true);
+          schemaMeta.getLocales().addLocale(localeInterface);
         }
       }
     }
@@ -114,15 +127,18 @@ public class ThinModelConverter {
         
         // hardcode to mysql, the platform will autodetect the correct datasource
         // type before generating SQL.
-
-        database = new DatabaseMeta(
-            ((SqlPhysicalModel) physicalModel).getDatasource(), 
+        if (sqlModel.getDatasource().getType() == DataSourceType.JNDI) {
+          database = new DatabaseMeta(
+            ((SqlPhysicalModel) physicalModel).getDatasource().getDatabaseName(), 
             "MYSQL", 
             "JNDI", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
-        
+          database.getDatabaseInterface().setDatabaseName(((SqlPhysicalModel) physicalModel).getDatasource().getDatabaseName());
+        } else {
+          // TODO: support JDBC
+        }
         // set the JNDI connection string
         
-        database.getDatabaseInterface().setDatabaseName(((SqlPhysicalModel) physicalModel).getDatasource());
+
         schemaMeta.addDatabase(database);
         
         // TODO: convert domain concepts
@@ -132,6 +148,7 @@ public class ThinModelConverter {
         for (IPhysicalTable table : sqlModel.getPhysicalTables()) {
           SqlPhysicalTable sqlTable = (SqlPhysicalTable)table;
           PhysicalTable physicalTable = new PhysicalTable();
+          physicalTable.setDatabaseMeta(database);
           convertConceptToLegacy(table, physicalTable);
           
           for (IPhysicalColumn col : sqlTable.getPhysicalColumns()) {
@@ -324,7 +341,7 @@ public class ThinModelConverter {
       Object prop = convertPropertyFromLegacy(propertyName, property);
       String newPropertyName = convertPropertyNameFromLegacy(propertyName);
       if (prop != null) {
-        concept.setProperty(propertyName, prop);
+        concept.setProperty(newPropertyName, prop);
       }
     }
   }
@@ -418,21 +435,63 @@ public class ThinModelConverter {
       FontSettings font = (FontSettings)property.getValue();
       return new Font(font.getName(), font.getHeight(), font.isBold(), font.isItalic());
     } else if (property instanceof ConceptPropertyNumber) {
-      return ((BigDecimal)property.getValue()).doubleValue();
+      if (property.getValue() != null) {
+        return ((BigDecimal)property.getValue()).doubleValue();
+      } else {
+        return null;
+      }
     }
     
     logger.error("unsupported property: " + property);
     return null;
   }
   
-  public static Domain convertFromLegacy(SchemaMeta schemaMeta) {
+  public static Domain convertFromLegacy(SchemaMeta schemaMeta) throws Exception {
     // SchemaMeta schemaMeta = new SchemaMeta();
     Domain domain = new Domain();
     domain.setId(schemaMeta.getDomainName());
+    List<LocaleType> localeTypes = new ArrayList<LocaleType>();
 
+    // the new model uses the natural ordering of the list vs. a separate ordinal
+    
+    List<LocaleInterface> list = (List<LocaleInterface>)schemaMeta.getLocales().getLocaleList();
+    Collections.sort(list, new Comparator<LocaleInterface>() {
+      // TODO: Test ordering
+      public int compare(LocaleInterface o1, LocaleInterface o2) {
+        if (o1.getOrder() > o2.getOrder()) {
+          return -1;
+        } else if (o1.getOrder() < o2.getOrder()) {
+          return 1;
+        } else {
+          return 0;
+        }
+      }
+    });
+    
+    for (LocaleInterface locale : list) {
+      LocaleType localeType = new LocaleType();
+      localeType.setDescription(locale.getDescription());
+      localeType.setCode(locale.getCode());
+      localeTypes.add(localeType);
+    }
+    
+    domain.setLocales(localeTypes);
+    
     for (DatabaseMeta database : schemaMeta.getDatabases()) {
       SqlPhysicalModel sqlModel = new SqlPhysicalModel();
-      sqlModel.setDatasource(database.getDatabaseName());
+      SqlDataSource dataSource = new SqlDataSource();
+      if (database.getAccessType() == DatabaseMeta.TYPE_ACCESS_JNDI) {
+        dataSource.setType(DataSourceType.JNDI); 
+        dataSource.setDatabaseName(database.getDatabaseName()); 
+      } else {
+        dataSource.setType(DataSourceType.JDBC);
+        dataSource.setDriverClass(database.getDriverClass());
+        dataSource.setUsername(database.getUsername());
+        dataSource.setPassword(database.getPassword());
+        dataSource.setUrl(database.getURL());
+        
+      }
+      sqlModel.setDatasource(dataSource);
       
       PhysicalTable tables[] = schemaMeta.getTablesOnDatabase(database);
       for (PhysicalTable table : tables) {
@@ -448,7 +507,7 @@ public class ThinModelConverter {
         
         for (PhysicalColumn column : table.getPhysicalColumns()) {
           SqlPhysicalColumn sqlColumn = new SqlPhysicalColumn(sqlTable);
-          convertConceptFromLegacy(table, sqlTable);
+          convertConceptFromLegacy(column, sqlColumn);
           sqlTable.getPhysicalColumns().add(sqlColumn);
         }
         sqlModel.getPhysicalTables().add(sqlTable);
@@ -463,6 +522,7 @@ public class ThinModelConverter {
     for (BusinessModel model : schemaMeta.getBusinessModels()) {
       LogicalModel logicalModel = new LogicalModel();
       convertConceptFromLegacy(model, logicalModel);
+      
       for (Object biztable : model.getBusinessTables()) {
         BusinessTable businessTable = (BusinessTable)biztable;
         LogicalTable logicalTable = new LogicalTable();
@@ -485,6 +545,39 @@ public class ThinModelConverter {
         logicalModel.getLogicalTables().add(logicalTable);
       }
 
+      for (RelationshipMeta rel : (List<RelationshipMeta>)model.getRelationships()) {
+        LogicalRelationship logical = new LogicalRelationship();
+        logical.setComplex(rel.isComplex());
+        logical.setComplexJoin(rel.getComplexJoin());
+        logical.setJoinOrderKey(rel.getJoinOrderKey());
+        logical.setDescription(new LocalizedString(domain.getLocales().get(0).getCode(), rel.getDescription()));
+        
+        // what happens if we set a null value for a property? from an inheritance perspective, there should be a difference
+        // between null and inherited.
+        LogicalTable toTable = null;
+        LogicalTable fromTable = null;
+        LogicalColumn toColumn = null;
+        LogicalColumn fromColumn = null;
+        
+        if (rel.getTableTo() != null) {
+          toTable = logicalModel.findLogicalTable(rel.getTableTo().getId());
+        }
+        if (rel.getTableFrom() != null) {
+          fromTable = logicalModel.findLogicalTable(rel.getTableFrom().getId());
+        }
+        if (rel.getFieldTo() != null) {
+          toColumn = logicalModel.findLogicalColumn(rel.getFieldTo().getId());
+        }
+        if (rel.getFieldFrom() != null) {
+          fromColumn = logicalModel.findLogicalColumn(rel.getFieldFrom().getId());
+        }
+        
+        logical.setToTable(toTable);
+        logical.setToColumn(toColumn);
+        logical.setFromTable(fromTable);
+        logical.setFromColumn(fromColumn);
+      }
+      
       for (BusinessCategory bizCategory : model.getRootCategory().getBusinessCategories()) {
         Category category = new Category();
         convertConceptFromLegacy(bizCategory, category);

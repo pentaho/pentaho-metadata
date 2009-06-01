@@ -84,7 +84,7 @@ public class LogicalColumn extends Concept {
     this.logicalTable = logicalTable;
   }
 
-  private LogicalTable getLogicalTable() {
+  public LogicalTable getLogicalTable() {
     return logicalTable;
   }  
 }

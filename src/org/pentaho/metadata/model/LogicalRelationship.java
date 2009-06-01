@@ -13,6 +13,7 @@
 package org.pentaho.metadata.model;
 
 import org.pentaho.metadata.model.concept.Concept;
+import org.pentaho.metadata.model.concept.types.RelationshipType;
 
 /**
  * Logical relationships define the relationship between two
@@ -28,13 +29,49 @@ public class LogicalRelationship extends Concept {
 
   private static final long serialVersionUID = -2673951365033614344L;
   
+  public static final String COMPLEX = "complex";
+  public static final String COMPLEX_JOIN = "complex_join";
+  public static final String RELATIONSHIP_TYPE = "relationship_type";
+  public static final String JOIN_ORDER_KEY = "join_order_key";
+  
   private LogicalTable fromTable, toTable;
   private LogicalColumn fromColumn, toColumn;
-  /* where this relationship falls in relation to others */
-  private long ordinal;
-
+  
   public LogicalRelationship() {
     super();
+    setComplex(false);
+  }
+  
+  public Boolean getComplex() {
+    return (Boolean)getProperty(COMPLEX);
+  }
+  
+  public void setComplex(Boolean complex) {
+    setProperty(COMPLEX, complex);
+  }
+  
+  public String getComplexJoin() {
+    return (String)getProperty(COMPLEX_JOIN);
+  }
+  
+  public void setComplexJoin(String complexJoin) {
+    setProperty(COMPLEX_JOIN, complexJoin);
+  }
+  
+  public RelationshipType getRelationshipType() {
+    return (RelationshipType)getProperty(RELATIONSHIP_TYPE);
+  }
+  
+  public void setRelationshipType(RelationshipType relationshipType) {
+    setProperty(RELATIONSHIP_TYPE, relationshipType);
+  }
+  
+  public String getJoinOrderKey() {
+    return (String)getProperty(JOIN_ORDER_KEY);
+  }
+  
+  public void setJoinOrderKey(String joinOrderKey) {
+    setProperty(JOIN_ORDER_KEY, joinOrderKey);
   }
   
   public LogicalTable getFromTable() {
@@ -68,16 +105,5 @@ public class LogicalRelationship extends Concept {
   public void setToColumn(LogicalColumn toColumn) {
     this.toColumn = toColumn;
   }
-
-  public long getOrdinal() {
-    return ordinal;
-  }
-
-  public void setOrdinal(long ordinal) {
-    this.ordinal = ordinal;
-  }
-
-  //TODO give this enum the correct set of supported join types
-  public enum JoinType { OUTER, INNER, LEFT, RIGHT }
 
 }
