@@ -69,4 +69,10 @@ public class Selection implements Serializable {
     }
   }
   
+  public boolean equals(Object selection) {
+    Selection sel = (Selection)selection;
+    return sel.getLogicalColumn().equals(getLogicalColumn()) &&
+      sel.getAggregationType() == getAggregationType(); 
+  }
+  
 }

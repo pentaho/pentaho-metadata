@@ -25,10 +25,15 @@ import org.pentaho.metadata.model.InlineEtlPhysicalTable;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.LogicalTable;
+import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.query.impl.ietl.InlineEtlQueryExecutor;
+import org.pentaho.metadata.query.model.CombinationType;
+import org.pentaho.metadata.query.model.Constraint;
+import org.pentaho.metadata.query.model.Order;
 import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.Selection;
+import org.pentaho.metadata.query.model.Order.Type;
 import org.pentaho.metadata.util.InlineEtlModelGenerator;
 import org.pentaho.pms.messages.util.LocaleHelper;
 
@@ -130,6 +135,247 @@ public class InlineEtlModelGeneratorTest {
     Assert.assertEquals("5", resultset.getValueAt(4, 0));
   }
   
+  @Test
+  public void testQueryExecutionWithOrder() throws Exception {
+    
+    EnvUtil.environmentInit();
+    StepLoader.init();
+    
+    InlineEtlModelGenerator gen = new InlineEtlModelGenerator(
+        "testmodel", 
+        "test/solution/system/metadata/csvfiles/example.csv",
+        true,
+        "\"",
+        ","
+    );
+    
+    Domain domain = gen.generate();
+
+    LogicalModel model = domain.getLogicalModels().get(0);
+    Category category = model.getCategories().get(0);
+    
+    category.getLogicalColumns().get(1).setDataType(DataType.NUMERIC);
+    
+    Query query = new Query(domain, model);
+
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(0), null));
+    query.getOrders().add(new Order(new Selection(category, category.getLogicalColumns().get(1), null), Type.ASC));
+    
+    InlineEtlQueryExecutor executor = new InlineEtlQueryExecutor();
+    IPentahoResultSet resultset = executor.executeQuery(query);
+    
+    Assert.assertEquals(5, resultset.getRowCount());
+    Assert.assertEquals(1, resultset.getColumnCount());
+    Assert.assertEquals("bc_0_Data1", resultset.getMetaData().getColumnHeaders()[0][0]);
+    Assert.assertEquals("4", resultset.getValueAt(0, 0));
+    Assert.assertEquals("3", resultset.getValueAt(1, 0));
+    Assert.assertEquals("1", resultset.getValueAt(2, 0));
+    Assert.assertEquals("2", resultset.getValueAt(3, 0));
+    Assert.assertEquals("5", resultset.getValueAt(4, 0));
+    
+    Query query2 = new Query(domain, model);
+
+    query2.getSelections().add(new Selection(category, category.getLogicalColumns().get(0), null));
+    query2.getOrders().add(new Order(new Selection(category, category.getLogicalColumns().get(1), null), Type.DESC));
+    
+    resultset = executor.executeQuery(query2);
+    
+    Assert.assertEquals(5, resultset.getRowCount());
+    Assert.assertEquals(1, resultset.getColumnCount());
+    Assert.assertEquals("bc_0_Data1", resultset.getMetaData().getColumnHeaders()[0][0]);
+    Assert.assertEquals("5", resultset.getValueAt(0, 0));
+    Assert.assertEquals("2", resultset.getValueAt(1, 0));
+    Assert.assertEquals("1", resultset.getValueAt(2, 0));
+    Assert.assertEquals("3", resultset.getValueAt(3, 0));
+    Assert.assertEquals("4", resultset.getValueAt(4, 0));
+  }
+  
+  @Test
+  public void testQueryExecutionWithConstraints() throws Exception {
+    
+    EnvUtil.environmentInit();
+    StepLoader.init();
+    
+    InlineEtlModelGenerator gen = new InlineEtlModelGenerator(
+        "testmodel", 
+        "test/solution/system/metadata/csvfiles/example.csv",
+        true,
+        "\"",
+        ","
+    );
+    
+    Domain domain = gen.generate();
+
+    
+    
+    LogicalModel model = domain.getLogicalModels().get(0);
+    Category category = model.getCategories().get(0);
+    
+    category.getLogicalColumns().get(0).setDataType(DataType.NUMERIC);
+    
+    
+    Query query = new Query(domain, model);
+
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(0), null));
+    query.getConstraints().add(new Constraint(CombinationType.AND, "[bc_testmodel.bc_0_Data1] > 2"));
+    
+    InlineEtlQueryExecutor executor = new InlineEtlQueryExecutor();
+    IPentahoResultSet resultset = executor.executeQuery(query);
+    
+    Assert.assertEquals(3, resultset.getRowCount());
+    Assert.assertEquals(1, resultset.getColumnCount());
+    Assert.assertEquals("bc_0_Data1", resultset.getMetaData().getColumnHeaders()[0][0]);
+    Assert.assertEquals(3.0, resultset.getValueAt(0, 0));
+    Assert.assertEquals(4.0, resultset.getValueAt(1, 0));
+    Assert.assertEquals(5.0, resultset.getValueAt(2, 0));
+    
+    Query query2 = new Query(domain, model);
+
+    query2.getSelections().add(new Selection(category, category.getLogicalColumns().get(0), null));
+    query2.getConstraints().add(new Constraint(CombinationType.AND, "[bc_testmodel.bc_1_Data2] > 4.0"));
+    
+    resultset = executor.executeQuery(query2);
+    
+    Assert.assertEquals(3, resultset.getRowCount());
+    Assert.assertEquals(1, resultset.getColumnCount());
+    Assert.assertEquals("bc_0_Data1", resultset.getMetaData().getColumnHeaders()[0][0]);
+    Assert.assertEquals(1.0, resultset.getValueAt(0, 0));
+    Assert.assertEquals(2.0, resultset.getValueAt(1, 0));
+    Assert.assertEquals(5.0, resultset.getValueAt(2, 0));
+
+    Query query4 = new Query(domain, model);
+
+    query4.getSelections().add(new Selection(category, category.getLogicalColumns().get(0), null));
+    query4.getConstraints().add(new Constraint(CombinationType.AND, "AND([bc_testmodel.bc_0_Data1] < 5; [bc_testmodel.bc_1_Data2] > 4.0)"));
+    
+    resultset = executor.executeQuery(query4);
+    
+    Assert.assertEquals(2, resultset.getRowCount());
+    Assert.assertEquals(1, resultset.getColumnCount());
+    Assert.assertEquals("bc_0_Data1", resultset.getMetaData().getColumnHeaders()[0][0]);
+    Assert.assertEquals(1.0, resultset.getValueAt(0, 0));
+    Assert.assertEquals(2.0, resultset.getValueAt(1, 0));
+    
+    Query query45 = new Query(domain, model);
+
+    query45.getSelections().add(new Selection(category, category.getLogicalColumns().get(0), null));
+    query45.getConstraints().add(new Constraint(CombinationType.AND, "OR([bc_testmodel.bc_0_Data1] < 5; [bc_testmodel.bc_1_Data2] > 4.0)"));
+    
+    resultset = executor.executeQuery(query45);
+    
+    Assert.assertEquals(5, resultset.getRowCount());
+    Assert.assertEquals(1, resultset.getColumnCount());
+    Assert.assertEquals("bc_0_Data1", resultset.getMetaData().getColumnHeaders()[0][0]);
+    Assert.assertEquals(1.0, resultset.getValueAt(0, 0));
+    Assert.assertEquals(2.0, resultset.getValueAt(1, 0));
+    Assert.assertEquals(3.0, resultset.getValueAt(2, 0));
+    Assert.assertEquals(4.0, resultset.getValueAt(3, 0));
+    Assert.assertEquals(5.0, resultset.getValueAt(4, 0));    
+    
+    Query query5 = new Query(domain, model);
+
+    query5.getSelections().add(new Selection(category, category.getLogicalColumns().get(0), null));
+    query5.getConstraints().add(new Constraint(CombinationType.AND, "[bc_testmodel.bc_0_Data1] < 5"));
+    query5.getConstraints().add(new Constraint(CombinationType.OR, "[bc_testmodel.bc_1_Data2] > 4.0"));    
+    
+    resultset = executor.executeQuery(query5);
+    
+    Assert.assertEquals(5, resultset.getRowCount());
+    Assert.assertEquals(1, resultset.getColumnCount());
+    Assert.assertEquals("bc_0_Data1", resultset.getMetaData().getColumnHeaders()[0][0]);
+    Assert.assertEquals(1.0, resultset.getValueAt(0, 0));
+    Assert.assertEquals(2.0, resultset.getValueAt(1, 0));
+    Assert.assertEquals(3.0, resultset.getValueAt(2, 0));
+    Assert.assertEquals(4.0, resultset.getValueAt(3, 0));
+    Assert.assertEquals(5.0, resultset.getValueAt(4, 0));    
+
+  }
+  
+  @Test
+  public void testQueryExecutionWithAggregations() throws Exception {
+    
+    EnvUtil.environmentInit();
+    StepLoader.init();
+    
+    InlineEtlModelGenerator gen = new InlineEtlModelGenerator(
+        "testmodel", 
+        "test/solution/system/metadata/csvfiles/example.csv",
+        true,
+        "\"",
+        ","
+    );
+    
+    Domain domain = gen.generate();
+
+    LogicalModel model = domain.getLogicalModels().get(0);
+    Category category = model.getCategories().get(0);
+    category.getLogicalColumns().get(1).setDataType(DataType.NUMERIC);
+    category.getLogicalColumns().get(1).setAggregationType(AggregationType.SUM);
+    Query query = new Query(domain, model);
+
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(3), null));
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(1), null));
+    
+    InlineEtlQueryExecutor executor = new InlineEtlQueryExecutor();
+    IPentahoResultSet resultset = executor.executeQuery(query);
+    
+    Assert.assertEquals(4, resultset.getRowCount());
+    Assert.assertEquals(2, resultset.getColumnCount());
+    Assert.assertEquals("bc_3_Data4", resultset.getMetaData().getColumnHeaders()[0][0]);
+    Assert.assertEquals("bc_1_Data2", resultset.getMetaData().getColumnHeaders()[0][1]);
+
+    Assert.assertEquals("A String", resultset.getValueAt(0, 0));
+    Assert.assertEquals("Bigger String Value", resultset.getValueAt(1, 0));
+    Assert.assertEquals("String Value", resultset.getValueAt(2, 0));
+    Assert.assertEquals("Very Long String Value for testing columns", resultset.getValueAt(3, 0));
+
+    
+    Assert.assertEquals(1.1, resultset.getValueAt(0, 1));
+    Assert.assertEquals(5.7, resultset.getValueAt(1, 1));
+    Assert.assertEquals(19.5, resultset.getValueAt(2, 1));    
+    Assert.assertEquals(3.4, resultset.getValueAt(3, 1));
+  }
+  
+  @Test
+  public void testQueryExecutionWithAggregationsAndConstraints() throws Exception {
+    EnvUtil.environmentInit();
+    StepLoader.init();
+    
+    InlineEtlModelGenerator gen = new InlineEtlModelGenerator(
+        "testmodel", 
+        "test/solution/system/metadata/csvfiles/example.csv",
+        true,
+        "\"",
+        ","
+    );
+    
+    Domain domain = gen.generate();
+
+    LogicalModel model = domain.getLogicalModels().get(0);
+    Category category = model.getCategories().get(0);
+    category.getLogicalColumns().get(1).setDataType(DataType.NUMERIC);
+    category.getLogicalColumns().get(1).setAggregationType(AggregationType.SUM);
+    Query query = new Query(domain, model);
+
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(3), null));
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(1), null));
+    query.getConstraints().add(new Constraint(CombinationType.AND, "[bc_testmodel.bc_1_Data2] > 4.0"));
+    query.getOrders().add(new Order(new Selection(category, category.getLogicalColumns().get(3), null), Order.Type.DESC));
+    
+    InlineEtlQueryExecutor executor = new InlineEtlQueryExecutor();
+    IPentahoResultSet resultset = executor.executeQuery(query);
+    
+    Assert.assertEquals(2, resultset.getRowCount());
+    Assert.assertEquals(2, resultset.getColumnCount());
+    Assert.assertEquals("bc_3_Data4", resultset.getMetaData().getColumnHeaders()[0][0]);
+    Assert.assertEquals("bc_1_Data2", resultset.getMetaData().getColumnHeaders()[0][1]);
+
+    Assert.assertEquals("String Value", resultset.getValueAt(0, 0));
+    Assert.assertEquals("Bigger String Value", resultset.getValueAt(1, 0));
+    
+    Assert.assertEquals(19.5, resultset.getValueAt(0, 1));
+    Assert.assertEquals(5.7, resultset.getValueAt(1, 1));
+  }
 }
 
 
