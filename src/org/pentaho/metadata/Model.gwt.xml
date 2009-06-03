@@ -2,5 +2,7 @@
 	<!-- Inherit the core Web Toolkit stuff.                  -->
     <source path="model">
     	<exclude name="**/PropertyTypeRegistry*"/>
+    	<exclude name="**/Security*"/>
+    	<exclude name="**/RowLevelSecurity*"/>
     </source>
 </module>
