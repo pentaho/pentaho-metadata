@@ -73,11 +73,11 @@ public class LogicalColumn extends Concept {
   
   @SuppressWarnings("unchecked")
   public List<AggregationType> getAggregationList() {
-    return (List<AggregationType>)getProperty(IPhysicalColumn.AGGREGATIONTYPE_PROPERTY);
+    return (List<AggregationType>)getProperty(IPhysicalColumn.AGGREGATIONLIST_PROPERTY);
   }
 
   public void setAggregationList(List<AggregationType> aggList) {
-    setProperty(IPhysicalColumn.AGGREGATIONTYPE_PROPERTY, aggList);
+    setProperty(IPhysicalColumn.AGGREGATIONLIST_PROPERTY, aggList);
   }
 
   public void setLogicalTable(LogicalTable logicalTable) {
