@@ -1,3 +1,15 @@
+/*
+ * Copyright 2009 Pentaho Corporation.  All rights reserved.
+ * This software was developed by Pentaho Corporation and is provided under the terms
+ * of the Mozilla Public License, Version 1.1, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho
+ * BI Platform.  The Initial Developer is Pentaho Corporation.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 package org.pentaho.metadata;
 
 import java.sql.Connection;
@@ -153,7 +165,6 @@ public class SQLModelGeneratorTest {
       Assert.fail();
     }
     Assert.assertNotNull(impl);
-    printOutJava(impl.getQuery().getQuery());
     Assert.assertEquals(
         
         "SELECT DISTINCT \n" + 
@@ -172,18 +183,6 @@ public class SQLModelGeneratorTest {
         impl.getQuery().getQuery()
     );
 
-  }
-  
-  public static void printOutJava(String sql) {
-    String lines[] = sql.split("\n");
-    for (int i = 0; i < lines.length; i++) {
-      System.out.print("        \"" +lines[i]);
-      if (i == lines.length - 1) {
-        System.out.println("\\n\"");
-      } else {
-        System.out.println("\\n\" + ");
-      }
-    }
   }
   
   private Connection getDataSourceConnection(String driverClass, String name, String username, String password, String url) throws Exception {

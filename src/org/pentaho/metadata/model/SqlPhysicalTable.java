@@ -32,7 +32,8 @@ public class SqlPhysicalTable extends Concept implements IPhysicalTable{
   public static final String TARGET_SCHEMA = "target_schema";
   public static final String TARGET_TABLE = "target_table";
   public static final String TARGET_TABLE_TYPE = "target_table_type";
-
+  public static final String RELATIVE_SIZE = "relative_size";
+  
   SqlPhysicalModel model;
   List<IPhysicalColumn> physicalColumns = new ArrayList<IPhysicalColumn>();
 
@@ -77,5 +78,13 @@ public class SqlPhysicalTable extends Concept implements IPhysicalTable{
   
   public void setTargetTableType(TargetTableType targetTableType) {
     setProperty(TARGET_TABLE_TYPE, targetTableType);
+  }
+  
+  public Integer getRelativeSize() {
+    return (Integer)getProperty(RELATIVE_SIZE);
+  }
+  
+  public void setRelativeSize(Integer relativeSize) {
+    setProperty(RELATIVE_SIZE, relativeSize);
   }
 }

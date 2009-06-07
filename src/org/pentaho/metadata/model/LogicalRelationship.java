@@ -40,9 +40,10 @@ public class LogicalRelationship extends Concept {
   public LogicalRelationship() {
     super();
     setComplex(false);
+    setRelationshipType(RelationshipType.UNDEFINED);
   }
   
-  public Boolean getComplex() {
+  public Boolean isComplex() {
     return (Boolean)getProperty(COMPLEX);
   }
   
@@ -104,6 +105,13 @@ public class LogicalRelationship extends Concept {
 
   public void setToColumn(LogicalColumn toColumn) {
     this.toColumn = toColumn;
+  }
+  
+  public boolean isUsingTable(LogicalTable table) {
+    if (table==null) {
+      return false;
+    }
+    return table.getId().equals(toTable.getId()) || table.getId().equals(fromTable.getId());
   }
 
 }

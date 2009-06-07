@@ -32,6 +32,7 @@ public class SqlPhysicalColumn extends AbstractPhysicalColumn {
 
   public SqlPhysicalColumn() {
     super();
+    setTargetColumnType(TargetColumnType.COLUMN_NAME);
   }
   
   public SqlPhysicalColumn(SqlPhysicalTable table) {

@@ -1,5 +1,18 @@
+/*
+ * Copyright 2009 Pentaho Corporation.  All rights reserved.
+ * This software was developed by Pentaho Corporation and is provided under the terms
+ * of the Mozilla Public License, Version 1.1, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho
+ * BI Platform.  The Initial Developer is Pentaho Corporation.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 package org.pentaho.metadata;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -22,6 +35,8 @@ import org.pentaho.metadata.model.concept.types.TargetColumnType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
 import org.pentaho.metadata.util.SerializationService;
 import org.pentaho.metadata.util.ThinModelConverter;
+import org.pentaho.pms.core.CWM;
+import org.pentaho.pms.factory.CwmSchemaFactory;
 import org.pentaho.pms.messages.util.LocaleHelper;
 import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
@@ -187,7 +202,7 @@ public class ThinModelTest {
     
   }
   
-  public Domain getBasicDomain() {
+  public Domain getBasicDomain2() {
     
     String locale = LocaleHelper.getLocale().toString();
     
@@ -245,10 +260,47 @@ public class ThinModelTest {
     return domain;
   }
   
+  private void deleteFile(String filename) {
+    File f = new File(filename);
+    if(f.exists()) {
+      f.delete();
+    }
+  }
+
+  
+  @Test 
+  public void loadLegacyXMI() {
+    
+    deleteFile("mdr.btb");
+    deleteFile("mdr.btd");
+    deleteFile("mdr.btx");
+    
+    CWM cwm = null;
+    try {
+      cwm = CWM.getInstance("Orders", true); //$NON-NLS-1$
+      Assert.assertNotNull("CWM singleton instance is null", cwm);
+      cwm.importFromXMI("samples/steelwheels.xmi"); //$NON-NLS-1$      
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.fail();
+    }
+    CwmSchemaFactory factory = new CwmSchemaFactory();
+
+    SchemaMeta schemaMeta = factory.getSchemaMeta(cwm);
+
+    Domain domain = null;
+    
+    try {
+      domain = ThinModelConverter.convertFromLegacy(schemaMeta);
+    } catch (Exception e){
+      e.printStackTrace();
+      Assert.fail();
+    }
+  }
   
   @Test
   public void testToFromLegacy() {
-    Domain domain = getBasicDomain();
+    Domain domain = TestHelper.getBasicDomain();
     SchemaMeta meta = null;
     try {
       meta = ThinModelConverter.convertToLegacy(domain);

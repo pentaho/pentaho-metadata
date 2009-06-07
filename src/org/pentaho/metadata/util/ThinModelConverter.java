@@ -1,3 +1,15 @@
+/*
+ * Copyright 2009 Pentaho Corporation.  All rights reserved.
+ * This software was developed by Pentaho Corporation and is provided under the terms
+ * of the Mozilla Public License, Version 1.1, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho
+ * BI Platform.  The Initial Developer is Pentaho Corporation.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 package org.pentaho.metadata.util;
 
 import java.math.BigDecimal;
@@ -84,6 +96,12 @@ import org.pentaho.pms.schema.concept.types.tabletype.TableTypeSettings;
 import org.pentaho.pms.schema.concept.types.url.ConceptPropertyURL;
 import org.pentaho.pms.util.ObjectAlreadyExistsException;
 
+/**
+ * This class converts to and from the original metadata model 
+ * (org.pentaho.pms.schema) to the new model (org.pentaho.metadata.model)
+ * 
+ * @author Will Gorman (wgorman@pentaho.com)
+ */
 public class ThinModelConverter {
   
   private static final Log logger = LogFactory.getLog(ThinModelConverter.class);
@@ -275,6 +293,22 @@ public class ThinModelConverter {
       }
       ConceptPropertyBoolean bool = new ConceptPropertyBoolean(propertyName, colType == TargetColumnType.OPEN_FORMULA);
       return bool;
+    } else if (property instanceof TableType) {
+      TableType tt = (TableType)property;
+      ConceptPropertyTableType tbltype = new ConceptPropertyTableType(propertyName, TableTypeSettings.types[tt.ordinal()]);
+      return tbltype;
+    } else if (property instanceof List) {
+      // aggregation lists here
+      List list = (List)property;
+      if (propertyName.equals("aggregation_list")) {
+        List<AggregationSettings> listaggs = new ArrayList<AggregationSettings>();
+        ConceptPropertyAggregationList agglist = new ConceptPropertyAggregationList(propertyName, listaggs);
+        for (Object obj : list) {
+          AggregationType aggType = (AggregationType)obj;
+          listaggs.add(AggregationSettings.types[aggType.ordinal()]); 
+        }
+        return agglist;
+      }
     }
     
     logger.error("unsupported property: " + property);
@@ -355,6 +389,7 @@ public class ThinModelConverter {
     }
   }
   
+  @SuppressWarnings("unchecked")
   private static Object convertPropertyFromLegacy(String propertyName, ConceptPropertyInterface property) {
 
     if (property instanceof ConceptPropertyString) {
@@ -364,6 +399,9 @@ public class ThinModelConverter {
       return new LocalizedString(settings.getLocaleStringMap());
     } else if (property instanceof ConceptPropertyDataType) {
       DataTypeSettings settings = (DataTypeSettings) property.getValue();
+      if (settings == null) {
+        return null;
+      }
       return DataType.values()[settings.getType()];
     } else if (property instanceof ConceptPropertyAggregationList) {
       List<AggregationSettings> orig = (List<AggregationSettings>)property.getValue();
@@ -445,6 +483,7 @@ public class ThinModelConverter {
     return null;
   }
   
+  @SuppressWarnings("unchecked")
   public static Domain convertFromLegacy(SchemaMeta schemaMeta) throws Exception {
     // SchemaMeta schemaMeta = new SchemaMeta();
     Domain domain = new Domain();
@@ -575,6 +614,7 @@ public class ThinModelConverter {
         logical.setToColumn(toColumn);
         logical.setFromTable(fromTable);
         logical.setFromColumn(fromColumn);
+        logicalModel.getLogicalRelationships().add(logical);
       }
       
       for (BusinessCategory bizCategory : model.getRootCategory().getBusinessCategories()) {

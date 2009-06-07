@@ -19,6 +19,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.metadata.model.Domain;
+import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.pms.messages.Messages;
 
 /**
@@ -78,5 +79,9 @@ public class InMemoryMetadataDomainRepository implements IMetadataDomainReposito
   
   public synchronized void removeDomain(String domainId) {
     domains.remove(domainId);
+  }
+  
+  public String generateRowLevelSecurityConstraint(LogicalModel model) {
+    return null;
   }
 }

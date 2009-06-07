@@ -63,7 +63,12 @@ public class Selection implements Serializable {
   
   public AggregationType getActiveAggregationType() {
     if (getAggregationType() == null) {
-      return logicalColumn.getAggregationType();
+      AggregationType aggType = logicalColumn.getAggregationType();
+      if (aggType == null) {
+        return AggregationType.NONE;
+      } else {
+        return aggType;
+      }
     } else {
       return getAggregationType();
     }

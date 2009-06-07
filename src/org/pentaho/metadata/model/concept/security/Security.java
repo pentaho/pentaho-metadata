@@ -13,7 +13,7 @@
 package org.pentaho.metadata.model.concept.security;
 
 import java.io.Serializable;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,7 +29,7 @@ public class Security implements Serializable {
   private Map<SecurityOwner, Integer> ownerAclMap;
 
   public Security() {
-    ownerAclMap = new Hashtable<SecurityOwner, Integer>();
+    ownerAclMap = new HashMap<SecurityOwner, Integer>();
   }
 
   /**

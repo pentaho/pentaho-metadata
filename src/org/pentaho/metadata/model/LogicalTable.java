@@ -28,6 +28,8 @@ import org.pentaho.metadata.model.LogicalModel;
  */
 public class LogicalTable extends Concept {
 
+  private static final long serialVersionUID = -2655375483724689568L;
+
   public LogicalTable() {
     super();
   }
@@ -67,6 +69,20 @@ public class LogicalTable extends Concept {
   @Override
   public IConcept getSecurityParentConcept() {
     return logicalModel;
+  }
+  
+  public LogicalColumn findLogicalColumn(String id) {
+    for (LogicalColumn col : logicalColumns) {
+      if (id.equals(col.getId())) {
+        return col;
+      }
+    }
+    return null;
+  }
+  
+  public boolean equals(Object obj) {
+    LogicalTable other = (LogicalTable)obj;
+    return other.getId().equals(getId());
   }
 
 }

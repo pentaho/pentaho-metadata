@@ -39,4 +39,20 @@ public enum RelationshipType {
   public String getType() {
     return type;
   }
+  
+  /**
+   * Calculate the mapping between the relationship type and the join type.
+   * @param relationshipType the type of relationship
+   * @return the join type (inner, left outer, right outer or full outer)
+   */
+  public static JoinType getJoinType(RelationshipType relationshipType) {
+    switch(relationshipType) {
+      case _0_N: return JoinType.LEFT_OUTER;
+      case _N_0: return JoinType.RIGHT_OUTER;
+      case _0_1: return JoinType.LEFT_OUTER;
+      case _1_0: return JoinType.RIGHT_OUTER;
+      case _0_0: return JoinType.FULL_OUTER;
+      default: return JoinType.INNER;
+    }
+  }
 }

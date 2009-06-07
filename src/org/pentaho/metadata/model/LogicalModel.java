@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.metadata.model.concept.Concept;
+import org.pentaho.metadata.model.concept.security.RowLevelSecurity;
 
 /**
  * The logical model contains logical tables and categories, and the name and description
@@ -28,7 +29,10 @@ public class LogicalModel extends Concept {
 
   private static final long serialVersionUID = 4063396040423259880L;
   
+  public static final String ROW_LEVEL_SECURITY = "row_level_security";
+  
   private List<LogicalTable> logicalTables = new ArrayList<LogicalTable>();
+  private List<LogicalRelationship> logicalRelationships = new ArrayList<LogicalRelationship>();
   private List<Category> categories = new ArrayList<Category>();
 
   public LogicalModel() {
@@ -40,9 +44,21 @@ public class LogicalModel extends Concept {
   public List<LogicalTable> getLogicalTables() {
     return logicalTables;
   }
+  
+  public List<LogicalRelationship> getLogicalRelationships() {
+    return logicalRelationships;
+  }
 
   public List<Category> getCategories() {
     return categories;
+  }
+  
+  public RowLevelSecurity getRowLevelSecurity() {
+    return (RowLevelSecurity)getProperty(ROW_LEVEL_SECURITY);
+  }
+
+  public void setRowLevelSecurity(RowLevelSecurity rls) {
+    setProperty(ROW_LEVEL_SECURITY, rls);
   }
   
   public Category findCategory(String categoryId) {
@@ -68,7 +84,6 @@ public class LogicalModel extends Concept {
     }
     return null;
   }
-
   
   /**
    * finds a logical column within the model.

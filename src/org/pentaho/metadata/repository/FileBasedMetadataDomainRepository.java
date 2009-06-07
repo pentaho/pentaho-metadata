@@ -24,6 +24,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.metadata.model.Domain;
+import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.util.SerializationService;
 //import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.pms.messages.Messages;
@@ -151,5 +152,9 @@ public class FileBasedMetadataDomainRepository implements IMetadataDomainReposit
     File domainFile = new File(folder, getDomainFilename(domainId));
     domains.remove(domainId);
     domainFile.delete();
+  }
+  
+  public String generateRowLevelSecurityConstraint(LogicalModel model) {
+    return null;
   }
 }

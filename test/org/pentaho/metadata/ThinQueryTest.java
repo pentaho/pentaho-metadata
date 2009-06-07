@@ -1,3 +1,15 @@
+/*
+ * Copyright 2009 Pentaho Corporation.  All rights reserved.
+ * This software was developed by Pentaho Corporation and is provided under the terms
+ * of the Mozilla Public License, Version 1.1, or any later version. You may not use
+ * this file except in compliance with the license. If you need a copy of the license,
+ * please go to http://www.mozilla.org/MPL/MPL-1.1.txt. The Original Code is the Pentaho
+ * BI Platform.  The Initial Developer is Pentaho Corporation.
+ *
+ * Software distributed under the Mozilla Public License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
+ * the license for the specific language governing your rights and limitations.
+ */
 package org.pentaho.metadata;
 
 import org.junit.Assert;
@@ -26,62 +38,11 @@ import org.pentaho.pms.messages.util.LocaleHelper;
 import org.pentaho.pms.mql.MQLQueryImpl;
 
 public class ThinQueryTest {
-  public Domain getBasicDomain() {
-    
-    String locale = LocaleHelper.getLocale().toString();
-    
-    SqlPhysicalModel model = new SqlPhysicalModel();
-    SqlDataSource dataSource = new SqlDataSource();
-    dataSource.setDatabaseName("SampleData");
-    model.setDatasource(dataSource);
-    SqlPhysicalTable table = new SqlPhysicalTable(model);
-    table.setId("PT1");
-    model.getPhysicalTables().add(table);
-    table.setTargetTableType(TargetTableType.INLINE_SQL);
-    table.setTargetTable("select * from customers");
-    
-    SqlPhysicalColumn column = new SqlPhysicalColumn(table);
-    column.setId("PC1");
-    column.setTargetColumn("customername");
-    column.setName(new LocalizedString(locale, "Customer Name"));
-    column.setDescription(new LocalizedString(locale, "Customer Name Desc"));
-    column.setDataType(DataType.STRING);
-    table.getPhysicalColumns().add(column);
-    
-    LogicalModel logicalModel = new LogicalModel();
-    logicalModel.setId("MODEL");
-    logicalModel.setName(new LocalizedString(locale, "My Model"));
-    logicalModel.setDescription(new LocalizedString(locale, "A Description of the Model"));
-    
-    LogicalTable logicalTable = new LogicalTable();
-    logicalTable.setId("LT");
-    logicalTable.setPhysicalTable(table);
-    
-    logicalModel.getLogicalTables().add(logicalTable);
-    
-    LogicalColumn logicalColumn = new LogicalColumn();
-    logicalColumn.setId("LC_CUSTOMERNAME");
-    logicalColumn.setPhysicalColumn(column);
-    logicalTable.addLogicalColumn(logicalColumn);
-    
-    Category mainCategory = new Category();
-    mainCategory.setId("CATEGORY");
-    mainCategory.setName(new LocalizedString(locale, "Category"));
-    mainCategory.addLogicalColumn(logicalColumn);
-    
-    logicalModel.getCategories().add(mainCategory);
-    
-    Domain domain = new Domain();
-    domain.setId("DOMAIN");
-    domain.addPhysicalModel(model);
-    domain.addLogicalModel(logicalModel);
-    
-    return domain;
-  }
+  
   
   @Test
   public void testQueryXmlSerialization() {
-    Domain domain = getBasicDomain();
+    Domain domain = TestHelper.getBasicDomain();
     LogicalModel model = domain.findLogicalModel("MODEL");
     Query query = new Query(domain, model);
     
@@ -116,7 +77,7 @@ public class ThinQueryTest {
   
   @Test
   public void testQueryConversion() throws Exception {
-    Domain domain = getBasicDomain();
+    Domain domain = TestHelper.getBasicDomain();
     LogicalModel model = domain.findLogicalModel("MODEL");
     Query query = new Query(domain, model);
     

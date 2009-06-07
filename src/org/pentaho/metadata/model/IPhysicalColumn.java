@@ -25,6 +25,7 @@ import org.pentaho.metadata.model.concept.types.DataType;
  *
  */
 public interface IPhysicalColumn extends IConcept {
+  public static final String FIELDTYPE_PROPERTY = "fieldtype";
   public static final String DATATYPE_PROPERTY = "datatype";
   public static final String AGGREGATIONTYPE_PROPERTY = "aggregation";
   public static final String AGGREGATIONLIST_PROPERTY = "aggregation_list";

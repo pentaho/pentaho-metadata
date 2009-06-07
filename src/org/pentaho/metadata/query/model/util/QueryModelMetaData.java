@@ -76,7 +76,7 @@ public class QueryModelMetaData extends MemoryMetaData {
 
     if (rowNo == 0 && columnNo < columns.size()) {
       LogicalColumn column = columns.get(columnNo).getLogicalColumn();
-      return column.getChildProperty(attributeName);
+      return column.getProperty(attributeName);
     }
     return null;
   }

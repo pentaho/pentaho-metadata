@@ -10,10 +10,9 @@ import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.RelationshipMeta;
-import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.util.ObjectAlreadyExistsException;
 
-public class ComplexExpressionsTests extends MetadataTestBase {
+public class ComplexExpressionsTest extends MetadataTestBase {
 	
   public void testCombinedCalculationInSelection() throws Exception {
 		BusinessModel model = createModel();
@@ -49,7 +48,10 @@ public class ComplexExpressionsTests extends MetadataTestBase {
 				query.getQuery());
 	}
    
-   public void testCombinedCalculationInHaving() throws Exception {
+  /*
+   * WG: This test assumes a behavior that no longer exists
+   * 
+  public void testCombinedCalculationInHaving() throws Exception {
 		BusinessModel model = createModel();
 
 		model.findBusinessColumn("bce2").setAggregationType(AggregationSettings.SUM);
@@ -63,7 +65,7 @@ public class ComplexExpressionsTests extends MetadataTestBase {
 				"SELECT bt1.pc1 AS COL0 FROM pt1 bt1 ,pt2 bt2 WHERE ( bt1.pc1 = bt2.pc2 ) GROUP BY bt1.pc1 HAVING ( SUM( bt2.pc2 * bt1.pc1 ) > 5 )", //$NON-NLS-1$ 
 				query.getQuery());
 	}
-
+   */
 	private BusinessModel createModel() throws ObjectAlreadyExistsException {
 	    
 	    final BusinessModel model = new BusinessModel();

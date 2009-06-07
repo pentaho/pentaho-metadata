@@ -3,7 +3,6 @@ package org.pentaho.pms;
 
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.example.AdvancedMQLQuery;
-import org.pentaho.pms.mql.MQLQueryFactory;
 import org.pentaho.pms.mql.MappedQuery;
 import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;

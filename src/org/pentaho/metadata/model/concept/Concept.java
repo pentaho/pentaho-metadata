@@ -27,7 +27,7 @@ import org.pentaho.metadata.model.concept.types.LocalizedString;
  * @author Will Gorman (wgorman@pentaho.com)
  *
  */
-public class Concept implements IConcept, Serializable {
+public class Concept implements IConcept, Serializable, Comparable {
   
   public Concept() {
     super();
@@ -135,5 +135,10 @@ public class Concept implements IConcept, Serializable {
   
   public void setDescription(LocalizedString description) {
     setProperty(DESCRIPTION_PROPERTY, description);
+  }
+
+  public int compareTo(Object o) {
+    Concept c = (Concept)o;
+    return getId().compareTo(c.getId());
   }
 }

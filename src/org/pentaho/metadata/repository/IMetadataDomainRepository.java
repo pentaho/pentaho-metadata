@@ -15,6 +15,7 @@ package org.pentaho.metadata.repository;
 import java.util.Set;
 
 import org.pentaho.metadata.model.Domain;
+import org.pentaho.metadata.model.LogicalModel;
 
 /**
  * This interface defines a metadata domain repository, used to maintain a system wide set
@@ -69,4 +70,6 @@ public interface IMetadataDomainRepository {
    * @param domainId
    */
   public void removeDomain(String domainId);
+  
+  public String generateRowLevelSecurityConstraint(LogicalModel model);
 }
