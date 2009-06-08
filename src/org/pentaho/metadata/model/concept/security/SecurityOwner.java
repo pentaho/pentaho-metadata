@@ -22,7 +22,9 @@ import java.io.Serializable;
  * @since 01-NOV-2006
  * 
  */
-public class SecurityOwner implements Serializable {
+public class SecurityOwner implements Serializable, Cloneable {
+
+  private static final long serialVersionUID = 6657148420948786542L;
 
   public static enum OwnerType {
     USER("SecurityOwner.USER_USER"), ROLE("SecurityOwner.USER_ROLE");
@@ -41,6 +43,8 @@ public class SecurityOwner implements Serializable {
   private OwnerType ownerType;
   private String ownerName;
 
+  public SecurityOwner() {}
+  
   /**
    * @param ownerType the type of ACL owner : user or role
    * @param ownerName the name or the user or role
@@ -77,5 +81,22 @@ public class SecurityOwner implements Serializable {
    */
   public void setOwnerName(String ownerName) {
     this.ownerName = ownerName;
+  }
+  
+  @Override
+  public boolean equals(Object object) {
+    SecurityOwner s = (SecurityOwner)object;
+    return  
+      getOwnerType().equals(s.getOwnerType()) &&
+      getOwnerName().equals(s.getOwnerName());
+  }
+  
+  @Override
+  public Object clone() {
+    try {
+      return super.clone();
+    } catch (CloneNotSupportedException e) {
+      return null;
+    }
   }
 }
