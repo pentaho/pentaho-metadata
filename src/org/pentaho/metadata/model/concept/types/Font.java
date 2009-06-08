@@ -14,7 +14,7 @@ package org.pentaho.metadata.model.concept.types;
 
 import java.io.Serializable;
 
-public class Font implements Serializable {
+public class Font implements Serializable, Cloneable {
 
   private static final long serialVersionUID = -5460335956689436764L;
   
@@ -101,5 +101,15 @@ public class Font implements Serializable {
    */
   public void setHeight(int size) {
     this.height = size;
+  }
+  
+  @Override
+  public boolean equals(Object object) {
+    Font f = (Font)object;
+    return getHeight() == f.getHeight() && 
+    ((getName() == null && f.getName() == null) ||
+     (getName() != null && getName().equals(f.getName()))) &&
+     isItalic() == f.isItalic() &&
+     isBold() == f.isBold();
   }
 }

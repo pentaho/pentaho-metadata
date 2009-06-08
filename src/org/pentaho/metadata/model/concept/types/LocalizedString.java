@@ -75,4 +75,10 @@ public class LocalizedString implements Serializable {
     return localeStringMap;
   }
   
+  @Override
+  public boolean equals(Object object) {
+    LocalizedString l = (LocalizedString)object;
+    return  
+    localeStringMap.equals(l.getLocaleStringMap());
+  }
 }

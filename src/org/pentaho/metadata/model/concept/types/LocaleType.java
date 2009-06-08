@@ -60,4 +60,14 @@ public class LocaleType implements Serializable {
   public String getDescription() {
     return description;
   }
+  
+  @Override
+  public boolean equals(Object object) {
+    LocaleType l = (LocaleType)object;
+    return  
+    ((getDescription() == null && l.getDescription() == null) ||
+     (getDescription() != null && getDescription().equals(l.getDescription()))) &&
+    ((getCode() == null && l.getCode() == null) ||
+         (getCode() != null && getCode().equals(l.getCode())));
+  }
 }

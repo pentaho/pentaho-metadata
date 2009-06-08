@@ -27,7 +27,7 @@ import org.pentaho.metadata.model.concept.types.LocalizedString;
  * @author Will Gorman (wgorman@pentaho.com)
  *
  */
-public class Concept implements IConcept, Serializable, Comparable {
+public class Concept implements IConcept, Serializable, Cloneable, Comparable {
   
   public Concept() {
     super();
@@ -35,9 +35,9 @@ public class Concept implements IConcept, Serializable, Comparable {
 
   private static final long serialVersionUID = -6912836203678095834L;
 
-  protected static String NAME_PROPERTY = "name";
-  protected static String DESCRIPTION_PROPERTY = "description";
-  protected static String SECURITY_PROPERTY = "security";
+  public static String NAME_PROPERTY = "name";
+  public static String DESCRIPTION_PROPERTY = "description";
+  public static String SECURITY_PROPERTY = "security";
   
   Map<String, Object> properties = new HashMap<String, Object>();
   String id;
@@ -45,6 +45,10 @@ public class Concept implements IConcept, Serializable, Comparable {
   
   public Map<String, Object> getChildProperties() {
     return properties;
+  }
+  
+  public void setChildProperties(Map<String, Object> properties) {
+    this.properties = properties;
   }
 
   public Object getChildProperty(String name) {
@@ -99,7 +103,7 @@ public class Concept implements IConcept, Serializable, Comparable {
       // Only take over the security information, nothing else
       Object securityProperty = (Object) getSecurityParentConcept().getProperty(SECURITY_PROPERTY);
       if (securityProperty!=null) {
-        all.put(id, securityProperty);
+        all.put(SECURITY_PROPERTY, securityProperty);
       }
     }
 
@@ -140,5 +144,18 @@ public class Concept implements IConcept, Serializable, Comparable {
   public int compareTo(Object o) {
     Concept c = (Concept)o;
     return getId().compareTo(c.getId());
+  }
+  
+  public Object clone() {
+    return clone(new Concept());
+  }
+  
+  protected Object clone(Concept clone) {
+    clone.setId(getId());
+    
+    // shallow references
+    clone.setChildProperties(getChildProperties());
+    clone.setParentConcept(getParentConcept());
+    return clone;
   }
 }

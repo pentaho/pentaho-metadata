@@ -56,6 +56,10 @@ public class SqlPhysicalTable extends Concept implements IPhysicalTable{
     return physicalColumns;
   }
   
+  public void addPhysicalColumn(IPhysicalColumn column) {
+    physicalColumns.add(column);
+  }
+  
   public String getTargetSchema() {
     return (String)getProperty(TARGET_SCHEMA);
   }

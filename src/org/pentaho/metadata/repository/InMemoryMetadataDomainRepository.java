@@ -13,13 +13,18 @@
 package org.pentaho.metadata.repository;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
+import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
+import org.pentaho.metadata.model.LogicalTable;
+import org.pentaho.metadata.model.concept.IConcept;
 import org.pentaho.pms.messages.Messages;
 
 /**
@@ -58,7 +63,51 @@ public class InMemoryMetadataDomainRepository implements IMetadataDomainReposito
     if (domains == null) {
       return null;
     }
-    return domains.get(id);
+    Domain domain = domains.get(id);
+    
+    Domain clone = (Domain)domain.clone();
+    
+    // force security on model, logical tables, logical columns, and categories
+    
+    Iterator<LogicalModel> iter = clone.getLogicalModels().iterator();
+    while (iter.hasNext()) {
+      LogicalModel model = iter.next();
+      if (!hasAccess(ACCESS_TYPE_READ, model)) {
+        iter.remove();
+      } else {
+        Iterator<LogicalTable> tbliter = model.getLogicalTables().iterator();
+        while (tbliter.hasNext()) {
+          LogicalTable table = tbliter.next();
+          if (!hasAccess(ACCESS_TYPE_READ, table)) {
+            tbliter.remove();
+          } else {
+            Iterator<LogicalColumn> coliter = table.getLogicalColumns().iterator();
+            while (coliter.hasNext()) {
+              LogicalColumn col = coliter.next();
+              if (!hasAccess(ACCESS_TYPE_READ, col)) {
+                coliter.remove();
+              }            
+            }
+          }
+        }
+        Iterator<Category> catiter = model.getCategories().iterator();
+        while (catiter.hasNext()) {
+          Category category = catiter.next();
+          if (!hasAccess(ACCESS_TYPE_READ, category)) {
+            catiter.remove();
+          } else {
+            Iterator<LogicalColumn> coliter = category.getLogicalColumns().iterator();
+            while (coliter.hasNext()) {
+              LogicalColumn col = coliter.next();
+              if (!hasAccess(ACCESS_TYPE_READ, col)) {
+                coliter.remove();
+              }            
+            }
+          }
+        }
+      }
+    }
+    return clone;
   }
   
   public Set<String> getDomainIds() {
@@ -83,5 +132,13 @@ public class InMemoryMetadataDomainRepository implements IMetadataDomainReposito
   
   public String generateRowLevelSecurityConstraint(LogicalModel model) {
     return null;
+  }
+  
+  /**
+   * The aclHolder cannot be null unless the access type requested is ACCESS_TYPE_SCHEMA_ADMIN.
+   */
+  public boolean hasAccess(int accessType, IConcept aclHolder) {
+    // Subclasses can override this for ACL and Session/Credential checking
+    return true;
   }
 }

@@ -13,8 +13,6 @@
 package org.pentaho.metadata;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import org.junit.Assert;
@@ -28,11 +26,19 @@ import org.pentaho.metadata.model.SqlDataSource;
 import org.pentaho.metadata.model.SqlPhysicalColumn;
 import org.pentaho.metadata.model.SqlPhysicalModel;
 import org.pentaho.metadata.model.SqlPhysicalTable;
+import org.pentaho.metadata.model.concept.Concept;
+import org.pentaho.metadata.model.concept.IConcept;
+import org.pentaho.metadata.model.concept.security.Security;
+import org.pentaho.metadata.model.concept.security.SecurityOwner;
+import org.pentaho.metadata.model.concept.security.SecurityOwner.OwnerType;
+import org.pentaho.metadata.model.concept.types.Color;
+import org.pentaho.metadata.model.concept.types.ColumnWidth;
 import org.pentaho.metadata.model.concept.types.DataType;
-import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
+import org.pentaho.metadata.model.concept.types.ColumnWidth.WidthType;
+import org.pentaho.metadata.repository.InMemoryMetadataDomainRepository;
 import org.pentaho.metadata.util.SerializationService;
 import org.pentaho.metadata.util.ThinModelConverter;
 import org.pentaho.pms.core.CWM;
@@ -202,64 +208,6 @@ public class ThinModelTest {
     
   }
   
-  public Domain getBasicDomain2() {
-    
-    String locale = LocaleHelper.getLocale().toString();
-    
-    SqlPhysicalModel model = new SqlPhysicalModel();
-    SqlDataSource dataSource = new SqlDataSource();
-    dataSource.setDatabaseName("SampleData");
-    model.setDatasource(dataSource);
-    SqlPhysicalTable table = new SqlPhysicalTable(model);
-    table.setId("PT1");
-    model.getPhysicalTables().add(table);
-    table.setTargetTableType(TargetTableType.INLINE_SQL);
-    table.setTargetTable("select * from customers");
-    
-    SqlPhysicalColumn column = new SqlPhysicalColumn(table);
-    column.setId("PC1");
-    column.setTargetColumn("customername");
-    column.setName(new LocalizedString(locale, "Customer Name"));
-    column.setDescription(new LocalizedString(locale, "Customer Name Desc"));
-    column.setDataType(DataType.STRING);
-    table.getPhysicalColumns().add(column);
-    
-    LogicalModel logicalModel = new LogicalModel();
-    logicalModel.setId("MODEL");
-    logicalModel.setName(new LocalizedString(locale, "My Model"));
-    logicalModel.setDescription(new LocalizedString(locale, "A Description of the Model"));
-    
-    LogicalTable logicalTable = new LogicalTable();
-    logicalTable.setId("LT");
-    logicalTable.setPhysicalTable(table);
-    
-    logicalModel.getLogicalTables().add(logicalTable);
-    
-    LogicalColumn logicalColumn = new LogicalColumn();
-    logicalColumn.setId("LC_CUSTOMERNAME");
-    logicalColumn.setPhysicalColumn(column);
-    logicalColumn.setLogicalTable(logicalTable);
-    logicalTable.addLogicalColumn(logicalColumn);
-    
-    Category mainCategory = new Category();
-    mainCategory.setId("CATEGORY");
-    mainCategory.setName(new LocalizedString(locale, "Category"));
-    mainCategory.addLogicalColumn(logicalColumn);
-    
-    logicalModel.getCategories().add(mainCategory);
-    
-    Domain domain = new Domain();
-    domain.setId("DOMAIN");
-    domain.addPhysicalModel(model);
-    domain.addLogicalModel(logicalModel);
-    
-    List<LocaleType> list = new ArrayList<LocaleType>();
-    list.add(new LocaleType(locale, "Locale Description"));
-    domain.setLocales(list);
-    
-    return domain;
-  }
-  
   private void deleteFile(String filename) {
     File f = new File(filename);
     if(f.exists()) {
@@ -375,5 +323,140 @@ public class ThinModelTest {
     Assert.assertEquals("select * from customers", column.getPhysicalColumn().getPhysicalTable().getProperty(SqlPhysicalTable.TARGET_TABLE));
     Assert.assertEquals("customername", column.getPhysicalColumn().getProperty(SqlPhysicalColumn.TARGET_COLUMN));
     Assert.assertEquals(TargetColumnType.COLUMN_NAME, column.getPhysicalColumn().getProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE));
+  }
+  
+  @Test
+  public void testCloning() {
+
+    Domain domain = TestHelper.getBasicDomain();
+    Domain domain2 = (Domain)domain.clone();
+
+    Assert.assertEquals(domain.getLogicalModels().get(0).getId(), domain2.getLogicalModels().get(0).getId());
+
+    domain2.getLogicalModels().get(0).setName(new LocalizedString("en_US", "TEST"));
+    
+    // equals uses the id for comparison, so these objects are still identical
+    Assert.assertEquals(domain.getLogicalModels().get(0).getId(), domain2.getLogicalModels().get(0).getId());
+    
+    domain2.getLogicalModels().get(0).setId("BLAH");
+
+    // once the id has changed, they appear as different elements.
+    Assert.assertNotSame(domain.getLogicalModels().get(0).getId(), domain2.getLogicalModels().get(0).getId());
+  }
+  
+  static class SecureRepo extends InMemoryMetadataDomainRepository {
+    
+    SecurityOwner currentOwner = null;
+    
+    public boolean hasAccess(int accessType, IConcept aclHolder) {
+      Security s = (Security)aclHolder.getProperty(Concept.SECURITY_PROPERTY);
+      if (s == null) {
+        return true;
+      }
+      if (currentOwner == null) {
+        return false;
+      }
+      Integer val = (Integer)s.getOwnerAclMap().get(currentOwner);
+      if (val != null) {
+        return true;
+      }
+      return false;
+    }
+  }
+  
+  @Test
+  public void testSecurity() throws Exception {
+    Domain domain = TestHelper.getBasicDomain();
+    SecureRepo repo = new SecureRepo();
+    repo.storeDomain(domain, false);
+
+    LogicalModel model = domain.getLogicalModels().get(0);
+
+    Security security = new Security();
+    SecurityOwner joe = new SecurityOwner(OwnerType.USER, "joe");
+    SecurityOwner suzy = new SecurityOwner(OwnerType.USER, "suzy");
+    security.putOwnerRights(joe, 1);
+    
+    LogicalTable table = model.getLogicalTables().get(0);
+    LogicalColumn column = table.getLogicalColumns().get(0);
+    Category category = model.getCategories().get(0);
+
+    column.setProperty(Concept.SECURITY_PROPERTY, security);
+
+    repo.currentOwner = joe;
+    
+    Domain joesDomain = repo.getDomain(domain.getId());
+    
+    Assert.assertEquals(1, joesDomain.getLogicalModels().get(0).getLogicalTables().get(0).getLogicalColumns().size());
+    Assert.assertEquals(1, joesDomain.getLogicalModels().get(0).getCategories().get(0).getLogicalColumns().size());
+
+    Assert.assertEquals(1, domain.getLogicalModels().get(0).getLogicalTables().get(0).getLogicalColumns().size());
+    Assert.assertEquals(1, domain.getLogicalModels().get(0).getCategories().get(0).getLogicalColumns().size());
+    
+    repo.currentOwner = suzy;
+    
+    Domain suzysDomain = repo.getDomain(domain.getId());
+    
+    Assert.assertEquals(0, suzysDomain.getLogicalModels().get(0).getLogicalTables().get(0).getLogicalColumns().size());
+    Assert.assertEquals(0, suzysDomain.getLogicalModels().get(0).getCategories().get(0).getLogicalColumns().size());
+    
+    column.removeChildProperty(Concept.SECURITY_PROPERTY);
+    
+    // add security to the table
+    
+    table.setProperty(Concept.SECURITY_PROPERTY, security);
+
+    repo.currentOwner = joe;
+    
+    joesDomain = repo.getDomain(domain.getId());
+    
+    Assert.assertEquals(1, joesDomain.getLogicalModels().get(0).getLogicalTables().size());
+    Assert.assertEquals(1, joesDomain.getLogicalModels().get(0).getCategories().get(0).getLogicalColumns().size());
+    
+    repo.currentOwner = suzy;
+    
+    suzysDomain = repo.getDomain(domain.getId());
+    
+    Assert.assertEquals(0, suzysDomain.getLogicalModels().get(0).getLogicalTables().size());
+    // the individual columns shouldn't appear either in the category
+    Assert.assertEquals(0, suzysDomain.getLogicalModels().get(0).getCategories().get(0).getLogicalColumns().size());
+    
+    table.removeChildProperty(Concept.SECURITY_PROPERTY);
+    
+    
+    // add securiry to the category
+    category.setProperty(Concept.SECURITY_PROPERTY, security);
+    
+    repo.currentOwner = joe;
+    
+    joesDomain = repo.getDomain(domain.getId());
+    
+    Assert.assertEquals(1, joesDomain.getLogicalModels().get(0).getCategories().size());
+    
+    repo.currentOwner = suzy;
+    
+    suzysDomain = repo.getDomain(domain.getId());
+    
+    Assert.assertEquals(0, suzysDomain.getLogicalModels().get(0).getCategories().size());
+
+    category.removeChildProperty(Concept.SECURITY_PROPERTY);
+    
+    // add security to model
+    
+    model.setProperty(Concept.SECURITY_PROPERTY, security);
+    
+    
+    repo.currentOwner = joe;
+    
+    joesDomain = repo.getDomain(domain.getId());
+    
+    Assert.assertEquals(1, joesDomain.getLogicalModels().size());
+   
+    repo.currentOwner = suzy;
+    
+    suzysDomain = repo.getDomain(domain.getId());
+    
+    Assert.assertEquals(0, suzysDomain.getLogicalModels().size());
+    
   }
 }

@@ -25,8 +25,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalModel;
+import org.pentaho.metadata.model.concept.IConcept;
 import org.pentaho.metadata.util.SerializationService;
-//import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.pms.messages.Messages;
 
 /**
@@ -157,4 +157,13 @@ public class FileBasedMetadataDomainRepository implements IMetadataDomainReposit
   public String generateRowLevelSecurityConstraint(LogicalModel model) {
     return null;
   }
+  
+  /**
+   * The aclHolder cannot be null unless the access type requested is ACCESS_TYPE_SCHEMA_ADMIN.
+   */
+  public boolean hasAccess(int accessType, IConcept aclHolder) {
+    // Subclasses can override this for ACL and Session/Credential checking
+    return true;
+  }
+
 }

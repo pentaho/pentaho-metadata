@@ -80,4 +80,9 @@ public class Color implements Serializable {
     this.red = red;
   }
 
+  @Override
+  public boolean equals(Object object) {
+    Color c = (Color)object;
+    return getRed() == c.getRed() && getBlue() == c.getBlue() && getGreen() == c.getGreen();
+  }
 }

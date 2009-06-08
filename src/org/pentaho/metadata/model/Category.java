@@ -76,4 +76,19 @@ public class Category extends Concept {
     }
     return null;
   }
+  
+  @Override
+  public Object clone() {
+    Category clone = new Category();
+    // shallow copies
+    clone(clone);
+    clone.parent = parent;
+    
+    // deep copies
+    clone.setLogicalColumns(new ArrayList<LogicalColumn>());
+    for (LogicalColumn col : getLogicalColumns()) {
+      clone.addLogicalColumn(col);
+    }
+    return clone;
+  }
 }

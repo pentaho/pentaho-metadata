@@ -18,7 +18,7 @@ package org.pentaho.metadata.model.concept.types;
  * @author Will Gorman (wgorman@pentaho.com)
  *
  */
-public enum AggregationType{
+public enum AggregationType {
   NONE("AggregationSettings.USER_NONE_DESC"), 
   SUM("AggregationSettings.USER_SUM_DESC"), 
   AVG("AggregationSettings.USER_AVERAGE_DESC"),

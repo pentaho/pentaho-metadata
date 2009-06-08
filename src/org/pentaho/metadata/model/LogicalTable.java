@@ -84,5 +84,21 @@ public class LogicalTable extends Concept {
     LogicalTable other = (LogicalTable)obj;
     return other.getId().equals(getId());
   }
+  
+  @Override
+  public Object clone() {
+     LogicalTable clone = new LogicalTable();
+     // shallow copy
+     clone(clone);
+     clone.logicalModel = logicalModel;
+     clone.physicalTable = physicalTable;
+     
+     // deep copy
+     clone.setLogicalColumns(new ArrayList<LogicalColumn>());
+     for (LogicalColumn col : logicalColumns) {
+       clone.addLogicalColumn(col);
+     }
+     return clone;
+  }
 
 }

@@ -90,13 +90,4 @@ public class SecurityOwner implements Serializable, Cloneable {
       getOwnerType().equals(s.getOwnerType()) &&
       getOwnerName().equals(s.getOwnerName());
   }
-  
-//  @Override
-//  public Object clone() {
-//    try {
-//      return super.clone();
-//    } catch (CloneNotSupportedException e) {
-//      return null;
-//    }
-//  }
 }

@@ -45,12 +45,24 @@ public class LogicalModel extends Concept {
     return logicalTables;
   }
   
+  public void addLogicalTable(LogicalTable table) {
+    logicalTables.add(table);
+  }
+  
   public List<LogicalRelationship> getLogicalRelationships() {
     return logicalRelationships;
+  }
+  
+  public void addLogicalRelationship(LogicalRelationship rel) {
+    logicalRelationships.add(rel);
   }
 
   public List<Category> getCategories() {
     return categories;
+  }
+  
+  public void addCategory(Category category) {
+    categories.add(category);
   }
   
   public RowLevelSecurity getRowLevelSecurity() {
@@ -100,6 +112,27 @@ public class LogicalModel extends Concept {
       }
     }
     return null;
+  }
+  
+  @Override
+  public Object clone() {
+    LogicalModel clone = new LogicalModel();
+    // configure concept properties
+    clone(clone);
+
+    // shallow references
+    clone.logicalRelationships = logicalRelationships;
+    
+    // actual clones
+    clone.logicalTables = new ArrayList<LogicalTable>();
+    for (LogicalTable table : logicalTables) {
+      clone.addLogicalTable((LogicalTable)table.clone());
+    }
+    clone.categories = new ArrayList<Category>();
+    for (Category category : categories) {
+      clone.addCategory((Category)category.clone());
+    }
+    return clone;
   }
   
 }

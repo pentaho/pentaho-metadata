@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalModel;
+import org.pentaho.metadata.model.concept.IConcept;
 
 /**
  * This interface defines a metadata domain repository, used to maintain a system wide set
@@ -26,6 +27,13 @@ import org.pentaho.metadata.model.LogicalModel;
  */
 public interface IMetadataDomainRepository {
 
+  public static final int ACCESS_TYPE_READ = 0;
+  public static final int ACCESS_TYPE_WRITE = 1;
+  public static final int ACCESS_TYPE_UPDATE = 2;
+  public static final int ACCESS_TYPE_DELETE = 3;
+  public static final int ACCESS_TYPE_ADMIN = 4;
+  public static final int ACCESS_TYPE_SCHEMA_ADMIN = 5;
+  
   /**
    * Store a domain to the repository.  The domain should persist between JVM restarts.
    * 
@@ -72,4 +80,10 @@ public interface IMetadataDomainRepository {
   public void removeDomain(String domainId);
   
   public String generateRowLevelSecurityConstraint(LogicalModel model);
+  
+  /**
+   * The aclHolder cannot be null unless the access type requested is ACCESS_TYPE_SCHEMA_ADMIN.
+   */
+  public boolean hasAccess(int accessType, IConcept aclHolder);
+
 }

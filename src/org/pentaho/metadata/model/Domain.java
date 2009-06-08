@@ -70,8 +70,8 @@ public class Domain extends Concept {
     this.logicalModels = logicalModels;
   }
   
-  public void addLogicalModel(LogicalModel physicalModel) {
-    logicalModels.add(physicalModel);
+  public void addLogicalModel(LogicalModel logicalModel) {
+    logicalModels.add(logicalModel);
   }
 
   /**
@@ -103,6 +103,10 @@ public class Domain extends Concept {
   @SuppressWarnings("unchecked")
   public List<LocaleType> getLocales() {
     return (List<LocaleType>)getProperty(LOCALES_PROPERTY);
+  }
+  
+  public void addLocale(LocaleType locale) {
+    getLocales().add(locale);
   }
   
   // utility methods
@@ -139,5 +143,50 @@ public class Domain extends Concept {
     }
     return null;
   }
+  
+  /**
+   * find a physical table in the domain
+   *  
+   * @param tableId the table id
+   * @return physical table
+   */
+  public IPhysicalModel findPhysicalModel(String modelId) {
+    for (IPhysicalModel model : getPhysicalModels()) {
+      if (modelId.equals(model.getId())) {
+        return model;
+      }
+    }
+    return null;
+  }
+  
+  /**
+   * find a physical table in the domain
+   *  
+   * @param tableId the table id
+   * @return physical table
+   */
+  public Concept findConcept(String conceptId) {
+    for (Concept concept : getConcepts()) {
+      if (conceptId.equals(concept.getId())) {
+        return concept;
+      }
+    }
+    return null;
+  }
 
+  @Override
+  public Object clone() {
+    Domain clone = new Domain();
+    // shallow copies
+    clone(clone);
+    clone.physicalModels = physicalModels;
+    clone.concepts = concepts;
+    
+    // deep copies
+    clone.setLogicalModels(new ArrayList<LogicalModel>());
+    for (LogicalModel model : getLogicalModels()) {
+      clone.addLogicalModel((LogicalModel)model.clone());
+    }
+    return clone;
+  }
 }

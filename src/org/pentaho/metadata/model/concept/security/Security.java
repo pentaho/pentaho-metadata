@@ -85,4 +85,10 @@ public class Security implements Serializable {
     this.ownerAclMap = ownerAclMap;
   }
 
+  @Override
+  public boolean equals(Object object) {
+    Security s = (Security)object;
+    return  
+    getOwnerAclMap().equals(s.getOwnerAclMap());     
+  }
 }

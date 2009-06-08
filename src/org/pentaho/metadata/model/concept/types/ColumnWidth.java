@@ -81,6 +81,10 @@ public class ColumnWidth implements Serializable {
   public void setWidth(double width) {
     this.width = width;
   }
-
-
+  
+  @Override
+  public boolean equals(Object object) {
+    ColumnWidth cw = (ColumnWidth)object;
+    return getType() == cw.getType() && getWidth() == cw.getWidth();
+  }
 }

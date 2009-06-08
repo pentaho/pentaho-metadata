@@ -53,5 +53,9 @@ public class SqlPhysicalModel extends Concept implements IPhysicalModel{
     return physicalTables;
   }
   
+  public void addPhysicalTable(SqlPhysicalTable table) {
+    physicalTables.add(table);
+  }
+  
 
 }

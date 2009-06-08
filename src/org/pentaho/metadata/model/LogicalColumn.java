@@ -86,5 +86,6 @@ public class LogicalColumn extends Concept {
 
   public LogicalTable getLogicalTable() {
     return logicalTable;
-  }  
+  }
+  
 }

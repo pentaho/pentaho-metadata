@@ -229,6 +229,7 @@ public class TestHelper {
     LogicalColumn logicalColumn = new LogicalColumn();
     logicalColumn.setId("LC_CUSTOMERNAME");
     logicalColumn.setPhysicalColumn(column);
+    logicalColumn.setLogicalTable(logicalTable);
     logicalTable.addLogicalColumn(logicalColumn);
     
     Category mainCategory = new Category();

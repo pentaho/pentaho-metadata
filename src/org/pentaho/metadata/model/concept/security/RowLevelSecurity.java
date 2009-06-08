@@ -94,4 +94,13 @@ public class RowLevelSecurity implements Serializable {
     }
   }
 
+  @Override
+  public boolean equals(Object object) {
+    RowLevelSecurity r = (RowLevelSecurity)object;
+    return  
+    getType() == r.getType() &&
+    getGlobalConstraint().equals(r.getGlobalConstraint()) &&
+    getRoleBasedConstraintMap().equals(r.getRoleBasedConstraintMap());    
+  }
+
 }
