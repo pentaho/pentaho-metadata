@@ -25,13 +25,19 @@ public enum AggregationType {
   COUNT("AggregationSettings.USER_COUNT_DESC"), 
   DISTINCT_COUNT("AggregationSettings.USER_DISTINCT_COUNT_DESC"),
   MIN("AggregationSettings.USER_MINIMUM_DESC"), 
-  MAX("AggregationSettings.AggregationSettings"); 
+  MAX("AggregationSettings.USER_MAXIMUM_DES"); 
 
   private String description;
 
   private AggregationType(String description) {
     this.description = description;
   }
-  
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
 }
 
