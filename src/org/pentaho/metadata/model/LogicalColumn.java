@@ -97,4 +97,16 @@ public class LogicalColumn extends Concept {
     setProperty(IPhysicalColumn.FIELDTYPE_PROPERTY, fieldType);
   }
   
+  public Object clone() {
+    LogicalColumn clone = new LogicalColumn();
+    clone.setId(getId());
+    clone.logicalTable = logicalTable;
+    clone.physicalColumn = physicalColumn;
+    
+    // copy over properties
+    for (String key : getChildProperties().keySet()) {
+      clone.setProperty(key, getChildProperty(key));
+    }
+    return clone;
+  }
 }

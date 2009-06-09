@@ -465,6 +465,8 @@ public class XmiParser {
           str.setString(domain.getLocales().get(0).getCode(), nvp.get("RELATIONSHIP_DESCRIPTION"));
         }
         relation.setJoinOrderKey(nvp.get("RELATIONSHIP_JOIN_ORDER_KEY"));
+        
+        logicalModel.addLogicalRelationship(relation);
       }
       
       

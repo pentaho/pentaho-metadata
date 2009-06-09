@@ -19,6 +19,8 @@ public class XmiParserTest {
     Assert.assertEquals(2, domain.getLogicalModels().get(0).getLogicalTables().size());
     Assert.assertEquals(8, domain.getLogicalModels().get(0).getLogicalTables().get(0).getLogicalColumns().size());
     Assert.assertEquals("BC_EMPLOYEES_JOBTITLE", domain.getLogicalModels().get(0).getLogicalTables().get(0).getLogicalColumns().get(0).getId());
+    Assert.assertEquals(1, domain.getLogicalModels().get(0).getLogicalRelationships().size());
+    
     Assert.assertEquals("JOBTITLE", domain.getLogicalModels().get(0).getLogicalTables().get(0).getLogicalColumns().get(0).getPhysicalColumn().getId());
     Assert.assertEquals("PT_EMPLOYEES", domain.getLogicalModels().get(0).getLogicalTables().get(0).getLogicalColumns().get(0).getPhysicalColumn().getPhysicalTable().getId());
     Assert.assertNotNull(domain.getLogicalModels().get(0).getLogicalTables().get(0).getLogicalColumns().get(0).getPhysicalColumn().getPhysicalTable().getPhysicalModel());

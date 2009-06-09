@@ -308,20 +308,25 @@ public class QueryXmlHelper {
   protected void addSelectionFromXmlNode(Query query, Element selectionElement) {
     
     NodeList viewnodes = selectionElement.getElementsByTagName("view"); //$NON-NLS-1$
-    if (viewnodes.getLength() == 0) {
-      // should throw exception here
-      return;
-    }
-    String viewId = XMLHandler.getNodeValue(viewnodes.item(0));
-    
     NodeList nodes = selectionElement.getElementsByTagName("column"); //$NON-NLS-1$
     if (nodes.getLength() == 0) {
       // should throw exception here
       return;
     }
     String columnId = XMLHandler.getNodeValue(nodes.item(0));
-    Category category = query.getLogicalModel().findCategory(viewId);
-    LogicalColumn column = category.findLogicalColumn(columnId);
+    String viewId = null;
+    Category category = null;
+    if (viewnodes.getLength() != 0) {
+      // this is due to legacy reasons, the query doesn't really need the category.
+      viewId = XMLHandler.getNodeValue(viewnodes.item(0));
+      category = query.getLogicalModel().findCategory(viewId);
+    }
+    LogicalColumn column = null;
+    if (category != null) {
+      column = category.findLogicalColumn(columnId);
+    } else {
+      column = query.getLogicalModel().findLogicalColumn(columnId);
+    }
     if (column != null) {
       AggregationType aggsetting = null;
       NodeList aggnodes = selectionElement.getElementsByTagName("aggregation"); //$NON-NLS-1$
