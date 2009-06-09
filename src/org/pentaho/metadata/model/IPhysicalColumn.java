@@ -17,6 +17,7 @@ import java.util.List;
 import org.pentaho.metadata.model.concept.IConcept;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
+import org.pentaho.metadata.model.concept.types.FieldType;
 
 /**
  * This interface defines the API for all physical columns.
@@ -31,6 +32,8 @@ public interface IPhysicalColumn extends IConcept {
   public static final String AGGREGATIONLIST_PROPERTY = "aggregation_list";
   public DataType getDataType();
   public void setDataType(DataType dataType);
+  public FieldType getFieldType();
+  public void setFieldType(FieldType fieldType);
   public AggregationType getAggregationType();
   public void setAggregationType(AggregationType aggType);
   public List<AggregationType> getAggregationList();

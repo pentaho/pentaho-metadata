@@ -35,7 +35,7 @@ public class RowLevelSecurityHelper {
   private static final String PARAM_SEPARATOR = ";";
   
 
-  public String getMQLFormula(RowLevelSecurity rls, String user, List<String> roles) {
+  public String getOpenFormulaSecurityConstraint(RowLevelSecurity rls, String user, List<String> roles) {
     switch(rls.getType()) {
       case GLOBAL:
         return expandFunctions(rls.getGlobalConstraint(), user, roles);

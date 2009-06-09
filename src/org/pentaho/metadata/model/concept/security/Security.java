@@ -74,7 +74,7 @@ public class Security implements Serializable {
   /**
    * @return the ownerAclMap
    */
-  public Map getOwnerAclMap() {
+  public Map<SecurityOwner, Integer> getOwnerAclMap() {
     return ownerAclMap;
   }
 

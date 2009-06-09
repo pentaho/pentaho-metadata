@@ -84,6 +84,6 @@ public interface IMetadataDomainRepository {
   /**
    * The aclHolder cannot be null unless the access type requested is ACCESS_TYPE_SCHEMA_ADMIN.
    */
-  public boolean hasAccess(int accessType, IConcept aclHolder);
+  public boolean hasAccess(final int accessType, final IConcept aclHolder);
 
 }

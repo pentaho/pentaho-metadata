@@ -243,7 +243,7 @@ public class XmiParser {
       }
       String databaseName = getKeyValue(tagged, "CWM:TaggedValue", "tag", "value", "TABLE_TARGET_DATABASE_NAME");
       SqlPhysicalModel model = (SqlPhysicalModel)domain.findPhysicalModel(databaseName);
-      SqlPhysicalTable table = new SqlPhysicalTable();
+      SqlPhysicalTable table = new SqlPhysicalTable(model);
       table.setId(physicalTable.getAttribute("name"));
       xmiConceptMap.put(physicalTable.getAttribute("xmi.id"), table);
       model.addPhysicalTable(table);
@@ -251,10 +251,9 @@ public class XmiParser {
       for (int i = 0; i < columns.getLength(); i++) {
         Element colelement = (Element)columns.item(i);
         
-        SqlPhysicalColumn col = new SqlPhysicalColumn();
+        SqlPhysicalColumn col = new SqlPhysicalColumn(table);
         col.setId(colelement.getAttribute("name"));
         xmiConceptMap.put(colelement.getAttribute("xmi.id"), col);
-        
         table.addPhysicalColumn(col);
         NodeList pccn = colelement.getChildNodes();
         for (int j = 0; j < pccn.getLength(); j++) {
@@ -375,14 +374,18 @@ public class XmiParser {
         col.setId(bizcol.getAttribute("name"));
         xmiConceptMap.put(bizcol.getAttribute("xmi.id"), col);
         
-        Map<String, String> nvp = getKeyValuePairs(bizcol, "CWMLTaggedValue", "tag", "xmi.id");
+        Map<String, String> nvp = getKeyValuePairs(bizcol, "CWM:TaggedValue", "tag", "value");
         String biztbl = nvp.get("BUSINESS_COLUMN_BUSINESS_TABLE");
-        String ptbl = nvp.get("BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME");
-        col.setLogicalTable((LogicalTable)xmiConceptMap.get(biztbl));
-        col.setPhysicalColumn((IPhysicalColumn)xmiConceptMap.get(ptbl));
-        
-        
-        
+        String pcol = nvp.get("BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME");
+        LogicalTable parent = logicalModel.findLogicalTable(biztbl);
+        col.setLogicalTable(parent);
+        parent.addLogicalColumn(col);
+        for (IPhysicalColumn phycol : parent.getPhysicalTable().getPhysicalColumns()) {
+          if (phycol.getId().equals(pcol)) {
+            col.setPhysicalColumn(phycol);
+            break;
+          }
+        }
       }
       
       // third read categories 

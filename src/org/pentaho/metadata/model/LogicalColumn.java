@@ -18,6 +18,7 @@ import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.IConcept;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
+import org.pentaho.metadata.model.concept.types.FieldType;
 
 /**
  * The logical column a logical table as a parent.  It inherits from a physical column.
@@ -86,6 +87,14 @@ public class LogicalColumn extends Concept {
 
   public LogicalTable getLogicalTable() {
     return logicalTable;
+  }
+  
+  public FieldType getFieldType() {
+    return (FieldType)getProperty(IPhysicalColumn.FIELDTYPE_PROPERTY);
+  }
+  
+  public void setFieldType(FieldType fieldType) {
+    setProperty(IPhysicalColumn.FIELDTYPE_PROPERTY, fieldType);
   }
   
 }

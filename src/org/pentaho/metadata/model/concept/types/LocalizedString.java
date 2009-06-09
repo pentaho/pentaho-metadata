@@ -27,6 +27,12 @@ public class LocalizedString implements Serializable {
   
   private static final long serialVersionUID = 8214549012790547810L;
   
+  // TODO: Create a default locale in the metadata instead of just saying
+  // English is the default!
+  // NOTE: please see http://jira.pentaho.org/browse/PMD-166 for more
+  // information
+  private static final String DEFAULT_LOCALE = "en_US"; //$NON-NLS-1$
+  
   private Map<String,String> localeStringMap;
   
   public LocalizedString() {
@@ -53,6 +59,17 @@ public class LocalizedString implements Serializable {
       return (String) localeStringMap.get(locale);
   }
 
+  public String getLocalizedString(String locale) {
+    String str = getString(locale);
+    if ((str == null || str.trim().length() == 0) && locale != null && locale.indexOf('_') > 0) {
+      str = getLocalizedString(locale.substring(0, locale.lastIndexOf('_')));
+    }
+    if (str == null || str.trim().length() == 0) {
+      str = getLocalizedString(DEFAULT_LOCALE);
+    }
+    return str;
+  }
+  
   public void setString(String locale, String string) {
       localeStringMap.put(locale, string);
   }

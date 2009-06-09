@@ -128,10 +128,35 @@ public class Concept implements IConcept, Serializable, Cloneable, Comparable {
   public LocalizedString getName() {
     return (LocalizedString)getProperty(NAME_PROPERTY);
   }
+
+  public String getName(String locale) {
+    LocalizedString locName = getName();
+    if (locName == null) {
+      return getId();
+    }
+    String name = locName.getLocalizedString(locale);
+    if (name == null || name.trim().length() == 0) {
+      return getId();
+    }
+    return name;
+  }
   
   public void setName(LocalizedString name) {
     setProperty(NAME_PROPERTY, name);
   }
+  
+  public String getDescription(String locale) {
+    LocalizedString locDesc = getDescription();
+    if (locDesc == null) {
+      return getId();
+    }
+    String name = locDesc.getLocalizedString(locale);
+    if (name == null || name.trim().length() == 0) {
+      return getId();
+    }
+    return name;
+  }
+
   
   public LocalizedString getDescription() {
     return (LocalizedString)getProperty(DESCRIPTION_PROPERTY);

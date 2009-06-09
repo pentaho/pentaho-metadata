@@ -43,15 +43,31 @@ public interface IConcept {
   
   /** @return get the localized name */
   public LocalizedString getName();
+
+  /** 
+   * @param locale the locale to resolve the name to 
+   * @return the name of the concept
+   */
+  public String getName(String locale);
   
   /** @param name the localized name of the concept */
   public void setName(LocalizedString name);
 
+  
   /** @return get the localized description */
   public LocalizedString getDescription();
+
+  /** 
+   * @param locale the locale to resolve the description to 
+   * @return the description of the concept
+   */
+  public String getDescription(String locale);
   
   /** @param description the localized description */
   public void setDescription(LocalizedString description);
+  
+
+  
   
   /**
    * returns the active property for id

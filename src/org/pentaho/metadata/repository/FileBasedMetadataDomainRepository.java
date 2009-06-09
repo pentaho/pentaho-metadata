@@ -26,6 +26,7 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.concept.IConcept;
+import org.pentaho.metadata.util.SecurityHelper;
 import org.pentaho.metadata.util.SerializationService;
 import org.pentaho.pms.messages.Messages;
 
@@ -41,7 +42,7 @@ public class FileBasedMetadataDomainRepository implements IMetadataDomainReposit
   private static final String DOMAIN_SUFFIX = ".domain.xml"; //$NON-NLS-1$
   private static final String DEFAULT_DOMAIN_FOLDER = "domains"; //$NON-NLS-1$
   
-  private Map<String, Domain> domains = null;
+  protected Map<String, Domain> domains = null;
   private String domainFolder = null;
   
   public void setDomainFolder(String folder) {
@@ -97,7 +98,10 @@ public class FileBasedMetadataDomainRepository implements IMetadataDomainReposit
     if (domains == null) {
       reloadDomains();
     }
-    return domains.get(id);
+    Domain domain = domains.get(id);
+    SecurityHelper helper = new SecurityHelper();
+    Domain clone = helper.createSecureDomain(this, domain);
+    return clone;
   }
   
   public Set<String> getDomainIds() {

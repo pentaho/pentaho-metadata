@@ -43,7 +43,7 @@ public class RowLevelSecurityTest {
         RowLevelSecurityHelper helper = new RowLevelSecurityHelper();
         List<String> roles = new ArrayList<String>();
         roles.add("test");
-        return helper.getMQLFormula(rls, "test", roles);
+        return helper.getOpenFormulaSecurityConstraint(rls, "test", roles);
       }
     };
     

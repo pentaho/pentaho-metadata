@@ -17,6 +17,7 @@ import java.util.List;
 import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
+import org.pentaho.metadata.model.concept.types.FieldType;
 
 /**
  * this class implements the some of the shared functionality required by all
@@ -35,6 +36,14 @@ public abstract class AbstractPhysicalColumn extends Concept implements IPhysica
 
   public void setDataType(DataType dataType) {
     setProperty(IPhysicalColumn.DATATYPE_PROPERTY, dataType);
+  }
+  
+  public FieldType getFieldType() {
+    return (FieldType)getProperty(IPhysicalColumn.FIELDTYPE_PROPERTY);
+  }
+  
+  public void setFieldType(FieldType fieldType) {
+    setProperty(IPhysicalColumn.FIELDTYPE_PROPERTY, fieldType);
   }
   
   public AggregationType getAggregationType() {
