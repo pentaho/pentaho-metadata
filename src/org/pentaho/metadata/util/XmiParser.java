@@ -53,6 +53,7 @@ import org.pentaho.metadata.model.concept.types.TargetColumnType;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.locale.LocaleInterface;
 import org.pentaho.pms.locale.LocaleMeta;
+import org.pentaho.pms.messages.util.LocaleHelper;
 import org.pentaho.pms.schema.RelationshipMeta;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.schema.concept.types.color.ColorSettings;
@@ -462,7 +463,13 @@ public class XmiParser {
         relation.setComplexJoin(nvp.get(nvp.get("RELATIONSHIP_COMPLEX_JOIN")));
         if (nvp.get("RELATIONSHIP_DESCRIPTION") != null) {
           LocalizedString str = new LocalizedString();
-          str.setString(domain.getLocales().get(0).getCode(), nvp.get("RELATIONSHIP_DESCRIPTION"));
+          String locale = null;
+          if (domain.getLocales().size() >= 0) {
+            locale = domain.getLocales().get(0).getCode();
+          } else {
+            locale = LocaleHelper.getDefaultLocale().toString();
+          }
+          str.setString(locale, nvp.get("RELATIONSHIP_DESCRIPTION"));
         }
         relation.setJoinOrderKey(nvp.get("RELATIONSHIP_JOIN_ORDER_KEY"));
         
