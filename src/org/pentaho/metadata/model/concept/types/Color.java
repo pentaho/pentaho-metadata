@@ -26,6 +26,10 @@ public class Color implements Serializable {
 
   int red, green, blue;
 
+  public Color() {
+    
+  }
+  
   /**
    * @param red
    * @param green

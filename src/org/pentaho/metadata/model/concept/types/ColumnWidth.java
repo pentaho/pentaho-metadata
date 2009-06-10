@@ -45,6 +45,10 @@ public class ColumnWidth implements Serializable {
   private WidthType type;
   private double width;
 
+  public ColumnWidth() {
+    
+  }
+  
   /**
    * @param type the column width type
    * @param width the prefered width of the column
