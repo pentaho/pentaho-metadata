@@ -362,7 +362,7 @@ public class QueryXmlHelper {
       operator = XMLHandler.getNodeValue(nodes.item(0));
     }
 
-    if (operator == null) {
+    if ((operator == null) || (operator.trim().equals(""))) {
       operator = "AND";
     }
 
