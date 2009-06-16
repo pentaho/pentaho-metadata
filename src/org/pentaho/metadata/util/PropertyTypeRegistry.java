@@ -10,7 +10,7 @@
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or  implied. Please refer to
  * the license for the specific language governing your rights and limitations.
 */
-package org.pentaho.metadata.model.concept;
+package org.pentaho.metadata.util;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -29,12 +29,11 @@ import org.pentaho.metadata.model.concept.types.ColumnWidth;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.FieldType;
 import org.pentaho.metadata.model.concept.types.Font;
-import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.model.concept.types.TableType;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
-import org.pentaho.pms.messages.Messages;
+import org.pentaho.metadata.messages.Messages;
 /**
  * Concept Property Types are now POJOs, but there still needs to be a mechanism for
  * pretty descriptions and listing the types available.
@@ -77,12 +76,9 @@ public class PropertyTypeRegistry {
     addPropertyType(TargetColumnType.class);
     addPropertyType(AggregationType.class);
     
-    // this isfor agg lists, 
+    // this is for agg lists, 
     // we will need another way to express lists
     addPropertyType(List.class);
-    
-    // not used directly
-    // addPropertyType(LocaleType.class);
     
     addPropertyType(Alignment.class);
     addPropertyType(Color.class);
