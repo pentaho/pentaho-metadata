@@ -16,7 +16,7 @@ import java.io.Serializable;
 
 /**
  * A constraint within a logical query model.  This contains a combination type which defines
- * how it relates to other constratints, and an open formula expression 
+ * how it relates to other constraints, and an open formula expression 
  * defining the constraint.
  * 
  * @author Will Gorman (wgorman@pentaho.com)

@@ -88,7 +88,7 @@ public class SqlOpenFormulaTest {
     // retrieve various databases here
     DatabaseMeta databaseMeta = new DatabaseMeta("", databaseToTest, "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
     try {
-      SqlOpenFormula formula = new SqlOpenFormula(model, databaseMeta, mqlFormula, null);
+      SqlOpenFormula formula = new SqlOpenFormula(model, databaseMeta, mqlFormula, null, null, false);
       formula.parseAndValidate();
       String sql = formula.generateSQL("en_US"); //$NON-NLS-1$
       Assert.assertNotNull(sql);
@@ -105,7 +105,7 @@ public class SqlOpenFormulaTest {
     // retrieve various databases here
     DatabaseMeta databaseMeta = new DatabaseMeta("", databaseToTest, "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
     try {
-      SqlOpenFormula formula = new SqlOpenFormula(model, databaseMeta, mqlFormula, null);
+      SqlOpenFormula formula = new SqlOpenFormula(model, databaseMeta, mqlFormula, null, null, false);
       formula.parseAndValidate();
       formula.generateSQL("en_US"); //$NON-NLS-1$
       Assert.fail();
@@ -119,7 +119,7 @@ public class SqlOpenFormulaTest {
     // retrieve various databases here
     DatabaseMeta databaseMeta = new DatabaseMeta("", databaseToTest, "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
     try {
-      SqlOpenFormula formula = new SqlOpenFormula(model, table, databaseMeta, mqlFormula, null);
+      SqlOpenFormula formula = new SqlOpenFormula(model, table, databaseMeta, mqlFormula, null, null, false);
       formula.parseAndValidate();
       String sql = formula.generateSQL("en_US"); //$NON-NLS-1$
       Assert.assertNotNull(sql);
@@ -413,7 +413,7 @@ public class SqlOpenFormulaTest {
   @Test
   public void testExpectedExceptionCategoryNotFound() {
     String mqlFormula = "[blah_CUSTOMERS.BC_CUSTOMERS_CUSTOMERNAME] = \"EuroCars\")"; //$NON-NLS-1$
-    handleFormulaFailure(getOrdersModel(), "Hypersonic", mqlFormula, "PMSFormula.ERROR_0005 - Failed to parse formula [blah_CUSTOMERS.BC_CUSTOMERS_CUSTOMERNAME] = \"EuroCars\")");
+    handleFormulaFailure(getOrdersModel(), "Hypersonic", mqlFormula, "SqlOpenFormula.ERROR_0005 - Failed to parse formula [blah_CUSTOMERS.BC_CUSTOMERS_CUSTOMERNAME] = \"EuroCars\")");
   }
 
   @Test

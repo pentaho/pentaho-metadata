@@ -13,20 +13,16 @@
 package org.pentaho.metadata.repository;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
-import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
-import org.pentaho.metadata.model.LogicalTable;
 import org.pentaho.metadata.model.concept.IConcept;
 import org.pentaho.metadata.util.SecurityHelper;
-import org.pentaho.pms.messages.Messages;
+import org.pentaho.metadata.messages.Messages;
 
 /**
  * This is an in memory only implementation of the IMetadataDomainRepository
@@ -65,10 +61,14 @@ public class InMemoryMetadataDomainRepository implements IMetadataDomainReposito
       return null;
     }
     Domain domain = domains.get(id);
-    
-    SecurityHelper helper = new SecurityHelper();
-    Domain clone = helper.createSecureDomain(this, domain);
-    return clone;
+    if (domain != null) {
+      SecurityHelper helper = new SecurityHelper();
+      Domain clone = helper.createSecureDomain(this, domain);
+      return clone;
+    } else {
+      logger.error("domain not found : " + id);
+      return null;
+    }
   }
   
   public Set<String> getDomainIds() {

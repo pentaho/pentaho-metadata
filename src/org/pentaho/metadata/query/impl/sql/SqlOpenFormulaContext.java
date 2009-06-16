@@ -12,13 +12,13 @@
 */
 package org.pentaho.metadata.query.impl.sql;
 
-import org.pentaho.pms.messages.Messages;
+import org.pentaho.metadata.messages.Messages;
 import org.pentaho.reporting.libraries.formula.DefaultFormulaContext;
 import org.pentaho.reporting.libraries.formula.typing.Type;
 
 /**
- * This is a singleton class that manages PMSFormula's context.
- * the PMSFormula uses this class to validate operators and
+ * This is a singleton class that manages SqlOpenFormula's context.
+ * the SqlOpenFormula uses this class to validate operators and
  * functions, and it also uses this class to convert Formula
  * terms to SQL.
  * 
@@ -33,27 +33,27 @@ public class SqlOpenFormulaContext extends DefaultFormulaContext {
   /**
    * static, thread safe singleton retrieval
    * 
-   * @return PMSFormulaContext singleton object
+   * @return SqlOpenFormulaContext singleton object
    */
   public static SqlOpenFormulaContext getInstance() {
     return singleton;
   }
 
   /**
-   * PMSFormulaContext and PMSFormula do not use libFormula in the traditional
+   * SqlOpenFormulaContext and SqlOpenFormula do not use libFormula in the traditional
    * manner of executing a formula.  Instead they generate the necessary SQL to be 
    * executed from an RDBMS.  
    */
   public Object resolveReference(Object name) {
-    throw new UnsupportedOperationException(Messages.getErrorString("PMSFormulaContext.ERROR_0001_INVALID_USE")); //$NON-NLS-1$
+    throw new UnsupportedOperationException(Messages.getErrorString("SqlOpenFormulaContext.ERROR_0001_INVALID_USE")); //$NON-NLS-1$
   }
 
   /**
-   * PMSFormulaContext and PMSFormula do not use libFormula in the traditional
+   * SqlOpenFormulaContext and SqlOpenFormula do not use libFormula in the traditional
    * manner of executing a formula.  Instead they generate the necessary SQL to be 
    * executed from an RDBMS.  
    */
   public Type resolveReferenceType(Object name) {
-    throw new UnsupportedOperationException(Messages.getErrorString("PMSFormulaContext.ERROR_0001_INVALID_USE")); //$NON-NLS-1$
+    throw new UnsupportedOperationException(Messages.getErrorString("SqlOpenFormulaContext.ERROR_0001_INVALID_USE")); //$NON-NLS-1$
   }
 }

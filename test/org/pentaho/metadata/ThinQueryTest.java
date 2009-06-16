@@ -29,6 +29,7 @@ import org.pentaho.metadata.model.concept.types.TargetTableType;
 import org.pentaho.metadata.query.model.CombinationType;
 import org.pentaho.metadata.query.model.Constraint;
 import org.pentaho.metadata.query.model.Order;
+import org.pentaho.metadata.query.model.Parameter;
 import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.metadata.query.model.util.QueryXmlHelper;
@@ -48,6 +49,9 @@ public class ThinQueryTest {
     
     Category category = model.findCategory("CATEGORY");
     LogicalColumn column = category.findLogicalColumn("LC_CUSTOMERNAME");
+    
+    query.getParameters().add(new Parameter("test", DataType.STRING, "val"));
+    
     query.getSelections().add(new Selection(category, column, null));
     
     query.getConstraints().add(new Constraint(CombinationType.AND, "[CATEGORY.LC_CUSTOMERNAME] = \"bob\""));

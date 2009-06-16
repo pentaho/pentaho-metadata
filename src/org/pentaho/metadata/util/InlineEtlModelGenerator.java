@@ -23,6 +23,7 @@ import org.pentaho.di.core.Props;
 import org.pentaho.di.core.vfs.KettleVFS;
 import org.pentaho.di.trans.steps.textfileinput.TextFileInput;
 import org.pentaho.di.trans.steps.textfileinput.TextFileInputMeta;
+import org.pentaho.metadata.messages.LocaleHelper;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.InlineEtlPhysicalColumn;
@@ -31,10 +32,14 @@ import org.pentaho.metadata.model.InlineEtlPhysicalTable;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.LogicalTable;
+import org.pentaho.metadata.model.concept.Concept;
+import org.pentaho.metadata.model.concept.security.Security;
+import org.pentaho.metadata.model.concept.security.SecurityOwner;
+import org.pentaho.metadata.model.concept.security.SecurityOwner.OwnerType;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
-import org.pentaho.pms.messages.util.LocaleHelper;
+import org.pentaho.metadata.repository.IMetadataDomainRepository;
 import org.pentaho.pms.util.Settings;
 
 /**
@@ -50,7 +55,11 @@ public class InlineEtlModelGenerator {
   private boolean headerPresent;
   private String delimiter;
   private String enclosure;
-
+  boolean securityEnabled;
+  List<String> users;
+  List<String> roles;
+  String createdBy;
+  
   public InlineEtlModelGenerator() {
     if(!Props.isInitialized()) {
       Props.init(Props.TYPE_PROPERTIES_EMPTY);
@@ -133,6 +142,8 @@ public class InlineEtlModelGenerator {
       column.setId("PC_" + i);
       column.setFieldName(fieldNames[i]);
       column.setName(new LocalizedString(locale.getCode(), fieldNames[i]));
+      
+      // TODO: autodetect field types
       column.setDataType(DataType.STRING);
       table.getPhysicalColumns().add(column);
       
@@ -158,11 +169,61 @@ public class InlineEtlModelGenerator {
     Domain domain = new Domain();
     domain.addPhysicalModel(model);
     
+    if (getCreatedBy() != null) {
+      domain.setProperty("created_by", createdBy);
+    }
+
+    if (isSecurityEnabled()) {
+      Security security = new Security();
+      for (String user : users) {
+        SecurityOwner owner = new SecurityOwner(OwnerType.USER, user);
+        security.putOwnerRights(owner, IMetadataDomainRepository.ACCESS_TYPE_READ);  
+      }
+      for (String role : roles) {
+        SecurityOwner owner = new SecurityOwner(OwnerType.ROLE, role);
+        security.putOwnerRights(owner, IMetadataDomainRepository.ACCESS_TYPE_READ);  
+      }          
+      logicalModel.setProperty(Concept.SECURITY_PROPERTY, security);
+    }
+    
+    
     List<LocaleType> locales = new ArrayList<LocaleType>();
     locales.add(locale);
     domain.setLocales(locales);
     domain.addLogicalModel(logicalModel);
     domain.setId(modelName);
     return domain;
+  }
+  
+  public void setSecurityEnabled(boolean securityEnabled) {
+    this.securityEnabled = securityEnabled;
+  }
+
+  public boolean isSecurityEnabled() {
+    return securityEnabled;
+  }
+
+  public void setUsers(List<String> users) {
+    this.users = users;
+  }
+
+  public List<String> getUsers() {
+    return users;
+  }
+
+  public void setRoles(List<String> roles) {
+    this.roles = roles;
+  }
+
+  public List<String> getRoles() {
+    return roles;
+  }
+
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
+
+  public String getCreatedBy() {
+    return createdBy;
   }
 }

@@ -52,6 +52,7 @@ import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.query.model.CombinationType;
 import org.pentaho.metadata.query.model.Constraint;
 import org.pentaho.metadata.query.model.Order;
+import org.pentaho.metadata.query.model.Parameter;
 import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.metadata.query.model.util.QueryModelMetaData;
@@ -78,15 +79,12 @@ public class InlineEtlQueryExecutor {
   }
   
   private List<Selection> getAllSelections(Query query, List<QueryConstraint> queryConstraints) {
-    
     List<Selection> allSelections = new ArrayList<Selection>();
     
     // selections
-    
     allSelections.addAll(query.getSelections());
     
     // orders
-    
     for (Order order : query.getOrders()) {
       if (!allSelections.contains(order.getSelection())) {
         allSelections.add(order.getSelection());
@@ -109,43 +107,62 @@ public class InlineEtlQueryExecutor {
     List<Selection> selections = new ArrayList<Selection>();
     String formula;
     Constraint orig;
-    // will probably have to handle group by somehow here
   }
   
-  public List<QueryConstraint> parseConstraints(Query query) {
+  public List<QueryConstraint> parseConstraints(Query query, Map<String, Object> parameters) {
     List<QueryConstraint> constraints = new ArrayList<QueryConstraint>();
     for (Constraint constraint : query.getConstraints()) {
       QueryConstraint qc = new QueryConstraint();
       qc.orig = constraint;
+
       // parse out all the [] fields
       Pattern p = Pattern.compile("\\[([^\\]]*)\\]");
       Matcher m = p.matcher(constraint.getFormula());
       StringBuffer sb = new StringBuffer();
       while (m.find()) {
         String match = m.group(1);
-        String seg[] = match.split("\\.");
-        Category cat = query.getLogicalModel().findCategory(seg[0]);
-        LogicalColumn col = cat.findLogicalColumn(seg[1]);
-        if (col == null) {
-          logger.error("FAILED TO LOCATE: " + seg[0] + "." + seg[1]);
-        }
-        String fieldName = (String)col.getProperty(InlineEtlPhysicalColumn.FIELD_NAME);
-        AggregationType agg = null;
-        if (seg.length > 2) {
-           agg = AggregationType.valueOf(seg[2].toUpperCase());
-        }
-        Selection sel = new Selection(cat, col, agg);
-        if (!qc.selections.contains(sel)) {
-          qc.selections.add(sel);
-          if (sel.getActiveAggregationType() != null && sel.getActiveAggregationType() != AggregationType.NONE) {
-            qc.groupby = true;
+        if (match.startsWith("param:")) {
+          String paramName = match.substring(6);
+          Object paramValue = parameters.get(paramName);
+          String openFormulaValue = "";
+          if (paramValue instanceof Boolean) {
+            // need to get and then render either true or false function.
+            if (((Boolean)paramValue).booleanValue()) {
+              openFormulaValue = "TRUE()";
+            } else {
+              openFormulaValue = "FALSE()";
+            }
+          } else if (paramValue instanceof Double) {
+            openFormulaValue = paramValue.toString();
+          } else {
+            // assume a string, string literal quote
+            openFormulaValue = "\"" + paramValue + "\""; 
+          }
+          m.appendReplacement(sb, openFormulaValue);
+        } else {
+          String seg[] = match.split("\\.");
+          Category cat = query.getLogicalModel().findCategory(seg[0]);
+          LogicalColumn col = cat.findLogicalColumn(seg[1]);
+          if (col == null) {
+            logger.error("FAILED TO LOCATE: " + seg[0] + "." + seg[1]);
+          }
+          String fieldName = (String)col.getProperty(InlineEtlPhysicalColumn.FIELD_NAME);
+          AggregationType agg = null;
+          if (seg.length > 2) {
+             agg = AggregationType.valueOf(seg[2].toUpperCase());
+          }
+          Selection sel = new Selection(cat, col, agg);
+          if (!qc.selections.contains(sel)) {
+            qc.selections.add(sel);
+            if (sel.getActiveAggregationType() != null && sel.getActiveAggregationType() != AggregationType.NONE) {
+              qc.groupby = true;
+            }
           }
           
+          // this may be different in the group by context.
+          
+          m.appendReplacement(sb, "[" + fieldName + "]");
         }
-        
-        // this may be different in the group by context.
-        
-        m.appendReplacement(sb, "[" + fieldName + "]");
       }
       m.appendTail(sb);
       qc.formula = sb.toString();
@@ -156,11 +173,24 @@ public class InlineEtlQueryExecutor {
   }
   
   public IPentahoResultSet executeQuery(Query query) throws Exception {
-    // step one, execute a transformation into a result set
+    return executeQuery(query, null);
+  }
+  
+  public IPentahoResultSet executeQuery(Query query, Map<String, Object> parameters) throws Exception {
 
+    // resolve any missing parameters with default values
+    if (parameters == null && query.getParameters().size() > 0) {
+      parameters = new HashMap<String, Object>();
+    }
+    for (Parameter param : query.getParameters()) {
+      if (!parameters.containsKey(param.getName())) {
+        parameters.put(param.getName(), param.getDefaultValue());
+      }
+    }
+    
     // group by?
     int groupBys = 0;
-    List<QueryConstraint> queryConstraints = parseConstraints(query);
+    List<QueryConstraint> queryConstraints = parseConstraints(query, parameters);
     
     List<Selection> allSelections = getAllSelections(query, queryConstraints);
     for (Selection selection : allSelections) {
@@ -215,16 +245,12 @@ public class InlineEtlQueryExecutor {
     //
     
     StepMeta selections = getStepMeta(transMeta, "Select values");
-
-    
     SelectValuesMeta selectVals = (SelectValuesMeta)selections.getStepMetaInterface();
     selectVals.allocate(allSelections.size(), 0, 0);
     for (int i = 0; i < allSelections.size(); i++) {
-      // 
       Selection selection = allSelections.get(i);
       String fieldName = ((InlineEtlPhysicalColumn)selection.getLogicalColumn().getPhysicalColumn()).getFieldName();
       selectVals.getSelectName()[i] = fieldName;
-      
       logger.debug("SELECT " + fieldName);
     }
 
@@ -234,7 +260,6 @@ public class InlineEtlQueryExecutor {
     SelectValuesMeta finalSelectVals = (SelectValuesMeta)finalSelections.getStepMetaInterface();
     finalSelectVals.allocate(query.getSelections().size(), 0, 0);
     for (int i = 0; i < query.getSelections().size(); i++) {
-      // 
       Selection selection = query.getSelections().get(i);
       String fieldName = ((InlineEtlPhysicalColumn)selection.getLogicalColumn().getPhysicalColumn()).getFieldName();
       fieldNameMap.put(fieldName.toUpperCase(), selection.getLogicalColumn().getId());
@@ -345,8 +370,6 @@ public class InlineEtlQueryExecutor {
     // SORT
     //
     
-    // TODO: does group by impact sorting?
-    
     StepMeta sort = getStepMeta(transMeta, "Sort rows");
     
     SortRowsMeta sortRows = (SortRowsMeta)sort.getStepMetaInterface();
@@ -403,8 +426,10 @@ public class InlineEtlQueryExecutor {
           c++;
         }
       }
-      
+
+      //
       // GROUP BY
+      //
       
       StepMeta group = getStepMeta(transMeta, "Group by");
       GroupByMeta groupStep = (GroupByMeta)group.getStepMetaInterface();
@@ -476,46 +501,38 @@ public class InlineEtlQueryExecutor {
   private static class InlineEtlRowListener implements RowListener {
     
     private MemoryResultSet results;
-    
     private MemoryResultSet errorResults;
 
     private boolean registerAsStepListener(Trans trans, Query query, Map fieldMap) throws Exception {
       boolean success = false;
-//      try{
-        if(trans != null){
-          List<StepMetaDataCombi> stepList = trans.getSteps();
-          // assume the last step
-          for (StepMetaDataCombi step : stepList) {
-            if (!"Unique rows".equals(step.stepname)) {
-//            if (!"Select values".equals(step.stepname)) {
-              continue;
-            }
-            logger.debug("STEP NAME: " + step.stepname);
-            RowMetaInterface row = trans.getTransMeta().getStepFields(step.stepMeta); // step.stepname?
-            // create the metadata that the Pentaho result sets need
-            String fieldNames[] = row.getFieldNames();
-            
-            String columns[][] = new String[1][fieldNames.length];
-            for (int column = 0; column < fieldNames.length; column++) {
-              columns[0][column] = fieldNames[column];
-            }
-            
-            //TODO: build valid metadata 
-            
-            QueryModelMetaData metadata = new QueryModelMetaData(fieldMap, columns, null, query.getSelections()); 
-            
-            // MemoryMetaData metaData = new MemoryMetaData(columns, null);
-            results = new MemoryResultSet(metadata);
-            errorResults = new MemoryResultSet(metadata);
-            // add ourself as a row listener
-            step.step.addRowListener(this);
-            success = true;
+      if(trans != null) {
+        List<StepMetaDataCombi> stepList = trans.getSteps();
+        // assume the last step
+        for (StepMetaDataCombi step : stepList) {
+          if (!"Unique rows".equals(step.stepname)) {
+            continue;
           }
+          logger.debug("STEP NAME: " + step.stepname);
+          RowMetaInterface row = trans.getTransMeta().getStepFields(step.stepMeta); // step.stepname?
+          // create the metadata that the Pentaho result sets need
+          String fieldNames[] = row.getFieldNames();
+          
+          String columns[][] = new String[1][fieldNames.length];
+          for (int column = 0; column < fieldNames.length; column++) {
+            columns[0][column] = fieldNames[column];
+          }
+          
+          // build valid metadata 
+          QueryModelMetaData metadata = new QueryModelMetaData(fieldMap, columns, null, query.getSelections()); 
+          
+          results = new MemoryResultSet(metadata);
+          errorResults = new MemoryResultSet(metadata);
+
+          // add ourself as a row listener
+          step.step.addRowListener(this);
+          success = true;
         }
-//      } catch (Exception e){
-//        throw new KettleComponentException(Messages.getString("Kettle.ERROR_0027_ERROR_INIT_STEP",stepName), e); //$NON-NLS-1$
-//      }
-      
+      }
       return success;
     }
     
@@ -580,8 +597,6 @@ public class InlineEtlQueryExecutor {
         throw new KettleStepException(e);
       }
     }
-
-    
   }
   
   private int convertType(DataType type) {

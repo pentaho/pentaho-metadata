@@ -12,15 +12,13 @@
  */
 package org.pentaho.metadata.query.model;
 
-import java.io.Serializable;
-
 /**
  * This enum defines how individual constraints combine.
  * 
  * @author Will Gorman (wgorman@pentaho.com)
  *
  */
-public enum CombinationType implements Serializable {
+public enum CombinationType {
   AND("AND"), OR("OR"), AND_NOT("AND NOT"), OR_NOT("OR NOT");
   
   private String toStringVal;

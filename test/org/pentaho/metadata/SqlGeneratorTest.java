@@ -14,6 +14,7 @@ package org.pentaho.metadata;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +31,7 @@ import org.pentaho.metadata.model.LogicalTable;
 import org.pentaho.metadata.model.SqlPhysicalColumn;
 import org.pentaho.metadata.model.SqlPhysicalTable;
 import org.pentaho.metadata.model.concept.types.AggregationType;
+import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.RelationshipType;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
@@ -38,6 +40,7 @@ import org.pentaho.metadata.query.impl.sql.Path;
 import org.pentaho.metadata.query.impl.sql.SqlGenerator;
 import org.pentaho.metadata.query.model.CombinationType;
 import org.pentaho.metadata.query.model.Constraint;
+import org.pentaho.metadata.query.model.Parameter;
 import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.metadata.query.model.util.QueryModelMetaData;
@@ -86,19 +89,24 @@ public class SqlGeneratorTest {
   }
   
   public static class TestSqlGenerator extends SqlGenerator {
+    
+    @Override
     public Path getShortestPathBetween(LogicalModel model, List<LogicalTable> tables) {
       return super.getShortestPathBetween(model, tables);
     }
     
-    public String getJoin(LogicalModel LogicalModel, LogicalRelationship relation, Map<LogicalTable, String> tableAliases, DatabaseMeta databaseMeta, String locale) {
-      return super.getJoin(LogicalModel, relation, tableAliases, databaseMeta, locale);
+    @Override
+    public String getJoin(LogicalModel LogicalModel, LogicalRelationship relation, Map<LogicalTable, String> tableAliases, Map<String, Object> parameters, boolean genAsPreparedStatement, DatabaseMeta databaseMeta, String locale) {
+      return super.getJoin(LogicalModel, relation, tableAliases, parameters, genAsPreparedStatement, databaseMeta, locale);
     }
     
+    @Override
     public <T> List<List<T>> getSubsetsOfSize(int size, List<T> list) {
       return super.getSubsetsOfSize(size, list);
     }
     
-    protected String generateUniqueAlias(String alias, int maxLength, Collection<String> existingAliases) {
+    @Override
+    public String generateUniqueAlias(String alias, int maxLength, Collection<String> existingAliases) {
       return super.generateUniqueAlias(alias, maxLength, existingAliases);
     }
   }
@@ -394,7 +402,7 @@ public class SqlGeneratorTest {
     
     TestSqlGenerator sqlGenerator = new TestSqlGenerator();
     DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
-    String joinSQL = sqlGenerator.getJoin(model, rl1, null, databaseMeta, locale);
+    String joinSQL = sqlGenerator.getJoin(model, rl1, null, null, false, databaseMeta, locale);
 
     TestHelper.assertEqualsIgnoreWhitespaces(joinSQL, " bt1.pc1  =  bt2.pc2 ");//$NON-NLS-1$
   } 
@@ -484,6 +492,130 @@ public class SqlGeneratorTest {
       Assert.fail();
     }
   }
+
+  @Test
+  public void testParameterSqlGeneration() {
+    try {
+
+      LogicalModel model = TestHelper.buildDefaultModel();
+      LogicalColumn bc1 = model.findLogicalColumn("bc1");
+      LogicalColumn bc2 = model.findLogicalColumn("bc2");
+      LogicalColumn bce2 = model.findLogicalColumn("bce2");
+      DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+      Query query = new Query(null, model);
+
+      query.getParameters().add(new Parameter("test1", DataType.BOOLEAN, true));
+      query.getParameters().add(new Parameter("test2", DataType.NUMERIC, 1.2));
+      query.getParameters().add(new Parameter("test3", DataType.STRING, "value"));
+      
+      query.getSelections().add(new Selection(null, bc1, null));
+      query.getSelections().add(new Selection(null, bc2, null));
+
+      query.getConstraints().add(new Constraint(CombinationType.AND, "[param:test1]")); //$NON-NLS-1$
+      query.getConstraints().add(new Constraint(CombinationType.AND, "[bt1.bc1] > [param:test2]")); //$NON-NLS-1$
+      query.getConstraints().add(new Constraint(CombinationType.AND, "[param:test3] = [bt2.bc2]")); //$NON-NLS-1$
+
+      SqlGenerator generator = new SqlGenerator();
+      
+      MappedQuery mquery = generator.generateSql(query, "en_US", null, databaseMeta, null, false);
+      TestHelper.printOutJava(mquery.getQuery());
+      TestHelper.assertEqualsIgnoreWhitespaces(
+          "SELECT DISTINCT \n" + 
+          "          bt1.pc1 AS COL0\n" + 
+          "         ,bt2.pc2 AS COL1\n" + 
+          "FROM \n" + 
+          "          pt1 bt1\n" + 
+          "         ,pt2 bt2\n" + 
+          "WHERE \n" + 
+          "          ( bt1.pc1 = bt2.pc2 )\n" + 
+          "      AND \n" + 
+          "        (\n" + 
+          "          (\n" + 
+          "             1\n" + 
+          "          )\n" + 
+          "      AND (\n" + 
+          "              bt1.pc1  > 1.2\n" + 
+          "          )\n" + 
+          "      AND (\n" + 
+          "             'value' =  bt2.pc2 \n" + 
+          "          )\n" + 
+          "        )\n",
+          mquery.getQuery()
+          );
+
+      Map<String, Object> parameters = new HashMap<String, Object>();
+      parameters.put("test1", false);
+      parameters.put("test2", 2.1);
+      parameters.put("test3", "eulav");
+      
+      mquery = generator.generateSql(query, "en_US", null, databaseMeta, parameters, false);
+      TestHelper.assertEqualsIgnoreWhitespaces(
+          "SELECT DISTINCT \n" + 
+          "          bt1.pc1 AS COL0\n" + 
+          "         ,bt2.pc2 AS COL1\n" + 
+          "FROM \n" + 
+          "          pt1 bt1\n" + 
+          "         ,pt2 bt2\n" + 
+          "WHERE \n" + 
+          "          ( bt1.pc1 = bt2.pc2 )\n" + 
+          "      AND \n" + 
+          "        (\n" + 
+          "          (\n" + 
+          "             0\n" + 
+          "          )\n" + 
+          "      AND (\n" + 
+          "              bt1.pc1  > 2.1\n" + 
+          "          )\n" + 
+          "      AND (\n" + 
+          "             'eulav' =  bt2.pc2 \n" + 
+          "          )\n" + 
+          "        )\n",
+          mquery.getQuery()
+          );
+
+      Assert.assertNull(mquery.getParamList());
+      
+      mquery = generator.generateSql(query, "en_US", null, databaseMeta, parameters, true);
+      TestHelper.printOutJava(mquery.getQuery());
+      TestHelper.assertEqualsIgnoreWhitespaces(
+          "SELECT DISTINCT \n" + 
+          "          bt1.pc1 AS COL0\n" + 
+          "         ,bt2.pc2 AS COL1\n" + 
+          "FROM \n" + 
+          "          pt1 bt1\n" + 
+          "         ,pt2 bt2\n" + 
+          "WHERE \n" + 
+          "          ( bt1.pc1 = bt2.pc2 )\n" + 
+          "      AND \n" + 
+          "        (\n" + 
+          "          (\n" + 
+          "             ?\n" + 
+          "          )\n" + 
+          "      AND (\n" + 
+          "              bt1.pc1  > ?\n" + 
+          "          )\n" + 
+          "      AND (\n" + 
+          "             ? =  bt2.pc2 \n" + 
+          "          )\n" + 
+          "        )\n",
+          mquery.getQuery()
+        );
+      Assert.assertNotNull(mquery.getParamList());
+      Assert.assertEquals(3, mquery.getParamList().size());
+      Assert.assertEquals("test1", mquery.getParamList().get(0));
+      Assert.assertEquals("test2", mquery.getParamList().get(1));
+      Assert.assertEquals("test3", mquery.getParamList().get(2));
+
+      
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.fail();
+    }
+    
+    
+    
+  }
+
   
   @Test
   public void testAggListSQLGeneration() {

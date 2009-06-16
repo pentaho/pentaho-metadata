@@ -18,7 +18,7 @@ import java.util.Map;
 import org.pentaho.commons.connection.memory.MemoryMetaData;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.query.model.Selection;
-import org.pentaho.pms.messages.Messages;
+import org.pentaho.metadata.messages.Messages;
 
 /**
  * This class extends The Pentaho Connection API's MemoryMetaData
@@ -59,7 +59,7 @@ public class QueryModelMetaData extends MemoryMetaData {
           if (key != null) {
             newHeader = columnsMap.get(key.toString().toUpperCase());
             if (newHeader == null) {
-              throw new RuntimeException(Messages.getErrorString("ExtendedMetadata.ERROR_0001_MetadataColumnNotFound", key.toString())); //$NON-NLS-1$
+              throw new RuntimeException(Messages.getErrorString("QueryModelMetaData.ERROR_0001_MetadataColumnNotFound", key.toString())); //$NON-NLS-1$
             }
             newHeaders[i][j] = newHeader;
           }

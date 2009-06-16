@@ -28,7 +28,7 @@ import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.concept.IConcept;
 import org.pentaho.metadata.util.SecurityHelper;
 import org.pentaho.metadata.util.SerializationService;
-import org.pentaho.pms.messages.Messages;
+import org.pentaho.metadata.messages.Messages;
 
 /**
  * This is a file based implementation of the IMetadataDomainRepository
@@ -99,9 +99,14 @@ public class FileBasedMetadataDomainRepository implements IMetadataDomainReposit
       reloadDomains();
     }
     Domain domain = domains.get(id);
-    SecurityHelper helper = new SecurityHelper();
-    Domain clone = helper.createSecureDomain(this, domain);
-    return clone;
+    if (domain != null) {
+      SecurityHelper helper = new SecurityHelper();
+      Domain clone = helper.createSecureDomain(this, domain);
+      return clone;
+    } else {
+      logger.error("domain not found : " + id);
+      return null;
+    }
   }
   
   public Set<String> getDomainIds() {

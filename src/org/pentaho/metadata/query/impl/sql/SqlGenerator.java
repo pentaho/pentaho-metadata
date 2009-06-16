@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -38,12 +40,13 @@ import org.pentaho.metadata.model.concept.types.TargetTableType;
 import org.pentaho.metadata.query.model.CombinationType;
 import org.pentaho.metadata.query.model.Constraint;
 import org.pentaho.metadata.query.model.Order;
+import org.pentaho.metadata.query.model.Parameter;
 import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.metadata.query.model.Order.Type;
 import org.pentaho.metadata.repository.IMetadataDomainRepository;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
-import org.pentaho.pms.messages.Messages;
+import org.pentaho.metadata.messages.Messages;
 import org.pentaho.pms.mql.dialect.JoinType;
 import org.pentaho.pms.mql.dialect.SQLDialectFactory;
 import org.pentaho.pms.mql.dialect.SQLDialectInterface;
@@ -97,7 +100,10 @@ public class SqlGenerator {
    * @param locale locale string
    * @param columnsMap map of column aliases to populate
    */
-  protected void generateSelect(SQLQueryModel query, LogicalModel model, DatabaseMeta databaseMeta, List<Selection> selections, boolean disableDistinct, boolean group, String locale, Map<LogicalTable, String> tableAliases, Map<String, String> columnsMap) {
+  protected void generateSelect(
+      SQLQueryModel query, LogicalModel model, DatabaseMeta databaseMeta, List<Selection> selections, 
+      boolean disableDistinct, boolean group, String locale, Map<LogicalTable, String> tableAliases, 
+      Map<String, String> columnsMap, Map<String, Object> parameters, boolean genAsPreparedStatement) {
     query.setDistinct(!disableDistinct && !group);
     for (int i = 0; i < selections.size(); i++) {
       // in some database implementations, the "as" name has a finite length;
@@ -111,7 +117,7 @@ public class SqlGenerator {
       }else{
         alias = databaseMeta.quoteField(selections.get(i).getLogicalColumn().getId());
       }
-      SqlAndTables sqlAndTables = getBusinessColumnSQL(model, selections.get(i), tableAliases, databaseMeta, locale);
+      SqlAndTables sqlAndTables = getBusinessColumnSQL(model, selections.get(i), tableAliases, parameters, genAsPreparedStatement, databaseMeta, locale);
       query.addSelection(sqlAndTables.getSql(), alias);
     }
   }
@@ -133,8 +139,9 @@ public class SqlGenerator {
   protected void generateFromAndWhere(
       SQLQueryModel query, List<LogicalTable> usedBusinessTables, LogicalModel model, 
       Path path, List<Constraint> conditions, Map<LogicalTable, String> tableAliases,
-      Map<Constraint, SqlOpenFormula> constraintFormulaMap,
-      DatabaseMeta databaseMeta, String locale) throws PentahoMetadataException {
+      Map<Constraint, SqlOpenFormula> constraintFormulaMap, Map<String, Object> parameters,
+      boolean genAsPreparedStatement, DatabaseMeta databaseMeta, String locale
+    ) throws PentahoMetadataException {
 
     // FROM TABLES
     for (int i = 0; i < usedBusinessTables.size(); i++) {
@@ -164,7 +171,7 @@ public class SqlGenerator {
     if (path != null) {
       for (int i = 0; i < path.size(); i++) {
         LogicalRelationship relation = path.getRelationship(i);
-        String joinFormula = getJoin(model, relation, tableAliases, databaseMeta, locale);
+        String joinFormula = getJoin(model, relation, tableAliases, parameters, genAsPreparedStatement, databaseMeta, locale);
         String joinOrderKey = relation.getJoinOrderKey();
         JoinType joinType;
         switch(RelationshipType.getJoinType(relation.getRelationshipType())) {
@@ -222,13 +229,14 @@ public class SqlGenerator {
    */
   protected void generateGroupBy(SQLQueryModel query, LogicalModel model, 
       List<Selection> selections, Map<LogicalTable, String> tableAliases, 
+      Map<String, Object> parameters, boolean genAsPreparedStatement, 
       DatabaseMeta databaseMeta, String locale) {
     // can be moved to selection loop
     for (Selection selection : selections) {
       // Check if the column has any nested aggregation in there like a calculated column : SUM(a)/SUM(b) with no aggregation set.
       //
-      if (!hasFactsInIt(model, selection, databaseMeta, locale)) {
-    	SqlAndTables sqlAndTables = getBusinessColumnSQL(model, selection, tableAliases, databaseMeta, locale);
+      if (!hasFactsInIt(model, selection, parameters, genAsPreparedStatement, databaseMeta, locale)) {
+    	SqlAndTables sqlAndTables = getBusinessColumnSQL(model, selection, tableAliases, parameters, genAsPreparedStatement, databaseMeta, locale);
         query.addGroupBy(sqlAndTables.getSql(), null);
       }
     }
@@ -245,7 +253,7 @@ public class SqlGenerator {
    */
   protected void generateOrderBy(SQLQueryModel query, LogicalModel model, List<Order> orderBy,
       DatabaseMeta databaseMeta, String locale, Map<LogicalTable, String> tableAliases, 
-      Map<String,String> columnsMap) {
+      Map<String,String> columnsMap, Map<String, Object> parameters, boolean genAsPreparedStatement) {
     if (orderBy != null) {
       for (Order orderItem : orderBy) {
         LogicalColumn businessColumn = orderItem.getSelection().getLogicalColumn();
@@ -267,7 +275,7 @@ public class SqlGenerator {
 	        	}
 	        }
         }
-        SqlAndTables sqlAndTables = getBusinessColumnSQL(model, orderItem.getSelection(), tableAliases, databaseMeta, locale);
+        SqlAndTables sqlAndTables = getBusinessColumnSQL(model, orderItem.getSelection(), tableAliases, parameters, genAsPreparedStatement, databaseMeta, locale);
         query.addOrderBy(sqlAndTables.getSql(), alias, orderItem.getType() != Type.ASC ? OrderType.DESCENDING : null); //$NON-NLS-1$
       }
     }
@@ -309,10 +317,16 @@ public class SqlGenerator {
     }
     return aliasWithId;
   }
-  
+
   public MappedQuery generateSql(
       Query query, String locale, IMetadataDomainRepository repo, 
       DatabaseMeta databaseMeta) throws PentahoMetadataException {
+    return generateSql(query, locale, repo, databaseMeta, null, false);
+  }
+  
+  public MappedQuery generateSql(
+      Query query, String locale, IMetadataDomainRepository repo, 
+      DatabaseMeta databaseMeta, Map<String, Object> parameters, boolean genAsPreparedStatement) throws PentahoMetadataException {
     
     Constraint securityConstraint = null;
     
@@ -322,10 +336,20 @@ public class SqlGenerator {
         securityConstraint = new Constraint(CombinationType.AND, mqlSecurityConstraint);
       }
     }
+    
+    // resolve any missing parameters with default values
+    if (parameters == null && query.getParameters().size() > 0) {
+      parameters = new HashMap<String, Object>();
+    }
+    for (Parameter param : query.getParameters()) {
+      if (!parameters.containsKey(param.getName())) {
+        parameters.put(param.getName(), param.getDefaultValue());
+      }
+    }
 
     return getSQL(query.getLogicalModel(), query.getSelections(), 
         query.getConstraints(), query.getOrders(), databaseMeta, 
-        locale, query.getDisableDistinct(), securityConstraint);
+        locale, parameters, genAsPreparedStatement, query.getDisableDistinct(), securityConstraint);
   }
   
   /**
@@ -348,7 +372,9 @@ public class SqlGenerator {
       List<Constraint> conditions, 
       List<Order> orderBy, 
       DatabaseMeta databaseMeta, 
-      String locale, 
+      String locale,
+      Map<String, Object> parameters,
+      boolean genAsPreparedStatement,
       boolean disableDistinct, 
       Constraint securityConstraint) throws PentahoMetadataException {
     
@@ -359,12 +385,12 @@ public class SqlGenerator {
     // generate the formula objects for constraints 
     Map<Constraint, SqlOpenFormula> constraintFormulaMap = new HashMap<Constraint, SqlOpenFormula>();
     for (Constraint constraint : conditions) {
-      SqlOpenFormula formula = new SqlOpenFormula(model, databaseMeta, constraint.getFormula(), null);
+      SqlOpenFormula formula = new SqlOpenFormula(model, databaseMeta, constraint.getFormula(), null, parameters, genAsPreparedStatement);
       formula.parseAndValidate();
       constraintFormulaMap.put(constraint, formula);
     }
     if (securityConstraint != null) {
-      SqlOpenFormula formula = new SqlOpenFormula(model, databaseMeta, securityConstraint.getFormula(), null);
+      SqlOpenFormula formula = new SqlOpenFormula(model, databaseMeta, securityConstraint.getFormula(), null, parameters, genAsPreparedStatement);
       formula.parseAndValidate();
       constraintFormulaMap.put(securityConstraint, formula);
     }
@@ -372,12 +398,12 @@ public class SqlGenerator {
     // These are the tables involved in the field selection
     //
     List<LogicalTable> tabs = getTablesInvolved(model, selections, conditions, 
-        orderBy, constraintFormulaMap, databaseMeta, locale, securityConstraint);
+        orderBy, constraintFormulaMap, parameters, genAsPreparedStatement, databaseMeta, locale, securityConstraint);
 
     // Now get the shortest path between these tables.
     Path path = getShortestPathBetween(model, tabs);
     if (path == null) {
-      throw new PentahoMetadataException(Messages.getErrorString("BusinessModel.ERROR_0001_FAILED_TO_FIND_PATH")); //$NON-NLS-1$
+      throw new PentahoMetadataException(Messages.getErrorString("SqlGenerator.ERROR_0002_FAILED_TO_FIND_PATH")); //$NON-NLS-1$
     }
 
     List<LogicalTable> usedBusinessTables = path.getUsedTables();
@@ -401,14 +427,14 @@ public class SqlGenerator {
       }
       
       boolean group = hasFactsInIt(model, selections, conditions, constraintFormulaMap, 
-                                    databaseMeta, locale);
+                                    parameters, genAsPreparedStatement, databaseMeta, locale);
 
-      generateSelect(query, model, databaseMeta, selections, disableDistinct, group, locale, tableAliases, columnsMap);
-      generateFromAndWhere(query, usedBusinessTables, model, path, conditions, tableAliases, constraintFormulaMap, databaseMeta, locale);
+      generateSelect(query, model, databaseMeta, selections, disableDistinct, group, locale, tableAliases, columnsMap, parameters, genAsPreparedStatement);
+      generateFromAndWhere(query, usedBusinessTables, model, path, conditions, tableAliases, constraintFormulaMap, parameters, genAsPreparedStatement, databaseMeta, locale);
       if (group) {
-        generateGroupBy(query, model, selections, tableAliases, databaseMeta, locale);
+        generateGroupBy(query, model, selections, tableAliases, parameters, genAsPreparedStatement, databaseMeta, locale);
       }
-      generateOrderBy(query, model, orderBy, databaseMeta, locale, tableAliases, columnsMap);
+      generateOrderBy(query, model, orderBy, databaseMeta, locale, tableAliases, columnsMap, parameters, genAsPreparedStatement);
       
       if (securityConstraint != null) {
         // apply current table aliases
@@ -421,9 +447,25 @@ public class SqlGenerator {
       }
     }
 
+    
+    // Convert temporary param placements with Sql Prepared Statement ? values
     SQLDialectInterface dialect = SQLDialectFactory.getSQLDialect(databaseMeta);
-   
-    return new MappedQuery(dialect.generateSelectStatement(query), columnsMap, selections);
+    List<String> paramNames = null;
+    String sql = dialect.generateSelectStatement(query);
+    Pattern p = Pattern.compile("___PARAM\\[(.*)\\]___");
+    Matcher m = p.matcher(sql);
+    StringBuffer sb = new StringBuffer();
+    while (m.find()) {
+      m.appendReplacement(sb, "?");
+      if (paramNames == null) {
+        paramNames = new ArrayList<String>();
+      }
+      String paramName = m.group(1);
+      paramNames.add(paramName);
+    }
+    m.appendTail(sb);
+    
+    return new MappedQuery(sb.toString(), columnsMap, selections, paramNames);
   }
 
   protected List<LogicalTable> getTablesInvolved (
@@ -432,6 +474,8 @@ public class SqlGenerator {
       List<Constraint> conditions, 
       List<Order> orderBy,
       Map<Constraint, SqlOpenFormula> constraintFormulaMap,
+      Map<String, Object> parameters,
+      boolean genAsPreparedStatement,
       DatabaseMeta databaseMeta,
       String locale,
       Constraint securityConstraint) {
@@ -447,7 +491,7 @@ public class SqlGenerator {
       // TODO: We re-use the static method below, maybe there is a better way to clean this up a bit.
       //
       
-      SqlAndTables sqlAndTables = getBusinessColumnSQL(model, selection, null, databaseMeta, locale);
+      SqlAndTables sqlAndTables = getBusinessColumnSQL(model, selection, null, parameters, genAsPreparedStatement, databaseMeta, locale);
       
   	  // Add the involved tables to the list...
   	  //
@@ -470,7 +514,7 @@ public class SqlGenerator {
     // Figure out which tables are involved in the ORDER BY
     //
     for(Order order : orderBy) {
-    	SqlAndTables sqlAndTables = getBusinessColumnSQL(model, order.getSelection(), null, databaseMeta, locale);
+    	SqlAndTables sqlAndTables = getBusinessColumnSQL(model, order.getSelection(), null, parameters, genAsPreparedStatement, databaseMeta, locale);
     	
     	// Add the involved tables to the list...
     	//
@@ -495,6 +539,7 @@ public class SqlGenerator {
   
   protected boolean hasFactsInIt(LogicalModel model, List<Selection> selections, 
       List<Constraint> conditions, Map<Constraint, SqlOpenFormula> constraintFormulaMap, 
+      Map<String, Object> parameters, boolean genAsPreparedStatement, 
       DatabaseMeta databaseMeta, String locale) {
 	// We don't have to simply check the columns in the selection
 	// If the column is made up of a calculation, we need to verify that there is no aggregation in the calculation too.
@@ -505,7 +550,7 @@ public class SqlGenerator {
 	//
     for (Selection selection : selections) {
     
-      if (hasFactsInIt(model, selection, databaseMeta, locale)) {
+      if (hasFactsInIt(model, selection, parameters, genAsPreparedStatement, databaseMeta, locale)) {
     	  return true;
       }
     }
@@ -516,7 +561,7 @@ public class SqlGenerator {
       for (Constraint condition : conditions) {
         List<Selection> list = constraintFormulaMap.get(condition).getSelections();
     	  for (Selection conditionColumn : list) {
-    	      if (hasFactsInIt(model, conditionColumn, databaseMeta, locale)) {
+    	      if (hasFactsInIt(model, conditionColumn, parameters, genAsPreparedStatement, databaseMeta, locale)) {
     	    	  return true;
     	      }
     	  }
@@ -536,12 +581,14 @@ public class SqlGenerator {
    * @param locale the locale to use
    * @return true if the business column uses any aggregation in the formula or is aggregated itself.
    */
-  protected boolean hasFactsInIt(LogicalModel model, Selection businessColumn, DatabaseMeta databaseMeta, String locale) {
+  protected boolean hasFactsInIt(
+      LogicalModel model, Selection businessColumn, Map<String, Object> parameters, boolean genAsPreparedStatement, 
+      DatabaseMeta databaseMeta, String locale) {
 	  if (businessColumn.hasAggregate()) return true;
 
 	  // Parse the formula in the business column to see which tables and columns are involved...
       //
-      SqlAndTables sqlAndTables = getBusinessColumnSQL(model, businessColumn, null, databaseMeta, locale);
+      SqlAndTables sqlAndTables = getBusinessColumnSQL(model, businessColumn, null, parameters, genAsPreparedStatement, databaseMeta, locale);
       for (Selection column : sqlAndTables.getUsedColumns()) {
 	      if (column.hasAggregate()) {
 	        return true;
@@ -769,7 +816,10 @@ public class SqlGenerator {
     return null;
   }
 
-  public static SqlAndTables getBusinessColumnSQL(LogicalModel businessModel, Selection column, Map<LogicalTable, String> tableAliases, DatabaseMeta databaseMeta, String locale) {
+  public static SqlAndTables getBusinessColumnSQL(
+      LogicalModel businessModel, Selection column, Map<LogicalTable, String> tableAliases, 
+      Map<String, Object> parameters, boolean genAsPreparedStatement, DatabaseMeta databaseMeta, 
+      String locale) {
     String targetColumn = (String)column.getLogicalColumn().getProperty(SqlPhysicalColumn.TARGET_COLUMN);
     LogicalTable logicalTable = column.getLogicalColumn().getLogicalTable();
       if (column.getLogicalColumn().getProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE) == TargetColumnType.OPEN_FORMULA) { 
@@ -777,7 +827,7 @@ public class SqlGenerator {
         
         try {
           // we'll need to pass in some context to PMSFormula so it can resolve aliases if necessary
-          SqlOpenFormula formula = new SqlOpenFormula(businessModel, logicalTable, databaseMeta, targetColumn, tableAliases);
+          SqlOpenFormula formula = new SqlOpenFormula(businessModel, logicalTable, databaseMeta, targetColumn, tableAliases, parameters, genAsPreparedStatement);
           formula.parseAndValidate();
           
           String formulaSql = formula.generateSQL(locale);
@@ -791,7 +841,7 @@ public class SqlGenerator {
         } catch (PentahoMetadataException e) {
           // this is for backwards compatibility.
           // eventually throw any errors
-          logger.error(Messages.getErrorString("BusinessColumn.ERROR_0001_FAILED_TO_PARSE_FORMULA", targetColumn), e); //$NON-NLS-1$
+          logger.error(Messages.getErrorString("SqlGenerator.ERROR_0001_FAILED_TO_PARSE_FORMULA", targetColumn), e); //$NON-NLS-1$
 
           // Report just this table and column as being used along with the formula.
           //
@@ -864,17 +914,17 @@ public class SqlGenerator {
       return fn;
   }
 
-  protected String getJoin(LogicalModel businessModel, LogicalRelationship relation, Map<LogicalTable, String> tableAliases, DatabaseMeta databaseMeta, String locale) {
+  protected String getJoin(LogicalModel businessModel, LogicalRelationship relation, Map<LogicalTable, String> tableAliases, Map<String, Object> parameters, boolean genAsPreparedStatement, DatabaseMeta databaseMeta, String locale) {
     String join=""; //$NON-NLS-1$
     if (relation.isComplex()) {
       try {
         // parse join as MQL
-        SqlOpenFormula formula = new SqlOpenFormula(businessModel, databaseMeta, relation.getComplexJoin(), tableAliases);
+        SqlOpenFormula formula = new SqlOpenFormula(businessModel, databaseMeta, relation.getComplexJoin(), tableAliases, parameters, genAsPreparedStatement);
         formula.parseAndValidate();
         join = formula.generateSQL(locale);
       } catch(PentahoMetadataException e) {
         // backward compatibility, deprecate
-        logger.error(Messages.getErrorString("MQLQueryImpl.ERROR_0017_FAILED_TO_PARSE_COMPLEX_JOIN", relation.getComplexJoin()), e); //$NON-NLS-1$
+        logger.error(Messages.getErrorString("SqlGenerator.ERROR_0017_FAILED_TO_PARSE_COMPLEX_JOIN", relation.getComplexJoin()), e); //$NON-NLS-1$
         join = relation.getComplexJoin();
       }
     } else if (relation.getFromTable() != null && relation.getToTable() != null && 

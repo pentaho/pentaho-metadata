@@ -30,7 +30,7 @@ import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
 import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
-import org.pentaho.pms.messages.Messages;
+import org.pentaho.metadata.messages.Messages;
 import org.pentaho.pms.mql.dialect.FormulaTraversalInterface;
 import org.pentaho.pms.mql.dialect.SQLDialectFactory;
 import org.pentaho.pms.mql.dialect.SQLDialectInterface;
@@ -101,51 +101,57 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
   
   private boolean hasAggregateFunction = false;
   
+  private Map<String, Object> parameters;
+  
   /** the string to parse */
   private String formulaString;
   
+  private boolean genAsPreparedStatement;
+  
   /**
-   * constructor, currently used for testing
+   * constructor, used for constraints, security, and complex joins
    * 
    * @param model logical model for logical column lookup
    * @param formulaString formula string
    * @throws PentahoMetadataException throws an exception if we're missing anything important
    */
-  public SqlOpenFormula(LogicalModel model, DatabaseMeta databaseMeta, String formulaString, Map<LogicalTable, String> tableAliases) throws PentahoMetadataException {
+  public SqlOpenFormula(LogicalModel model, DatabaseMeta databaseMeta, String formulaString, Map<LogicalTable, String> tableAliases, Map<String, Object> parameters, boolean genAsPreparedStatement) throws PentahoMetadataException {
     
     this.model = model;
     this.formulaString = formulaString;
     this.databaseMeta = databaseMeta;
     this.tableAliases = tableAliases;
     this.tables = new ArrayList<LogicalTable>();
+    this.parameters = parameters;
+    this.genAsPreparedStatement = genAsPreparedStatement;
     
     if (model == null) {
-      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0001_NO_BUSINESS_MODEL_PROVIDED")); //$NON-NLS-1$
+      throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0001_NO_BUSINESS_MODEL_PROVIDED")); //$NON-NLS-1$
     }
     
     if (databaseMeta == null) {
-      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0002_NO_DATABASE_META_PROVIDED")); //$NON-NLS-1$
+      throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0002_NO_DATABASE_META_PROVIDED")); //$NON-NLS-1$
     }
     
     this.sqlDialect = SQLDialectFactory.getSQLDialect(databaseMeta);
     
     if (sqlDialect == null) {
-      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0018_DATABASE_DIALECT_NOT_FOUND", databaseMeta.getDatabaseTypeDesc())); //$NON-NLS-1$
+      throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0018_DATABASE_DIALECT_NOT_FOUND", databaseMeta.getDatabaseTypeDesc())); //$NON-NLS-1$
     }
     
     if (formulaString == null) {
-      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0003_NO_FORMULA_STRING_PROVIDED")); //$NON-NLS-1$
+      throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0003_NO_FORMULA_STRING_PROVIDED")); //$NON-NLS-1$
     }
   }
   
   /**
-   * constructor, currently used for testing
+   * constructor, used for formula based physical columns
    * 
    * @param model business model for business column lookup
    * @param formulaString formula string
    * @throws PentahoMetadataException throws an exception if we're missing anything important
    */
-  public SqlOpenFormula(LogicalModel model, LogicalTable table, DatabaseMeta databaseMeta, String formulaString, Map<LogicalTable, String> tableAliases) throws PentahoMetadataException {
+  public SqlOpenFormula(LogicalModel model, LogicalTable table, DatabaseMeta databaseMeta, String formulaString, Map<LogicalTable, String> tableAliases, Map<String, Object> parameters, boolean genAsPreparedStatement) throws PentahoMetadataException {
     
     this.model = model;
     this.formulaString = formulaString;
@@ -153,27 +159,29 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
     this.tableAliases = tableAliases;
     this.tables = new ArrayList<LogicalTable>();
     this.tables.add(table);
+    this.parameters = parameters;
+    this.genAsPreparedStatement = genAsPreparedStatement;
     
     if (model == null) {
-      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0001_NO_BUSINESS_MODEL_PROVIDED")); //$NON-NLS-1$
+      throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0001_NO_BUSINESS_MODEL_PROVIDED")); //$NON-NLS-1$
     }
     
     if (databaseMeta == null) {
-      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0002_NO_DATABASE_META_PROVIDED")); //$NON-NLS-1$
+      throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0002_NO_DATABASE_META_PROVIDED")); //$NON-NLS-1$
     }
     
     if (table == null) {
-      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0004_NO_BUSINESS_TABLE_PROVIDED")); //$NON-NLS-1$
+      throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0004_NO_BUSINESS_TABLE_PROVIDED")); //$NON-NLS-1$
     }
     
     this.sqlDialect = SQLDialectFactory.getSQLDialect(databaseMeta);
     
     if (sqlDialect == null) {
-      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0017_DATABASE_DIALECT_NOT_FOUND", databaseMeta.getDatabaseTypeDesc())); //$NON-NLS-1$
+      throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0015_DATABASE_DIALECT_NOT_FOUND", databaseMeta.getDatabaseTypeDesc())); //$NON-NLS-1$
     }
     
     if (formulaString == null) {
-      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0003_NO_FORMULA_STRING_PROVIDED")); //$NON-NLS-1$
+      throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0003_NO_FORMULA_STRING_PROVIDED")); //$NON-NLS-1$
     }
   }
   
@@ -185,52 +193,6 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
    * @param formulaString formula string
    * @throws PentahoMetadataException throws an exception if we're missing anything important
    */
-  public SqlOpenFormula(LogicalModel model, String formulaString, Map<LogicalTable, String> tableAliases, DatabaseMeta databaseMeta) throws PentahoMetadataException {
-    
-    this.model = model;
-    this.formulaString = formulaString;
-    this.tableAliases = tableAliases;
-    this.tables = new ArrayList<LogicalTable>();
-    this.databaseMeta = databaseMeta;
-    
-    if (model == null) {
-      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0001_NO_BUSINESS_MODEL_PROVIDED")); //$NON-NLS-1$
-    }
-    
-    if (databaseMeta == null) {
-      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0002_NO_DATABASE_META_PROVIDED")); //$NON-NLS-1$
-    }
-    
-    this.sqlDialect = SQLDialectFactory.getSQLDialect(databaseMeta);
-    
-    if (sqlDialect == null) {
-      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0017_DATABASE_DIALECT_NOT_FOUND", databaseMeta.getDatabaseTypeDesc())); //$NON-NLS-1$
-    }
-    
-    if (formulaString == null) {
-      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0003_NO_FORMULA_STRING_PROVIDED")); //$NON-NLS-1$
-    }
-  }
-  
-  /**
-   * constructor which also takes a specific logical table for resolving fields
-   * 
-   * @param model logical model for logical column lookup
-   * @param table logical table for resolving fields
-   * @param formulaString formula string
-   * @throws PentahoMetadataException throws an exception if we're missing anything important
-   */
-  public SqlOpenFormula(LogicalModel model, LogicalTable table, String formulaString, Map<LogicalTable, String> tableAliases, DatabaseMeta databaseMeta) throws PentahoMetadataException {
-    
-    this(model, formulaString, tableAliases, databaseMeta);
-    
-    this.tables.add(table);
-    
-    if (table == null) {
-      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0004_NO_BUSINESS_TABLE_PROVIDED")); //$NON-NLS-1$
-    }
-  }
-
   public void setTableAliases(Map<LogicalTable, String> tableAliases) {
     this.tableAliases = tableAliases;
   }
@@ -268,16 +230,16 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
       } catch (ParseException e) {
         logger.error("an exception occurred", e); //$NON-NLS-1$
         // is it possible to provide more detail in this exception to the user?
-        throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0005_FAILED_TO_PARSE_FORMULA", formulaString)); //$NON-NLS-1$
+        throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0005_FAILED_TO_PARSE_FORMULA", formulaString)); //$NON-NLS-1$
       } catch (EvaluationException e) {
         logger.error("an exception occurred", e); //$NON-NLS-1$
-        throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0006_FAILED_TO_EVALUATE_FORMULA", formulaString)); //$NON-NLS-1$
+        throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0006_FAILED_TO_EVALUATE_FORMULA", formulaString)); //$NON-NLS-1$
       } catch (Throwable e) {
         if (e instanceof PentahoMetadataException) {
           throw (PentahoMetadataException)e;         
         } else {
           logger.error("an exception occurred", e); //$NON-NLS-1$
-          throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0007_UNKNOWN_ERROR", formulaString)); //$NON-NLS-1$
+          throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0007_UNKNOWN_ERROR", formulaString)); //$NON-NLS-1$
         }
       }
       // this should populate the fields object
@@ -296,11 +258,21 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
   protected void addField(String fieldName) throws PentahoMetadataException {
     
     if (fieldName == null) {
-      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0008_FIELDNAME_NULL", formulaString)); //$NON-NLS-1$
+      throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0008_FIELDNAME_NULL", formulaString)); //$NON-NLS-1$
     }
     
     // we need to validate that "fieldName" actually maps to a field!
     if (!selectionMap.containsKey(fieldName)) {
+
+      // check to see if it's a parameter
+      if (fieldName.startsWith("param:")) {
+        String paramName = fieldName.substring(6);
+        if (parameters.get(paramName) == null) {
+          throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_00XX_PARAM_NOT_FOUND", paramName));
+        }
+        return;
+      }
+
       
       // check if this is a "physicalcolumn" or a "<logicaltable>.<logicalcolumn>"
       if (fieldName.indexOf(".") < 0) { //$NON-NLS-1$
@@ -308,7 +280,7 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
         // expecting <PHYSICAL COLUMN>
         
         if (tables == null) {
-          throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0009_FIELDNAME_ERROR_NO_BUSINESS_TABLE", fieldName)); //$NON-NLS-1$
+          throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0009_FIELDNAME_ERROR_NO_BUSINESS_TABLE", fieldName)); //$NON-NLS-1$
         }
         
         // note, this column name is the "physical column name" vs. the "logical column name"
@@ -330,7 +302,7 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
 	        }
         }
         
-        throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0010_FIELDNAME_ERROR_COLUMN_NOT_FOUND", fieldName, fieldName, toString(getLogicalTableIDs())));//$NON-NLS-1$
+        throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0010_FIELDNAME_ERROR_COLUMN_NOT_FOUND", fieldName, fieldName, toString(getLogicalTableIDs())));//$NON-NLS-1$
         
       } else {
       
@@ -340,7 +312,7 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
         // or <LOGICAL TABLE ID>.<LOGICAL COLUMN ID>.<AGGREGATION>
         String tblcol[] = fieldName.split("\\."); //$NON-NLS-1$
         if (tblcol.length != 2 && tblcol.length != 3) {
-          throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0011_INVALID_FIELDNAME",fieldName)); //$NON-NLS-1$
+          throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0011_INVALID_FIELDNAME",fieldName)); //$NON-NLS-1$
         }
         
         // first lookup the logical table that the column belongs to.
@@ -359,7 +331,7 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
           // Find the column in that table...
           column = logicalTable.findLogicalColumn(tblcol[1]);
           if (column == null) {
-            throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0019_FIELDNAME_ERROR_CAT_COLUMN_NOT_FOUND", fieldName, tblcol[0], tblcol[1])); //$NON-NLS-1$
+            throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0019_FIELDNAME_ERROR_CAT_COLUMN_NOT_FOUND", fieldName, tblcol[0], tblcol[1])); //$NON-NLS-1$
           }
 
         } else {
@@ -372,19 +344,19 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
           	//
           	category = model.findCategory(tblcol[0]);
           	if (category==null) {
-          		throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0012_FIELDNAME_ERROR_PARENT_NOT_FOUND", fieldName, tblcol[0])); //$NON-NLS-1$
+          		throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0012_FIELDNAME_ERROR_PARENT_NOT_FOUND", fieldName, tblcol[0])); //$NON-NLS-1$
           	}
           	
           	// What do you know, it worked.
           	// Now look up the column.
           	column = category.findLogicalColumn(tblcol[1]);
           	if (column==null) {
-  	            throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0010_FIELDNAME_ERROR_COLUMN_NOT_FOUND", fieldName, tblcol[1], tblcol[0])); //$NON-NLS-1$
+  	            throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0010_FIELDNAME_ERROR_COLUMN_NOT_FOUND", fieldName, tblcol[1], tblcol[0])); //$NON-NLS-1$
           	}
           } else {
 	          column = logicalTable.findLogicalColumn(tblcol[1]);
 	          if (column == null) {
-	            throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0010_FIELDNAME_ERROR_COLUMN_NOT_FOUND", fieldName, tblcol[1], tblcol[0])); //$NON-NLS-1$
+	            throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0010_FIELDNAME_ERROR_COLUMN_NOT_FOUND", fieldName, tblcol[1], tblcol[0])); //$NON-NLS-1$
 	          }
 	          // This means that the logical table is not in the list of used tables...
 	          // Add it here...
@@ -482,7 +454,7 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
         gen.validateFunction(f);
         // note, if aggregator function, we should make sure it is part of the table formula vs. conditional formula
         if (!allowAggregateFunctions && tables == null && sqlDialect.isAggregateFunction(f.getFunctionName())) {
-          throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0013_AGGREGATE_USAGE_ERROR", f.getFunctionName(), formulaString)); //$NON-NLS-1$
+          throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0013_AGGREGATE_USAGE_ERROR", f.getFunctionName(), formulaString)); //$NON-NLS-1$
         }
 
         if (sqlDialect.isAggregateFunction(f.getFunctionName())) {
@@ -497,17 +469,17 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
           }
         }
       } else {
-        throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0014_FUNCTION_NOT_SUPPORTED", f.getFunctionName())); //$NON-NLS-1$
+        throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0014_FUNCTION_NOT_SUPPORTED", f.getFunctionName())); //$NON-NLS-1$
       }
     } else if (val instanceof InfixOperator) {
       if ( sqlDialect.isSupportedInfixOperator(val.toString())) {
         // everything is fine
         return;
       } else {
-        throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0021_OPERATOR_NOT_SUPPORTED", val.toString())); //$NON-NLS-1$
+        throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0021_OPERATOR_NOT_SUPPORTED", val.toString())); //$NON-NLS-1$
       }
     } else {
-      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0016_CLASS_TYPE_NOT_SUPPORTED", val.getClass().toString())); //$NON-NLS-1$
+      throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0016_CLASS_TYPE_NOT_SUPPORTED", val.getClass().toString())); //$NON-NLS-1$
     }
   }
   
@@ -598,13 +570,48 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
         sb.append(" " + gen.getOperatorSQL() + " "); //$NON-NLS-1$ //$NON-NLS-2$
       }
     } else {
-      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0016_CLASS_TYPE_NOT_SUPPORTED", val.getClass().toString())); //$NON-NLS-1$
+      throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0016_CLASS_TYPE_NOT_SUPPORTED", val.getClass().toString())); //$NON-NLS-1$
     }
   }
 
   protected void renderContextLookup(StringBuffer sb, String contextName, String locale) {
     Selection column = (Selection)selectionMap.get(contextName);
     if (column == null) {
+      // either a physical column or parameter
+
+      if (contextName.startsWith("param:")) {
+        String paramName = contextName.substring(6);
+        if (genAsPreparedStatement) {
+          // put a temporary placeholder in the SQL if this parameter will be used as part of a 
+          // prepared statement sql query.
+          sb.append("___PARAM[" + paramName + "]___");
+        } else {
+          Object paramValue = parameters.get(paramName);
+          if (paramValue instanceof Boolean) {
+            // need to get and then render either true or false function.
+            if (((Boolean)paramValue).booleanValue()) {
+              try {
+                sqlDialect.getFunctionSQLGenerator("TRUE").generateFunctionSQL(this, sb, locale, null);
+              } catch (Exception e) {
+                logger.error("", e);
+              }
+            } else {
+              try {
+                sqlDialect.getFunctionSQLGenerator("FALSE").generateFunctionSQL(this, sb, locale, null);
+              } catch (Exception e) {
+                logger.error("", e);
+              }          
+            }
+          } else if (paramValue instanceof Double) {
+            sb.append(paramValue.toString());
+          } else {
+            // assume a string, string literal quote
+            sb.append(sqlDialect.quoteStringLiteral(paramValue.toString())); 
+          }
+        }
+        return;
+      }
+      
       // we have a physical column function, we need to evaluate it
       // in a special way due to aggregations and such
       
@@ -631,7 +638,7 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
     } else {
       // render the column sql
       sb.append(" "); //$NON-NLS-1$
-      SqlAndTables sqlAndTables = SqlGenerator.getBusinessColumnSQL(model, column, tableAliases, databaseMeta, locale);
+      SqlAndTables sqlAndTables = SqlGenerator.getBusinessColumnSQL(model, column, tableAliases, parameters, genAsPreparedStatement, databaseMeta, locale);
       sb.append(sqlAndTables.getSql());
       sb.append(" "); //$NON-NLS-1$
       
@@ -653,7 +660,7 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
    */
   public String generateSQL(String locale) throws PentahoMetadataException {
     if (!isValidated) {
-      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0017_STATE_ERROR_NOT_VALIDATED")); //$NON-NLS-1$
+      throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0017_STATE_ERROR_NOT_VALIDATED")); //$NON-NLS-1$
     }
     StringBuffer sb = new StringBuffer();
     generateSQL(null, formulaObject.getRootReference(), sb, locale);

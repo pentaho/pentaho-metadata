@@ -30,14 +30,16 @@ import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.concept.types.AggregationType;
+import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.query.model.CombinationType;
 import org.pentaho.metadata.query.model.Constraint;
 import org.pentaho.metadata.query.model.Order;
+import org.pentaho.metadata.query.model.Parameter;
 import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.metadata.repository.IMetadataDomainRepository;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
-import org.pentaho.pms.messages.Messages;
+import org.pentaho.metadata.messages.Messages;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -58,7 +60,12 @@ public class QueryXmlHelper {
   // TO XML
   //
   
-  public String toXML(Query query) {
+  public String toXML(final Query query) {
+    if (query == null) {
+      logger.error("toXML: query must not be null");
+      return null;
+    }
+    
     try {
       StringWriter stringWriter = new StringWriter();
       StreamResult result = new StreamResult();
@@ -76,6 +83,12 @@ public class QueryXmlHelper {
   }
   
   public Document toDocument(Query query) {
+    
+    if (query == null) {
+      logger.error("toDocument: query must not be null");
+      return null;
+    }
+    
     DocumentBuilderFactory dbf;
     DocumentBuilder db;
     Document doc;
@@ -134,6 +147,12 @@ public class QueryXmlHelper {
       mqlElement.appendChild(optionsElement);
       addOptionsToDocument(doc, optionsElement, query);      
       
+      if (query.getParameters() != null && query.getParameters().size() > 0) {
+        Element parametersElement = doc.createElement("parameters");
+        mqlElement.appendChild(parametersElement);
+        addParametersToDocument(doc, parametersElement, query);
+      }
+      
       // insert the selections
       Element selectionsElement = doc.createElement("selections"); //$NON-NLS-1$
       for (Selection selection : query.getSelections()) {
@@ -172,7 +191,41 @@ public class QueryXmlHelper {
   protected void addOptionsToDocument(Document doc, Element optionsElement, Query query) {
     addTextElement(doc, optionsElement, "disable_distinct", Boolean.toString(query.getDisableDistinct())); //$NON-NLS-1$
   }
+  
+  protected void addParametersToDocument(Document doc, Element parametersElement, Query query) {
+    for (Parameter param : query.getParameters()) {
+      Element paramElement = doc.createElement("parameter");
+      paramElement.setAttribute("name", param.getName());
+      paramElement.setAttribute("type", param.getType().toString());
+      paramElement.setAttribute("defaultValue", param.getDefaultValue().toString());
+      parametersElement.appendChild(paramElement);
+    }
+  }
 
+  protected void addParameterFromXmlNode(Query query, Element paramElement) {
+    String name = paramElement.getAttribute("name");
+    String type = paramElement.getAttribute("type");
+    String defaultValue = paramElement.getAttribute("defaultValue");
+    
+    if (name != null && type != null && defaultValue != null) {
+      DataType dataType = DataType.valueOf(type);
+      Object defaultVal = null;
+      // todo: add support for additional objects
+      switch(dataType) {
+        case BOOLEAN:
+          defaultVal = Boolean.parseBoolean(defaultValue);
+          break;
+        case NUMERIC:
+          defaultVal = Double.parseDouble(defaultValue);
+          break;
+        default:
+          defaultVal = defaultValue;  
+      }
+      Parameter param = new Parameter(name, DataType.valueOf(type), defaultVal);
+      query.getParameters().add(param);
+    }
+  }
+  
   protected void addSelectionToDocument(Document doc, Selection selection, Element selectionElement) {
     addTextElement(doc, selectionElement, "view", selection.getCategory().getId()); //$NON-NLS-1$
     addTextElement(doc, selectionElement, "column", selection.getLogicalColumn().getId()); //$NON-NLS-1$
@@ -267,6 +320,13 @@ public class QueryXmlHelper {
       }
     }
     
+    NodeList paramNodes = doc.getElementsByTagName("parameter");
+    Element paramElement;
+    for (int idx = 0; idx < paramNodes.getLength(); idx++) {
+      paramElement = (Element)paramNodes.item(idx);
+      addParameterFromXmlNode(query, paramElement);
+    }
+    
     // process the selections
     NodeList nodes = doc.getElementsByTagName("selection"); //$NON-NLS-1$
     Element selectionElement;
@@ -304,7 +364,7 @@ public class QueryXmlHelper {
     }
     query.setDisableDistinct(false); // Keep default behavior...
   }
-
+  
   protected void addSelectionFromXmlNode(Query query, Element selectionElement) {
     
     NodeList viewnodes = selectionElement.getElementsByTagName("view"); //$NON-NLS-1$

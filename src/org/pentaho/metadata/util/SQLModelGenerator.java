@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.pentaho.di.core.Props;
+import org.pentaho.metadata.messages.LocaleHelper;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalColumn;
@@ -21,11 +22,15 @@ import org.pentaho.metadata.model.SqlPhysicalColumn;
 import org.pentaho.metadata.model.SqlPhysicalModel;
 import org.pentaho.metadata.model.SqlPhysicalTable;
 import org.pentaho.metadata.model.SqlDataSource.DataSourceType;
+import org.pentaho.metadata.model.concept.Concept;
+import org.pentaho.metadata.model.concept.security.Security;
+import org.pentaho.metadata.model.concept.security.SecurityOwner;
+import org.pentaho.metadata.model.concept.security.SecurityOwner.OwnerType;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
-import org.pentaho.pms.messages.util.LocaleHelper;
+import org.pentaho.metadata.repository.IMetadataDomainRepository;
 import org.pentaho.pms.util.Settings;
 
 public class SQLModelGenerator {
@@ -33,6 +38,10 @@ public class SQLModelGenerator {
   Connection connection;
   String query;
   String connectionName;
+  boolean securityEnabled;
+  List<String> users;
+  List<String> roles;
+  String createdBy;
   
   public SQLModelGenerator() {
     super();
@@ -85,23 +94,23 @@ public class SQLModelGenerator {
     LocaleType locale = new LocaleType(LocaleHelper.getLocale().toString(), LocaleHelper.getLocale().getDisplayName());
     
     if(validate()) {
-    SqlPhysicalModel model = new SqlPhysicalModel();
-    String modelID = Settings.getBusinessModelIDPrefix()+ modelName;
-    model.setId(modelID);
-    model.setName(new LocalizedString(locale.getCode(), modelName));
-    SqlDataSource dataSource = new SqlDataSource();
-    dataSource.setType(DataSourceType.JNDI);
-    dataSource.setDatabaseName(connectionName);
-    model.setDatasource(dataSource);
-    SqlPhysicalTable table = new SqlPhysicalTable(model);
-    table.setId("INLINE_SQL_1");
-    model.getPhysicalTables().add(table);
-    table.setTargetTableType(TargetTableType.INLINE_SQL);
-    table.setTargetTable(query);
-    
-    String[] columnHeader = null;
-    //String[] columnType = null;
-    int[] columnType = null;
+      SqlPhysicalModel model = new SqlPhysicalModel();
+      String modelID = Settings.getBusinessModelIDPrefix()+ modelName;
+      model.setId(modelID);
+      model.setName(new LocalizedString(locale.getCode(), modelName));
+      SqlDataSource dataSource = new SqlDataSource();
+      dataSource.setType(DataSourceType.JNDI);
+      dataSource.setDatabaseName(connectionName);
+      model.setDatasource(dataSource);
+      SqlPhysicalTable table = new SqlPhysicalTable(model);
+      table.setId("INLINE_SQL_1");
+      model.getPhysicalTables().add(table);
+      table.setTargetTableType(TargetTableType.INLINE_SQL);
+      table.setTargetTable(query);
+      
+      String[] columnHeader = null;
+      //String[] columnType = null;
+      int[] columnType = null;
       Statement stmt = null;
       ResultSet rs = null;
       try {
@@ -190,6 +199,23 @@ public class SQLModelGenerator {
         Domain domain = new Domain();
         domain.addPhysicalModel(model);
         
+        if (getCreatedBy() != null) {
+          domain.setProperty("created_by", createdBy);
+        }
+
+        if (isSecurityEnabled()) {
+          Security security = new Security();
+          for (String user : users) {
+            SecurityOwner owner = new SecurityOwner(OwnerType.USER, user);
+            security.putOwnerRights(owner, IMetadataDomainRepository.ACCESS_TYPE_READ);  
+          }
+          for (String role : roles) {
+            SecurityOwner owner = new SecurityOwner(OwnerType.ROLE, role);
+            security.putOwnerRights(owner, IMetadataDomainRepository.ACCESS_TYPE_READ);  
+          }          
+          logicalModel.setProperty(Concept.SECURITY_PROPERTY, security);
+        }
+        
         List<LocaleType> locales = new ArrayList<LocaleType>();
         locales.add(locale);
         domain.setLocales(locales);
@@ -277,5 +303,37 @@ public class SQLModelGenerator {
     }
 
     return columnTypes;
+  }
+
+  public void setSecurityEnabled(boolean securityEnabled) {
+    this.securityEnabled = securityEnabled;
+  }
+
+  public boolean isSecurityEnabled() {
+    return securityEnabled;
+  }
+
+  public void setUsers(List<String> users) {
+    this.users = users;
+  }
+
+  public List<String> getUsers() {
+    return users;
+  }
+
+  public void setRoles(List<String> roles) {
+    this.roles = roles;
+  }
+
+  public List<String> getRoles() {
+    return roles;
+  }
+
+  public void setCreatedBy(String createdBy) {
+    this.createdBy = createdBy;
+  }
+
+  public String getCreatedBy() {
+    return createdBy;
   }
 }

@@ -12,6 +12,9 @@
  */
 package org.pentaho.metadata;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.pentaho.commons.connection.IPentahoResultSet;
@@ -31,6 +34,7 @@ import org.pentaho.metadata.query.impl.ietl.InlineEtlQueryExecutor;
 import org.pentaho.metadata.query.model.CombinationType;
 import org.pentaho.metadata.query.model.Constraint;
 import org.pentaho.metadata.query.model.Order;
+import org.pentaho.metadata.query.model.Parameter;
 import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.metadata.query.model.Order.Type;
@@ -205,14 +209,11 @@ public class InlineEtlModelGeneratorTest {
     );
     
     Domain domain = gen.generate();
-
-    
     
     LogicalModel model = domain.getLogicalModels().get(0);
     Category category = model.getCategories().get(0);
     
     category.getLogicalColumns().get(0).setDataType(DataType.NUMERIC);
-    
     
     Query query = new Query(domain, model);
 
@@ -289,6 +290,24 @@ public class InlineEtlModelGeneratorTest {
     Assert.assertEquals(4.0, resultset.getValueAt(3, 0));
     Assert.assertEquals(5.0, resultset.getValueAt(4, 0));    
 
+    Query query6 = new Query(domain, model);
+
+    query6.getParameters().add(new Parameter("param1", DataType.BOOLEAN, false));
+    query6.getSelections().add(new Selection(category, category.getLogicalColumns().get(0), null));
+    query6.getConstraints().add(new Constraint(CombinationType.AND, "[param:param1]"));
+    
+    resultset = executor.executeQuery(query6, null);
+    Assert.assertEquals(0, resultset.getRowCount());
+
+    Map<String, Object> params = new HashMap<String,Object>();
+    
+    params.put("param1", true);
+    
+    resultset = executor.executeQuery(query6, params);
+    Assert.assertEquals(5, resultset.getRowCount());
+    
+    
+    
   }
   
   @Test

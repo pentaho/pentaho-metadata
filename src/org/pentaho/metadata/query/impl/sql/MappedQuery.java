@@ -39,11 +39,13 @@ public class MappedQuery implements SqlQuery {
   protected Map columnsMap;
 
   protected List<? extends Selection> selections;
+  protected List<String> paramNameList;
 
-  public MappedQuery(String sql, Map columnsMap, List<? extends Selection> selections) {
+  public MappedQuery(String sql, Map columnsMap, List<? extends Selection> selections, List<String> paramNameList) {
     query = sql;
     this.selections = selections;
     this.columnsMap = columnsMap;
+    this.paramNameList = paramNameList;
   }
 
   /**
@@ -104,6 +106,10 @@ public class MappedQuery implements SqlQuery {
    */
   public Map getMap() {
     return columnsMap;
+  }
+  
+  public List<String> getParamList() {
+    return paramNameList;
   }
 
   /**

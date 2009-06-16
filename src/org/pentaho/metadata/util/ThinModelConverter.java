@@ -258,7 +258,7 @@ public class ThinModelConverter {
     }
   }
   
-  private static ConceptPropertyInterface convertPropertyToLegacy(String propertyName, Object property) {
+  public static ConceptPropertyInterface convertPropertyToLegacy(String propertyName, Object property) {
 
     if (property instanceof String) {
       if (propertyName.equals(SqlPhysicalColumn.TARGET_COLUMN)) {
@@ -293,6 +293,11 @@ public class ThinModelConverter {
       }
       ConceptPropertyBoolean bool = new ConceptPropertyBoolean(propertyName, colType == TargetColumnType.OPEN_FORMULA);
       return bool;
+    } else if (property instanceof Font) {
+      Font font = (Font)property;
+      FontSettings value = new FontSettings(font.getName(), font.getHeight(), font.isBold(), font.isItalic());
+      ConceptPropertyFont fontprop = new ConceptPropertyFont(propertyName, value);
+      return fontprop;
     } else if (property instanceof TableType) {
       TableType tt = (TableType)property;
       ConceptPropertyTableType tbltype = new ConceptPropertyTableType(propertyName, TableTypeSettings.types[tt.ordinal()]);
@@ -497,9 +502,9 @@ public class ThinModelConverter {
       // TODO: Test ordering
       public int compare(LocaleInterface o1, LocaleInterface o2) {
         if (o1.getOrder() > o2.getOrder()) {
-          return -1;
-        } else if (o1.getOrder() < o2.getOrder()) {
           return 1;
+        } else if (o1.getOrder() < o2.getOrder()) {
+          return -1;
         } else {
           return 0;
         }

@@ -21,7 +21,7 @@ import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.metadata.query.model.Order.Type;
 import org.pentaho.metadata.query.model.util.QueryXmlHelper;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
-import org.pentaho.pms.messages.Messages;
+import org.pentaho.metadata.messages.Messages;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -157,12 +157,12 @@ public class AdvancedQueryXmlHelper extends QueryXmlHelper {
 
       if (category == null) {
         throw new PentahoMetadataException(Messages.getErrorString(
-            "MQLQuery.ERROR_0014_BUSINESS_CATEGORY_NOT_FOUND", view)); //$NON-NLS-1$ 
+            "QueryXmlHelper.ERROR_0015_BUSINESS_CATEGORY_NOT_FOUND", view)); //$NON-NLS-1$ 
       }
       LogicalColumn businessColumn = category.findLogicalColumn(column);
       if (businessColumn == null) {
         throw new PentahoMetadataException(Messages.getErrorString(
-            "MQLQuery.ERROR_0016_BUSINESS_COLUMN_NOT_FOUND", category.getId(), column)); //$NON-NLS-1$ 
+            "QueryXmlHelper.ERROR_0013_BUSINESS_COL_NOT_FOUND", category.getId(), column)); //$NON-NLS-1$ 
       }
       query.getOrders().add(new Order(new AliasedSelection(category, businessColumn, null, alias), ascending ? Type.ASC : Type.DESC));
     } else if (formula != null) {

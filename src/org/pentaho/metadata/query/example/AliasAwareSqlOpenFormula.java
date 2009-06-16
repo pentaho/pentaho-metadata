@@ -20,13 +20,13 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.metadata.messages.Messages;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.LogicalTable;
 import org.pentaho.metadata.query.impl.sql.SqlOpenFormula;
 import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
-import org.pentaho.pms.messages.Messages;
 
 /**
  * This class manages the two types of formulas which appear in the metadata system.  Both of 
@@ -59,7 +59,7 @@ public class AliasAwareSqlOpenFormula extends SqlOpenFormula {
    * @throws PentahoMetadataException throws an exception if we're missing anything important
    */
   public AliasAwareSqlOpenFormula(LogicalModel model, DatabaseMeta databaseMeta, String formulaString, List<Selection> selections, String aliasName) throws PentahoMetadataException {
-    super(model, databaseMeta, formulaString, null);
+    super(model, databaseMeta, formulaString, null, null, false);
     this.selections = selections;
     this.aliasName = aliasName;
   }
@@ -72,7 +72,7 @@ public class AliasAwareSqlOpenFormula extends SqlOpenFormula {
    * @throws PentahoMetadataException throws an exception if we're missing anything important
    */
   public AliasAwareSqlOpenFormula(LogicalModel model, LogicalTable table, DatabaseMeta databaseMeta, String formulaString, String aliasName) throws PentahoMetadataException {
-    super(model, table, databaseMeta, formulaString, null);    
+    super(model, table, databaseMeta, formulaString, null, null, false);    
     this.aliasName = aliasName;
   }
 
@@ -128,7 +128,7 @@ public class AliasAwareSqlOpenFormula extends SqlOpenFormula {
             getSelections().add(sel);
             return;
           } else {
-            throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0011_INVALID_FIELDNAME",fieldName)); //$NON-NLS-1$
+            throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0011_INVALID_FIELDNAME", fieldName)); //$NON-NLS-1$
           }
         }
       }

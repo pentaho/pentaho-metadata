@@ -36,8 +36,7 @@ import org.pentaho.metadata.query.model.Order;
 import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.metadata.query.model.Order.Type;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
-import org.pentaho.pms.example.AdvancedSQLGenerator;
-import org.pentaho.pms.messages.Messages;
+import org.pentaho.metadata.messages.Messages;
 import org.pentaho.pms.mql.dialect.JoinType;
 import org.pentaho.pms.mql.dialect.SQLDialectFactory;
 import org.pentaho.pms.mql.dialect.SQLDialectInterface;
@@ -84,6 +83,8 @@ public class AdvancedSqlGenerator extends SqlGenerator {
       List<Order> orderbys, 
       DatabaseMeta databaseMeta, 
       String locale, 
+      Map<String, Object> parameters,
+      boolean genAsPreparedStatement,
       boolean disableDistinct, 
       Constraint securityConstraint) throws PentahoMetadataException {
 
@@ -91,7 +92,7 @@ public class AdvancedSqlGenerator extends SqlGenerator {
     Map<Constraint, AliasAwareSqlOpenFormula> constraintFormulaMap = new HashMap<Constraint, AliasAwareSqlOpenFormula>();
     Map<AliasedSelection, AliasAwareSqlOpenFormula> selectionFormulaMap = new HashMap<AliasedSelection, AliasAwareSqlOpenFormula>();
     for (Constraint constraint : constraints) {
-      AliasAwareSqlOpenFormula formula = new AliasAwareSqlOpenFormula(model, databaseMeta, constraint.getFormula(), selections, AdvancedSQLGenerator.DEFAULT_ALIAS);
+      AliasAwareSqlOpenFormula formula = new AliasAwareSqlOpenFormula(model, databaseMeta, constraint.getFormula(), selections, DEFAULT_ALIAS);
       formula.parseAndValidate();
       constraintFormulaMap.put(constraint, formula);
     }
@@ -119,7 +120,7 @@ public class AdvancedSqlGenerator extends SqlGenerator {
       AliasedSelection sel = (AliasedSelection)selection;
       
       if (sel.hasFormula()) {
-        AliasAwareSqlOpenFormula formula = new AliasAwareSqlOpenFormula(model, databaseMeta, sel.getFormula(), selections, AdvancedSQLGenerator.DEFAULT_ALIAS); // formula;
+        AliasAwareSqlOpenFormula formula = new AliasAwareSqlOpenFormula(model, databaseMeta, sel.getFormula(), selections, DEFAULT_ALIAS); // formula;
         formula.setAllowAggregateFunctions(true);
         formula.parseAndValidate();
         selectionFormulaMap.put(sel, formula);
@@ -168,7 +169,7 @@ public class AdvancedSqlGenerator extends SqlGenerator {
     
     
     if (defaultPath == null) {
-      throw new PentahoMetadataException(Messages.getErrorString("LogicalModel.ERROR_0001_FAILED_TO_FIND_PATH")); //$NON-NLS-1$
+      throw new PentahoMetadataException(Messages.getErrorString("SqlGenerator.ERROR_0002_FAILED_TO_FIND_PATH")); //$NON-NLS-1$
     }
     
     for (int i = 0; i < defaultPath.size(); i++) {
@@ -361,7 +362,7 @@ public class AdvancedSqlGenerator extends SqlGenerator {
     SQLDialectInterface dialect = SQLDialectFactory.getSQLDialect(databaseMeta);
     String sql = dialect.generateSelectStatement(sqlquery);
 
-    MappedQuery query = new MappedQuery(sql, columnsMap, selections);
+    MappedQuery query = new MappedQuery(sql, columnsMap, selections, null);
     
     // defaultPath.getUsedTables();
     
@@ -521,7 +522,7 @@ public class AdvancedSqlGenerator extends SqlGenerator {
         } catch (PentahoMetadataException e) {
           // this is for backwards compatibility.
           // eventually throw any errors
-          throw new RuntimeException(Messages.getErrorString("LogicalColumn.ERROR_0001_FAILED_TO_PARSE_FORMULA", columnStr)); //$NON-NLS-1$  
+          throw new RuntimeException(Messages.getErrorString("SqlGenerator.ERROR_0001_FAILED_TO_PARSE_FORMULA", columnStr)); //$NON-NLS-1$  
         }
       } else {
           String tableColumn = ""; //$NON-NLS-1$
