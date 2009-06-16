@@ -1,6 +1,4 @@
 <module>
-	<!-- Inherit the core Web Toolkit stuff.                  -->
-    <source path="model">
-    	<exclude name="**/PropertyTypeRegistry*"/>
-    </source>
+	<!-- org.pentaho.metadata.model package -->
+    <source path="model"/>
 </module>
