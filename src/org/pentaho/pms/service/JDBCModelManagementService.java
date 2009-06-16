@@ -152,9 +152,16 @@ public class JDBCModelManagementService implements IModelManagementService {
     return DriverManager.getConnection(url, username, password);
   }
 
-  public Domain generateModel(String modelName,  String connectionName, Connection connection, String query) throws ModelManagementServiceException {
+  public Domain generateModel(String modelName,  String connectionName, Connection connection, String query, Boolean securityEnabled, List<String> permittedRoleList, List<String> permittedUserList, String createdBy) throws ModelManagementServiceException {
     try {
       SQLModelGenerator generator = new SQLModelGenerator(modelName, connectionName, connection, query);
+      generator.setSecurityEnabled(securityEnabled);
+      if(securityEnabled) {
+        generator.setRoles(permittedRoleList);
+        generator.setUsers(permittedUserList);
+        generator.setCreatedBy(createdBy);
+      }
+      
       return generator.generate();
     } catch(SQLModelGeneratorException smge) {
       throw new ModelManagementServiceException(smge);

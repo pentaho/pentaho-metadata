@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -175,4 +176,32 @@ public class FileBasedMetadataDomainRepository implements IMetadataDomainReposit
     return true;
   }
 
+  public synchronized void removeModel(String domainId, String modelName) {
+    Domain domain = getDomain(domainId);
+    if(domain != null) {
+      List<LogicalModel> logicalModelList = domain.getLogicalModels();
+      if(logicalModelList != null && logicalModelList.size() == 1) {
+        removeDomain(domainId);
+      } else if(logicalModelList != null && logicalModelList.size() > 1) {
+        for(LogicalModel logicalModel:logicalModelList) {
+          if(modelName.equals(logicalModel.getName(domain.getLocales().get(0).getCode()))) {
+            logicalModelList.remove(logicalModel);
+            break;
+          }
+        }
+        try {
+          storeDomain(domain, true);
+        } catch (DomainIdNullException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        } catch (DomainAlreadyExistsException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        } catch (DomainStorageException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      }
+    }
+  }
 }

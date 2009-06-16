@@ -14,10 +14,16 @@ import org.pentaho.metadata.util.InlineEtlModelGenerator;
 
 public class CsvModelManagementService {
 
-  public Domain generateModel(String modelName, String fileLocation, boolean headerPresent, String enclosure, String delimiter)
+  public Domain generateModel(String modelName, String fileLocation, boolean headerPresent, String enclosure, String delimiter, Boolean securityEnabled, List<String> permittedRoleList, List<String> permittedUserList, String createdBy)
       throws ModelManagementServiceException {
     try {
     InlineEtlModelGenerator generator = new InlineEtlModelGenerator(modelName, fileLocation, headerPresent, enclosure, delimiter);
+    generator.setSecurityEnabled(securityEnabled);
+    if(securityEnabled) {
+      generator.setRoles(permittedRoleList);
+      generator.setUsers(permittedUserList);
+      generator.setCreatedBy(createdBy);
+    }
     return generator.generate();
     } catch (Exception e) {
       throw new ModelManagementServiceException(e);

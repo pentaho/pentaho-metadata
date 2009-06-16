@@ -79,6 +79,13 @@ public interface IMetadataDomainRepository {
    */
   public void removeDomain(String domainId);
   
+  /**
+   * remove a model  from a domain which is stored either on a disk or memory.
+   * @param domainId
+   */
+  public void removeModel(String domainId, String modelName);
+
+  
   public String generateRowLevelSecurityConstraint(LogicalModel model);
   
   /**

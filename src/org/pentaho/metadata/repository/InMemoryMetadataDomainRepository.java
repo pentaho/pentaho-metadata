@@ -13,6 +13,7 @@
 package org.pentaho.metadata.repository;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -101,5 +102,20 @@ public class InMemoryMetadataDomainRepository implements IMetadataDomainReposito
   public boolean hasAccess(int accessType, IConcept aclHolder) {
     // Subclasses can override this for ACL and Session/Credential checking
     return true;
+  }
+
+  public synchronized void removeModel(String domainId, String modelName) {
+    Domain domain = getDomain(domainId);
+    List<LogicalModel> logicalModelList = domain.getLogicalModels();
+    if(logicalModelList != null && logicalModelList.size() == 1) {
+      removeDomain(domainId);
+    } else if(logicalModelList != null && logicalModelList.size() > 1) {
+      for(LogicalModel logicalModel:logicalModelList) {
+        if(modelName.equals(logicalModel.getName(domain.getLocales().get(0).getCode()))) {
+          logicalModelList.remove(logicalModel);
+          break;
+        }
+      }
+    }
   }
 }
