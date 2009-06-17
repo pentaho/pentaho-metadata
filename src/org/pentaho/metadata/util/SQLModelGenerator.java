@@ -247,6 +247,8 @@ public class SQLModelGenerator {
       return DataType.BOOLEAN;
     
     case Types.DATE:
+      return DataType.DATE;
+    
     case Types.TIMESTAMP:  
       return DataType.DATE;
     

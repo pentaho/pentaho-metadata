@@ -14,6 +14,7 @@
   <dependencies defaultconf="default->default">
     
     <!--  external dependencies -->
+    <dependency org="joda-time" name="joda-time" rev="1.6" transitive="false"/>
     <dependency org="commons-collections" name="commons-collections" rev="3.2" />
     <dependency org="commons-lang" name="commons-lang" rev="2.2" />
     <dependency org="commons-logging" name="commons-logging" rev="1.1" >
@@ -25,6 +26,7 @@
         <!-- exclude junit 3.8.1 dependency -->
       <exclude org="junit" name="junit" />
     </dependency>
+    <dependency org="commons-math" name="commons-math" rev="1.1" transitive="false"/>
     <dependency org="commons-dbcp" name="commons-dbcp" rev="1.2.1" />
     <dependency org="commons-net" name="commons-net" rev="1.4.1" />
     <dependency org="commons-vfs" name="commons-vfs" rev="1.0" />

@@ -39,6 +39,8 @@ import org.pentaho.metadata.model.concept.security.SecurityOwner.OwnerType;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
+import org.pentaho.metadata.query.model.util.CsvDataReader;
+import org.pentaho.metadata.query.model.util.SampleDataForDataType;
 import org.pentaho.metadata.repository.IMetadataDomainRepository;
 import org.pentaho.pms.util.Settings;
 
@@ -49,7 +51,7 @@ import org.pentaho.pms.util.Settings;
  *
  */
 public class InlineEtlModelGenerator {
-
+  public static final int ROW_LIMIT = 5;
   private String modelName;
   private String fileLocation;
   private boolean headerPresent;
@@ -142,9 +144,16 @@ public class InlineEtlModelGenerator {
       column.setId("PC_" + i);
       column.setFieldName(fieldNames[i]);
       column.setName(new LocalizedString(locale.getCode(), fieldNames[i]));
-      
-      // TODO: autodetect field types
-      column.setDataType(DataType.STRING);
+      // Construct a CSV Reader to read the sample data. This data will be used to sample data
+      // types of individual columns
+      CsvDataReader csvDataReader = new CsvDataReader(fileLocation, headerPresent, enclosure, delimiter, ROW_LIMIT); 
+      SampleDataForDataType dataTypeConverter = new SampleDataForDataType();
+      // If headers are present we will get the sampling data using the column name otherwise we will use the column number
+      if(headerPresent) {
+        column.setDataType(dataTypeConverter.evaluateDataType(csvDataReader.getColumnData(i)));
+      } else {
+        column.setDataType(dataTypeConverter.evaluateDataType(csvDataReader.getColumnData(fieldNames[i])));
+      }
       table.getPhysicalColumns().add(column);
       
       // create logical column
