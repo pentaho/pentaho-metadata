@@ -78,14 +78,14 @@ public interface IMetadataDomainRepository {
    * @param domainId
    */
   public void removeDomain(String domainId);
-  
-  /**
-   * remove a model  from a domain which is stored either on a disk or memory.
-   * @param domainId
-   */
-  public void removeModel(String domainId, String modelName);
 
-  
+  /**
+   * remove a model from a domain which is stored either on a disk or memory.
+   * @param domainId
+   * @param modelId
+   */
+  public void removeModel(String domainId, String modelId) throws DomainIdNullException, DomainStorageException;
+    
   public String generateRowLevelSecurityConstraint(LogicalModel model);
   
   /**
@@ -93,4 +93,6 @@ public interface IMetadataDomainRepository {
    */
   public boolean hasAccess(final int accessType, final IConcept aclHolder);
 
+
+  
 }

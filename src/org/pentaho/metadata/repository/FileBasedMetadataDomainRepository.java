@@ -18,7 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -53,7 +53,6 @@ public class FileBasedMetadataDomainRepository implements IMetadataDomainReposit
   public synchronized void storeDomain(Domain domain, boolean overwrite) throws DomainIdNullException, DomainAlreadyExistsException, DomainStorageException {
 
     if (domain.getId() == null) {
-      // todo: replace with exception
       throw new DomainIdNullException(Messages.getErrorString("IMetadataDomainRepository.ERROR_0001_DOMAIN_ID_NULL")); //$NON-NLS-1$
     }
     
@@ -164,6 +163,38 @@ public class FileBasedMetadataDomainRepository implements IMetadataDomainReposit
     domainFile.delete();
   }
   
+  public synchronized void removeModel(String domainId, String modelId) throws DomainIdNullException, DomainStorageException {
+    
+    // get a raw domain vs. the cloned secure domain
+    Domain domain = domains.get(domainId);
+    if (domain == null) {
+      throw new DomainIdNullException(Messages.getErrorString("IMetadataDomainRepository.ERROR_0001_DOMAIN_ID_NULL")); //$NON-NLS-1$
+    }
+    
+    // remove the model
+    Iterator<LogicalModel> iter = domain.getLogicalModels().iterator();
+    while (iter.hasNext()) {
+      LogicalModel model = iter.next();
+      if (modelId.equals(model.getId())) {
+        iter.remove();
+        break;
+      }
+    }
+    
+    if (domain.getLogicalModels().size() == 0) {
+      // remove the domain all together
+      removeDomain(domainId);
+    } else {
+      
+      // store the modified domain
+      try {
+        storeDomain(domain, true);
+      } catch (DomainAlreadyExistsException e) {
+        logger.error("this should not happen", e);
+      }
+    }
+  }
+  
   public String generateRowLevelSecurityConstraint(LogicalModel model) {
     return null;
   }
@@ -174,34 +205,5 @@ public class FileBasedMetadataDomainRepository implements IMetadataDomainReposit
   public boolean hasAccess(int accessType, IConcept aclHolder) {
     // Subclasses can override this for ACL and Session/Credential checking
     return true;
-  }
-
-  public synchronized void removeModel(String domainId, String modelName) {
-    Domain domain = getDomain(domainId);
-    if(domain != null) {
-      List<LogicalModel> logicalModelList = domain.getLogicalModels();
-      if(logicalModelList != null && logicalModelList.size() == 1) {
-        removeDomain(domainId);
-      } else if(logicalModelList != null && logicalModelList.size() > 1) {
-        for(LogicalModel logicalModel:logicalModelList) {
-          if(modelName.equals(logicalModel.getName(domain.getLocales().get(0).getCode()))) {
-            logicalModelList.remove(logicalModel);
-            break;
-          }
-        }
-        try {
-          storeDomain(domain, true);
-        } catch (DomainIdNullException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        } catch (DomainAlreadyExistsException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        } catch (DomainStorageException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-      }
-    }
   }
 }
