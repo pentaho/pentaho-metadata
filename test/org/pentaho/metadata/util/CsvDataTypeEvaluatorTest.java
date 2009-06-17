@@ -6,9 +6,9 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.pentaho.metadata.model.concept.types.DataType;
-import org.pentaho.metadata.query.model.util.SampleDataForDataType;
+import org.pentaho.metadata.query.model.util.CsvDataTypeEvaluator;
 
-public class SampleDataForDataTypeTest {
+public class CsvDataTypeEvaluatorTest {
   
   @Test
   public void testSampleData_String() throws Exception {
@@ -17,7 +17,7 @@ public class SampleDataForDataTypeTest {
     columnValues.add("christmas day");
     columnValues.add("1212");
     columnValues.add("2323.33");
-    SampleDataForDataType type = new SampleDataForDataType(columnValues);
+    CsvDataTypeEvaluator type = new CsvDataTypeEvaluator(columnValues);
     DataType guessType = type.evaluateDataType(columnValues);
     Assert.assertEquals(DataType.STRING, guessType);
   }
@@ -29,7 +29,7 @@ public class SampleDataForDataTypeTest {
     columnValues.add("122");
     columnValues.add("1212");
     columnValues.add("2323.33");
-    SampleDataForDataType type = new SampleDataForDataType(columnValues);
+    CsvDataTypeEvaluator type = new CsvDataTypeEvaluator(columnValues);
     DataType guessType = type.evaluateDataType(columnValues);
     Assert.assertEquals(DataType.NUMERIC, guessType);
   }
@@ -41,7 +41,7 @@ public class SampleDataForDataTypeTest {
     columnValues.add("232323.33");
     columnValues.add("3443.33");
     columnValues.add("2323.33");
-    SampleDataForDataType type = new SampleDataForDataType(columnValues);
+    CsvDataTypeEvaluator type = new CsvDataTypeEvaluator(columnValues);
     DataType guessType = type.evaluateDataType(columnValues);
     Assert.assertEquals(DataType.NUMERIC, guessType);
   }
@@ -53,7 +53,7 @@ public class SampleDataForDataTypeTest {
     columnValues.add("8:30");
     columnValues.add("1212");
     columnValues.add("23:40");
-    SampleDataForDataType type = new SampleDataForDataType(columnValues);
+    CsvDataTypeEvaluator type = new CsvDataTypeEvaluator(columnValues);
     DataType guessType = type.evaluateDataType(columnValues);
     Assert.assertEquals(DataType.DATE, guessType);
   }
@@ -65,7 +65,7 @@ public class SampleDataForDataTypeTest {
     columnValues.add("2008-05-04");
     columnValues.add("2323.33");
     columnValues.add("23.33");
-    SampleDataForDataType type = new SampleDataForDataType(columnValues);
+    CsvDataTypeEvaluator type = new CsvDataTypeEvaluator(columnValues);
     DataType guessType = type.evaluateDataType(columnValues);
     Assert.assertEquals(DataType.DATE, guessType);
   }
@@ -77,7 +77,7 @@ public class SampleDataForDataTypeTest {
     columnValues.add("1");
     columnValues.add("false");
     columnValues.add("false");
-    SampleDataForDataType type = new SampleDataForDataType(columnValues);
+    CsvDataTypeEvaluator type = new CsvDataTypeEvaluator(columnValues);
     DataType guessType = type.evaluateDataType(columnValues);
     Assert.assertEquals(DataType.BOOLEAN, guessType);
   }
