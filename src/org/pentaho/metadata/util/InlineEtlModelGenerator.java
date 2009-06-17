@@ -40,7 +40,7 @@ import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.query.model.util.CsvDataReader;
-import org.pentaho.metadata.query.model.util.SampleDataForDataType;
+import org.pentaho.metadata.query.model.util.CsvDataTypeEvaluator;
 import org.pentaho.metadata.repository.IMetadataDomainRepository;
 import org.pentaho.pms.util.Settings;
 
@@ -147,7 +147,7 @@ public class InlineEtlModelGenerator {
       // Construct a CSV Reader to read the sample data. This data will be used to sample data
       // types of individual columns
       CsvDataReader csvDataReader = new CsvDataReader(fileLocation, headerPresent, enclosure, delimiter, ROW_LIMIT); 
-      SampleDataForDataType dataTypeConverter = new SampleDataForDataType();
+      CsvDataTypeEvaluator dataTypeConverter = new CsvDataTypeEvaluator();
       // If headers are present we will get the sampling data using the column name otherwise we will use the column number
       if(headerPresent) {
         column.setDataType(dataTypeConverter.evaluateDataType(csvDataReader.getColumnData(i)));

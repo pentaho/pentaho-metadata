@@ -9,12 +9,12 @@ import java.util.Map.Entry;
 
 import org.pentaho.metadata.model.concept.types.DataType;
 
-public class SampleDataForDataType {
+public class CsvDataTypeEvaluator {
   List<String> columnValues;
-  public SampleDataForDataType() {
+  public CsvDataTypeEvaluator() {
     
   }
-  public SampleDataForDataType( List<String> columnValues) {
+  public CsvDataTypeEvaluator( List<String> columnValues) {
     this.columnValues = columnValues;
   }  
   public DataType evaluateDataType(List<String> columnValues) {
