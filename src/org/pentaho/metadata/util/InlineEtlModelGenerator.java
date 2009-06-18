@@ -36,7 +36,6 @@ import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.security.Security;
 import org.pentaho.metadata.model.concept.security.SecurityOwner;
 import org.pentaho.metadata.model.concept.security.SecurityOwner.OwnerType;
-import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.query.model.util.CsvDataReader;
@@ -58,6 +57,7 @@ public class InlineEtlModelGenerator {
   private String delimiter;
   private String enclosure;
   boolean securityEnabled;
+  int defaultAcls;
   List<String> users;
   List<String> roles;
   String createdBy;
@@ -68,20 +68,27 @@ public class InlineEtlModelGenerator {
     }
   }
   
-  public InlineEtlModelGenerator(String modelName, String fileLocation, boolean headerPresent, String enclosure, String delimiter) {
+  public InlineEtlModelGenerator(String modelName, String fileLocation, boolean headerPresent, String delimiter,String enclosure,
+       boolean securityEnabled,  List<String> users, List<String> roles, int defaultAcls,String createdBy) {
     this();
     this.modelName = modelName;
     this.fileLocation = fileLocation;
     this.headerPresent = headerPresent;
     this.delimiter = delimiter;
     this.enclosure = enclosure;
+    this.securityEnabled = securityEnabled;
+    this.users = users;
+    this.roles = roles;
+    this.createdBy = createdBy;
+    this.defaultAcls = defaultAcls;
   }
   
   public Domain generate() throws Exception {
-    return generate(modelName, fileLocation, headerPresent, enclosure, delimiter);
+    return generate(modelName, fileLocation, headerPresent, enclosure, delimiter, securityEnabled, users, roles, defaultAcls, createdBy);
   }
   
-  public Domain generate(String modelName, String fileLocation, boolean headerPresent, String enclosure, String delimiter) throws Exception {
+  public Domain generate(String modelName, String fileLocation, boolean headerPresent,String delimiter, String enclosure,
+      boolean securityEnabled,  List<String> users, List<String> roles, int defaultAcls,String createdBy) throws Exception {
     // use code within Kettle to gen CSV model
     InputStream inputStream = KettleVFS.getInputStream(fileLocation);
     InputStreamReader reader = new InputStreamReader(inputStream);
@@ -234,5 +241,12 @@ public class InlineEtlModelGenerator {
 
   public String getCreatedBy() {
     return createdBy;
+  }
+  public void setDefaultAcls(int defaultAcls) {
+    this.defaultAcls = defaultAcls;
+  }
+  
+  public int getDefaultAcls() {
+    return defaultAcls;
   }
 }

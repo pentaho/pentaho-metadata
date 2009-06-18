@@ -30,7 +30,6 @@ import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
-import org.pentaho.metadata.repository.IMetadataDomainRepository;
 import org.pentaho.pms.util.Settings;
 
 public class SQLModelGenerator {
@@ -38,7 +37,7 @@ public class SQLModelGenerator {
   Connection connection;
   String query;
   String connectionName;
-  boolean securityEnabled;
+  Boolean securityEnabled;
   List<String> users;
   List<String> roles;
   int defaultAcls;
@@ -51,7 +50,8 @@ public class SQLModelGenerator {
     }
   }
 
-  public SQLModelGenerator(String modelName, String connectionName, Connection connection, String query) {
+  public SQLModelGenerator(String modelName, String connectionName, Connection connection, String query,
+      Boolean securityEnabled, List<String> users, List<String> roles, int defaultAcls, String createdBy) {
     if(!Props.isInitialized()) {
       Props.init(Props.TYPE_PROPERTIES_EMPTY);
     }
@@ -59,6 +59,11 @@ public class SQLModelGenerator {
     this.connectionName = connectionName;
     this.connection = connection;
     this.modelName = modelName;
+    this.securityEnabled = securityEnabled;
+    this.users = users;
+    this.roles = roles;
+    this.defaultAcls = defaultAcls;
+    this.createdBy = createdBy;
   }
  
   public Connection getConnection() {
@@ -87,10 +92,11 @@ public class SQLModelGenerator {
     return !StringUtils.isEmpty(this.modelName) && !StringUtils.isEmpty(this.query) && this.connection != null;  
   }
   public Domain generate() throws SQLModelGeneratorException {
-    return generate(this.modelName, this.connectionName, this.connection, this.query);
+    return generate(this.modelName, this.connectionName, this.connection, this.query, this.securityEnabled, this.users, this.roles, this.defaultAcls, this.createdBy);
   }
   
-  public Domain generate(String modelName, String connectionName, Connection connection, String query) throws SQLModelGeneratorException {
+  public Domain generate(String modelName, String connectionName, Connection connection, String query,
+      Boolean securityEnabled, List<String> users, List<String> roles, int defaultAcls, String createdBy) throws SQLModelGeneratorException {
     
     LocaleType locale = new LocaleType(LocaleHelper.getLocale().toString(), LocaleHelper.getLocale().getDisplayName());
     
@@ -308,11 +314,11 @@ public class SQLModelGenerator {
     return columnTypes;
   }
 
-  public void setSecurityEnabled(boolean securityEnabled) {
+  public void setSecurityEnabled(Boolean securityEnabled) {
     this.securityEnabled = securityEnabled;
   }
 
-  public boolean isSecurityEnabled() {
+  public Boolean isSecurityEnabled() {
     return securityEnabled;
   }
 
@@ -347,4 +353,16 @@ public class SQLModelGenerator {
   public String getCreatedBy() {
     return createdBy;
   }
+  public String getConnectionName() {
+    return connectionName;
+  }
+
+  public void setConnectionName(String connectionName) {
+    this.connectionName = connectionName;
+  }
+
+  public Boolean getSecurityEnabled() {
+    return securityEnabled;
+  }
+
 }

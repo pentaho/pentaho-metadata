@@ -16,6 +16,8 @@ import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -143,7 +145,7 @@ public class SQLModelGeneratorTest {
     }
 
   }
-  
+
   @Test
   public void testQueryConversion() throws Exception {
     Domain domain = generateModel();
@@ -222,6 +224,13 @@ public class SQLModelGeneratorTest {
   private Domain generateModel() throws SQLModelGeneratorException{
     String query = "select customername from customers where customernumber < 171";
     Connection connection = null;
+    Boolean securityEnabled = true;
+    List<String> users = new ArrayList<String>();
+    users.add("suzy");
+    List<String> roles = new ArrayList<String>();
+    roles.add("Authenticated");
+    int defaultAcls = 31;
+    String createdBy = "joe";
     try {
     connection = getDataSourceConnection("org.hsqldb.jdbcDriver","SampleData"
         ,"pentaho_user", "password"
@@ -230,7 +239,7 @@ public class SQLModelGeneratorTest {
       e.printStackTrace();
       Assert.fail();
     }
-    SQLModelGenerator generator = new SQLModelGenerator("newdatasource", "SampleData", connection, query);
+    SQLModelGenerator generator = new SQLModelGenerator("newdatasource", "SampleData", connection, query, securityEnabled, users, roles, defaultAcls, createdBy);
     return generator.generate(); 
   }
   
