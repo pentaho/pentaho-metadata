@@ -41,6 +41,7 @@ public class SQLModelGenerator {
   boolean securityEnabled;
   List<String> users;
   List<String> roles;
+  int defaultAcls;
   String createdBy;
   
   public SQLModelGenerator() {
@@ -207,11 +208,11 @@ public class SQLModelGenerator {
           Security security = new Security();
           for (String user : users) {
             SecurityOwner owner = new SecurityOwner(OwnerType.USER, user);
-            security.putOwnerRights(owner, IMetadataDomainRepository.ACCESS_TYPE_READ);  
+            security.putOwnerRights(owner, defaultAcls);  
           }
           for (String role : roles) {
             SecurityOwner owner = new SecurityOwner(OwnerType.ROLE, role);
-            security.putOwnerRights(owner, IMetadataDomainRepository.ACCESS_TYPE_READ);  
+            security.putOwnerRights(owner, defaultAcls);  
           }          
           logicalModel.setProperty(Concept.SECURITY_PROPERTY, security);
         }
@@ -329,6 +330,14 @@ public class SQLModelGenerator {
 
   public List<String> getRoles() {
     return roles;
+  }
+  
+  public void setDefaultAcls(int defaultAcls) {
+    this.defaultAcls = defaultAcls;
+  }
+  
+  public int getDefaultAcls() {
+    return defaultAcls;
   }
 
   public void setCreatedBy(String createdBy) {
