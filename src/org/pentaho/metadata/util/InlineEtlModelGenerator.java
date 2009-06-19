@@ -193,11 +193,11 @@ public class InlineEtlModelGenerator {
       Security security = new Security();
       for (String user : users) {
         SecurityOwner owner = new SecurityOwner(OwnerType.USER, user);
-        security.putOwnerRights(owner, IMetadataDomainRepository.ACCESS_TYPE_READ);  
+        security.putOwnerRights(owner, defaultAcls);  
       }
       for (String role : roles) {
         SecurityOwner owner = new SecurityOwner(OwnerType.ROLE, role);
-        security.putOwnerRights(owner, IMetadataDomainRepository.ACCESS_TYPE_READ);  
+        security.putOwnerRights(owner, defaultAcls);  
       }          
       logicalModel.setProperty(Concept.SECURITY_PROPERTY, security);
     }
