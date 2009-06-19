@@ -208,7 +208,7 @@ public class QueryXmlHelper {
     String defaultValue = paramElement.getAttribute("defaultValue");
     
     if (name != null && type != null && defaultValue != null) {
-      DataType dataType = DataType.valueOf(type);
+      DataType dataType = DataType.valueOf(type.toUpperCase());
       Object defaultVal = null;
       // todo: add support for additional objects
       switch(dataType) {
@@ -221,7 +221,7 @@ public class QueryXmlHelper {
         default:
           defaultVal = defaultValue;  
       }
-      Parameter param = new Parameter(name, DataType.valueOf(type), defaultVal);
+      Parameter param = new Parameter(name, DataType.valueOf(type.toUpperCase()), defaultVal);
       query.getParameters().add(param);
     }
   }
@@ -465,7 +465,10 @@ public class QueryXmlHelper {
     Order.Type orderType = Order.Type.ASC;
     NodeList nodes = orderElement.getElementsByTagName("direction"); //$NON-NLS-1$
     if (nodes.getLength() > 0) {
-      orderType = Order.Type.valueOf(XMLHandler.getNodeValue(nodes.item(0))); //$NON-NLS-1$
+      String orderTypeStr = XMLHandler.getNodeValue(nodes.item(0));
+      if (orderTypeStr != null) {
+        orderType = Order.Type.valueOf(orderTypeStr.toUpperCase()); //$NON-NLS-1$
+      }
     }
     nodes = orderElement.getElementsByTagName("view_id"); //$NON-NLS-1$
     if (nodes.getLength() > 0) {
