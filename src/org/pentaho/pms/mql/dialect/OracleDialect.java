@@ -71,4 +71,9 @@ public class OracleDialect extends DefaultSQLDialect {
   public int getMaxTableNameLength() {
     return 30;
   }
+  
+  @Override
+  protected String getStringConcatOperator() {
+    return "||"; //$NON-NLS-1$
+  }
 }

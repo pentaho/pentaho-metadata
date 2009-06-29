@@ -48,4 +48,24 @@ public class MySQLDialect extends DefaultSQLDialect {
   public int getMaxTableNameLength() {
     return 64;
   }
+  
+  // there is no string concat operator in MySQL
+  @Override
+  protected String getStringConcatOperator() {
+    return null; //$NON-NLS-1$
+  }
+  
+  @Override
+  protected String generateStringConcat(String... vals) {
+    StringBuilder sb = new StringBuilder();
+    sb.append("CONCAT(");
+    for (int i = 0; i < vals.length; i++) {
+      if (i != 0) {
+        sb.append(", "); //$NON-NLS-1$ //$NON-NLS-2$
+      }
+      sb.append(vals[i]);
+    }
+    sb.append(")");
+    return sb.toString();
+  }
 }

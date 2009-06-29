@@ -578,6 +578,120 @@ public class SqlOpenFormulaTest {
     quantityOrdered.setAggregationType(qaBackup);
     buyPrice.setAggregationType(paBackup);
   }
+  
+  @Test
+  public void testContainsFunction() {
+
+    handleFormula(getOrdersModel(), "Oracle", //$NON-NLS-1$
+        "CONTAINS([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
+        , "BT_CUSTOMERS.COUNTRY  LIKE '%' || 'AMERICA' || '%'" //$NON-NLS-1$
+    );
+    handleFormula(getOrdersModel(), "MySQL", //$NON-NLS-1$ 
+        "CONTAINS([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
+        , "BT_CUSTOMERS.COUNTRY  LIKE CONCAT('%', 'AMERICA', '%')" //$NON-NLS-1$
+    );
+
+    handleFormula(getOrdersModel(), "Hypersonic", //$NON-NLS-1$ 
+        "CONTAINS([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
+        , "BT_CUSTOMERS.COUNTRY  LIKE '%' + 'AMERICA' + '%'" //$NON-NLS-1$
+    );
+
+    handleFormula(getOrdersModel(), "DB2", //$NON-NLS-1$ 
+        "CONTAINS([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
+        , "BT_CUSTOMERS.COUNTRY  LIKE '%' || 'AMERICA' || '%'" //$NON-NLS-1$
+    );
+
+    handleFormula(getOrdersModel(), "MSSQL", //$NON-NLS-1$ 
+        "CONTAINS([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
+        , "BT_CUSTOMERS.COUNTRY  LIKE '%' + 'AMERICA' + '%'" //$NON-NLS-1$
+    );
+
+    handleFormula(getOrdersModel(), "MSAccess", //$NON-NLS-1$ 
+        "CONTAINS([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
+        , "BT_CUSTOMERS.COUNTRY  LIKE '%' + 'AMERICA' + '%'" //$NON-NLS-1$
+    );
+
+    handleFormula(getOrdersModel(), "PostgreSQL", //$NON-NLS-1$ 
+        "CONTAINS([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
+        , "BT_CUSTOMERS.COUNTRY  LIKE '%' || 'AMERICA' || '%'" //$NON-NLS-1$
+    );
+  }
+  
+  @Test
+  public void testBeginsWithFunction() {
+
+    handleFormula(getOrdersModel(), "Oracle", //$NON-NLS-1$
+        "BEGINSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
+        , "BT_CUSTOMERS.COUNTRY  LIKE 'AMERICA' || '%'" //$NON-NLS-1$
+    );
+    handleFormula(getOrdersModel(), "MySQL", //$NON-NLS-1$ 
+        "BEGINSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
+        , "BT_CUSTOMERS.COUNTRY  LIKE CONCAT('AMERICA', '%')" //$NON-NLS-1$
+    );
+
+    handleFormula(getOrdersModel(), "Hypersonic", //$NON-NLS-1$ 
+        "BEGINSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
+        , "BT_CUSTOMERS.COUNTRY  LIKE 'AMERICA' + '%'" //$NON-NLS-1$
+    );
+
+    handleFormula(getOrdersModel(), "DB2", //$NON-NLS-1$ 
+        "BEGINSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
+        , "BT_CUSTOMERS.COUNTRY  LIKE 'AMERICA' || '%'" //$NON-NLS-1$
+    );
+
+    handleFormula(getOrdersModel(), "MSSQL", //$NON-NLS-1$ 
+        "BEGINSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
+        , "BT_CUSTOMERS.COUNTRY  LIKE 'AMERICA' + '%'" //$NON-NLS-1$
+    );
+
+    handleFormula(getOrdersModel(), "MSAccess", //$NON-NLS-1$ 
+        "BEGINSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
+        , "BT_CUSTOMERS.COUNTRY  LIKE 'AMERICA' + '%'" //$NON-NLS-1$
+    );
+
+    handleFormula(getOrdersModel(), "PostgreSQL", //$NON-NLS-1$ 
+        "BEGINSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
+        , "BT_CUSTOMERS.COUNTRY  LIKE 'AMERICA' || '%'" //$NON-NLS-1$
+    );
+  }
+  
+  @Test
+  public void testEndsWithFunction() {
+
+    handleFormula(getOrdersModel(), "Oracle", //$NON-NLS-1$
+        "ENDSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
+        , "BT_CUSTOMERS.COUNTRY  LIKE '%' || 'AMERICA'" //$NON-NLS-1$
+    );
+    handleFormula(getOrdersModel(), "MySQL", //$NON-NLS-1$ 
+        "ENDSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
+        , "BT_CUSTOMERS.COUNTRY  LIKE CONCAT('%', 'AMERICA')" //$NON-NLS-1$
+    );
+
+    handleFormula(getOrdersModel(), "Hypersonic", //$NON-NLS-1$ 
+        "ENDSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
+        , "BT_CUSTOMERS.COUNTRY  LIKE '%' + 'AMERICA'" //$NON-NLS-1$
+    );
+
+    handleFormula(getOrdersModel(), "DB2", //$NON-NLS-1$ 
+        "ENDSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
+        , "BT_CUSTOMERS.COUNTRY  LIKE '%' || 'AMERICA'" //$NON-NLS-1$
+    );
+
+    handleFormula(getOrdersModel(), "MSSQL", //$NON-NLS-1$ 
+        "ENDSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
+        , "BT_CUSTOMERS.COUNTRY  LIKE '%' + 'AMERICA'" //$NON-NLS-1$
+    );
+
+    handleFormula(getOrdersModel(), "MSAccess", //$NON-NLS-1$ 
+        "ENDSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
+        , "BT_CUSTOMERS.COUNTRY  LIKE '%' + 'AMERICA'" //$NON-NLS-1$
+    );
+
+    handleFormula(getOrdersModel(), "PostgreSQL", //$NON-NLS-1$ 
+        "ENDSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
+        , "BT_CUSTOMERS.COUNTRY  LIKE '%' || 'AMERICA'" //$NON-NLS-1$
+    );
+  }
 
   
 }

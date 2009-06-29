@@ -79,7 +79,88 @@ public class DefaultSQLDialect implements SQLDialectInterface {
     //
     // comparison functions
     //
-    supportedFunctions.put("LIKE",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.INLINE_FUNCTION, "LIKE", 2, false)); //$NON-NLS-1$ //$NON-NLS-2$
+    supportedFunctions.put("LIKE",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.INLINE_FUNCTION, "LIKE", 2, false){
+      
+      
+      
+    });
+
+    supportedFunctions.put("CONTAINS",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.INLINE_FUNCTION, "LIKE", 2, false){
+      /**
+       * render the necessary sql
+       */
+      public void generateFunctionSQL(FormulaTraversalInterface formula, StringBuffer sb, String locale, FormulaFunction f) throws PentahoMetadataException {
+        if (f.getChildValues() != null && f.getChildValues().length > 0) {
+          formula.generateSQL(f, f.getChildValues()[0], sb, locale);
+          for (int i = 1; i < f.getChildValues().length; i++) {
+            sb.append(" " + getSQL() + " "); //$NON-NLS-1$ //$NON-NLS-2$
+            StringBuffer tmpsb = new StringBuffer();
+            formula.generateSQL(f, f.getChildValues()[i], tmpsb, locale);
+            
+            sb.append(
+                generateStringConcat(
+                    quoteStringLiteral(getStringWildCard()), 
+                    tmpsb.toString(), 
+                    quoteStringLiteral(getStringWildCard())
+                )
+            );
+            
+          }
+        }
+      }
+    });
+
+    supportedFunctions.put("BEGINSWITH",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.INLINE_FUNCTION, "LIKE", 2, false){
+      /**
+       * render the necessary sql
+       */
+      public void generateFunctionSQL(FormulaTraversalInterface formula, StringBuffer sb, String locale, FormulaFunction f) throws PentahoMetadataException {
+        if (f.getChildValues() != null && f.getChildValues().length > 0) {
+          formula.generateSQL(f, f.getChildValues()[0], sb, locale);
+          for (int i = 1; i < f.getChildValues().length; i++) {
+            sb.append(" " + getSQL() + " "); //$NON-NLS-1$ //$NON-NLS-2$
+            StringBuffer tmpsb = new StringBuffer();
+            formula.generateSQL(f, f.getChildValues()[i], tmpsb, locale);
+            
+            sb.append(
+                generateStringConcat(
+                    tmpsb.toString(), 
+                    quoteStringLiteral(getStringWildCard())
+                )
+            );
+            
+          }
+        }
+      }
+    });
+    
+
+    supportedFunctions.put("ENDSWITH",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.INLINE_FUNCTION, "LIKE", 2, false){
+      /**
+       * render the necessary sql
+       */
+      public void generateFunctionSQL(FormulaTraversalInterface formula, StringBuffer sb, String locale, FormulaFunction f) throws PentahoMetadataException {
+        if (f.getChildValues() != null && f.getChildValues().length > 0) {
+          formula.generateSQL(f, f.getChildValues()[0], sb, locale);
+          for (int i = 1; i < f.getChildValues().length; i++) {
+            sb.append(" " + getSQL() + " "); //$NON-NLS-1$ //$NON-NLS-2$
+            StringBuffer tmpsb = new StringBuffer();
+            formula.generateSQL(f, f.getChildValues()[i], tmpsb, locale);
+            
+            sb.append(
+                generateStringConcat(
+                    quoteStringLiteral(getStringWildCard()),
+                    tmpsb.toString() 
+                )
+            );
+            
+          }
+        }
+      }
+    });
+    
+    
+    //$NON-NLS-1$ //$NON-NLS-2$
     supportedFunctions.put("IN",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_FUNCTION, "IN", 2) { //$NON-NLS-1$ //$NON-NLS-2$
       
       /**
@@ -610,6 +691,22 @@ public class DefaultSQLDialect implements SQLDialectInterface {
       }
     }
   }
+
+  protected String getStringConcatOperator() {
+    return "+"; //$NON-NLS-1$
+  }
+  
+  
+  protected String generateStringConcat(String... vals) {
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < vals.length; i++) {
+      if (i != 0) {
+        sb.append(" ").append(getStringConcatOperator()).append(" "); //$NON-NLS-1$ //$NON-NLS-2$
+      }
+      sb.append(vals[i]);
+    }
+    return sb.toString();
+  }
   
   /**
    * generates the HAVING portion of the SQL statement
@@ -828,7 +925,15 @@ public class DefaultSQLDialect implements SQLDialectInterface {
   	return clause.toString();
   }
 
-/**
+  public String getStringWildCard() {
+    return "%";
+  }
+  
+  public String getCharWildCard() {
+    return "_";
+  }
+  
+  /**
    * generates a sql query based on the SQLQueryModel object
    * @param query
    * @return
