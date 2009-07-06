@@ -58,8 +58,8 @@ public class ConceptPropertyType
             new ConceptPropertyType( PROPERTY_TYPE_SECURITY,         "Security",    Messages.getString("ConceptPropertyType.USER_SECURITY_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
             new ConceptPropertyType( PROPERTY_TYPE_ALIGNMENT,        "Alignment",   Messages.getString("ConceptPropertyType.USER_ALIGNMENT_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
             new ConceptPropertyType( PROPERTY_TYPE_COLUMN_WIDTH,     "ColumnWidth", Messages.getString("ConceptPropertyType.USER_COLUMN_WIDTH_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
-            new ConceptPropertyType( PROPERTY_TYPE_ROW_LEVEL_SECURITY,     "RowLevelSecurity", Messages.getString("ConceptPropertyType.USER_ROW_LEVEL_SECURITY_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
-            new ConceptPropertyType( PROPERTY_TYPE_AGGREGATION_LIST,     "AggregationList", Messages.getString("ConceptPropertyType.USER_ROW_LEVEL_SECURITY_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
+            new ConceptPropertyType( PROPERTY_TYPE_ROW_LEVEL_SECURITY, "RowLevelSecurity", Messages.getString("ConceptPropertyType.USER_ROW_LEVEL_SECURITY_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
+            new ConceptPropertyType( PROPERTY_TYPE_AGGREGATION_LIST, "AggregationList", Messages.getString("ConceptPropertyType.USER_AGGREGATION_LIST_DESC")), //$NON-NLS-1$ //$NON-NLS-2$
         };
 
     public static final ConceptPropertyType STRING           = propertyTypes[ PROPERTY_TYPE_STRING ];
