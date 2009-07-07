@@ -105,6 +105,28 @@ import org.pentaho.pms.util.ObjectAlreadyExistsException;
 public class ThinModelConverter {
   
   private static final Log logger = LogFactory.getLog(ThinModelConverter.class);
+
+  public static DatabaseMeta convertToLegacy(String name, SqlDataSource datasource) {
+    DatabaseMeta databaseMeta = new DatabaseMeta();
+    
+    databaseMeta.setName(name);
+    
+    databaseMeta.setHostname(datasource.getHostname());
+    databaseMeta.setDatabaseType(datasource.getDialectType());
+    databaseMeta.setAccessType(DatabaseMeta.getAccessType(datasource.getType().toString()));
+    databaseMeta.setDBName(datasource.getDatabaseName());
+    databaseMeta.setDBPort(datasource.getPort());
+    databaseMeta.setUsername(datasource.getUsername());
+    databaseMeta.setPassword(datasource.getPassword());
+
+    // And now load the attributes...
+    for (String key : datasource.getAttributes().keySet()) {
+        databaseMeta.getAttributes().put(key, datasource.getAttributes().get(key));
+    }
+    return databaseMeta;
+  }
+  
+
   
   public static SchemaMeta convertToLegacy(Domain domain) throws ObjectAlreadyExistsException {
     SchemaMeta schemaMeta = new SchemaMeta();
@@ -523,16 +545,18 @@ public class ThinModelConverter {
     for (DatabaseMeta database : schemaMeta.getDatabases()) {
       SqlPhysicalModel sqlModel = new SqlPhysicalModel();
       SqlDataSource dataSource = new SqlDataSource();
+      
+      dataSource.setDialectType(database.getDatabaseTypeDesc());
+      dataSource.setDatabaseName(database.getDatabaseName());
+      dataSource.setHostname(database.getHostname());
+      dataSource.setPort(database.getDatabasePortNumberString());
+      dataSource.setUsername(database.getUsername());
+      dataSource.setPassword(database.getPassword());
+      
       if (database.getAccessType() == DatabaseMeta.TYPE_ACCESS_JNDI) {
-        dataSource.setType(DataSourceType.JNDI); 
-        dataSource.setDatabaseName(database.getDatabaseName()); 
-      } else {
-        dataSource.setType(DataSourceType.JDBC);
-        dataSource.setDriverClass(database.getDriverClass());
-        dataSource.setUsername(database.getUsername());
-        dataSource.setPassword(database.getPassword());
-        dataSource.setUrl(database.getURL());
-        
+        dataSource.setType(DataSourceType.values()[database.getAccessType()]); 
+      } else if (database.getAccessType() == DatabaseMeta.TYPE_ACCESS_NATIVE) {
+        dataSource.setType(DataSourceType.NATIVE);
       }
       sqlModel.setDatasource(dataSource);
       

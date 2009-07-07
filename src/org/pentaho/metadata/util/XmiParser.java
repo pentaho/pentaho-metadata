@@ -15,6 +15,8 @@ package org.pentaho.metadata.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.math.BigDecimal;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,6 +35,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.metadata.messages.LocaleHelper;
 import org.pentaho.metadata.messages.Messages;
 import org.pentaho.metadata.model.Category;
@@ -50,8 +53,10 @@ import org.pentaho.metadata.model.SqlPhysicalTable;
 import org.pentaho.metadata.model.SqlDataSource.DataSourceType;
 import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.IConcept;
+import org.pentaho.metadata.model.concept.security.RowLevelSecurity;
 import org.pentaho.metadata.model.concept.security.SecurityOwner;
 import org.pentaho.metadata.model.concept.types.AggregationType;
+import org.pentaho.metadata.model.concept.types.Alignment;
 import org.pentaho.metadata.model.concept.types.Color;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.FieldType;
@@ -62,18 +67,24 @@ import org.pentaho.metadata.model.concept.types.RelationshipType;
 import org.pentaho.metadata.model.concept.types.TableType;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
+import org.pentaho.metadata.model.concept.types.ColumnWidth.WidthType;
+import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.locale.LocaleInterface;
 import org.pentaho.pms.locale.LocaleMeta;
 import org.pentaho.pms.schema.RelationshipMeta;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
+import org.pentaho.pms.schema.concept.types.aggregation.ConceptPropertyAggregationList;
+import org.pentaho.pms.schema.concept.types.alignment.AlignmentSettings;
 import org.pentaho.pms.schema.concept.types.color.ColorSettings;
+import org.pentaho.pms.schema.concept.types.columnwidth.ColumnWidth;
 import org.pentaho.pms.schema.concept.types.datatype.DataTypeSettings;
 import org.pentaho.pms.schema.concept.types.fieldtype.FieldTypeSettings;
 import org.pentaho.pms.schema.concept.types.font.ConceptPropertyFont;
 import org.pentaho.pms.schema.concept.types.font.FontSettings;
 import org.pentaho.pms.schema.concept.types.tabletype.TableTypeSettings;
 import org.pentaho.pms.schema.security.Security;
+import org.pentaho.pms.schema.security.RowLevelSecurity.Type;
 import org.pentaho.pms.util.Const;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -85,12 +96,8 @@ import org.xml.sax.SAXException;
 /**
  * This code parses an XMI xml file.
  * 
- * TODO: 
- *  __ support for Aggregation List
- *  __ Full DatabaseMeta support
- *  __ Security Service Support (Event)
- *  __ olap support from old models?
- *  __ comprehensive concept property type support (URL, etc)
+ * Note: 
+ *  olap support (CWMOLAP:Schema) is not supported at this time. 
  * 
  * @author Will Gorman (wgorman@pentaho.com)
  *
@@ -194,7 +201,29 @@ public class XmiParser {
       
       
       Element beforeDesc = null;
-      // Event TODO: Will need to bring over security service
+
+      
+      // Event Support
+      
+      Element eventModelElement = null;
+      for (String key : domain.getChildProperties().keySet()) {
+        if (key.startsWith("LEGACY_EVENT_")) {
+          // if any keys event, create a model element
+          if (eventModelElement == null) {
+            eventModelElement = doc.createElement("CWM:ModelElement.taggedValue");
+          }
+          String shortkey = key.substring("LEGACY_EVENT_".length());
+          eventModelElement.appendChild(createTaggedValue(doc, shortkey, (String)domain.getChildProperties().get(key), "a" + id++));
+        }
+      }
+      // only add cwm:event if one or more keys exist
+      if (eventModelElement != null) {
+        Element event = doc.createElement("CWM:Event");
+        event.setAttribute("xmi.id", "a" + id++);
+        event.setAttribute("name", "SECURITY_SERVICE");
+        event.appendChild(eventModelElement);
+        xmiContent.appendChild(event);
+      }
       
       // Parameter / Locale info
       int val = 1;
@@ -227,8 +256,19 @@ public class XmiParser {
           catalog.setAttribute("name", model.getId());
           catalog.setAttribute("xmi.id", "a" + id++);
           Element modelElement = doc.createElement("CWM:ModelElement.taggedValue");
+
+          modelElement.appendChild(createTaggedValue(doc, "DATABASE_TYPE", datasource.getDialectType(), "a" + id++));
+          modelElement.appendChild(createTaggedValue(doc, "DATABASE_ACCESS", datasource.getType().toString(), "a" + id++));
           modelElement.appendChild(createTaggedValue(doc, "DATABASE_DATABASE", datasource.getDatabaseName(), "a" + id++));
-          modelElement.appendChild(createTaggedValue(doc, "DATABASE_ACCESS", datasource.getType() == DataSourceType.JNDI ? "JNDI" : "JDBC", "a" + id++));
+          modelElement.appendChild(createTaggedValue(doc, "DATABASE_SERVER", datasource.getHostname(), "a" + id++));
+          modelElement.appendChild(createTaggedValue(doc, "DATABASE_PORT", datasource.getPort(), "a" + id++));
+          modelElement.appendChild(createTaggedValue(doc, "DATABASE_USERNAME", datasource.getUsername(), "a" + id++));
+          modelElement.appendChild(createTaggedValue(doc, "DATABASE_PASSWORD", datasource.getPassword(), "a" + id++));
+          
+          for (String attribute : datasource.getAttributes().keySet()) {
+            modelElement.appendChild(createTaggedValue(doc, CWM.TAG_DATABASE_ATTRIBUTE_PREFIX + attribute, datasource.getAttributes().get(attribute), "a" + id++));
+          }
+          
           catalog.appendChild(modelElement);
           xmiContent.appendChild(catalog);
         } else {
@@ -411,6 +451,7 @@ public class XmiParser {
 
   }
   
+  @SuppressWarnings("unchecked")
   protected int createDescriptions(Document doc, IConcept concept, String parentTag, String idstr, List<Element> allDescriptions, int id) {
     for (String key : concept.getChildProperties().keySet()) {
 
@@ -441,6 +482,29 @@ public class XmiParser {
         ColorSettings cs = new ColorSettings(c.getRed(), c.getGreen(), c.getBlue());
         body = cs.toString();
         type = "Color";
+      } else if (val instanceof URL) {
+        body = val.toString();
+        type = "URL";
+      } else if (val instanceof org.pentaho.metadata.model.concept.types.ColumnWidth) {
+        org.pentaho.metadata.model.concept.types.ColumnWidth ncw = (org.pentaho.metadata.model.concept.types.ColumnWidth)val;
+        type = "ColumnWidth";
+        ColumnWidth cw = new ColumnWidth(ncw.getType().ordinal(), ncw.getWidth());
+        //             ColumnWidth cw = ColumnWidth.fromString(body);
+//        WidthType cwt = WidthType.values()[cw.getType()];
+//        org.pentaho.metadata.model.concept.types.ColumnWidth ncw = new org.pentaho.metadata.model.concept.types.ColumnWidth(cwt, cw.getWidth().doubleValue());
+//        concept.setProperty(name, ncw);
+        body = cw.toString();
+      } else if (val instanceof Double) {
+        type = "Number";
+        BigDecimal bd = new BigDecimal((Double)val);
+        body = bd.toString();
+      } else if (val instanceof Alignment) {
+//      AlignmentSettings alignment = (AlignmentSettings)property.getValue();
+//      return Alignment.values()[alignment.getType()];
+        Alignment alignment = (Alignment)val;
+        AlignmentSettings as = AlignmentSettings.types[alignment.ordinal()];
+        body = as.toString();
+        type = "Alignment";
       } else if (val instanceof org.pentaho.metadata.model.concept.security.Security) {
         org.pentaho.metadata.model.concept.security.Security security = (org.pentaho.metadata.model.concept.security.Security)val;
         Map<org.pentaho.pms.schema.security.SecurityOwner, Integer> map = new HashMap<org.pentaho.pms.schema.security.SecurityOwner, Integer>();
@@ -451,6 +515,20 @@ public class XmiParser {
         Security legacySecurity = new Security(map);
         body = legacySecurity.toXML();
         type = "Security";
+      } else if (val instanceof RowLevelSecurity) {
+        RowLevelSecurity nrls = (RowLevelSecurity)val;
+        org.pentaho.pms.schema.security.RowLevelSecurity rls = new org.pentaho.pms.schema.security.RowLevelSecurity();
+        rls.setType(Type.values()[nrls.getType().ordinal()]);
+        rls.setGlobalConstraint(nrls.getGlobalConstraint());
+        Map<org.pentaho.pms.schema.security.SecurityOwner, String> roleBasedConstraintMap = new HashMap<org.pentaho.pms.schema.security.SecurityOwner, String>();
+        for (SecurityOwner owner : nrls.getRoleBasedConstraintMap().keySet()) {
+          org.pentaho.pms.schema.security.SecurityOwner ownerObj = new org.pentaho.pms.schema.security.SecurityOwner(owner.getOwnerType().ordinal(), owner.getOwnerName()); 
+          roleBasedConstraintMap.put(ownerObj, nrls.getRoleBasedConstraintMap().get(owner));
+        }
+        rls.setRoleBasedConstraintMap(roleBasedConstraintMap);
+        
+        body = rls.toXML();
+        type = "RowLevelSecurity";
       } else if (val instanceof Font) {
         ConceptPropertyFont font = (ConceptPropertyFont)ThinModelConverter.convertPropertyToLegacy("font", val);
         body = ((FontSettings)font.getValue()).toString();
@@ -491,6 +569,28 @@ public class XmiParser {
         AggregationType at = (AggregationType)val;
         body = AggregationSettings.types[at.ordinal()].getCode();
         type = "Aggregation";
+      } else if (val instanceof List) {
+        List objs = (List)val;
+        if (objs.size() == 0) {
+          // assume this is an agg list
+          ConceptPropertyAggregationList list = new ConceptPropertyAggregationList(key, new ArrayList<AggregationSettings>());
+          type = "AggregationList";
+          body = list.toXML();
+        } else {
+          if (objs.get(0) instanceof AggregationType) {
+            List<AggregationType> aggTypes = (List<AggregationType>)objs;
+            type = "AggregationList";
+            List<AggregationSettings> aggSettings = new ArrayList<AggregationSettings>();
+            for (AggregationType aggType : aggTypes) {
+              aggSettings.add(AggregationSettings.types[aggType.ordinal()]);
+            }
+            ConceptPropertyAggregationList list = new ConceptPropertyAggregationList(key, aggSettings);
+            type = "AggregationList";
+            body = list.toXML();
+          } else {
+            logger.error("Unsupported Concept Property List: " + objs.get(0).getClass());
+          }
+        }
       } else {
         logger.error("Unsupported Concept Property: " + val.getClass());
       }
@@ -571,7 +671,7 @@ public class XmiParser {
     List<Element> physicalTables = new ArrayList<Element>();
     List<Element> parameters = new ArrayList<Element>();
     List<Element> schemas = new ArrayList<Element>();
-    
+    List<Element> events = new ArrayList<Element>();
     list = content.getChildNodes();
     for (int i = 0; i < list.getLength(); i++) {
       Node node = list.item(i);
@@ -588,6 +688,8 @@ public class XmiParser {
           schemas.add((Element)node);
         } else if (node.getNodeName().equals("CWM:Description")) {
           descriptions.add((Element)node);
+        } else if (node.getNodeName().equals("CWM:Event")) {
+          events.add((Element)node);
         } else {
           logger.debug("IGNORED: " + node.getNodeName());
         }
@@ -597,6 +699,12 @@ public class XmiParser {
     Domain domain = new Domain();
     Map<String, Concept> xmiConceptMap = new HashMap<String, Concept>();
     
+    for (Element event : events) {
+      Map<String, String> kvp = getKeyValuePairs(event, "CWM:TaggedValue", "tag", "value");
+      for (String key : kvp.keySet()) {
+        domain.setProperty("LEGACY_EVENT_" + key, kvp.get(key));
+      }
+    }
     populateLocales(domain, parameters);
     
     for (Element concept : concepts) {
@@ -633,13 +741,7 @@ public class XmiParser {
       /*
            <CWMRDB:Catalog name="SampleData" xmi.id="a1165">
       <CWM:ModelElement.taggedValue>
-        <CWM:TaggedValue tag="DATABASE_JDBC_URL" value="HYPERSONIC" xmi.id="a1166"/>
-        <CWM:TaggedValue tag="DATABASE_ATTRIBUTE_PREFIX_MAXIMUM_POOL_SIZE" value="10" xmi.id="a1167"/>
-        <CWM:TaggedValue tag="DATABASE_ATTRIBUTE_PREFIX_IS_CLUSTERED" value="N" xmi.id="a1168"/>
-        <CWM:TaggedValue tag="DATABASE_ATTRIBUTE_PREFIX_USE_POOLING" value="N" xmi.id="a1169"/>
-        <CWM:TaggedValue tag="DATABASE_ATTRIBUTE_PREFIX_EXTRA_OPTION_MYSQL.useCursorFetch" value="true" xmi.id="a1170"/>
-        <CWM:TaggedValue tag="DATABASE_ATTRIBUTE_PREFIX_STREAM_RESULTS" value="Y" xmi.id="a1171"/>
-        <CWM:TaggedValue tag="DATABASE_ATTRIBUTE_PREFIX_EXTRA_OPTION_MYSQL.defaultFetchSize" value="500" xmi.id="a1172"/>
+
         <CWM:TaggedValue tag="DATABASE_INDEX_TABLESPACE" value="" xmi.id="a1173"/>
         <CWM:TaggedValue tag="DATABASE_DATA_TABLESPACE" value="" xmi.id="a1174"/>
         <CWM:TaggedValue tag="DATABASE_SERVERNAME" value="" xmi.id="a1175"/>
@@ -652,6 +754,30 @@ public class XmiParser {
         <CWM:TaggedValue tag="DATABASE_SERVER" value="localhost" xmi.id="a1182"/>
       </CWM:ModelElement.taggedValue>
     </CWMRDB:Catalog>
+    
+    
+        <CWM:TaggedValue xmi.id = 'a700' tag = 'DATABASE_SERVER' value = 'localhost'/>
+        <CWM:TaggedValue xmi.id = 'a701' tag = 'DATABASE_TYPE' value = 'MYSQL'/>
+        <CWM:TaggedValue xmi.id = 'a702' tag = 'DATABASE_ACCESS' value = 'Native'/>
+        <CWM:TaggedValue xmi.id = 'a703' tag = 'DATABASE_DATABASE' value = 'foodmart'/>
+        <CWM:TaggedValue xmi.id = 'a704' tag = 'DATABASE_PORT' value = '3306'/>
+        <CWM:TaggedValue xmi.id = 'a705' tag = 'DATABASE_USERNAME' value = 'foodmart'/>
+        <CWM:TaggedValue xmi.id = 'a706' tag = 'DATABASE_PASSWORD' value = 'foodmart'/>
+        <CWM:TaggedValue xmi.id = 'a707' tag = 'DATABASE_SERVERNAME'/>
+        <CWM:TaggedValue xmi.id = 'a708' tag = 'DATABASE_DATA_TABLESPACE'/>
+        <CWM:TaggedValue xmi.id = 'a709' tag = 'DATABASE_INDEX_TABLESPACE'/>
+        
+        
+        <CWM:TaggedValue xmi.id = 'a710' tag = 'DATABASE_ATTRIBUTE_PREFIX_EXTRA_OPTION_MYSQL.useCursorFetch' value = 'true'/>
+        <CWM:TaggedValue xmi.id = 'a711' tag = 'DATABASE_ATTRIBUTE_PREFIX_USE_POOLING' value = 'N'/>
+        <CWM:TaggedValue xmi.id = 'a712' tag = 'DATABASE_ATTRIBUTE_PREFIX_IS_CLUSTERED' value = 'N'/>
+        <CWM:TaggedValue xmi.id = 'a713' tag = 'DATABASE_ATTRIBUTE_PREFIX_STREAM_RESULTS' value = 'Y'/>
+        <CWM:TaggedValue xmi.id = 'a714' tag = 'DATABASE_ATTRIBUTE_PREFIX_EXTRA_OPTION_MYSQL.defaultFetchSize' value = '500'/>
+        <CWM:TaggedValue xmi.id = 'a715' tag = 'DATABASE_ATTRIBUTE_PREFIX_PORT_NUMBER' value = '3306'/>
+        <CWM:TaggedValue xmi.id = 'a716' tag = 'DATABASE_ATTRIBUTE_PREFIX_FORCE_IDENTIFIERS_TO_UPPERCASE' value = 'Y'/>
+        <CWM:TaggedValue xmi.id = 'a717' tag = 'DATABASE_ATTRIBUTE_PREFIX_FORCE_IDENTIFIERS_TO_LOWERCASE' value = 'Y'/>
+        <CWM:TaggedValue xmi.id = 'a718' tag = 'DATABASE_ATTRIBUTE_PREFIX_QUOTE_ALL_FIELDS' value = 'Y'/>
+        <CWM:TaggedValue xmi.id = 'a719' tag = 'DATABASE_JDBC_URL' value = 'jdbc:mysql://localhost:3306/foodmart?defaultFetchSize=500&amp;useCursorFetch=true'/>
        */
       SqlPhysicalModel sqlPhysicalModel = new SqlPhysicalModel();
       domain.addPhysicalModel(sqlPhysicalModel);
@@ -661,15 +787,23 @@ public class XmiParser {
       String name = datasource.getAttribute("name");
       sqlPhysicalModel.setId(name);
       Map<String, String> kvp = getKeyValuePairs(datasource, "CWM:TaggedValue", "tag", "value");
+      
+      sqlDataSource.setType(DataSourceType.values()[DatabaseMeta.getAccessType(kvp.get("DATABASE_ACCESS"))]);
       sqlDataSource.setDatabaseName(kvp.get("DATABASE_DATABASE"));
-      // sqlDataSource.setDriverClass(kvp.get("DATABASE_DATABASE"));
-      if (kvp.get("DATABASE_ACCESS").equals("JNDI")) {
-        sqlDataSource.setType(DataSourceType.JNDI);
-      } else {
-        // TODO: NEED A BETTER CONVERSION
-        sqlDataSource.setType(DataSourceType.JDBC);
-//        sqlDataSource.setUsername(kvp.get("DATABASE_USERNAME"));
-//        sqlDataSource.setPassword(kvp.get("DATABASE_PASSWORD"));
+      sqlDataSource.setHostname(kvp.get("DATABASE_SERVER"));
+      sqlDataSource.setPort(kvp.get("DATABASE_PORT"));
+      sqlDataSource.setUsername(kvp.get("DATABASE_USERNAME"));
+      sqlDataSource.setPassword(kvp.get("DATABASE_PASSWORD"));
+      sqlDataSource.setDialectType(kvp.get("DATABASE_TYPE"));
+      
+      // And now load the attributes...
+      for (String tag : kvp.keySet()) {
+          if (tag.startsWith(CWM.TAG_DATABASE_ATTRIBUTE_PREFIX)) {
+              String key = tag.substring(CWM.TAG_DATABASE_ATTRIBUTE_PREFIX.length());
+              String attribute = kvp.get(tag);
+              // Add the attribute
+              sqlDataSource.getAttributes().put(key, attribute);
+          }
       }
     }
     
@@ -1069,10 +1203,34 @@ public class XmiParser {
               map.put(ownerObj, val);
             }
             concept.setProperty(name, new org.pentaho.metadata.model.concept.security.Security(map));
+          } else if (propType.equals("RowLevelSecurity")) {
+            org.pentaho.pms.schema.security.RowLevelSecurity security = 
+              org.pentaho.pms.schema.security.RowLevelSecurity.fromXML(body);
+            
+            RowLevelSecurity securityObj = new RowLevelSecurity();
+            securityObj.setType(RowLevelSecurity.Type.values()[security.getType().ordinal()]);
+            securityObj.setGlobalConstraint(security.getGlobalConstraint());
+            
+            Map<SecurityOwner, String> map = new HashMap<SecurityOwner, String>();
+            for (org.pentaho.pms.schema.security.SecurityOwner owner : security.getRoleBasedConstraintMap().keySet()) {
+              SecurityOwner ownerObj = new SecurityOwner(SecurityOwner.OwnerType.values()[owner.getOwnerType()], owner.getOwnerName());
+              map.put(ownerObj, security.getRoleBasedConstraintMap().get(owner));
+            }
+            securityObj.setRoleBasedConstraintMap(map);
+            concept.setProperty(name, securityObj);
           } else if (propType.equals("Aggregation")) {
             // <CWM:Description body="none" name="aggregation" type="Aggregation" xmi.id="a104">
             
             concept.setProperty(name, AggregationType.values()[AggregationSettings.getType(body).getType()]);
+          } else if (propType.equals("AggregationList")) {
+            List<AggregationSettings> settings = ConceptPropertyAggregationList.fromXML(body);
+            List<AggregationType> aggTypes = new ArrayList<AggregationType>();
+            if (settings != null) {
+              for (AggregationSettings setting : settings) {
+                aggTypes.add(AggregationType.values()[setting.getType()]);
+              }
+            }
+            concept.setProperty(name, aggTypes);
           } else if (propType.equals("Font")) {
             FontSettings font = FontSettings.fromString(body);
             concept.setProperty(name, new Font(font.getName(), font.getHeight(), font.isBold(), font.isItalic()));
@@ -1081,6 +1239,21 @@ public class XmiParser {
             concept.setProperty(name, new Color(color.getRed(), color.getGreen(), color.getBlue()));
             // TODO: } else if (propType.equals("AggregationList")) {
             // TODO: ALL Others: URL, Number, etc
+          } else if (propType.equals("Alignment")) {
+            AlignmentSettings alignment = AlignmentSettings.fromString(body);
+            concept.setProperty(name, Alignment.values()[alignment.getType()]);
+          } else if (propType.equals("Number")) {
+            BigDecimal bd = new BigDecimal(body);
+            concept.setProperty(name, bd.doubleValue());
+          } else if (propType.equals("ColumnWidth")) {
+            ColumnWidth cw = ColumnWidth.fromString(body);
+            WidthType cwt = WidthType.values()[cw.getType()];
+            org.pentaho.metadata.model.concept.types.ColumnWidth ncw = new org.pentaho.metadata.model.concept.types.ColumnWidth(cwt, cw.getWidth().doubleValue());
+            concept.setProperty(name, ncw);
+          } else if (propType.equals("URL")) {
+            // NOTE: URL is not compatible with GWT at this time
+            URL url = new URL(body);
+            concept.setProperty(name, url);
           } else {
             logger.error("Failed to convert PROPERTY OF TYPE " + propType + " of " + concept.getId());
           }
