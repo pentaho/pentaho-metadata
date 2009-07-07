@@ -84,7 +84,7 @@ public class InlineEtlModelGenerator {
   }
   
   public Domain generate() throws Exception {
-    return generate(modelName, fileLocation, headerPresent, enclosure, delimiter, securityEnabled, users, roles, defaultAcls, createdBy);
+    return generate(modelName, fileLocation, headerPresent, delimiter, enclosure, securityEnabled, users, roles, defaultAcls, createdBy);
   }
   
   public Domain generate(String modelName, String fileLocation, boolean headerPresent,String delimiter, String enclosure,
@@ -144,7 +144,7 @@ public class InlineEtlModelGenerator {
     logicalTable.setId("LOGICAL_TABLE_1");
 
     
-    for (int i=0; i < fieldNames.length; i++) {
+    for (int i = 0; i < fieldNames.length; i++) {
       fieldNames[i] = Const.trim(fieldNames[i]);
       InlineEtlPhysicalColumn column = new InlineEtlPhysicalColumn();
       column.setTable(table);

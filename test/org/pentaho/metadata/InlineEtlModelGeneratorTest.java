@@ -141,11 +141,11 @@ public class InlineEtlModelGeneratorTest {
     Assert.assertEquals(5, resultset.getRowCount());
     Assert.assertEquals(1, resultset.getColumnCount());
     Assert.assertEquals("bc_0_Data1", resultset.getMetaData().getColumnHeaders()[0][0]);
-    Assert.assertEquals("1.0", resultset.getValueAt(0, 0));
-    Assert.assertEquals("2.0", resultset.getValueAt(1, 0));
-    Assert.assertEquals("3.0", resultset.getValueAt(2, 0));
-    Assert.assertEquals("4.0", resultset.getValueAt(3, 0));
-    Assert.assertEquals("5.0", resultset.getValueAt(4, 0));
+    Assert.assertEquals(1.0, resultset.getValueAt(0, 0));
+    Assert.assertEquals(2.0, resultset.getValueAt(1, 0));
+    Assert.assertEquals(3.0, resultset.getValueAt(2, 0));
+    Assert.assertEquals(4.0, resultset.getValueAt(3, 0));
+    Assert.assertEquals(5.0, resultset.getValueAt(4, 0));
   }
   
   @Test
@@ -184,11 +184,11 @@ public class InlineEtlModelGeneratorTest {
     Assert.assertEquals(5, resultset.getRowCount());
     Assert.assertEquals(1, resultset.getColumnCount());
     Assert.assertEquals("bc_0_Data1", resultset.getMetaData().getColumnHeaders()[0][0]);
-    Assert.assertEquals("4.0", resultset.getValueAt(0, 0));
-    Assert.assertEquals("3.0", resultset.getValueAt(1, 0));
-    Assert.assertEquals("1.0", resultset.getValueAt(2, 0));
-    Assert.assertEquals("2.0", resultset.getValueAt(3, 0));
-    Assert.assertEquals("5.0", resultset.getValueAt(4, 0));
+    Assert.assertEquals(4.0, resultset.getValueAt(0, 0));
+    Assert.assertEquals(3.0, resultset.getValueAt(1, 0));
+    Assert.assertEquals(1.0, resultset.getValueAt(2, 0));
+    Assert.assertEquals(2.0, resultset.getValueAt(3, 0));
+    Assert.assertEquals(5.0, resultset.getValueAt(4, 0));
     
     Query query2 = new Query(domain, model);
 
@@ -200,11 +200,11 @@ public class InlineEtlModelGeneratorTest {
     Assert.assertEquals(5, resultset.getRowCount());
     Assert.assertEquals(1, resultset.getColumnCount());
     Assert.assertEquals("bc_0_Data1", resultset.getMetaData().getColumnHeaders()[0][0]);
-    Assert.assertEquals("5.0", resultset.getValueAt(0, 0));
-    Assert.assertEquals("2.0", resultset.getValueAt(1, 0));
-    Assert.assertEquals("1.0", resultset.getValueAt(2, 0));
-    Assert.assertEquals("3.0", resultset.getValueAt(3, 0));
-    Assert.assertEquals("4.0", resultset.getValueAt(4, 0));
+    Assert.assertEquals(5.0, resultset.getValueAt(0, 0));
+    Assert.assertEquals(2.0, resultset.getValueAt(1, 0));
+    Assert.assertEquals(1.0, resultset.getValueAt(2, 0));
+    Assert.assertEquals(3.0, resultset.getValueAt(3, 0));
+    Assert.assertEquals(4.0, resultset.getValueAt(4, 0));
   }
   
   @Test
