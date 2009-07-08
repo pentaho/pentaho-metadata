@@ -59,6 +59,7 @@
     <dependency org="pentaho" name="pentaho-connections" rev="${dependency.pentaho-connections.revision}" changing="true" />
     <dependency org="pentaho.kettle" name="kettle-engine" rev="${dependency.kettle.revision}" />
     <dependency org="pentaho.kettle" name="kettle-core"   rev="${dependency.kettle.revision}" />
+    <dependency org="pentaho.kettle" name="kettle-db"     rev="${dependency.kettle.revision}" />
     <dependency org="pentaho" name="pentaho-cwm" rev="1.5.4" />
     <dependency org="${dependency.libformula.group}" name="libformula" rev="${dependency.libformula.revision}" />
     <dependency org="pentaho" name="pentaho-publisher" rev="1.6.0" />
