@@ -112,7 +112,11 @@ public class ThinModelConverter {
     databaseMeta.setName(name);
     
     databaseMeta.setHostname(datasource.getHostname());
-    databaseMeta.setDatabaseType(datasource.getDialectType());
+    if (datasource.getDialectType() == null) {
+      databaseMeta.setDatabaseType("MYSQL");
+    } else {
+      databaseMeta.setDatabaseType(datasource.getDialectType());
+    }
     databaseMeta.setAccessType(DatabaseMeta.getAccessType(datasource.getType().toString()));
     databaseMeta.setDBName(datasource.getDatabaseName());
     databaseMeta.setDBPort(datasource.getPort());
