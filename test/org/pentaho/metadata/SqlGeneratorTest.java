@@ -2378,4 +2378,71 @@ public class SqlGeneratorTest {
     ); //$NON-NLS-1$
   }
 
+  @Test
+  public void testParameterSqlGenerationWithFunctions() {
+    try {
+
+      LogicalModel model = TestHelper.buildDefaultModel();
+      LogicalColumn bc1 = model.findLogicalColumn("bc1");
+      LogicalColumn bc2 = model.findLogicalColumn("bc2");
+      LogicalColumn bce2 = model.findLogicalColumn("bce2");
+      DatabaseMeta databaseMeta = new DatabaseMeta("", "HYPERSONIC", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+      Query query = new Query(null, model);
+
+      query.getParameters().add(new Parameter("test3", DataType.STRING, "value"));
+      
+      query.getSelections().add(new Selection(null, bc1, null));
+      query.getSelections().add(new Selection(null, bc2, null));
+
+      query.getConstraints().add(new Constraint(CombinationType.AND, "LIKE([bt2.bc2]; [param:test3])")); //$NON-NLS-1$
+      query.getConstraints().add(new Constraint(CombinationType.AND, "CONTAINS([bt2.bc2]; [param:test3])")); //$NON-NLS-1$
+      query.getConstraints().add(new Constraint(CombinationType.AND, "BEGINSWITH([bt2.bc2]; [param:test3])")); //$NON-NLS-1$
+      query.getConstraints().add(new Constraint(CombinationType.AND, "ENDSWITH([bt2.bc2]; [param:test3])")); //$NON-NLS-1$
+      SqlGenerator generator = new SqlGenerator();
+      
+      MappedQuery mquery = generator.generateSql(query, "en_US", null, databaseMeta, null, true);
+      TestHelper.printOutJava(mquery.getQuery());
+      TestHelper.assertEqualsIgnoreWhitespaces(
+          "SELECT DISTINCT \n" + 
+          "          bt1.pc1 AS COL0\n" + 
+          "         ,bt2.pc2 AS COL1\n" + 
+          "FROM \n" + 
+          "          pt1 bt1\n" + 
+          "         ,pt2 bt2\n" + 
+          "WHERE \n" + 
+          "          ( bt1.pc1 = bt2.pc2 )\n" + 
+          "      AND \n" + 
+          "        (\n" + 
+          "          (\n" + 
+          "              bt2.pc2  LIKE ?\n" + 
+          "          )\n" + 
+          "      AND (\n" + 
+          "              bt2.pc2  LIKE '%' + ? + '%'\n" + 
+          "          )\n" + 
+          "      AND (\n" + 
+          "              bt2.pc2  LIKE ? + '%'\n" + 
+          "          )\n" + 
+          "      AND (\n" + 
+          "              bt2.pc2  LIKE '%' + ?\n" + 
+          "          )\n" + 
+          "        )\n",
+          mquery.getQuery()
+          );
+
+      Assert.assertNotNull(mquery.getParamList());
+      Assert.assertEquals(4, mquery.getParamList().size());
+      Assert.assertEquals("test3", mquery.getParamList().get(0));
+      Assert.assertEquals("test3", mquery.getParamList().get(0));
+      Assert.assertEquals("test3", mquery.getParamList().get(0));
+      Assert.assertEquals("test3", mquery.getParamList().get(0));
+      
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.fail();
+    }
+    
+    
+    
+  }
+  
 }
