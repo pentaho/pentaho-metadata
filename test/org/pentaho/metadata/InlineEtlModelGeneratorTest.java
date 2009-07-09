@@ -328,6 +328,96 @@ public class InlineEtlModelGeneratorTest {
   }
   
   @Test
+  public void testQueryExecutionWithFormulaFunctions() throws Exception {
+    
+    EnvUtil.environmentInit();
+    StepLoader.init();
+    
+    List<String> users = new ArrayList<String>();
+    users.add("suzy");
+    List<String> roles = new ArrayList<String>();
+    roles.add("Authenticated");
+    int defaultAcls = 31;
+    InlineEtlModelGenerator gen = new InlineEtlModelGenerator(
+        "testmodel", 
+        "test/solution/system/metadata/csvfiles/example.csv",
+        true,
+        ",",
+        "\"",true, users, roles, defaultAcls, "joe");
+    
+    Domain domain = gen.generate();
+    
+    LogicalModel model = domain.getLogicalModels().get(0);
+    Category category = model.getCategories().get(0);
+    
+    category.getLogicalColumns().get(0).setDataType(DataType.NUMERIC);
+    
+    Query query = new Query(domain, model);
+
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(3), null));
+    query.getConstraints().add(new Constraint(CombinationType.AND, "LIKE([bc_testmodel.bc_3_Data4];\"%Value%\")"));
+    
+    InlineEtlQueryExecutor executor = new InlineEtlQueryExecutor();
+    IPentahoResultSet resultset = executor.executeQuery(query);
+    
+    // this is a bug, String Value should only appear once
+    
+    Assert.assertEquals(4, resultset.getRowCount());
+    Assert.assertEquals(1, resultset.getColumnCount());
+    Assert.assertEquals("bc_3_Data4", resultset.getMetaData().getColumnHeaders()[0][0]);
+    Assert.assertEquals("String Value", resultset.getValueAt(0, 0));
+    Assert.assertEquals("Bigger String Value", resultset.getValueAt(1, 0));
+    Assert.assertEquals("Very Long String Value for testing columns", resultset.getValueAt(2, 0));
+    Assert.assertEquals("String Value", resultset.getValueAt(3, 0));
+    
+    query = new Query(domain, model);
+
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(3), null));
+    query.getConstraints().add(new Constraint(CombinationType.AND, "CONTAINS([bc_testmodel.bc_3_Data4];\"Value\")"));
+    
+    executor = new InlineEtlQueryExecutor();
+    resultset = executor.executeQuery(query);
+    
+    Assert.assertEquals(4, resultset.getRowCount());
+    Assert.assertEquals(1, resultset.getColumnCount());
+    Assert.assertEquals("bc_3_Data4", resultset.getMetaData().getColumnHeaders()[0][0]);
+    Assert.assertEquals("String Value", resultset.getValueAt(0, 0));
+    Assert.assertEquals("Bigger String Value", resultset.getValueAt(1, 0));
+    Assert.assertEquals("Very Long String Value for testing columns", resultset.getValueAt(2, 0));
+    Assert.assertEquals("String Value", resultset.getValueAt(3, 0));
+    
+    query = new Query(domain, model);
+
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(3), null));
+    query.getConstraints().add(new Constraint(CombinationType.AND, "BEGINSWITH([bc_testmodel.bc_3_Data4];\"String\")"));
+    
+    executor = new InlineEtlQueryExecutor();
+    resultset = executor.executeQuery(query);
+    
+    Assert.assertEquals(1, resultset.getRowCount());
+    Assert.assertEquals(1, resultset.getColumnCount());
+    Assert.assertEquals("bc_3_Data4", resultset.getMetaData().getColumnHeaders()[0][0]);
+    Assert.assertEquals("String Value", resultset.getValueAt(0, 0));
+    
+    
+    query = new Query(domain, model);
+
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(3), null));
+    query.getConstraints().add(new Constraint(CombinationType.AND, "ENDSWITH([bc_testmodel.bc_3_Data4];\"Value\")"));
+    
+    executor = new InlineEtlQueryExecutor();
+    resultset = executor.executeQuery(query);
+    
+    Assert.assertEquals(3, resultset.getRowCount());
+    Assert.assertEquals(1, resultset.getColumnCount());
+    Assert.assertEquals("bc_3_Data4", resultset.getMetaData().getColumnHeaders()[0][0]);
+    Assert.assertEquals("String Value", resultset.getValueAt(0, 0));
+    Assert.assertEquals("Bigger String Value", resultset.getValueAt(1, 0));
+    Assert.assertEquals("String Value", resultset.getValueAt(2, 0));
+  }
+  
+  
+  @Test
   public void testQueryExecutionWithAggregations() throws Exception {
     
     EnvUtil.environmentInit();
