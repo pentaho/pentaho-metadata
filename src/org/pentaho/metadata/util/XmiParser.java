@@ -1038,9 +1038,13 @@ public class XmiParser {
         String fieldparent = nvp.get("RELATIONSHIP_FIELDNAME_PARENT");
 
         relation.setFromTable(logicalModel.findLogicalTable(tableparent));
-        relation.setFromColumn(logicalModel.findLogicalColumn(fieldparent));
+        if (fieldparent != null) {
+          relation.setFromColumn(logicalModel.findLogicalColumn(fieldparent));
+        }
         relation.setToTable(logicalModel.findLogicalTable(tablechild));
-        relation.setToColumn(logicalModel.findLogicalColumn(fieldchild));
+        if (fieldchild != null) {
+          relation.setToColumn(logicalModel.findLogicalColumn(fieldchild));
+        }
         
         relation.setComplex("Y".equals(nvp.get("RELATIONSHIP_IS_COMPLEX")));
         String val = nvp.get(nvp.get("RELATIONSHIP_COMPLEX_JOIN"));
