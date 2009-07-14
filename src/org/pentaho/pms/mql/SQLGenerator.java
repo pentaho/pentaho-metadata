@@ -411,8 +411,8 @@ public class SQLGenerator {
       List cols = securityConstraint.getBusinessColumns();
       Iterator iter = cols.iterator();
       while (iter.hasNext()) {
-        BusinessColumn col = (BusinessColumn)iter.next();
-        BusinessTable businessTable = col.getBusinessTable();
+        Selection col = (Selection)iter.next();
+        BusinessTable businessTable = col.getBusinessColumn().getBusinessTable();
         treeSet.add(businessTable); //$NON-NLS-1$
       }
     }
