@@ -44,6 +44,7 @@ import org.pentaho.metadata.query.model.Parameter;
 import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.metadata.query.model.util.QueryModelMetaData;
+import org.pentaho.pms.core.exception.PentahoMetadataException;
 
 public class SqlGeneratorTest {
   
@@ -96,7 +97,7 @@ public class SqlGeneratorTest {
     }
     
     @Override
-    public String getJoin(LogicalModel LogicalModel, LogicalRelationship relation, Map<LogicalTable, String> tableAliases, Map<String, Object> parameters, boolean genAsPreparedStatement, DatabaseMeta databaseMeta, String locale) {
+    public String getJoin(LogicalModel LogicalModel, LogicalRelationship relation, Map<LogicalTable, String> tableAliases, Map<String, Object> parameters, boolean genAsPreparedStatement, DatabaseMeta databaseMeta, String locale) throws PentahoMetadataException {
       return super.getJoin(LogicalModel, relation, tableAliases, parameters, genAsPreparedStatement, databaseMeta, locale);
     }
     
@@ -2444,5 +2445,115 @@ public class SqlGeneratorTest {
     
     
   }
-  
+
+  @Test
+  public void testInvalidRelationException() throws Exception {
+    
+    final LogicalModel model = new LogicalModel();
+    
+    final LogicalTable bt1 = new LogicalTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt1"); //$NON-NLS-1$
+    final LogicalColumn bc1 = new LogicalColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc1"); //$NON-NLS-1$
+    bc1.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc1.setLogicalTable(bt1);
+    bt1.addLogicalColumn(bc1);
+    bt1.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt2 = new LogicalTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt2"); //$NON-NLS-1$
+    final LogicalColumn bc2 = new LogicalColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc2"); //$NON-NLS-1$
+    bc2.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc2.setLogicalTable(bt2);
+    // bt2.addLogicalColumn(bc2);
+
+    bt2.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt3 = new LogicalTable();
+    bt3.setId("bt3"); //$NON-NLS-1$
+    bt3.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt3"); //$NON-NLS-1$
+    final LogicalColumn bc3 = new LogicalColumn();
+    bc3.setId("bc3"); //$NON-NLS-1$
+    bc3.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc3"); //$NON-NLS-1$
+    bc3.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc3.setLogicalTable(bt3);
+    bt3.addLogicalColumn(bc3);
+    bt3.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt4 = new LogicalTable();
+    bt4.setId("bt4"); //$NON-NLS-1$
+    bt4.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt4"); //$NON-NLS-1$
+    final LogicalColumn bc4 = new LogicalColumn();
+    bc4.setId("bc4"); //$NON-NLS-1$
+    bc4.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc4"); //$NON-NLS-1$
+    bc4.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc4.setLogicalTable(bt4);
+    bt4.addLogicalColumn(bc4);
+    bt4.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt5 = new LogicalTable();
+    bt5.setId("bt5"); //$NON-NLS-1$
+    bt5.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt5"); //$NON-NLS-1$
+    final LogicalColumn bc5 = new LogicalColumn();
+    bc5.setId("bc5"); //$NON-NLS-1$
+    bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc5"); //$NON-NLS-1$
+    bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc5.setLogicalTable(bt5);
+    bt5.addLogicalColumn(bc5);
+    bt5.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    final LogicalRelationship rl1 = new LogicalRelationship();
+    
+    rl1.setFromTable(bt1);
+    rl1.setFromColumn(bc1);
+    rl1.setToTable(bt2);
+    // rl1.setToColumn(bc2);
+    
+    final LogicalRelationship rl2 = new LogicalRelationship();
+    
+    rl2.setFromTable(bt2);
+    // rl2.setFromColumn(bc2);
+    rl2.setToTable(bt3);
+    rl2.setToColumn(bc3);
+
+    final LogicalRelationship rl3 = new LogicalRelationship();
+    
+    rl3.setFromTable(bt3);
+    rl3.setFromColumn(bc3);
+    rl3.setToTable(bt4);
+    rl3.setToColumn(bc4);
+
+    final LogicalRelationship rl4 = new LogicalRelationship();
+    
+    rl4.setFromTable(bt4);
+    rl4.setFromColumn(bc4);
+    rl4.setToTable(bt5);
+    rl4.setToColumn(bc5);
+    
+    model.getLogicalTables().add(bt1);
+    model.getLogicalTables().add(bt2);
+    model.getLogicalTables().add(bt3);
+    model.getLogicalTables().add(bt4);
+    model.getLogicalTables().add(bt5);
+    
+    model.getLogicalRelationships().add(rl1);
+    model.getLogicalRelationships().add(rl2);
+    model.getLogicalRelationships().add(rl3);
+    model.getLogicalRelationships().add(rl4);
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    Query myTest = new Query(null, model); //$NON-NLS-1$
+    myTest.getSelections().add(new Selection(null, bc1, null));
+    myTest.getSelections().add(new Selection(null, bc4, null));
+    SqlGenerator generator = new SqlGenerator();
+    try {
+      MappedQuery query = generator.generateSql(myTest, "en_US", null, databaseMeta);
+      Assert.fail();
+    } catch (PentahoMetadataException e) {
+      Assert.assertTrue(e.getMessage().indexOf("ERROR_0003") >= 0);
+    }
+  }
 }

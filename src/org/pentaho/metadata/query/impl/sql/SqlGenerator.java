@@ -446,7 +446,6 @@ public class SqlGenerator {
         query.setSecurityConstraint(sqlFormula, securityFormula.hasAggregate());
       }
     }
-
     
     // Convert temporary param placements with Sql Prepared Statement ? values
     SQLDialectInterface dialect = SQLDialectFactory.getSQLDialect(databaseMeta);
@@ -914,7 +913,7 @@ public class SqlGenerator {
       return fn;
   }
 
-  protected String getJoin(LogicalModel businessModel, LogicalRelationship relation, Map<LogicalTable, String> tableAliases, Map<String, Object> parameters, boolean genAsPreparedStatement, DatabaseMeta databaseMeta, String locale) {
+  protected String getJoin(LogicalModel businessModel, LogicalRelationship relation, Map<LogicalTable, String> tableAliases, Map<String, Object> parameters, boolean genAsPreparedStatement, DatabaseMeta databaseMeta, String locale) throws PentahoMetadataException {
     String join=""; //$NON-NLS-1$
     if (relation.isComplex()) {
       try {
@@ -955,6 +954,8 @@ public class SqlGenerator {
         join += databaseMeta.quoteField(rightTableAlias);
         join += "."; //$NON-NLS-1$
         join += databaseMeta.quoteField((String)relation.getToColumn().getProperty(SqlPhysicalColumn.TARGET_COLUMN));
+    } else {
+      throw new PentahoMetadataException(Messages.getErrorString("SqlGenerator.ERROR_0003_INVALID_RELATION", relation.toString())); //$NON-NLS-1$
     }
     
     return join;

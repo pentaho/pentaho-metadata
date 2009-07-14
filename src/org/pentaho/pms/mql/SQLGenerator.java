@@ -763,7 +763,7 @@ public class SQLGenerator {
         // Left side
         String leftTableAlias = null;
         if (tableAliases != null) {
-          leftTableAlias = tableAliases.get(relation.getFieldFrom().getBusinessTable());  
+          leftTableAlias = tableAliases.get(relation.getFieldFrom().getBusinessTable());
         } else {
           leftTableAlias = relation.getFieldFrom().getBusinessTable().getId();
         }
@@ -786,6 +786,8 @@ public class SQLGenerator {
         join += databaseMeta.quoteField( rightTableAlias );
         join += "."; //$NON-NLS-1$
         join += databaseMeta.quoteField( relation.getFieldTo().getFormula() );
+    } else {
+      logger.error(Messages.getErrorString("SQLGenerator.ERROR_0001_INVALID_RELATION", relation.toString())); //$NON-NLS-1$
     }
     
     return join;
