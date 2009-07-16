@@ -40,8 +40,8 @@ import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.query.model.util.CsvDataReader;
 import org.pentaho.metadata.query.model.util.CsvDataTypeEvaluator;
-import org.pentaho.metadata.repository.IMetadataDomainRepository;
 import org.pentaho.pms.util.Settings;
+import org.pentaho.reporting.libraries.base.util.CSVTokenizer;
 
 /**
  * This class generates an inline ETL domain.
@@ -97,8 +97,9 @@ public class InlineEtlModelGenerator {
     String line = TextFileInput.getLine(null, reader, TextFileInputMeta.FILE_FORMAT_MIXED, new StringBuilder(1000));
     
     // Split the string, header or data into parts...
-    String[] fieldNames = Const.splitString(line, delimiter); 
+    CSVTokenizer tokenizer = new CSVTokenizer(line, delimiter, enclosure);
     
+    String[] fieldNames = new String[tokenizer.countTokens()];
     if (!headerPresent) {
       // Don't use field names from the header...
       // Generate field names F1 ... F10
@@ -107,10 +108,8 @@ public class InlineEtlModelGenerator {
         fieldNames[i] = "Field_"+df.format(i); // $NON-NLS-1$
       }
     } else {
-      if (!Const.isEmpty(enclosure)) {
-          for (int i=0;i<fieldNames.length;i++) {
-            if (fieldNames[i].startsWith(enclosure) && fieldNames[i].endsWith(enclosure) && fieldNames[i].length()>1) fieldNames[i] = fieldNames[i].substring(1, fieldNames[i].length()-1);
-          }
+      for (int i=0;i<fieldNames.length;i++) {
+        fieldNames[i] = tokenizer.nextToken();
       }
     }
 
