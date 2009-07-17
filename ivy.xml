@@ -62,6 +62,7 @@
     <dependency org="pentaho.kettle" name="kettle-db"     rev="${dependency.kettle.revision}" />
     <dependency org="pentaho" name="pentaho-cwm" rev="1.5.4" />
     <dependency org="${dependency.libformula.group}" name="libformula" rev="${dependency.libformula.revision}" />
+    <dependency org="${dependency.libbase.group}" name="libbase" rev="${dependency.libbase.revision}" />
     <dependency org="pentaho" name="pentaho-publisher" rev="1.6.0" />
     
     <!-- test dependencies -->
