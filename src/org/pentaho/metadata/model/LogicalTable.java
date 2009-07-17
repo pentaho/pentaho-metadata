@@ -30,16 +30,26 @@ public class LogicalTable extends Concept {
 
   private static final long serialVersionUID = -2655375483724689568L;
 
+  private LogicalModel logicalModel;
+  private IPhysicalTable physicalTable;
+  private List<LogicalColumn> logicalColumns = new ArrayList<LogicalColumn>();
+
   public LogicalTable() {
     super();
   }
+  
+  public LogicalTable(LogicalModel logicalModel, IPhysicalTable physicalTable) { 
+    this.logicalModel = logicalModel;
+    this.physicalTable = physicalTable;
+  }
 
-  private LogicalModel logicalModel;
-  private IPhysicalTable physicalTable;
-  
-  // needs the security attribute.
-  
-  private List<LogicalColumn> logicalColumns = new ArrayList<LogicalColumn>();
+  public void setLogicalModel(LogicalModel logicalModel) {
+    this.logicalModel = logicalModel;
+  }
+
+  public LogicalModel getLogicalModel() {
+    return logicalModel;
+  }
 
   public IPhysicalTable getPhysicalTable() {
     return physicalTable;
@@ -68,7 +78,7 @@ public class LogicalTable extends Concept {
   
   @Override
   public IConcept getSecurityParentConcept() {
-    return logicalModel;
+    return getLogicalModel();
   }
   
   public LogicalColumn findLogicalColumn(String id) {
@@ -90,7 +100,7 @@ public class LogicalTable extends Concept {
      LogicalTable clone = new LogicalTable();
      // shallow copy
      clone(clone);
-     clone.logicalModel = logicalModel;
+     clone.setLogicalModel(logicalModel);
      clone.physicalTable = physicalTable;
      
      // deep copy

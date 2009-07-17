@@ -129,17 +129,16 @@ public class InlineEtlModelGenerator {
     table.setId("INLINE_ETL_1");
     model.getPhysicalTables().add(table);
     
-    Category mainCategory = new Category();
-    String categoryID= Settings.getBusinessCategoryIDPrefix()+ modelName;
-    mainCategory.setId(categoryID);
-    mainCategory.setName(new LocalizedString(locale.getCode(), modelName));
-
     LogicalModel logicalModel = new LogicalModel();
     logicalModel.setId("MODEL_1");
     logicalModel.setName(new LocalizedString(locale.getCode(), modelName));
 
-    LogicalTable logicalTable = new LogicalTable();
-    logicalTable.setPhysicalTable(table);
+    Category mainCategory = new Category(logicalModel);
+    String categoryID= Settings.getBusinessCategoryIDPrefix()+ modelName;
+    mainCategory.setId(categoryID);
+    mainCategory.setName(new LocalizedString(locale.getCode(), modelName));
+
+    LogicalTable logicalTable = new LogicalTable(logicalModel, table);
     logicalTable.setId("LOGICAL_TABLE_1");
 
     

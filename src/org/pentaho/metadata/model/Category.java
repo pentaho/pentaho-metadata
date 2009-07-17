@@ -29,19 +29,31 @@ public class Category extends Concept {
 
   private static final long serialVersionUID = -2367402604729602739L;
 
-  private LogicalModel parent;
+  private LogicalModel logicalModel;
   private List<LogicalColumn> logicalColumns = new ArrayList<LogicalColumn>();
 
   public Category() {
     super();
   }
   
+  public Category(LogicalModel logicalModel) {
+    this.logicalModel = logicalModel;
+  }
+  
+  public void setLogicalModel(LogicalModel logicalModel) {
+    this.logicalModel = logicalModel;
+  }
+
+  public LogicalModel getLogicalModel() {
+    return logicalModel;
+  }
+
   /**
    * The security parent for category is the logical model.
    */
   @Override
   public IConcept getSecurityParentConcept() {
-    return parent;
+    return getLogicalModel();
   }
   
   /**
@@ -82,7 +94,7 @@ public class Category extends Concept {
     Category clone = new Category();
     // shallow copies
     clone(clone);
-    clone.parent = parent;
+    clone.setLogicalModel(logicalModel);
     
     // deep copies
     clone.setLogicalColumns(new ArrayList<LogicalColumn>());

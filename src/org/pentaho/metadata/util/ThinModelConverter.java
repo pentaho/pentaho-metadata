@@ -599,6 +599,7 @@ public class ThinModelConverter {
         LogicalTable logicalTable = new LogicalTable();
         IPhysicalTable physicalTable = domain.findPhysicalTable(businessTable.getPhysicalTable().getId());
         logicalTable.setPhysicalTable(physicalTable);
+        logicalTable.setLogicalModel(logicalModel);
         convertConceptFromLegacy(businessTable, logicalTable);
         
         for (BusinessColumn column : businessTable.getBusinessColumns()) {
@@ -651,7 +652,7 @@ public class ThinModelConverter {
       }
       
       for (BusinessCategory bizCategory : model.getRootCategory().getBusinessCategories()) {
-        Category category = new Category();
+        Category category = new Category(logicalModel);
         convertConceptFromLegacy(bizCategory, category);
         
         for (Object bizColumn : bizCategory.getBusinessColumns()) {

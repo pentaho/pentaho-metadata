@@ -351,7 +351,7 @@ public class ThinModelTest {
     public boolean hasAccess(int accessType, IConcept aclHolder) {
       Security s = (Security)aclHolder.getProperty(Concept.SECURITY_PROPERTY);
       if (s == null) {
-        return true;
+        return false;
       }
       if (currentOwner == null) {
         return false;
@@ -372,9 +372,15 @@ public class ThinModelTest {
 
     LogicalModel model = domain.getLogicalModels().get(0);
 
-    Security security = new Security();
+    Security globalSecurity = new Security();
     SecurityOwner joe = new SecurityOwner(OwnerType.USER, "joe");
     SecurityOwner suzy = new SecurityOwner(OwnerType.USER, "suzy");
+    globalSecurity.putOwnerRights(joe, 1);
+    globalSecurity.putOwnerRights(suzy, 1);
+
+    model.setProperty(Concept.SECURITY_PROPERTY, globalSecurity);
+    
+    Security security = new Security();
     security.putOwnerRights(joe, 1);
     
     LogicalTable table = model.getLogicalTables().get(0);
@@ -457,6 +463,6 @@ public class ThinModelTest {
     suzysDomain = repo.getDomain(domain.getId());
     
     Assert.assertEquals(0, suzysDomain.getLogicalModels().size());
-    
   }
+
 }

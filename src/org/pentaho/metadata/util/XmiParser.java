@@ -911,6 +911,7 @@ public class XmiParser {
         Map<String, String> nvp = getKeyValuePairs(biztable, "CWM:TaggedValue", "tag", "value");
         String pt = nvp.get("BUSINESS_TABLE_PHYSICAL_TABLE_NAME");
         table.setPhysicalTable(domain.findPhysicalTable(pt));
+        table.setLogicalModel(logicalModel);
         // store legacy values
         if (nvp.containsKey("TABLE_IS_DRAWN")) {
           table.setProperty("__LEGACY_TABLE_IS_DRAWN", nvp.get("TABLE_IS_DRAWN"));
@@ -996,7 +997,7 @@ public class XmiParser {
          */
         
         Element category = (Element)categories.item(i);
-        Category cat = new Category();
+        Category cat = new Category(logicalModel);
         cat.setId(category.getAttribute("name"));
         xmiConceptMap.put(category.getAttribute("xmi.id"), cat);
         NodeList columns = category.getElementsByTagName("CWM:Attribute");

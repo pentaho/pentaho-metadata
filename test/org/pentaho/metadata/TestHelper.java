@@ -223,6 +223,7 @@ public class TestHelper {
     LogicalTable logicalTable = new LogicalTable();
     logicalTable.setId("LT");
     logicalTable.setPhysicalTable(table);
+    logicalTable.setLogicalModel(logicalModel);
     
     logicalModel.getLogicalTables().add(logicalTable);
     
@@ -232,7 +233,7 @@ public class TestHelper {
     logicalColumn.setLogicalTable(logicalTable);
     logicalTable.addLogicalColumn(logicalColumn);
     
-    Category mainCategory = new Category();
+    Category mainCategory = new Category(logicalModel);
     mainCategory.setId("CATEGORY");
     mainCategory.setName(new LocalizedString(locale, "Category"));
     mainCategory.addLogicalColumn(logicalColumn);
