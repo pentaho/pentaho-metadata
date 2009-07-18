@@ -168,9 +168,13 @@ public class DefaultSQLFunctionGenerator implements SQLFunctionGeneratorInterfac
     if (type == INLINE_FUNCTION) {
       if (f.getChildValues() != null && f.getChildValues().length > 0) {
         formula.generateSQL(f, f.getChildValues()[0], sb, locale);
-        for (int i = 1; i < f.getChildValues().length; i++) {
-          sb.append(" " + getSQL() + " "); //$NON-NLS-1$ //$NON-NLS-2$
-          formula.generateSQL(f, f.getChildValues()[i], sb, locale);
+        if (paramCount == 1) {
+          sb.append(" " + getSQL()); //$NON-NLS-1$ //$NON-NLS-2$
+        } else {
+          for (int i = 1; i < f.getChildValues().length; i++) {
+            sb.append(" " + getSQL() + " "); //$NON-NLS-1$ //$NON-NLS-2$
+            formula.generateSQL(f, f.getChildValues()[i], sb, locale);
+          }
         }
       }
     } else if (type == PARAM_FUNCTION || type == PARAM_AGG_FUNCTION) {

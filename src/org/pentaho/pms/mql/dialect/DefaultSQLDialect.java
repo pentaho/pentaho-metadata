@@ -60,7 +60,7 @@ public class DefaultSQLDialect implements SQLDialectInterface {
     supportedFunctions.put("AND", new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.INLINE_FUNCTION, "AND")); //$NON-NLS-1$ //$NON-NLS-2$
     supportedFunctions.put("OR",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.INLINE_FUNCTION, "OR"));  //$NON-NLS-1$ //$NON-NLS-2$
     supportedFunctions.put("NOT",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_FUNCTION, "NOT", 1)); //$NON-NLS-1$ //$NON-NLS-2$
-    supportedFunctions.put("ISNA",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.INLINE_FUNCTION, "IS", 2));  //$NON-NLS-1$ //$NON-NLS-2$
+    supportedFunctions.put("ISNA",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.INLINE_FUNCTION, "IS NULL", 1));  //$NON-NLS-1$ //$NON-NLS-2$
     supportedFunctions.put("NULL",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_FUNCTION, "NULL", false));  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-1$ //$NON-NLS-2$
 
     // infix operators

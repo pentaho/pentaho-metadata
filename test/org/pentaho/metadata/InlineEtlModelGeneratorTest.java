@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.di.core.util.EnvUtil;
@@ -414,6 +415,29 @@ public class InlineEtlModelGeneratorTest {
     Assert.assertEquals("String Value", resultset.getValueAt(0, 0));
     Assert.assertEquals("Bigger String Value", resultset.getValueAt(1, 0));
     Assert.assertEquals("String Value", resultset.getValueAt(2, 0));
+    
+    
+    query = new Query(domain, model);
+
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(3), null));
+    query.getConstraints().add(new Constraint(CombinationType.AND, "ISNA([bc_testmodel.bc_3_Data4])"));
+    
+    executor = new InlineEtlQueryExecutor();
+    resultset = executor.executeQuery(query);
+    
+    Assert.assertEquals(0, resultset.getRowCount());
+    Assert.assertEquals(1, resultset.getColumnCount());
+    
+    query = new Query(domain, model);
+
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(3), null));
+    query.getConstraints().add(new Constraint(CombinationType.AND, "NOT(ISNA([bc_testmodel.bc_3_Data4]))"));
+    
+    executor = new InlineEtlQueryExecutor();
+    resultset = executor.executeQuery(query);
+    
+    Assert.assertEquals(5, resultset.getRowCount());
+    Assert.assertEquals(1, resultset.getColumnCount());
   }
   
   
@@ -445,6 +469,60 @@ public class InlineEtlModelGeneratorTest {
 
     query.getSelections().add(new Selection(category, category.getLogicalColumns().get(3), null));
     query.getSelections().add(new Selection(category, category.getLogicalColumns().get(1), null));
+    
+    InlineEtlQueryExecutor executor = new InlineEtlQueryExecutor();
+    IPentahoResultSet resultset = executor.executeQuery(query);
+    
+    Assert.assertEquals(4, resultset.getRowCount());
+    Assert.assertEquals(2, resultset.getColumnCount());
+    Assert.assertEquals("bc_3_Data4", resultset.getMetaData().getColumnHeaders()[0][0]);
+    Assert.assertEquals("bc_1_Data2", resultset.getMetaData().getColumnHeaders()[0][1]);
+
+    Assert.assertEquals("A String", resultset.getValueAt(0, 0));
+    Assert.assertEquals("Bigger String Value", resultset.getValueAt(1, 0));
+    Assert.assertEquals("String Value", resultset.getValueAt(2, 0));
+    Assert.assertEquals("Very Long String Value for testing columns", resultset.getValueAt(3, 0));
+
+    
+    Assert.assertEquals(1.1, resultset.getValueAt(0, 1));
+    Assert.assertEquals(5.7, resultset.getValueAt(1, 1));
+    Assert.assertEquals(19.5, resultset.getValueAt(2, 1));    
+    Assert.assertEquals(3.4, resultset.getValueAt(3, 1));
+  }
+  
+  /**
+   * This test is ignored until PMD-532 is resolved
+   * 
+   */
+  @Ignore @Test
+  public void testQueryExecutionWithDifferentAggregations() throws Exception {
+    
+    EnvUtil.environmentInit();
+    StepLoader.init();
+    
+    List<String> users = new ArrayList<String>();
+    users.add("suzy");
+    List<String> roles = new ArrayList<String>();
+    roles.add("Authenticated");
+    int defaultAcls = 31;
+    InlineEtlModelGenerator gen = new InlineEtlModelGenerator(
+        "testmodel", 
+        "test/solution/system/metadata/csvfiles/example.csv",
+        true,
+        ",",
+        "\"",true, users, roles, defaultAcls, "joe");
+    
+    Domain domain = gen.generate();
+
+    LogicalModel model = domain.getLogicalModels().get(0);
+    Category category = model.getCategories().get(0);
+    category.getLogicalColumns().get(1).setDataType(DataType.NUMERIC);
+    category.getLogicalColumns().get(1).setAggregationType(AggregationType.SUM);
+    Query query = new Query(domain, model);
+
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(3), null));
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(1), null));
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(1), AggregationType.AVG));
     
     InlineEtlQueryExecutor executor = new InlineEtlQueryExecutor();
     IPentahoResultSet resultset = executor.executeQuery(query);

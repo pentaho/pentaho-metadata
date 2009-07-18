@@ -13,6 +13,7 @@
 package org.pentaho.metadata;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -27,6 +28,7 @@ import org.pentaho.metadata.model.LogicalTable;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.query.impl.sql.SqlOpenFormula;
 import org.pentaho.metadata.util.ThinModelConverter;
+import org.pentaho.metadata.util.XmiParser;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.factory.CwmSchemaFactory;
 import org.pentaho.pms.schema.SchemaMeta;
@@ -43,29 +45,41 @@ public class SqlOpenFormulaTest {
 
   static LogicalModel ordersModel;
   
+  static final boolean USE_LEGACY_CWM = false;
+  
   public LogicalModel getOrdersModel() {
     if (ordersModel == null) {
-      CWM cwm = null;
-      try {
-        cwm = CWM.getInstance("Orders", true); //$NON-NLS-1$
-        Assert.assertNotNull("CWM singleton instance is null", cwm);
-        cwm.importFromXMI("samples/orders.xmi"); //$NON-NLS-1$      
-      } catch (Exception e) {
-        e.printStackTrace();
-        Assert.fail();
-      }
-      CwmSchemaFactory cwmSchemaFactory = new CwmSchemaFactory();
+      if (USE_LEGACY_CWM) {
   
-      SchemaMeta schemaMeta = cwmSchemaFactory.getSchemaMeta(cwm);
-      org.pentaho.pms.schema.BusinessModel oldOrdersModel = schemaMeta.findModel("Orders"); //$NON-NLS-1$
-      try {
-        Domain domain = ThinModelConverter.convertFromLegacy(schemaMeta);
-        ordersModel = domain.findLogicalModel("Orders"); //$NON-NLS-1$
-        Assert.assertNotNull(ordersModel);
-      } catch (Exception e) {
-        e.printStackTrace();
+        CWM cwm = null;
+        try {
+          cwm = CWM.getInstance("Orders", true); //$NON-NLS-1$
+          Assert.assertNotNull("CWM singleton instance is null", cwm);
+          cwm.importFromXMI("samples/orders.xmi"); //$NON-NLS-1$      
+        } catch (Exception e) {
+          e.printStackTrace();
+          Assert.fail();
+        }
+        CwmSchemaFactory cwmSchemaFactory = new CwmSchemaFactory();
+    
+        SchemaMeta schemaMeta = cwmSchemaFactory.getSchemaMeta(cwm);
+        org.pentaho.pms.schema.BusinessModel oldOrdersModel = schemaMeta.findModel("Orders"); //$NON-NLS-1$
+        try {
+          Domain domain = ThinModelConverter.convertFromLegacy(schemaMeta);
+          ordersModel = domain.findLogicalModel("Orders"); //$NON-NLS-1$
+          Assert.assertNotNull(ordersModel);
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+        // convert to and then from thin model just for giggles
+      } else {
+        try {
+          Domain domain = new XmiParser().parseXmi(new FileInputStream("samples/orders.xmi"));
+          ordersModel = domain.findLogicalModel("Orders");
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
       }
-      // convert to and then from thin model just for giggles
     }
     return ordersModel;
   }
@@ -693,5 +707,13 @@ public class SqlOpenFormulaTest {
     );
   }
 
+  @Test
+  public void testISNAFunction() {
+
+    handleFormula(getOrdersModel(), "Oracle", //$NON-NLS-1$
+        "ISNA([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY])" //$NON-NLS-1$
+        , "BT_CUSTOMERS.COUNTRY  IS NULL" //$NON-NLS-1$
+    );
+  }
   
 }
