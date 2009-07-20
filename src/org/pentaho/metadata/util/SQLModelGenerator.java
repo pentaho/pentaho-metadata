@@ -156,6 +156,7 @@ public class SQLModelGenerator {
       
       try {
         LogicalModel logicalModel = new LogicalModel();
+        logicalModel.setPhysicalModel(model);
         logicalModel.setId("MODEL_1");
         logicalModel.setName(new LocalizedString(locale.getCode(), modelName));
 

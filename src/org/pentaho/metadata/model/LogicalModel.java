@@ -31,6 +31,7 @@ public class LogicalModel extends Concept {
   
   public static final String ROW_LEVEL_SECURITY = "row_level_security";
   
+  private IPhysicalModel physicalModel;
   private List<LogicalTable> logicalTables = new ArrayList<LogicalTable>();
   private List<LogicalRelationship> logicalRelationships = new ArrayList<LogicalRelationship>();
   private List<Category> categories = new ArrayList<Category>();
@@ -38,9 +39,15 @@ public class LogicalModel extends Concept {
   public LogicalModel() {
     super();
   }
-  
-  // TODO: add security
-  
+
+  public void setPhysicalModel(IPhysicalModel physicalModel) {
+    this.physicalModel = physicalModel;
+  }
+
+  public IPhysicalModel getPhysicalModel() {
+    return physicalModel;
+  }
+
   public List<LogicalTable> getLogicalTables() {
     return logicalTables;
   }
@@ -122,6 +129,7 @@ public class LogicalModel extends Concept {
 
     // shallow references
     clone.logicalRelationships = logicalRelationships;
+    clone.physicalModel = physicalModel;
     
     // actual clones
     clone.logicalTables = new ArrayList<LogicalTable>();

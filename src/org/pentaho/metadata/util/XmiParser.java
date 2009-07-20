@@ -42,6 +42,7 @@ import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.IPhysicalColumn;
 import org.pentaho.metadata.model.IPhysicalModel;
+import org.pentaho.metadata.model.IPhysicalTable;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.LogicalRelationship;
@@ -879,6 +880,7 @@ public class XmiParser {
     
     for (Element schema : schemas) {
       LogicalModel logicalModel = new LogicalModel();
+      
       logicalModel.setId(schema.getAttribute("name"));
       xmiConceptMap.put(schema.getAttribute("xmi.id"), logicalModel);
       
@@ -910,7 +912,13 @@ public class XmiParser {
         table.setId(biztable.getAttribute("name"));
         Map<String, String> nvp = getKeyValuePairs(biztable, "CWM:TaggedValue", "tag", "value");
         String pt = nvp.get("BUSINESS_TABLE_PHYSICAL_TABLE_NAME");
-        table.setPhysicalTable(domain.findPhysicalTable(pt));
+        IPhysicalTable physTable = domain.findPhysicalTable(pt);
+        
+        // set the model's physical table if not already set and if available
+        if (physTable != null && logicalModel.getPhysicalModel() == null) {
+          logicalModel.setPhysicalModel(physTable.getPhysicalModel());
+        }
+        table.setPhysicalTable(physTable);
         table.setLogicalModel(logicalModel);
         // store legacy values
         if (nvp.containsKey("TABLE_IS_DRAWN")) {

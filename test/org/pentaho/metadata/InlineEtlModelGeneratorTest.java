@@ -85,8 +85,11 @@ public class InlineEtlModelGeneratorTest {
     // TEST LOGICAL MODEL
     
     Assert.assertEquals(1, domain.getLogicalModels().size());
-    
+
     LogicalModel logicalModel = domain.getLogicalModels().get(0);
+    
+    Assert.assertNotNull(logicalModel.getPhysicalModel());
+    
     Assert.assertEquals("MODEL_1", logicalModel.getId());
     Assert.assertEquals("testmodel", logicalModel.getName().getString(locale));
     Assert.assertEquals(1, logicalModel.getLogicalTables().size());

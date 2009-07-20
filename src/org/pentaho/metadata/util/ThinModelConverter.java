@@ -598,6 +598,9 @@ public class ThinModelConverter {
         BusinessTable businessTable = (BusinessTable)biztable;
         LogicalTable logicalTable = new LogicalTable();
         IPhysicalTable physicalTable = domain.findPhysicalTable(businessTable.getPhysicalTable().getId());
+        if (physicalTable != null && logicalModel.getPhysicalModel() == null) {
+          logicalModel.setPhysicalModel(physicalTable.getPhysicalModel());
+        }
         logicalTable.setPhysicalTable(physicalTable);
         logicalTable.setLogicalModel(logicalModel);
         convertConceptFromLegacy(businessTable, logicalTable);
