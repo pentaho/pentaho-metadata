@@ -12,17 +12,12 @@
  */
 package org.pentaho.metadata.util;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.di.core.Const;
 import org.pentaho.di.core.Props;
-import org.pentaho.di.core.vfs.KettleVFS;
-import org.pentaho.di.trans.steps.textfileinput.TextFileInput;
-import org.pentaho.di.trans.steps.textfileinput.TextFileInputMeta;
 import org.pentaho.metadata.messages.LocaleHelper;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
@@ -41,7 +36,6 @@ import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.query.model.util.CsvDataReader;
 import org.pentaho.metadata.query.model.util.CsvDataTypeEvaluator;
 import org.pentaho.pms.util.Settings;
-import org.pentaho.reporting.libraries.base.util.CSVTokenizer;
 
 /**
  * This class generates an inline ETL domain.
@@ -50,9 +44,11 @@ import org.pentaho.reporting.libraries.base.util.CSVTokenizer;
  *
  */
 public class InlineEtlModelGenerator {
+  
   public static final int ROW_LIMIT = 5;
   private String modelName;
   private String fileLocation;
+  private String fileName;
   private boolean headerPresent;
   private String delimiter;
   private String enclosure;
@@ -68,11 +64,12 @@ public class InlineEtlModelGenerator {
     }
   }
   
-  public InlineEtlModelGenerator(String modelName, String fileLocation, boolean headerPresent, String delimiter,String enclosure,
+  public InlineEtlModelGenerator(String modelName, String fileLocation, String fileName, boolean headerPresent, String delimiter,String enclosure,
        boolean securityEnabled,  List<String> users, List<String> roles, int defaultAcls,String createdBy) {
     this();
     this.modelName = modelName;
     this.fileLocation = fileLocation;
+    this.fileName = fileName;
     this.headerPresent = headerPresent;
     this.delimiter = delimiter;
     this.enclosure = enclosure;
@@ -84,32 +81,31 @@ public class InlineEtlModelGenerator {
   }
   
   public Domain generate() throws Exception {
-    return generate(modelName, fileLocation, headerPresent, delimiter, enclosure, securityEnabled, users, roles, defaultAcls, createdBy);
+    return generate(modelName, fileLocation, fileName, headerPresent, delimiter, enclosure, securityEnabled, users, roles, defaultAcls, createdBy);
   }
   
-  public Domain generate(String modelName, String fileLocation, boolean headerPresent,String delimiter, String enclosure,
+  public Domain generate(String modelName, String fileLocation, String fileName, boolean headerPresent,String delimiter, String enclosure,
       boolean securityEnabled,  List<String> users, List<String> roles, int defaultAcls,String createdBy) throws Exception {
-    // use code within Kettle to gen CSV model
-    InputStream inputStream = KettleVFS.getInputStream(fileLocation);
-    InputStreamReader reader = new InputStreamReader(inputStream);
     
-    // Read a line of data to determine the number of rows...
-    String line = TextFileInput.getLine(null, reader, TextFileInputMeta.FILE_FORMAT_MIXED, new StringBuilder(1000));
+    // Construct a CSV Reader to read the sample data. This data will be used to sample data
+    // types of individual columns, and load the header rows
+    CsvDataReader csvDataReader = new CsvDataReader(fileLocation + fileName, headerPresent, delimiter, enclosure, ROW_LIMIT); 
+    CsvDataTypeEvaluator dataTypeConverter = new CsvDataTypeEvaluator();
     
-    // Split the string, header or data into parts...
-    CSVTokenizer tokenizer = new CSVTokenizer(line, delimiter, enclosure);
+    csvDataReader.loadData();
     
-    String[] fieldNames = new String[tokenizer.countTokens()];
-    if (!headerPresent) {
-      // Don't use field names from the header...
-      // Generate field names F1 ... F10
-      DecimalFormat df = new DecimalFormat("000"); // $NON-NLS-1$
-      for (int i=0;i<fieldNames.length;i++) {
-        fieldNames[i] = "Field_"+df.format(i); // $NON-NLS-1$
-      }
-    } else {
-      for (int i=0;i<fieldNames.length;i++) {
-        fieldNames[i] = tokenizer.nextToken();
+    String[] fieldNames = new String[csvDataReader.getColumnCount()];
+
+    // Generate field names F1 ... F10
+    // even if header is true, this is necessary in case data fields are left empty
+    DecimalFormat df = new DecimalFormat("000"); // $NON-NLS-1$
+    for (int i=0;i<fieldNames.length;i++) {
+      fieldNames[i] = "Field_"+df.format(i); // $NON-NLS-1$
+    }
+
+    if (headerPresent) {
+      for (int i = 0; i < csvDataReader.getHeader().size(); i++) {
+        fieldNames[i] = csvDataReader.getHeader().get(i);
       }
     }
 
@@ -120,7 +116,7 @@ public class InlineEtlModelGenerator {
     model.setId(modelID);
     model.setName(new LocalizedString(locale.getCode(), modelName));
 
-    model.setFileLocation(fileLocation);
+    model.setFileLocation(fileName);
     model.setHeaderPresent(headerPresent);
     model.setEnclosure(enclosure);
     model.setDelimiter(delimiter);
@@ -140,6 +136,7 @@ public class InlineEtlModelGenerator {
 
     LogicalTable logicalTable = new LogicalTable(logicalModel, table);
     logicalTable.setId("LOGICAL_TABLE_1");
+    
 
     
     for (int i = 0; i < fieldNames.length; i++) {
@@ -149,16 +146,7 @@ public class InlineEtlModelGenerator {
       column.setId("PC_" + i);
       column.setFieldName(fieldNames[i]);
       column.setName(new LocalizedString(locale.getCode(), fieldNames[i]));
-      // Construct a CSV Reader to read the sample data. This data will be used to sample data
-      // types of individual columns
-      CsvDataReader csvDataReader = new CsvDataReader(fileLocation, headerPresent, enclosure, delimiter, ROW_LIMIT); 
-      CsvDataTypeEvaluator dataTypeConverter = new CsvDataTypeEvaluator();
-      // If headers are present we will get the sampling data using the column name otherwise we will use the column number
-      if(headerPresent) {
-        column.setDataType(dataTypeConverter.evaluateDataType(csvDataReader.getColumnData(i)));
-      } else {
-        column.setDataType(dataTypeConverter.evaluateDataType(csvDataReader.getColumnData(fieldNames[i])));
-      }
+      column.setDataType(dataTypeConverter.evaluateDataType(csvDataReader.getColumnData(i)));
       table.getPhysicalColumns().add(column);
       
       // create logical column

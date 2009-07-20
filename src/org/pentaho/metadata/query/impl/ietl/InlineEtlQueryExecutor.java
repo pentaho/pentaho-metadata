@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -171,12 +172,8 @@ public class InlineEtlQueryExecutor {
     }
     return constraints;
   }
-  
-  public IPentahoResultSet executeQuery(Query query) throws Exception {
-    return executeQuery(query, null);
-  }
-  
-  public IPentahoResultSet executeQuery(Query query, Map<String, Object> parameters) throws Exception {
+
+  public IPentahoResultSet executeQuery(Query query, String csvFilePath, Map<String, Object> parameters) throws Exception {
 
     // resolve any missing parameters with default values
     if (parameters == null && query.getParameters().size() > 0) {
@@ -192,8 +189,18 @@ public class InlineEtlQueryExecutor {
     int groupBys = 0;
     List<QueryConstraint> queryConstraints = parseConstraints(query, parameters);
     
+    TreeSet<String> repeatedSelections = new TreeSet<String>();
     List<Selection> allSelections = getAllSelections(query, queryConstraints);
     for (Selection selection : allSelections) {
+      // Temporary until PMD-532 is fixed
+      // verify that selections only appear once in the query.
+      String fieldName = ((InlineEtlPhysicalColumn)selection.getLogicalColumn().getPhysicalColumn()).getFieldName();
+      if (repeatedSelections.contains(fieldName)) {
+        throw new Exception("Inline ETL Execution does not support multiple selections of the same logical column: " + selection.getLogicalColumn().getId());
+      }
+      repeatedSelections.add(fieldName);
+      
+      
       if (selection.getActiveAggregationType() != null && selection.getActiveAggregationType() != AggregationType.NONE) {
         groupBys++;
       }
@@ -216,8 +223,11 @@ public class InlineEtlQueryExecutor {
 
     
     // the file name might need to be translated to the correct location here
-    
-    csvinput.setFilename(physicalModel.getFileLocation());
+    if (csvFilePath != null) {
+      csvinput.setFilename(csvFilePath + physicalModel.getFileLocation());
+    } else {
+      csvinput.setFilename(physicalModel.getFileLocation());
+    }
     
     csvinput.setDelimiter(physicalModel.getDelimiter());
     csvinput.setEnclosure(physicalModel.getEnclosure());

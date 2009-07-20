@@ -55,7 +55,8 @@ public class InlineEtlModelGeneratorTest {
     int defaultAcls = 31;
     InlineEtlModelGenerator gen = new InlineEtlModelGenerator(
         "testmodel", 
-        "test/solution/system/metadata/csvfiles/example.csv",
+        "test/solution/system/metadata/csvfiles/",
+        "example.csv",
         true,
         ",",
         "\"",true, users, roles, defaultAcls, "joe");
@@ -123,7 +124,8 @@ public class InlineEtlModelGeneratorTest {
     int defaultAcls = 31;
     InlineEtlModelGenerator gen = new InlineEtlModelGenerator(
         "testmodel", 
-        "test/solution/system/metadata/csvfiles/example.csv",
+        "test/solution/system/metadata/csvfiles/",
+        "example.csv",
         true,
         ",",
         "\"",true, users, roles, defaultAcls, "joe");
@@ -137,7 +139,7 @@ public class InlineEtlModelGeneratorTest {
     query.getSelections().add(new Selection(category, category.getLogicalColumns().get(0), null));
     
     InlineEtlQueryExecutor executor = new InlineEtlQueryExecutor();
-    IPentahoResultSet resultset = executor.executeQuery(query);
+    IPentahoResultSet resultset = executor.executeQuery(query, "test/solution/system/metadata/csvfiles/", null);
     
     Assert.assertEquals(5, resultset.getRowCount());
     Assert.assertEquals(1, resultset.getColumnCount());
@@ -162,7 +164,8 @@ public class InlineEtlModelGeneratorTest {
     int defaultAcls = 31;
     InlineEtlModelGenerator gen = new InlineEtlModelGenerator(
         "testmodel", 
-        "test/solution/system/metadata/csvfiles/example.csv",
+        "test/solution/system/metadata/csvfiles/",
+        "example.csv",
         true,
         ",",
         "\"",true, users, roles, defaultAcls, "joe");
@@ -180,7 +183,7 @@ public class InlineEtlModelGeneratorTest {
     query.getOrders().add(new Order(new Selection(category, category.getLogicalColumns().get(1), null), Type.ASC));
     
     InlineEtlQueryExecutor executor = new InlineEtlQueryExecutor();
-    IPentahoResultSet resultset = executor.executeQuery(query);
+    IPentahoResultSet resultset = executor.executeQuery(query, "test/solution/system/metadata/csvfiles/", null);
     
     Assert.assertEquals(5, resultset.getRowCount());
     Assert.assertEquals(1, resultset.getColumnCount());
@@ -196,7 +199,7 @@ public class InlineEtlModelGeneratorTest {
     query2.getSelections().add(new Selection(category, category.getLogicalColumns().get(0), null));
     query2.getOrders().add(new Order(new Selection(category, category.getLogicalColumns().get(1), null), Type.DESC));
     
-    resultset = executor.executeQuery(query2);
+    resultset = executor.executeQuery(query2, "test/solution/system/metadata/csvfiles/", null);
     
     Assert.assertEquals(5, resultset.getRowCount());
     Assert.assertEquals(1, resultset.getColumnCount());
@@ -221,7 +224,8 @@ public class InlineEtlModelGeneratorTest {
     int defaultAcls = 31;
     InlineEtlModelGenerator gen = new InlineEtlModelGenerator(
         "testmodel", 
-        "test/solution/system/metadata/csvfiles/example.csv",
+        "test/solution/system/metadata/csvfiles/",
+        "example.csv",
         true,
         ",",
         "\"",true, users, roles, defaultAcls, "joe");
@@ -239,7 +243,7 @@ public class InlineEtlModelGeneratorTest {
     query.getConstraints().add(new Constraint(CombinationType.AND, "[bc_testmodel.bc_0_Data1] > 2"));
     
     InlineEtlQueryExecutor executor = new InlineEtlQueryExecutor();
-    IPentahoResultSet resultset = executor.executeQuery(query);
+    IPentahoResultSet resultset = executor.executeQuery(query, "test/solution/system/metadata/csvfiles/", null);
     
     Assert.assertEquals(3, resultset.getRowCount());
     Assert.assertEquals(1, resultset.getColumnCount());
@@ -253,7 +257,7 @@ public class InlineEtlModelGeneratorTest {
     query2.getSelections().add(new Selection(category, category.getLogicalColumns().get(0), null));
     query2.getConstraints().add(new Constraint(CombinationType.AND, "[bc_testmodel.bc_1_Data2] > 4.0"));
     
-    resultset = executor.executeQuery(query2);
+    resultset = executor.executeQuery(query2, "test/solution/system/metadata/csvfiles/", null);
     
     Assert.assertEquals(3, resultset.getRowCount());
     Assert.assertEquals(1, resultset.getColumnCount());
@@ -267,7 +271,7 @@ public class InlineEtlModelGeneratorTest {
     query4.getSelections().add(new Selection(category, category.getLogicalColumns().get(0), null));
     query4.getConstraints().add(new Constraint(CombinationType.AND, "AND([bc_testmodel.bc_0_Data1] < 5; [bc_testmodel.bc_1_Data2] > 4.0)"));
     
-    resultset = executor.executeQuery(query4);
+    resultset = executor.executeQuery(query4, "test/solution/system/metadata/csvfiles/", null);
     
     Assert.assertEquals(2, resultset.getRowCount());
     Assert.assertEquals(1, resultset.getColumnCount());
@@ -280,7 +284,7 @@ public class InlineEtlModelGeneratorTest {
     query45.getSelections().add(new Selection(category, category.getLogicalColumns().get(0), null));
     query45.getConstraints().add(new Constraint(CombinationType.AND, "OR([bc_testmodel.bc_0_Data1] < 5; [bc_testmodel.bc_1_Data2] > 4.0)"));
     
-    resultset = executor.executeQuery(query45);
+    resultset = executor.executeQuery(query45, "test/solution/system/metadata/csvfiles/", null);
     
     Assert.assertEquals(5, resultset.getRowCount());
     Assert.assertEquals(1, resultset.getColumnCount());
@@ -297,7 +301,7 @@ public class InlineEtlModelGeneratorTest {
     query5.getConstraints().add(new Constraint(CombinationType.AND, "[bc_testmodel.bc_0_Data1] < 5"));
     query5.getConstraints().add(new Constraint(CombinationType.OR, "[bc_testmodel.bc_1_Data2] > 4.0"));    
     
-    resultset = executor.executeQuery(query5);
+    resultset = executor.executeQuery(query5, "test/solution/system/metadata/csvfiles/", null);
     
     Assert.assertEquals(5, resultset.getRowCount());
     Assert.assertEquals(1, resultset.getColumnCount());
@@ -314,14 +318,14 @@ public class InlineEtlModelGeneratorTest {
     query6.getSelections().add(new Selection(category, category.getLogicalColumns().get(0), null));
     query6.getConstraints().add(new Constraint(CombinationType.AND, "[param:param1]"));
     
-    resultset = executor.executeQuery(query6, null);
+    resultset = executor.executeQuery(query6, "test/solution/system/metadata/csvfiles/", null);
     Assert.assertEquals(0, resultset.getRowCount());
 
     Map<String, Object> params = new HashMap<String,Object>();
     
     params.put("param1", true);
     
-    resultset = executor.executeQuery(query6, params);
+    resultset = executor.executeQuery(query6, "test/solution/system/metadata/csvfiles/", params);
     Assert.assertEquals(5, resultset.getRowCount());
     
     
@@ -341,7 +345,8 @@ public class InlineEtlModelGeneratorTest {
     int defaultAcls = 31;
     InlineEtlModelGenerator gen = new InlineEtlModelGenerator(
         "testmodel", 
-        "test/solution/system/metadata/csvfiles/example.csv",
+        "test/solution/system/metadata/csvfiles/",
+        "example.csv",
         true,
         ",",
         "\"",true, users, roles, defaultAcls, "joe");
@@ -359,7 +364,7 @@ public class InlineEtlModelGeneratorTest {
     query.getConstraints().add(new Constraint(CombinationType.AND, "LIKE([bc_testmodel.bc_3_Data4];\"%Value%\")"));
     
     InlineEtlQueryExecutor executor = new InlineEtlQueryExecutor();
-    IPentahoResultSet resultset = executor.executeQuery(query);
+    IPentahoResultSet resultset = executor.executeQuery(query, "test/solution/system/metadata/csvfiles/", null);
     
     // this is a bug, String Value should only appear once
     
@@ -377,7 +382,7 @@ public class InlineEtlModelGeneratorTest {
     query.getConstraints().add(new Constraint(CombinationType.AND, "CONTAINS([bc_testmodel.bc_3_Data4];\"Value\")"));
     
     executor = new InlineEtlQueryExecutor();
-    resultset = executor.executeQuery(query);
+    resultset = executor.executeQuery(query, "test/solution/system/metadata/csvfiles/", null);
     
     Assert.assertEquals(4, resultset.getRowCount());
     Assert.assertEquals(1, resultset.getColumnCount());
@@ -393,7 +398,7 @@ public class InlineEtlModelGeneratorTest {
     query.getConstraints().add(new Constraint(CombinationType.AND, "BEGINSWITH([bc_testmodel.bc_3_Data4];\"String\")"));
     
     executor = new InlineEtlQueryExecutor();
-    resultset = executor.executeQuery(query);
+    resultset = executor.executeQuery(query, "test/solution/system/metadata/csvfiles/", null);
     
     Assert.assertEquals(1, resultset.getRowCount());
     Assert.assertEquals(1, resultset.getColumnCount());
@@ -407,7 +412,7 @@ public class InlineEtlModelGeneratorTest {
     query.getConstraints().add(new Constraint(CombinationType.AND, "ENDSWITH([bc_testmodel.bc_3_Data4];\"Value\")"));
     
     executor = new InlineEtlQueryExecutor();
-    resultset = executor.executeQuery(query);
+    resultset = executor.executeQuery(query, "test/solution/system/metadata/csvfiles/", null);
     
     Assert.assertEquals(3, resultset.getRowCount());
     Assert.assertEquals(1, resultset.getColumnCount());
@@ -423,7 +428,7 @@ public class InlineEtlModelGeneratorTest {
     query.getConstraints().add(new Constraint(CombinationType.AND, "ISNA([bc_testmodel.bc_3_Data4])"));
     
     executor = new InlineEtlQueryExecutor();
-    resultset = executor.executeQuery(query);
+    resultset = executor.executeQuery(query, "test/solution/system/metadata/csvfiles/", null);
     
     Assert.assertEquals(0, resultset.getRowCount());
     Assert.assertEquals(1, resultset.getColumnCount());
@@ -434,7 +439,7 @@ public class InlineEtlModelGeneratorTest {
     query.getConstraints().add(new Constraint(CombinationType.AND, "NOT(ISNA([bc_testmodel.bc_3_Data4]))"));
     
     executor = new InlineEtlQueryExecutor();
-    resultset = executor.executeQuery(query);
+    resultset = executor.executeQuery(query, "test/solution/system/metadata/csvfiles/", null);
     
     Assert.assertEquals(5, resultset.getRowCount());
     Assert.assertEquals(1, resultset.getColumnCount());
@@ -454,7 +459,8 @@ public class InlineEtlModelGeneratorTest {
     int defaultAcls = 31;
     InlineEtlModelGenerator gen = new InlineEtlModelGenerator(
         "testmodel", 
-        "test/solution/system/metadata/csvfiles/example.csv",
+        "test/solution/system/metadata/csvfiles/",
+        "example.csv",
         true,
         ",",
         "\"",true, users, roles, defaultAcls, "joe");
@@ -471,7 +477,7 @@ public class InlineEtlModelGeneratorTest {
     query.getSelections().add(new Selection(category, category.getLogicalColumns().get(1), null));
     
     InlineEtlQueryExecutor executor = new InlineEtlQueryExecutor();
-    IPentahoResultSet resultset = executor.executeQuery(query);
+    IPentahoResultSet resultset = executor.executeQuery(query, "test/solution/system/metadata/csvfiles/", null);
     
     Assert.assertEquals(4, resultset.getRowCount());
     Assert.assertEquals(2, resultset.getColumnCount());
@@ -507,7 +513,8 @@ public class InlineEtlModelGeneratorTest {
     int defaultAcls = 31;
     InlineEtlModelGenerator gen = new InlineEtlModelGenerator(
         "testmodel", 
-        "test/solution/system/metadata/csvfiles/example.csv",
+        "test/solution/system/metadata/csvfiles/",
+        "example.csv",
         true,
         ",",
         "\"",true, users, roles, defaultAcls, "joe");
@@ -525,7 +532,7 @@ public class InlineEtlModelGeneratorTest {
     query.getSelections().add(new Selection(category, category.getLogicalColumns().get(1), AggregationType.AVG));
     
     InlineEtlQueryExecutor executor = new InlineEtlQueryExecutor();
-    IPentahoResultSet resultset = executor.executeQuery(query);
+    IPentahoResultSet resultset = executor.executeQuery(query, "test/solution/system/metadata/csvfiles/", null);
     
     Assert.assertEquals(4, resultset.getRowCount());
     Assert.assertEquals(2, resultset.getColumnCount());
@@ -556,7 +563,8 @@ public class InlineEtlModelGeneratorTest {
     int defaultAcls = 31;
     InlineEtlModelGenerator gen = new InlineEtlModelGenerator(
         "testmodel", 
-        "test/solution/system/metadata/csvfiles/example.csv",
+        "test/solution/system/metadata/csvfiles/",
+        "example.csv",
         true,
         ",",
         "\"",true, users, roles, defaultAcls, "joe");
@@ -575,7 +583,7 @@ public class InlineEtlModelGeneratorTest {
     query.getOrders().add(new Order(new Selection(category, category.getLogicalColumns().get(3), null), Order.Type.DESC));
     
     InlineEtlQueryExecutor executor = new InlineEtlQueryExecutor();
-    IPentahoResultSet resultset = executor.executeQuery(query);
+    IPentahoResultSet resultset = executor.executeQuery(query, "test/solution/system/metadata/csvfiles/", null);
     
     Assert.assertEquals(2, resultset.getRowCount());
     Assert.assertEquals(2, resultset.getColumnCount());
