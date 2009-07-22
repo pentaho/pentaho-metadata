@@ -46,6 +46,19 @@ public class CsvDataReaderTest {
     List<String> data = reader.getColumnData(2);
     Assert.assertTrue(compare(data, originalData));    
   }
+
+  @Test
+  public void testCheckForIndexOutOfBoundException() throws Exception {
+    List<String> data = null;
+    try {
+    CsvDataReader reader = new CsvDataReader("test/solution/system/metadata/csvfiles/csv_various_types.csv", true, ",", "\"", 5);
+    reader.loadData();
+    data = reader.getColumnData(2);
+    Assert.assertTrue(data != null);
+    } catch(IndexOutOfBoundsException ex) {
+      Assert.assertFalse(data != null);
+    }
+  }
   
   private boolean compare(List<String> list1, List<String> list2) {
     int i=0;
