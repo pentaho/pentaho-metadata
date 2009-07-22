@@ -57,6 +57,15 @@ public class AliasedSelection extends Selection {
     return formula != null;
   }
   
+  @Override
+  public int hashCode() {
+    if (getLogicalColumn() != null) {
+      return getLogicalColumn().getId().hashCode();
+    } else {
+      return formula.hashCode();
+    }
+  }
+  
   public boolean equals(Object selection) {
     AliasedSelection sel = (AliasedSelection)selection;
     if (hasFormula() && sel.hasFormula()) {
