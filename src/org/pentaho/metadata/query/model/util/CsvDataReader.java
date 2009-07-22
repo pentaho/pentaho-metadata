@@ -99,7 +99,9 @@ public class CsvDataReader {
   public List<String> getColumnData(int columnNumber) {
     List<String> dataSample = new ArrayList<String>(rowLimit);
     for (List<String> row : data) {
-      dataSample.add(row.get(columnNumber));
+      if(row.size() > columnNumber) {
+        dataSample.add(row.get(columnNumber));
+      }
     }
     return dataSample;
   }
