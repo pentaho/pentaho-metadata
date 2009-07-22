@@ -142,4 +142,11 @@ public interface IConcept {
    */
   public IConcept getSecurityParentConcept();
   
+  
+  /**
+   * returns a clone of the concept.
+   * 
+   * @return clone of concept object
+   */
+  public Object clone();
 }
