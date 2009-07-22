@@ -191,16 +191,19 @@ public class InlineEtlQueryExecutor {
     
     TreeSet<String> repeatedSelections = new TreeSet<String>();
     List<Selection> allSelections = getAllSelections(query, queryConstraints);
+    Map<Selection, String> selectionFieldNames = new HashMap<Selection, String>();
+
+    // calculate number of group bys, also build up a list
+    // of unique field names.
     for (Selection selection : allSelections) {
-      // Temporary until PMD-532 is fixed
-      // verify that selections only appear once in the query.
       String fieldName = ((InlineEtlPhysicalColumn)selection.getLogicalColumn().getPhysicalColumn()).getFieldName();
-      if (repeatedSelections.contains(fieldName)) {
-        throw new Exception("Inline ETL Execution does not support multiple selections of the same logical column: " + selection.getLogicalColumn().getId());
+      String useFieldName = fieldName;
+      int count = 1;
+      while (repeatedSelections.contains(useFieldName)) {
+        useFieldName = fieldName + "_" + count++;
       }
-      repeatedSelections.add(fieldName);
-      
-      
+      repeatedSelections.add(useFieldName);
+      selectionFieldNames.put(selection, useFieldName);
       if (selection.getActiveAggregationType() != null && selection.getActiveAggregationType() != AggregationType.NONE) {
         groupBys++;
       }
@@ -217,7 +220,7 @@ public class InlineEtlQueryExecutor {
     // CSV FILE LOCATION AND FIELDS
     //
 
-    InlineEtlPhysicalModel physicalModel = (InlineEtlPhysicalModel)query.getSelections().get(0).getLogicalColumn().getPhysicalColumn().getPhysicalTable().getPhysicalModel();
+    InlineEtlPhysicalModel physicalModel = (InlineEtlPhysicalModel)query.getLogicalModel().getPhysicalModel();
     
     CsvInputMeta csvinput = (CsvInputMeta)getStepMeta(transMeta, "CSV file input").getStepMetaInterface();
 
@@ -260,8 +263,18 @@ public class InlineEtlQueryExecutor {
     for (int i = 0; i < allSelections.size(); i++) {
       Selection selection = allSelections.get(i);
       String fieldName = ((InlineEtlPhysicalColumn)selection.getLogicalColumn().getPhysicalColumn()).getFieldName();
+      String renameFieldName = selectionFieldNames.get(selection);
       selectVals.getSelectName()[i] = fieldName;
-      logger.debug("SELECT " + fieldName);
+      
+      // add a rename property if this field is used for multiple
+      // selections
+      if (!fieldName.equals(renameFieldName)) {
+        selectVals.getSelectRename()[i] = renameFieldName;
+        logger.debug("SELECT " + fieldName + " RENAME TO " + renameFieldName);
+      } else {
+        logger.debug("SELECT " + fieldName);
+      }
+      
     }
 
     StepMeta finalSelections = getStepMeta(transMeta, "Select values 2");
@@ -271,7 +284,7 @@ public class InlineEtlQueryExecutor {
     finalSelectVals.allocate(query.getSelections().size(), 0, 0);
     for (int i = 0; i < query.getSelections().size(); i++) {
       Selection selection = query.getSelections().get(i);
-      String fieldName = ((InlineEtlPhysicalColumn)selection.getLogicalColumn().getPhysicalColumn()).getFieldName();
+      String fieldName = selectionFieldNames.get(selection);
       fieldNameMap.put(fieldName.toUpperCase(), selection.getLogicalColumn().getId());
       finalSelectVals.getSelectName()[i] = fieldName;
     }
@@ -388,7 +401,7 @@ public class InlineEtlQueryExecutor {
 
     int c = 0;
     for (Order order : query.getOrders()) {
-      String fieldName = ((InlineEtlPhysicalColumn)order.getSelection().getLogicalColumn().getPhysicalColumn()).getFieldName();
+      String fieldName = selectionFieldNames.get(order.getSelection()); 
       sortRows.getFieldName()[c] = fieldName;
       logger.debug("ORDER: " + fieldName);
       sortRows.getAscending()[c] = (order.getType() == Order.Type.ASC);
@@ -428,7 +441,7 @@ public class InlineEtlQueryExecutor {
         if (selection.getActiveAggregationType() == null ||
             selection.getActiveAggregationType() == AggregationType.NONE) {
           
-          String fieldName = ((InlineEtlPhysicalColumn)selection.getLogicalColumn().getPhysicalColumn()).getFieldName();
+          String fieldName = selectionFieldNames.get(selection);
           groupSortRows.getFieldName()[c] = fieldName;
           logger.debug("GROUP ORDER: " + fieldName);
           groupSortRows.getAscending()[c] = true;
@@ -451,7 +464,7 @@ public class InlineEtlQueryExecutor {
       c = 0;
       for (Selection selection : query.getSelections()) {
         if (selection.getActiveAggregationType() == null || selection.getActiveAggregationType() == AggregationType.NONE) {
-          String fieldName = ((InlineEtlPhysicalColumn)selection.getLogicalColumn().getPhysicalColumn()).getFieldName();
+          String fieldName = selectionFieldNames.get(selection); 
           groupStep.getGroupField()[c] = fieldName;
           logger.debug("GROUP BY: " + fieldName);
           c++;
@@ -463,7 +476,7 @@ public class InlineEtlQueryExecutor {
       c = 0;
       for (Selection selection : allSelections) {
         if (selection.getActiveAggregationType() != null && selection.getActiveAggregationType() != AggregationType.NONE) {
-          String fieldName = ((InlineEtlPhysicalColumn)selection.getLogicalColumn().getPhysicalColumn()).getFieldName();
+          String fieldName = selectionFieldNames.get(selection); 
           groupStep.getAggregateField()[c] = fieldName;    
           groupStep.getSubjectField()[c] = fieldName;    
           groupStep.getAggregateType()[c] = selection.getActiveAggregationType().ordinal();

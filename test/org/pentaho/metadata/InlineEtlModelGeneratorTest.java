@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.di.core.util.EnvUtil;
@@ -503,7 +502,7 @@ public class InlineEtlModelGeneratorTest {
    * This test is ignored until PMD-532 is resolved
    * 
    */
-  @Ignore @Test
+  @Test
   public void testQueryExecutionWithDifferentAggregations() throws Exception {
     
     EnvUtil.environmentInit();
@@ -538,20 +537,26 @@ public class InlineEtlModelGeneratorTest {
     IPentahoResultSet resultset = executor.executeQuery(query, "test/solution/system/metadata/csvfiles/", null);
     
     Assert.assertEquals(4, resultset.getRowCount());
-    Assert.assertEquals(2, resultset.getColumnCount());
+    Assert.assertEquals(3, resultset.getColumnCount());
     Assert.assertEquals("bc_3_Data4", resultset.getMetaData().getColumnHeaders()[0][0]);
     Assert.assertEquals("bc_1_Data2", resultset.getMetaData().getColumnHeaders()[0][1]);
+    Assert.assertEquals("bc_1_Data2_1", resultset.getMetaData().getColumnHeaders()[0][2]);
 
     Assert.assertEquals("A String", resultset.getValueAt(0, 0));
     Assert.assertEquals("Bigger String Value", resultset.getValueAt(1, 0));
     Assert.assertEquals("String Value", resultset.getValueAt(2, 0));
     Assert.assertEquals("Very Long String Value for testing columns", resultset.getValueAt(3, 0));
-
     
     Assert.assertEquals(1.1, resultset.getValueAt(0, 1));
     Assert.assertEquals(5.7, resultset.getValueAt(1, 1));
     Assert.assertEquals(19.5, resultset.getValueAt(2, 1));    
     Assert.assertEquals(3.4, resultset.getValueAt(3, 1));
+    
+    Assert.assertEquals(1.1, resultset.getValueAt(0, 2));
+    Assert.assertEquals(5.7, resultset.getValueAt(1, 2));
+    Assert.assertEquals(9.75, resultset.getValueAt(2, 2));    
+    Assert.assertEquals(3.4, resultset.getValueAt(3, 2));
+
   }
   
   @Test

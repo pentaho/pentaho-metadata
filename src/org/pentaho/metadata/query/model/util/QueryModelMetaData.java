@@ -14,6 +14,7 @@ package org.pentaho.metadata.query.model.util;
 
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 
 import org.pentaho.commons.connection.memory.MemoryMetaData;
 import org.pentaho.metadata.model.LogicalColumn;
@@ -49,18 +50,20 @@ public class QueryModelMetaData extends MemoryMetaData {
     Object key;
 
     if (columnsMap != null) {
-
+      TreeSet<String> existingHeaders = new TreeSet<String>();
       newHeaders = new Object[columnHeaders.length][];
-      Object newHeader = null;
+      String newHeader = null;
       for (int i = 0; i < columnHeaders.length; i++) {
         newHeaders[i] = new Object[columnHeaders[i].length];
         for (int j = 0; j < columnHeaders[i].length; j++) {
           key = columnHeaders[i][j];
           if (key != null) {
-            newHeader = columnsMap.get(key.toString().toUpperCase());
+            newHeader = (String)columnsMap.get(key.toString().toUpperCase());
             if (newHeader == null) {
               throw new RuntimeException(Messages.getErrorString("QueryModelMetaData.ERROR_0001_MetadataColumnNotFound", key.toString())); //$NON-NLS-1$
             }
+            newHeader = getUniqueHeader(newHeader, existingHeaders);
+            existingHeaders.add(newHeader);
             newHeaders[i][j] = newHeader;
           }
         }
@@ -68,7 +71,15 @@ public class QueryModelMetaData extends MemoryMetaData {
       
       this.columnHeaders = newHeaders;
     }
-    
+  }
+  
+  private String getUniqueHeader(String header, TreeSet<String> existingHeaders) {
+    String newHeader = header;
+    int count = 1;
+    while (existingHeaders.contains(newHeader)) {
+      newHeader = header + "_" + count++;
+    }
+    return newHeader;
   }
 
   public Object getAttribute(int rowNo, int columnNo, String attributeName) {

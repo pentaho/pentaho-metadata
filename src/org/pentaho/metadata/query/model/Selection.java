@@ -74,6 +74,10 @@ public class Selection implements Serializable {
     }
   }
   
+  public int hashCode() {
+    return logicalColumn.getId().hashCode();
+  }
+  
   public boolean equals(Object selection) {
     Selection sel = (Selection)selection;
     return sel.getLogicalColumn().equals(getLogicalColumn()) &&
