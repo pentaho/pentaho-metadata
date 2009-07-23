@@ -65,10 +65,7 @@ public interface IConcept extends Cloneable {
   
   /** @param description the localized description */
   public void setDescription(LocalizedString description);
-  
 
-  
-  
   /**
    * returns the active property for id
    * 
@@ -141,4 +138,11 @@ public interface IConcept extends Cloneable {
    * @return inherited concept
    */
   public IConcept getSecurityParentConcept();
+  
+  /**
+   * returns a clone of the concept.
+   * 
+   * @return clone of concept object
+   */
+  public Object clone();
 }
