@@ -33,7 +33,7 @@ import org.pentaho.metadata.model.concept.types.LocalizedString;
  * @author Will Gorman (wgorman@pentaho.com)
  *
  */
-public interface IConcept {
+public interface IConcept extends Cloneable {
 
   /** @return get the id of the property */
   public String getId();
@@ -141,12 +141,4 @@ public interface IConcept {
    * @return inherited concept
    */
   public IConcept getSecurityParentConcept();
-  
-  
-  /**
-   * returns a clone of the concept.
-   * 
-   * @return clone of concept object
-   */
-  public Object clone();
 }
