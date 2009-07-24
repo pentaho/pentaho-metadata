@@ -40,9 +40,11 @@ import org.pentaho.metadata.query.impl.sql.Path;
 import org.pentaho.metadata.query.impl.sql.SqlGenerator;
 import org.pentaho.metadata.query.model.CombinationType;
 import org.pentaho.metadata.query.model.Constraint;
+import org.pentaho.metadata.query.model.Order;
 import org.pentaho.metadata.query.model.Parameter;
 import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.Selection;
+import org.pentaho.metadata.query.model.Order.Type;
 import org.pentaho.metadata.query.model.util.QueryModelMetaData;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 
@@ -494,6 +496,61 @@ public class SqlGeneratorTest {
     }
   }
 
+  @Test
+  public void testOrderByQuotedSQLGeneration() {
+    try {
+
+      LogicalModel model = TestHelper.buildDefaultModel();
+      LogicalColumn bc1 = model.findLogicalColumn("bc1");
+      bc1.setProperty(IPhysicalColumn.AGGREGATIONTYPE_PROPERTY, AggregationType.SUM);
+      LogicalColumn bc2 = model.findLogicalColumn("bc2");
+      LogicalColumn bce2 = model.findLogicalColumn("bce2");
+      DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+      databaseMeta.setQuoteAllFields(true);
+      Query query = new Query(null, model);
+      
+      query.getSelections().add(new Selection(null, bc1, null));
+      query.getSelections().add(new Selection(null, bc2, null));
+      query.getSelections().add(new Selection(null, bce2, null));
+      
+      query.getConstraints().add(new Constraint(CombinationType.AND, "[bt1.bc1] > 25")); //$NON-NLS-1$
+
+      query.getOrders().add(new Order(new Selection(null, bc1, null), Type.ASC));
+      
+      SqlGenerator generator = new SqlGenerator();
+      
+      MappedQuery mquery = generator.generateSql(query, "en_US", null, databaseMeta);
+      TestHelper.printOutJava(mquery.getQuery());
+      
+      TestHelper.assertEqualsIgnoreWhitespaces(
+          "SELECT \n" + 
+          "          SUM(\"bt1\".\"pc1\") AS \"COL0\"\n" + 
+          "         ,\"bt2\".\"pc2\" AS \"COL1\"\n" + 
+          "         , \"bt2\".\"pc2\"  * 2 AS \"COL2\"\n" + 
+          "FROM \n" + 
+          "          \"pt1\" \"bt1\"\n" + 
+          "         ,\"pt2\" \"bt2\"\n" + 
+          "WHERE \n" + 
+          "          ( \"bt1\".\"pc1\" = \"bt2\".\"pc2\" )\n" + 
+          "GROUP BY \n" + 
+          "          \"bt2\".\"pc2\"\n" + 
+          "         , \"bt2\".\"pc2\"  * 2\n" + 
+          "HAVING \n" + 
+          "          (\n" + 
+          "              SUM(\"bt1\".\"pc1\")  > 25\n" + 
+          "          )\n" + 
+          "ORDER BY \n" + 
+          "          \"COL0\"\n"
+          ,
+          mquery.getQuery()
+          );
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.fail();
+    }
+  }
+  
   @Test
   public void testParameterSqlGeneration() {
     try {

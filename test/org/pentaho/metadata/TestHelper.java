@@ -180,7 +180,7 @@ public class TestHelper {
   public static void printOutJava(String sql) {
     String lines[] = sql.split("\n");
     for (int i = 0; i < lines.length; i++) {
-      System.out.print("        \"" +lines[i]);
+      System.out.print("        \"" +lines[i].replaceAll("\\\"", "\\\\\""));
       if (i == lines.length - 1) {
         System.out.println("\\n\"");
       } else {

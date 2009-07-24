@@ -276,7 +276,7 @@ public class SqlGenerator {
 	        }
         }
         SqlAndTables sqlAndTables = getBusinessColumnSQL(model, orderItem.getSelection(), tableAliases, parameters, genAsPreparedStatement, databaseMeta, locale);
-        query.addOrderBy(sqlAndTables.getSql(), alias, orderItem.getType() != Type.ASC ? OrderType.DESCENDING : null); //$NON-NLS-1$
+        query.addOrderBy(sqlAndTables.getSql(), databaseMeta.quoteField(alias), orderItem.getType() != Type.ASC ? OrderType.DESCENDING : null); //$NON-NLS-1$
       }
     }
   }
