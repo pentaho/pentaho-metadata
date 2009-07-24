@@ -13,6 +13,7 @@
 package org.pentaho.pms.mql.dialect;
 
 import org.pentaho.pms.core.exception.PentahoMetadataException;
+import org.pentaho.reporting.libraries.formula.lvalues.ContextLookup;
 
 /**
  * This interface is implemented by PMSFormula in order to traverse the 
@@ -34,4 +35,14 @@ public interface FormulaTraversalInterface {
    * @throws PentahoMetadataException if a problem occurs during the generation of sql
    */
   public void generateSQL(Object parent, Object val, StringBuffer sb, String locale) throws PentahoMetadataException;
+  
+  /**
+   * this method allows access to parameter values, so if a function
+   * needs to perform runtime evaluation before generating SQL, it can. 
+   * 
+   * @param lookup parameter value
+   * @return value of the parameter
+   * @throws PentahoMetadataException
+   */
+  public Object getParameterValue(ContextLookup lookup) throws PentahoMetadataException;
 }

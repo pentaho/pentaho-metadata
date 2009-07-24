@@ -31,6 +31,7 @@ import org.pentaho.pms.mql.dialect.SQLQueryModel.SQLSelection;
 import org.pentaho.pms.mql.dialect.SQLQueryModel.SQLTable;
 import org.pentaho.pms.mql.dialect.SQLQueryModel.SQLWhereFormula;
 import org.pentaho.pms.util.Const;
+import org.pentaho.reporting.libraries.formula.lvalues.ContextLookup;
 import org.pentaho.reporting.libraries.formula.lvalues.FormulaFunction;
 import org.pentaho.reporting.libraries.formula.lvalues.StaticValue;
 
@@ -273,9 +274,16 @@ public class DefaultSQLDialect implements SQLDialectInterface {
     supportedFunctions.put("DATEVALUE", new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_FUNCTION, "DATE", 1) { //$NON-NLS-1$ //$NON-NLS-2$
       public void generateFunctionSQL(FormulaTraversalInterface formula, StringBuffer sb, String locale, FormulaFunction f) throws PentahoMetadataException {
         Pattern p = Pattern.compile("(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)"); //$NON-NLS-1$
-        Matcher m = p.matcher((String)((StaticValue)f.getChildValues()[0]).getValue());
+        String dateValue = null;
+        if (f.getChildValues()[0] instanceof StaticValue) {
+          dateValue = (String)((StaticValue)f.getChildValues()[0]).getValue();
+        } else if (f.getChildValues()[0] instanceof ContextLookup) {
+          dateValue = (String)formula.getParameterValue((ContextLookup)f.getChildValues()[0]);
+        }
+        
+        Matcher m = p.matcher(dateValue);
         if (!m.matches()) {
-          throw new PentahoMetadataException(Messages.getErrorString("DefaultSQLDialect.ERROR_0001_DATE_STRING_SYNTAX_INVALID", (String)((StaticValue)f.getChildValues()[0]).getValue())); //$NON-NLS-1$
+          throw new PentahoMetadataException(Messages.getErrorString("DefaultSQLDialect.ERROR_0001_DATE_STRING_SYNTAX_INVALID", dateValue)); //$NON-NLS-1$
         }
         int year = Integer.parseInt(m.group(1));
         int month = Integer.parseInt(m.group(2));

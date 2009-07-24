@@ -14,7 +14,7 @@ package org.pentaho.pms.mql.dialect;
 
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.messages.Messages;
-import org.pentaho.pms.mql.PMSFormula;
+import org.pentaho.reporting.libraries.formula.lvalues.ContextLookup;
 import org.pentaho.reporting.libraries.formula.lvalues.FormulaFunction;
 import org.pentaho.reporting.libraries.formula.lvalues.StaticValue;
 import org.pentaho.reporting.libraries.formula.typing.coretypes.NumberType;
@@ -132,8 +132,13 @@ public class DefaultSQLFunctionGenerator implements SQLFunctionGeneratorInterfac
   protected void verifyAllStaticStrings(FormulaFunction f) throws PentahoMetadataException {
   
     for (int i = 0; i < f.getChildValues().length; i++) {
-      if (!(f.getChildValues()[i] instanceof StaticValue) ||
-          !(((StaticValue)f.getChildValues()[i]).getValueType() instanceof TextType)) {
+      // this checks to see if the strings are static or if they are available as parameters
+      if ((!(f.getChildValues()[i] instanceof StaticValue) ||
+          !(((StaticValue)f.getChildValues()[i]).getValueType() instanceof TextType)) &&
+          (!(f.getChildValues()[i] instanceof ContextLookup) || 
+          !(((ContextLookup)f.getChildValues()[i]).getName().startsWith("param:"))    
+          )
+      ) {
         throw new PentahoMetadataException(Messages.getErrorString("PMSFormulaContext.ERROR_0004_INVALID_PARAM_TYPE_NOT_STRING", Integer.toString(i+1), f.getFunctionName())); //$NON-NLS-1$
       }
     }

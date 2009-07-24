@@ -44,6 +44,8 @@ import org.pentaho.reporting.libraries.formula.parser.ParseException;
 import org.pentaho.reporting.libraries.formula.typing.coretypes.TextType;
 
 /**
+ * This class has been replaced with org.pentaho.metadata.query.impl.sql.SqlOpenFormula
+ * 
  * This class manages the two types of formulas which appear in the metadata system.  Both of 
  * these types support the conversion of open document formula syntax to RDBMS specific SQL. 
  * 
@@ -59,6 +61,7 @@ import org.pentaho.reporting.libraries.formula.typing.coretypes.TextType;
  * @see org.pentaho.pms.mql.WhereCondition
  * @see BusinessColumn
  */
+@Deprecated
 public class PMSFormula implements FormulaTraversalInterface {
   
   private static final Log logger = LogFactory.getLog(PMSFormula.class);
@@ -249,6 +252,10 @@ public class PMSFormula implements FormulaTraversalInterface {
   
   protected Map getBusinessColumnMap() {
     return businessColumnMap;
+  }
+  
+  public Object getParameterValue(ContextLookup lookup) throws PentahoMetadataException {
+    throw new UnsupportedOperationException();
   }
   
   /**

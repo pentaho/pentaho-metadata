@@ -573,31 +573,40 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
       throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0016_CLASS_TYPE_NOT_SUPPORTED", val.getClass().toString())); //$NON-NLS-1$
     }
   }
+  
+  public Object getParameterValue(ContextLookup param) throws PentahoMetadataException {
+    if (param.getName().startsWith("param:")) { //$NON-NLS-1$
+      String paramName = param.getName().substring(6);
+      return parameters.get(paramName);
+    } else {
+      throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0022_INVALID_PARAM_REFERENCE", param.getName())); //$NON-NLS-1$
+    }
+  }
 
   protected void renderContextLookup(StringBuffer sb, String contextName, String locale) {
     Selection column = (Selection)selectionMap.get(contextName);
     if (column == null) {
       // either a physical column or parameter
 
-      if (contextName.startsWith("param:")) {
+      if (contextName.startsWith("param:")) { //$NON-NLS-1$
         String paramName = contextName.substring(6);
         if (genAsPreparedStatement) {
           // put a temporary placeholder in the SQL if this parameter will be used as part of a 
           // prepared statement sql query.
-          sb.append("___PARAM[" + paramName + "]___");
+          sb.append("___PARAM[" + paramName + "]___"); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
           Object paramValue = parameters.get(paramName);
           if (paramValue instanceof Boolean) {
             // need to get and then render either true or false function.
             if (((Boolean)paramValue).booleanValue()) {
               try {
-                sqlDialect.getFunctionSQLGenerator("TRUE").generateFunctionSQL(this, sb, locale, null);
+                sqlDialect.getFunctionSQLGenerator("TRUE").generateFunctionSQL(this, sb, locale, null); //$NON-NLS-1$
               } catch (Exception e) {
                 logger.error("", e);
               }
             } else {
               try {
-                sqlDialect.getFunctionSQLGenerator("FALSE").generateFunctionSQL(this, sb, locale, null);
+                sqlDialect.getFunctionSQLGenerator("FALSE").generateFunctionSQL(this, sb, locale, null); //$NON-NLS-1$
               } catch (Exception e) {
                 logger.error("", e);
               }          
