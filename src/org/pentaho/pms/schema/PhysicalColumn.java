@@ -41,6 +41,7 @@ import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
+import org.pentaho.pms.schema.concept.types.datatype.DataTypeSettings;
 import org.pentaho.pms.schema.concept.types.fieldtype.FieldTypeSettings;
 
 
@@ -54,7 +55,7 @@ public class PhysicalColumn extends ConceptUtilityBase implements ConceptUtility
 		setFormula(formula);
 		setFieldType(fieldType);
 		setAggregationType(aggregationType);
-
+		setDataType(DataTypeSettings.UNKNOWN);
    this.physicalTable       = tableinfo;
 	}
 

@@ -71,11 +71,19 @@ public class ConceptPropertyDataType extends ConceptPropertyBase implements Clon
 
     public boolean equals(Object obj)
     {
+      if (value != null) {
         return value.equals(obj);
+      } else {
+        return value == obj;
+      }
     }
 
     public int hashCode()
     {
+      if (value != null) {
         return value.hashCode();
+      } else {
+        return -1;
+      }
     }
 }
