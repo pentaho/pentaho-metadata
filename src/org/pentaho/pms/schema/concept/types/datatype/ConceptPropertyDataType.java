@@ -15,6 +15,9 @@ package org.pentaho.pms.schema.concept.types.datatype;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
+/**
+ * @deprecated as of metadata 3.0.
+ */
 public class ConceptPropertyDataType extends ConceptPropertyBase implements Cloneable
 {
     public static final ConceptPropertyDataType UNKNOWN = new ConceptPropertyDataType("datatype", DataTypeSettings.UNKNOWN); //$NON-NLS-1$

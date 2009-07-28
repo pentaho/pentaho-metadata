@@ -18,6 +18,8 @@ import org.w3c.dom.Node;
  * Stores constraints that are used to filter rows. Row level security is specified at the business model level.
  * 
  * @author mlowery
+ * 
+ * @deprecated as of metadata 3.0. please use org.pentaho.metadata.model.concept.security.RowLevelSecurity
  */
 public class RowLevelSecurity implements Cloneable {
 

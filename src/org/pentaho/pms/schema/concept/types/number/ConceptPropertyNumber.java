@@ -19,6 +19,9 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
+/**
+ * @deprecated as of metadata 3.0. please see org.pentaho.metadata.model.concept.types.LocalizedString
+ */
 public class ConceptPropertyNumber extends ConceptPropertyBase implements Cloneable
 {
     private BigDecimal value;

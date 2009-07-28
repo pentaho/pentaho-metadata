@@ -18,6 +18,9 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.pentaho.pms.messages.Messages;
 
+/**
+ * @deprecated as of metadata 3.0. please use org.pentaho.metadata.model.concept.types.Alignment
+ */
 public class AlignmentSettings
 {
     public static final int TYPE_ALIGNMENT_LEFT          = 0;

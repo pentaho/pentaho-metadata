@@ -45,6 +45,10 @@ import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.ObjectAlreadyExistsException;
 import org.pentaho.pms.util.UniqueList;
 
+/**
+ * 
+ * @deprecated as of metadata 3.0.
+ */
 public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeListenersInterface {
 
   // TODO: Create a default locale in the metadata instead of just saying

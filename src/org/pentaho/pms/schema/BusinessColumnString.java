@@ -18,6 +18,8 @@ import java.util.List;
  * Proxy class to tie together a business column in a categories tree and a string representation.
  * 
  * @author Matt
+ * 
+ * @deprecated as of metadata 3.0.
  */
 public class BusinessColumnString
 {

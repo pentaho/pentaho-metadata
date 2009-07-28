@@ -18,6 +18,9 @@ import java.util.Date;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
+/**
+ * @deprecated as of metadata 3.0.
+ */
 public class ConceptPropertyDate extends ConceptPropertyBase implements Cloneable
 {
     private Date value;

@@ -18,7 +18,8 @@ import org.pentaho.commons.connection.IPentahoMetaData;
  * This interface defines the result of executing an MQLQuery
  * 
  * @author Will Gorman (wgorman@pentaho.org)
- *
+ * 
+ * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.query.model.impl.sql.SqlQuery
  */
 public interface Query {
   

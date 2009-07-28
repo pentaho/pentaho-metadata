@@ -17,6 +17,9 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
+/**
+ * @deprecated as of metadata 3.0.
+ */
 public class ConceptPropertyFont extends ConceptPropertyBase implements Cloneable
 {
     private FontSettings value;

@@ -15,6 +15,9 @@ package org.pentaho.pms.schema.concept.types.bool;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
+/**
+ * @deprecated as of metadata 3.0.
+ */
 public class ConceptPropertyBoolean extends ConceptPropertyBase implements Cloneable
 {
     private Boolean value;

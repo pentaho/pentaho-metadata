@@ -31,7 +31,9 @@ import org.pentaho.pms.util.ObjectAlreadyExistsException;
 import org.pentaho.pms.util.UniqueArrayList;
 import org.pentaho.pms.util.UniqueList;
 
-
+/**
+ * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.model.LogicalModel
+ */
 public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInterface, Cloneable,
     ConceptUtilityInterface {
 

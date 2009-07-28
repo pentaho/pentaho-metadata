@@ -23,7 +23,8 @@ import org.pentaho.reporting.libraries.formula.typing.Type;
  * terms to SQL.
  * 
  * @author Will Gorman (wgorman@pentaho.org)
- *
+ * 
+ * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.query.model.impl.sql.SqlOpenFormulaContext
  */
 public class PMSFormulaContext extends DefaultFormulaContext {
   

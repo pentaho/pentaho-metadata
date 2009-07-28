@@ -20,6 +20,9 @@ import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
+/**
+ * @deprecated as of metadata 3.0.
+ */
 public class ConceptPropertyTableType extends ConceptPropertyBase implements ConceptPropertyInterface, Cloneable
 {
     public static final ConceptPropertyTableType DEFAULT_OTHER     = new ConceptPropertyTableType("tabletype", TableTypeSettings.OTHER);    //$NON-NLS-1$

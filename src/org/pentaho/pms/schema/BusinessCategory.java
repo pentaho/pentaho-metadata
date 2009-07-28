@@ -31,6 +31,8 @@ import org.pentaho.pms.util.UniqueList;
  *  
  * @author Matt
  * @since  17-AUG-2006
+ * 
+ * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.model.Category
  */
 public class BusinessCategory extends ConceptUtilityBase implements ChangedFlagInterface, ConceptUtilityInterface, Cloneable
 {

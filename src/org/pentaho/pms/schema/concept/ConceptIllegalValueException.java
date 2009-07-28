@@ -12,6 +12,9 @@
 */
 package org.pentaho.pms.schema.concept;
 
+/**
+ * @deprecated as of metadata 3.0.
+ */
 public class ConceptIllegalValueException extends Exception
 {
     private static final long serialVersionUID = 4397770344129366440L;

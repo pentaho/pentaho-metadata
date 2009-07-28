@@ -20,7 +20,9 @@ import org.pentaho.pms.schema.security.Security;
 import org.pentaho.pms.util.ObjectAlreadyExistsException;
 
 
-
+/**
+ * @deprecated as of metadata 3.0.
+ */
 public interface ConceptUtilityInterface
 {
     /**

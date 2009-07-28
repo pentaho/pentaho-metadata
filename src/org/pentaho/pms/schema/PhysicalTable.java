@@ -42,6 +42,8 @@ import org.pentaho.pms.util.UniqueList;
  * Represents a physical table on a physical database with physical columns.
  *
  * @since 28-jan-2004
+ * 
+ * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.model.SqlPhysicalTable
  */
 public class PhysicalTable extends ConceptUtilityBase implements Cloneable, ChangedFlagInterface, ConceptUtilityInterface
 {

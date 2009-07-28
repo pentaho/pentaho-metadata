@@ -44,7 +44,9 @@ import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.schema.concept.types.datatype.DataTypeSettings;
 import org.pentaho.pms.schema.concept.types.fieldtype.FieldTypeSettings;
 
-
+/**
+ * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.model.SqlPhysicalColumn
+ */
 public class PhysicalColumn extends ConceptUtilityBase implements ConceptUtilityInterface, Cloneable
 {
 	private PhysicalTable physicalTable;

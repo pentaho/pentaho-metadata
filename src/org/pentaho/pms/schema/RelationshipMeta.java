@@ -35,11 +35,10 @@ import org.pentaho.di.core.xml.XMLInterface;
 import org.pentaho.pms.util.Const;
 import org.w3c.dom.Node;
 
-/*
+/**
  * Created on 28-jan-2004
- * 
+ * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.model.LogicalRelationship
  */
- 
 public class RelationshipMeta extends ChangedFlag implements Cloneable, XMLInterface, ChangedFlagInterface
 {
 	private BusinessTable table_from, table_to;

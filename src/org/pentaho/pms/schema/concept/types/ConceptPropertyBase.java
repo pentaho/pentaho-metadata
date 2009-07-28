@@ -18,7 +18,7 @@ import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
  * Base class for all concept properties.
  *
  * @author Matt
- *
+ @deprecated as of metadata 3.0.
  */
 public abstract class ConceptPropertyBase implements ConceptPropertyInterface, Cloneable
 {

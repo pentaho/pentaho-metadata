@@ -17,7 +17,9 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
-
+/**
+ * @deprecated as of metadata 3.0.
+ */
 public class ConceptPropertyLocalizedString extends ConceptPropertyBase implements Cloneable
 {
     private LocalizedStringSettings value;

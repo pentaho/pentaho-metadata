@@ -22,6 +22,9 @@ import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
 import org.pentaho.pms.messages.Messages;
 
+/**
+ * @deprecated as of metadata 3.0.
+ */
 public class MQLQueryFactory {
     
   private static final Log logger = LogFactory.getLog(MQLQueryFactory.class);

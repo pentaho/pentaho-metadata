@@ -18,6 +18,8 @@ import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
  * The interface that describes a concept property
  *
  * @author Matt
+ * 
+ * @deprecated as of metadata 3.0. in the new model, these are just Serializable objects.
  */
 public interface ConceptPropertyInterface extends Cloneable
 {

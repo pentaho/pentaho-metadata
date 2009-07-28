@@ -45,6 +45,9 @@ import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.util.Const;
 
+/**
+ * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.query.model.Constraint
+ */
 public class WhereCondition extends ConceptUtilityBase implements ConceptUtilityInterface {
 
   public static final String[] operators = new String[] { "AND", "OR", "AND NOT", "OR NOT" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$

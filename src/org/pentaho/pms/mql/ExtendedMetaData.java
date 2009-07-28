@@ -23,6 +23,7 @@ import org.pentaho.pms.schema.BusinessColumn;
  * This class extends The Pentaho Connection API's MemoryMetaData
  * with additional BusinessColumn Metadata. 
  *
+ * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.query.model.util.QueryModelMetaData
  */
 public class ExtendedMetaData extends MemoryMetaData {
 

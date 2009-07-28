@@ -20,6 +20,9 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
+/**
+ * @deprecated as of metadata 3.0. please see org.pentaho.metadata.model.concept.types.LocalizedString
+ */
 public class LocalizedStringSettings implements Cloneable
 {
     public static final LocalizedStringSettings EMPTY = new LocalizedStringSettings();

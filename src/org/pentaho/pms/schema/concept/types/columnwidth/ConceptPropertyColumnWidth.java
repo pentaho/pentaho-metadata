@@ -15,6 +15,9 @@ package org.pentaho.pms.schema.concept.types.columnwidth;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
+/**
+ * @deprecated as of metadata 3.0.
+ */
 public class ConceptPropertyColumnWidth extends ConceptPropertyBase implements Cloneable
 {
     public static final ConceptPropertyColumnWidth PIXELS  = new ConceptPropertyColumnWidth("aggregation", ColumnWidth.PIXELS); //$NON-NLS-1$

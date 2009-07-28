@@ -15,8 +15,9 @@ package org.pentaho.pms.schema.concept.types.color;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-
-
+/**
+ * @deprecated as of metadata 3.0. please see org.pentaho.metadata.model.concept.types.Color
+ */
 public class ColorSettings
 {
     private static final String SEPARATOR = ","; //$NON-NLS-1$

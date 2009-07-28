@@ -17,6 +17,9 @@ import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 import org.pentaho.pms.schema.security.Security;
 
+/**
+ * @deprecated as of metadata 3.0.
+ */
 public class ConceptPropertySecurity extends ConceptPropertyBase implements ConceptPropertyInterface, Cloneable
 {
     private Security value;

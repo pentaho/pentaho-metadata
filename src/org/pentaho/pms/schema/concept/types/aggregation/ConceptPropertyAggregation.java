@@ -17,6 +17,9 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
+/**
+ * @deprecated as of metadata 3.0.
+ */
 public class ConceptPropertyAggregation extends ConceptPropertyBase implements Cloneable
 {
     public static final ConceptPropertyAggregation NONE     = new ConceptPropertyAggregation("aggregation", AggregationSettings.NONE); //$NON-NLS-1$

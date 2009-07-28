@@ -16,7 +16,8 @@ package org.pentaho.pms.mql;
  * Contains a selection and the sort direction, used to specify the sorting of that column.
  * 
  * @author Matt
- *
+ * 
+ * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.query.model.Order
  */
 public class OrderBy
 {

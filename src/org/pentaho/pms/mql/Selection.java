@@ -19,6 +19,8 @@ import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
  * This class defines an MQL selection
  * 
  * @author Will Gorman (wgorman@pentaho.org)
+ * 
+ * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.query.model.Selection
  */
 public class Selection {
  

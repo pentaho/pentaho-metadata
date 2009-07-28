@@ -57,6 +57,9 @@ import org.pentaho.pms.util.Settings;
 import org.pentaho.pms.util.UniqueArrayList;
 import org.pentaho.pms.util.UniqueList;
 
+/**
+ * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.model.Domain
+ */
 public class SchemaMeta {
   private String name;
 

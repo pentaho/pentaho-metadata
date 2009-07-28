@@ -35,6 +35,9 @@ package org.pentaho.pms.schema;
 import java.util.ArrayList;
 
 
+/**
+ * @deprecated as of metadata 3.0.
+ */
 public class SelectionGroup
 {
 	private String         name; 

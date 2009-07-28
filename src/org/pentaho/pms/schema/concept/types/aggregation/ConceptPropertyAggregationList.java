@@ -29,7 +29,8 @@ import org.w3c.dom.Node;
  * This property allows for a list of aggregations to be selected.
  * 
  * @author Will Gorman (wgorman@pentaho.com)
- *
+ * 
+ * @deprecated as of metadata 3.0.
  */
 public class ConceptPropertyAggregationList extends ConceptPropertyBase implements Cloneable
 {

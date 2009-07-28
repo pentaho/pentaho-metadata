@@ -18,6 +18,9 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.pentaho.pms.messages.Messages;
 
+/**
+ * @deprecated as of metadata 3.0. please see org.pentaho.metadata.model.concept.types.ColumnWidth 
+ */
 public class ColumnWidth
 {
     public static final int TYPE_WIDTH_PIXELS  = 0;

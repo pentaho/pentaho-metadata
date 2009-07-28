@@ -35,6 +35,8 @@ import org.w3c.dom.Node;
  * 
  * @author Matt
  * @since 18-aug-2006
+ * 
+ * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.model.LogicalTable
  */
 public class BusinessTable extends ConceptUtilityBase implements Cloneable, GUIPositionInterface, ChangedFlagInterface,
     ConceptUtilityInterface, Comparable {

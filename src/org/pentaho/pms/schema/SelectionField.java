@@ -27,11 +27,12 @@
  
 
 package org.pentaho.pms.schema;
-/*
- * Created on 6-feb-04
- *
- */
 
+/**
+ * Created on 6-feb-04
+ * 
+ * @deprecated as of metadata 3.0.
+ */
 public class SelectionField
 {
 	private String name; 

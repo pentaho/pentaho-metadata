@@ -15,6 +15,9 @@ package org.pentaho.pms.schema.concept.types.fieldtype;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
+/**
+ * @deprecated as of metadata 3.0. 
+ */
 public class ConceptPropertyFieldType extends ConceptPropertyBase implements Cloneable
 {
     public static final ConceptPropertyFieldType DEFAULT_OTHER     = new ConceptPropertyFieldType("fieldtype", FieldTypeSettings.OTHER);    //$NON-NLS-1$

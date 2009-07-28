@@ -16,6 +16,9 @@ import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
+/**
+ * @deprecated as of metadata 3.0.
+ */
 public class ConceptPropertyString extends ConceptPropertyBase implements ConceptPropertyInterface, Cloneable
 {
     private String value;

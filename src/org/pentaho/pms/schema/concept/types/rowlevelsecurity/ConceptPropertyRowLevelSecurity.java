@@ -7,6 +7,9 @@ import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 import org.pentaho.pms.schema.security.RowLevelSecurity;
 
+/**
+ * @deprecated as of metadata 3.0.
+ */
 public class ConceptPropertyRowLevelSecurity extends ConceptPropertyBase implements Cloneable {
 
   private RowLevelSecurity value;

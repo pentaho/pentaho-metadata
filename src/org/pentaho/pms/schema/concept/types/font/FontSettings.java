@@ -16,8 +16,9 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.pentaho.pms.util.Const;
 
-
-
+/**
+ * @deprecated as of metadata 3.0. please see org.pentaho.metadata.model.concept.types.Font
+ */
 public class FontSettings
 {
     private String  name;

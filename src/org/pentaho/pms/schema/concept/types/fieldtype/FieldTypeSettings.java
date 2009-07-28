@@ -18,6 +18,9 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.pentaho.pms.messages.Messages;
 
+/**
+ * @deprecated as of metadata 3.0. please see org.pentaho.metadata.model.concept.types.FieldType
+ */
 public class FieldTypeSettings
 {
     public static final int TYPE_OTHER     = 0;

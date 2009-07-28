@@ -30,6 +30,7 @@ import org.pentaho.commons.connection.IPentahoMetaData;
  * 
  * @author gmoran
  *
+ * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.query.model.impl.sql.MappedQuery
  */
 public class MappedQuery implements Query {
   protected String query;

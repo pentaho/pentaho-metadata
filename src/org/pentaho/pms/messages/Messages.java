@@ -25,6 +25,9 @@ import java.util.ResourceBundle;
 
 import org.pentaho.pms.messages.util.LocaleHelper;
 
+/**
+ * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.messages.Messages
+ */
 public class Messages {
     private static final String BUNDLE_NAME = "org.pentaho.pms.locale.messages";//$NON-NLS-1$
 

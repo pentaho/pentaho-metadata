@@ -15,6 +15,9 @@ package org.pentaho.pms.schema.concept.types.color;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
+/**
+ * @deprecated as of metadata 3.0.
+ */
 public class ConceptPropertyColor extends ConceptPropertyBase implements Cloneable
 {
     private ColorSettings value;

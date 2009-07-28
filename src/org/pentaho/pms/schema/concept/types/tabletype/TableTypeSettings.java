@@ -18,6 +18,9 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.pentaho.pms.messages.Messages;
 
+/**
+ * @deprecated as of metadata 3.0. please see TableType
+ */
 public class TableTypeSettings
 {
     public static final int TYPE_OTHER     = 0;

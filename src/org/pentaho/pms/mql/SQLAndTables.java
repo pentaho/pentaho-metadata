@@ -11,6 +11,7 @@ import org.pentaho.pms.schema.BusinessTable;
  * 
  * @author Matt Casters (mcasters@pentaho.org)
  * 
+ * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.query.impl.sql.SqlAndTables
  */
 public class SQLAndTables {
 	private String sql;

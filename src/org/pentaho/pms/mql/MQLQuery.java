@@ -19,6 +19,9 @@ import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.SchemaMeta;
 
+/**
+ * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.query.model.Query
+ */
 public interface MQLQuery {
 
   public MappedQuery getQuery() throws PentahoMetadataException;

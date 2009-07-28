@@ -24,6 +24,7 @@ import org.w3c.dom.Node;
  * @author Matt
  * @since 01-NOV-2006
  * 
+ * @deprecated as of metadata 3.0. please use org.pentaho.metadata.model.concept.security.SecurityOwner
  */
 public class SecurityOwner implements Cloneable
 {

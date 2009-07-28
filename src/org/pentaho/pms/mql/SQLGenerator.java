@@ -33,6 +33,7 @@ import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
  * 
  * @author Will Gorman (wgorman@pentaho.org)
  *
+ * @deprecated as of metadata 3.0.  please use org.pentaho.metadata.query.impl.sql.SqlGenerator
  */
 public class SQLGenerator {
   

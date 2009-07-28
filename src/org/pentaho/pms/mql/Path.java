@@ -35,11 +35,11 @@ import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.RelationshipMeta;
 
 
-/*
+/**
  * Created on 30-jan-04
  *
+ * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.query.model.impl.sql.Path
  */
-
 public class Path
 {
 	private List<RelationshipMeta> path;  // contains Relationship objects

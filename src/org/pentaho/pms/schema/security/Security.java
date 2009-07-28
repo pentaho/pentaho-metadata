@@ -26,7 +26,8 @@ import org.w3c.dom.Node;
 /**
  * Contains a mapping between a SecurityOwner (named user or role) and the rights (integer : masks with ACLs)
  * @author Matt
- *
+ * 
+ * @deprecated as of metadata 3.0. please use org.pentaho.metadata.model.concept.security.Security
  */
 public class Security implements Cloneable
 {

@@ -60,8 +60,9 @@ import org.pentaho.reporting.libraries.formula.typing.coretypes.TextType;
  * 
  * @see org.pentaho.pms.mql.WhereCondition
  * @see BusinessColumn
+ * 
+ * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.query.model.impl.sql.SqlOpenFormula
  */
-@Deprecated
 public class PMSFormula implements FormulaTraversalInterface {
   
   private static final Log logger = LogFactory.getLog(PMSFormula.class);

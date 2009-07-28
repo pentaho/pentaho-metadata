@@ -15,6 +15,9 @@ package org.pentaho.pms.schema.concept.types.alignment;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
+/**
+ * @deprecated as of metadata 3.0.
+ */
 public class ConceptPropertyAlignment extends ConceptPropertyBase implements Cloneable
 {
     public static final ConceptPropertyAlignment LEFT      = new ConceptPropertyAlignment("alignment", AlignmentSettings.LEFT); //$NON-NLS-1$

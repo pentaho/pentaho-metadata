@@ -18,6 +18,9 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.pentaho.pms.messages.Messages;
 
+/**
+ * @deprecated as of metadata 3.0. please use org.pentaho.metadata.model.concept.types.AggregationType
+ */
 public class AggregationSettings
 {
     public static final int TYPE_AGGREGATION_NONE           = 0;

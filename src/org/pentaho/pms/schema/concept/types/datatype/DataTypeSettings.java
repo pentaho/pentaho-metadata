@@ -16,6 +16,9 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.pentaho.pms.messages.Messages;
 
+/**
+ * @deprecated as of metadata 3.0. please see org.pentaho.metadata.model.concept.types.DataType 
+ */
 public class DataTypeSettings
 {
     public static final int DATA_TYPE_UNKNOWN   = 0;

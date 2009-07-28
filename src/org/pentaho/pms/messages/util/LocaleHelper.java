@@ -14,6 +14,9 @@ package org.pentaho.pms.messages.util;
 
 import java.util.Locale;
 
+/**
+ * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.messages.LocalHelper
+ */
 public class LocaleHelper {
 
     private static final ThreadLocal<Locale> threadLocales = new ThreadLocal<Locale>();

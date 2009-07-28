@@ -31,6 +31,9 @@ import org.pentaho.pms.schema.concept.types.localstring.ConceptPropertyLocalized
 import org.pentaho.pms.schema.concept.types.localstring.LocalizedStringSettings;
 import org.pentaho.pms.schema.concept.types.security.ConceptPropertySecurity;
 
+/**
+ * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.model.concept.Concept
+ */
 public class Concept extends ChangedFlag implements ConceptInterface, Cloneable
 {
     private String name;

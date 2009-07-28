@@ -19,7 +19,8 @@ import java.util.Map;
  * For now, we will start with a simple Parent/Child relationship.
  *
  * @author Matt
- *
+ * 
+ * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.model.concept.IConcept
  */
 public interface ConceptInterface
 {

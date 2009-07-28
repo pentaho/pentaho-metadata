@@ -18,6 +18,9 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.pentaho.pms.messages.Messages;
 
+/**
+ * @deprecated as of metadata 3.0. please use org.pentaho.metadata.util.PropertyTypeRegistry
+ */
 public class ConceptPropertyType
 {
     public static final int PROPERTY_TYPE_STRING           =  0;

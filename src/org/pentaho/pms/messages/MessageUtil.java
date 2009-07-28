@@ -20,7 +20,9 @@ package org.pentaho.pms.messages;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
-
+/**
+ * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.messages.Messages
+ */
 public class MessageUtil {
 
 	/**

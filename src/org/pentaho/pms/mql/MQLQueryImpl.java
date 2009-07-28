@@ -45,6 +45,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+/**
+ * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.query.model.Query
+ */
 public class MQLQueryImpl implements MQLQuery {
 
   private static final Log logger = LogFactory.getLog(MQLQuery.class);
