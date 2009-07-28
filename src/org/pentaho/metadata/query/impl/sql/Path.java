@@ -173,8 +173,8 @@ public class Path {
 		Set<LogicalTable> treeSet = new TreeSet<LogicalTable>();
 		for (int i=0;i<size();i++) {
 			LogicalRelationship rel = getRelationship(i);
-			treeSet.add(rel.getFromTable()); //$NON-NLS-1$
-			treeSet.add(rel.getToTable()); //$NON-NLS-1$
+			treeSet.add(rel.getFromTable());
+			treeSet.add(rel.getToTable());
 		}
 		return new ArrayList<LogicalTable>(treeSet);
 	}

@@ -18,8 +18,8 @@ public class CsvDataReader {
   private static final Log logger = LogFactory.getLog(QueryXmlHelper.class);
   
   private static int DEFAULT_ROW_LIMIT = 5;
-  private static String DEFAULT_DELIMETER = ",";
-  private static String DEFAULT_ENCLOSURE = "/";
+  private static String DEFAULT_DELIMETER = ","; //$NON-NLS-1$
+  private static String DEFAULT_ENCLOSURE = "/"; //$NON-NLS-1$
   
   private String fileLocation;
   private boolean headerPresent;
@@ -78,7 +78,7 @@ public class CsvDataReader {
       }
 
     } catch (Exception e) {
-      logger.error(Messages.getString("CsvDataReader.ERROR_0001_Failed"), e);
+      logger.error(Messages.getString("CsvDataReader.ERROR_0001_Failed"), e); //$NON-NLS-1$
     } finally {
       
       //close the file

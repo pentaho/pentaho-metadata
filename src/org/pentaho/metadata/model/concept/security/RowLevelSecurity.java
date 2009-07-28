@@ -26,7 +26,7 @@ import java.util.Map;
 public class RowLevelSecurity implements Serializable {
 
   private static final long serialVersionUID = 8053164409342554552L;
-  private static final String EMPTY_STRING = "";
+  private static final String EMPTY_STRING = ""; //$NON-NLS-1$
   
   public static enum Type {
     NONE, GLOBAL, ROLEBASED
@@ -37,7 +37,7 @@ public class RowLevelSecurity implements Serializable {
   /**
    * See {@link #getType()}. Type will tell you which of three options are in effect: no RLS, global, or role-based.
    */
-  private String globalConstraint = "";
+  private String globalConstraint = ""; //$NON-NLS-1$
 
   /**
    * See {@link #getType()}. Type will tell you which of three options are in effect: no RLS, global, or role-based.

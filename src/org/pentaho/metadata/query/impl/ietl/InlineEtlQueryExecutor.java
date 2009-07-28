@@ -57,6 +57,7 @@ import org.pentaho.metadata.query.model.Parameter;
 import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.metadata.query.model.util.QueryModelMetaData;
+import org.pentaho.metadata.messages.Messages;
 
 /**
  * This query executor generates an inline ETL result set, based on the inline etl 
@@ -69,7 +70,7 @@ public class InlineEtlQueryExecutor {
   
   private static final Log logger = LogFactory.getLog(InlineEtlQueryExecutor.class);
   
-  String transformLocation = "res:org/pentaho/metadata/query/impl/ietl/";
+  String transformLocation = "res:org/pentaho/metadata/query/impl/ietl/"; //$NON-NLS-1$
   
   protected String getTransformLocation() {
     return transformLocation;
@@ -117,35 +118,35 @@ public class InlineEtlQueryExecutor {
       qc.orig = constraint;
 
       // parse out all the [] fields
-      Pattern p = Pattern.compile("\\[([^\\]]*)\\]");
+      Pattern p = Pattern.compile("\\[([^\\]]*)\\]"); //$NON-NLS-1$
       Matcher m = p.matcher(constraint.getFormula());
       StringBuffer sb = new StringBuffer();
       while (m.find()) {
         String match = m.group(1);
-        if (match.startsWith("param:")) {
+        if (match.startsWith("param:")) { //$NON-NLS-1$
           String paramName = match.substring(6);
           Object paramValue = parameters.get(paramName);
-          String openFormulaValue = "";
+          String openFormulaValue = ""; //$NON-NLS-1$
           if (paramValue instanceof Boolean) {
             // need to get and then render either true or false function.
             if (((Boolean)paramValue).booleanValue()) {
-              openFormulaValue = "TRUE()";
+              openFormulaValue = "TRUE()"; //$NON-NLS-1$
             } else {
-              openFormulaValue = "FALSE()";
+              openFormulaValue = "FALSE()"; //$NON-NLS-1$
             }
           } else if (paramValue instanceof Double) {
             openFormulaValue = paramValue.toString();
           } else {
             // assume a string, string literal quote
-            openFormulaValue = "\"" + paramValue + "\""; 
+            openFormulaValue = "\"" + paramValue + "\""; //$NON-NLS-1$ //$NON-NLS-2$
           }
           m.appendReplacement(sb, openFormulaValue);
         } else {
-          String seg[] = match.split("\\.");
+          String seg[] = match.split("\\."); //$NON-NLS-1$
           Category cat = query.getLogicalModel().findCategory(seg[0]);
           LogicalColumn col = cat.findLogicalColumn(seg[1]);
           if (col == null) {
-            logger.error("FAILED TO LOCATE: " + seg[0] + "." + seg[1]);
+            logger.error(Messages.getErrorString("InlineEtlQueryExecutor.ERROR_0001_FAILED_TO_LOCATE_COLUMN",seg[0], seg[1])); //$NON-NLS-1$
           }
           String fieldName = (String)col.getProperty(InlineEtlPhysicalColumn.FIELD_NAME);
           AggregationType agg = null;
@@ -162,12 +163,14 @@ public class InlineEtlQueryExecutor {
           
           // this may be different in the group by context.
           
-          m.appendReplacement(sb, "[" + fieldName + "]");
+          m.appendReplacement(sb, "[" + fieldName + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         }
       }
       m.appendTail(sb);
       qc.formula = sb.toString();
-      logger.debug("PARSED FORMULA: " + qc.formula);
+      if (logger.isDebugEnabled()) {
+        logger.debug("PARSED FORMULA: " + qc.formula); //$NON-NLS-1$
+      }
       constraints.add(qc);
     }
     return constraints;
@@ -200,7 +203,7 @@ public class InlineEtlQueryExecutor {
       String useFieldName = fieldName;
       int count = 1;
       while (repeatedSelections.contains(useFieldName)) {
-        useFieldName = fieldName + "_" + count++;
+        useFieldName = fieldName + "_" + count++; //$NON-NLS-1$
       }
       repeatedSelections.add(useFieldName);
       selectionFieldNames.put(selection, useFieldName);
@@ -209,9 +212,9 @@ public class InlineEtlQueryExecutor {
       }
     }
 
-    String fileAddress = getTransformLocation() + "inlinecsv.ktr";
+    String fileAddress = getTransformLocation() + "inlinecsv.ktr"; //$NON-NLS-1$
     if (groupBys > 0) {
-      fileAddress = getTransformLocation() + "inlinecsv_groupby.ktr";  
+      fileAddress = getTransformLocation() + "inlinecsv_groupby.ktr";   //$NON-NLS-1$
     }
     TransMeta transMeta = new TransMeta(fileAddress, null, true);
     transMeta.setFilename(fileAddress);
@@ -222,8 +225,7 @@ public class InlineEtlQueryExecutor {
 
     InlineEtlPhysicalModel physicalModel = (InlineEtlPhysicalModel)query.getLogicalModel().getPhysicalModel();
     
-    CsvInputMeta csvinput = (CsvInputMeta)getStepMeta(transMeta, "CSV file input").getStepMetaInterface();
-
+    CsvInputMeta csvinput = (CsvInputMeta)getStepMeta(transMeta, "CSV file input").getStepMetaInterface(); //$NON-NLS-1$
     
     // the file name might need to be translated to the correct location here
     if (csvFilePath != null) {
@@ -248,7 +250,9 @@ public class InlineEtlQueryExecutor {
       LogicalColumn col = table.getLogicalColumns().get(i);
       csvinput.getInputFields()[i] = new TextFileInputField();
       String fieldName = (String)col.getProperty(InlineEtlPhysicalColumn.FIELD_NAME);
-      logger.debug("FROM CSV: " + fieldName);
+      if (logger.isDebugEnabled()) {
+        logger.debug("FROM CSV: " + fieldName); //$NON-NLS-1$
+      }
       csvinput.getInputFields()[i].setName(fieldName);
       csvinput.getInputFields()[i].setType(convertType(col.getDataType()));
     }
@@ -257,7 +261,7 @@ public class InlineEtlQueryExecutor {
     // SELECT
     //
     
-    StepMeta selections = getStepMeta(transMeta, "Select values");
+    StepMeta selections = getStepMeta(transMeta, "Select values"); //$NON-NLS-1$
     SelectValuesMeta selectVals = (SelectValuesMeta)selections.getStepMetaInterface();
     selectVals.allocate(allSelections.size(), 0, 0);
     for (int i = 0; i < allSelections.size(); i++) {
@@ -270,14 +274,14 @@ public class InlineEtlQueryExecutor {
       // selections
       if (!fieldName.equals(renameFieldName)) {
         selectVals.getSelectRename()[i] = renameFieldName;
-        logger.debug("SELECT " + fieldName + " RENAME TO " + renameFieldName);
-      } else {
-        logger.debug("SELECT " + fieldName);
       }
       
+      if (logger.isDebugEnabled()) {
+        logger.debug("SELECT " + fieldName + " RENAME TO " + renameFieldName);  //$NON-NLS-1$//$NON-NLS-2$
+      }
     }
 
-    StepMeta finalSelections = getStepMeta(transMeta, "Select values 2");
+    StepMeta finalSelections = getStepMeta(transMeta, "Select values 2"); //$NON-NLS-1$
     Map<String, String> fieldNameMap = new HashMap<String, String>();
     
     SelectValuesMeta finalSelectVals = (SelectValuesMeta)finalSelections.getStepMetaInterface();
@@ -295,7 +299,7 @@ public class InlineEtlQueryExecutor {
     
     if (query.getConstraints().size() > 0) {
       
-      StepMeta formula = getStepMeta(transMeta, "Formula");
+      StepMeta formula = getStepMeta(transMeta, "Formula"); //$NON-NLS-1$
       FormulaMeta formulaMeta = (FormulaMeta)formula.getStepMetaInterface();
 
       int alloc = 0;
@@ -309,7 +313,7 @@ public class InlineEtlQueryExecutor {
         formulaMeta.allocate(alloc);
       }
       
-      StepMeta filter = getStepMeta(transMeta, "Filter rows");
+      StepMeta filter = getStepMeta(transMeta, "Filter rows"); //$NON-NLS-1$
       FilterRowsMeta filterRows = (FilterRowsMeta)filter.getStepMetaInterface();
       Condition rootCondition = new Condition();      
       int c = 0;
@@ -318,13 +322,13 @@ public class InlineEtlQueryExecutor {
           continue;
         }
         String formulaVal = constraint.formula;
-        formulaMeta.getFormula()[c] = new FormulaMetaFunction("__FORMULA_" + c, formulaVal, ValueMetaInterface.TYPE_BOOLEAN, -1, -1, null);
+        formulaMeta.getFormula()[c] = new FormulaMetaFunction("__FORMULA_" + c, formulaVal, ValueMetaInterface.TYPE_BOOLEAN, -1, -1, null); //$NON-NLS-1$
 
         Condition condition = new Condition();
-        condition.setLeftValuename("__FORMULA_" + c);
+        condition.setLeftValuename("__FORMULA_" + c); //$NON-NLS-1$
         condition.setOperator(convertOperator(constraint.orig.getCombinationType()));
         condition.setFunction(Condition.FUNC_EQUAL);
-        condition.setRightExact(new ValueMetaAndData("dummy", true));
+        condition.setRightExact(new ValueMetaAndData("dummy", true)); //$NON-NLS-1$
         rootCondition.addCondition(condition);
         c++;
       }
@@ -339,7 +343,7 @@ public class InlineEtlQueryExecutor {
       
       if (groupBys > 0) {
         
-        StepMeta formula2 = getStepMeta(transMeta, "Formula 2");
+        StepMeta formula2 = getStepMeta(transMeta, "Formula 2"); //$NON-NLS-1$
         FormulaMeta formulaMeta2 = (FormulaMeta)formula2.getStepMetaInterface();
         
         alloc = 0;
@@ -354,7 +358,7 @@ public class InlineEtlQueryExecutor {
         }
 
         
-        StepMeta filter2 = getStepMeta(transMeta, "Filter rows 2");
+        StepMeta filter2 = getStepMeta(transMeta, "Filter rows 2"); //$NON-NLS-1$
         FilterRowsMeta filterRows2 = (FilterRowsMeta)filter2.getStepMetaInterface();
         Condition rootCondition2 = new Condition();
         
@@ -364,13 +368,13 @@ public class InlineEtlQueryExecutor {
             continue;
           }
           String formulaVal = constraint.formula;
-          formulaMeta2.getFormula()[c] = new FormulaMetaFunction("__FORMULA2_" + c, formulaVal, ValueMetaInterface.TYPE_BOOLEAN, -1, -1, null);
+          formulaMeta2.getFormula()[c] = new FormulaMetaFunction("__FORMULA2_" + c, formulaVal, ValueMetaInterface.TYPE_BOOLEAN, -1, -1, null); //$NON-NLS-1$
 
           Condition condition = new Condition();
-          condition.setLeftValuename("__FORMULA2_" + c);
+          condition.setLeftValuename("__FORMULA2_" + c); //$NON-NLS-1$
           condition.setOperator(convertOperator(constraint.orig.getCombinationType()));
           condition.setFunction(Condition.FUNC_EQUAL);
-          condition.setRightExact(new ValueMetaAndData("dummy", true));
+          condition.setRightExact(new ValueMetaAndData("dummy", true)); //$NON-NLS-1$
           rootCondition2.addCondition(condition);
           c++;
         }
@@ -393,7 +397,7 @@ public class InlineEtlQueryExecutor {
     // SORT
     //
     
-    StepMeta sort = getStepMeta(transMeta, "Sort rows");
+    StepMeta sort = getStepMeta(transMeta, "Sort rows"); //$NON-NLS-1$
     
     SortRowsMeta sortRows = (SortRowsMeta)sort.getStepMetaInterface();
     
@@ -403,7 +407,9 @@ public class InlineEtlQueryExecutor {
     for (Order order : query.getOrders()) {
       String fieldName = selectionFieldNames.get(order.getSelection()); 
       sortRows.getFieldName()[c] = fieldName;
-      logger.debug("ORDER: " + fieldName);
+      if (logger.isDebugEnabled()) {
+        logger.debug("ORDER: " + fieldName); //$NON-NLS-1$
+      }
       sortRows.getAscending()[c] = (order.getType() == Order.Type.ASC);
       sortRows.getCaseSensitive()[c] = false;
       c++;
@@ -417,7 +423,7 @@ public class InlineEtlQueryExecutor {
       
       // GROUP SORT
       
-      StepMeta groupsort = getStepMeta(transMeta, "Group Sort rows");
+      StepMeta groupsort = getStepMeta(transMeta, "Group Sort rows"); //$NON-NLS-1$
       
       SortRowsMeta groupSortRows = (SortRowsMeta)groupsort.getStepMetaInterface();
       
@@ -443,7 +449,9 @@ public class InlineEtlQueryExecutor {
           
           String fieldName = selectionFieldNames.get(selection);
           groupSortRows.getFieldName()[c] = fieldName;
-          logger.debug("GROUP ORDER: " + fieldName);
+          if (logger.isDebugEnabled()) {
+            logger.debug("GROUP ORDER: " + fieldName);  //$NON-NLS-1$
+          }
           groupSortRows.getAscending()[c] = true;
           groupSortRows.getCaseSensitive()[c] = false;
           c++;
@@ -454,7 +462,7 @@ public class InlineEtlQueryExecutor {
       // GROUP BY
       //
       
-      StepMeta group = getStepMeta(transMeta, "Group by");
+      StepMeta group = getStepMeta(transMeta, "Group by"); //$NON-NLS-1$
       GroupByMeta groupStep = (GroupByMeta)group.getStepMetaInterface();
       // c is the number 
       groupStep.allocate(groups, groupBys);
@@ -466,7 +474,9 @@ public class InlineEtlQueryExecutor {
         if (selection.getActiveAggregationType() == null || selection.getActiveAggregationType() == AggregationType.NONE) {
           String fieldName = selectionFieldNames.get(selection); 
           groupStep.getGroupField()[c] = fieldName;
-          logger.debug("GROUP BY: " + fieldName);
+          if (logger.isDebugEnabled()) {
+            logger.debug("GROUP BY: " + fieldName);  //$NON-NLS-1$
+          }
           c++;
         }
       }
@@ -532,10 +542,12 @@ public class InlineEtlQueryExecutor {
         List<StepMetaDataCombi> stepList = trans.getSteps();
         // assume the last step
         for (StepMetaDataCombi step : stepList) {
-          if (!"Unique rows".equals(step.stepname)) {
+          if (!"Unique rows".equals(step.stepname)) { //$NON-NLS-1$
             continue;
           }
-          logger.debug("STEP NAME: " + step.stepname);
+          if (logger.isDebugEnabled()) {
+            logger.debug("STEP NAME: " + step.stepname); //$NON-NLS-1$
+          }
           RowMetaInterface row = trans.getTransMeta().getStepFields(step.stepMeta); // step.stepname?
           // create the metadata that the Pentaho result sets need
           String fieldNames[] = row.getFieldNames();
@@ -610,7 +622,7 @@ public class InlineEtlQueryExecutor {
         if (logger.isDebugEnabled()) {
           StringBuffer sb = new StringBuffer();
           for (int i = 0; i < pentahoRow.length; i++) {
-            sb.append(pentahoRow[i] + "; ");
+            sb.append(pentahoRow[i] + "; "); //$NON-NLS-1$
           }
           logger.debug(sb.toString());
         }

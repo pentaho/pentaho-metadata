@@ -62,7 +62,7 @@ public class QueryXmlHelper {
   
   public String toXML(final Query query) {
     if (query == null) {
-      logger.error("toXML: query must not be null");
+      logger.error(Messages.getErrorString("QueryXmlHelper.ERROR_0000_QUERY_MUST_NOT_BE_NULL")); //$NON-NLS-1$
       return null;
     }
     
@@ -85,7 +85,7 @@ public class QueryXmlHelper {
   public Document toDocument(Query query) {
     
     if (query == null) {
-      logger.error("toDocument: query must not be null");
+      logger.error(Messages.getErrorString("QueryXmlHelper.ERROR_0000_QUERY_MUST_NOT_BE_NULL")); //$NON-NLS-1$
       return null;
     }
     
@@ -127,7 +127,7 @@ public class QueryXmlHelper {
       // insert the domain information
       String data = query.getDomain().getId();
       if (data != null) {
-        addTextElement(doc, mqlElement, "domain_id", data);
+        addTextElement(doc, mqlElement, "domain_id", data); //$NON-NLS-1$
       } else {
         logger.error(Messages.getErrorString("QueryXmlHelper.ERROR_0005_DOMAIN_ID_NULL")); //$NON-NLS-1$
         return false;
@@ -136,7 +136,7 @@ public class QueryXmlHelper {
       // insert the model information
       data = query.getLogicalModel().getId();
       if (data != null) {
-        addTextElement(doc, mqlElement, "model_id", data);
+        addTextElement(doc, mqlElement, "model_id", data); //$NON-NLS-1$
       } else {
         logger.error(Messages.getErrorString("QueryXmlHelper.ERROR_0006_MODEL_ID_NULL")); //$NON-NLS-1$
         return false;
@@ -148,7 +148,7 @@ public class QueryXmlHelper {
       addOptionsToDocument(doc, optionsElement, query);      
       
       if (query.getParameters() != null && query.getParameters().size() > 0) {
-        Element parametersElement = doc.createElement("parameters");
+        Element parametersElement = doc.createElement("parameters"); //$NON-NLS-1$
         mqlElement.appendChild(parametersElement);
         addParametersToDocument(doc, parametersElement, query);
       }
@@ -194,18 +194,18 @@ public class QueryXmlHelper {
   
   protected void addParametersToDocument(Document doc, Element parametersElement, Query query) {
     for (Parameter param : query.getParameters()) {
-      Element paramElement = doc.createElement("parameter");
-      paramElement.setAttribute("name", param.getName());
-      paramElement.setAttribute("type", param.getType().toString());
-      paramElement.setAttribute("defaultValue", param.getDefaultValue().toString());
+      Element paramElement = doc.createElement("parameter"); //$NON-NLS-1$
+      paramElement.setAttribute("name", param.getName()); //$NON-NLS-1$
+      paramElement.setAttribute("type", param.getType().toString()); //$NON-NLS-1$
+      paramElement.setAttribute("defaultValue", param.getDefaultValue().toString()); //$NON-NLS-1$
       parametersElement.appendChild(paramElement);
     }
   }
 
   protected void addParameterFromXmlNode(Query query, Element paramElement) {
-    String name = paramElement.getAttribute("name");
-    String type = paramElement.getAttribute("type");
-    String defaultValue = paramElement.getAttribute("defaultValue");
+    String name = paramElement.getAttribute("name"); //$NON-NLS-1$
+    String type = paramElement.getAttribute("type"); //$NON-NLS-1$
+    String defaultValue = paramElement.getAttribute("defaultValue"); //$NON-NLS-1$
     
     if (name != null && type != null && defaultValue != null) {
       DataType dataType = DataType.valueOf(type.toUpperCase());
@@ -230,13 +230,13 @@ public class QueryXmlHelper {
     addTextElement(doc, selectionElement, "view", selection.getCategory().getId()); //$NON-NLS-1$
     addTextElement(doc, selectionElement, "column", selection.getLogicalColumn().getId()); //$NON-NLS-1$
     if (selection.getAggregationType() != null) {
-      addTextElement(doc, selectionElement, "aggregation", selection.getAggregationType().toString());
+      addTextElement(doc, selectionElement, "aggregation", selection.getAggregationType().toString()); //$NON-NLS-1$
     }
   }
   
   protected void addConstraintToDocument(Document doc, Constraint constraint, Element constraintElement) {
-    addTextElement(doc, constraintElement, "operator", constraint.getCombinationType() == null ? "" : constraint.getCombinationType().toString());
-    addTextElement(doc, constraintElement, "condition", constraint.getFormula());
+    addTextElement(doc, constraintElement, "operator", constraint.getCombinationType() == null ? "" : constraint.getCombinationType().toString()); //$NON-NLS-1$  //$NON-NLS-2$
+    addTextElement(doc, constraintElement, "condition", constraint.getFormula()); //$NON-NLS-1$
   }
   
   protected void addOrderByToDocument(Document doc, Order order, Element orderElement) {
@@ -246,14 +246,14 @@ public class QueryXmlHelper {
     addTextElement(doc, orderElement, "view_id", order.getSelection().getCategory().getId()); //$NON-NLS-1$
     addTextElement(doc, orderElement, "column_id", order.getSelection().getLogicalColumn().getId()); //$NON-NLS-1$
     if (order.getSelection().getAggregationType() != null) {
-      addTextElement(doc, orderElement, "aggregation", order.getSelection().getAggregationType().toString());
+      addTextElement(doc, orderElement, "aggregation", order.getSelection().getAggregationType().toString()); //$NON-NLS-1$
     }
     
   }
 
   protected void addTextElement(Document doc, Element element, String elementName, String text) {
-    Element childElement = doc.createElement(elementName); //$NON-NLS-1$
-    childElement.appendChild(doc.createTextNode(text)); //$NON-NLS-1$ //$NON-NLS-2$
+    Element childElement = doc.createElement(elementName);
+    childElement.appendChild(doc.createTextNode(text));
     element.appendChild(childElement);
   }
   
@@ -320,7 +320,7 @@ public class QueryXmlHelper {
       }
     }
     
-    NodeList paramNodes = doc.getElementsByTagName("parameter");
+    NodeList paramNodes = doc.getElementsByTagName("parameter"); //$NON-NLS-1$
     Element paramElement;
     for (int idx = 0; idx < paramNodes.getLength(); idx++) {
       paramElement = (Element)paramNodes.item(idx);
@@ -394,7 +394,7 @@ public class QueryXmlHelper {
         String aggvalue = XMLHandler.getNodeValue(aggnodes.item(0));
         AggregationType setting = AggregationType.valueOf(aggvalue.toUpperCase());
         if (setting == null) {
-          Messages.getErrorString("QueryXmlHelper.ERROR_0011_AGG_NOT_RECOGNIZED", columnId, aggvalue);
+          Messages.getErrorString("QueryXmlHelper.ERROR_0011_AGG_NOT_RECOGNIZED", columnId, aggvalue); //$NON-NLS-1$
         } else {
           // verify that the setting is one of the options for this business column
           if ((column.getAggregationType() == setting) ||
@@ -402,7 +402,7 @@ public class QueryXmlHelper {
               column.getAggregationList().contains(setting)) {
             aggsetting = setting;
           } else {
-            Messages.getErrorString("QueryXmlHelper.ERROR_0012_INVALID_AGG_FOR_BUSINESS_COL", columnId, aggvalue);
+            Messages.getErrorString("QueryXmlHelper.ERROR_0012_INVALID_AGG_FOR_BUSINESS_COL", columnId, aggvalue); //$NON-NLS-1$
           }
         }
       }
@@ -410,7 +410,7 @@ public class QueryXmlHelper {
       query.getSelections().add(new Selection(category, column, aggsetting));
     } else {
       // print a warning message
-      Messages.getErrorString("QueryXmlHelper.ERROR_0013_BUSINESS_COL_NOT_FOUND", viewId, columnId);
+      Messages.getErrorString("QueryXmlHelper.ERROR_0013_BUSINESS_COL_NOT_FOUND", viewId, columnId); //$NON-NLS-1$
     }
   }
   
@@ -422,8 +422,8 @@ public class QueryXmlHelper {
       operator = XMLHandler.getNodeValue(nodes.item(0));
     }
 
-    if ((operator == null) || (operator.trim().equals(""))) {
-      operator = "AND";
+    if ((operator == null) || (operator.trim().equals(""))) { //$NON-NLS-1$
+      operator = "AND"; //$NON-NLS-1$
     }
 
     nodes = constraintElement.getElementsByTagName("condition"); //$NON-NLS-1$
@@ -467,7 +467,7 @@ public class QueryXmlHelper {
     if (nodes.getLength() > 0) {
       String orderTypeStr = XMLHandler.getNodeValue(nodes.item(0));
       if (orderTypeStr != null) {
-        orderType = Order.Type.valueOf(orderTypeStr.toUpperCase()); //$NON-NLS-1$
+        orderType = Order.Type.valueOf(orderTypeStr.toUpperCase());
       }
     }
     nodes = orderElement.getElementsByTagName("view_id"); //$NON-NLS-1$

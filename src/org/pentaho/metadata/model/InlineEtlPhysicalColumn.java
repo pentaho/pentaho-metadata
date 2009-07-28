@@ -23,8 +23,8 @@ public class InlineEtlPhysicalColumn extends AbstractPhysicalColumn {
 
   private static final long serialVersionUID = 2960505010295811572L;
 
-  public static final String COLUMN_NUMBER = "column_number";
-  public static final String FIELD_NAME = "field_name";
+  public static final String COLUMN_NUMBER = "column_number"; //$NON-NLS-1$
+  public static final String FIELD_NAME = "field_name"; //$NON-NLS-1$
   
   private InlineEtlPhysicalTable table;
   public InlineEtlPhysicalColumn() {

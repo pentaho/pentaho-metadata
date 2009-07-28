@@ -103,13 +103,14 @@ import org.xml.sax.SAXException;
  * @author Will Gorman (wgorman@pentaho.com)
  *
  */
+@SuppressWarnings("deprecation")
 public class XmiParser {
   
   private static final Log logger = LogFactory.getLog(XmiParser.class);
   
   public String generateXmi(Domain domain) {
     if (domain == null) {
-      logger.error("generateXML: domain must not be null");
+      logger.error(Messages.getErrorString("XmiParser.ERROR_0001_DOMAIN_NULL")); //$NON-NLS-1$
       return null;
     }
     
@@ -124,14 +125,14 @@ public class XmiParser {
         return stringWriter.getBuffer().toString();
       }
     } catch (Exception e) {
-      logger.error(Messages.getErrorString("QueryXmlHelper.ERROR_0001_TO_XML_FAILED"), e); //$NON-NLS-1$
+      logger.error(Messages.getErrorString("XmiParser.ERROR_0002_TO_XML_FAILED"), e); //$NON-NLS-1$
     }
     return null;
   }
   
   public Document toXmiDocument(Domain domain) {
     if (domain == null) {
-      logger.error("toDocument: query must not be null");
+      logger.error(Messages.getErrorString("XmiParser.ERROR_0001_DOMAIN_NULL")); //$NON-NLS-1$
       return null;
     }
     
@@ -145,28 +146,27 @@ public class XmiParser {
       db = dbf.newDocumentBuilder();
       doc = db.newDocument();
       Element xmiElement = doc.createElement("XMI"); //$NON-NLS-1$
-      xmiElement.setAttribute("xmlns:CWM", "org.omg.xmi.namespace.CWM");
-      xmiElement.setAttribute("xmlns:CWMMDB", "org.omg.xmi.namespace.CWMMDB");
-      xmiElement.setAttribute("xmlns:CWMOLAP", "org.omg.xmi.namespace.CWMOLAP");
-      xmiElement.setAttribute("xmlns:CWMRDB", "org.omg.xmi.namespace.CWMRDB");
-      xmiElement.setAttribute("xmlns:CWMTFM", "org.omg.xmi.namespace.CWMTFM");
+      xmiElement.setAttribute("xmlns:CWM", "org.omg.xmi.namespace.CWM"); //$NON-NLS-1$ //$NON-NLS-2$
+      xmiElement.setAttribute("xmlns:CWMMDB", "org.omg.xmi.namespace.CWMMDB"); //$NON-NLS-1$ //$NON-NLS-2$
+      xmiElement.setAttribute("xmlns:CWMOLAP", "org.omg.xmi.namespace.CWMOLAP"); //$NON-NLS-1$ //$NON-NLS-2$
+      xmiElement.setAttribute("xmlns:CWMRDB", "org.omg.xmi.namespace.CWMRDB"); //$NON-NLS-1$ //$NON-NLS-2$
+      xmiElement.setAttribute("xmlns:CWMTFM", "org.omg.xmi.namespace.CWMTFM"); //$NON-NLS-1$ //$NON-NLS-2$
       Date date = new Date();
-      SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
-      xmiElement.setAttribute("timestamp", sdf.format(date));
-      xmiElement.setAttribute("xmi.version", "1.2");
+      SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy"); //$NON-NLS-1$
+      xmiElement.setAttribute("timestamp", sdf.format(date)); //$NON-NLS-1$
+      xmiElement.setAttribute("xmi.version", "1.2"); //$NON-NLS-1$ //$NON-NLS-2$
       doc.appendChild(xmiElement);
-      Element xmiHeader = doc.createElement("XMI.header");
+      Element xmiHeader = doc.createElement("XMI.header"); //$NON-NLS-1$
       xmiElement.appendChild(xmiHeader);
-      Element xmiDocumentation = doc.createElement("XMI.documentation");
+      Element xmiDocumentation = doc.createElement("XMI.documentation"); //$NON-NLS-1$
       xmiHeader.appendChild(xmiDocumentation);
-      addTextElement(doc, xmiDocumentation, "XMI.exporter", "Pentaho XMI Generator");
-      addTextElement(doc, xmiDocumentation, "XMI.exporterVersion", "1.0");
+      addTextElement(doc, xmiDocumentation, "XMI.exporter", "Pentaho XMI Generator"); //$NON-NLS-1$ //$NON-NLS-2$
+      addTextElement(doc, xmiDocumentation, "XMI.exporterVersion", "1.0"); //$NON-NLS-1$ //$NON-NLS-2$
       
-      Element xmiContent = doc.createElement("XMI.content");
+      Element xmiContent = doc.createElement("XMI.content"); //$NON-NLS-1$
       xmiElement.appendChild(xmiContent);
       
-      // first add concepts, the order is ???
-//      Map<Concept, String> conceptToId = new HashMap<Concept, String>();
+      // first add concepts
       List<Element> allDescriptions = new ArrayList<Element>();
 
       int id = 1;
@@ -180,18 +180,18 @@ public class XmiParser {
     </CWM:Class>
 
          */
-        Element cwmClass = doc.createElement("CWM:Class");
-        cwmClass.setAttribute("isAbstract", "false");
-        cwmClass.setAttribute("name", concept.getId());
-        String idstr = "a" + id++;
+        Element cwmClass = doc.createElement("CWM:Class"); //$NON-NLS-1$
+        cwmClass.setAttribute("isAbstract", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+        cwmClass.setAttribute("name", concept.getId()); //$NON-NLS-1$
+        String idstr = "a" + id++; //$NON-NLS-1$
 
-        id = createDescriptions(doc, concept, "CWM:Class", idstr, allDescriptions, id);
+        id = createDescriptions(doc, concept, "CWM:Class", idstr, allDescriptions, id); //$NON-NLS-1$
         
-        cwmClass.setAttribute("xmi.id", idstr);
+        cwmClass.setAttribute("xmi.id", idstr); //$NON-NLS-1$
         
         if (concept.getParentConcept() != null) {
-          Element modelElement = doc.createElement("CWM:ModelElement.taggedValue");
-          modelElement.appendChild(createTaggedValue(doc, "CONCEPT_PARENT_NAME", concept.getParentConcept().getId(), "a" + id++));
+          Element modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
+          modelElement.appendChild(createTaggedValue(doc, "CONCEPT_PARENT_NAME", concept.getParentConcept().getId(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
           cwmClass.appendChild(modelElement);
         }
         
@@ -208,20 +208,20 @@ public class XmiParser {
       
       Element eventModelElement = null;
       for (String key : domain.getChildProperties().keySet()) {
-        if (key.startsWith("LEGACY_EVENT_")) {
+        if (key.startsWith("LEGACY_EVENT_")) { //$NON-NLS-1$
           // if any keys event, create a model element
           if (eventModelElement == null) {
-            eventModelElement = doc.createElement("CWM:ModelElement.taggedValue");
+            eventModelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
           }
-          String shortkey = key.substring("LEGACY_EVENT_".length());
-          eventModelElement.appendChild(createTaggedValue(doc, shortkey, (String)domain.getChildProperties().get(key), "a" + id++));
+          String shortkey = key.substring("LEGACY_EVENT_".length()); //$NON-NLS-1$
+          eventModelElement.appendChild(createTaggedValue(doc, shortkey, (String)domain.getChildProperties().get(key), "a" + id++)); //$NON-NLS-1$
         }
       }
       // only add cwm:event if one or more keys exist
       if (eventModelElement != null) {
-        Element event = doc.createElement("CWM:Event");
-        event.setAttribute("xmi.id", "a" + id++);
-        event.setAttribute("name", "SECURITY_SERVICE");
+        Element event = doc.createElement("CWM:Event"); //$NON-NLS-1$
+        event.setAttribute("xmi.id", "a" + id++); //$NON-NLS-1$  //$NON-NLS-2$
+        event.setAttribute("name", "SECURITY_SERVICE");  //$NON-NLS-1$  //$NON-NLS-2$
         event.appendChild(eventModelElement);
         xmiContent.appendChild(event);
       }
@@ -229,16 +229,16 @@ public class XmiParser {
       // Parameter / Locale info
       int val = 1;
       for (LocaleType localeType : domain.getLocales()) {
-        Element cwmParameter = doc.createElement("CWM:Parameter");
+        Element cwmParameter = doc.createElement("CWM:Parameter"); //$NON-NLS-1$
         if (beforeDesc == null) {
           beforeDesc = cwmParameter;
         }
-        cwmParameter.setAttribute("name", localeType.getCode());
-        cwmParameter.setAttribute("xmi.id", "a" + id++);
-        Element modelElement = doc.createElement("CWM:ModelElement.taggedValue");
-        modelElement.appendChild(createTaggedValue(doc, "LOCALE_IS_DEFAULT", "" + ((val == 1) ? "Y" : "N"), "a" + id++));
-        modelElement.appendChild(createTaggedValue(doc, "LOCALE_ORDER", "" + val++, "a" + id++));
-        modelElement.appendChild(createTaggedValue(doc, "LOCALE_DESCRIPTION", localeType.getDescription(), "a" + id++));
+        cwmParameter.setAttribute("name", localeType.getCode()); //$NON-NLS-1$
+        cwmParameter.setAttribute("xmi.id", "a" + id++); //$NON-NLS-1$ //$NON-NLS-2$
+        Element modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
+        modelElement.appendChild(createTaggedValue(doc, "LOCALE_IS_DEFAULT", "" + ((val == 1) ? "Y" : "N"), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+        modelElement.appendChild(createTaggedValue(doc, "LOCALE_ORDER", "" + val++, "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        modelElement.appendChild(createTaggedValue(doc, "LOCALE_DESCRIPTION", localeType.getDescription(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
         cwmParameter.appendChild(modelElement);
         xmiContent.appendChild(cwmParameter);
       }
@@ -246,34 +246,32 @@ public class XmiParser {
       // CWMOLAP:Schema elements don't get converted
       
       // CWMRDB:Catalog: Data Source objects
-      // TODO: We really need the thin version of DBMeta to accomplish this,
-      // or we could store all the stuff in __LEGACY_ properties
-      
       for (IPhysicalModel model : domain.getPhysicalModels()) {
         if (model instanceof SqlPhysicalModel) {
           SqlPhysicalModel sqlModel = (SqlPhysicalModel)model;
           SqlDataSource datasource = sqlModel.getDatasource();
-          Element catalog = doc.createElement("CWMRDB:Catalog");
-          catalog.setAttribute("name", model.getId());
-          catalog.setAttribute("xmi.id", "a" + id++);
-          Element modelElement = doc.createElement("CWM:ModelElement.taggedValue");
+          Element catalog = doc.createElement("CWMRDB:Catalog"); //$NON-NLS-1$
+          catalog.setAttribute("name", model.getId()); //$NON-NLS-1$
+          catalog.setAttribute("xmi.id", "a" + id++); //$NON-NLS-1$ //$NON-NLS-2$
+          Element modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
 
-          modelElement.appendChild(createTaggedValue(doc, "DATABASE_TYPE", datasource.getDialectType(), "a" + id++));
-          modelElement.appendChild(createTaggedValue(doc, "DATABASE_ACCESS", datasource.getType().toString(), "a" + id++));
-          modelElement.appendChild(createTaggedValue(doc, "DATABASE_DATABASE", datasource.getDatabaseName(), "a" + id++));
-          modelElement.appendChild(createTaggedValue(doc, "DATABASE_SERVER", datasource.getHostname(), "a" + id++));
-          modelElement.appendChild(createTaggedValue(doc, "DATABASE_PORT", datasource.getPort(), "a" + id++));
-          modelElement.appendChild(createTaggedValue(doc, "DATABASE_USERNAME", datasource.getUsername(), "a" + id++));
-          modelElement.appendChild(createTaggedValue(doc, "DATABASE_PASSWORD", datasource.getPassword(), "a" + id++));
+          modelElement.appendChild(createTaggedValue(doc, "DATABASE_TYPE", datasource.getDialectType(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
+          modelElement.appendChild(createTaggedValue(doc, "DATABASE_ACCESS", datasource.getType().toString(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
+          modelElement.appendChild(createTaggedValue(doc, "DATABASE_DATABASE", datasource.getDatabaseName(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
+          modelElement.appendChild(createTaggedValue(doc, "DATABASE_SERVER", datasource.getHostname(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
+          modelElement.appendChild(createTaggedValue(doc, "DATABASE_PORT", datasource.getPort(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
+          modelElement.appendChild(createTaggedValue(doc, "DATABASE_USERNAME", datasource.getUsername(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
+          modelElement.appendChild(createTaggedValue(doc, "DATABASE_PASSWORD", datasource.getPassword(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
           
           for (String attribute : datasource.getAttributes().keySet()) {
-            modelElement.appendChild(createTaggedValue(doc, CWM.TAG_DATABASE_ATTRIBUTE_PREFIX + attribute, datasource.getAttributes().get(attribute), "a" + id++));
+            modelElement.appendChild(createTaggedValue(doc, CWM.TAG_DATABASE_ATTRIBUTE_PREFIX + attribute, datasource.getAttributes().get(attribute), "a" + id++)); //$NON-NLS-1$
           }
           
           catalog.appendChild(modelElement);
           xmiContent.appendChild(catalog);
         } else {
           // we do not support CSV to XMI yet
+          logger.warn(Messages.getErrorString("XmiParser.ERROR_0003_PHYSICAL_MODEL_NOT_SUPPORTED", model.getClass().getName())); //$NON-NLS-1$
         }
       }
       
@@ -283,30 +281,30 @@ public class XmiParser {
         if (model instanceof SqlPhysicalModel) {
           SqlPhysicalModel sqlModel = (SqlPhysicalModel)model;
           for (SqlPhysicalTable table : sqlModel.getPhysicalTables()) {
-            Element cwmRdbTable = doc.createElement("CWMRDB:Table");
-            cwmRdbTable.setAttribute("isAbstract", "false");
-            cwmRdbTable.setAttribute("isSystem", "false");
-            cwmRdbTable.setAttribute("isTemporary", "false");
-            cwmRdbTable.setAttribute("name", table.getId());
-            String idstr = "a" + id++;
-            cwmRdbTable.setAttribute("xmi.id", idstr);
-            id = createDescriptions(doc, table, "CWMRDB:Table", idstr, allDescriptions, id);
+            Element cwmRdbTable = doc.createElement("CWMRDB:Table"); //$NON-NLS-1$
+            cwmRdbTable.setAttribute("isAbstract", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+            cwmRdbTable.setAttribute("isSystem", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+            cwmRdbTable.setAttribute("isTemporary", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+            cwmRdbTable.setAttribute("name", table.getId()); //$NON-NLS-1$
+            String idstr = "a" + id++; //$NON-NLS-1$
+            cwmRdbTable.setAttribute("xmi.id", idstr); //$NON-NLS-1$
+            id = createDescriptions(doc, table, "CWMRDB:Table", idstr, allDescriptions, id); //$NON-NLS-1$
 
-            Element modelElement = doc.createElement("CWM:ModelElement.taggedValue");
-            modelElement.appendChild(createTaggedValue(doc, "TABLE_TARGET_DATABASE_NAME", model.getId(), "a" + id++));
+            Element modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
+            modelElement.appendChild(createTaggedValue(doc, "TABLE_TARGET_DATABASE_NAME", model.getId(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
             cwmRdbTable.appendChild(modelElement);
 
-            Element ownedElement = doc.createElement("CWM:Namespace.ownedElement");
+            Element ownedElement = doc.createElement("CWM:Namespace.ownedElement"); //$NON-NLS-1$
             for (IPhysicalColumn column : table.getPhysicalColumns()) {
               SqlPhysicalColumn sqlColumn = (SqlPhysicalColumn)column;
-              Element rdbColumn = doc.createElement("CWMRDB:Column");
-              rdbColumn.setAttribute("name", sqlColumn.getId());
-              idstr = "a" + id++;
-              rdbColumn.setAttribute("xmi.id", idstr);
-              id = createDescriptions(doc, column, "CWMRDB:Column", idstr, allDescriptions, id);
+              Element rdbColumn = doc.createElement("CWMRDB:Column"); //$NON-NLS-1$
+              rdbColumn.setAttribute("name", sqlColumn.getId()); //$NON-NLS-1$
+              idstr = "a" + id++; //$NON-NLS-1$
+              rdbColumn.setAttribute("xmi.id", idstr); //$NON-NLS-1$
+              id = createDescriptions(doc, column, "CWMRDB:Column", idstr, allDescriptions, id); //$NON-NLS-1$
               if (sqlColumn.getParentConcept() != null) {
-                modelElement = doc.createElement("CWM:ModelElement.taggedValue");
-                modelElement.appendChild(createTaggedValue(doc, "CONCEPT_PARENT_NAME", sqlColumn.getParentConcept().getId(), "a" + id++));
+                modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
+                modelElement.appendChild(createTaggedValue(doc, "CONCEPT_PARENT_NAME", sqlColumn.getParentConcept().getId(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
                 rdbColumn.appendChild(modelElement);
               }
               ownedElement.appendChild(rdbColumn);
@@ -320,31 +318,31 @@ public class XmiParser {
       // CWMMDB:Schema: logical categories
       
       for (LogicalModel model : domain.getLogicalModels()) {
-        Element mdbSchema = doc.createElement("CWMMDB:Schema");
-        mdbSchema.setAttribute("name", model.getId());
-        String idstr = "a" + id++;
-        mdbSchema.setAttribute("xmi.id", idstr);
-        id = createDescriptions(doc, model, "CWMMDB:Schema", idstr, allDescriptions, id);
+        Element mdbSchema = doc.createElement("CWMMDB:Schema"); //$NON-NLS-1$
+        mdbSchema.setAttribute("name", model.getId()); //$NON-NLS-1$
+        String idstr = "a" + id++; //$NON-NLS-1$
+        mdbSchema.setAttribute("xmi.id", idstr); //$NON-NLS-1$
+        id = createDescriptions(doc, model, "CWMMDB:Schema", idstr, allDescriptions, id); //$NON-NLS-1$
         
-        Element ownedElement = doc.createElement("CWM:Namespace.ownedElement");
+        Element ownedElement = doc.createElement("CWM:Namespace.ownedElement"); //$NON-NLS-1$
         mdbSchema.appendChild(ownedElement);
         for (Category category : model.getCategories()) {
-          Element extent = doc.createElement("CWM:Extent");
-          extent.setAttribute("name", category.getId());
-          idstr = "a" + id++;
-          extent.setAttribute("xmi.id", idstr);
-          id = createDescriptions(doc, category, "CWM:Extent", idstr, allDescriptions, id);
-          Element modelElement = doc.createElement("CWM:ModelElement.taggedValue");
-          modelElement.appendChild(createTaggedValue(doc, "BUSINESS_CATEGORY_ROOT", "Y", "a" + id++));
+          Element extent = doc.createElement("CWM:Extent"); //$NON-NLS-1$
+          extent.setAttribute("name", category.getId()); //$NON-NLS-1$
+          idstr = "a" + id++; //$NON-NLS-1$
+          extent.setAttribute("xmi.id", idstr); //$NON-NLS-1$
+          id = createDescriptions(doc, category, "CWM:Extent", idstr, allDescriptions, id); //$NON-NLS-1$
+          Element modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
+          modelElement.appendChild(createTaggedValue(doc, "BUSINESS_CATEGORY_ROOT", "Y", "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
           extent.appendChild(modelElement);
-          Element cOwnedElement = doc.createElement("CWM:Namespace.ownedElement");
+          Element cOwnedElement = doc.createElement("CWM:Namespace.ownedElement"); //$NON-NLS-1$
           extent.appendChild(cOwnedElement);
           for (LogicalColumn col : category.getLogicalColumns()) {
-            Element attribute = doc.createElement("CWM:Attribute");
-            attribute.setAttribute("name", col.getId());
-            attribute.setAttribute("xmi.id", "a" + id++);
-            modelElement = doc.createElement("CWM:ModelElement.taggedValue");
-            modelElement.appendChild(createTaggedValue(doc, "BUSINESS_CATEGORY_TYPE", "Column", "a" + id++));
+            Element attribute = doc.createElement("CWM:Attribute"); //$NON-NLS-1$
+            attribute.setAttribute("name", col.getId()); //$NON-NLS-1$
+            attribute.setAttribute("xmi.id", "a" + id++); //$NON-NLS-1$ //$NON-NLS-2$
+            modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
+            modelElement.appendChild(createTaggedValue(doc, "BUSINESS_CATEGORY_TYPE", "Column", "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             attribute.appendChild(modelElement);
             cOwnedElement.appendChild(attribute);
           }
@@ -353,70 +351,70 @@ public class XmiParser {
         }
         
         for (LogicalRelationship rel : model.getLogicalRelationships()) {
-          Element keyRel = doc.createElement("CWM:KeyRelationship");
-          keyRel.setAttribute("xmi.id", "a" + id++);
-          Element modelElement = doc.createElement("CWM:ModelElement.taggedValue");
+          Element keyRel = doc.createElement("CWM:KeyRelationship"); //$NON-NLS-1$
+          keyRel.setAttribute("xmi.id", "a" + id++); //$NON-NLS-1$ //$NON-NLS-2$
+          Element modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
           keyRel.appendChild(modelElement);
-          modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_TYPE", rel.getRelationshipType().getType(), "a" + id++));
+          modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_TYPE", rel.getRelationshipType().getType(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
           // check for nulls?
-          modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_FIELDNAME_CHILD", rel.getToColumn().getId(), "a" + id++));
-          modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_FIELDNAME_PARENT", rel.getFromColumn().getId(), "a" + id++));
-          modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_TABLENAME_CHILD", rel.getToTable().getId(), "a" + id++));
-          modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_TABLENAME_PARENT", rel.getFromTable().getId(), "a" + id++));
+          modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_FIELDNAME_CHILD", rel.getToColumn().getId(), "a" + id++));//$NON-NLS-1$ //$NON-NLS-2$
+          modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_FIELDNAME_PARENT", rel.getFromColumn().getId(), "a" + id++));//$NON-NLS-1$ //$NON-NLS-2$
+          modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_TABLENAME_CHILD", rel.getToTable().getId(), "a" + id++));//$NON-NLS-1$ //$NON-NLS-2$
+          modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_TABLENAME_PARENT", rel.getFromTable().getId(), "a" + id++));//$NON-NLS-1$ //$NON-NLS-2$
           if (rel.isComplex()) {
-            modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_IS_COMPLEX", "Y", "a" + id++));
-            modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_COMPLEX_JOIN", rel.getComplexJoin(), "a" + id++));
+            modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_IS_COMPLEX", "Y", "a" + id++));//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_COMPLEX_JOIN", rel.getComplexJoin(), "a" + id++));//$NON-NLS-1$ //$NON-NLS-2$
           }
           if (rel.getDescription() != null) {
             for (String locale : rel.getDescription().getLocales()) {
-              modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_DESCRIPTION", rel.getDescription(locale), "a" + id++));
+              modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_DESCRIPTION", rel.getDescription(locale), "a" + id++));//$NON-NLS-1$ //$NON-NLS-2$
               break;
             }
           }
           if (rel.getJoinOrderKey() != null) {
-            modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_JOIN_ORDER_KEY", rel.getJoinOrderKey(), "a" + id++));
+            modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_JOIN_ORDER_KEY", rel.getJoinOrderKey(), "a" + id++));//$NON-NLS-1$ //$NON-NLS-2$
           }
           ownedElement.appendChild(keyRel);
         }
         
-        Element sdo = doc.createElement("CWMMDB:Schema.dimensionedObject");
-        Element sd = doc.createElement("CWMMDB:Schema.dimension");
+        Element sdo = doc.createElement("CWMMDB:Schema.dimensionedObject"); //$NON-NLS-1$
+        Element sd = doc.createElement("CWMMDB:Schema.dimension"); //$NON-NLS-1$
         mdbSchema.appendChild(sdo);
         mdbSchema.appendChild(sd);
         for (LogicalTable table : model.getLogicalTables()) {
-          Element dim = doc.createElement("CWMMDB:Dimension");
+          Element dim = doc.createElement("CWMMDB:Dimension"); //$NON-NLS-1$
           sd.appendChild(dim);
-          dim.setAttribute("isAbstract", "false");
-          dim.setAttribute("name", table.getId());
-          String tblidstr = "a" + id++;
-          dim.setAttribute("xmi.id", tblidstr);
-          id = createDescriptions(doc, table, "CWMMDB:Dimension", tblidstr, allDescriptions, id);
-          Element modelElement = doc.createElement("CWM:ModelElement.taggedValue");
-          if (table.getProperty("__LEGACY_TABLE_IS_DRAWN") != null) {
-            modelElement.appendChild(createTaggedValue(doc, "TABLE_IS_DRAWN", (String)table.getProperty("__LEGACY_TABLE_IS_DRAWN"), "a" + id));
+          dim.setAttribute("isAbstract", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+          dim.setAttribute("name", table.getId()); //$NON-NLS-1$
+          String tblidstr = "a" + id++; //$NON-NLS-1$
+          dim.setAttribute("xmi.id", tblidstr); //$NON-NLS-1$
+          id = createDescriptions(doc, table, "CWMMDB:Dimension", tblidstr, allDescriptions, id); //$NON-NLS-1$
+          Element modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
+          if (table.getProperty("__LEGACY_TABLE_IS_DRAWN") != null) { //$NON-NLS-1$
+            modelElement.appendChild(createTaggedValue(doc, "TABLE_IS_DRAWN", (String)table.getProperty("__LEGACY_TABLE_IS_DRAWN"), "a" + id)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
           }
-          if (table.getProperty("__LEGACY_TAG_POSITION_Y") != null) {
-            modelElement.appendChild(createTaggedValue(doc, "TAG_POSITION_Y", (String)table.getProperty("__LEGACY_TAG_POSITION_Y"), "a" + id));
+          if (table.getProperty("__LEGACY_TAG_POSITION_Y") != null) { //$NON-NLS-1$
+            modelElement.appendChild(createTaggedValue(doc, "TAG_POSITION_Y", (String)table.getProperty("__LEGACY_TAG_POSITION_Y"), "a" + id)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
           }
-          if (table.getProperty("__LEGACY_TAG_POSITION_X") != null) {
-            modelElement.appendChild(createTaggedValue(doc, "TAG_POSITION_X", (String)table.getProperty("__LEGACY_TAG_POSITION_X"), "a" + id));
+          if (table.getProperty("__LEGACY_TAG_POSITION_X") != null) { //$NON-NLS-1$
+            modelElement.appendChild(createTaggedValue(doc, "TAG_POSITION_X", (String)table.getProperty("__LEGACY_TAG_POSITION_X"), "a" + id)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
           }
           
-          modelElement.appendChild(createTaggedValue(doc, "BUSINESS_TABLE_PHYSICAL_TABLE_NAME", table.getPhysicalTable().getId(), "a" + id));
+          modelElement.appendChild(createTaggedValue(doc, "BUSINESS_TABLE_PHYSICAL_TABLE_NAME", table.getPhysicalTable().getId(), "a" + id)); //$NON-NLS-1$ //$NON-NLS-2$
           dim.appendChild(modelElement);
-          Element dimObjs = doc.createElement("CWMMDB:Dimension.dimensionedObject");
+          Element dimObjs = doc.createElement("CWMMDB:Dimension.dimensionedObject"); //$NON-NLS-1$
           dim.appendChild(dimObjs);
           
           for (LogicalColumn column : table.getLogicalColumns()) {
-            Element dimObj = doc.createElement("CWMMDB:DimensionedObject");
+            Element dimObj = doc.createElement("CWMMDB:DimensionedObject"); //$NON-NLS-1$
             sdo.appendChild(dimObj);
-            dimObj.setAttribute("name", column.getId());
-            idstr = "a" + id++;
-            id = createDescriptions(doc, column, "CWMMDB:DimensionedObject", idstr, allDescriptions, id);
-            dimObj.setAttribute("xmi.id", idstr);
-            modelElement = doc.createElement("CWM:ModelElement.taggedValue");
-            modelElement.appendChild(createTaggedValue(doc, "BUSINESS_COLUMN_BUSINESS_TABLE", column.getLogicalTable().getId(), "a" + id++));
-            modelElement.appendChild(createTaggedValue(doc, "BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME", column.getPhysicalColumn().getId(), "a" + id++));
+            dimObj.setAttribute("name", column.getId()); //$NON-NLS-1$
+            idstr = "a" + id++; //$NON-NLS-1$
+            id = createDescriptions(doc, column, "CWMMDB:DimensionedObject", idstr, allDescriptions, id); //$NON-NLS-1$
+            dimObj.setAttribute("xmi.id", idstr); //$NON-NLS-1$
+            modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
+            modelElement.appendChild(createTaggedValue(doc, "BUSINESS_COLUMN_BUSINESS_TABLE", column.getLogicalTable().getId(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
+            modelElement.appendChild(createTaggedValue(doc, "BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME", column.getPhysicalColumn().getId(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
             dimObj.appendChild(modelElement);
             /*
             <CWMMDB:DimensionedObject.dimension>
@@ -424,15 +422,15 @@ public class XmiParser {
             </CWMMDB:DimensionedObject.dimension>
              */
             
-            Element parentRoot = doc.createElement("CWMMDB:DimensionedObject.dimension");
-            Element parent = doc.createElement("CWMMDB:Dimension");
-            parent.setAttribute("xmi.idref", tblidstr);
+            Element parentRoot = doc.createElement("CWMMDB:DimensionedObject.dimension"); //$NON-NLS-1$
+            Element parent = doc.createElement("CWMMDB:Dimension"); //$NON-NLS-1$
+            parent.setAttribute("xmi.idref", tblidstr); //$NON-NLS-1$
             dimObj.appendChild(parentRoot);
             parentRoot.appendChild(parent);
             
             // CWMMDB:DimensionedObject xmi.idref="a1365"/>
-            Element dimObjLink = doc.createElement("CWMMDB:DimensionedObject");
-            dimObjLink.setAttribute("xmi.idref", idstr);
+            Element dimObjLink = doc.createElement("CWMMDB:DimensionedObject"); //$NON-NLS-1$
+            dimObjLink.setAttribute("xmi.idref", idstr); //$NON-NLS-1$
             dimObjs.appendChild(dimObjLink);
           }
         }
@@ -469,26 +467,26 @@ public class XmiParser {
        */
       if (val instanceof String) {
         if (key.equals(SqlPhysicalColumn.TARGET_COLUMN)) {
-          key = "formula";
+          key = "formula"; //$NON-NLS-1$
         }
         String str = (String)val;
         body = str;
-        type = "String";
+        type = "String"; //$NON-NLS-1$
       } else if (val instanceof Boolean) {
         Boolean bool = (Boolean)val;
-        type = "Boolean";
-        body = bool.booleanValue() ? "Y" : "N";
+        type = "Boolean"; //$NON-NLS-1$
+        body = bool.booleanValue() ? "Y" : "N"; //$NON-NLS-1$ //$NON-NLS-2$
       } else if (val instanceof Color) {
         Color c = (Color)val;
         ColorSettings cs = new ColorSettings(c.getRed(), c.getGreen(), c.getBlue());
         body = cs.toString();
-        type = "Color";
+        type = "Color"; //$NON-NLS-1$
       } else if (val instanceof URL) {
         body = val.toString();
-        type = "URL";
+        type = "URL"; //$NON-NLS-1$
       } else if (val instanceof org.pentaho.metadata.model.concept.types.ColumnWidth) {
         org.pentaho.metadata.model.concept.types.ColumnWidth ncw = (org.pentaho.metadata.model.concept.types.ColumnWidth)val;
-        type = "ColumnWidth";
+        type = "ColumnWidth"; //$NON-NLS-1$
         ColumnWidth cw = new ColumnWidth(ncw.getType().ordinal(), ncw.getWidth());
         //             ColumnWidth cw = ColumnWidth.fromString(body);
 //        WidthType cwt = WidthType.values()[cw.getType()];
@@ -496,7 +494,7 @@ public class XmiParser {
 //        concept.setProperty(name, ncw);
         body = cw.toString();
       } else if (val instanceof Double) {
-        type = "Number";
+        type = "Number"; //$NON-NLS-1$
         BigDecimal bd = new BigDecimal((Double)val);
         body = bd.toString();
       } else if (val instanceof Alignment) {
@@ -505,7 +503,7 @@ public class XmiParser {
         Alignment alignment = (Alignment)val;
         AlignmentSettings as = AlignmentSettings.types[alignment.ordinal()];
         body = as.toString();
-        type = "Alignment";
+        type = "Alignment"; //$NON-NLS-1$
       } else if (val instanceof org.pentaho.metadata.model.concept.security.Security) {
         org.pentaho.metadata.model.concept.security.Security security = (org.pentaho.metadata.model.concept.security.Security)val;
         Map<org.pentaho.pms.schema.security.SecurityOwner, Integer> map = new HashMap<org.pentaho.pms.schema.security.SecurityOwner, Integer>();
@@ -515,7 +513,7 @@ public class XmiParser {
         }
         Security legacySecurity = new Security(map);
         body = legacySecurity.toXML();
-        type = "Security";
+        type = "Security"; //$NON-NLS-1$
       } else if (val instanceof RowLevelSecurity) {
         RowLevelSecurity nrls = (RowLevelSecurity)val;
         org.pentaho.pms.schema.security.RowLevelSecurity rls = new org.pentaho.pms.schema.security.RowLevelSecurity();
@@ -529,71 +527,70 @@ public class XmiParser {
         rls.setRoleBasedConstraintMap(roleBasedConstraintMap);
         
         body = rls.toXML();
-        type = "RowLevelSecurity";
+        type = "RowLevelSecurity"; //$NON-NLS-1$
       } else if (val instanceof Font) {
-        ConceptPropertyFont font = (ConceptPropertyFont)ThinModelConverter.convertPropertyToLegacy("font", val);
+        ConceptPropertyFont font = (ConceptPropertyFont)ThinModelConverter.convertPropertyToLegacy("font", val); //$NON-NLS-1$
         body = ((FontSettings)font.getValue()).toString();
-        type = "Font";
+        type = "Font"; //$NON-NLS-1$
       } else if (val instanceof TargetTableType) {
         TargetTableType ttt = (TargetTableType)val;
         if (ttt == TargetTableType.TABLE) {
           // do nothing
         } else {
-          type = "TargetTableType";
+          type = "TargetTableType"; //$NON-NLS-1$
           body = ttt.toString();
         }
       } else if (val instanceof TableType) {
         TableType tt = (TableType)val;
         body = TableTypeSettings.getTypeDescriptions()[tt.ordinal()];
-        type = "TableType";
-        // concept.setProperty(name, TableType.values()[TableTypeSettings.getType(body).getType()]);
+        type = "TableType"; //$NON-NLS-1$
       } else if (val instanceof LocalizedString) {
         // need to add description for each locale
         LocalizedString lstr = (LocalizedString)val;
         for (String locale : lstr.getLocales()) {
-          createDescription(doc, lstr.getLocalizedString(locale), key, "LocString", locale, id++, parentTag, idstr, allDescriptions);
+          createDescription(doc, lstr.getLocalizedString(locale), key, "LocString", locale, id++, parentTag, idstr, allDescriptions); //$NON-NLS-1$
         }
       } else if (val instanceof TargetColumnType) {
         TargetColumnType tct = (TargetColumnType)val;
-        body = tct == TargetColumnType.OPEN_FORMULA ? "Y": "N";
-        key = "exact";
-        type = "Boolean";
+        body = tct == TargetColumnType.OPEN_FORMULA ? "Y": "N"; //$NON-NLS-1$ //$NON-NLS-2$
+        key = "exact"; //$NON-NLS-1$
+        type = "Boolean"; //$NON-NLS-1$
       } else if (val instanceof FieldType) {
         FieldType ft = (FieldType)val;
         // concept.setProperty(name, FieldType.values()[FieldTypeSettings.getType(body).getType()]);
         body = FieldTypeSettings.getTypeDescriptions()[ft.ordinal()];
-        type = "FieldType";
+        type = "FieldType"; //$NON-NLS-1$
       } else if (val instanceof DataType) {
         body = DataTypeSettings.types[((DataType)val).ordinal()].getCode();
-        type = "DataType";
+        type = "DataType"; //$NON-NLS-1$
       } else if (val instanceof AggregationType) {
         AggregationType at = (AggregationType)val;
         body = AggregationSettings.types[at.ordinal()].getCode();
-        type = "Aggregation";
+        type = "Aggregation"; //$NON-NLS-1$
       } else if (val instanceof List) {
         List objs = (List)val;
         if (objs.size() == 0) {
           // assume this is an agg list
           ConceptPropertyAggregationList list = new ConceptPropertyAggregationList(key, new ArrayList<AggregationSettings>());
-          type = "AggregationList";
+          type = "AggregationList"; //$NON-NLS-1$
           body = list.toXML();
         } else {
           if (objs.get(0) instanceof AggregationType) {
             List<AggregationType> aggTypes = (List<AggregationType>)objs;
-            type = "AggregationList";
+            type = "AggregationList"; //$NON-NLS-1$
             List<AggregationSettings> aggSettings = new ArrayList<AggregationSettings>();
             for (AggregationType aggType : aggTypes) {
               aggSettings.add(AggregationSettings.types[aggType.ordinal()]);
             }
             ConceptPropertyAggregationList list = new ConceptPropertyAggregationList(key, aggSettings);
-            type = "AggregationList";
+            type = "AggregationList"; //$NON-NLS-1$
             body = list.toXML();
           } else {
-            logger.error("Unsupported Concept Property List: " + objs.get(0).getClass());
+            logger.error(Messages.getErrorString("XmiParser.ERROR_0004_UNSUPPORTED_CONCEPT_PROPERTY_LIST", objs.get(0).getClass())); //$NON-NLS-1$
           }
         }
       } else {
-        logger.error("Unsupported Concept Property: " + val.getClass());
+        logger.error(Messages.getErrorString("XmiParser.ERROR_0005_UNSUPPORTED_CONCEPT_PROPERTY",val.getClass())); //$NON-NLS-1$
       }
       if (type != null) {
         createDescription(doc, body, key, type, null, id++, parentTag, idstr, allDescriptions);
@@ -603,33 +600,33 @@ public class XmiParser {
   }
   
   protected void createDescription(Document doc, String body, String key, String type, String locale, int id, String parentTag, String idstr, List<Element> allDescriptions) {
-    Element desc = doc.createElement("CWM:Description");
-    desc.setAttribute("body", body);
+    Element desc = doc.createElement("CWM:Description"); //$NON-NLS-1$
+    desc.setAttribute("body", body); //$NON-NLS-1$
     if (locale != null) {
-      desc.setAttribute("language", locale);
+      desc.setAttribute("language", locale); //$NON-NLS-1$
     }
-    desc.setAttribute("name", key);
-    desc.setAttribute("type", type);
-    desc.setAttribute("xmi.id", "a" + id++);
-    Element modelElement = doc.createElement("CWM:Description.modelElement");
+    desc.setAttribute("name", key); //$NON-NLS-1$
+    desc.setAttribute("type", type); //$NON-NLS-1$
+    desc.setAttribute("xmi.id", "a" + id++); //$NON-NLS-1$ //$NON-NLS-2$
+    Element modelElement = doc.createElement("CWM:Description.modelElement"); //$NON-NLS-1$
     Element parent = doc.createElement(parentTag);
     modelElement.appendChild(parent);
-    parent.setAttribute("xmi.idref", idstr);
+    parent.setAttribute("xmi.idref", idstr); //$NON-NLS-1$
     desc.appendChild(modelElement);
     allDescriptions.add(desc);    
   }
   
   protected Element createTaggedValue(Document doc, String tagName, String value, String id) {
-    Element taggedValue = doc.createElement("CWM:TaggedValue");
-    taggedValue.setAttribute("tag", tagName);
-    taggedValue.setAttribute("value", value);
-    taggedValue.setAttribute("xmi.id", id);
+    Element taggedValue = doc.createElement("CWM:TaggedValue"); //$NON-NLS-1$
+    taggedValue.setAttribute("tag", tagName); //$NON-NLS-1$
+    taggedValue.setAttribute("value", value); //$NON-NLS-1$
+    taggedValue.setAttribute("xmi.id", id); //$NON-NLS-1$
     return taggedValue;
   }
   
   protected void addTextElement(Document doc, Element element, String elementName, String text) {
-    Element childElement = doc.createElement(elementName); //$NON-NLS-1$
-    childElement.appendChild(doc.createTextNode(text)); //$NON-NLS-1$ //$NON-NLS-2$
+    Element childElement = doc.createElement(elementName);
+    childElement.appendChild(doc.createTextNode(text));
     element.appendChild(childElement);
   }
   
@@ -657,7 +654,7 @@ public class XmiParser {
       throw new PentahoMetadataException(iex);
     }
     Element content = null;
-    NodeList list = doc.getElementsByTagName("XMI.content");
+    NodeList list = doc.getElementsByTagName("XMI.content"); //$NON-NLS-1$
     for (int i = 0; i < list.getLength(); i++) {
       content = (Element)list.item(i);
       break;
@@ -677,22 +674,24 @@ public class XmiParser {
     for (int i = 0; i < list.getLength(); i++) {
       Node node = list.item(i);
       if (node.getNodeType() == Node.ELEMENT_NODE) {
-        if (node.getNodeName().equals("CWM:Class")) {
+        if (node.getNodeName().equals("CWM:Class")) { //$NON-NLS-1$
           concepts.add((Element)node);
-        } else if (node.getNodeName().equals("CWM:Parameter")) {
+        } else if (node.getNodeName().equals("CWM:Parameter")) { //$NON-NLS-1$
           parameters.add((Element)node);
-        } else if (node.getNodeName().equals("CWMRDB:Catalog")) {
+        } else if (node.getNodeName().equals("CWMRDB:Catalog")) { //$NON-NLS-1$
           datasources.add((Element)node);
-        } else if (node.getNodeName().equals("CWMRDB:Table")) {
+        } else if (node.getNodeName().equals("CWMRDB:Table")) { //$NON-NLS-1$
           physicalTables.add((Element)node);
-        } else if (node.getNodeName().equals("CWMMDB:Schema")) {
+        } else if (node.getNodeName().equals("CWMMDB:Schema")) { //$NON-NLS-1$
           schemas.add((Element)node);
-        } else if (node.getNodeName().equals("CWM:Description")) {
+        } else if (node.getNodeName().equals("CWM:Description")) { //$NON-NLS-1$
           descriptions.add((Element)node);
-        } else if (node.getNodeName().equals("CWM:Event")) {
+        } else if (node.getNodeName().equals("CWM:Event")) { //$NON-NLS-1$
           events.add((Element)node);
         } else {
-          logger.debug("IGNORED: " + node.getNodeName());
+          if (logger.isDebugEnabled()) {
+            logger.debug("Ignoring root : " + node.getNodeName()); //$NON-NLS-1$
+          }
         }
       }
     }
@@ -701,9 +700,9 @@ public class XmiParser {
     Map<String, Concept> xmiConceptMap = new HashMap<String, Concept>();
     
     for (Element event : events) {
-      Map<String, String> kvp = getKeyValuePairs(event, "CWM:TaggedValue", "tag", "value");
+      Map<String, String> kvp = getKeyValuePairs(event, "CWM:TaggedValue", "tag", "value"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       for (String key : kvp.keySet()) {
-        domain.setProperty("LEGACY_EVENT_" + key, kvp.get(key));
+        domain.setProperty("LEGACY_EVENT_" + key, kvp.get(key)); //$NON-NLS-1$
       }
     }
     populateLocales(domain, parameters);
@@ -717,12 +716,12 @@ public class XmiParser {
     </CWM:Class>
        */
       Concept c = new Concept();
-      String name = concept.getAttribute("name");
+      String name = concept.getAttribute("name"); //$NON-NLS-1$
       c.setId(name);
-      String xmiId = concept.getAttribute("xmi.id");
-      String parentName = getKeyValue(concept, "CWM:TaggedValue", "tag", "value", "CONCEPT_PARENT_NAME");
+      String xmiId = concept.getAttribute("xmi.id"); //$NON-NLS-1$
+      String parentName = getKeyValue(concept, "CWM:TaggedValue", "tag", "value", "CONCEPT_PARENT_NAME"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
       if (parentName != null) {
-        c.setProperty("__TMP_CONCEPT_PARENT_NAME", parentName);
+        c.setProperty("__TMP_CONCEPT_PARENT_NAME", parentName); //$NON-NLS-1$
       }
       xmiConceptMap.put(xmiId, c);
       domain.addConcept(c);
@@ -730,9 +729,9 @@ public class XmiParser {
     
     // second pass to bind parents to children
     for (Concept concept : domain.getConcepts()) {
-      String parentName = (String)concept.getChildProperty("__TMP_CONCEPT_PARENT_NAME");
+      String parentName = (String)concept.getChildProperty("__TMP_CONCEPT_PARENT_NAME"); //$NON-NLS-1$
       if (parentName != null) {
-        concept.removeChildProperty("__TMP_CONCEPT_PARENT_NAME");
+        concept.removeChildProperty("__TMP_CONCEPT_PARENT_NAME"); //$NON-NLS-1$
         concept.setParentConcept(domain.findConcept(parentName));
       }
       
@@ -785,17 +784,17 @@ public class XmiParser {
       SqlDataSource sqlDataSource = new SqlDataSource();
       sqlPhysicalModel.setDatasource(sqlDataSource);
       
-      String name = datasource.getAttribute("name");
+      String name = datasource.getAttribute("name"); //$NON-NLS-1$
       sqlPhysicalModel.setId(name);
-      Map<String, String> kvp = getKeyValuePairs(datasource, "CWM:TaggedValue", "tag", "value");
+      Map<String, String> kvp = getKeyValuePairs(datasource, "CWM:TaggedValue", "tag", "value"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       
-      sqlDataSource.setType(DataSourceType.values()[DatabaseMeta.getAccessType(kvp.get("DATABASE_ACCESS"))]);
-      sqlDataSource.setDatabaseName(kvp.get("DATABASE_DATABASE"));
-      sqlDataSource.setHostname(kvp.get("DATABASE_SERVER"));
-      sqlDataSource.setPort(kvp.get("DATABASE_PORT"));
-      sqlDataSource.setUsername(kvp.get("DATABASE_USERNAME"));
-      sqlDataSource.setPassword(kvp.get("DATABASE_PASSWORD"));
-      sqlDataSource.setDialectType(kvp.get("DATABASE_TYPE"));
+      sqlDataSource.setType(DataSourceType.values()[DatabaseMeta.getAccessType(kvp.get("DATABASE_ACCESS"))]); //$NON-NLS-1$
+      sqlDataSource.setDatabaseName(kvp.get("DATABASE_DATABASE")); //$NON-NLS-1$
+      sqlDataSource.setHostname(kvp.get("DATABASE_SERVER")); //$NON-NLS-1$
+      sqlDataSource.setPort(kvp.get("DATABASE_PORT")); //$NON-NLS-1$
+      sqlDataSource.setUsername(kvp.get("DATABASE_USERNAME")); //$NON-NLS-1$
+      sqlDataSource.setPassword(kvp.get("DATABASE_PASSWORD")); //$NON-NLS-1$
+      sqlDataSource.setDialectType(kvp.get("DATABASE_TYPE")); //$NON-NLS-1$
       
       // And now load the attributes...
       for (String tag : kvp.keySet()) {
@@ -809,48 +808,48 @@ public class XmiParser {
     }
     
     for (Element physicalTable : physicalTables) {
-      String name = physicalTable.getAttribute("name");
+      String name = physicalTable.getAttribute("name"); //$NON-NLS-1$
       Element tagged = null;
       Element owned = null;
       NodeList ptcn = physicalTable.getChildNodes();
       for (int i = 0; i < ptcn.getLength(); i++) {
         if (ptcn.item(i).getNodeType() == Node.ELEMENT_NODE) {
-          if (ptcn.item(i).getNodeName().equals("CWM:ModelElement.taggedValue")) {
+          if (ptcn.item(i).getNodeName().equals("CWM:ModelElement.taggedValue")) { //$NON-NLS-1$
             tagged = (Element)ptcn.item(i);
           }
-          if (ptcn.item(i).getNodeName().equals("CWM:Namespace.ownedElement")) {
+          if (ptcn.item(i).getNodeName().equals("CWM:Namespace.ownedElement")) { //$NON-NLS-1$
             owned = (Element)ptcn.item(i);
           }
         }
       }
-      String databaseName = getKeyValue(tagged, "CWM:TaggedValue", "tag", "value", "TABLE_TARGET_DATABASE_NAME");
+      String databaseName = getKeyValue(tagged, "CWM:TaggedValue", "tag", "value", "TABLE_TARGET_DATABASE_NAME"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
       SqlPhysicalModel model = (SqlPhysicalModel)domain.findPhysicalModel(databaseName);
       SqlPhysicalTable table = new SqlPhysicalTable(model);
-      table.setId(physicalTable.getAttribute("name"));
-      xmiConceptMap.put(physicalTable.getAttribute("xmi.id"), table);
+      table.setId(physicalTable.getAttribute("name")); //$NON-NLS-1$
+      xmiConceptMap.put(physicalTable.getAttribute("xmi.id"), table); //$NON-NLS-1$
       model.addPhysicalTable(table);
-      NodeList columns = owned.getElementsByTagName("CWMRDB:Column");
+      NodeList columns = owned.getElementsByTagName("CWMRDB:Column"); //$NON-NLS-1$
       for (int i = 0; i < columns.getLength(); i++) {
         Element colelement = (Element)columns.item(i);
         
         SqlPhysicalColumn col = new SqlPhysicalColumn(table);
-        col.setId(colelement.getAttribute("name"));
-        xmiConceptMap.put(colelement.getAttribute("xmi.id"), col);
+        col.setId(colelement.getAttribute("name")); //$NON-NLS-1$
+        xmiConceptMap.put(colelement.getAttribute("xmi.id"), col); //$NON-NLS-1$
         table.addPhysicalColumn(col);
         NodeList pccn = colelement.getChildNodes();
         for (int j = 0; j < pccn.getLength(); j++) {
           if (pccn.item(j).getNodeType() == Node.ELEMENT_NODE) {
-            if (pccn.item(j).getNodeName().equals("CWM:ModelElement.taggedValue")) {
+            if (pccn.item(j).getNodeName().equals("CWM:ModelElement.taggedValue")) { //$NON-NLS-1$
               tagged = (Element)pccn.item(j);
             }
           }
         }
         
-        String conceptParentName = getKeyValue(tagged, "CWM:TaggedValue", "tag", "value", "CONCEPT_PARENT_NAME");
+        String conceptParentName = getKeyValue(tagged, "CWM:TaggedValue", "tag", "value", "CONCEPT_PARENT_NAME"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         if (conceptParentName != null) {
           Concept parent = domain.findConcept(conceptParentName);
           if (parent == null) {
-            logger.error("failed to located concept : " + conceptParentName);
+            logger.error(Messages.getErrorString("XmiParser.ERROR_0006_FAILED_TO_LOCATE_CONCEPT", conceptParentName)); //$NON-NLS-1$
           } else {
             col.setParentConcept(parent);
           }
@@ -881,8 +880,8 @@ public class XmiParser {
     for (Element schema : schemas) {
       LogicalModel logicalModel = new LogicalModel();
       
-      logicalModel.setId(schema.getAttribute("name"));
-      xmiConceptMap.put(schema.getAttribute("xmi.id"), logicalModel);
+      logicalModel.setId(schema.getAttribute("name")); //$NON-NLS-1$
+      xmiConceptMap.put(schema.getAttribute("xmi.id"), logicalModel); //$NON-NLS-1$
       
       domain.addLogicalModel(logicalModel);
       
@@ -892,26 +891,28 @@ public class XmiParser {
       NodeList schemaChildren = schema.getChildNodes();
       for (int i = 0; i < schemaChildren.getLength(); i++) {
         if (schemaChildren.item(i).getNodeType() == Node.ELEMENT_NODE) {
-          if (schemaChildren.item(i).getNodeName().equals("CWMMDB:Schema.dimension")) {
+          if (schemaChildren.item(i).getNodeName().equals("CWMMDB:Schema.dimension")) { //$NON-NLS-1$
             dimension = (Element)schemaChildren.item(i);
-          } else if (schemaChildren.item(i).getNodeName().equals("CWMMDB:Schema.dimensionedObject")) {
+          } else if (schemaChildren.item(i).getNodeName().equals("CWMMDB:Schema.dimensionedObject")) { //$NON-NLS-1$
             dimensionedObject = (Element)schemaChildren.item(i);
-          } else if (schemaChildren.item(i).getNodeName().equals("CWM:Namespace.ownedElement")) {
+          } else if (schemaChildren.item(i).getNodeName().equals("CWM:Namespace.ownedElement")) { //$NON-NLS-1$
             ownedElement = (Element)schemaChildren.item(i);
           } else {
-            System.out.println("SCHEMA IGNORED: " + schemaChildren.item(i).getNodeName());
+            if (logger.isDebugEnabled()) {
+              logger.debug("Schema ignored: " + schemaChildren.item(i).getNodeName()); //$NON-NLS-1$
+            }
           }
         }
       }
       
       // first read all biz tables
-      NodeList bizTables = dimension.getElementsByTagName("CWMMDB:Dimension");
+      NodeList bizTables = dimension.getElementsByTagName("CWMMDB:Dimension"); //$NON-NLS-1$
       for (int i = 0; i < bizTables.getLength(); i++) {
         Element biztable = (Element)bizTables.item(i);
         LogicalTable table = new LogicalTable();
-        table.setId(biztable.getAttribute("name"));
-        Map<String, String> nvp = getKeyValuePairs(biztable, "CWM:TaggedValue", "tag", "value");
-        String pt = nvp.get("BUSINESS_TABLE_PHYSICAL_TABLE_NAME");
+        table.setId(biztable.getAttribute("name")); //$NON-NLS-1$
+        Map<String, String> nvp = getKeyValuePairs(biztable, "CWM:TaggedValue", "tag", "value"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        String pt = nvp.get("BUSINESS_TABLE_PHYSICAL_TABLE_NAME"); //$NON-NLS-1$
         IPhysicalTable physTable = domain.findPhysicalTable(pt);
         
         // set the model's physical table if not already set and if available
@@ -921,16 +922,16 @@ public class XmiParser {
         table.setPhysicalTable(physTable);
         table.setLogicalModel(logicalModel);
         // store legacy values
-        if (nvp.containsKey("TABLE_IS_DRAWN")) {
-          table.setProperty("__LEGACY_TABLE_IS_DRAWN", nvp.get("TABLE_IS_DRAWN"));
+        if (nvp.containsKey("TABLE_IS_DRAWN")) { //$NON-NLS-1$
+          table.setProperty("__LEGACY_TABLE_IS_DRAWN", nvp.get("TABLE_IS_DRAWN")); //$NON-NLS-1$ //$NON-NLS-2$
         }
-        if (nvp.containsKey("TAG_POSITION_Y")) {
-          table.setProperty("__LEGACY_TAG_POSITION_Y", nvp.get("TAG_POSITION_Y"));
+        if (nvp.containsKey("TAG_POSITION_Y")) { //$NON-NLS-1$
+          table.setProperty("__LEGACY_TAG_POSITION_Y", nvp.get("TAG_POSITION_Y")); //$NON-NLS-1$ //$NON-NLS-2$
         }
-        if (nvp.containsKey("TAG_POSITION_X")) {
-          table.setProperty("__LEGACY_TAG_POSITION_X", nvp.get("TAG_POSITION_X"));
+        if (nvp.containsKey("TAG_POSITION_X")) { //$NON-NLS-1$
+          table.setProperty("__LEGACY_TAG_POSITION_X", nvp.get("TAG_POSITION_X")); //$NON-NLS-1$ //$NON-NLS-2$
         }
-        xmiConceptMap.put(biztable.getAttribute("xmi.id"), table);
+        xmiConceptMap.put(biztable.getAttribute("xmi.id"), table); //$NON-NLS-1$
         logicalModel.addLogicalTable(table);
         /*
          <CWMMDB:Dimension isAbstract="false" name="BT_EMPLOYEES_EMPLOYEES" xmi.id="a21"> <- Biz table
@@ -949,7 +950,7 @@ public class XmiParser {
       }
             
       // second read all biz cols
-      NodeList bizcols = dimensionedObject.getElementsByTagName("CWMMDB:DimensionedObject");
+      NodeList bizcols = dimensionedObject.getElementsByTagName("CWMMDB:DimensionedObject"); //$NON-NLS-1$
       for (int i = 0; i < bizcols.getLength(); i++) {
         /*
          <CWMMDB:DimensionedObject name="BC_EMPLOYEES_JOBTITLE" xmi.id="a1344">
@@ -964,12 +965,12 @@ public class XmiParser {
          */
         Element bizcol = (Element)bizcols.item(i);
         LogicalColumn col = new LogicalColumn();
-        col.setId(bizcol.getAttribute("name"));
-        xmiConceptMap.put(bizcol.getAttribute("xmi.id"), col);
+        col.setId(bizcol.getAttribute("name")); //$NON-NLS-1$
+        xmiConceptMap.put(bizcol.getAttribute("xmi.id"), col); //$NON-NLS-1$
         
-        Map<String, String> nvp = getKeyValuePairs(bizcol, "CWM:TaggedValue", "tag", "value");
-        String biztbl = nvp.get("BUSINESS_COLUMN_BUSINESS_TABLE");
-        String pcol = nvp.get("BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME");
+        Map<String, String> nvp = getKeyValuePairs(bizcol, "CWM:TaggedValue", "tag", "value"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        String biztbl = nvp.get("BUSINESS_COLUMN_BUSINESS_TABLE"); //$NON-NLS-1$
+        String pcol = nvp.get("BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME"); //$NON-NLS-1$
         LogicalTable parent = logicalModel.findLogicalTable(biztbl);
         col.setLogicalTable(parent);
         parent.addLogicalColumn(col);
@@ -982,7 +983,7 @@ public class XmiParser {
       }
       
       // third read categories 
-      NodeList categories = ownedElement.getElementsByTagName("CWM:Extent");
+      NodeList categories = ownedElement.getElementsByTagName("CWM:Extent"); //$NON-NLS-1$
       for (int i = 0; i < categories.getLength(); i++) {
         /*
          <CWM:Extent name="BC_OFFICES_" xmi.id="a13"> <-- Category
@@ -1006,12 +1007,12 @@ public class XmiParser {
         
         Element category = (Element)categories.item(i);
         Category cat = new Category(logicalModel);
-        cat.setId(category.getAttribute("name"));
-        xmiConceptMap.put(category.getAttribute("xmi.id"), cat);
-        NodeList columns = category.getElementsByTagName("CWM:Attribute");
+        cat.setId(category.getAttribute("name")); //$NON-NLS-1$
+        xmiConceptMap.put(category.getAttribute("xmi.id"), cat); //$NON-NLS-1$
+        NodeList columns = category.getElementsByTagName("CWM:Attribute"); //$NON-NLS-1$
         for (int j = 0; j < columns.getLength(); j++) {
           Element column = (Element)columns.item(j);
-          String name = column.getAttribute("name");
+          String name = column.getAttribute("name"); //$NON-NLS-1$
           LogicalColumn col = logicalModel.findLogicalColumn(name);
           cat.addLogicalColumn(col);
         }
@@ -1021,7 +1022,7 @@ public class XmiParser {
       
       
       // fourth read relationships
-      NodeList rels = ownedElement.getElementsByTagName("CWM:KeyRelationship");
+      NodeList rels = ownedElement.getElementsByTagName("CWM:KeyRelationship"); //$NON-NLS-1$
       for (int i = 0; i < rels.getLength(); i++) {
         Element rel = (Element)rels.item(i);
         /*
@@ -1035,16 +1036,16 @@ public class XmiParser {
           </CWM:ModelElement.taggedValue>
         </CWM:KeyRelationship>
         */
-        Map<String, String> nvp = getKeyValuePairs(rel, "CWM:TaggedValue", "tag", "value");
+        Map<String, String> nvp = getKeyValuePairs(rel, "CWM:TaggedValue", "tag", "value"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         LogicalRelationship relation = new LogicalRelationship();
-        String type = nvp.get("RELATIONSHIP_TYPE");
+        String type = nvp.get("RELATIONSHIP_TYPE"); //$NON-NLS-1$
         RelationshipType reltype = RelationshipType.values()[RelationshipMeta.getType(type)];
         relation.setRelationshipType(reltype);
         
-        String tablechild = nvp.get("RELATIONSHIP_TABLENAME_CHILD"); // to
-        String tableparent = nvp.get("RELATIONSHIP_TABLENAME_PARENT"); // from
-        String fieldchild = nvp.get("RELATIONSHIP_FIELDNAME_CHILD");
-        String fieldparent = nvp.get("RELATIONSHIP_FIELDNAME_PARENT");
+        String tablechild = nvp.get("RELATIONSHIP_TABLENAME_CHILD"); // to //$NON-NLS-1$
+        String tableparent = nvp.get("RELATIONSHIP_TABLENAME_PARENT"); // from //$NON-NLS-1$
+        String fieldchild = nvp.get("RELATIONSHIP_FIELDNAME_CHILD"); //$NON-NLS-1$
+        String fieldparent = nvp.get("RELATIONSHIP_FIELDNAME_PARENT"); //$NON-NLS-1$
 
         relation.setFromTable(logicalModel.findLogicalTable(tableparent));
         if (fieldparent != null) {
@@ -1055,12 +1056,12 @@ public class XmiParser {
           relation.setToColumn(logicalModel.findLogicalColumn(fieldchild));
         }
         
-        relation.setComplex("Y".equals(nvp.get("RELATIONSHIP_IS_COMPLEX")));
-        String val = nvp.get(nvp.get("RELATIONSHIP_COMPLEX_JOIN"));
+        relation.setComplex("Y".equals(nvp.get("RELATIONSHIP_IS_COMPLEX"))); //$NON-NLS-1$ //$NON-NLS-2$
+        String val = nvp.get(nvp.get("RELATIONSHIP_COMPLEX_JOIN")); //$NON-NLS-1$
         if (val != null) {
           relation.setComplexJoin(val);
         }
-        if (nvp.get("RELATIONSHIP_DESCRIPTION") != null) {
+        if (nvp.get("RELATIONSHIP_DESCRIPTION") != null) { //$NON-NLS-1$
           LocalizedString str = new LocalizedString();
           String locale = null;
           if (domain.getLocales().size() >= 0) {
@@ -1068,9 +1069,9 @@ public class XmiParser {
           } else {
             locale = LocaleHelper.getDefaultLocale().toString();
           }
-          str.setString(locale, nvp.get("RELATIONSHIP_DESCRIPTION"));
+          str.setString(locale, nvp.get("RELATIONSHIP_DESCRIPTION")); //$NON-NLS-1$
         }
-        String joinOrderKey = nvp.get("RELATIONSHIP_JOIN_ORDER_KEY");
+        String joinOrderKey = nvp.get("RELATIONSHIP_JOIN_ORDER_KEY"); //$NON-NLS-1$
         if (joinOrderKey != null) {
           relation.setJoinOrderKey(joinOrderKey);
         }
@@ -1159,54 +1160,54 @@ public class XmiParser {
       </CWM:Description.modelElement>
     </CWM:Description>
        */
-      Element modelElem = (Element)description.getElementsByTagName("CWM:Description.modelElement").item(0);
+      Element modelElem = (Element)description.getElementsByTagName("CWM:Description.modelElement").item(0); //$NON-NLS-1$
       NodeList mecn = modelElem.getChildNodes();
       String parentRef = null;
       String type = null;
       for (int i = 0; i < mecn.getLength(); i++) {
         if (mecn.item(i).getNodeType() == Node.ELEMENT_NODE) {
-           parentRef = ((Element)mecn.item(i)).getAttribute("xmi.idref");
+           parentRef = ((Element)mecn.item(i)).getAttribute("xmi.idref"); //$NON-NLS-1$
            // temporary, not really needed
            type = mecn.item(i).getNodeName();
            break;
         }
       }
       if (parentRef == null) {
-        System.out.println("PARENT REF NULL");
+        logger.error(Messages.getErrorString("XmiParser.ERROR_0007_PARENT_REF_NULL")); //$NON-NLS-1$
       } else {
         Concept concept = xmiConceptMap.get(parentRef);
-        String name = description.getAttribute("name");
-        String body = description.getAttribute("body");
+        String name = description.getAttribute("name"); //$NON-NLS-1$
+        String body = description.getAttribute("body"); //$NON-NLS-1$
         if (concept == null) {
-          System.out.println("CANT FIND PARENT: " + type + " : " + parentRef);
+          logger.error(Messages.getErrorString("XmiParser.ERROR_0007_CANNOT_FIND_PARENT", type, parentRef)); //$NON-NLS-1$
         } else {
           // ADD PROPERTY
-          String propType = description.getAttribute("type");
-          if (propType.equals("LocString")) {
+          String propType = description.getAttribute("type"); //$NON-NLS-1$
+          if (propType.equals("LocString")) { //$NON-NLS-1$
             addLocalizedString(description, concept, name, body);
-          } else if (propType.equals("String")) {
+          } else if (propType.equals("String")) { //$NON-NLS-1$
             // <CWM:Description body="" name="mask" type="String" xmi.id="a90">
-            if (name.equals("formula")) {
+            if (name.equals("formula")) { //$NON-NLS-1$
               name = SqlPhysicalColumn.TARGET_COLUMN;
             }
             concept.setProperty(name, body);
-          } else if (propType.equals("Boolean")) {
-            if (name.equals("exact")) {
-              concept.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, "Y".equals(body) ? TargetColumnType.OPEN_FORMULA : TargetColumnType.COLUMN_NAME);
+          } else if (propType.equals("Boolean")) { //$NON-NLS-1$
+            if (name.equals("exact")) { //$NON-NLS-1$
+              concept.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, "Y".equals(body) ? TargetColumnType.OPEN_FORMULA : TargetColumnType.COLUMN_NAME); //$NON-NLS-1$
             } else {
               // <CWM:Description body="N" name="exact" type="Boolean" xmi.id="a92">
-              concept.setProperty(name, new Boolean("Y".equals(body)));
+              concept.setProperty(name, new Boolean("Y".equals(body))); //$NON-NLS-1$
             }
-          } else if (propType.equals("FieldType")) {
+          } else if (propType.equals("FieldType")) { //$NON-NLS-1$
             //     <CWM:Description body="Dimension" name="fieldtype" type="FieldType" xmi.id="a97">
             concept.setProperty(name, FieldType.values()[FieldTypeSettings.getType(body).getType()]);
-          } else if (propType.equals("TableType")) {
+          } else if (propType.equals("TableType")) { //$NON-NLS-1$
             concept.setProperty(name, TableType.values()[TableTypeSettings.getType(body).getType()]);
-          } else if (propType.equals("DataType")) {
+          } else if (propType.equals("DataType")) { //$NON-NLS-1$
             // <CWM:Description body="String,50,-1" name="datatype" type="DataType" xmi.id="a100">
             DataTypeSettings setting = DataTypeSettings.fromString(body);
             concept.setProperty(name, DataType.valueOf(setting.getCode().toUpperCase()));
-          } else if (propType.equals("Security")) {
+          } else if (propType.equals("Security")) { //$NON-NLS-1$
             // <CWM:Description body="&lt;security&gt;&#10;  &lt;owner-rights&gt;&#10;  &lt;owner&gt;&lt;type&gt;user&lt;/type&gt;&lt;name&gt;suzy&lt;/name&gt;&lt;/owner&gt; &lt;rights&gt;31&lt;/rights&gt;&#10;  &lt;/owner-rights&gt;&#10;  &lt;owner-rights&gt;&#10;  &lt;owner&gt;&lt;type&gt;role&lt;/type&gt;&lt;name&gt;Admin&lt;/name&gt;&lt;/owner&gt; &lt;rights&gt;31&lt;/rights&gt;&#10;  &lt;/owner-rights&gt;&#10;&lt;/security&gt;&#10;" name="security" type="Security" xmi.id="a84">
             Security security = Security.fromXML(body);
             Map<SecurityOwner, Integer> map = new HashMap<SecurityOwner, Integer>();
@@ -1216,7 +1217,7 @@ public class XmiParser {
               map.put(ownerObj, val);
             }
             concept.setProperty(name, new org.pentaho.metadata.model.concept.security.Security(map));
-          } else if (propType.equals("RowLevelSecurity")) {
+          } else if (propType.equals("RowLevelSecurity")) { //$NON-NLS-1$
             org.pentaho.pms.schema.security.RowLevelSecurity security = 
               org.pentaho.pms.schema.security.RowLevelSecurity.fromXML(body);
             
@@ -1231,11 +1232,11 @@ public class XmiParser {
             }
             securityObj.setRoleBasedConstraintMap(map);
             concept.setProperty(name, securityObj);
-          } else if (propType.equals("Aggregation")) {
+          } else if (propType.equals("Aggregation")) { //$NON-NLS-1$
             // <CWM:Description body="none" name="aggregation" type="Aggregation" xmi.id="a104">
             
             concept.setProperty(name, AggregationType.values()[AggregationSettings.getType(body).getType()]);
-          } else if (propType.equals("AggregationList")) {
+          } else if (propType.equals("AggregationList")) { //$NON-NLS-1$
             List<AggregationSettings> settings = ConceptPropertyAggregationList.fromXML(body);
             List<AggregationType> aggTypes = new ArrayList<AggregationType>();
             if (settings != null) {
@@ -1244,31 +1245,31 @@ public class XmiParser {
               }
             }
             concept.setProperty(name, aggTypes);
-          } else if (propType.equals("Font")) {
+          } else if (propType.equals("Font")) { //$NON-NLS-1$
             FontSettings font = FontSettings.fromString(body);
             concept.setProperty(name, new Font(font.getName(), font.getHeight(), font.isBold(), font.isItalic()));
-          } else if (propType.equals("Color")) {
+          } else if (propType.equals("Color")) { //$NON-NLS-1$
             ColorSettings color = ColorSettings.fromString(body);
             concept.setProperty(name, new Color(color.getRed(), color.getGreen(), color.getBlue()));
             // TODO: } else if (propType.equals("AggregationList")) {
             // TODO: ALL Others: URL, Number, etc
-          } else if (propType.equals("Alignment")) {
+          } else if (propType.equals("Alignment")) { //$NON-NLS-1$
             AlignmentSettings alignment = AlignmentSettings.fromString(body);
             concept.setProperty(name, Alignment.values()[alignment.getType()]);
-          } else if (propType.equals("Number")) {
+          } else if (propType.equals("Number")) { //$NON-NLS-1$
             BigDecimal bd = new BigDecimal(body);
             concept.setProperty(name, bd.doubleValue());
-          } else if (propType.equals("ColumnWidth")) {
+          } else if (propType.equals("ColumnWidth")) { //$NON-NLS-1$
             ColumnWidth cw = ColumnWidth.fromString(body);
             WidthType cwt = WidthType.values()[cw.getType()];
             org.pentaho.metadata.model.concept.types.ColumnWidth ncw = new org.pentaho.metadata.model.concept.types.ColumnWidth(cwt, cw.getWidth().doubleValue());
             concept.setProperty(name, ncw);
-          } else if (propType.equals("URL")) {
+          } else if (propType.equals("URL")) { //$NON-NLS-1$
             // NOTE: URL is not compatible with GWT at this time
             URL url = new URL(body);
             concept.setProperty(name, url);
           } else {
-            logger.error("Failed to convert PROPERTY OF TYPE " + propType + " of " + concept.getId());
+            logger.error(Messages.getErrorString("XmiParser.ERROR_0000_FAILED_TO_CONVERT_PROPERTY", propType, concept.getId() )); //$NON-NLS-1$
           }
         }
       }
@@ -1281,7 +1282,7 @@ public class XmiParser {
      <CWM:Description body="Oficinas" language="es" name="name" type="LocString" xmi.id="a14">
      */
 
-    String lang = description.getAttribute("language");
+    String lang = description.getAttribute("language"); //$NON-NLS-1$
     LocalizedString str = (LocalizedString)concept.getChildProperty(name);
     if (str == null) {
       str = new LocalizedString();
@@ -1305,17 +1306,17 @@ public class XmiParser {
     </CWM:Parameter>
        */
       LocaleInterface locale = new LocaleMeta();
-      locale.setCode(parameter.getAttribute("name"));
-      Map<String, String> kvp = getKeyValuePairs(parameter, "CWM:TaggedValue", "tag", "value");
+      locale.setCode(parameter.getAttribute("name")); //$NON-NLS-1$
+      Map<String, String> kvp = getKeyValuePairs(parameter, "CWM:TaggedValue", "tag", "value"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       
       // The description
-      String description = kvp.get("LOCALE_DESCRIPTION");
+      String description = kvp.get("LOCALE_DESCRIPTION"); //$NON-NLS-1$
       if (!Const.isEmpty(description)) {
         locale.setDescription(description);
       }
       
       // The order
-      String strOrder = kvp.get("LOCALE_ORDER");
+      String strOrder = kvp.get("LOCALE_ORDER"); //$NON-NLS-1$
       locale.setOrder(Const.toInt(strOrder, -1));
       
       // Active?

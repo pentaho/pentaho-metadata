@@ -19,13 +19,13 @@ package org.pentaho.metadata.model.concept.types;
  *
  */
 public enum AggregationType {
-  NONE("AggregationSettings.USER_NONE_DESC"), 
-  SUM("AggregationSettings.USER_SUM_DESC"), 
-  AVG("AggregationSettings.USER_AVERAGE_DESC"),
-  COUNT("AggregationSettings.USER_COUNT_DESC"), 
-  DISTINCT_COUNT("AggregationSettings.USER_DISTINCT_COUNT_DESC"),
-  MIN("AggregationSettings.USER_MINIMUM_DESC"), 
-  MAX("AggregationSettings.USER_MAXIMUM_DES"); 
+  NONE("AggregationSettings.USER_NONE_DESC"), //$NON-NLS-1$ 
+  SUM("AggregationSettings.USER_SUM_DESC"), //$NON-NLS-1$
+  AVG("AggregationSettings.USER_AVERAGE_DESC"), //$NON-NLS-1$
+  COUNT("AggregationSettings.USER_COUNT_DESC"), //$NON-NLS-1$
+  DISTINCT_COUNT("AggregationSettings.USER_DISTINCT_COUNT_DESC"), //$NON-NLS-1$
+  MIN("AggregationSettings.USER_MINIMUM_DESC"), //$NON-NLS-1$
+  MAX("AggregationSettings.USER_MAXIMUM_DES"); //$NON-NLS-1$
 
   private String description;
 

@@ -30,7 +30,7 @@ public class Domain extends Concept {
 
   private static final long serialVersionUID = -9093116797722021640L;
 
-  public static final String LOCALES_PROPERTY = "locales";
+  public static final String LOCALES_PROPERTY = "locales"; //$NON-NLS-1$
   
   public Domain() {
     super();

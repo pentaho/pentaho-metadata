@@ -25,8 +25,8 @@ public class SqlPhysicalColumn extends AbstractPhysicalColumn {
 
   private static final long serialVersionUID = -9131564777458111496L;
 
-  public static final String TARGET_COLUMN = "target_column";
-  public static final String TARGET_COLUMN_TYPE = "target_column_type";
+  public static final String TARGET_COLUMN = "target_column"; //$NON-NLS-1$
+  public static final String TARGET_COLUMN_TYPE = "target_column_type"; //$NON-NLS-1$
 
   private SqlPhysicalTable table;
 

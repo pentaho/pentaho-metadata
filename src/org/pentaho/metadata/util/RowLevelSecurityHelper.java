@@ -28,11 +28,11 @@ import org.pentaho.metadata.model.concept.security.SecurityOwner;
  */
 public class RowLevelSecurityHelper {
   
-  private static final String EMPTY_STRING = "";
-  private static final String FUNC_OR = "OR";
-  private static final String PARAM_LIST_BEGIN = "(";
-  private static final String PARAM_LIST_END = ")";
-  private static final String PARAM_SEPARATOR = ";";
+  private static final String EMPTY_STRING = ""; //$NON-NLS-1$
+  private static final String FUNC_OR = "OR"; //$NON-NLS-1$
+  private static final String PARAM_LIST_BEGIN = "("; //$NON-NLS-1$
+  private static final String PARAM_LIST_END = ")"; //$NON-NLS-1$
+  private static final String PARAM_SEPARATOR = ";"; //$NON-NLS-1$
   
 
   public String getOpenFormulaSecurityConstraint(RowLevelSecurity rls, String user, List<String> roles) {
@@ -49,19 +49,19 @@ public class RowLevelSecurityHelper {
     
   protected String expandFunctions(String formula, String user, List<String> roles) {
     // "expand" USER() function (regex: escape parentheses and escape backslash that escapes parentheses
-    formula = formula.replaceAll("USER\\(\\)", String.format("\"%s\"", user));
+    formula = formula.replaceAll("USER\\(\\)", String.format("\"%s\"", user)); //$NON-NLS-1$  //$NON-NLS-2$
 
     // "expand" ROLES() function (regex: escape parentheses and escape backslash that escapes parentheses
     StringBuilder buf = new StringBuilder();
     int i = 0;
     for (String role : roles) {
       if (i > 0) {
-        buf.append(";");
+        buf.append(";"); //$NON-NLS-1$
       }
-      buf.append(String.format("\"%s\"", role));
+      buf.append(String.format("\"%s\"", role)); //$NON-NLS-1$
       i++;
     }
-    return formula.replaceAll("ROLES\\(\\)", buf.toString());
+    return formula.replaceAll("ROLES\\(\\)", buf.toString()); //$NON-NLS-1$
   }
   
 
@@ -94,7 +94,7 @@ public class RowLevelSecurityHelper {
     }
     
     if (pieces.size() == 0) {
-      return "FALSE()";
+      return "FALSE()"; //$NON-NLS-1$
     } else if (pieces.size() == 1) {
       return pieces.get(0);
     } else {

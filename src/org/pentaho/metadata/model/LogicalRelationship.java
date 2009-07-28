@@ -29,10 +29,10 @@ public class LogicalRelationship extends Concept {
 
   private static final long serialVersionUID = -2673951365033614344L;
   
-  public static final String COMPLEX = "complex";
-  public static final String COMPLEX_JOIN = "complex_join";
-  public static final String RELATIONSHIP_TYPE = "relationship_type";
-  public static final String JOIN_ORDER_KEY = "join_order_key";
+  public static final String COMPLEX = "complex"; //$NON-NLS-1$
+  public static final String COMPLEX_JOIN = "complex_join"; //$NON-NLS-1$
+  public static final String RELATIONSHIP_TYPE = "relationship_type"; //$NON-NLS-1$
+  public static final String JOIN_ORDER_KEY = "join_order_key"; //$NON-NLS-1$
   
   private LogicalTable fromTable, toTable;
   private LogicalColumn fromColumn, toColumn;

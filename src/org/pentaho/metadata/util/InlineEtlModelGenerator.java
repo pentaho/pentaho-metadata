@@ -98,9 +98,9 @@ public class InlineEtlModelGenerator {
 
     // Generate field names F1 ... F10
     // even if header is true, this is necessary in case data fields are left empty
-    DecimalFormat df = new DecimalFormat("000"); // $NON-NLS-1$
+    DecimalFormat df = new DecimalFormat("000"); //$NON-NLS-1$
     for (int i=0;i<fieldNames.length;i++) {
-      fieldNames[i] = "Field_"+df.format(i); // $NON-NLS-1$
+      fieldNames[i] = "Field_"+df.format(i); //$NON-NLS-1$
     }
 
     if (headerPresent) {
@@ -122,12 +122,12 @@ public class InlineEtlModelGenerator {
     model.setDelimiter(delimiter);
     
     InlineEtlPhysicalTable table = new InlineEtlPhysicalTable(model);
-    table.setId("INLINE_ETL_1");
+    table.setId("INLINE_ETL_1"); //$NON-NLS-1$
     model.getPhysicalTables().add(table);
     
     LogicalModel logicalModel = new LogicalModel();
     logicalModel.setPhysicalModel(model);
-    logicalModel.setId("MODEL_1");
+    logicalModel.setId("MODEL_1"); //$NON-NLS-1$
     logicalModel.setName(new LocalizedString(locale.getCode(), modelName));
 
     Category mainCategory = new Category(logicalModel);
@@ -136,7 +136,7 @@ public class InlineEtlModelGenerator {
     mainCategory.setName(new LocalizedString(locale.getCode(), modelName));
 
     LogicalTable logicalTable = new LogicalTable(logicalModel, table);
-    logicalTable.setId("LOGICAL_TABLE_1");
+    logicalTable.setId("LOGICAL_TABLE_1"); //$NON-NLS-1$
     
 
     
@@ -144,7 +144,7 @@ public class InlineEtlModelGenerator {
       fieldNames[i] = Const.trim(fieldNames[i]);
       InlineEtlPhysicalColumn column = new InlineEtlPhysicalColumn();
       column.setTable(table);
-      column.setId("PC_" + i);
+      column.setId("PC_" + i); //$NON-NLS-1$
       column.setFieldName(fieldNames[i]);
       column.setName(new LocalizedString(locale.getCode(), fieldNames[i]));
       column.setDataType(dataTypeConverter.evaluateDataType(csvDataReader.getColumnData(i)));
@@ -154,7 +154,7 @@ public class InlineEtlModelGenerator {
       
       LogicalColumn logicalColumn = new LogicalColumn();
       String columnID = Settings.getBusinessColumnIDPrefix();
-      logicalColumn.setId(columnID + i + "_" + fieldNames[i].replaceAll("\\s","_").replaceAll("[^A-Za-z0-9_]",""));
+      logicalColumn.setId(columnID + i + "_" + fieldNames[i].replaceAll("\\s","_").replaceAll("[^A-Za-z0-9_]","")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
       
       // the default name of the logical column 
       // inherits from the physical column.
@@ -173,7 +173,7 @@ public class InlineEtlModelGenerator {
     domain.addPhysicalModel(model);
     
     if (getCreatedBy() != null) {
-      domain.setProperty("created_by", createdBy);
+      domain.setProperty("created_by", createdBy); //$NON-NLS-1$
     }
 
     if (isSecurityEnabled()) {

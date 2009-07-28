@@ -27,7 +27,7 @@ public class SecurityOwner implements Serializable, Cloneable {
   private static final long serialVersionUID = 6657148420948786542L;
 
   public static enum OwnerType {
-    USER("SecurityOwner.USER_USER"), ROLE("SecurityOwner.USER_ROLE");
+    USER("SecurityOwner.USER_USER"), ROLE("SecurityOwner.USER_ROLE");  //$NON-NLS-1$  //$NON-NLS-2$
 
     String description;
 

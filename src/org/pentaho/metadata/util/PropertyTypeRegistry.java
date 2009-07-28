@@ -108,7 +108,7 @@ public class PropertyTypeRegistry {
   }
   
   public String getPropertyTypeDescription(Class clazz) {
-    return Messages.getString("PropertyDescription." + clazz.getCanonicalName());
+    return Messages.getString("PropertyDescription." + clazz.getCanonicalName()); //$NON-NLS-1$
   }
   
   public Class getPropertyType(String type) {

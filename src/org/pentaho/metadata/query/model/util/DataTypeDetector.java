@@ -1,10 +1,11 @@
 package org.pentaho.metadata.query.model.util;
-import java.sql.Date;
-import java.sql.Time;
+
+import java.util.Date;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
+import org.pentaho.metadata.messages.Messages;
 import org.pentaho.metadata.model.concept.types.DataType;
 
 public class DataTypeDetector {
@@ -122,7 +123,7 @@ public class DataTypeDetector {
               .getMillis());*/
         default:
           throw new IllegalStateException(
-              "Encountered unsupported column type: " + type);
+              Messages.getErrorString("DataTypeDetector.ERROR_0001_UNSUPPORTED_COLUMN_TYPE", type)); //$NON-NLS-1$
         }
       }
       return null;

@@ -13,11 +13,11 @@
 package org.pentaho.metadata.model.concept.types;
 
 public enum FieldType {
-  OTHER("FieldType.USER_OTHER_DESC"),
-  DIMENSION("FieldType.USER_DIMENSION_DESC"),
-  FACT("FieldType.USER_FACT_DESC"),
-  KEY("FieldType.USER_KEY_DESC"),
-  ATTRIBUTE("FieldType.USER_ATTRIBUTE_DESC");
+  OTHER("FieldType.USER_OTHER_DESC"), //$NON-NLS-1$
+  DIMENSION("FieldType.USER_DIMENSION_DESC"), //$NON-NLS-1$
+  FACT("FieldType.USER_FACT_DESC"), //$NON-NLS-1$
+  KEY("FieldType.USER_KEY_DESC"), //$NON-NLS-1$
+  ATTRIBUTE("FieldType.USER_ATTRIBUTE_DESC"); //$NON-NLS-1$
   
   private String description;
   

@@ -102,6 +102,7 @@ import org.pentaho.pms.util.ObjectAlreadyExistsException;
  * 
  * @author Will Gorman (wgorman@pentaho.com)
  */
+@SuppressWarnings("deprecation")
 public class ThinModelConverter {
   
   private static final Log logger = LogFactory.getLog(ThinModelConverter.class);
@@ -113,7 +114,8 @@ public class ThinModelConverter {
     
     databaseMeta.setHostname(datasource.getHostname());
     if (datasource.getDialectType() == null) {
-      databaseMeta.setDatabaseType("MYSQL");
+      // default to mysql if dialect is null
+      databaseMeta.setDatabaseType("MYSQL"); //$NON-NLS-1$
     } else {
       databaseMeta.setDatabaseType(datasource.getDialectType());
     }
@@ -131,7 +133,13 @@ public class ThinModelConverter {
   }
   
 
-  
+  /**
+   * This method isn't fully supported, it was implemented during a transition phase between the old and new models.
+
+   * @param domain a domain object to convert to legacy
+   * @return a schema meta object
+   * @throws ObjectAlreadyExistsException
+   */
   public static SchemaMeta convertToLegacy(Domain domain) throws ObjectAlreadyExistsException {
     SchemaMeta schemaMeta = new SchemaMeta();
     
@@ -173,8 +181,8 @@ public class ThinModelConverter {
         if (sqlModel.getDatasource().getType() == DataSourceType.JNDI) {
           database = new DatabaseMeta(
             ((SqlPhysicalModel) physicalModel).getDatasource().getDatabaseName(), 
-            "MYSQL", 
-            "JNDI", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+            "MYSQL",  //$NON-NLS-1$
+            "JNDI", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
           database.getDatabaseInterface().setDatabaseName(((SqlPhysicalModel) physicalModel).getDatasource().getDatabaseName());
         } else {
           // TODO: support JDBC
@@ -205,7 +213,7 @@ public class ThinModelConverter {
         }
         
       } else {
-        logger.error("physical model not supported " + physicalModel.getClass());
+        logger.error("physical model not supported " + physicalModel.getClass()); //$NON-NLS-1$
       }
     }
 
@@ -288,7 +296,7 @@ public class ThinModelConverter {
 
     if (property instanceof String) {
       if (propertyName.equals(SqlPhysicalColumn.TARGET_COLUMN)) {
-        propertyName = "formula";
+        propertyName = "formula"; //$NON-NLS-1$
       }
       ConceptPropertyString string = new ConceptPropertyString(propertyName, (String)property);
       return string;
@@ -315,7 +323,7 @@ public class ThinModelConverter {
     } else if (property instanceof TargetColumnType) {
       TargetColumnType colType = (TargetColumnType)property;
       if (propertyName.equals(SqlPhysicalColumn.TARGET_COLUMN_TYPE)) {
-        propertyName = "exact";
+        propertyName = "exact"; //$NON-NLS-1$
       }
       ConceptPropertyBoolean bool = new ConceptPropertyBoolean(propertyName, colType == TargetColumnType.OPEN_FORMULA);
       return bool;
@@ -331,7 +339,7 @@ public class ThinModelConverter {
     } else if (property instanceof List) {
       // aggregation lists here
       List list = (List)property;
-      if (propertyName.equals("aggregation_list")) {
+      if (propertyName.equals("aggregation_list")) { //$NON-NLS-1$
         List<AggregationSettings> listaggs = new ArrayList<AggregationSettings>();
         ConceptPropertyAggregationList agglist = new ConceptPropertyAggregationList(propertyName, listaggs);
         for (Object obj : list) {
@@ -342,7 +350,7 @@ public class ThinModelConverter {
       }
     }
     
-    logger.error("unsupported property: " + property);
+    logger.error("unsupported property: " + property); //$NON-NLS-1$
     return null;
   }
   
@@ -411,9 +419,9 @@ public class ThinModelConverter {
   }
   
   private static String convertPropertyNameFromLegacy(String propertyName) {
-    if ("formula".equals(propertyName)) {
+    if ("formula".equals(propertyName)) { //$NON-NLS-1$
       return SqlPhysicalColumn.TARGET_COLUMN;
-    } else if ("exact".equals(propertyName)) {
+    } else if ("exact".equals(propertyName)) { //$NON-NLS-1$
       return SqlPhysicalColumn.TARGET_COLUMN_TYPE;
     } else {
       return propertyName;
@@ -446,7 +454,7 @@ public class ThinModelConverter {
       return AggregationType.values()[aggSettings.getType()];
     } else if (property instanceof ConceptPropertyBoolean) {
       Boolean boolVal = (Boolean)property.getValue();
-      if (propertyName.equals("exact")) {
+      if (propertyName.equals("exact")) { //$NON-NLS-1$
         if (boolVal) {
           return TargetColumnType.OPEN_FORMULA;
         } else {
@@ -510,7 +518,7 @@ public class ThinModelConverter {
       }
     }
     
-    logger.error("unsupported property: " + property);
+    logger.error("unsupported property: " + property); //$NON-NLS-1$
     return null;
   }
   
@@ -572,7 +580,7 @@ public class ThinModelConverter {
 
         // Specify TargetTableType
         
-        if (table.getTargetTable().toLowerCase().startsWith("select ")) {
+        if (table.getTargetTable().toLowerCase().startsWith("select ")) { //$NON-NLS-1$
           sqlTable.setTargetTableType(TargetTableType.INLINE_SQL);
         }
         

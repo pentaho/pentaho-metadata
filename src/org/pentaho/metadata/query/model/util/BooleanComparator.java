@@ -3,6 +3,7 @@ import java.util.Comparator;
 
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.util.DefaultTransformer;
+import org.pentaho.metadata.messages.Messages;
 
 public class BooleanComparator implements Comparator<Object> {
 
@@ -25,7 +26,7 @@ public class BooleanComparator implements Comparator<Object> {
 
       @Override
       public String toString() {
-        return "BooleanComparable[boolean=" + b + "]";
+        return "BooleanComparable[boolean=" + b + "]"; //$NON-NLS-1$ //$NON-NLS-2$
       }
     };
   }
@@ -84,17 +85,17 @@ public class BooleanComparator implements Comparator<Object> {
   public static boolean parseBoolean(String string)
       throws IllegalArgumentException {
     string = string.trim();
-    if ("true".equalsIgnoreCase(string) || "1".equals(string)
-        || "y".equalsIgnoreCase(string)
-        || "yes".equalsIgnoreCase(string)) {
+    if ("true".equalsIgnoreCase(string) || "1".equals(string) //$NON-NLS-1$ //$NON-NLS-2$
+        || "y".equalsIgnoreCase(string) //$NON-NLS-1$
+        || "yes".equalsIgnoreCase(string)) { //$NON-NLS-1$
       return true;
-    } else if ("false".equalsIgnoreCase(string) || "0".equals(string)
-        || "n".equalsIgnoreCase(string)
-        || "no".equalsIgnoreCase(string)) {
+    } else if ("false".equalsIgnoreCase(string) || "0".equals(string) //$NON-NLS-1$ //$NON-NLS-2$
+        || "n".equalsIgnoreCase(string) //$NON-NLS-1$
+        || "no".equalsIgnoreCase(string)) { //$NON-NLS-1$
       return false;
     } else {
       throw new IllegalArgumentException(
-          "Could not get boolean value of string: " + string);
+          Messages.getErrorString("BooleanComparator.ERROR_0001_UNABLE_TO_DETECT_BOOLEAN_VAL", string)); //$NON-NLS-1$
     }
   }
 

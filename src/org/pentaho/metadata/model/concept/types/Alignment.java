@@ -13,10 +13,10 @@
 package org.pentaho.metadata.model.concept.types;
 
 public enum Alignment {
-  LEFT("Alignment.USER_LEFT_DESC"),
-  RIGHT("Alignment.USER_RIGHT_DESC"),
-  CENTERED("Alignment.USER_CENTERED_DESC"),
-  JUSTIFIED("Alignment.USER_JUSTIFIED_DESC");
+  LEFT("Alignment.USER_LEFT_DESC"), //$NON-NLS-1$
+  RIGHT("Alignment.USER_RIGHT_DESC"), //$NON-NLS-1$
+  CENTERED("Alignment.USER_CENTERED_DESC"), //$NON-NLS-1$
+  JUSTIFIED("Alignment.USER_JUSTIFIED_DESC"); //$NON-NLS-1$
   
   private String description;
   

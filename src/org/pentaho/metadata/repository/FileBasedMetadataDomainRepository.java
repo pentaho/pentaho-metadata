@@ -104,7 +104,7 @@ public class FileBasedMetadataDomainRepository implements IMetadataDomainReposit
       Domain clone = helper.createSecureDomain(this, domain);
       return clone;
     } else {
-      logger.error("domain not found : " + id);
+      logger.error(Messages.getErrorString("FileBasedMetadataDomainRepository.ERROR_0006_DOMAIN_NOT_FOUND", id)); //$NON-NLS-1$
       return null;
     }
   }
@@ -190,7 +190,8 @@ public class FileBasedMetadataDomainRepository implements IMetadataDomainReposit
       try {
         storeDomain(domain, true);
       } catch (DomainAlreadyExistsException e) {
-        logger.error("this should not happen", e);
+        // this should not happen
+        logger.error(Messages.getErrorString("FileBasedMetadataDomainRepository.ERROR_0007_DOMAIN_ALREADY_EXISTS", domain.getId()), e); //$NON-NLS-1$
       }
     }
   }

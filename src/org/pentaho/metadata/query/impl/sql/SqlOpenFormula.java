@@ -64,6 +64,8 @@ import org.pentaho.reporting.libraries.formula.typing.coretypes.TextType;
  */
 public class SqlOpenFormula implements FormulaTraversalInterface {
   
+  private static final String PARAM = "param:"; //$NON-NLS-1$
+
   private static final Log logger = LogFactory.getLog(SqlOpenFormula.class);
   
   /** 
@@ -265,10 +267,10 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
     if (!selectionMap.containsKey(fieldName)) {
 
       // check to see if it's a parameter
-      if (fieldName.startsWith("param:")) {
+      if (fieldName.startsWith(PARAM)) {
         String paramName = fieldName.substring(6);
         if (parameters.get(paramName) == null) {
-          throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_00XX_PARAM_NOT_FOUND", paramName));
+          throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_00XX_PARAM_NOT_FOUND", paramName)); //$NON-NLS-1$
         }
         return;
       }
@@ -379,7 +381,7 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
         }
 
         if (category == null) {
-          logger.warn("using a business column that is not associated with a category directly: " + column.getId());
+          logger.warn(Messages.getErrorString("SqlOpenFormula.ERROR_0023_UNASSOCIATED_LOGICAL_COL", column.getId())); //$NON-NLS-1$
           for (Category cat : model.getCategories()) {
             if (cat.findLogicalColumn(column.getId()) != null) {
               category = cat;
@@ -400,7 +402,7 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < arr.length; i++) {
       if (i != 0) {
-        sb.append(",");
+        sb.append(","); //$NON-NLS-1$
       }
       sb.append(arr[i]);
     }
@@ -575,7 +577,7 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
   }
   
   public Object getParameterValue(ContextLookup param) throws PentahoMetadataException {
-    if (param.getName().startsWith("param:")) { //$NON-NLS-1$
+    if (param.getName().startsWith(PARAM)) {
       String paramName = param.getName().substring(6);
       return parameters.get(paramName);
     } else {
@@ -583,12 +585,12 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
     }
   }
 
-  protected void renderContextLookup(StringBuffer sb, String contextName, String locale) {
+  protected void renderContextLookup(StringBuffer sb, String contextName, String locale) throws PentahoMetadataException {
     Selection column = (Selection)selectionMap.get(contextName);
     if (column == null) {
       // either a physical column or parameter
 
-      if (contextName.startsWith("param:")) { //$NON-NLS-1$
+      if (contextName.startsWith(PARAM)) {
         String paramName = contextName.substring(6);
         if (genAsPreparedStatement) {
           // put a temporary placeholder in the SQL if this parameter will be used as part of a 
@@ -599,17 +601,9 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
           if (paramValue instanceof Boolean) {
             // need to get and then render either true or false function.
             if (((Boolean)paramValue).booleanValue()) {
-              try {
-                sqlDialect.getFunctionSQLGenerator("TRUE").generateFunctionSQL(this, sb, locale, null); //$NON-NLS-1$
-              } catch (Exception e) {
-                logger.error("", e);
-              }
+              sqlDialect.getFunctionSQLGenerator("TRUE").generateFunctionSQL(this, sb, locale, null); //$NON-NLS-1$
             } else {
-              try {
-                sqlDialect.getFunctionSQLGenerator("FALSE").generateFunctionSQL(this, sb, locale, null); //$NON-NLS-1$
-              } catch (Exception e) {
-                logger.error("", e);
-              }          
+              sqlDialect.getFunctionSQLGenerator("FALSE").generateFunctionSQL(this, sb, locale, null); //$NON-NLS-1$
             }
           } else if (paramValue instanceof Double) {
             sb.append(paramValue.toString());

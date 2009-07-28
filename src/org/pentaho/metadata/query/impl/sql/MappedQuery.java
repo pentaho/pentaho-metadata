@@ -90,7 +90,7 @@ public class MappedQuery implements SqlQuery {
    * @return the string after the whole-word search-and-replace has been completed
    */
   private String wholeWordReplaceAll(final String source, final String search, final String repl) {
-    final Pattern p = Pattern.compile("(\\W)" + search + "(\\W)");
+    final Pattern p = Pattern.compile("(\\W)" + search + "(\\W)"); //$NON-NLS-1$ //$NON-NLS-2$
     final Matcher m = p.matcher(source);
     final StringBuffer sb = new StringBuffer();
     while (m.find()) {

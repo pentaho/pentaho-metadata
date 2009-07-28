@@ -41,8 +41,9 @@ import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.metadata.query.model.Order.Type;
 import org.pentaho.metadata.util.InlineEtlModelGenerator;
-import org.pentaho.pms.messages.util.LocaleHelper;
+import org.pentaho.metadata.messages.LocaleHelper;
 
+@SuppressWarnings("nls")
 public class InlineEtlModelGeneratorTest {
 
   @Test

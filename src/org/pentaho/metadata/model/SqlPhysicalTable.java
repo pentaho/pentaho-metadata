@@ -29,10 +29,10 @@ public class SqlPhysicalTable extends Concept implements IPhysicalTable{
 
   private static final long serialVersionUID = -2590635019353532334L;
 
-  public static final String TARGET_SCHEMA = "target_schema";
-  public static final String TARGET_TABLE = "target_table";
-  public static final String TARGET_TABLE_TYPE = "target_table_type";
-  public static final String RELATIVE_SIZE = "relative_size";
+  public static final String TARGET_SCHEMA = "target_schema"; //$NON-NLS-1$
+  public static final String TARGET_TABLE = "target_table"; //$NON-NLS-1$
+  public static final String TARGET_TABLE_TYPE = "target_table_type"; //$NON-NLS-1$
+  public static final String RELATIVE_SIZE = "relative_size"; //$NON-NLS-1$
   
   SqlPhysicalModel model;
   List<IPhysicalColumn> physicalColumns = new ArrayList<IPhysicalColumn>();

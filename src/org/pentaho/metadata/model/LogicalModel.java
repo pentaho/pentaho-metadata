@@ -29,7 +29,7 @@ public class LogicalModel extends Concept {
 
   private static final long serialVersionUID = 4063396040423259880L;
   
-  public static final String ROW_LEVEL_SECURITY = "row_level_security";
+  public static final String ROW_LEVEL_SECURITY = "row_level_security"; //$NON-NLS-1$
   
   private IPhysicalModel physicalModel;
   private List<LogicalTable> logicalTables = new ArrayList<LogicalTable>();

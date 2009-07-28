@@ -77,7 +77,7 @@ public class QueryModelMetaData extends MemoryMetaData {
     String newHeader = header;
     int count = 1;
     while (existingHeaders.contains(newHeader)) {
-      newHeader = header + "_" + count++;
+      newHeader = header + "_" + count++; //$NON-NLS-1$
     }
     return newHeader;
   }

@@ -28,10 +28,10 @@ public class InlineEtlPhysicalModel extends Concept implements IPhysicalModel {
 
   private static final long serialVersionUID = 998991922256017536L;
   
-  public static final String FILE_LOCATION = "file_location";
-  public static final String HEADER_PRESENT = "header_present";
-  public static final String ENCLOSURE = "enclosure";
-  public static final String DELIMITER = "delimiter";
+  public static final String FILE_LOCATION = "file_location"; //$NON-NLS-1$
+  public static final String HEADER_PRESENT = "header_present"; //$NON-NLS-1$
+  public static final String ENCLOSURE = "enclosure"; //$NON-NLS-1$
+  public static final String DELIMITER = "delimiter"; //$NON-NLS-1$
   
   // this contains a list of the physical tables
   private List<InlineEtlPhysicalTable> physicalTables = new ArrayList<InlineEtlPhysicalTable>();

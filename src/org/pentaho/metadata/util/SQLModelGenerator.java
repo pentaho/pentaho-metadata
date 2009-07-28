@@ -30,6 +30,7 @@ import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
+import org.pentaho.metadata.messages.Messages;
 import org.pentaho.pms.util.Settings;
 
 public class SQLModelGenerator {
@@ -110,7 +111,7 @@ public class SQLModelGenerator {
       dataSource.setDatabaseName(connectionName);
       model.setDatasource(dataSource);
       SqlPhysicalTable table = new SqlPhysicalTable(model);
-      table.setId("INLINE_SQL_1");
+      table.setId("INLINE_SQL_1"); //$NON-NLS-1$
       model.getPhysicalTables().add(table);
       table.setTargetTableType(TargetTableType.INLINE_SQL);
       table.setTargetTable(query);
@@ -157,7 +158,7 @@ public class SQLModelGenerator {
       try {
         LogicalModel logicalModel = new LogicalModel();
         logicalModel.setPhysicalModel(model);
-        logicalModel.setId("MODEL_1");
+        logicalModel.setId("MODEL_1"); //$NON-NLS-1$
         logicalModel.setName(new LocalizedString(locale.getCode(), modelName));
 
         Category mainCategory = new Category(logicalModel);
@@ -166,7 +167,7 @@ public class SQLModelGenerator {
         mainCategory.setName(new LocalizedString(locale.getCode(), modelName));
   
         LogicalTable logicalTable = new LogicalTable(logicalModel, table);
-        logicalTable.setId("LOGICAL_TABLE_1");
+        logicalTable.setId("LOGICAL_TABLE_1"); //$NON-NLS-1$
         
         logicalModel.getLogicalTables().add(logicalTable);
         
@@ -181,7 +182,7 @@ public class SQLModelGenerator {
           column.setName(new LocalizedString(locale.getCode(), columnHeader[i]));
           // Map the SQL Column Type to Metadata Column Type
           column.setDataType(converDataType(columnType[i]));
-          String physicalColumnID = Settings.getPhysicalColumnIDPrefix() + "_" + columnHeader[i];
+          String physicalColumnID = Settings.getPhysicalColumnIDPrefix() + "_" + columnHeader[i]; //$NON-NLS-1$
           column.setId(physicalColumnID);
           table.getPhysicalColumns().add(column);
                   
@@ -207,7 +208,7 @@ public class SQLModelGenerator {
         domain.addPhysicalModel(model);
         
         if (getCreatedBy() != null) {
-          domain.setProperty("created_by", createdBy);
+          domain.setProperty("created_by", createdBy); //$NON-NLS-1$
         }
 
         if (isSecurityEnabled()) {
@@ -234,7 +235,7 @@ public class SQLModelGenerator {
         throw new SQLModelGeneratorException(e);
       }
     } else {
-      throw new SQLModelGeneratorException("Input Validation Failed");
+      throw new SQLModelGeneratorException(Messages.getErrorString("SQLModelGenerator.ERROR_0001_INPUT_VALIDATION_FAILED")); //$NON-NLS-1$
     }
   }
  

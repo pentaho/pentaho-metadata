@@ -19,7 +19,7 @@ package org.pentaho.metadata.query.model;
  *
  */
 public enum CombinationType {
-  AND("AND"), OR("OR"), AND_NOT("AND NOT"), OR_NOT("OR NOT");
+  AND("AND"), OR("OR"), AND_NOT("AND NOT"), OR_NOT("OR NOT"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
   
   private String toStringVal;
   private CombinationType(String val){

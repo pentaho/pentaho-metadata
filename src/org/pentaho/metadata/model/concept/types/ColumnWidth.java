@@ -19,11 +19,11 @@ public class ColumnWidth implements Serializable {
   private static final long serialVersionUID = -5781026318422512440L;
 
   public enum WidthType {
-    PIXELS(100, "ColumnWidth.USER_PIXELS_DESC"),
-    PERCENT(10, "ColumnWidth.USER_PERCENT_DESC"),
-    INCHES(3, "ColumnWidth.USER_INCHES_DESC"),
-    CM(10, "ColumnWidth.USER_CENTIMETERS_DESC"),
-    POINTS(1,"ColumnWidth.USER_POINTS_DESC");
+    PIXELS(100, "ColumnWidth.USER_PIXELS_DESC"), //$NON-NLS-1$
+    PERCENT(10, "ColumnWidth.USER_PERCENT_DESC"), //$NON-NLS-1$
+    INCHES(3, "ColumnWidth.USER_INCHES_DESC"), //$NON-NLS-1$
+    CM(10, "ColumnWidth.USER_CENTIMETERS_DESC"), //$NON-NLS-1$
+    POINTS(1,"ColumnWidth.USER_POINTS_DESC"); //$NON-NLS-1$
     
     double defaultValue;
     String description;

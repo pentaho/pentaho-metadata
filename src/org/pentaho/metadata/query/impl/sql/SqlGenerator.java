@@ -158,7 +158,7 @@ public class SqlGenerator {
       String tableName = (String)businessTable.getProperty(SqlPhysicalTable.TARGET_TABLE);
       TargetTableType type = (TargetTableType)businessTable.getProperty(SqlPhysicalTable.TARGET_TABLE_TYPE);
       if (type == TargetTableType.INLINE_SQL) {
-        tableName = "(" + tableName + ")"; 
+        tableName = "(" + tableName + ")";   //$NON-NLS-1$ //$NON-NLS-2$
       } else {
         tableName = databaseMeta.quoteField(tableName);
       }
@@ -276,14 +276,14 @@ public class SqlGenerator {
 	        }
         }
         SqlAndTables sqlAndTables = getBusinessColumnSQL(model, orderItem.getSelection(), tableAliases, parameters, genAsPreparedStatement, databaseMeta, locale);
-        query.addOrderBy(sqlAndTables.getSql(), databaseMeta.quoteField(alias), orderItem.getType() != Type.ASC ? OrderType.DESCENDING : null); //$NON-NLS-1$
+        query.addOrderBy(sqlAndTables.getSql(), databaseMeta.quoteField(alias), orderItem.getType() != Type.ASC ? OrderType.DESCENDING : null);
       }
     }
   }
   
   private static String genString(String base, int val) {
     if (val < 10) {
-      return base + "0" + val;
+      return base + "0" + val; //$NON-NLS-1$
     }
     return base + val;
   }
@@ -451,11 +451,11 @@ public class SqlGenerator {
     SQLDialectInterface dialect = SQLDialectFactory.getSQLDialect(databaseMeta);
     List<String> paramNames = null;
     String sql = dialect.generateSelectStatement(query);
-    Pattern p = Pattern.compile("___PARAM\\[(.*)\\]___");
+    Pattern p = Pattern.compile("___PARAM\\[(.*)\\]___"); //$NON-NLS-1$
     Matcher m = p.matcher(sql);
     StringBuffer sb = new StringBuffer();
     while (m.find()) {
-      m.appendReplacement(sb, "?");
+      m.appendReplacement(sb, "?"); //$NON-NLS-1$
       if (paramNames == null) {
         paramNames = new ArrayList<String>();
       }
@@ -506,7 +506,7 @@ public class SqlGenerator {
       List<Selection> cols = formula.getSelections();
       for (Selection selection : cols) {
         LogicalTable businessTable = selection.getLogicalColumn().getLogicalTable();
-        treeSet.add(businessTable); //$NON-NLS-1$
+        treeSet.add(businessTable);
       }
     }
     
@@ -879,15 +879,15 @@ public class SqlGenerator {
   private static boolean hasAggregateDefinedAlready(String sql, DatabaseMeta databaseMeta) {
     String trimmed = sql.trim();
     return 
-      trimmed.startsWith(databaseMeta.getFunctionAverage() + "(") ||
-      trimmed.startsWith(databaseMeta.getFunctionCount() + "(") ||
-      trimmed.startsWith(databaseMeta.getFunctionMaximum() + "(") ||
-      trimmed.startsWith(databaseMeta.getFunctionMinimum()  + "(") ||
-      trimmed.startsWith(databaseMeta.getFunctionSum() + "(");
+      trimmed.startsWith(databaseMeta.getFunctionAverage() + "(") || //$NON-NLS-1$
+      trimmed.startsWith(databaseMeta.getFunctionCount() + "(") || //$NON-NLS-1$
+      trimmed.startsWith(databaseMeta.getFunctionMaximum() + "(") || //$NON-NLS-1$
+      trimmed.startsWith(databaseMeta.getFunctionMinimum()  + "(") || //$NON-NLS-1$
+      trimmed.startsWith(databaseMeta.getFunctionSum() + "("); //$NON-NLS-1$
   }
   
   public static String getFunctionExpression(Selection column, String tableColumn, DatabaseMeta databaseMeta) {
-      String expression=getFunction(column, databaseMeta); //$NON-NLS-1$
+      String expression=getFunction(column, databaseMeta);
       
       switch(column.getActiveAggregationType()) {
           case DISTINCT_COUNT : expression+="(DISTINCT "+tableColumn+")"; break;   //$NON-NLS-1$ //$NON-NLS-2$

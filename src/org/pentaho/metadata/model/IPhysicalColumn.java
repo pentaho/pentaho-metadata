@@ -26,10 +26,10 @@ import org.pentaho.metadata.model.concept.types.FieldType;
  *
  */
 public interface IPhysicalColumn extends IConcept {
-  public static final String FIELDTYPE_PROPERTY = "fieldtype";
-  public static final String DATATYPE_PROPERTY = "datatype";
-  public static final String AGGREGATIONTYPE_PROPERTY = "aggregation";
-  public static final String AGGREGATIONLIST_PROPERTY = "aggregation_list";
+  public static final String FIELDTYPE_PROPERTY = "fieldtype"; //$NON-NLS-1$
+  public static final String DATATYPE_PROPERTY = "datatype"; //$NON-NLS-1$
+  public static final String AGGREGATIONTYPE_PROPERTY = "aggregation"; //$NON-NLS-1$
+  public static final String AGGREGATIONLIST_PROPERTY = "aggregation_list"; //$NON-NLS-1$
   public DataType getDataType();
   public void setDataType(DataType dataType);
   public FieldType getFieldType();

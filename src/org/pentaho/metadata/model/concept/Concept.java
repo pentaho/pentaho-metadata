@@ -35,9 +35,9 @@ public class Concept implements IConcept, Serializable, Cloneable, Comparable {
 
   private static final long serialVersionUID = -6912836203678095834L;
 
-  public static String NAME_PROPERTY = "name";
-  public static String DESCRIPTION_PROPERTY = "description";
-  public static String SECURITY_PROPERTY = "security";
+  public static String NAME_PROPERTY = "name"; //$NON-NLS-1$
+  public static String DESCRIPTION_PROPERTY = "description"; //$NON-NLS-1$
+  public static String SECURITY_PROPERTY = "security"; //$NON-NLS-1$
   
   Map<String, Object> properties = new HashMap<String, Object>();
   String id;
