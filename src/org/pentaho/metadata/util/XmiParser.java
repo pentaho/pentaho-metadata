@@ -247,6 +247,10 @@ public class XmiParser {
       
       // CWMRDB:Catalog: Data Source objects
       for (IPhysicalModel model : domain.getPhysicalModels()) {
+        if (model.getId().equals("__MISSING_PARENT_PHYSICAL_MODEL__")) { //$NON-NLS-1$
+          continue;
+        }
+        
         if (model instanceof SqlPhysicalModel) {
           SqlPhysicalModel sqlModel = (SqlPhysicalModel)model;
           SqlDataSource datasource = sqlModel.getDatasource();
@@ -290,12 +294,20 @@ public class XmiParser {
             cwmRdbTable.setAttribute("xmi.id", idstr); //$NON-NLS-1$
             id = createDescriptions(doc, table, "CWMRDB:Table", idstr, allDescriptions, id); //$NON-NLS-1$
 
-            Element modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
-            modelElement.appendChild(createTaggedValue(doc, "TABLE_TARGET_DATABASE_NAME", model.getId(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
+            Element modelElement = null;
+            if (!model.getId().equals("__MISSING_PARENT_PHYSICAL_MODEL__")) { //$NON-NLS-1$
+              modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
+              modelElement.appendChild(createTaggedValue(doc, "TABLE_TARGET_DATABASE_NAME", model.getId(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
+            }
             if (table.getParentConcept() != null) {
+              if (modelElement == null) {
+                modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
+              }
               modelElement.appendChild(createTaggedValue(doc, "CONCEPT_PARENT_NAME", table.getParentConcept().getId(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
             }
-            cwmRdbTable.appendChild(modelElement);
+            if (modelElement != null) {
+              cwmRdbTable.appendChild(modelElement);
+            }
 
             Element ownedElement = doc.createElement("CWM:Namespace.ownedElement"); //$NON-NLS-1$
             for (IPhysicalColumn column : table.getPhysicalColumns()) {
@@ -362,11 +374,19 @@ public class XmiParser {
           Element modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
           keyRel.appendChild(modelElement);
           modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_TYPE", rel.getRelationshipType().getType(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
-          // check for nulls?
-          modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_FIELDNAME_CHILD", rel.getToColumn().getId(), "a" + id++));//$NON-NLS-1$ //$NON-NLS-2$
-          modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_FIELDNAME_PARENT", rel.getFromColumn().getId(), "a" + id++));//$NON-NLS-1$ //$NON-NLS-2$
-          modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_TABLENAME_CHILD", rel.getToTable().getId(), "a" + id++));//$NON-NLS-1$ //$NON-NLS-2$
-          modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_TABLENAME_PARENT", rel.getFromTable().getId(), "a" + id++));//$NON-NLS-1$ //$NON-NLS-2$
+
+          if (rel.getToColumn() != null) {
+            modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_FIELDNAME_CHILD", rel.getToColumn().getId(), "a" + id++));//$NON-NLS-1$ //$NON-NLS-2$
+          }
+          if (rel.getFromColumn() != null) {
+            modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_FIELDNAME_PARENT", rel.getFromColumn().getId(), "a" + id++));//$NON-NLS-1$ //$NON-NLS-2$
+          }
+          if (rel.getToTable() != null) {
+            modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_TABLENAME_CHILD", rel.getToTable().getId(), "a" + id++));//$NON-NLS-1$ //$NON-NLS-2$
+          }
+          if (rel.getFromTable() != null) {
+            modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_TABLENAME_PARENT", rel.getFromTable().getId(), "a" + id++));//$NON-NLS-1$ //$NON-NLS-2$
+          }
           if (rel.isComplex()) {
             modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_IS_COMPLEX", "Y", "a" + id++));//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_COMPLEX_JOIN", rel.getComplexJoin(), "a" + id++));//$NON-NLS-1$ //$NON-NLS-2$
@@ -824,6 +844,8 @@ public class XmiParser {
       }
     }
     
+    SqlPhysicalModel missingParentModel = null;
+    
     for (Element physicalTable : physicalTables) {
       String name = physicalTable.getAttribute("name"); //$NON-NLS-1$
       Element tagged = null;
@@ -840,6 +862,16 @@ public class XmiParser {
         }
       }
       String databaseName = getKeyValue(tagged, "CWM:TaggedValue", "tag", "value", "TABLE_TARGET_DATABASE_NAME"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+      
+      if (databaseName == null) {
+        logger.warn(Messages.getErrorString("XmiParser.ERROR_0009_MISSING_DATABASE_PARENT", name)); //$NON-NLS-1$
+        if (missingParentModel == null) {
+          missingParentModel = new SqlPhysicalModel();
+          missingParentModel.setId("__MISSING_PARENT_PHYSICAL_MODEL__"); //$NON-NLS-1$
+          domain.addPhysicalModel(missingParentModel);
+        }
+        databaseName = "__MISSING_PARENT_PHYSICAL_MODEL__"; //$NON-NLS-1$
+      }
       SqlPhysicalModel model = (SqlPhysicalModel)domain.findPhysicalModel(databaseName);
       SqlPhysicalTable table = new SqlPhysicalTable(model);
       table.setId(physicalTable.getAttribute("name")); //$NON-NLS-1$
@@ -1020,9 +1052,12 @@ public class XmiParser {
           Element column = (Element)columns.item(j);
           String name = column.getAttribute("name"); //$NON-NLS-1$
           LogicalColumn col = logicalModel.findLogicalColumn(name);
-          cat.addLogicalColumn(col);
+          if (col == null) {
+            logger.warn(Messages.getString("XmiParser.ERROR_0010_UNABLE_TO_FIND_COL_FOR_CATEGORY", name, cat.getId())); //$NON-NLS-1$
+          } else {
+            cat.addLogicalColumn(col);
+          }
         }
-        
         logicalModel.addCategory(cat);
       }
       
@@ -1185,7 +1220,7 @@ public class XmiParser {
         String name = description.getAttribute("name"); //$NON-NLS-1$
         String body = description.getAttribute("body"); //$NON-NLS-1$
         if (concept == null) {
-          logger.error(Messages.getErrorString("XmiParser.ERROR_0007_CANNOT_FIND_PARENT", type, parentRef)); //$NON-NLS-1$
+          logger.error(Messages.getErrorString("XmiParser.ERROR_0010_CANNOT_FIND_PARENT", type, parentRef)); //$NON-NLS-1$
         } else {
           // ADD PROPERTY
           String propType = description.getAttribute("type"); //$NON-NLS-1$
@@ -1275,7 +1310,7 @@ public class XmiParser {
             URL url = new URL(body);
             concept.setProperty(name, url);
           } else {
-            logger.error(Messages.getErrorString("XmiParser.ERROR_0000_FAILED_TO_CONVERT_PROPERTY", propType, concept.getId() )); //$NON-NLS-1$
+            logger.error(Messages.getErrorString("XmiParser.ERROR_0008_FAILED_TO_CONVERT_PROPERTY", propType, concept.getId() )); //$NON-NLS-1$
           }
         }
       }
@@ -1393,6 +1428,9 @@ public class XmiParser {
   }
   
   private static String getKeyValue(Element parent, String childName, String keyAttrib, String valAttrib, String keyVal) {
+    if (parent == null) {
+      return null;
+    }
     NodeList nodeList = parent.getElementsByTagName(childName);
     for (int i = 0; i < nodeList.getLength(); i++) {
       String key = ((Element)nodeList.item(i)).getAttribute(keyAttrib);
