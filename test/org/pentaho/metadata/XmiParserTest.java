@@ -2,7 +2,6 @@ package org.pentaho.metadata;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
-import java.io.StringBufferInputStream;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Set;
@@ -27,6 +26,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
+@SuppressWarnings("nls")
 public class XmiParserTest {
   
   @Test
@@ -50,6 +50,10 @@ public class XmiParserTest {
     Assert.assertEquals("BC_OFFICES_TERRITORY", domain.getLogicalModels().get(0).getCategories().get(0).getLogicalColumns().get(0).getId());
     Assert.assertEquals("TERRITORY", domain.getLogicalModels().get(0).getCategories().get(0).getLogicalColumns().get(0).getPhysicalColumn().getId());
     Assert.assertEquals("PT_OFFICES", domain.getLogicalModels().get(0).getCategories().get(0).getLogicalColumns().get(0).getPhysicalColumn().getPhysicalTable().getId());
+    
+    // verify that inheritance is working
+    Assert.assertEquals("$#,###.##", domain.findLogicalModel("BV_ORDERS").findCategory("CAT_ORDERS").findLogicalColumn("BC_ORDERDETAILS_TOTAL").getProperty("mask"));
+    
     
   }
   

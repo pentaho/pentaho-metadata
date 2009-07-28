@@ -292,6 +292,9 @@ public class XmiParser {
 
             Element modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
             modelElement.appendChild(createTaggedValue(doc, "TABLE_TARGET_DATABASE_NAME", model.getId(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
+            if (table.getParentConcept() != null) {
+              modelElement.appendChild(createTaggedValue(doc, "CONCEPT_PARENT_NAME", table.getParentConcept().getId(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
+            }
             cwmRdbTable.appendChild(modelElement);
 
             Element ownedElement = doc.createElement("CWM:Namespace.ownedElement"); //$NON-NLS-1$
@@ -334,6 +337,9 @@ public class XmiParser {
           id = createDescriptions(doc, category, "CWM:Extent", idstr, allDescriptions, id); //$NON-NLS-1$
           Element modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
           modelElement.appendChild(createTaggedValue(doc, "BUSINESS_CATEGORY_ROOT", "Y", "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+          if (category.getParentConcept() != null) {
+            modelElement.appendChild(createTaggedValue(doc, "CONCEPT_PARENT_NAME", category.getParentConcept().getId(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
+          }
           extent.appendChild(modelElement);
           Element cOwnedElement = doc.createElement("CWM:Namespace.ownedElement"); //$NON-NLS-1$
           extent.appendChild(cOwnedElement);
@@ -399,7 +405,9 @@ public class XmiParser {
           if (table.getProperty("__LEGACY_TAG_POSITION_X") != null) { //$NON-NLS-1$
             modelElement.appendChild(createTaggedValue(doc, "TAG_POSITION_X", (String)table.getProperty("__LEGACY_TAG_POSITION_X"), "a" + id)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
           }
-          
+          if (table.getParentConcept() != null) {
+            modelElement.appendChild(createTaggedValue(doc, "CONCEPT_PARENT_NAME", table.getParentConcept().getId(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
+          }
           modelElement.appendChild(createTaggedValue(doc, "BUSINESS_TABLE_PHYSICAL_TABLE_NAME", table.getPhysicalTable().getId(), "a" + id)); //$NON-NLS-1$ //$NON-NLS-2$
           dim.appendChild(modelElement);
           Element dimObjs = doc.createElement("CWMMDB:Dimension.dimensionedObject"); //$NON-NLS-1$
@@ -415,6 +423,9 @@ public class XmiParser {
             modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
             modelElement.appendChild(createTaggedValue(doc, "BUSINESS_COLUMN_BUSINESS_TABLE", column.getLogicalTable().getId(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
             modelElement.appendChild(createTaggedValue(doc, "BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME", column.getPhysicalColumn().getId(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
+            if (column.getParentConcept() != null) {
+              modelElement.appendChild(createTaggedValue(doc, "CONCEPT_PARENT_NAME", column.getParentConcept().getId(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
+            }
             dimObj.appendChild(modelElement);
             /*
             <CWMMDB:DimensionedObject.dimension>
@@ -433,6 +444,12 @@ public class XmiParser {
             dimObjLink.setAttribute("xmi.idref", idstr); //$NON-NLS-1$
             dimObjs.appendChild(dimObjLink);
           }
+        }
+        
+        if (model.getParentConcept() != null) {
+          Element modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
+          modelElement.appendChild(createTaggedValue(doc, "CONCEPT_PARENT_NAME", model.getParentConcept().getId(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
+          mdbSchema.appendChild(modelElement);
         }
         
         xmiContent.appendChild(mdbSchema);
@@ -828,6 +845,7 @@ public class XmiParser {
       table.setId(physicalTable.getAttribute("name")); //$NON-NLS-1$
       xmiConceptMap.put(physicalTable.getAttribute("xmi.id"), table); //$NON-NLS-1$
       model.addPhysicalTable(table);
+      bindParentConcept(physicalTable, domain, table);
       NodeList columns = owned.getElementsByTagName("CWMRDB:Column"); //$NON-NLS-1$
       for (int i = 0; i < columns.getLength(); i++) {
         Element colelement = (Element)columns.item(i);
@@ -836,24 +854,7 @@ public class XmiParser {
         col.setId(colelement.getAttribute("name")); //$NON-NLS-1$
         xmiConceptMap.put(colelement.getAttribute("xmi.id"), col); //$NON-NLS-1$
         table.addPhysicalColumn(col);
-        NodeList pccn = colelement.getChildNodes();
-        for (int j = 0; j < pccn.getLength(); j++) {
-          if (pccn.item(j).getNodeType() == Node.ELEMENT_NODE) {
-            if (pccn.item(j).getNodeName().equals("CWM:ModelElement.taggedValue")) { //$NON-NLS-1$
-              tagged = (Element)pccn.item(j);
-            }
-          }
-        }
-        
-        String conceptParentName = getKeyValue(tagged, "CWM:TaggedValue", "tag", "value", "CONCEPT_PARENT_NAME"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-        if (conceptParentName != null) {
-          Concept parent = domain.findConcept(conceptParentName);
-          if (parent == null) {
-            logger.error(Messages.getErrorString("XmiParser.ERROR_0006_FAILED_TO_LOCATE_CONCEPT", conceptParentName)); //$NON-NLS-1$
-          } else {
-            col.setParentConcept(parent);
-          }
-        }
+        bindParentConcept(colelement, domain, col);
       }
       
       /*
@@ -883,6 +884,8 @@ public class XmiParser {
       logicalModel.setId(schema.getAttribute("name")); //$NON-NLS-1$
       xmiConceptMap.put(schema.getAttribute("xmi.id"), logicalModel); //$NON-NLS-1$
       
+      bindParentConcept(schema, domain, logicalModel);      
+      
       domain.addLogicalModel(logicalModel);
       
       Element dimension = null;
@@ -911,6 +914,7 @@ public class XmiParser {
         Element biztable = (Element)bizTables.item(i);
         LogicalTable table = new LogicalTable();
         table.setId(biztable.getAttribute("name")); //$NON-NLS-1$
+        bindParentConcept(biztable, domain, table);
         Map<String, String> nvp = getKeyValuePairs(biztable, "CWM:TaggedValue", "tag", "value"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         String pt = nvp.get("BUSINESS_TABLE_PHYSICAL_TABLE_NAME"); //$NON-NLS-1$
         IPhysicalTable physTable = domain.findPhysicalTable(pt);
@@ -967,6 +971,7 @@ public class XmiParser {
         LogicalColumn col = new LogicalColumn();
         col.setId(bizcol.getAttribute("name")); //$NON-NLS-1$
         xmiConceptMap.put(bizcol.getAttribute("xmi.id"), col); //$NON-NLS-1$
+        bindParentConcept(bizcol, domain, col);
         
         Map<String, String> nvp = getKeyValuePairs(bizcol, "CWM:TaggedValue", "tag", "value"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         String biztbl = nvp.get("BUSINESS_COLUMN_BUSINESS_TABLE"); //$NON-NLS-1$
@@ -1009,6 +1014,7 @@ public class XmiParser {
         Category cat = new Category(logicalModel);
         cat.setId(category.getAttribute("name")); //$NON-NLS-1$
         xmiConceptMap.put(category.getAttribute("xmi.id"), cat); //$NON-NLS-1$
+        bindParentConcept(category, domain, cat);
         NodeList columns = category.getElementsByTagName("CWM:Attribute"); //$NON-NLS-1$
         for (int j = 0; j < columns.getLength(); j++) {
           Element column = (Element)columns.item(j);
@@ -1276,6 +1282,30 @@ public class XmiParser {
     }
     return domain;
   }
+  
+  protected void bindParentConcept(Element element, Domain domain, IConcept concept) {
+    Element tagged = null;
+    NodeList pccn = element.getChildNodes();
+    for (int j = 0; j < pccn.getLength(); j++) {
+      if (pccn.item(j).getNodeType() == Node.ELEMENT_NODE) {
+        if (pccn.item(j).getNodeName().equals("CWM:ModelElement.taggedValue")) { //$NON-NLS-1$
+          tagged = (Element)pccn.item(j);
+        }
+      }
+    }
+    if (tagged != null) {
+      String conceptParentName = getKeyValue(tagged, "CWM:TaggedValue", "tag", "value", "CONCEPT_PARENT_NAME"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+      if (conceptParentName != null) {
+        Concept parent = domain.findConcept(conceptParentName);
+        if (parent == null) {
+          logger.error(Messages.getErrorString("XmiParser.ERROR_0006_FAILED_TO_LOCATE_CONCEPT", conceptParentName)); //$NON-NLS-1$
+        } else {
+          concept.setParentConcept(parent);
+        }
+      }
+    }
+  }
+  
   
   protected void addLocalizedString(Element description, Concept concept, String name, String body) {
     /*
