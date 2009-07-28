@@ -102,6 +102,7 @@ public class LogicalColumn extends Concept {
     clone.setId(getId());
     clone.logicalTable = logicalTable;
     clone.physicalColumn = physicalColumn;
+    clone.setParentConcept(getParentConcept());
     
     // copy over properties
     for (String key : getChildProperties().keySet()) {
