@@ -10,7 +10,6 @@ import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.PhysicalColumn;
 import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.SchemaMeta;
-import org.pentaho.pms.schema.v3.physical.SQLDataSource;
 import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.ObjectAlreadyExistsException;
 import org.pentaho.pms.util.Settings;
