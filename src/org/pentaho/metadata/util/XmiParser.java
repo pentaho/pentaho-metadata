@@ -130,6 +130,13 @@ public class XmiParser {
     return null;
   }
   
+  protected static class IdGen {
+    int val = 1;
+    public String getNextId() {
+      return "a" + val++; //$NON-NLS-1$
+    }
+  }
+  
   public Document toXmiDocument(Domain domain) {
     if (domain == null) {
       logger.error(Messages.getErrorString("XmiParser.ERROR_0001_DOMAIN_NULL")); //$NON-NLS-1$
@@ -139,6 +146,7 @@ public class XmiParser {
     DocumentBuilderFactory dbf;
     DocumentBuilder db;
     Document doc;
+    IdGen idGen = new IdGen();
 
     try {
       // create an XML document
@@ -168,8 +176,6 @@ public class XmiParser {
       
       // first add concepts
       List<Element> allDescriptions = new ArrayList<Element>();
-
-      int id = 1;
       
       for (Concept concept : domain.getConcepts()) {
         /*
@@ -183,15 +189,15 @@ public class XmiParser {
         Element cwmClass = doc.createElement("CWM:Class"); //$NON-NLS-1$
         cwmClass.setAttribute("isAbstract", "false"); //$NON-NLS-1$ //$NON-NLS-2$
         cwmClass.setAttribute("name", concept.getId()); //$NON-NLS-1$
-        String idstr = "a" + id++; //$NON-NLS-1$
+        String idstr = idGen.getNextId();
 
-        id = createDescriptions(doc, concept, "CWM:Class", idstr, allDescriptions, id); //$NON-NLS-1$
+        createDescriptions(doc, concept, "CWM:Class", idstr, allDescriptions, idGen); //$NON-NLS-1$
         
         cwmClass.setAttribute("xmi.id", idstr); //$NON-NLS-1$
         
         if (concept.getParentConcept() != null) {
           Element modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
-          modelElement.appendChild(createTaggedValue(doc, "CONCEPT_PARENT_NAME", concept.getParentConcept().getId(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
+          modelElement.appendChild(createTaggedValue(doc, "CONCEPT_PARENT_NAME", concept.getParentConcept().getId(), idGen.getNextId())); //$NON-NLS-1$
           cwmClass.appendChild(modelElement);
         }
         
@@ -214,14 +220,14 @@ public class XmiParser {
             eventModelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
           }
           String shortkey = key.substring("LEGACY_EVENT_".length()); //$NON-NLS-1$
-          eventModelElement.appendChild(createTaggedValue(doc, shortkey, (String)domain.getChildProperties().get(key), "a" + id++)); //$NON-NLS-1$
+          eventModelElement.appendChild(createTaggedValue(doc, shortkey, (String)domain.getChildProperties().get(key), idGen.getNextId()));
         }
       }
       // only add cwm:event if one or more keys exist
       if (eventModelElement != null) {
         Element event = doc.createElement("CWM:Event"); //$NON-NLS-1$
-        event.setAttribute("xmi.id", "a" + id++); //$NON-NLS-1$  //$NON-NLS-2$
-        event.setAttribute("name", "SECURITY_SERVICE");  //$NON-NLS-1$  //$NON-NLS-2$
+        event.setAttribute("xmi.id", idGen.getNextId()); //$NON-NLS-1$
+        event.setAttribute("name", "SECURITY_SERVICE"); //$NON-NLS-1$ //$NON-NLS-2$
         event.appendChild(eventModelElement);
         xmiContent.appendChild(event);
       }
@@ -234,11 +240,11 @@ public class XmiParser {
           beforeDesc = cwmParameter;
         }
         cwmParameter.setAttribute("name", localeType.getCode()); //$NON-NLS-1$
-        cwmParameter.setAttribute("xmi.id", "a" + id++); //$NON-NLS-1$ //$NON-NLS-2$
+        cwmParameter.setAttribute("xmi.id", idGen.getNextId()); //$NON-NLS-1$
         Element modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
-        modelElement.appendChild(createTaggedValue(doc, "LOCALE_IS_DEFAULT", "" + ((val == 1) ? "Y" : "N"), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-        modelElement.appendChild(createTaggedValue(doc, "LOCALE_ORDER", "" + val++, "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        modelElement.appendChild(createTaggedValue(doc, "LOCALE_DESCRIPTION", localeType.getDescription(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
+        modelElement.appendChild(createTaggedValue(doc, "LOCALE_IS_DEFAULT", "" + ((val == 1) ? "Y" : "N"), idGen.getNextId())); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        modelElement.appendChild(createTaggedValue(doc, "LOCALE_ORDER", "" + val++, idGen.getNextId())); //$NON-NLS-1$ //$NON-NLS-2$
+        modelElement.appendChild(createTaggedValue(doc, "LOCALE_DESCRIPTION", localeType.getDescription(), idGen.getNextId())); //$NON-NLS-1$
         cwmParameter.appendChild(modelElement);
         xmiContent.appendChild(cwmParameter);
       }
@@ -256,19 +262,19 @@ public class XmiParser {
           SqlDataSource datasource = sqlModel.getDatasource();
           Element catalog = doc.createElement("CWMRDB:Catalog"); //$NON-NLS-1$
           catalog.setAttribute("name", model.getId()); //$NON-NLS-1$
-          catalog.setAttribute("xmi.id", "a" + id++); //$NON-NLS-1$ //$NON-NLS-2$
+          catalog.setAttribute("xmi.id", idGen.getNextId()); //$NON-NLS-1$
           Element modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
 
-          modelElement.appendChild(createTaggedValue(doc, "DATABASE_TYPE", datasource.getDialectType(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
-          modelElement.appendChild(createTaggedValue(doc, "DATABASE_ACCESS", datasource.getType().toString(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
-          modelElement.appendChild(createTaggedValue(doc, "DATABASE_DATABASE", datasource.getDatabaseName(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
-          modelElement.appendChild(createTaggedValue(doc, "DATABASE_SERVER", datasource.getHostname(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
-          modelElement.appendChild(createTaggedValue(doc, "DATABASE_PORT", datasource.getPort(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
-          modelElement.appendChild(createTaggedValue(doc, "DATABASE_USERNAME", datasource.getUsername(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
-          modelElement.appendChild(createTaggedValue(doc, "DATABASE_PASSWORD", datasource.getPassword(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
+          modelElement.appendChild(createTaggedValue(doc, "DATABASE_TYPE", datasource.getDialectType(), idGen.getNextId())); //$NON-NLS-1$
+          modelElement.appendChild(createTaggedValue(doc, "DATABASE_ACCESS", datasource.getType().toString(), idGen.getNextId())); //$NON-NLS-1$
+          modelElement.appendChild(createTaggedValue(doc, "DATABASE_DATABASE", datasource.getDatabaseName(), idGen.getNextId())); //$NON-NLS-1$
+          modelElement.appendChild(createTaggedValue(doc, "DATABASE_SERVER", datasource.getHostname(), idGen.getNextId())); //$NON-NLS-1$
+          modelElement.appendChild(createTaggedValue(doc, "DATABASE_PORT", datasource.getPort(), idGen.getNextId())); //$NON-NLS-1$
+          modelElement.appendChild(createTaggedValue(doc, "DATABASE_USERNAME", datasource.getUsername(), idGen.getNextId())); //$NON-NLS-1$
+          modelElement.appendChild(createTaggedValue(doc, "DATABASE_PASSWORD", datasource.getPassword(), idGen.getNextId())); //$NON-NLS-1$
           
           for (String attribute : datasource.getAttributes().keySet()) {
-            modelElement.appendChild(createTaggedValue(doc, CWM.TAG_DATABASE_ATTRIBUTE_PREFIX + attribute, datasource.getAttributes().get(attribute), "a" + id++)); //$NON-NLS-1$
+            modelElement.appendChild(createTaggedValue(doc, CWM.TAG_DATABASE_ATTRIBUTE_PREFIX + attribute, datasource.getAttributes().get(attribute), idGen.getNextId()));
           }
           
           catalog.appendChild(modelElement);
@@ -290,20 +296,20 @@ public class XmiParser {
             cwmRdbTable.setAttribute("isSystem", "false"); //$NON-NLS-1$ //$NON-NLS-2$
             cwmRdbTable.setAttribute("isTemporary", "false"); //$NON-NLS-1$ //$NON-NLS-2$
             cwmRdbTable.setAttribute("name", table.getId()); //$NON-NLS-1$
-            String idstr = "a" + id++; //$NON-NLS-1$
+            String idstr = idGen.getNextId();
             cwmRdbTable.setAttribute("xmi.id", idstr); //$NON-NLS-1$
-            id = createDescriptions(doc, table, "CWMRDB:Table", idstr, allDescriptions, id); //$NON-NLS-1$
+            createDescriptions(doc, table, "CWMRDB:Table", idstr, allDescriptions, idGen); //$NON-NLS-1$
 
             Element modelElement = null;
             if (!model.getId().equals("__MISSING_PARENT_PHYSICAL_MODEL__")) { //$NON-NLS-1$
               modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
-              modelElement.appendChild(createTaggedValue(doc, "TABLE_TARGET_DATABASE_NAME", model.getId(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
+              modelElement.appendChild(createTaggedValue(doc, "TABLE_TARGET_DATABASE_NAME", model.getId(), idGen.getNextId())); //$NON-NLS-1$
             }
             if (table.getParentConcept() != null) {
               if (modelElement == null) {
                 modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
               }
-              modelElement.appendChild(createTaggedValue(doc, "CONCEPT_PARENT_NAME", table.getParentConcept().getId(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
+              modelElement.appendChild(createTaggedValue(doc, "CONCEPT_PARENT_NAME", table.getParentConcept().getId(), idGen.getNextId())); //$NON-NLS-1$
             }
             if (modelElement != null) {
               cwmRdbTable.appendChild(modelElement);
@@ -314,12 +320,12 @@ public class XmiParser {
               SqlPhysicalColumn sqlColumn = (SqlPhysicalColumn)column;
               Element rdbColumn = doc.createElement("CWMRDB:Column"); //$NON-NLS-1$
               rdbColumn.setAttribute("name", sqlColumn.getId()); //$NON-NLS-1$
-              idstr = "a" + id++; //$NON-NLS-1$
+              idstr = idGen.getNextId();
               rdbColumn.setAttribute("xmi.id", idstr); //$NON-NLS-1$
-              id = createDescriptions(doc, column, "CWMRDB:Column", idstr, allDescriptions, id); //$NON-NLS-1$
+              createDescriptions(doc, column, "CWMRDB:Column", idstr, allDescriptions, idGen); //$NON-NLS-1$
               if (sqlColumn.getParentConcept() != null) {
                 modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
-                modelElement.appendChild(createTaggedValue(doc, "CONCEPT_PARENT_NAME", sqlColumn.getParentConcept().getId(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
+                modelElement.appendChild(createTaggedValue(doc, "CONCEPT_PARENT_NAME", sqlColumn.getParentConcept().getId(), idGen.getNextId())); //$NON-NLS-1$
                 rdbColumn.appendChild(modelElement);
               }
               ownedElement.appendChild(rdbColumn);
@@ -335,22 +341,22 @@ public class XmiParser {
       for (LogicalModel model : domain.getLogicalModels()) {
         Element mdbSchema = doc.createElement("CWMMDB:Schema"); //$NON-NLS-1$
         mdbSchema.setAttribute("name", model.getId()); //$NON-NLS-1$
-        String idstr = "a" + id++; //$NON-NLS-1$
+        String idstr = idGen.getNextId();
         mdbSchema.setAttribute("xmi.id", idstr); //$NON-NLS-1$
-        id = createDescriptions(doc, model, "CWMMDB:Schema", idstr, allDescriptions, id); //$NON-NLS-1$
+        createDescriptions(doc, model, "CWMMDB:Schema", idstr, allDescriptions, idGen); //$NON-NLS-1$
         
         Element ownedElement = doc.createElement("CWM:Namespace.ownedElement"); //$NON-NLS-1$
         mdbSchema.appendChild(ownedElement);
         for (Category category : model.getCategories()) {
           Element extent = doc.createElement("CWM:Extent"); //$NON-NLS-1$
           extent.setAttribute("name", category.getId()); //$NON-NLS-1$
-          idstr = "a" + id++; //$NON-NLS-1$
+          idstr = idGen.getNextId();
           extent.setAttribute("xmi.id", idstr); //$NON-NLS-1$
-          id = createDescriptions(doc, category, "CWM:Extent", idstr, allDescriptions, id); //$NON-NLS-1$
+          createDescriptions(doc, category, "CWM:Extent", idstr, allDescriptions, idGen); //$NON-NLS-1$
           Element modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
-          modelElement.appendChild(createTaggedValue(doc, "BUSINESS_CATEGORY_ROOT", "Y", "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+          modelElement.appendChild(createTaggedValue(doc, "BUSINESS_CATEGORY_ROOT", "Y", idGen.getNextId())); //$NON-NLS-1$ //$NON-NLS-2$
           if (category.getParentConcept() != null) {
-            modelElement.appendChild(createTaggedValue(doc, "CONCEPT_PARENT_NAME", category.getParentConcept().getId(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
+            modelElement.appendChild(createTaggedValue(doc, "CONCEPT_PARENT_NAME", category.getParentConcept().getId(), idGen.getNextId())); //$NON-NLS-1$
           }
           extent.appendChild(modelElement);
           Element cOwnedElement = doc.createElement("CWM:Namespace.ownedElement"); //$NON-NLS-1$
@@ -358,9 +364,9 @@ public class XmiParser {
           for (LogicalColumn col : category.getLogicalColumns()) {
             Element attribute = doc.createElement("CWM:Attribute"); //$NON-NLS-1$
             attribute.setAttribute("name", col.getId()); //$NON-NLS-1$
-            attribute.setAttribute("xmi.id", "a" + id++); //$NON-NLS-1$ //$NON-NLS-2$
+            attribute.setAttribute("xmi.id", idGen.getNextId()); //$NON-NLS-1$
             modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
-            modelElement.appendChild(createTaggedValue(doc, "BUSINESS_CATEGORY_TYPE", "Column", "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            modelElement.appendChild(createTaggedValue(doc, "BUSINESS_CATEGORY_TYPE", "Column", idGen.getNextId())); //$NON-NLS-1$ //$NON-NLS-2$
             attribute.appendChild(modelElement);
             cOwnedElement.appendChild(attribute);
           }
@@ -370,35 +376,35 @@ public class XmiParser {
         
         for (LogicalRelationship rel : model.getLogicalRelationships()) {
           Element keyRel = doc.createElement("CWM:KeyRelationship"); //$NON-NLS-1$
-          keyRel.setAttribute("xmi.id", "a" + id++); //$NON-NLS-1$ //$NON-NLS-2$
+          keyRel.setAttribute("xmi.id", idGen.getNextId()); //$NON-NLS-1$
           Element modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
           keyRel.appendChild(modelElement);
-          modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_TYPE", rel.getRelationshipType().getType(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
+          modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_TYPE", rel.getRelationshipType().getType(), idGen.getNextId())); //$NON-NLS-1$
 
           if (rel.getToColumn() != null) {
-            modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_FIELDNAME_CHILD", rel.getToColumn().getId(), "a" + id++));//$NON-NLS-1$ //$NON-NLS-2$
+            modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_FIELDNAME_CHILD", rel.getToColumn().getId(), idGen.getNextId()));//$NON-NLS-1$
           }
           if (rel.getFromColumn() != null) {
-            modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_FIELDNAME_PARENT", rel.getFromColumn().getId(), "a" + id++));//$NON-NLS-1$ //$NON-NLS-2$
+            modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_FIELDNAME_PARENT", rel.getFromColumn().getId(), idGen.getNextId()));//$NON-NLS-1$
           }
           if (rel.getToTable() != null) {
-            modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_TABLENAME_CHILD", rel.getToTable().getId(), "a" + id++));//$NON-NLS-1$ //$NON-NLS-2$
+            modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_TABLENAME_CHILD", rel.getToTable().getId(), idGen.getNextId()));//$NON-NLS-1$
           }
           if (rel.getFromTable() != null) {
-            modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_TABLENAME_PARENT", rel.getFromTable().getId(), "a" + id++));//$NON-NLS-1$ //$NON-NLS-2$
+            modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_TABLENAME_PARENT", rel.getFromTable().getId(), idGen.getNextId()));//$NON-NLS-1$
           }
           if (rel.isComplex()) {
-            modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_IS_COMPLEX", "Y", "a" + id++));//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_COMPLEX_JOIN", rel.getComplexJoin(), "a" + id++));//$NON-NLS-1$ //$NON-NLS-2$
+            modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_IS_COMPLEX", "Y", idGen.getNextId()));//$NON-NLS-1$ //$NON-NLS-2$
+            modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_COMPLEX_JOIN", rel.getComplexJoin(), idGen.getNextId()));//$NON-NLS-1$
           }
           if (rel.getDescription() != null) {
             for (String locale : rel.getDescription().getLocales()) {
-              modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_DESCRIPTION", rel.getDescription(locale), "a" + id++));//$NON-NLS-1$ //$NON-NLS-2$
+              modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_DESCRIPTION", rel.getDescription(locale), idGen.getNextId()));//$NON-NLS-1$
               break;
             }
           }
           if (rel.getJoinOrderKey() != null) {
-            modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_JOIN_ORDER_KEY", rel.getJoinOrderKey(), "a" + id++));//$NON-NLS-1$ //$NON-NLS-2$
+            modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_JOIN_ORDER_KEY", rel.getJoinOrderKey(), idGen.getNextId()));//$NON-NLS-1$
           }
           ownedElement.appendChild(keyRel);
         }
@@ -412,23 +418,23 @@ public class XmiParser {
           sd.appendChild(dim);
           dim.setAttribute("isAbstract", "false"); //$NON-NLS-1$ //$NON-NLS-2$
           dim.setAttribute("name", table.getId()); //$NON-NLS-1$
-          String tblidstr = "a" + id++; //$NON-NLS-1$
+          String tblidstr = idGen.getNextId();
           dim.setAttribute("xmi.id", tblidstr); //$NON-NLS-1$
-          id = createDescriptions(doc, table, "CWMMDB:Dimension", tblidstr, allDescriptions, id); //$NON-NLS-1$
+          createDescriptions(doc, table, "CWMMDB:Dimension", tblidstr, allDescriptions, idGen); //$NON-NLS-1$
           Element modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
           if (table.getProperty("__LEGACY_TABLE_IS_DRAWN") != null) { //$NON-NLS-1$
-            modelElement.appendChild(createTaggedValue(doc, "TABLE_IS_DRAWN", (String)table.getProperty("__LEGACY_TABLE_IS_DRAWN"), "a" + id)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            modelElement.appendChild(createTaggedValue(doc, "TABLE_IS_DRAWN", (String)table.getProperty("__LEGACY_TABLE_IS_DRAWN"), idGen.getNextId())); //$NON-NLS-1$ //$NON-NLS-2$
           }
           if (table.getProperty("__LEGACY_TAG_POSITION_Y") != null) { //$NON-NLS-1$
-            modelElement.appendChild(createTaggedValue(doc, "TAG_POSITION_Y", (String)table.getProperty("__LEGACY_TAG_POSITION_Y"), "a" + id)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            modelElement.appendChild(createTaggedValue(doc, "TAG_POSITION_Y", (String)table.getProperty("__LEGACY_TAG_POSITION_Y"), idGen.getNextId())); //$NON-NLS-1$ //$NON-NLS-2$
           }
           if (table.getProperty("__LEGACY_TAG_POSITION_X") != null) { //$NON-NLS-1$
-            modelElement.appendChild(createTaggedValue(doc, "TAG_POSITION_X", (String)table.getProperty("__LEGACY_TAG_POSITION_X"), "a" + id)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            modelElement.appendChild(createTaggedValue(doc, "TAG_POSITION_X", (String)table.getProperty("__LEGACY_TAG_POSITION_X"), idGen.getNextId())); //$NON-NLS-1$ //$NON-NLS-2$
           }
           if (table.getParentConcept() != null) {
-            modelElement.appendChild(createTaggedValue(doc, "CONCEPT_PARENT_NAME", table.getParentConcept().getId(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
+            modelElement.appendChild(createTaggedValue(doc, "CONCEPT_PARENT_NAME", table.getParentConcept().getId(), idGen.getNextId())); //$NON-NLS-1$
           }
-          modelElement.appendChild(createTaggedValue(doc, "BUSINESS_TABLE_PHYSICAL_TABLE_NAME", table.getPhysicalTable().getId(), "a" + id)); //$NON-NLS-1$ //$NON-NLS-2$
+          modelElement.appendChild(createTaggedValue(doc, "BUSINESS_TABLE_PHYSICAL_TABLE_NAME", table.getPhysicalTable().getId(), idGen.getNextId())); //$NON-NLS-1$
           dim.appendChild(modelElement);
           Element dimObjs = doc.createElement("CWMMDB:Dimension.dimensionedObject"); //$NON-NLS-1$
           dim.appendChild(dimObjs);
@@ -437,14 +443,14 @@ public class XmiParser {
             Element dimObj = doc.createElement("CWMMDB:DimensionedObject"); //$NON-NLS-1$
             sdo.appendChild(dimObj);
             dimObj.setAttribute("name", column.getId()); //$NON-NLS-1$
-            idstr = "a" + id++; //$NON-NLS-1$
-            id = createDescriptions(doc, column, "CWMMDB:DimensionedObject", idstr, allDescriptions, id); //$NON-NLS-1$
+            idstr = idGen.getNextId();
+            createDescriptions(doc, column, "CWMMDB:DimensionedObject", idstr, allDescriptions, idGen); //$NON-NLS-1$
             dimObj.setAttribute("xmi.id", idstr); //$NON-NLS-1$
             modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
-            modelElement.appendChild(createTaggedValue(doc, "BUSINESS_COLUMN_BUSINESS_TABLE", column.getLogicalTable().getId(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
-            modelElement.appendChild(createTaggedValue(doc, "BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME", column.getPhysicalColumn().getId(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
+            modelElement.appendChild(createTaggedValue(doc, "BUSINESS_COLUMN_BUSINESS_TABLE", column.getLogicalTable().getId(), idGen.getNextId())); //$NON-NLS-1$
+            modelElement.appendChild(createTaggedValue(doc, "BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME", column.getPhysicalColumn().getId(), idGen.getNextId())); //$NON-NLS-1$
             if (column.getParentConcept() != null) {
-              modelElement.appendChild(createTaggedValue(doc, "CONCEPT_PARENT_NAME", column.getParentConcept().getId(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
+              modelElement.appendChild(createTaggedValue(doc, "CONCEPT_PARENT_NAME", column.getParentConcept().getId(), idGen.getNextId())); //$NON-NLS-1$
             }
             dimObj.appendChild(modelElement);
             /*
@@ -468,7 +474,7 @@ public class XmiParser {
         
         if (model.getParentConcept() != null) {
           Element modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
-          modelElement.appendChild(createTaggedValue(doc, "CONCEPT_PARENT_NAME", model.getParentConcept().getId(), "a" + id++)); //$NON-NLS-1$ //$NON-NLS-2$
+          modelElement.appendChild(createTaggedValue(doc, "CONCEPT_PARENT_NAME", model.getParentConcept().getId(), idGen.getNextId())); //$NON-NLS-1$
           mdbSchema.appendChild(modelElement);
         }
         
@@ -488,7 +494,7 @@ public class XmiParser {
   }
   
   @SuppressWarnings("unchecked")
-  protected int createDescriptions(Document doc, IConcept concept, String parentTag, String idstr, List<Element> allDescriptions, int id) {
+  protected void createDescriptions(Document doc, IConcept concept, String parentTag, String idstr, List<Element> allDescriptions, IdGen idGen) {
     for (String key : concept.getChildProperties().keySet()) {
 
       String body = null;
@@ -525,18 +531,12 @@ public class XmiParser {
         org.pentaho.metadata.model.concept.types.ColumnWidth ncw = (org.pentaho.metadata.model.concept.types.ColumnWidth)val;
         type = "ColumnWidth"; //$NON-NLS-1$
         ColumnWidth cw = new ColumnWidth(ncw.getType().ordinal(), ncw.getWidth());
-        //             ColumnWidth cw = ColumnWidth.fromString(body);
-//        WidthType cwt = WidthType.values()[cw.getType()];
-//        org.pentaho.metadata.model.concept.types.ColumnWidth ncw = new org.pentaho.metadata.model.concept.types.ColumnWidth(cwt, cw.getWidth().doubleValue());
-//        concept.setProperty(name, ncw);
         body = cw.toString();
       } else if (val instanceof Double) {
         type = "Number"; //$NON-NLS-1$
         BigDecimal bd = new BigDecimal((Double)val);
         body = bd.toString();
       } else if (val instanceof Alignment) {
-//      AlignmentSettings alignment = (AlignmentSettings)property.getValue();
-//      return Alignment.values()[alignment.getType()];
         Alignment alignment = (Alignment)val;
         AlignmentSettings as = AlignmentSettings.types[alignment.ordinal()];
         body = as.toString();
@@ -585,7 +585,7 @@ public class XmiParser {
         // need to add description for each locale
         LocalizedString lstr = (LocalizedString)val;
         for (String locale : lstr.getLocales()) {
-          createDescription(doc, lstr.getLocalizedString(locale), key, "LocString", locale, id++, parentTag, idstr, allDescriptions); //$NON-NLS-1$
+          createDescription(doc, lstr.getLocalizedString(locale), key, "LocString", locale, idGen, parentTag, idstr, allDescriptions); //$NON-NLS-1$
         }
       } else if (val instanceof TargetColumnType) {
         TargetColumnType tct = (TargetColumnType)val;
@@ -630,13 +630,12 @@ public class XmiParser {
         logger.error(Messages.getErrorString("XmiParser.ERROR_0005_UNSUPPORTED_CONCEPT_PROPERTY",val.getClass())); //$NON-NLS-1$
       }
       if (type != null) {
-        createDescription(doc, body, key, type, null, id++, parentTag, idstr, allDescriptions);
+        createDescription(doc, body, key, type, null, idGen, parentTag, idstr, allDescriptions);
       }
     }
-    return id;
   }
   
-  protected void createDescription(Document doc, String body, String key, String type, String locale, int id, String parentTag, String idstr, List<Element> allDescriptions) {
+  protected void createDescription(Document doc, String body, String key, String type, String locale, IdGen idGen, String parentTag, String idstr, List<Element> allDescriptions) {
     Element desc = doc.createElement("CWM:Description"); //$NON-NLS-1$
     desc.setAttribute("body", body); //$NON-NLS-1$
     if (locale != null) {
@@ -644,7 +643,7 @@ public class XmiParser {
     }
     desc.setAttribute("name", key); //$NON-NLS-1$
     desc.setAttribute("type", type); //$NON-NLS-1$
-    desc.setAttribute("xmi.id", "a" + id++); //$NON-NLS-1$ //$NON-NLS-2$
+    desc.setAttribute("xmi.id", idGen.getNextId()); //$NON-NLS-1$
     Element modelElement = doc.createElement("CWM:Description.modelElement"); //$NON-NLS-1$
     Element parent = doc.createElement(parentTag);
     modelElement.appendChild(parent);
