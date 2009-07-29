@@ -68,6 +68,8 @@ import org.pentaho.metadata.messages.Messages;
  */
 public class InlineEtlQueryExecutor {
   
+  private static final String __FORMULA_ = "__FORMULA_"; //$NON-NLS-1$
+
   private static final Log logger = LogFactory.getLog(InlineEtlQueryExecutor.class);
   
   String transformLocation = "res:org/pentaho/metadata/query/impl/ietl/"; //$NON-NLS-1$
@@ -143,27 +145,30 @@ public class InlineEtlQueryExecutor {
           m.appendReplacement(sb, openFormulaValue);
         } else {
           String seg[] = match.split("\\."); //$NON-NLS-1$
-          Category cat = query.getLogicalModel().findCategory(seg[0]);
-          LogicalColumn col = cat.findLogicalColumn(seg[1]);
-          if (col == null) {
-            logger.error(Messages.getErrorString("InlineEtlQueryExecutor.ERROR_0001_FAILED_TO_LOCATE_COLUMN",seg[0], seg[1])); //$NON-NLS-1$
-          }
-          String fieldName = (String)col.getProperty(InlineEtlPhysicalColumn.FIELD_NAME);
-          AggregationType agg = null;
-          if (seg.length > 2) {
-             agg = AggregationType.valueOf(seg[2].toUpperCase());
-          }
-          Selection sel = new Selection(cat, col, agg);
-          if (!qc.selections.contains(sel)) {
-            qc.selections.add(sel);
-            if (sel.getActiveAggregationType() != null && sel.getActiveAggregationType() != AggregationType.NONE) {
-              qc.groupby = true;
+          if (seg != null && seg.length > 1) {
+            Category cat = query.getLogicalModel().findCategory(seg[0]);
+            LogicalColumn col = cat.findLogicalColumn(seg[1]);
+            if (col == null) {
+              logger.error(Messages.getErrorString("InlineEtlQueryExecutor.ERROR_0001_FAILED_TO_LOCATE_COLUMN",seg[0], seg[1])); //$NON-NLS-1$
             }
+            String fieldName = (String)col.getProperty(InlineEtlPhysicalColumn.FIELD_NAME);
+            AggregationType agg = null;
+            if (seg.length > 2) {
+               agg = AggregationType.valueOf(seg[2].toUpperCase());
+            }
+            Selection sel = new Selection(cat, col, agg);
+            if (!qc.selections.contains(sel)) {
+              qc.selections.add(sel);
+              if (sel.getActiveAggregationType() != null && sel.getActiveAggregationType() != AggregationType.NONE) {
+                qc.groupby = true;
+              }
+            }
+            // this may be different in the group by context.
+            
+            m.appendReplacement(sb, "[" + fieldName + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+          } else {
+            logger.error(Messages.getErrorString("InlineEtlQueryExecutor.ERROR_0002_FAILED_TO_PARSE_FORMULA", match)); //$NON-NLS-1$
           }
-          
-          // this may be different in the group by context.
-          
-          m.appendReplacement(sb, "[" + fieldName + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         }
       }
       m.appendTail(sb);
@@ -322,10 +327,10 @@ public class InlineEtlQueryExecutor {
           continue;
         }
         String formulaVal = constraint.formula;
-        formulaMeta.getFormula()[c] = new FormulaMetaFunction("__FORMULA_" + c, formulaVal, ValueMetaInterface.TYPE_BOOLEAN, -1, -1, null); //$NON-NLS-1$
+        formulaMeta.getFormula()[c] = new FormulaMetaFunction(__FORMULA_ + c, formulaVal, ValueMetaInterface.TYPE_BOOLEAN, -1, -1, null);
 
         Condition condition = new Condition();
-        condition.setLeftValuename("__FORMULA_" + c); //$NON-NLS-1$
+        condition.setLeftValuename(__FORMULA_ + c);
         condition.setOperator(convertOperator(constraint.orig.getCombinationType()));
         condition.setFunction(Condition.FUNC_EQUAL);
         condition.setRightExact(new ValueMetaAndData("dummy", true)); //$NON-NLS-1$
@@ -622,7 +627,7 @@ public class InlineEtlQueryExecutor {
         if (logger.isDebugEnabled()) {
           StringBuffer sb = new StringBuffer();
           for (int i = 0; i < pentahoRow.length; i++) {
-            sb.append(pentahoRow[i] + "; "); //$NON-NLS-1$
+            sb.append(pentahoRow[i]).append("; "); //$NON-NLS-1$
           }
           logger.debug(sb.toString());
         }

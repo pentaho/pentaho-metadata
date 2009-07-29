@@ -134,11 +134,13 @@ public class ThinModelConverter {
   
 
   /**
-   * This method isn't fully supported, it was implemented during a transition phase between the old and new models.
-
+   * Convert a thin model to the legacy API 
+   * 
    * @param domain a domain object to convert to legacy
    * @return a schema meta object
    * @throws ObjectAlreadyExistsException
+   * 
+   * @deprecated this method isn't fully supported, it was implemented during a transition phase between the old and new models
    */
   public static SchemaMeta convertToLegacy(Domain domain) throws ObjectAlreadyExistsException {
     SchemaMeta schemaMeta = new SchemaMeta();
