@@ -2,6 +2,7 @@ package org.pentaho.metadata;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Set;
@@ -65,6 +66,10 @@ public class XmiParserTest {
     Domain domain = parser.parseXmi(new FileInputStream("samples/steelwheels.xmi"));
     
     String xmi = parser.generateXmi(domain);
+    
+    FileOutputStream fos = new FileOutputStream("/home/gorman/metadata_files/xmi_output.xmi");
+    fos.write(xmi.getBytes());
+    fos.close();
     
     ByteArrayInputStream is = new ByteArrayInputStream(xmi.getBytes());
     Domain domain2 = parser.parseXmi(is);
