@@ -494,7 +494,7 @@ public class InlineEtlQueryExecutor {
           String fieldName = selectionFieldNames.get(selection); 
           groupStep.getAggregateField()[c] = fieldName;    
           groupStep.getSubjectField()[c] = fieldName;    
-          groupStep.getAggregateType()[c] = selection.getActiveAggregationType().ordinal();
+          groupStep.getAggregateType()[c] = convertAggType(selection.getActiveAggregationType());
           groupStep.getValueField()[c] = null;
           c++;
         }
@@ -511,6 +511,29 @@ public class InlineEtlQueryExecutor {
     trans.endProcessing("end"); //$NON-NLS-1$
     
     return listener.results;
+  }
+  
+  private int convertAggType(AggregationType type) {
+    switch(type) {
+      case NONE:
+        return GroupByMeta.TYPE_GROUP_NONE;
+      case AVG:
+        return GroupByMeta.TYPE_GROUP_AVERAGE;
+      case SUM:
+        return GroupByMeta.TYPE_GROUP_SUM;
+      case COUNT:
+        return GroupByMeta.TYPE_GROUP_COUNT_ALL;
+      case DISTINCT_COUNT:
+        // todo: need to implement distinct count in Kettle
+        return GroupByMeta.TYPE_GROUP_COUNT_ALL;
+        
+      case MIN:
+        return GroupByMeta.TYPE_GROUP_MIN;
+      case MAX:
+        return GroupByMeta.TYPE_GROUP_MAX;
+      default:
+        return GroupByMeta.TYPE_GROUP_NONE;
+    }
   }
   
   private int convertOperator(CombinationType combo) {

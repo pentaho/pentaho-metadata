@@ -605,6 +605,190 @@ public class InlineEtlModelGeneratorTest {
     Assert.assertEquals(19.5, resultset.getValueAt(0, 1));
     Assert.assertEquals(5.7, resultset.getValueAt(1, 1));
   }
+  
+  
+  @Test
+  public void testQueryExecutionAllAggregations() throws Exception {
+    
+    EnvUtil.environmentInit();
+    StepLoader.init();
+    
+    List<String> users = new ArrayList<String>();
+    users.add("suzy");
+    List<String> roles = new ArrayList<String>();
+    roles.add("Authenticated");
+    int defaultAcls = 31;
+    InlineEtlModelGenerator gen = new InlineEtlModelGenerator(
+        "testmodel", 
+        "test/solution/system/metadata/csvfiles/",
+        "People.csv",
+        true,
+        ",",
+        "\"",true, users, roles, defaultAcls, "joe");
+    
+    Domain domain = gen.generate();
+
+    LogicalModel model = domain.getLogicalModels().get(0);
+    Category category = model.getCategories().get(0);
+    // category.getLogicalColumns().get(1).setDataType(DataType.NUMERIC);
+    category.getLogicalColumns().get(6).setAggregationType(AggregationType.SUM);
+    List<AggregationType> aggList = new ArrayList<AggregationType>();
+    aggList.add(AggregationType.AVG);
+    aggList.add(AggregationType.COUNT);
+    aggList.add(AggregationType.MAX);
+    aggList.add(AggregationType.MIN);
+    aggList.add(AggregationType.DISTINCT_COUNT);
+    aggList.add(AggregationType.NONE);
+    
+    category.getLogicalColumns().get(6).setAggregationList(aggList);
+    Query query = new Query(domain, model);
+
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(5), null));
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(6), null));
+    
+    InlineEtlQueryExecutor executor = new InlineEtlQueryExecutor();
+    IPentahoResultSet resultset = executor.executeQuery(query, "test/solution/system/metadata/csvfiles/", null);
+    
+    Assert.assertEquals(3, resultset.getRowCount());
+    Assert.assertEquals(2, resultset.getColumnCount());
+    Assert.assertEquals("bc_5_County", resultset.getMetaData().getColumnHeaders()[0][0]);
+    Assert.assertEquals("bc_6_Age", resultset.getMetaData().getColumnHeaders()[0][1]);
+
+    Assert.assertEquals("Orange", resultset.getValueAt(0, 0));
+    Assert.assertEquals("Seminole", resultset.getValueAt(1, 0));
+    Assert.assertEquals("Volusia", resultset.getValueAt(2, 0));
+    
+    Assert.assertEquals(194.0, resultset.getValueAt(0, 1));
+    Assert.assertEquals(32.0, resultset.getValueAt(1, 1));
+    Assert.assertEquals(31.0, resultset.getValueAt(2, 1));
+    
+    query = new Query(domain, model);
+
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(5), null));
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(6), AggregationType.AVG));
+    
+    executor = new InlineEtlQueryExecutor();
+    resultset = executor.executeQuery(query, "test/solution/system/metadata/csvfiles/", null);
+    
+    Assert.assertEquals(3, resultset.getRowCount());
+    Assert.assertEquals(2, resultset.getColumnCount());
+    Assert.assertEquals("bc_5_County", resultset.getMetaData().getColumnHeaders()[0][0]);
+    Assert.assertEquals("bc_6_Age", resultset.getMetaData().getColumnHeaders()[0][1]);
+
+    Assert.assertEquals("Orange", resultset.getValueAt(0, 0));
+    Assert.assertEquals("Seminole", resultset.getValueAt(1, 0));
+    Assert.assertEquals("Volusia", resultset.getValueAt(2, 0));
+    
+    Assert.assertEquals(32.333333333333336, resultset.getValueAt(0, 1));
+    Assert.assertEquals(32.0, resultset.getValueAt(1, 1));
+    Assert.assertEquals(31.0, resultset.getValueAt(2, 1));
+
+    query = new Query(domain, model);
+
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(5), null));
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(6), AggregationType.NONE));
+    
+    executor = new InlineEtlQueryExecutor();
+    resultset = executor.executeQuery(query, "test/solution/system/metadata/csvfiles/", null);
+    
+    Assert.assertEquals(8, resultset.getRowCount());
+    Assert.assertEquals(2, resultset.getColumnCount());
+    Assert.assertEquals("bc_5_County", resultset.getMetaData().getColumnHeaders()[0][0]);
+    Assert.assertEquals("bc_6_Age", resultset.getMetaData().getColumnHeaders()[0][1]);
+
+    Assert.assertEquals("Orange", resultset.getValueAt(0, 0));
+    Assert.assertEquals("Orange", resultset.getValueAt(1, 0));
+    Assert.assertEquals("Seminole", resultset.getValueAt(2, 0));
+    
+    Assert.assertEquals(36.0, resultset.getValueAt(0, 1));
+    Assert.assertEquals(29.0, resultset.getValueAt(1, 1));
+    Assert.assertEquals(32.0, resultset.getValueAt(2, 1));
+
+    query = new Query(domain, model);
+
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(5), null));
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(6), AggregationType.COUNT));
+    
+    executor = new InlineEtlQueryExecutor();
+    resultset = executor.executeQuery(query, "test/solution/system/metadata/csvfiles/", null);
+    
+    Assert.assertEquals(3, resultset.getRowCount());
+    Assert.assertEquals(2, resultset.getColumnCount());
+    Assert.assertEquals("bc_5_County", resultset.getMetaData().getColumnHeaders()[0][0]);
+    Assert.assertEquals("bc_6_Age", resultset.getMetaData().getColumnHeaders()[0][1]);
+
+    Assert.assertEquals("Orange", resultset.getValueAt(0, 0));
+    Assert.assertEquals("Seminole", resultset.getValueAt(1, 0));
+    Assert.assertEquals("Volusia", resultset.getValueAt(2, 0));
+    
+    Assert.assertEquals(6L, resultset.getValueAt(0, 1));
+    Assert.assertEquals(1L, resultset.getValueAt(1, 1));
+    Assert.assertEquals(1L, resultset.getValueAt(2, 1));
+    
+    query = new Query(domain, model);
+
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(5), null));
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(6), AggregationType.MIN));
+    
+    executor = new InlineEtlQueryExecutor();
+    resultset = executor.executeQuery(query, "test/solution/system/metadata/csvfiles/", null);
+    
+    Assert.assertEquals(3, resultset.getRowCount());
+    Assert.assertEquals(2, resultset.getColumnCount());
+    Assert.assertEquals("bc_5_County", resultset.getMetaData().getColumnHeaders()[0][0]);
+    Assert.assertEquals("bc_6_Age", resultset.getMetaData().getColumnHeaders()[0][1]);
+
+    Assert.assertEquals("Orange", resultset.getValueAt(0, 0));
+    Assert.assertEquals("Seminole", resultset.getValueAt(1, 0));
+    Assert.assertEquals("Volusia", resultset.getValueAt(2, 0));
+    
+    Assert.assertEquals(29.0, resultset.getValueAt(0, 1));
+    Assert.assertEquals(32.0, resultset.getValueAt(1, 1));
+    Assert.assertEquals(31.0, resultset.getValueAt(2, 1));
+    
+    query = new Query(domain, model);
+
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(5), null));
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(6), AggregationType.MAX));
+    
+    executor = new InlineEtlQueryExecutor();
+    resultset = executor.executeQuery(query, "test/solution/system/metadata/csvfiles/", null);
+    
+    Assert.assertEquals(3, resultset.getRowCount());
+    Assert.assertEquals(2, resultset.getColumnCount());
+    Assert.assertEquals("bc_5_County", resultset.getMetaData().getColumnHeaders()[0][0]);
+    Assert.assertEquals("bc_6_Age", resultset.getMetaData().getColumnHeaders()[0][1]);
+
+    Assert.assertEquals("Orange", resultset.getValueAt(0, 0));
+    Assert.assertEquals("Seminole", resultset.getValueAt(1, 0));
+    Assert.assertEquals("Volusia", resultset.getValueAt(2, 0));
+    
+    Assert.assertEquals(36.0, resultset.getValueAt(0, 1));
+    Assert.assertEquals(32.0, resultset.getValueAt(1, 1));
+    Assert.assertEquals(31.0, resultset.getValueAt(2, 1));
+
+    query = new Query(domain, model);
+
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(5), null));
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(6), AggregationType.DISTINCT_COUNT));
+    
+    executor = new InlineEtlQueryExecutor();
+    resultset = executor.executeQuery(query, "test/solution/system/metadata/csvfiles/", null);
+    
+    Assert.assertEquals(3, resultset.getRowCount());
+    Assert.assertEquals(2, resultset.getColumnCount());
+    Assert.assertEquals("bc_5_County", resultset.getMetaData().getColumnHeaders()[0][0]);
+    Assert.assertEquals("bc_6_Age", resultset.getMetaData().getColumnHeaders()[0][1]);
+
+    Assert.assertEquals("Orange", resultset.getValueAt(0, 0));
+    Assert.assertEquals("Seminole", resultset.getValueAt(1, 0));
+    Assert.assertEquals("Volusia", resultset.getValueAt(2, 0));
+    
+    Assert.assertEquals(6L, resultset.getValueAt(0, 1));
+    Assert.assertEquals(1L, resultset.getValueAt(1, 1));
+    Assert.assertEquals(1L, resultset.getValueAt(2, 1));
+    
+  }
 }
 
 
