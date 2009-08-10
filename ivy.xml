@@ -37,7 +37,6 @@
     <dependency org="dom4j" name="dom4j" rev="1.6.1">
       <exclude org="xml-apis" name="xml-apis" />
     </dependency>
-    <dependency org="org.springframework" name="spring-core" rev="2.0" transitive="false" />
     <dependency org="simple-jndi" name="simple-jndi" rev="0.11.3" />
     <!-- dependency org="jfree" name="jcommon" rev="1.0.14" / -->
     <dependency org="com.thoughtworks.xstream" name="xstream"            rev="1.3" />
