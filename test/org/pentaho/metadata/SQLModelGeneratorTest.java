@@ -12,18 +12,28 @@
  */
 package org.pentaho.metadata;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.Statement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
+import org.pentaho.commons.connection.IPentahoConnection;
+import org.pentaho.commons.connection.IPentahoResultSet;
+import org.pentaho.commons.connection.marshal.MarshallableResultSet;
+import org.pentaho.commons.connection.marshal.ResultSetMarshaller;
+import org.pentaho.commons.connection.memory.MemoryMetaData;
+import org.pentaho.commons.connection.memory.MemoryResultSet;
 import org.pentaho.di.core.Props;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
@@ -49,28 +59,28 @@ import org.pentaho.pms.schema.concept.types.datatype.DataTypeSettings;
 import org.pentaho.pms.util.Settings;
 
 public class SQLModelGeneratorTest {
-  
+
   @Test
   public void testSQLModelGenerator() {
     // basic tests
     try {
-    SerializationService service = new SerializationService();
-    
-    String xml = service.serializeDomain(generateModel());
-  
-    System.out.println(xml);
-    
-    Domain domain2 = service.deserializeDomain(xml);
-    
-    Assert.assertEquals(1, domain2.getPhysicalModels().size());
-    } catch(SQLModelGeneratorException smge) {
+      SerializationService service = new SerializationService();
+
+      String xml = service.serializeDomain(generateModel());
+
+      System.out.println(xml);
+
+      Domain domain2 = service.deserializeDomain(xml);
+
+      Assert.assertEquals(1, domain2.getPhysicalModels().size());
+    } catch (SQLModelGeneratorException smge) {
       Assert.fail();
     }
   }
-  
+
   @Test
   public void testToLegacy() {
-    if(!Props.isInitialized()) {
+    if (!Props.isInitialized()) {
       Props.init(Props.TYPE_PROPERTIES_EMPTY);
     }
     Domain domain = null;
@@ -78,24 +88,25 @@ public class SQLModelGeneratorTest {
     try {
       domain = generateModel();
       meta = ThinModelConverter.convertToLegacy(domain);
-    } catch (Exception e){
+    } catch (Exception e) {
       e.printStackTrace();
       Assert.fail();
     }
-    
+
     String locale = Locale.getDefault().toString();
-    
+
     // verify conversion worked.
     BusinessModel model = meta.findModel("MODEL_1");
     Assert.assertNotNull(model);
     String local = model.getName(locale);
     Assert.assertEquals("newdatasource", model.getName(locale));
-    BusinessCategory cat = model.getRootCategory().findBusinessCategory(Settings.getBusinessCategoryIDPrefix()+ "newdatasource");
+    BusinessCategory cat = model.getRootCategory().findBusinessCategory(
+        Settings.getBusinessCategoryIDPrefix() + "newdatasource");
     Assert.assertNotNull(cat);
     Assert.assertEquals("newdatasource", cat.getName(locale));
-    
+
     Assert.assertEquals(1, cat.getBusinessColumns().size());
-    
+
     // this tests the inheritance of physical cols made it through
     BusinessColumn col = cat.getBusinessColumn(0);
     Assert.assertEquals("CUSTOMERNAME", col.getName(locale));
@@ -103,11 +114,13 @@ public class SQLModelGeneratorTest {
     Assert.assertEquals("LOGICAL_TABLE_1", col.getBusinessTable().getId());
 
     Assert.assertEquals(col.getDataType(), DataTypeSettings.STRING);
-    Assert.assertEquals("select customername from customers where customernumber < 171", col.getBusinessTable().getTargetTable());
-    Assert.assertEquals("select customername from customers where customernumber < 171", col.getPhysicalColumn().getTable().getTargetTable());
+    Assert.assertEquals("select customername from customers where customernumber < 171", col.getBusinessTable()
+        .getTargetTable());
+    Assert.assertEquals("select customername from customers where customernumber < 171", col.getPhysicalColumn()
+        .getTable().getTargetTable());
     Assert.assertEquals("CUSTOMERNAME", col.getPhysicalColumn().getFormula());
     Assert.assertEquals(false, col.getPhysicalColumn().isExact());
-    
+
   }
 
   @Test
@@ -116,18 +129,18 @@ public class SQLModelGeneratorTest {
       Domain domain = generateModel();
       LogicalModel model = domain.findLogicalModel("MODEL_1");
       Query query = new Query(domain, model);
-      
-      Category category = model.findCategory(Settings.getBusinessCategoryIDPrefix()+ "newdatasource");
+
+      Category category = model.findCategory(Settings.getBusinessCategoryIDPrefix() + "newdatasource");
       LogicalColumn column = category.findLogicalColumn("bc_CUSTOMERNAME");
       query.getSelections().add(new Selection(category, column, null));
-      
+
       query.getConstraints().add(new Constraint(CombinationType.AND, "[CATEGORY.bc_CUSTOMERNAME] = \"bob\""));
-  
+
       query.getOrders().add(new Order(new Selection(category, column, null), Order.Type.ASC));
-      
+
       QueryXmlHelper helper = new QueryXmlHelper();
       String xml = helper.toXML(query);
-      
+
       InMemoryMetadataDomainRepository repo = new InMemoryMetadataDomainRepository();
       try {
         repo.storeDomain(domain, true);
@@ -136,7 +149,7 @@ public class SQLModelGeneratorTest {
         Assert.fail();
       }
       Query newQuery = null;
-        newQuery = helper.fromXML(repo, xml);
+      newQuery = helper.fromXML(repo, xml);
       // verify that when we serialize and deserialize, the xml stays the same. 
       Assert.assertEquals(xml, helper.toXML(newQuery));
     } catch (Exception e) {
@@ -151,11 +164,11 @@ public class SQLModelGeneratorTest {
     Domain domain = generateModel();
     LogicalModel model = domain.findLogicalModel("MODEL_1");
     Query query = new Query(domain, model);
-    
-    Category category = model.findCategory(Settings.getBusinessCategoryIDPrefix()+ "newdatasource");
+
+    Category category = model.findCategory(Settings.getBusinessCategoryIDPrefix() + "newdatasource");
     LogicalColumn column = category.findLogicalColumn("bc_CUSTOMERNAME");
     query.getSelections().add(new Selection(category, column, null));
-    
+
     query.getConstraints().add(new Constraint(CombinationType.AND, "[bc_newdatasource.bc_CUSTOMERNAME] = \"bob\""));
 
     query.getOrders().add(new Order(new Selection(category, column, null), Order.Type.ASC));
@@ -168,26 +181,18 @@ public class SQLModelGeneratorTest {
     }
     Assert.assertNotNull(impl);
     Assert.assertEquals(
-        
-        "SELECT DISTINCT \n" + 
-        "          LOGICAL_TABLE_1.CUSTOMERNAME AS COL0\n" + 
-        "FROM \n" + 
-        "          (select customername from customers where customernumber < 171) LOGICAL_TABLE_1\n" + 
-        "WHERE \n" + 
-        "        (\n" + 
-        "          (\n" + 
-        "              LOGICAL_TABLE_1.CUSTOMERNAME  = 'bob'\n" + 
-        "          )\n" + 
-        "        )\n" + 
-        "ORDER BY \n" + 
-        "          COL0\n",
-        
-        impl.getQuery().getQuery()
-    );
+
+    "SELECT DISTINCT \n" + "          LOGICAL_TABLE_1.CUSTOMERNAME AS COL0\n" + "FROM \n"
+        + "          (select customername from customers where customernumber < 171) LOGICAL_TABLE_1\n" + "WHERE \n"
+        + "        (\n" + "          (\n" + "              LOGICAL_TABLE_1.CUSTOMERNAME  = 'bob'\n" + "          )\n"
+        + "        )\n" + "ORDER BY \n" + "          COL0\n",
+
+    impl.getQuery().getQuery());
 
   }
-  
-  private Connection getDataSourceConnection(String driverClass, String name, String username, String password, String url) throws Exception {
+
+  private Connection getDataSourceConnection(String driverClass, String name, String username, String password,
+      String url) throws Exception {
     Connection conn = null;
 
     if (StringUtils.isEmpty(driverClass)) {
@@ -204,7 +209,7 @@ public class SQLModelGeneratorTest {
       throw new Exception("Driver not found in the class path. Driver was " + driverClass); //$NON-NLS-1$    }
     }
     Driver driver = null;
-    
+
     try {
       driver = driverC.asSubclass(Driver.class).newInstance();
     } catch (InstantiationException e) {
@@ -220,7 +225,7 @@ public class SQLModelGeneratorTest {
       throw new Exception("Unable to connect", e); //$NON-NLS-1$
     }
   }
-  
+
   private Domain generateModel() throws SQLModelGeneratorException{
     String query = "select customername from customers where customernumber < 171";
     Connection connection = null;
@@ -231,16 +236,131 @@ public class SQLModelGeneratorTest {
     roles.add("Authenticated");
     int defaultAcls = 31;
     String createdBy = "joe";
+    String[] columnHeaders = null;
+    String[] columnTypes = null;
+    Object[][] rawdata = null;
+    Statement stmt = null;
+    ResultSet rs = null;
     try {
-    connection = getDataSourceConnection("org.hsqldb.jdbcDriver","SampleData"
-        ,"pentaho_user", "password"
-          ,"jdbc:hsqldb:file:test/solution/system/data/sampledata");
+      connection = getDataSourceConnection("org.hsqldb.jdbcDriver","SampleData"
+          ,"pentaho_user", "password"
+            ,"jdbc:hsqldb:file:test/solution/system/data/sampledata");
+    stmt = connection.createStatement();
+    stmt.setMaxRows(5);
+    rs = stmt.executeQuery(query);
+    ResultSetMetaData metadata = rs.getMetaData();
+    columnHeaders = new String[metadata.getColumnCount()];
+    columnTypes = new String[metadata.getColumnCount()];
+    columnHeaders = getColumnNames(metadata);
+    columnTypes = getColumnTypes(metadata);
+
+    int colCount = rs.getMetaData().getColumnCount();
+    //loop through rows
+    int rowIdx = 0;
+    rawdata = new Object[5][colCount];
+    while (rs.next()) {
+      if(rowIdx >= 5) {
+        break;
+      }
+
+       for (int colIdx = 1; colIdx <= colCount; colIdx++) {
+         rawdata[rowIdx][colIdx-1] = rs.getString(colIdx);
+      }
+      rowIdx++;
+    }
+  
     } catch(Exception e) {
       e.printStackTrace();
-      Assert.fail();
+      
+    } finally {
+      try {
+        closeAll(connection, stmt, rs, true);
+      } catch (SQLException e) {
+      }
     }
-    SQLModelGenerator generator = new SQLModelGenerator("newdatasource", "SampleData", connection, query, securityEnabled, users, roles, defaultAcls, createdBy);
+    MemoryMetaData metadata = new MemoryMetaData( new String[][] { columnHeaders }, null );
+    metadata.setColumnTypes(columnTypes);
+    MemoryResultSet data = new MemoryResultSet( metadata );
+    for(int i=0;i<rawdata.length;i++) {
+     data.addRow(rawdata[i]); 
+    }
+    MarshallableResultSet resultSet = ResultSetMarshaller.fromResultSet(data);
+
+    SQLModelGenerator generator = new SQLModelGenerator("newdatasource", "SampleData", resultSet, query, securityEnabled, users, roles, defaultAcls, createdBy);
     return generator.generate(); 
   }
-  
+
+  /**
+   * The following method returns an array of String(java.sql.Types) containing the column types for
+   * a given ResultSetMetaData object.
+   */
+  private String[] getColumnTypesNames(ResultSetMetaData resultSetMetaData) throws SQLException {
+    int columnCount = resultSetMetaData.getColumnCount();
+    String[] columnTypes = new String[columnCount];
+
+    for (int colIndex = 1; colIndex <= columnCount; colIndex++) {
+      columnTypes[colIndex - 1] = resultSetMetaData.getColumnTypeName(colIndex);
+    }
+
+    return columnTypes;
+  }
+
+  /**
+   * The following method returns an array of strings containing the column names for
+   * a given ResultSetMetaData object.
+   */
+  public String[] getColumnNames(ResultSetMetaData resultSetMetaData) throws SQLException {
+    int columnCount = resultSetMetaData.getColumnCount();
+    String columnNames[] = new String[columnCount];
+
+    for (int colIndex = 1; colIndex <= columnCount; colIndex++) {
+      columnNames[colIndex - 1] = resultSetMetaData.getColumnName(colIndex);
+    }
+
+    return columnNames;
+  }
+
+  /**
+   * The following method returns an array of int(java.sql.Types) containing the column types for
+   * a given ResultSetMetaData object.
+   */
+  public String[] getColumnTypes(ResultSetMetaData resultSetMetaData) throws SQLException {
+    int columnCount = resultSetMetaData.getColumnCount();
+    String[] returnValue = new String[columnCount];
+    for (int colIndex = 1; colIndex <= columnCount; colIndex++) {
+      returnValue[colIndex - 1] = resultSetMetaData.getColumnTypeName(colIndex);
+    }
+
+    return returnValue;
+  }
+
+  private void closeAll(Connection conn, Statement stmt, ResultSet rs, boolean throwsException) throws SQLException {
+    SQLException rethrow = null;
+    if (rs != null) {
+      try {
+        rs.close();
+      } catch (SQLException ignored) {
+        rethrow = ignored;
+      }
+    }
+    if (stmt != null) {
+      try {
+        stmt.close();
+      } catch (SQLException ignored) {
+        rethrow = ignored;
+      }
+    }
+    if (conn != null) {
+      try {
+        conn.close();
+      } catch (SQLException ignored) {
+        rethrow = ignored;
+      }
+    }
+    if (throwsException && rethrow != null) {
+      throw rethrow;
+    }
+
+  }
+
 }
