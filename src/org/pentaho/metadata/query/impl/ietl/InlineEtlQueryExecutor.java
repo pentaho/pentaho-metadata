@@ -517,19 +517,19 @@ public class InlineEtlQueryExecutor {
     switch(type) {
       case NONE:
         return GroupByMeta.TYPE_GROUP_NONE;
-      case AVG:
+      case AVERAGE:
         return GroupByMeta.TYPE_GROUP_AVERAGE;
       case SUM:
         return GroupByMeta.TYPE_GROUP_SUM;
       case COUNT:
         return GroupByMeta.TYPE_GROUP_COUNT_ALL;
-      case DISTINCT_COUNT:
+      case COUNT_DISTINCT:
         // todo: need to implement distinct count in Kettle
         return GroupByMeta.TYPE_GROUP_COUNT_ALL;
         
-      case MIN:
+      case MINIMUM:
         return GroupByMeta.TYPE_GROUP_MIN;
-      case MAX:
+      case MAXIMUM:
         return GroupByMeta.TYPE_GROUP_MAX;
       default:
         return GroupByMeta.TYPE_GROUP_NONE;

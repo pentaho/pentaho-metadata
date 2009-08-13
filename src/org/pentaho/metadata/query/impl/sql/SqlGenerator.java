@@ -890,7 +890,7 @@ public class SqlGenerator {
       String expression=getFunction(column, databaseMeta);
       
       switch(column.getActiveAggregationType()) {
-          case DISTINCT_COUNT : expression+="(DISTINCT "+tableColumn+")"; break;   //$NON-NLS-1$ //$NON-NLS-2$
+          case COUNT_DISTINCT : expression+="(DISTINCT "+tableColumn+")"; break;   //$NON-NLS-1$ //$NON-NLS-2$
           default: expression+="("+tableColumn+")"; break;  //$NON-NLS-1$ //$NON-NLS-2$
       }
       
@@ -901,11 +901,11 @@ public class SqlGenerator {
       String fn=""; //$NON-NLS-1$
       
       switch(column.getActiveAggregationType()) {
-          case AVG: fn=databaseMeta.getFunctionAverage(); break;
-          case DISTINCT_COUNT:
+          case AVERAGE: fn=databaseMeta.getFunctionAverage(); break;
+          case COUNT_DISTINCT:
           case COUNT: fn=databaseMeta.getFunctionCount(); break;
-          case MAX: fn=databaseMeta.getFunctionMaximum(); break;
-          case MIN: fn=databaseMeta.getFunctionMinimum(); break;
+          case MAXIMUM: fn=databaseMeta.getFunctionMaximum(); break;
+          case MINIMUM: fn=databaseMeta.getFunctionMinimum(); break;
           case SUM: fn=databaseMeta.getFunctionSum(); break;
           default: break;
       }

@@ -532,7 +532,7 @@ public class InlineEtlModelGeneratorTest {
 
     query.getSelections().add(new Selection(category, category.getLogicalColumns().get(3), null));
     query.getSelections().add(new Selection(category, category.getLogicalColumns().get(1), null));
-    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(1), AggregationType.AVG));
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(1), AggregationType.AVERAGE));
     
     InlineEtlQueryExecutor executor = new InlineEtlQueryExecutor();
     IPentahoResultSet resultset = executor.executeQuery(query, "test/solution/system/metadata/csvfiles/", null);
@@ -633,11 +633,11 @@ public class InlineEtlModelGeneratorTest {
     // category.getLogicalColumns().get(1).setDataType(DataType.NUMERIC);
     category.getLogicalColumns().get(6).setAggregationType(AggregationType.SUM);
     List<AggregationType> aggList = new ArrayList<AggregationType>();
-    aggList.add(AggregationType.AVG);
+    aggList.add(AggregationType.AVERAGE);
     aggList.add(AggregationType.COUNT);
-    aggList.add(AggregationType.MAX);
-    aggList.add(AggregationType.MIN);
-    aggList.add(AggregationType.DISTINCT_COUNT);
+    aggList.add(AggregationType.MAXIMUM);
+    aggList.add(AggregationType.MINIMUM);
+    aggList.add(AggregationType.COUNT_DISTINCT);
     aggList.add(AggregationType.NONE);
     
     category.getLogicalColumns().get(6).setAggregationList(aggList);
@@ -665,7 +665,7 @@ public class InlineEtlModelGeneratorTest {
     query = new Query(domain, model);
 
     query.getSelections().add(new Selection(category, category.getLogicalColumns().get(5), null));
-    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(6), AggregationType.AVG));
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(6), AggregationType.AVERAGE));
     
     executor = new InlineEtlQueryExecutor();
     resultset = executor.executeQuery(query, "test/solution/system/metadata/csvfiles/", null);
@@ -728,7 +728,7 @@ public class InlineEtlModelGeneratorTest {
     query = new Query(domain, model);
 
     query.getSelections().add(new Selection(category, category.getLogicalColumns().get(5), null));
-    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(6), AggregationType.MIN));
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(6), AggregationType.MINIMUM));
     
     executor = new InlineEtlQueryExecutor();
     resultset = executor.executeQuery(query, "test/solution/system/metadata/csvfiles/", null);
@@ -749,7 +749,7 @@ public class InlineEtlModelGeneratorTest {
     query = new Query(domain, model);
 
     query.getSelections().add(new Selection(category, category.getLogicalColumns().get(5), null));
-    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(6), AggregationType.MAX));
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(6), AggregationType.MAXIMUM));
     
     executor = new InlineEtlQueryExecutor();
     resultset = executor.executeQuery(query, "test/solution/system/metadata/csvfiles/", null);
@@ -770,7 +770,7 @@ public class InlineEtlModelGeneratorTest {
     query = new Query(domain, model);
 
     query.getSelections().add(new Selection(category, category.getLogicalColumns().get(5), null));
-    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(6), AggregationType.DISTINCT_COUNT));
+    query.getSelections().add(new Selection(category, category.getLogicalColumns().get(6), AggregationType.COUNT_DISTINCT));
     
     executor = new InlineEtlQueryExecutor();
     resultset = executor.executeQuery(query, "test/solution/system/metadata/csvfiles/", null);

@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.StringReader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -14,6 +15,7 @@ import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.SqlDataSource;
 import org.pentaho.metadata.model.SqlPhysicalModel;
+import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.util.SerializationService;
 import org.pentaho.metadata.util.ThinModelConverter;
 import org.pentaho.metadata.util.XmiParser;
@@ -38,10 +40,10 @@ public class XmiParserTest {
     
     Assert.assertEquals(2, domain.getLogicalModels().get(0).getLogicalTables().size());
     Assert.assertEquals(8, domain.getLogicalModels().get(0).getLogicalTables().get(0).getLogicalColumns().size());
-    Assert.assertEquals("BC_EMPLOYEES_JOBTITLE", domain.getLogicalModels().get(0).getLogicalTables().get(0).getLogicalColumns().get(0).getId());
+    Assert.assertEquals("BC_EMPLOYEES_EMPLOYEENUMBER", domain.getLogicalModels().get(0).getLogicalTables().get(0).getLogicalColumns().get(0).getId());
     Assert.assertEquals(1, domain.getLogicalModels().get(0).getLogicalRelationships().size());
     
-    Assert.assertEquals("JOBTITLE", domain.getLogicalModels().get(0).getLogicalTables().get(0).getLogicalColumns().get(0).getPhysicalColumn().getId());
+    Assert.assertEquals("EMPLOYEENUMBER", domain.getLogicalModels().get(0).getLogicalTables().get(0).getLogicalColumns().get(0).getPhysicalColumn().getId());
     Assert.assertEquals("PT_EMPLOYEES", domain.getLogicalModels().get(0).getLogicalTables().get(0).getLogicalColumns().get(0).getPhysicalColumn().getPhysicalTable().getId());
     Assert.assertNotNull(domain.getLogicalModels().get(0).getLogicalTables().get(0).getLogicalColumns().get(0).getPhysicalColumn().getPhysicalTable().getPhysicalModel());
     
@@ -50,9 +52,16 @@ public class XmiParserTest {
     Assert.assertEquals("BC_OFFICES_TERRITORY", domain.getLogicalModels().get(0).getCategories().get(0).getLogicalColumns().get(0).getId());
     Assert.assertEquals("TERRITORY", domain.getLogicalModels().get(0).getCategories().get(0).getLogicalColumns().get(0).getPhysicalColumn().getId());
     Assert.assertEquals("PT_OFFICES", domain.getLogicalModels().get(0).getCategories().get(0).getLogicalColumns().get(0).getPhysicalColumn().getPhysicalTable().getId());
+
+    
+    List<AggregationType> aggTypes = (List<AggregationType>)domain.findLogicalModel("BV_ORDERS").findCategory("CAT_ORDERS").findLogicalColumn("BC_ORDERS_ORDERNUMBER").getProperty("aggregation_list");
+    Assert.assertNotNull(aggTypes);
+    Assert.assertEquals(2, aggTypes.size());
+    Assert.assertEquals(aggTypes.get(0), AggregationType.COUNT);
+    Assert.assertEquals(aggTypes.get(1), AggregationType.COUNT_DISTINCT);
     
     // verify that inheritance is working
-    Assert.assertEquals("$#,###.##", domain.findLogicalModel("BV_ORDERS").findCategory("CAT_ORDERS").findLogicalColumn("BC_ORDERDETAILS_TOTAL").getProperty("mask"));
+    Assert.assertEquals("$#,##0.00;($#,##0.00)", domain.findLogicalModel("BV_ORDERS").findCategory("CAT_ORDERS").findLogicalColumn("BC_ORDERDETAILS_TOTAL").getProperty("mask"));
     
     
   }
