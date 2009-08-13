@@ -463,7 +463,13 @@ public class DefaultSQLDialect implements SQLDialectInterface {
    * @return quoted string
    */
   public String quoteStringLiteral(Object str) {
-    return "'" + str + "'"; //$NON-NLS-1$  //$NON-NLS-2$
+    String strval = null;
+    if (str != null) {
+      strval = str.toString();
+      strval = strval.replaceAll("'", "''"); //$NON-NLS-1$  //$NON-NLS-2$
+    }
+    
+    return "'" + strval + "'"; //$NON-NLS-1$  //$NON-NLS-2$
   }
   
   //
