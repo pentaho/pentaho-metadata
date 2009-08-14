@@ -247,6 +247,25 @@ public class ThinModelTest {
   }
   
   @Test
+  public void testLocalizedString() {
+    LocalizedString ls = new LocalizedString();
+    ls.setString("en_US", "Test 1");
+    ls.setString("es", "Test 2");
+    
+    String result = ls.getString("nl_BE.UTF-8");
+    Assert.assertNull(result);
+    result = ls.getLocalizedString("nl_BE.UTF-8");
+    Assert.assertEquals("Test 1", result);
+    result = ls.getLocalizedString("en_US");
+    Assert.assertEquals("Test 1", result);
+    
+    ls = new LocalizedString();
+    ls.setString("es", "Test 2");
+    result = ls.getLocalizedString("en_US");
+    Assert.assertNull(result);
+  }
+  
+  @Test
   public void testToFromLegacy() {
     Domain domain = TestHelper.getBasicDomain();
     SchemaMeta meta = null;

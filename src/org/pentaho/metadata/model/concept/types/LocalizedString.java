@@ -64,7 +64,7 @@ public class LocalizedString implements Serializable {
     if ((str == null || str.trim().length() == 0) && locale != null && locale.indexOf('_') > 0) {
       str = getLocalizedString(locale.substring(0, locale.lastIndexOf('_')));
     }
-    if (str == null || str.trim().length() == 0) {
+    if ((str == null || str.trim().length() == 0) && !DEFAULT_LOCALE.startsWith(locale)) {
       str = getLocalizedString(DEFAULT_LOCALE);
     }
     return str;
