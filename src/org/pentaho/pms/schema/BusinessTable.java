@@ -228,7 +228,7 @@ public class BusinessTable extends ConceptUtilityBase implements Cloneable, GUIP
 
     // add the business columns to the category
     //
-    for (int i = nrBusinessColumns() - 1; i >= 0; i--) {
+    for (int i = 0; i < nrBusinessColumns(); i++) {
 
       try {
         businessCategory.addBusinessColumn(getBusinessColumn(i));
