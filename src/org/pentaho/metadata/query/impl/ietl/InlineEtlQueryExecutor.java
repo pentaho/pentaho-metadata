@@ -524,9 +524,7 @@ public class InlineEtlQueryExecutor {
       case COUNT:
         return GroupByMeta.TYPE_GROUP_COUNT_ALL;
       case COUNT_DISTINCT:
-        // todo: need to implement distinct count in Kettle
-        return GroupByMeta.TYPE_GROUP_COUNT_ALL;
-        
+        return GroupByMeta.TYPE_GROUP_COUNT_DISTINCT;
       case MINIMUM:
         return GroupByMeta.TYPE_GROUP_MIN;
       case MAXIMUM:
