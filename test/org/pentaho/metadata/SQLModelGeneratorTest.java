@@ -237,7 +237,7 @@ public class SQLModelGeneratorTest {
     int defaultAcls = 31;
     String createdBy = "joe";
     String[] columnHeaders = null;
-    String[] columnTypes = null;
+    int[] columnTypes = null;
     Object[][] rawdata = null;
     Statement stmt = null;
     ResultSet rs = null;
@@ -250,25 +250,9 @@ public class SQLModelGeneratorTest {
     rs = stmt.executeQuery(query);
     ResultSetMetaData metadata = rs.getMetaData();
     columnHeaders = new String[metadata.getColumnCount()];
-    columnTypes = new String[metadata.getColumnCount()];
+    columnTypes = new int[metadata.getColumnCount()];
     columnHeaders = getColumnNames(metadata);
     columnTypes = getColumnTypes(metadata);
-
-    int colCount = rs.getMetaData().getColumnCount();
-    //loop through rows
-    int rowIdx = 0;
-    rawdata = new Object[5][colCount];
-    while (rs.next()) {
-      if(rowIdx >= 5) {
-        break;
-      }
-
-       for (int colIdx = 1; colIdx <= colCount; colIdx++) {
-         rawdata[rowIdx][colIdx-1] = rs.getString(colIdx);
-      }
-      rowIdx++;
-    }
-  
     } catch(Exception e) {
       e.printStackTrace();
       
@@ -278,15 +262,7 @@ public class SQLModelGeneratorTest {
       } catch (SQLException e) {
       }
     }
-    MemoryMetaData metadata = new MemoryMetaData( new String[][] { columnHeaders }, null );
-    metadata.setColumnTypes(columnTypes);
-    MemoryResultSet data = new MemoryResultSet( metadata );
-    for(int i=0;i<rawdata.length;i++) {
-     data.addRow(rawdata[i]); 
-    }
-    MarshallableResultSet resultSet = ResultSetMarshaller.fromResultSet(data);
-
-    SQLModelGenerator generator = new SQLModelGenerator("newdatasource", "SampleData", resultSet, query, securityEnabled, users, roles, defaultAcls, createdBy);
+    SQLModelGenerator generator = new SQLModelGenerator("newdatasource", "SampleData", columnTypes, columnHeaders, query, securityEnabled, users, roles, defaultAcls, createdBy);
     return generator.generate(); 
   }
 
@@ -324,11 +300,11 @@ public class SQLModelGeneratorTest {
    * The following method returns an array of int(java.sql.Types) containing the column types for
    * a given ResultSetMetaData object.
    */
-  public String[] getColumnTypes(ResultSetMetaData resultSetMetaData) throws SQLException {
+  public int[] getColumnTypes(ResultSetMetaData resultSetMetaData) throws SQLException {
     int columnCount = resultSetMetaData.getColumnCount();
-    String[] returnValue = new String[columnCount];
+    int[] returnValue = new int[columnCount];
     for (int colIndex = 1; colIndex <= columnCount; colIndex++) {
-      returnValue[colIndex - 1] = resultSetMetaData.getColumnTypeName(colIndex);
+      returnValue[colIndex - 1] = resultSetMetaData.getColumnType(colIndex);
     }
 
     return returnValue;

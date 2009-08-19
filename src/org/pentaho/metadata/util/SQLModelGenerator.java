@@ -1,5 +1,6 @@
 package org.pentaho.metadata.util;
 
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,8 +34,10 @@ import org.pentaho.pms.util.Settings;
 
 public class SQLModelGenerator {
   String modelName;
-
-  MarshallableResultSet resultSet;
+  
+  int[] columnTypes;
+  
+  String[] columnNames;
 
   String query;
 
@@ -57,28 +60,21 @@ public class SQLModelGenerator {
     }
   }
 
-  public SQLModelGenerator(String modelName, String connectionName, MarshallableResultSet resultSet, String query,
+  public SQLModelGenerator(String modelName, String connectionName, int[] columnTypes, String[] columnNames, String query,
       Boolean securityEnabled, List<String> users, List<String> roles, int defaultAcls, String createdBy) {
     if (!Props.isInitialized()) {
       Props.init(Props.TYPE_PROPERTIES_EMPTY);
     }
     this.query = query;
     this.connectionName = connectionName;
-    this.resultSet = resultSet;
+    this.columnTypes = columnTypes;
+    this.columnNames = columnNames;    
     this.modelName = modelName;
     this.securityEnabled = securityEnabled;
     this.users = users;
     this.roles = roles;
     this.defaultAcls = defaultAcls;
     this.createdBy = createdBy;
-  }
-
-  public MarshallableResultSet getConnection() {
-    return resultSet;
-  }
-
-  public void setConnection(MarshallableResultSet resultSet) {
-    this.resultSet = resultSet;
   }
 
   public String getModelName() {
@@ -98,15 +94,16 @@ public class SQLModelGenerator {
   }
 
   private boolean validate() {
-    return !StringUtils.isEmpty(this.modelName) && !StringUtils.isEmpty(this.query) && this.resultSet != null;
+    return !StringUtils.isEmpty(this.modelName) && !StringUtils.isEmpty(this.query) 
+    && this.columnTypes != null && columnTypes.length > 0 && this.columnNames != null && columnNames.length > 0;
   }
 
   public Domain generate() throws SQLModelGeneratorException {
-    return generate(this.modelName, this.connectionName, this.resultSet, this.query, this.securityEnabled, this.users,
+    return generate(this.modelName, this.connectionName, this.columnTypes, this.columnNames, this.query, this.securityEnabled, this.users,
         this.roles, this.defaultAcls, this.createdBy);
   }
 
-  public Domain generate(String modelName, String connectionName, MarshallableResultSet resultSet, String query,
+  public Domain generate(String modelName, String connectionName, int[] columnType, String[] columnHeader, String query,
       Boolean securityEnabled, List<String> users, List<String> roles, int defaultAcls, String createdBy)
       throws SQLModelGeneratorException {
 
@@ -126,19 +123,7 @@ public class SQLModelGenerator {
         table.setTargetTableType(TargetTableType.INLINE_SQL);
         table.setTargetTable(query);
 
-        MarshallableColumnNames marshallableColumnNames = null;
-        MarshallableColumnTypes marshallableColumnTypes = null;
-        String[] columnHeader = null;
-        String[] columnType = null;
         try {
-          marshallableColumnNames = resultSet.getColumnNames();
-          if(marshallableColumnNames != null) {
-            columnHeader = marshallableColumnNames.getColumnName();
-          }
-          marshallableColumnTypes = resultSet.getColumnTypes();
-          if(marshallableColumnTypes != null) {
-            columnType = marshallableColumnTypes.getColumnType();
-          }
           LogicalModel logicalModel = new LogicalModel();
           logicalModel.setPhysicalModel(model);
           logicalModel.setId("MODEL_1"); //$NON-NLS-1$
@@ -222,21 +207,37 @@ public class SQLModelGenerator {
       }
   }
 
-  private static DataType converDataType(String type) {
-      if(type.equals(IPentahoDataTypes.TYPE_DECIMAL) || type.equals(IPentahoDataTypes.TYPE_DOUBLE) ||
-          type.equals(IPentahoDataTypes.TYPE_INT) || type.equals(IPentahoDataTypes.TYPE_FLOAT) ||type.equals(IPentahoDataTypes.TYPE_LONG)) {
-        return DataType.NUMERIC;
-      } else if(type.equals(IPentahoDataTypes.TYPE_BOOLEAN)) {
-        return DataType.BOOLEAN;
-      } else if(type.equals(IPentahoDataTypes.TYPE_DATE)) {
-        return DataType.DATE;
-      } else if(type.equals(IPentahoDataTypes.TYPE_STRING)) {
-        return DataType.STRING;
-      } else {
-        return DataType.UNKNOWN;
-      }
-  }
+  private static DataType converDataType(int type)
+  {
+    switch (type)
+    {
+    case Types.BIGINT:
+    case Types.INTEGER:
+    case Types.NUMERIC:
+      return DataType.NUMERIC;
+    
+    case Types.BINARY:
+      return DataType.BINARY;
 
+    case Types.BOOLEAN:
+      return DataType.BOOLEAN;
+    
+    case Types.DATE:
+      return DataType.DATE;
+    
+    case Types.TIMESTAMP:  
+      return DataType.DATE;
+    
+    case Types.LONGVARCHAR:
+    
+    case Types.VARCHAR:
+      return DataType.STRING;
+
+    default:
+      return DataType.UNKNOWN;
+    }
+  }
+  
   public void setSecurityEnabled(Boolean securityEnabled) {
     this.securityEnabled = securityEnabled;
   }
@@ -287,5 +288,21 @@ public class SQLModelGenerator {
 
   public Boolean getSecurityEnabled() {
     return securityEnabled;
+  }
+  
+  public int[] getColumnTypes() {
+    return columnTypes;
+  }
+
+  public void setColumnTypes(int[] columnTypes) {
+    this.columnTypes = columnTypes;
+  }
+
+  public String[] getColumnNames() {
+    return columnNames;
+  }
+
+  public void setColumnNames(String[] columnNames) {
+    this.columnNames = columnNames;
   }
 }
