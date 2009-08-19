@@ -784,7 +784,7 @@ public class InlineEtlModelGeneratorTest {
     Assert.assertEquals("Seminole", resultset.getValueAt(1, 0));
     Assert.assertEquals("Volusia", resultset.getValueAt(2, 0));
     
-    Assert.assertEquals(6L, resultset.getValueAt(0, 1));
+    Assert.assertEquals(4L, resultset.getValueAt(0, 1));
     Assert.assertEquals(1L, resultset.getValueAt(1, 1));
     Assert.assertEquals(1L, resultset.getValueAt(2, 1));
     
