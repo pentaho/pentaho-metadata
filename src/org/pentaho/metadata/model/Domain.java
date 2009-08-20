@@ -111,6 +111,9 @@ public class Domain extends Concept {
    * @return locale codes
    */
   public String[] getLocaleCodes() {
+    if (getLocales() == null) {
+      return null;
+    }
     String locales[] = new String[getLocales().size()];
     for (int i = 0; i < getLocales().size(); i++) {
       locales[i] = getLocales().get(i).getCode();
