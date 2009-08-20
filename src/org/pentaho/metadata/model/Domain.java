@@ -105,6 +105,19 @@ public class Domain extends Concept {
     return (List<LocaleType>)getProperty(LOCALES_PROPERTY);
   }
   
+  /**
+   * Returns a string array of locale codes
+   * 
+   * @return locale codes
+   */
+  public String[] getLocaleCodes() {
+    String locales[] = new String[getLocales().size()];
+    for (int i = 0; i < getLocales().size(); i++) {
+      locales[i] = getLocales().get(i).getCode();
+    }
+    return locales;
+  }
+  
   public void addLocale(LocaleType locale) {
     getLocales().add(locale);
   }
