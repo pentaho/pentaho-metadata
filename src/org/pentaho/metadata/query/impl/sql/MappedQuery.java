@@ -120,6 +120,7 @@ public class MappedQuery implements SqlQuery {
     return query;
   }
 
+  @SuppressWarnings("deprecation")
   public IPentahoMetaData generateMetadata(IPentahoMetaData nativeMetadata) {
 
     // columnsMap holds a reference to the id of the columns that we retrieved - the column

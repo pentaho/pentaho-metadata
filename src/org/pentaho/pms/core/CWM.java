@@ -94,6 +94,7 @@ import org.pentaho.pms.util.Const;
  * @since  2006/07/25
  *
  */
+@SuppressWarnings("deprecation")
 public class CWM
 {
     public static final LogWriter log = LogWriter.getInstance();

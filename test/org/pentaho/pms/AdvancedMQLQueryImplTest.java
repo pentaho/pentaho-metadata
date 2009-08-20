@@ -12,6 +12,7 @@ import org.pentaho.pms.schema.RelationshipMeta;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 
+@SuppressWarnings("deprecation")
 public class AdvancedMQLQueryImplTest extends MetadataTestBase {
 
   public BusinessModel getDefaultModel() throws Exception {

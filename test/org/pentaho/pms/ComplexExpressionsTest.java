@@ -12,6 +12,7 @@ import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.RelationshipMeta;
 import org.pentaho.pms.util.ObjectAlreadyExistsException;
 
+@SuppressWarnings("deprecation")
 public class ComplexExpressionsTest extends MetadataTestBase {
 	
   public void testCombinedCalculationInSelection() throws Exception {

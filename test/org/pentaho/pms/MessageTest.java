@@ -10,6 +10,7 @@ import org.pentaho.pms.messages.Messages;
  *  
  * @author David Kincade
  */
+@SuppressWarnings("deprecation")
 public class MessageTest extends TestCase {
   public void testMessages() {
     // In the messages.propeties file, the following is defined:

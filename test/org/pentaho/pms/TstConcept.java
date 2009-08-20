@@ -25,6 +25,7 @@ import org.pentaho.pms.schema.concept.types.font.ConceptPropertyFont;
 import org.pentaho.pms.schema.concept.types.font.FontSettings;
 import org.pentaho.pms.schema.concept.types.number.ConceptPropertyNumber;
 
+@SuppressWarnings("deprecation")
 public class TstConcept
 {
 

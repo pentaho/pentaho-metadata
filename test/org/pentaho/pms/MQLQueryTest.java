@@ -26,7 +26,6 @@ import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.factory.CwmSchemaFactory;
-import org.pentaho.pms.mql.DateMath;
 import org.pentaho.pms.mql.MQLQuery;
 import org.pentaho.pms.mql.MQLQueryFactory;
 import org.pentaho.pms.mql.MQLQueryImpl;
@@ -42,6 +41,7 @@ import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.util.Const;
 
+@SuppressWarnings("deprecation")
 public class MQLQueryTest extends TestCase {
 
   BusinessModel ordersModel = null;

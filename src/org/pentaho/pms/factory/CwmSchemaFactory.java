@@ -115,6 +115,7 @@ import org.pentaho.pms.util.ObjectAlreadyExistsException;
  * @author Matt
  *
  */
+@SuppressWarnings("deprecation")
 public class CwmSchemaFactory implements CwmSchemaFactoryInterface
 {
   

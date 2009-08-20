@@ -16,6 +16,7 @@ import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.DefaultPropertyID;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
+@SuppressWarnings("deprecation")
 public class DefaultProperty
 {
     private Class subject;

@@ -37,6 +37,7 @@ import org.pentaho.pms.util.Const;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+@SuppressWarnings("deprecation")
 public class SecurityService extends ChangedFlag implements Cloneable {
   
   public static final int SERVICE_TYPE_ALL = 0;

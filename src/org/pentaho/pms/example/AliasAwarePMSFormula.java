@@ -45,6 +45,7 @@ import org.pentaho.pms.schema.BusinessTable;
  * @see org.pentaho.pms.mql.WhereCondition
  * @see BusinessColumn
  */
+@SuppressWarnings("deprecation")
 public class AliasAwarePMSFormula extends PMSFormula {
   
   private static final Log logger = LogFactory.getLog(AliasAwarePMSFormula.class);

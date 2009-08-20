@@ -18,6 +18,7 @@ import java.util.List;
 import org.pentaho.di.core.changed.ChangedFlag;
 import org.pentaho.pms.schema.BusinessColumn;
 
+@SuppressWarnings("deprecation")
 public class OlapHierarchyLevel extends ChangedFlag implements Cloneable
 {
     private String name;

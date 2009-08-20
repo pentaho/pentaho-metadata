@@ -19,6 +19,7 @@ import java.util.List;
 import org.pentaho.di.core.changed.ChangedFlag;
 import org.pentaho.pms.messages.Messages;
 
+@SuppressWarnings("deprecation")
 public class Locales extends ChangedFlag
 {
     public static final String EN_US = "en_US"; //$NON-NLS-1$

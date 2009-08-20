@@ -18,6 +18,7 @@ import org.pentaho.pms.util.Settings;
 import org.pentaho.pms.util.UniqueArrayList;
 import org.pentaho.pms.util.UniqueList;
 
+@SuppressWarnings("deprecation")
 public class PhysicalTableImporter
 {
 	public static PhysicalTable importTableDefinition(Database database, String schemaName, String tableName,

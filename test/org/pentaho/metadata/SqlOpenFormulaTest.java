@@ -36,7 +36,6 @@ import org.pentaho.metadata.util.ThinModelConverter;
 import org.pentaho.metadata.util.XmiParser;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.factory.CwmSchemaFactory;
-import org.pentaho.pms.mql.MQLQuery;
 import org.pentaho.pms.schema.SchemaMeta;
 
 /**
@@ -46,6 +45,7 @@ import org.pentaho.pms.schema.SchemaMeta;
  * @author Will Gorman (wgorman@pentaho.com)
  *
  */
+@SuppressWarnings("deprecation")
 public class SqlOpenFormulaTest {
 
 

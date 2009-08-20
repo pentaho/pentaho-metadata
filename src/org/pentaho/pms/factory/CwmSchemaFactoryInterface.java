@@ -47,6 +47,7 @@ import org.pentaho.pms.schema.olap.OlapHierarchy;
 import org.pentaho.pms.schema.olap.OlapHierarchyLevel;
 import org.pentaho.pms.schema.security.SecurityService;
 
+@SuppressWarnings("deprecation")
 public interface CwmSchemaFactoryInterface {
 
   public static final int ACCESS_TYPE_READ = 0;

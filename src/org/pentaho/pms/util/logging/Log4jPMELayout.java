@@ -22,6 +22,7 @@ import org.pentaho.di.core.logging.Log4JLayoutInterface;
 import org.pentaho.di.core.logging.Log4jMessage;
 import org.pentaho.pms.messages.Messages;
 
+@SuppressWarnings("deprecation")
 public class Log4jPMELayout extends Layout implements Log4JLayoutInterface
 {
     private boolean timeAdded;

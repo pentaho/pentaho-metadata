@@ -14,6 +14,7 @@ package org.pentaho.pms.schema.olap;
 
 import org.pentaho.pms.schema.BusinessColumn;
 
+@SuppressWarnings("deprecation")
 public class OlapMeasure implements Cloneable
 {
     private String name;

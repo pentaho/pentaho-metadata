@@ -12,6 +12,7 @@ import org.junit.Test;
  * 
  * @author mlowery
  */
+@SuppressWarnings("deprecation")
 public class RowLevelSecurityTest {
 
   private static final String XML_FRAG_NONE = "<row-level-security type=\"none\"><formula><![CDATA[]]></formula><entries></entries></row-level-security>";

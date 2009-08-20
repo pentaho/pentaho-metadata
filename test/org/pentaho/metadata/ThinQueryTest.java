@@ -18,14 +18,7 @@ import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
-import org.pentaho.metadata.model.LogicalTable;
-import org.pentaho.metadata.model.SqlDataSource;
-import org.pentaho.metadata.model.SqlPhysicalColumn;
-import org.pentaho.metadata.model.SqlPhysicalModel;
-import org.pentaho.metadata.model.SqlPhysicalTable;
 import org.pentaho.metadata.model.concept.types.DataType;
-import org.pentaho.metadata.model.concept.types.LocalizedString;
-import org.pentaho.metadata.model.concept.types.TargetTableType;
 import org.pentaho.metadata.query.model.CombinationType;
 import org.pentaho.metadata.query.model.Constraint;
 import org.pentaho.metadata.query.model.Order;
@@ -35,9 +28,9 @@ import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.metadata.query.model.util.QueryXmlHelper;
 import org.pentaho.metadata.repository.InMemoryMetadataDomainRepository;
 import org.pentaho.metadata.util.ThinModelConverter;
-import org.pentaho.pms.messages.util.LocaleHelper;
 import org.pentaho.pms.mql.MQLQueryImpl;
 
+@SuppressWarnings("deprecation")
 public class ThinQueryTest {
   
   

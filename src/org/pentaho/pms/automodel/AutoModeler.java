@@ -29,6 +29,7 @@ import org.pentaho.pms.util.Settings;
  * @author matt
  *
  */
+@SuppressWarnings("deprecation")
 public class AutoModeler {
 	private DatabaseMeta  databaseMeta;
 	private SchemaTable[] tableNames;
@@ -61,7 +62,7 @@ public class AutoModeler {
 //	  
 //	}
 
-	public SchemaMeta generateSchemaMeta() throws PentahoMetadataException {
+  public SchemaMeta generateSchemaMeta() throws PentahoMetadataException {
 		SchemaMeta schemaMeta = new SchemaMeta();
 		schemaMeta.setName(modelName);
 		
@@ -118,7 +119,7 @@ public class AutoModeler {
 	}
 	
 	
-	private BusinessColumn findBusinessColumn(BusinessTable businessTable, String columnName) {
+  private BusinessColumn findBusinessColumn(BusinessTable businessTable, String columnName) {
 		for (int i=0;i<businessTable.nrBusinessColumns();i++) {
 			BusinessColumn businessColumn = businessTable.getBusinessColumn(i);
 			if (columnName.equals(businessColumn.getPhysicalColumn().getFormula())) return businessColumn;
@@ -126,7 +127,7 @@ public class AutoModeler {
 		return null;
 	}
 
-	private BusinessTable createBusinessTable(PhysicalTable physicalTable, String locale) throws ObjectAlreadyExistsException {
+  private BusinessTable createBusinessTable(PhysicalTable physicalTable, String locale) throws ObjectAlreadyExistsException {
 
 		// Create a business table with a new ID and localized name
 		//

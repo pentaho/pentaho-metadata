@@ -43,7 +43,7 @@ public class MQLQueryFactory {
     // load MQLQuery class instance from properties somewhere
     try {
       Class<?> claz = Class.forName(mqlQueryClassName);
-      @SuppressWarnings("unchecked")
+
       Class<?  extends MQLQuery> clazz = (Class<?  extends MQLQuery>)claz.asSubclass(MQLQuery.class);
       
       if (MQLQuery.class.isAssignableFrom(clazz)) {

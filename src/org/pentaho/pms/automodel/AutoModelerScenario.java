@@ -13,6 +13,7 @@ import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.RelationshipMeta;
 import org.pentaho.pms.schema.SchemaMeta;
 
+@SuppressWarnings("deprecation")
 public class AutoModelerScenario  {
 
 	public AutoModelerScenario() throws KettleDatabaseException, PentahoMetadataException {

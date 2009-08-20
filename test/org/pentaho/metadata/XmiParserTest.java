@@ -53,7 +53,7 @@ public class XmiParserTest {
     Assert.assertEquals("TERRITORY", domain.getLogicalModels().get(0).getCategories().get(0).getLogicalColumns().get(0).getPhysicalColumn().getId());
     Assert.assertEquals("PT_OFFICES", domain.getLogicalModels().get(0).getCategories().get(0).getLogicalColumns().get(0).getPhysicalColumn().getPhysicalTable().getId());
 
-    
+    @SuppressWarnings("unchecked")
     List<AggregationType> aggTypes = (List<AggregationType>)domain.findLogicalModel("BV_ORDERS").findCategory("CAT_ORDERS").findLogicalColumn("BC_ORDERS_ORDERNUMBER").getProperty("aggregation_list");
     Assert.assertNotNull(aggTypes);
     Assert.assertEquals(2, aggTypes.size());
@@ -97,6 +97,7 @@ public class XmiParserTest {
         HashMap unknownMap = (HashMap)source;
         if (unknownMap.size() > 0) {
           if (unknownMap.keySet().iterator().next() instanceof String) { 
+            @SuppressWarnings("unchecked")
             HashMap<String, Object> map = (HashMap<String, Object>)source;
             Set<String> ordered = new TreeSet<String>(map.keySet());
             for (String key : ordered) {

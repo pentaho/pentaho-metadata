@@ -31,13 +31,10 @@ import org.pentaho.metadata.model.concept.IConcept;
 import org.pentaho.metadata.model.concept.security.Security;
 import org.pentaho.metadata.model.concept.security.SecurityOwner;
 import org.pentaho.metadata.model.concept.security.SecurityOwner.OwnerType;
-import org.pentaho.metadata.model.concept.types.Color;
-import org.pentaho.metadata.model.concept.types.ColumnWidth;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
-import org.pentaho.metadata.model.concept.types.ColumnWidth.WidthType;
 import org.pentaho.metadata.repository.InMemoryMetadataDomainRepository;
 import org.pentaho.metadata.util.SerializationService;
 import org.pentaho.metadata.util.ThinModelConverter;
@@ -50,6 +47,7 @@ import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.concept.types.datatype.DataTypeSettings;
 
+@SuppressWarnings("deprecation")
 public class ThinModelTest {
   
   @Test

@@ -2,7 +2,6 @@ package org.pentaho.pms.example;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,7 +23,6 @@ import org.pentaho.pms.mql.dialect.SQLDialectFactory;
 import org.pentaho.pms.mql.dialect.SQLDialectInterface;
 import org.pentaho.pms.mql.dialect.SQLQueryModel;
 import org.pentaho.pms.mql.dialect.SQLQueryModel.OrderType;
-import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.RelationshipMeta;
@@ -36,6 +34,7 @@ import org.pentaho.pms.schema.RelationshipMeta;
  * @author Will Gorman (wgorman@pentaho.org)
  *
  */
+@SuppressWarnings("deprecation")
 public class AdvancedSQLGenerator extends SQLGenerator {
 
   public static final String DEFAULT_ALIAS = "__DEFAULT__"; //$NON-NLS-1$

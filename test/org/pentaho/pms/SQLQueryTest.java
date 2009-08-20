@@ -12,8 +12,6 @@
 */
 package org.pentaho.pms;
 
-import junit.framework.TestCase;
-
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.mql.dialect.SQLDialectFactory;
 import org.pentaho.pms.mql.dialect.SQLDialectInterface;

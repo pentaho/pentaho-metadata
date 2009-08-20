@@ -12,28 +12,20 @@
  */
 package org.pentaho.metadata;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.Statement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
-import org.pentaho.commons.connection.IPentahoConnection;
-import org.pentaho.commons.connection.IPentahoResultSet;
-import org.pentaho.commons.connection.marshal.MarshallableResultSet;
-import org.pentaho.commons.connection.marshal.ResultSetMarshaller;
-import org.pentaho.commons.connection.memory.MemoryMetaData;
-import org.pentaho.commons.connection.memory.MemoryResultSet;
 import org.pentaho.di.core.Props;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
@@ -58,6 +50,7 @@ import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.concept.types.datatype.DataTypeSettings;
 import org.pentaho.pms.util.Settings;
 
+@SuppressWarnings("deprecation")
 public class SQLModelGeneratorTest {
 
   @Test

@@ -14,6 +14,7 @@ package org.pentaho.pms.test;
 
 import org.pentaho.pms.schema.BusinessModel;
 
+@SuppressWarnings("deprecation")
 public class TestBV
 {
     public static void main(String[] args)

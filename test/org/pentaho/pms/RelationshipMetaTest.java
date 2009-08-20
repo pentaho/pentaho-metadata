@@ -1,8 +1,8 @@
 package org.pentaho.pms;
 
-import org.pentaho.pms.schema.RelationshipMeta;
-
 import junit.framework.TestCase;
+
+import org.pentaho.pms.schema.RelationshipMeta;
 
 /**
  * Test the conversion logic between the relationship type and the join type (and vice versa)<br>
@@ -11,6 +11,7 @@ import junit.framework.TestCase;
  * @author Matt Casters (mcasters@pentaho.org)
  *
  */
+@SuppressWarnings("deprecation")
 public class RelationshipMetaTest extends TestCase {
 
 	/**

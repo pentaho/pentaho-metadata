@@ -434,6 +434,7 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
     }
   }
 
+  @SuppressWarnings("unchecked")
   public List<AggregationSettings> getAggregationList() {
     ConceptPropertyInterface property = concept.getProperty(DefaultPropertyID.AGGREGATION_LIST.getId());
     if (property == null || property.getValue() == null) {

@@ -28,6 +28,7 @@ import org.pentaho.reporting.libraries.formula.typing.coretypes.TextType;
  * @author Will Gorman (wgorman@pentaho.org)
  *
  */
+@SuppressWarnings("deprecation")
 public class DefaultSQLFunctionGenerator implements SQLFunctionGeneratorInterface {
   
   protected int type;

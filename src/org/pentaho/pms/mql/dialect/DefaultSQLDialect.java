@@ -42,6 +42,7 @@ import org.pentaho.reporting.libraries.formula.lvalues.StaticValue;
  * @author Will Gorman (wgorman@pentaho.org)
  *
  */
+@SuppressWarnings("deprecation")
 public class DefaultSQLDialect implements SQLDialectInterface {
   
   protected Map<String,SQLFunctionGeneratorInterface>  supportedFunctions = new HashMap<String,SQLFunctionGeneratorInterface> ();

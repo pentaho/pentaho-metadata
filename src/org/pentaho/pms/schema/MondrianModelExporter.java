@@ -26,6 +26,7 @@ import org.pentaho.pms.schema.olap.OlapHierarchyLevel;
 import org.pentaho.pms.schema.olap.OlapMeasure;
 import org.pentaho.pms.util.Const;
 
+@SuppressWarnings("deprecation")
 public class MondrianModelExporter
 {
     private BusinessModel businessModel;

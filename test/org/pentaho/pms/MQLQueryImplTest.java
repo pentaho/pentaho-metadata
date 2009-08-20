@@ -22,6 +22,7 @@ import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.RelationshipMeta;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 
+@SuppressWarnings("deprecation")
 public class MQLQueryImplTest extends MetadataTestBase {
   
   public void testGetShortestPathBetween() throws Exception {

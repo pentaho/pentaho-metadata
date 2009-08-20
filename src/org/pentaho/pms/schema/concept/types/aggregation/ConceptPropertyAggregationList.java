@@ -114,6 +114,7 @@ public class ConceptPropertyAggregationList extends ConceptPropertyBase implemen
         }
     }
     
+    @SuppressWarnings("unchecked")
     public void setValue(Object value){ 
       if (value != null) {
         this.value = (List<AggregationSettings>) value;

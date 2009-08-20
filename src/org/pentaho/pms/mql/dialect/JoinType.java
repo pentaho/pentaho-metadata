@@ -2,6 +2,7 @@ package org.pentaho.pms.mql.dialect;
 
 import org.pentaho.pms.schema.RelationshipMeta;
 
+@SuppressWarnings("deprecation")
 public enum JoinType {
 	/**
 	 * Inner join

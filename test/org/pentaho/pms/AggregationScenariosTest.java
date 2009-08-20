@@ -11,6 +11,7 @@ import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.schema.concept.types.fieldtype.FieldTypeSettings;
 
+@SuppressWarnings("deprecation")
 public class AggregationScenariosTest extends MetadataTestBase {
 
 	  /**

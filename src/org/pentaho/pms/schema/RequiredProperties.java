@@ -67,6 +67,7 @@ public class RequiredProperties extends ChangedFlag implements ChangedFlagInterf
         return (Class[])keySet.toArray(new Class[keySet.size()]);
     }
 
+    @SuppressWarnings("deprecation")
     public void setDefault()
     {
         // First we do the Physical Table...

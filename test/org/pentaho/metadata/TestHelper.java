@@ -30,6 +30,7 @@ import org.pentaho.metadata.model.concept.types.TargetColumnType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
 import org.pentaho.pms.messages.util.LocaleHelper;
 
+@SuppressWarnings("deprecation")
 public class TestHelper {
   public static LogicalModel buildDefaultModel() {
     try {

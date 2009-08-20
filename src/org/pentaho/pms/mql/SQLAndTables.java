@@ -3,7 +3,6 @@ package org.pentaho.pms.mql;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessTable;
 
 /**

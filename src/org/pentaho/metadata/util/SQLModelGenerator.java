@@ -5,10 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.pentaho.commons.connection.IPentahoDataTypes;
-import org.pentaho.commons.connection.marshal.MarshallableColumnNames;
-import org.pentaho.commons.connection.marshal.MarshallableColumnTypes;
-import org.pentaho.commons.connection.marshal.MarshallableResultSet;
 import org.pentaho.di.core.Props;
 import org.pentaho.metadata.messages.LocaleHelper;
 import org.pentaho.metadata.messages.Messages;

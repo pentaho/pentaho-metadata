@@ -1,6 +1,5 @@
 package org.pentaho.pms.example;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -33,6 +32,7 @@ import org.w3c.dom.NodeList;
  * @author Will Gorman (wgorman@pentaho.org)
  * 
  */
+@SuppressWarnings("deprecation")
 public class AdvancedMQLQuery extends MQLQueryImpl
 {
 

@@ -2,11 +2,10 @@ package org.pentaho.pms.mql;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang.StringUtils;
 
 import junit.framework.TestCase;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Units tests for the <code>MappedQuery</code> class.
@@ -55,6 +54,7 @@ public class MappedQueryTest extends TestCase {
    * BISERVER-2881 was caused by a string replace of COL1 accidentally replacing
    * COL10, COL11, COL12 (etc).
    */
+  @SuppressWarnings("deprecation")
   public void testGetDisplayQuery() {
     // Get the display query based on the SAMPLE1 set of parameters
     final MappedQuery mappedQuery = new MappedQuery(SAMPLE1_SQL, SAMPLE1_MAP, null);

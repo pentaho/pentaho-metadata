@@ -44,6 +44,7 @@ import org.pentaho.pms.schema.concept.types.url.ConceptPropertyURL;
 import org.pentaho.pms.schema.security.RowLevelSecurity;
 import org.pentaho.pms.schema.security.Security;
 
+@SuppressWarnings("deprecation")
 public class DefaultPropertyID
 {
     private static final Log logger = LogFactory.getLog(DefaultPropertyID.class);

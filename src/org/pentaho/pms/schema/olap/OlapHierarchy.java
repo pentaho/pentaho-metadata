@@ -20,6 +20,7 @@ import org.pentaho.di.core.changed.ChangedFlag;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessTable;
 
+@SuppressWarnings("deprecation")
 public class OlapHierarchy extends ChangedFlag implements Cloneable
 {
     private String         name;
