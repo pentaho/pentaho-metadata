@@ -26,6 +26,15 @@ public enum CombinationType {
     toStringVal = val;
   }
   
+  public static CombinationType getCombinationType(String value) {
+    for (CombinationType type : values()) {
+      if (type.toString().equalsIgnoreCase(value)) {
+        return type;
+      }
+    }
+    return null;
+  }
+  
   @Override
   public String toString() {
     return toStringVal;

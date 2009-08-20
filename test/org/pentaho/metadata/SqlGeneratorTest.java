@@ -48,6 +48,7 @@ import org.pentaho.metadata.query.model.Order.Type;
 import org.pentaho.metadata.query.model.util.QueryModelMetaData;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 
+@SuppressWarnings("nls")
 public class SqlGeneratorTest {
   
   @Test
@@ -596,7 +597,90 @@ public class SqlGeneratorTest {
     }
   }
   
-  
+  @Test
+  public void testFirstConstraintNOT() {
+    try {
+
+      LogicalModel model = TestHelper.buildDefaultModel();
+      LogicalColumn bc1 = model.findLogicalColumn("bc1");
+      LogicalColumn bc2 = model.findLogicalColumn("bc2");
+      DatabaseMeta databaseMeta = new DatabaseMeta("", "HYPERSONIC", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+      databaseMeta.setQuoteAllFields(true);
+      Query query = new Query(null, model);
+      
+      query.getSelections().add(new Selection(null, bc1, null));
+      query.getSelections().add(new Selection(null, bc2, null));
+      
+      query.getConstraints().add(new Constraint(CombinationType.AND_NOT, "[bt1.bc1] > 1")); //$NON-NLS-1$
+      query.getConstraints().add(new Constraint(CombinationType.AND_NOT, "[bt1.bc1] < 1")); //$NON-NLS-1$
+
+      SqlGenerator generator = new SqlGenerator();
+      
+      MappedQuery mquery = generator.generateSql(query, "en_US", null, databaseMeta);
+
+      TestHelper.printOutJava(mquery.getQuery());
+      
+      TestHelper.assertEqualsIgnoreWhitespaces(
+          "SELECT DISTINCT \n" + 
+          "          \"bt1\".\"pc1\" AS \"COL0\"\n" + 
+          "         ,\"bt2\".\"pc2\" AS \"COL1\"\n" + 
+          "FROM \n" + 
+          "          \"pt1\" \"bt1\"\n" + 
+          "         ,\"pt2\" \"bt2\"\n" + 
+          "WHERE \n" + 
+          "          ( \"bt1\".\"pc1\" = \"bt2\".\"pc2\" )\n" + 
+          "      AND \n" + 
+          "        (\n" + 
+          "      NOT (\n" + 
+          "              \"bt1\".\"pc1\"  > 1\n" + 
+          "          )\n" + 
+          "      AND NOT (\n" + 
+          "              \"bt1\".\"pc1\"  < 1\n" + 
+          "          )\n" + 
+          "        )\n"
+          ,
+          mquery.getQuery()
+          );
+
+      query = new Query(null, model);
+      
+      query.getSelections().add(new Selection(null, bc1, null));
+      query.getSelections().add(new Selection(null, bc2, null));
+      
+      query.getConstraints().add(new Constraint(CombinationType.OR_NOT, "[bt1.bc1] > 1")); //$NON-NLS-1$
+      query.getConstraints().add(new Constraint(CombinationType.OR_NOT, "[bt1.bc1] < 1")); //$NON-NLS-1$
+
+      mquery = generator.generateSql(query, "en_US", null, databaseMeta);
+
+      TestHelper.assertEqualsIgnoreWhitespaces(
+          "SELECT DISTINCT \n" + 
+          "          \"bt1\".\"pc1\" AS \"COL0\"\n" + 
+          "         ,\"bt2\".\"pc2\" AS \"COL1\"\n" + 
+          "FROM \n" + 
+          "          \"pt1\" \"bt1\"\n" + 
+          "         ,\"pt2\" \"bt2\"\n" + 
+          "WHERE \n" + 
+          "          ( \"bt1\".\"pc1\" = \"bt2\".\"pc2\" )\n" + 
+          "      AND \n" + 
+          "        (\n" + 
+          "      NOT (\n" + 
+          "              \"bt1\".\"pc1\"  > 1\n" + 
+          "          )\n" + 
+          "      OR NOT (\n" + 
+          "              \"bt1\".\"pc1\"  < 1\n" + 
+          "          )\n" + 
+          "        )\n"
+          ,
+          mquery.getQuery()
+          );
+
+      
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.fail();
+    }
+  }
+
   @Test
   public void testParameterSqlGeneration() {
     try {
@@ -1409,7 +1493,69 @@ public class SqlGeneratorTest {
     TestHelper.assertEqualsIgnoreWhitespaces( 
         "SELECT DISTINCT bt1.pc1 AS COL0 ,bt2.pc2 AS COL1 FROM pt1 bt1 LEFT OUTER JOIN pt2 bt2 ON ( bt1.pc1 = bt2.pc2 AND ( bt2.pc2 > 1 ) ) WHERE (( bt1.pc1 > 1 ))",  //$NON-NLS-1$
         query.getQuery()    
-    ); 
+    );
+  }
+  
+  /**
+   * Scenario 1d: Two Tables are outer joined both with constraints
+   * This scenario uses nots, verifying NOT syntax
+   */
+  @Test
+  public void testOuterJoinScenario1dNOT() throws Exception {
+    final LogicalModel model = new LogicalModel();
+    model.setId("model_01");
+    Category mainCat = new Category();
+    mainCat.setId("cat_01");
+    model.getCategories().add(mainCat);
+    
+    final LogicalTable bt1 = new LogicalTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt1"); //$NON-NLS-1$
+    final LogicalColumn bc1 = new LogicalColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc1"); //$NON-NLS-1$
+    bc1.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc1.setLogicalTable(bt1);
+    bt1.addLogicalColumn(bc1);
+    bt1.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    mainCat.addLogicalColumn(bc1);
+    model.getLogicalTables().add(bt1);
+    
+    final LogicalTable bt2 = new LogicalTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt2"); //$NON-NLS-1$
+    final LogicalColumn bc2 = new LogicalColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc2"); //$NON-NLS-1$
+    bc2.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc2.setLogicalTable(bt2);
+    bt2.addLogicalColumn(bc2);
+    mainCat.addLogicalColumn(bc2);
+    model.getLogicalTables().add(bt2);
+    
+    final LogicalRelationship rl1 = new LogicalRelationship();
+    rl1.setRelationshipType(RelationshipType._0_N);
+    rl1.setFromTable(bt1);
+    rl1.setFromColumn(bc1);
+    rl1.setToTable(bt2);
+    rl1.setToColumn(bc2);
+    
+    model.getLogicalRelationships().add(rl1);    
+
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    Query myTest = new Query(null, model); //$NON-NLS-1$
+    myTest.getSelections().add(new Selection(null, bc1, null));
+    myTest.getSelections().add(new Selection(null, bc2, null));
+    myTest.getConstraints().add(new Constraint(CombinationType.AND_NOT, "[bt1.bc1] > 1"));
+    myTest.getConstraints().add(new Constraint(CombinationType.AND_NOT, "[bt1.bc1] < 1"));
+    myTest.getConstraints().add(new Constraint(CombinationType.AND, "[bt2.bc2] > 1"));
+    
+    SqlGenerator generator = new SqlGenerator();
+    MappedQuery query = generator.generateSql(myTest, "en_US", null, databaseMeta);
+    TestHelper.assertEqualsIgnoreWhitespaces( 
+        "SELECT DISTINCT bt1.pc1 AS COL0 ,bt2.pc2 AS COL1 FROM pt1 bt1 LEFT OUTER JOIN pt2 bt2 ON ( bt1.pc1 = bt2.pc2 AND ( bt2.pc2 > 1 ) ) WHERE ( NOT ( bt1.pc1 > 1 ) AND NOT (bt1.pc1 < 1) )",  //$NON-NLS-1$
+        query.getQuery()    
+    );
   }
   
   

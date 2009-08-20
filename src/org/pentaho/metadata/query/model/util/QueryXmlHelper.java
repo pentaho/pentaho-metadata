@@ -450,10 +450,10 @@ public class QueryXmlHelper {
 
     if (view_id == null || column_id == null) {
       // new function support
-      query.getConstraints().add(new Constraint(CombinationType.valueOf(operator.toUpperCase()), cond));
+      query.getConstraints().add(new Constraint(CombinationType.getCombinationType(operator.toUpperCase()), cond));
     } else {
       // backwards compatibility
-      query.getConstraints().add(new Constraint(CombinationType.valueOf(operator.toUpperCase()), "[" + view_id + "." + column_id + "] " + cond)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      query.getConstraints().add(new Constraint(CombinationType.getCombinationType(operator.toUpperCase()), "[" + view_id + "." + column_id + "] " + cond)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
     
   }

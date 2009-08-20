@@ -63,7 +63,7 @@ public class DefaultSQLDialect implements SQLDialectInterface {
     supportedFunctions.put("OR",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.INLINE_FUNCTION, "OR"));  //$NON-NLS-1$ //$NON-NLS-2$
     supportedFunctions.put("NOT",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_FUNCTION, "NOT", 1)); //$NON-NLS-1$ //$NON-NLS-2$
     supportedFunctions.put("ISNA",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.INLINE_FUNCTION, "IS NULL", 1));  //$NON-NLS-1$ //$NON-NLS-2$
-    supportedFunctions.put("NULL",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_FUNCTION, "NULL", false));  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-1$ //$NON-NLS-2$
+    supportedFunctions.put("NULL",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_FUNCTION, "NULL", false));  //$NON-NLS-1$ //$NON-NLS-2$
 
     // infix operators
     supportedInfixOperators.put("+",  new DefaultSQLOperatorGenerator("+")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -81,13 +81,13 @@ public class DefaultSQLDialect implements SQLDialectInterface {
     //
     // comparison functions
     //
-    supportedFunctions.put("LIKE",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.INLINE_FUNCTION, "LIKE", 2, false){
+    supportedFunctions.put("LIKE",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.INLINE_FUNCTION, "LIKE", 2, false){ //$NON-NLS-1$ //$NON-NLS-2$
       
       
       
     });
 
-    supportedFunctions.put("CONTAINS",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.INLINE_FUNCTION, "LIKE", 2, false){
+    supportedFunctions.put("CONTAINS",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.INLINE_FUNCTION, "LIKE", 2, false){ //$NON-NLS-1$ //$NON-NLS-2$
       /**
        * render the necessary sql
        */
@@ -112,7 +112,7 @@ public class DefaultSQLDialect implements SQLDialectInterface {
       }
     });
 
-    supportedFunctions.put("BEGINSWITH",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.INLINE_FUNCTION, "LIKE", 2, false){
+    supportedFunctions.put("BEGINSWITH",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.INLINE_FUNCTION, "LIKE", 2, false){ //$NON-NLS-1$ //$NON-NLS-2$
       /**
        * render the necessary sql
        */
@@ -137,7 +137,7 @@ public class DefaultSQLDialect implements SQLDialectInterface {
     });
     
 
-    supportedFunctions.put("ENDSWITH",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.INLINE_FUNCTION, "LIKE", 2, false){
+    supportedFunctions.put("ENDSWITH",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.INLINE_FUNCTION, "LIKE", 2, false){ //$NON-NLS-1$ //$NON-NLS-2$
       /**
        * render the necessary sql
        */
@@ -259,7 +259,7 @@ public class DefaultSQLDialect implements SQLDialectInterface {
           Calendar cal = DateMath.calculateDate(exp);
           sb.append(getDateSQL(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1, cal.get(Calendar.DAY_OF_MONTH)));
         } catch (IllegalArgumentException ex) {
-          throw new PentahoMetadataException(Messages.getErrorString("DefaultSQLDialect.ERROR_0002_DATE_MATH_SYNTAX_INVALID", exp), ex);
+          throw new PentahoMetadataException(Messages.getErrorString("DefaultSQLDialect.ERROR_0002_DATE_MATH_SYNTAX_INVALID", exp), ex); //$NON-NLS-1$
         }
       }
         
@@ -353,13 +353,13 @@ public class DefaultSQLDialect implements SQLDialectInterface {
     
     supportedFunctions.put("TRUE", new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_FUNCTION, "TRUE()", 0) { //$NON-NLS-1$ //$NON-NLS-2$
       public void generateFunctionSQL(FormulaTraversalInterface formula, StringBuffer sb, String locale, FormulaFunction f) throws PentahoMetadataException {
-        sb.append("TRUE");
+        sb.append("TRUE"); //$NON-NLS-1$
       }
     });
 
     supportedFunctions.put("FALSE", new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_FUNCTION, "FALSE()", 0) { //$NON-NLS-1$ //$NON-NLS-2$
       public void generateFunctionSQL(FormulaTraversalInterface formula, StringBuffer sb, String locale, FormulaFunction f) throws PentahoMetadataException {
-        sb.append("FALSE");
+        sb.append("FALSE"); //$NON-NLS-1$
       }
     });
   }
@@ -581,7 +581,11 @@ public class DefaultSQLDialect implements SQLDialectInterface {
         for (SQLWhereFormula whereFormula : query.getWhereFormulas()) {
           if (!usedSQLWhereFormula.contains(whereFormula)) {
             if (first) {
-              sql.append("          ("); //$NON-NLS-1$
+              if (whereFormula.getOperator().endsWith("NOT")) { //$NON-NLS-1$ 
+                sql.append("      NOT ("); //$NON-NLS-1$
+              } else {
+                sql.append("          ("); //$NON-NLS-1$
+              }
               first = false;
             } else {
               sql.append("      "); //$NON-NLS-1$
@@ -678,7 +682,7 @@ public class DefaultSQLDialect implements SQLDialectInterface {
       if (addSecurityConstraint) {
         sql.append("        (").append(Const.CR); //$NON-NLS-1$
         sql.append("          "); //$NON-NLS-1$
-        sql.append(query.getSecurityConstraint().getFormula()).append(Const.CR); //$NON-NLS-1$
+        sql.append(query.getSecurityConstraint().getFormula()).append(Const.CR);
         if (query.getHavings().size() > 0) {
           sql.append("        ) AND (").append(Const.CR); //$NON-NLS-1$
         }
@@ -688,7 +692,11 @@ public class DefaultSQLDialect implements SQLDialectInterface {
       for (SQLWhereFormula havingFormula : query.getHavings()) {
         if (first) {
           first = false;
-          sql.append("          ("); //$NON-NLS-1$
+          if (havingFormula.getOperator().endsWith("NOT")) {  //$NON-NLS-1$
+            sql.append("      NOT ("); //$NON-NLS-1$
+          } else {
+            sql.append("          ("); //$NON-NLS-1$
+          }
         } else {
           sql.append("      "); //$NON-NLS-1$
           sql.append(havingFormula.getOperator());
@@ -803,7 +811,7 @@ public class DefaultSQLDialect implements SQLDialectInterface {
 	  //
 	  String joinClause = getJoinClause(query, sortedJoins, 0, new ArrayList<String>(), usedSQLWhereFormula);
 	  
-	  sql.append(Const.CR).append("FROM ").append(joinClause).append(Const.CR);
+	  sql.append(Const.CR).append("FROM ").append(joinClause).append(Const.CR); //$NON-NLS-1$
 	  
 	  return usedSQLWhereFormula;
   }
@@ -815,19 +823,19 @@ public class DefaultSQLDialect implements SQLDialectInterface {
    */
   private String getJoinClause(SQLQueryModel query, List<SQLJoin> sortedJoins, int index, List<String> usedTables, List<SQLWhereFormula> usedSQLWhereFormula) {
   	StringBuilder clause = new StringBuilder();
-  	String indent = Const.rightPad(" ", (index+1)+3);
+  	String indent = Const.rightPad(" ", (index+1)+3); //$NON-NLS-1$
   	SQLJoin join = sortedJoins.get(index);
     String leftTableNameAndAlias = join.getLeftTablename();
     String leftTableNameOrAlias = join.getLeftTablename();
     if (!Const.isEmpty(join.getLeftTableAlias())) {
-      leftTableNameAndAlias += " " + join.getLeftTableAlias();
+      leftTableNameAndAlias += " " + join.getLeftTableAlias(); //$NON-NLS-1$
       leftTableNameOrAlias = join.getLeftTableAlias();
     }
 
     String rightTableNameAndAlias = join.getRightTablename();
     String rightTableNameOrAlias = join.getRightTablename();
     if (!Const.isEmpty(join.getRightTableAlias())) { 
-      rightTableNameAndAlias += " " + join.getRightTableAlias();
+      rightTableNameAndAlias += " " + join.getRightTableAlias(); //$NON-NLS-1$
       rightTableNameOrAlias = join.getRightTableAlias();
     }
       
@@ -853,14 +861,14 @@ public class DefaultSQLDialect implements SQLDialectInterface {
       leftTableNameAndAlias = join.getRightTablename();
       leftTableNameOrAlias = join.getRightTablename();
       if (!Const.isEmpty(join.getRightTableAlias())) { 
-        leftTableNameAndAlias += " " + join.getRightTableAlias();
+        leftTableNameAndAlias += " " + join.getRightTableAlias(); //$NON-NLS-1$
         leftTableNameOrAlias = join.getRightTableAlias();
       }
       
       rightTableNameAndAlias = join.getLeftTablename();
       rightTableNameOrAlias = join.getLeftTablename();
       if (!Const.isEmpty(join.getLeftTableAlias())) { 
-        rightTableNameAndAlias += " " + join.getLeftTableAlias();
+        rightTableNameAndAlias += " " + join.getLeftTableAlias(); //$NON-NLS-1$
         rightTableNameOrAlias = join.getLeftTableAlias();
       }
 
@@ -876,18 +884,18 @@ public class DefaultSQLDialect implements SQLDialectInterface {
   	// Now add the JOIN syntax
   	//
   	switch(joinType) {
-    	case INNER_JOIN : clause.append(" JOIN "); break;
-    	case LEFT_OUTER_JOIN : clause.append(" LEFT OUTER JOIN "); break;
-    	case RIGHT_OUTER_JOIN : clause.append(" RIGHT OUTER JOIN "); break;
-    	case FULL_OUTER_JOIN : clause.append(" FULL OUTER JOIN "); break;
+    	case INNER_JOIN : clause.append(" JOIN "); break; //$NON-NLS-1$
+    	case LEFT_OUTER_JOIN : clause.append(" LEFT OUTER JOIN "); break; //$NON-NLS-1$
+    	case RIGHT_OUTER_JOIN : clause.append(" RIGHT OUTER JOIN "); break; //$NON-NLS-1$
+    	case FULL_OUTER_JOIN : clause.append(" FULL OUTER JOIN "); break; //$NON-NLS-1$
   	}
   
   	// Now, we generate the clause in one go...
   	//
   	if (index<sortedJoins.size()-1) {
-  		clause.append(Const.CR).append(indent).append(" ( ").append(Const.CR).append(indent).append("  ");
+  		clause.append(Const.CR).append(indent).append(" ( ").append(Const.CR).append(indent).append("  "); //$NON-NLS-1$ //$NON-NLS-2$
   		clause.append(rightClause);
-  		clause.append(indent).append(" ) ");
+  		clause.append(indent).append(" ) "); //$NON-NLS-1$
   	} else {
   		clause.append(rightTableNameAndAlias);
   		usedTables.add(rightTableNameOrAlias);
@@ -898,7 +906,7 @@ public class DefaultSQLDialect implements SQLDialectInterface {
   	//
     
   	SQLWhereFormula joinFormula = join.getSqlWhereFormula();
-  	clause.append(Const.CR).append(indent).append(" ON ( ");
+  	clause.append(Const.CR).append(indent).append(" ON ( "); //$NON-NLS-1$
   	clause.append(joinFormula.getFormula());
   	
   	// Now see if there are any SQL where conditions that apply to either two tables...
@@ -928,24 +936,24 @@ public class DefaultSQLDialect implements SQLDialectInterface {
 
 	  			// If all the involved tables are (usually 1) is part of this join, we specify the condition here...
 	  			if (allInvolvedAvailableHere) {
-	  				clause.append(" AND ( ").append(sqlWhereFormula.getFormula()).append(" ) ");
+	  				clause.append(" AND ( ").append(sqlWhereFormula.getFormula()).append(" ) "); //$NON-NLS-1$ //$NON-NLS-2$
 	  				// Remember that we did use it...
 	  				usedSQLWhereFormula.add(sqlWhereFormula);
 	  			}
 	  		}
 	  	}
   	}
-  	clause.append(" )").append(Const.CR);
+  	clause.append(" )").append(Const.CR); //$NON-NLS-1$
   	
   	return clause.toString();
   }
 
   public String getStringWildCard() {
-    return "%";
+    return "%"; //$NON-NLS-1$
   }
   
   public String getCharWildCard() {
-    return "_";
+    return "_"; //$NON-NLS-1$
   }
   
   /**

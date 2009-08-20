@@ -209,10 +209,10 @@ public class SqlGenerator {
           
           String sqlFormula = formula.generateSQL(locale);
           String[] usedTables = formula.getLogicalTableIDs();
-          query.addWhereFormula(sqlFormula, first ? "AND" : condition.getCombinationType().name(), usedTables); //$NON-NLS-1$
+          query.addWhereFormula(sqlFormula, condition.getCombinationType().toString(), usedTables);
           first = false;
         } else {
-          query.addHavingFormula(formula.generateSQL(locale), condition.getCombinationType().name());
+          query.addHavingFormula(formula.generateSQL(locale), condition.getCombinationType().toString());
         }
       }
     }
