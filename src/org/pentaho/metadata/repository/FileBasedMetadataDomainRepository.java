@@ -14,9 +14,11 @@ package org.pentaho.metadata.repository;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -72,11 +74,20 @@ public class FileBasedMetadataDomainRepository implements IMetadataDomainReposit
     }
     
     SerializationService service = new SerializationService();
+    FileOutputStream output = null;
     try {
-      FileOutputStream output = new FileOutputStream(domainFile);
+      output = new FileOutputStream(domainFile);
       service.serializeDomain(domain, output);
     } catch (FileNotFoundException e) {
       throw new DomainStorageException(Messages.getErrorString("FileBasedMetadataDomainRepository.ERROR_0004_DOMAIN_STORAGE_EXCEPTION"), e); //$NON-NLS-1$
+    } finally {
+      try {
+        if (output != null) {
+          output.close();
+        }
+      } catch (IOException e) {
+        throw new DomainStorageException(Messages.getErrorString("FileBasedMetadataDomainRepository.ERROR_0004_DOMAIN_STORAGE_EXCEPTION"), e); //$NON-NLS-1$
+      }
     }
     
     // adds the domain to the domains list
@@ -144,11 +155,23 @@ public class FileBasedMetadataDomainRepository implements IMetadataDomainReposit
     if (folder.exists()) {
       for (File file : folder.listFiles(new DomainFileNameFilter())) {
         // load domain
+        FileInputStream fis = null;
         try {
-          Domain domain = service.deserializeDomain(new FileInputStream(file));
+          fis = new FileInputStream(file);
+          Domain domain = service.deserializeDomain(fis);
           localDomains.put(domain.getId(), domain);
         } catch (FileNotFoundException e) {
           logger.error(Messages.getErrorString("FileBasedMetadataDomainRepository.ERROR_0005_FAILED_TO_LOAD_DOMAIN", file.getName()) , e); //$NON-NLS-1$
+        } finally {
+          if (fis != null) {
+            try {
+              if (fis != null) {
+                fis.close();
+              }
+            } catch (IOException e) {
+              logger.error(Messages.getErrorString("FileBasedMetadataDomainRepository.ERROR_0005_FAILED_TO_LOAD_DOMAIN", file.getName()) , e); //$NON-NLS-1$
+            }
+          }
         }
       }
     }
