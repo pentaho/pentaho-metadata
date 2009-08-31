@@ -184,11 +184,11 @@ public class SqlGenerator {
         String leftTableName = databaseMeta.getQuotedSchemaTableCombination(
                   (String)relation.getFromTable().getProperty(SqlPhysicalTable.TARGET_SCHEMA), 
                   (String)relation.getFromTable().getProperty(SqlPhysicalTable.TARGET_TABLE));
-        String leftTableAlias = relation.getFromTable().getId();
+        String leftTableAlias = tableAliases.get(relation.getFromTable());
         String rightTableName = databaseMeta.getQuotedSchemaTableCombination(
                   (String)relation.getToTable().getProperty(SqlPhysicalTable.TARGET_SCHEMA), 
                   (String)relation.getToTable().getProperty(SqlPhysicalTable.TARGET_TABLE));
-        String rightTableAlias = relation.getToTable().getId();
+        String rightTableAlias = tableAliases.get(relation.getToTable());
         
         query.addJoin(leftTableName, leftTableAlias, rightTableName, rightTableAlias, joinType, joinFormula, joinOrderKey);
         // query.addWhereFormula(joinFormula, "AND"); //$NON-NLS-1$
