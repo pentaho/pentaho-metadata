@@ -12,10 +12,16 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.openide.util.io.ReaderInputStream;
 import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.metadata.messages.LocaleHelper;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.SqlDataSource;
 import org.pentaho.metadata.model.SqlPhysicalModel;
 import org.pentaho.metadata.model.concept.types.AggregationType;
+import org.pentaho.metadata.query.impl.sql.MappedQuery;
+import org.pentaho.metadata.query.impl.sql.SqlGenerator;
+import org.pentaho.metadata.query.model.Query;
+import org.pentaho.metadata.query.model.util.QueryXmlHelper;
+import org.pentaho.metadata.repository.InMemoryMetadataDomainRepository;
 import org.pentaho.metadata.util.SerializationService;
 import org.pentaho.metadata.util.ThinModelConverter;
 import org.pentaho.metadata.util.XmiParser;
@@ -212,6 +218,66 @@ public class XmiParserTest {
     Assert.assertTrue(xmi.indexOf("&lt;row-level-security type=&quot;global&quot;&gt;&lt;formula&gt;&lt;![CDATA[TRUE()]]&gt;&lt;/formula&gt;&lt;entries&gt;&lt;/entries&gt;&lt;/row-level-security&gt;") >= 0);
     
     // Verify that the SqlDatasource is to and from successfully
+  }
+  
+  @Test
+  public void testComplexJoinsInXmi() throws Exception {
+  
+    // This unit test loads an XMI domain containing
+    // a complex join, and also executes a basic query
+    // verifying that the complex join is resolved.
+  
+    XmiParser parser = new XmiParser();
+    Domain domain = parser.parseXmi(new FileInputStream("samples/complex_join.xmi"));
+    domain.setId("test domain");
+    Assert.assertTrue(domain.getLogicalModels().get(0).getLogicalRelationships().get(0).isComplex());
+    Assert.assertEquals("[BT_ORDERS_ORDERS.BC_ORDERS_ORDERNUMBER]=[BT_ORDERFACT_ORDERFACT.BC_ORDERFACT_ORDERNUMBER]", domain.getLogicalModels().get(0).getLogicalRelationships().get(0).getComplexJoin());
+    
+    String mql = 
+        "<mql>" +
+        "<domain_type>relational</domain_type>" +
+        "<domain_id>test domain</domain_id>" +
+        "<model_id>BV_MODEL_1</model_id>" +
+        "<model_name>Model 1</model_name>" +
+        "<options>" +
+        "  <disable_distinct>false</disable_distinct>" +
+        "</options>" +
+        "<selections>" +
+        "  <selection>" +
+        "    <view>BC_ORDERS</view>" +
+        "    <column>BC_ORDERS_STATUS</column>" +
+        "    <aggregation>none</aggregation>" +
+        "  </selection>" +
+        "  <selection>" +
+        "    <view>BC_ORDERFACT</view>" +
+        "    <column>BC_ORDERFACT_PRODUCTCODE</column>" +
+        "    <aggregation>none</aggregation>" +
+        "  </selection>" +
+        "</selections>" +
+        "<constraints/>" +
+        "<orders/>" +
+        "</mql>";
+    
+    InMemoryMetadataDomainRepository repo = new InMemoryMetadataDomainRepository();
+    repo.storeDomain(domain, false);
+    QueryXmlHelper helper = new QueryXmlHelper();
+    Query query = helper.fromXML(repo, mql);
+    
+    SqlGenerator generator = new SqlGenerator();
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    MappedQuery queryObj = generator.generateSql(query, "en_US", repo, databaseMeta);
+    TestHelper.printOutJava(queryObj.getQuery());
+    Assert.assertEquals(
+        "SELECT DISTINCT \n" + 
+        "          BT_ORDERS_ORDERS.STATUS AS COL0\n" + 
+        "         ,BT_ORDERFACT_ORDERFACT.PRODUCTCODE AS COL1\n" + 
+        "FROM \n" + 
+        "          ORDERFACT BT_ORDERFACT_ORDERFACT\n" + 
+        "         ,ORDERS BT_ORDERS_ORDERS\n" + 
+        "WHERE \n" + 
+        "          (  BT_ORDERS_ORDERS.ORDERNUMBER  =  BT_ORDERFACT_ORDERFACT.ORDERNUMBER  )\n"
+        , queryObj.getQuery());
+    
   }
 
 }

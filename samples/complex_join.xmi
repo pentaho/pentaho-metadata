@@ -1,0 +1,1737 @@
+<?xml version = '1.0' encoding = 'UTF-8' ?>
+<XMI xmi.version = '1.2' xmlns:CWMTFM = 'org.omg.xmi.namespace.CWMTFM' xmlns:CWM = 'org.omg.xmi.namespace.CWM'
+  xmlns:CWMMDB = 'org.omg.xmi.namespace.CWMMDB' xmlns:CWMOLAP = 'org.omg.xmi.namespace.CWMOLAP'
+  xmlns:CWMRDB = 'org.omg.xmi.namespace.CWMRDB' timestamp = 'Tue Sep 08 10:29:33 EDT 2009'>
+  <XMI.header>
+    <XMI.documentation>
+      <XMI.exporter>Netbeans XMI Writer</XMI.exporter>
+      <XMI.exporterVersion>1.0</XMI.exporterVersion>
+    </XMI.documentation>
+  </XMI.header>
+  <XMI.content>
+    <CWM:Class xmi.id = 'a1' name = 'Base' isAbstract = 'false'/>
+    <CWM:Description xmi.id = 'a2' name = 'foreground_color' body = '0,0,0'
+      type = 'Color'>
+      <CWM:Description.modelElement>
+        <CWM:Class xmi.idref = 'a1'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a3' name = 'font' body = 'Arial-10' type = 'Font'>
+      <CWM:Description.modelElement>
+        <CWM:Class xmi.idref = 'a1'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a4' name = 'alignment' body = 'left' type = 'Alignment'>
+      <CWM:Description.modelElement>
+        <CWM:Class xmi.idref = 'a1'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a5' name = 'name' body = 'ORDERFACT' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Table xmi.idref = 'a6'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a7' name = 'tabletype' body = 'Fact' type = 'TableType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Table xmi.idref = 'a6'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a8' name = 'target_table' body = 'ORDERFACT'
+      type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Table xmi.idref = 'a6'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a9' name = 'name' body = 'ORDERNUMBER' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a10'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a11' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a10'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a12' name = 'formula' body = 'ORDERNUMBER' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a10'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a13' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a10'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a14' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a10'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a15' name = 'datatype' body = 'Numeric,9,0' type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a10'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a16' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a10'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a17' name = 'aggregation_list' body = '&lt;aggregationlist&gt;&#10;&lt;/aggregationlist&gt;&#10;'
+      type = 'AggregationList'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a10'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a18' name = 'name' body = 'PRODUCTCODE' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a19'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a20' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a19'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a21' name = 'formula' body = 'PRODUCTCODE' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a19'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a22' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a19'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a23' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a19'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a24' name = 'datatype' body = 'String,50,-1'
+      type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a19'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a25' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a19'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a26' name = 'aggregation_list' body = '&lt;aggregationlist&gt;&#10;&lt;/aggregationlist&gt;&#10;'
+      type = 'AggregationList'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a19'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a27' name = 'name' body = 'QUANTITYORDERED' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a28'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a29' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a28'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a30' name = 'formula' body = 'QUANTITYORDERED'
+      type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a28'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a31' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a28'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a32' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a28'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a33' name = 'datatype' body = 'Numeric,9,0' type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a28'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a34' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a28'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a35' name = 'aggregation_list' body = '&lt;aggregationlist&gt;&#10;&lt;/aggregationlist&gt;&#10;'
+      type = 'AggregationList'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a28'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a36' name = 'name' body = 'PRICEEACH' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a37'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a38' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a37'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a39' name = 'formula' body = 'PRICEEACH' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a37'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a40' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a37'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a41' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a37'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a42' name = 'datatype' body = 'Numeric,9,0' type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a37'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a43' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a37'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a44' name = 'aggregation_list' body = '&lt;aggregationlist&gt;&#10;&lt;/aggregationlist&gt;&#10;'
+      type = 'AggregationList'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a37'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a45' name = 'name' body = 'ORDERLINENUMBER' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a46'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a47' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a46'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a48' name = 'formula' body = 'ORDERLINENUMBER'
+      type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a46'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a49' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a46'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a50' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a46'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a51' name = 'datatype' body = 'Numeric,9,0' type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a46'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a52' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a46'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a53' name = 'aggregation_list' body = '&lt;aggregationlist&gt;&#10;&lt;/aggregationlist&gt;&#10;'
+      type = 'AggregationList'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a46'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a54' name = 'name' body = 'TOTALPRICE' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a55'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a56' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a55'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a57' name = 'formula' body = 'TOTALPRICE' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a55'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a58' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a55'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a59' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a55'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a60' name = 'datatype' body = 'Numeric,9,0' type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a55'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a61' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a55'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a62' name = 'aggregation_list' body = '&lt;aggregationlist&gt;&#10;&lt;/aggregationlist&gt;&#10;'
+      type = 'AggregationList'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a55'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a63' name = 'name' body = 'ORDERDATE' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a64'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a65' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a64'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a66' name = 'formula' body = 'ORDERDATE' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a64'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a67' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a64'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a68' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a64'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a69' name = 'datatype' body = 'Date,-1,-1' type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a64'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a70' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a64'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a71' name = 'aggregation_list' body = '&lt;aggregationlist&gt;&#10;&lt;/aggregationlist&gt;&#10;'
+      type = 'AggregationList'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a64'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a72' name = 'name' body = 'REQUIREDDATE' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a73'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a74' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a73'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a75' name = 'formula' body = 'REQUIREDDATE' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a73'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a76' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a73'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a77' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a73'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a78' name = 'datatype' body = 'Date,-1,-1' type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a73'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a79' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a73'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a80' name = 'aggregation_list' body = '&lt;aggregationlist&gt;&#10;&lt;/aggregationlist&gt;&#10;'
+      type = 'AggregationList'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a73'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a81' name = 'name' body = 'SHIPPEDDATE' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a82'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a83' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a82'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a84' name = 'formula' body = 'SHIPPEDDATE' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a82'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a85' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a82'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a86' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a82'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a87' name = 'datatype' body = 'Date,-1,-1' type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a82'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a88' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a82'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a89' name = 'aggregation_list' body = '&lt;aggregationlist&gt;&#10;&lt;/aggregationlist&gt;&#10;'
+      type = 'AggregationList'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a82'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a90' name = 'name' body = 'STATUS' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a91'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a92' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a91'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a93' name = 'formula' body = 'STATUS' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a91'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a94' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a91'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a95' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a91'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a96' name = 'datatype' body = 'String,50,-1'
+      type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a91'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a97' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a91'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a98' name = 'aggregation_list' body = '&lt;aggregationlist&gt;&#10;&lt;/aggregationlist&gt;&#10;'
+      type = 'AggregationList'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a91'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a99' name = 'name' body = 'COMMENTS' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a100'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a101' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a100'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a102' name = 'formula' body = 'COMMENTS' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a100'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a103' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a100'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a104' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a100'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a105' name = 'datatype' body = 'String,50,-1'
+      type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a100'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a106' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a100'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a107' name = 'aggregation_list' body = '&lt;aggregationlist&gt;&#10;&lt;/aggregationlist&gt;&#10;'
+      type = 'AggregationList'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a100'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a108' name = 'name' body = 'CUSTOMERNUMBER' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a109'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a110' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a109'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a111' name = 'formula' body = 'CUSTOMERNUMBER'
+      type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a109'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a112' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a109'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a113' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a109'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a114' name = 'datatype' body = 'Numeric,9,0'
+      type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a109'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a115' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a109'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a116' name = 'aggregation_list' body = '&lt;aggregationlist&gt;&#10;&lt;/aggregationlist&gt;&#10;'
+      type = 'AggregationList'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a109'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a117' name = 'name' body = 'TIME ID' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a118'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a119' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a118'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a120' name = 'formula' body = 'TIME_ID' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a118'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a121' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a118'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a122' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a118'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a123' name = 'datatype' body = 'String,50,-1'
+      type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a118'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a124' name = 'fieldtype' body = 'Key' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a118'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a125' name = 'aggregation_list' body = '&lt;aggregationlist&gt;&#10;&lt;/aggregationlist&gt;&#10;'
+      type = 'AggregationList'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a118'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a126' name = 'name' body = 'QTR ID' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a127'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a128' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a127'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a129' name = 'formula' body = 'QTR_ID' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a127'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a130' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a127'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a131' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a127'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a132' name = 'datatype' body = 'Numeric,9,0'
+      type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a127'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a133' name = 'fieldtype' body = 'Key' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a127'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a134' name = 'aggregation_list' body = '&lt;aggregationlist&gt;&#10;&lt;/aggregationlist&gt;&#10;'
+      type = 'AggregationList'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a127'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a135' name = 'name' body = 'MONTH ID' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a136'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a137' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a136'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a138' name = 'formula' body = 'MONTH_ID' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a136'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a139' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a136'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a140' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a136'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a141' name = 'datatype' body = 'Numeric,9,0'
+      type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a136'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a142' name = 'fieldtype' body = 'Key' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a136'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a143' name = 'aggregation_list' body = '&lt;aggregationlist&gt;&#10;&lt;/aggregationlist&gt;&#10;'
+      type = 'AggregationList'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a136'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a144' name = 'name' body = 'YEAR ID' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a145'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a146' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a145'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a147' name = 'formula' body = 'YEAR_ID' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a145'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a148' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a145'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a149' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a145'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a150' name = 'datatype' body = 'Numeric,9,0'
+      type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a145'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a151' name = 'fieldtype' body = 'Key' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a145'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a152' name = 'aggregation_list' body = '&lt;aggregationlist&gt;&#10;&lt;/aggregationlist&gt;&#10;'
+      type = 'AggregationList'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a145'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a153' name = 'name' body = 'ORDERS' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Table xmi.idref = 'a154'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a155' name = 'tabletype' body = 'Other' type = 'TableType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Table xmi.idref = 'a154'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a156' name = 'target_table' body = 'ORDERS' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Table xmi.idref = 'a154'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a157' name = 'name' body = 'ORDERNUMBER' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a158'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a159' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a158'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a160' name = 'formula' body = 'ORDERNUMBER' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a158'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a161' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a158'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a162' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a158'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a163' name = 'datatype' body = 'Numeric,9,0'
+      type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a158'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a164' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a158'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a165' name = 'aggregation_list' body = '&lt;aggregationlist&gt;&#10;&lt;/aggregationlist&gt;&#10;'
+      type = 'AggregationList'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a158'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a166' name = 'name' body = 'ORDERDATE' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a167'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a168' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a167'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a169' name = 'formula' body = 'ORDERDATE' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a167'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a170' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a167'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a171' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a167'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a172' name = 'datatype' body = 'Date,-1,-1' type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a167'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a173' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a167'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a174' name = 'aggregation_list' body = '&lt;aggregationlist&gt;&#10;&lt;/aggregationlist&gt;&#10;'
+      type = 'AggregationList'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a167'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a175' name = 'name' body = 'REQUIREDDATE' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a176'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a177' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a176'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a178' name = 'formula' body = 'REQUIREDDATE'
+      type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a176'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a179' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a176'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a180' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a176'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a181' name = 'datatype' body = 'Date,-1,-1' type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a176'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a182' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a176'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a183' name = 'aggregation_list' body = '&lt;aggregationlist&gt;&#10;&lt;/aggregationlist&gt;&#10;'
+      type = 'AggregationList'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a176'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a184' name = 'name' body = 'SHIPPEDDATE' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a185'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a186' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a185'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a187' name = 'formula' body = 'SHIPPEDDATE' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a185'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a188' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a185'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a189' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a185'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a190' name = 'datatype' body = 'Date,-1,-1' type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a185'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a191' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a185'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a192' name = 'aggregation_list' body = '&lt;aggregationlist&gt;&#10;&lt;/aggregationlist&gt;&#10;'
+      type = 'AggregationList'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a185'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a193' name = 'name' body = 'STATUS' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a194'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a195' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a194'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a196' name = 'formula' body = 'STATUS' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a194'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a197' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a194'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a198' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a194'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a199' name = 'datatype' body = 'String,50,-1'
+      type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a194'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a200' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a194'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a201' name = 'aggregation_list' body = '&lt;aggregationlist&gt;&#10;&lt;/aggregationlist&gt;&#10;'
+      type = 'AggregationList'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a194'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a202' name = 'name' body = 'COMMENTS' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a203'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a204' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a203'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a205' name = 'formula' body = 'COMMENTS' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a203'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a206' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a203'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a207' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a203'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a208' name = 'datatype' body = 'String,50,-1'
+      type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a203'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a209' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a203'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a210' name = 'aggregation_list' body = '&lt;aggregationlist&gt;&#10;&lt;/aggregationlist&gt;&#10;'
+      type = 'AggregationList'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a203'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a211' name = 'name' body = 'CUSTOMERNUMBER' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a212'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a213' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a212'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a214' name = 'formula' body = 'CUSTOMERNUMBER'
+      type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a212'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a215' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a212'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a216' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a212'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a217' name = 'datatype' body = 'Numeric,9,0'
+      type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a212'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a218' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a212'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a219' name = 'aggregation_list' body = '&lt;aggregationlist&gt;&#10;&lt;/aggregationlist&gt;&#10;'
+      type = 'AggregationList'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a212'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a220' name = 'name' body = 'Model 1' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Schema xmi.idref = 'a221'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a222' name = 'security' body = '&lt;security&gt;&#10;&lt;/security&gt;&#10;'
+      type = 'Security'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Schema xmi.idref = 'a221'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a223' name = 'row_level_security' body = '&lt;row-level-security type=&quot;none&quot;&gt;&lt;formula&gt;&lt;![CDATA[]]&gt;&lt;/formula&gt;&lt;entries&gt;&lt;/entries&gt;&lt;/row-level-security&gt;'
+      type = 'RowLevelSecurity'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Schema xmi.idref = 'a221'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a224' name = 'name' body = 'ORDERS' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Dimension xmi.idref = 'a225'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a226' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMMDB:DimensionedObject xmi.idref = 'a227'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a228' name = 'name' body = 'ORDERFACT' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Dimension xmi.idref = 'a229'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a230' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMMDB:DimensionedObject xmi.idref = 'a231'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a232' name = 'name' body = 'ORDERS' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a233'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a234' name = 'security' body = '&lt;security&gt;&#10;&lt;/security&gt;&#10;'
+      type = 'Security'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a233'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a235' name = 'name' body = 'ORDERFACT' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a236'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a237' name = 'security' body = '&lt;security&gt;&#10;&lt;/security&gt;&#10;'
+      type = 'Security'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a236'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Event xmi.id = 'a238' name = 'SECURITY_SERVICE'>
+      <CWM:ModelElement.taggedValue>
+        <CWM:TaggedValue xmi.id = 'a239' tag = 'SECURITY_SERVICE_URL'/>
+        <CWM:TaggedValue xmi.id = 'a240' tag = 'SECURITY_DETAILS_NAME'/>
+        <CWM:TaggedValue xmi.id = 'a241' tag = 'SECURITY_DETAIL_NAME'/>
+        <CWM:TaggedValue xmi.id = 'a242' tag = 'SECURITY_DETAIL_TYPE' value = 'All'/>
+        <CWM:TaggedValue xmi.id = 'a243' tag = 'SECURITY_USERNAME'/>
+        <CWM:TaggedValue xmi.id = 'a244' tag = 'SECURITY_PASSWORD'/>
+        <CWM:TaggedValue xmi.id = 'a245' tag = 'SECURITY_PROXY_HOST'/>
+        <CWM:TaggedValue xmi.id = 'a246' tag = 'SECURITY_PROXY_PORT'/>
+        <CWM:TaggedValue xmi.id = 'a247' tag = 'SECURITY_NON_PROXY_HOSTS'/>
+        <CWM:TaggedValue xmi.id = 'a248' tag = 'SECURITY_FILENAME'/>
+        <CWM:TaggedValue xmi.id = 'a249' tag = 'SECURITY_URL' value = 'null?action=null&amp;null=all'/>
+      </CWM:ModelElement.taggedValue>
+    </CWM:Event>
+    <CWM:Parameter xmi.id = 'a250' name = 'en_US'>
+      <CWM:ModelElement.taggedValue>
+        <CWM:TaggedValue xmi.id = 'a251' tag = 'LOCALE_DESCRIPTION' value = 'English (American)'/>
+        <CWM:TaggedValue xmi.id = 'a252' tag = 'LOCALE_ORDER' value = '1'/>
+        <CWM:TaggedValue xmi.id = 'a253' tag = 'LOCALE_IS_DEFAULT' value = 'Y'/>
+      </CWM:ModelElement.taggedValue>
+    </CWM:Parameter>
+    <CWMOLAP:Schema xmi.id = 'a254' name = 'BV_MODEL_1'/>
+    <CWMRDB:Catalog xmi.id = 'a255' name = 'sampledata'>
+      <CWM:ModelElement.taggedValue>
+        <CWM:TaggedValue xmi.id = 'a256' tag = 'DATABASE_SERVER' value = 'localhost'/>
+        <CWM:TaggedValue xmi.id = 'a257' tag = 'DATABASE_TYPE' value = 'HYPERSONIC'/>
+        <CWM:TaggedValue xmi.id = 'a258' tag = 'DATABASE_ACCESS' value = 'Native'/>
+        <CWM:TaggedValue xmi.id = 'a259' tag = 'DATABASE_DATABASE' value = 'sampledata'/>
+        <CWM:TaggedValue xmi.id = 'a260' tag = 'DATABASE_PORT' value = '9001'/>
+        <CWM:TaggedValue xmi.id = 'a261' tag = 'DATABASE_USERNAME' value = 'pentaho_user'/>
+        <CWM:TaggedValue xmi.id = 'a262' tag = 'DATABASE_PASSWORD' value = 'password'/>
+        <CWM:TaggedValue xmi.id = 'a263' tag = 'DATABASE_SERVERNAME'/>
+        <CWM:TaggedValue xmi.id = 'a264' tag = 'DATABASE_DATA_TABLESPACE'/>
+        <CWM:TaggedValue xmi.id = 'a265' tag = 'DATABASE_INDEX_TABLESPACE'/>
+        <CWM:TaggedValue xmi.id = 'a266' tag = 'DATABASE_ATTRIBUTE_PREFIX_USE_POOLING'
+          value = 'N'/>
+        <CWM:TaggedValue xmi.id = 'a267' tag = 'DATABASE_ATTRIBUTE_PREFIX_FORCE_IDENTIFIERS_TO_LOWERCASE'
+          value = 'N'/>
+        <CWM:TaggedValue xmi.id = 'a268' tag = 'DATABASE_ATTRIBUTE_PREFIX_IS_CLUSTERED'
+          value = 'N'/>
+        <CWM:TaggedValue xmi.id = 'a269' tag = 'DATABASE_ATTRIBUTE_PREFIX_QUOTE_ALL_FIELDS'
+          value = 'N'/>
+        <CWM:TaggedValue xmi.id = 'a270' tag = 'DATABASE_ATTRIBUTE_PREFIX_FORCE_IDENTIFIERS_TO_UPPERCASE'
+          value = 'N'/>
+        <CWM:TaggedValue xmi.id = 'a271' tag = 'DATABASE_ATTRIBUTE_PREFIX_PORT_NUMBER'
+          value = '9001'/>
+        <CWM:TaggedValue xmi.id = 'a272' tag = 'DATABASE_JDBC_URL' value = 'jdbc:hsqldb:hsql://localhost:9001/sampledata'/>
+      </CWM:ModelElement.taggedValue>
+    </CWMRDB:Catalog>
+    <CWMRDB:Table xmi.id = 'a6' name = 'PT_ORDERFACT' isAbstract = 'false' isTemporary = 'false'
+      isSystem = 'false'>
+      <CWM:ModelElement.taggedValue>
+        <CWM:TaggedValue xmi.id = 'a273' tag = 'TABLE_TARGET_DATABASE_NAME' value = 'sampledata'/>
+      </CWM:ModelElement.taggedValue>
+      <CWM:Namespace.ownedElement>
+        <CWMRDB:Column xmi.id = 'a10' name = 'ORDERNUMBER'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a274' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+        <CWMRDB:Column xmi.id = 'a19' name = 'PRODUCTCODE'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a275' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+        <CWMRDB:Column xmi.id = 'a28' name = 'QUANTITYORDERED'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a276' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+        <CWMRDB:Column xmi.id = 'a37' name = 'PRICEEACH'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a277' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+        <CWMRDB:Column xmi.id = 'a46' name = 'ORDERLINENUMBER'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a278' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+        <CWMRDB:Column xmi.id = 'a55' name = 'TOTALPRICE'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a279' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+        <CWMRDB:Column xmi.id = 'a64' name = 'ORDERDATE'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a280' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+        <CWMRDB:Column xmi.id = 'a73' name = 'REQUIREDDATE'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a281' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+        <CWMRDB:Column xmi.id = 'a82' name = 'SHIPPEDDATE'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a282' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+        <CWMRDB:Column xmi.id = 'a91' name = 'STATUS'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a283' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+        <CWMRDB:Column xmi.id = 'a100' name = 'COMMENTS'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a284' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+        <CWMRDB:Column xmi.id = 'a109' name = 'CUSTOMERNUMBER'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a285' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+        <CWMRDB:Column xmi.id = 'a118' name = 'TIME_ID'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a286' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+        <CWMRDB:Column xmi.id = 'a127' name = 'QTR_ID'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a287' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+        <CWMRDB:Column xmi.id = 'a136' name = 'MONTH_ID'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a288' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+        <CWMRDB:Column xmi.id = 'a145' name = 'YEAR_ID'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a289' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+      </CWM:Namespace.ownedElement>
+    </CWMRDB:Table>
+    <CWMRDB:Table xmi.id = 'a154' name = 'PT_ORDERS' isAbstract = 'false' isTemporary = 'false'
+      isSystem = 'false'>
+      <CWM:ModelElement.taggedValue>
+        <CWM:TaggedValue xmi.id = 'a290' tag = 'TABLE_TARGET_DATABASE_NAME' value = 'sampledata'/>
+      </CWM:ModelElement.taggedValue>
+      <CWM:Namespace.ownedElement>
+        <CWMRDB:Column xmi.id = 'a158' name = 'ORDERNUMBER'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a291' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+        <CWMRDB:Column xmi.id = 'a167' name = 'ORDERDATE'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a292' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+        <CWMRDB:Column xmi.id = 'a176' name = 'REQUIREDDATE'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a293' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+        <CWMRDB:Column xmi.id = 'a185' name = 'SHIPPEDDATE'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a294' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+        <CWMRDB:Column xmi.id = 'a194' name = 'STATUS'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a295' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+        <CWMRDB:Column xmi.id = 'a203' name = 'COMMENTS'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a296' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+        <CWMRDB:Column xmi.id = 'a212' name = 'CUSTOMERNUMBER'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a297' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+      </CWM:Namespace.ownedElement>
+    </CWMRDB:Table>
+    <CWMMDB:Schema xmi.id = 'a221' name = 'BV_MODEL_1'>
+      <CWM:Namespace.ownedElement>
+        <CWM:KeyRelationship xmi.id = 'a298'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a299' tag = 'RELATIONSHIP_TABLENAME_PARENT' value = 'BT_ORDERFACT_ORDERFACT'/>
+            <CWM:TaggedValue xmi.id = 'a300' tag = 'RELATIONSHIP_TABLENAME_CHILD' value = 'BT_ORDERS_ORDERS'/>
+            <CWM:TaggedValue xmi.id = 'a301' tag = 'RELATIONSHIP_IS_COMPLEX' value = 'Y'/>
+            <CWM:TaggedValue xmi.id = 'a302' tag = 'RELATIONSHIP_COMPLEX_JOIN' value = '[BT_ORDERS_ORDERS.BC_ORDERS_ORDERNUMBER]=[BT_ORDERFACT_ORDERFACT.BC_ORDERFACT_ORDERNUMBER]'/>
+            <CWM:TaggedValue xmi.id = 'a303' tag = 'RELATIONSHIP_TYPE' value = '1:N'/>
+            <CWM:TaggedValue xmi.id = 'a304' tag = 'RELATIONSHIP_JOIN_ORDER_KEY' value = ''/>
+            <CWM:TaggedValue xmi.id = 'a305' tag = 'RELATIONSHIP_DESCRIPTION' value = ''/>
+          </CWM:ModelElement.taggedValue>
+        </CWM:KeyRelationship>
+        <CWM:Extent xmi.id = 'a233' name = 'BC_ORDERS'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a306' tag = 'BUSINESS_CATEGORY_ROOT' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWM:Namespace.ownedElement>
+            <CWM:Attribute xmi.id = 'a307' name = 'BC_ORDERS_ORDERNUMBER'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a308' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a309' name = 'BC_ORDERS_ORDERDATE'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a310' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a311' name = 'BC_ORDERS_REQUIREDDATE'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a312' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a313' name = 'BC_ORDERS_SHIPPEDDATE'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a314' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a315' name = 'BC_ORDERS_STATUS'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a316' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a317' name = 'BC_ORDERS_COMMENTS'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a318' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a319' name = 'BC_ORDERS_CUSTOMERNUMBER'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a320' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+          </CWM:Namespace.ownedElement>
+        </CWM:Extent>
+        <CWM:Extent xmi.id = 'a236' name = 'BC_ORDERFACT'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a321' tag = 'BUSINESS_CATEGORY_ROOT' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWM:Namespace.ownedElement>
+            <CWM:Attribute xmi.id = 'a322' name = 'BC_ORDERFACT_ORDERNUMBER'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a323' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a324' name = 'BC_ORDERFACT_PRODUCTCODE'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a325' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a326' name = 'BC_ORDERFACT_QUANTITYORDERED'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a327' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a328' name = 'BC_ORDERFACT_PRICEEACH'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a329' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a330' name = 'BC_ORDERFACT_ORDERLINENUMBER'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a331' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a332' name = 'BC_ORDERFACT_TOTALPRICE'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a333' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a334' name = 'BC_ORDERFACT_ORDERDATE'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a335' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a336' name = 'BC_ORDERFACT_REQUIREDDATE'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a337' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a338' name = 'BC_ORDERFACT_SHIPPEDDATE'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a339' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a340' name = 'BC_ORDERFACT_STATUS'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a341' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a342' name = 'BC_ORDERFACT_COMMENTS'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a343' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a344' name = 'BC_ORDERFACT_CUSTOMERNUMBER'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a345' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a346' name = 'BC_ORDERFACT_TIME_ID'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a347' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a348' name = 'BC_ORDERFACT_QTR_ID'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a349' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a350' name = 'BC_ORDERFACT_MONTH_ID'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a351' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a352' name = 'BC_ORDERFACT_YEAR_ID'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a353' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+          </CWM:Namespace.ownedElement>
+        </CWM:Extent>
+      </CWM:Namespace.ownedElement>
+      <CWMMDB:Schema.dimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a354' name = 'BC_ORDERS_ORDERNUMBER'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a355' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'ORDERNUMBER'/>
+            <CWM:TaggedValue xmi.id = 'a356' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_ORDERS_ORDERS'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a225'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a357' name = 'BC_ORDERS_ORDERDATE'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a358' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'ORDERDATE'/>
+            <CWM:TaggedValue xmi.id = 'a359' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_ORDERS_ORDERS'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a225'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a360' name = 'BC_ORDERS_REQUIREDDATE'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a361' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'REQUIREDDATE'/>
+            <CWM:TaggedValue xmi.id = 'a362' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_ORDERS_ORDERS'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a225'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a363' name = 'BC_ORDERS_SHIPPEDDATE'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a364' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'SHIPPEDDATE'/>
+            <CWM:TaggedValue xmi.id = 'a365' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_ORDERS_ORDERS'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a225'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a227' name = 'BC_ORDERS_STATUS'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a366' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'STATUS'/>
+            <CWM:TaggedValue xmi.id = 'a367' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_ORDERS_ORDERS'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a225'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a368' name = 'BC_ORDERS_COMMENTS'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a369' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'COMMENTS'/>
+            <CWM:TaggedValue xmi.id = 'a370' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_ORDERS_ORDERS'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a225'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a371' name = 'BC_ORDERS_CUSTOMERNUMBER'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a372' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'CUSTOMERNUMBER'/>
+            <CWM:TaggedValue xmi.id = 'a373' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_ORDERS_ORDERS'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a225'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a374' name = 'BC_ORDERFACT_ORDERNUMBER'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a375' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'ORDERNUMBER'/>
+            <CWM:TaggedValue xmi.id = 'a376' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_ORDERFACT_ORDERFACT'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a229'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a231' name = 'BC_ORDERFACT_PRODUCTCODE'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a377' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'PRODUCTCODE'/>
+            <CWM:TaggedValue xmi.id = 'a378' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_ORDERFACT_ORDERFACT'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a229'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a379' name = 'BC_ORDERFACT_QUANTITYORDERED'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a380' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'QUANTITYORDERED'/>
+            <CWM:TaggedValue xmi.id = 'a381' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_ORDERFACT_ORDERFACT'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a229'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a382' name = 'BC_ORDERFACT_PRICEEACH'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a383' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'PRICEEACH'/>
+            <CWM:TaggedValue xmi.id = 'a384' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_ORDERFACT_ORDERFACT'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a229'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a385' name = 'BC_ORDERFACT_ORDERLINENUMBER'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a386' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'ORDERLINENUMBER'/>
+            <CWM:TaggedValue xmi.id = 'a387' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_ORDERFACT_ORDERFACT'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a229'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a388' name = 'BC_ORDERFACT_TOTALPRICE'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a389' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'TOTALPRICE'/>
+            <CWM:TaggedValue xmi.id = 'a390' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_ORDERFACT_ORDERFACT'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a229'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a391' name = 'BC_ORDERFACT_ORDERDATE'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a392' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'ORDERDATE'/>
+            <CWM:TaggedValue xmi.id = 'a393' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_ORDERFACT_ORDERFACT'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a229'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a394' name = 'BC_ORDERFACT_REQUIREDDATE'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a395' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'REQUIREDDATE'/>
+            <CWM:TaggedValue xmi.id = 'a396' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_ORDERFACT_ORDERFACT'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a229'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a397' name = 'BC_ORDERFACT_SHIPPEDDATE'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a398' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'SHIPPEDDATE'/>
+            <CWM:TaggedValue xmi.id = 'a399' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_ORDERFACT_ORDERFACT'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a229'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a400' name = 'BC_ORDERFACT_STATUS'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a401' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'STATUS'/>
+            <CWM:TaggedValue xmi.id = 'a402' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_ORDERFACT_ORDERFACT'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a229'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a403' name = 'BC_ORDERFACT_COMMENTS'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a404' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'COMMENTS'/>
+            <CWM:TaggedValue xmi.id = 'a405' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_ORDERFACT_ORDERFACT'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a229'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a406' name = 'BC_ORDERFACT_CUSTOMERNUMBER'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a407' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'CUSTOMERNUMBER'/>
+            <CWM:TaggedValue xmi.id = 'a408' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_ORDERFACT_ORDERFACT'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a229'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a409' name = 'BC_ORDERFACT_TIME_ID'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a410' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'TIME_ID'/>
+            <CWM:TaggedValue xmi.id = 'a411' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_ORDERFACT_ORDERFACT'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a229'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a412' name = 'BC_ORDERFACT_QTR_ID'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a413' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'QTR_ID'/>
+            <CWM:TaggedValue xmi.id = 'a414' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_ORDERFACT_ORDERFACT'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a229'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a415' name = 'BC_ORDERFACT_MONTH_ID'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a416' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'MONTH_ID'/>
+            <CWM:TaggedValue xmi.id = 'a417' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_ORDERFACT_ORDERFACT'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a229'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a418' name = 'BC_ORDERFACT_YEAR_ID'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a419' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'YEAR_ID'/>
+            <CWM:TaggedValue xmi.id = 'a420' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_ORDERFACT_ORDERFACT'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a229'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+      </CWMMDB:Schema.dimensionedObject>
+      <CWMMDB:Schema.dimension>
+        <CWMMDB:Dimension xmi.id = 'a225' name = 'BT_ORDERS_ORDERS' isAbstract = 'false'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a421' tag = 'BUSINESS_TABLE_PHYSICAL_TABLE_NAME'
+              value = 'PT_ORDERS'/>
+            <CWM:TaggedValue xmi.id = 'a422' tag = 'TAG_POSITION_X' value = '150'/>
+            <CWM:TaggedValue xmi.id = 'a423' tag = 'TAG_POSITION_Y' value = '150'/>
+            <CWM:TaggedValue xmi.id = 'a424' tag = 'TABLE_IS_DRAWN' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:Dimension.dimensionedObject>
+            <CWMMDB:DimensionedObject xmi.idref = 'a354'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a357'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a360'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a363'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a227'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a368'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a371'/>
+          </CWMMDB:Dimension.dimensionedObject>
+        </CWMMDB:Dimension>
+        <CWMMDB:Dimension xmi.id = 'a229' name = 'BT_ORDERFACT_ORDERFACT' isAbstract = 'false'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a425' tag = 'BUSINESS_TABLE_PHYSICAL_TABLE_NAME'
+              value = 'PT_ORDERFACT'/>
+            <CWM:TaggedValue xmi.id = 'a426' tag = 'TAG_POSITION_X' value = '319'/>
+            <CWM:TaggedValue xmi.id = 'a427' tag = 'TAG_POSITION_Y' value = '150'/>
+            <CWM:TaggedValue xmi.id = 'a428' tag = 'TABLE_IS_DRAWN' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:Dimension.dimensionedObject>
+            <CWMMDB:DimensionedObject xmi.idref = 'a374'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a231'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a379'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a382'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a385'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a388'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a391'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a394'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a397'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a400'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a403'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a406'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a409'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a412'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a415'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a418'/>
+          </CWMMDB:Dimension.dimensionedObject>
+        </CWMMDB:Dimension>
+      </CWMMDB:Schema.dimension>
+    </CWMMDB:Schema>
+  </XMI.content>
+</XMI>

@@ -1097,7 +1097,7 @@ public class XmiParser {
         }
         
         relation.setComplex("Y".equals(nvp.get("RELATIONSHIP_IS_COMPLEX"))); //$NON-NLS-1$ //$NON-NLS-2$
-        String val = nvp.get(nvp.get("RELATIONSHIP_COMPLEX_JOIN")); //$NON-NLS-1$
+        String val = nvp.get("RELATIONSHIP_COMPLEX_JOIN"); //$NON-NLS-1$
         if (val != null) {
           relation.setComplexJoin(val);
         }
