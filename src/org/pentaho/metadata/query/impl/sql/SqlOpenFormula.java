@@ -234,17 +234,17 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
         validateAndResolveObjectModel(val);
         isValidated = true;
       } catch (ParseException e) {
-        logger.error("an exception occurred", e); //$NON-NLS-1$
+        logger.debug("an exception occurred", e); //$NON-NLS-1$
         // is it possible to provide more detail in this exception to the user?
         throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0005_FAILED_TO_PARSE_FORMULA", formulaString)); //$NON-NLS-1$
       } catch (EvaluationException e) {
-        logger.error("an exception occurred", e); //$NON-NLS-1$
+        logger.debug("an exception occurred", e); //$NON-NLS-1$
         throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0006_FAILED_TO_EVALUATE_FORMULA", formulaString)); //$NON-NLS-1$
       } catch (Throwable e) {
         if (e instanceof PentahoMetadataException) {
           throw (PentahoMetadataException)e;         
         } else {
-          logger.error("an exception occurred", e); //$NON-NLS-1$
+          logger.debug("an exception occurred", e); //$NON-NLS-1$
           throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0007_UNKNOWN_ERROR", formulaString)); //$NON-NLS-1$
         }
       }
