@@ -154,7 +154,7 @@ public class XmiParserTest {
     return xstream.toXML(domain);
 
   }
-  
+
   @Test
   public void testXmiLegacyConceptProperties() throws Exception {
     XmiParser parser = new XmiParser();
@@ -296,4 +296,12 @@ public class XmiParserTest {
     
   }
 
+  @Test
+  public void testMissingLocale() throws Exception {
+    XmiParser parser = new XmiParser();
+    Domain domain = parser.parseXmi(new FileInputStream("test-res/missing_locale.xmi"));
+    Assert.assertEquals(0, domain.getLocaleCodes().length);
+    
+  }
+  
 }

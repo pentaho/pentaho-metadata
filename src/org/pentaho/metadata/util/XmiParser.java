@@ -1108,10 +1108,10 @@ public class XmiParser {
         if (nvp.get("RELATIONSHIP_DESCRIPTION") != null) { //$NON-NLS-1$
           LocalizedString str = new LocalizedString();
           String locale = null;
-          if (domain.getLocales().size() >= 0) {
+          if (domain.getLocales().size() > 0) {
             locale = domain.getLocales().get(0).getCode();
           } else {
-            locale = LocaleHelper.getDefaultLocale().toString();
+            locale = LocaleHelper.getLocale().toString();
           }
           str.setString(locale, nvp.get("RELATIONSHIP_DESCRIPTION")); //$NON-NLS-1$
         }
