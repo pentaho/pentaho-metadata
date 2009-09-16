@@ -22,11 +22,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -57,18 +59,19 @@ public class FileBasedMetadataDomainRepository implements IMetadataDomainReposit
   }
   
   public void storeDomain(Domain domain, boolean overwrite) throws DomainIdNullException, DomainAlreadyExistsException, DomainStorageException {
+    if (domain.getId() == null) {
+      throw new DomainIdNullException(Messages.getErrorString("IMetadataDomainRepository.ERROR_0001_DOMAIN_ID_NULL")); //$NON-NLS-1$
+    }
+
+    File folder = getDomainsFolder();
+    if (!folder.exists()) {
+      folder.mkdirs();
+    }
+    
     synchronized(domains) {
-      if (domain.getId() == null) {
-        throw new DomainIdNullException(Messages.getErrorString("IMetadataDomainRepository.ERROR_0001_DOMAIN_ID_NULL")); //$NON-NLS-1$
-      }
       
       if (!overwrite && domains.get(domain.getId()) != null) {
         throw new DomainAlreadyExistsException(Messages.getErrorString("IMetadataDomainRepository.ERROR_0002_DOMAIN_OBJECT_EXISTS", domain.getId())); //$NON-NLS-1$
-      }
-      
-      File folder = getDomainsFolder();
-      if (!folder.exists()) {
-        folder.mkdirs();
       }
       
       File domainFile = new File(folder, getDomainFilename(domain.getId()));
@@ -126,7 +129,11 @@ public class FileBasedMetadataDomainRepository implements IMetadataDomainReposit
     if (domains.size() == 0) {
       reloadDomains();
     }
-    return domains.keySet();
+    Set<String> set = null;
+    synchronized(domains) {
+      set = new TreeSet<String>(domains.keySet());
+    }
+    return set;
   }
   
   private static class DomainFileNameFilter implements FilenameFilter {
@@ -145,41 +152,39 @@ public class FileBasedMetadataDomainRepository implements IMetadataDomainReposit
   }
   
   public void flushDomains() {
-    synchronized(domains) {
-      domains.clear();
-    }
+    domains.clear();
   }
   
   public void reloadDomains() {
-    synchronized(domains) {
-      // load the domains from the file system
-      // for each file in the system/metadata/domains folder that ends with .domain.xml, load
-      Map<String, Domain> localDomains = new HashMap<String, Domain>();
-      SerializationService service = new SerializationService();
-      File folder = getDomainsFolder();
-      if (folder.exists()) {
-        for (File file : folder.listFiles(new DomainFileNameFilter())) {
-          // load domain
-          FileInputStream fis = null;
-          try {
-            fis = new FileInputStream(file);
-            Domain domain = service.deserializeDomain(fis);
-            localDomains.put(domain.getId(), domain);
-          } catch (FileNotFoundException e) {
-            logger.error(Messages.getErrorString("FileBasedMetadataDomainRepository.ERROR_0005_FAILED_TO_LOAD_DOMAIN", file.getName()) , e); //$NON-NLS-1$
-          } finally {
-            if (fis != null) {
-              try {
-                if (fis != null) {
-                  fis.close();
-                }
-              } catch (IOException e) {
-                logger.error(Messages.getErrorString("FileBasedMetadataDomainRepository.ERROR_0005_FAILED_TO_LOAD_DOMAIN", file.getName()) , e); //$NON-NLS-1$
+    // load the domains from the file system
+    // for each file in the system/metadata/domains folder that ends with .domain.xml, load
+    Map<String, Domain> localDomains = new HashMap<String, Domain>();
+    SerializationService service = new SerializationService();
+    File folder = getDomainsFolder();
+    if (folder.exists()) {
+      for (File file : folder.listFiles(new DomainFileNameFilter())) {
+        // load domain
+        FileInputStream fis = null;
+        try {
+          fis = new FileInputStream(file);
+          Domain domain = service.deserializeDomain(fis);
+          localDomains.put(domain.getId(), domain);
+        } catch (FileNotFoundException e) {
+          logger.error(Messages.getErrorString("FileBasedMetadataDomainRepository.ERROR_0005_FAILED_TO_LOAD_DOMAIN", file.getName()) , e); //$NON-NLS-1$
+        } finally {
+          if (fis != null) {
+            try {
+              if (fis != null) {
+                fis.close();
               }
+            } catch (IOException e) {
+              logger.error(Messages.getErrorString("FileBasedMetadataDomainRepository.ERROR_0005_FAILED_TO_LOAD_DOMAIN", file.getName()) , e); //$NON-NLS-1$
             }
           }
         }
       }
+    }
+    synchronized (domains) {
       domains.clear();
       domains.putAll(localDomains);
     }
