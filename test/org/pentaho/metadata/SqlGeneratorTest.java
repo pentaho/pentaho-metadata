@@ -2230,9 +2230,9 @@ public class SqlGeneratorTest {
     final LogicalRelationship rl1 = new LogicalRelationship();
     
     rl1.setFromTable(bt1);
-    rl1.setFromColumn(bc1);
     rl1.setToTable(bt2);
-    rl1.setToColumn(bc2);
+    rl1.setComplex(true);
+    rl1.setComplexJoin("[metadata_business_table_very_long_name_1.bc1] = [metadata_business_table_very_long_name_2.bc2]");
     
     final LogicalRelationship rl2 = new LogicalRelationship();
     
