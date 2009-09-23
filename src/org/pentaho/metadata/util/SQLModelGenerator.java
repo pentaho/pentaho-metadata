@@ -126,6 +126,7 @@ public class SQLModelGenerator {
         model.setId(modelID);
         model.setName(new LocalizedString(locale.getCode(), modelName));
         SqlDataSource dataSource = new SqlDataSource();
+        dataSource.getAttributes().put("QUOTE_ALL_FIELDS", "Y"); //$NON-NLS-1$ //$NON-NLS-2$
         dataSource.setType(DataSourceType.JNDI);
         dataSource.setDatabaseName(connectionName);
         model.setDatasource(dataSource);
