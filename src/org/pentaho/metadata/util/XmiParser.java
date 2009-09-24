@@ -943,185 +943,190 @@ public class XmiParser {
         }
       }
       
-      // first read all biz tables
-      NodeList bizTables = dimension.getElementsByTagName("CWMMDB:Dimension"); //$NON-NLS-1$
-      for (int i = 0; i < bizTables.getLength(); i++) {
-        Element biztable = (Element)bizTables.item(i);
-        LogicalTable table = new LogicalTable();
-        table.setId(biztable.getAttribute("name")); //$NON-NLS-1$
-        bindParentConcept(biztable, domain, table);
-        Map<String, String> nvp = getKeyValuePairs(biztable, "CWM:TaggedValue", "tag", "value"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        String pt = nvp.get("BUSINESS_TABLE_PHYSICAL_TABLE_NAME"); //$NON-NLS-1$
-        IPhysicalTable physTable = domain.findPhysicalTable(pt);
-        
-        // set the model's physical table if not already set and if available
-        if (physTable != null && logicalModel.getPhysicalModel() == null) {
-          logicalModel.setPhysicalModel(physTable.getPhysicalModel());
-        }
-        table.setPhysicalTable(physTable);
-        table.setLogicalModel(logicalModel);
-        // store legacy values
-        if (nvp.containsKey("TABLE_IS_DRAWN")) { //$NON-NLS-1$
-          table.setProperty("__LEGACY_TABLE_IS_DRAWN", nvp.get("TABLE_IS_DRAWN")); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-        if (nvp.containsKey("TAG_POSITION_Y")) { //$NON-NLS-1$
-          table.setProperty("__LEGACY_TAG_POSITION_Y", nvp.get("TAG_POSITION_Y")); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-        if (nvp.containsKey("TAG_POSITION_X")) { //$NON-NLS-1$
-          table.setProperty("__LEGACY_TAG_POSITION_X", nvp.get("TAG_POSITION_X")); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-        xmiConceptMap.put(biztable.getAttribute("xmi.id"), table); //$NON-NLS-1$
-        logicalModel.addLogicalTable(table);
-        /*
-         <CWMMDB:Dimension isAbstract="false" name="BT_EMPLOYEES_EMPLOYEES" xmi.id="a21"> <- Biz table
-          <CWM:ModelElement.taggedValue>
-            <CWM:TaggedValue tag="TABLE_IS_DRAWN" value="Y" xmi.id="a1396"/>
-            <CWM:TaggedValue tag="TAG_POSITION_Y" value="151" xmi.id="a1397"/>
-            <CWM:TaggedValue tag="TAG_POSITION_X" value="213" xmi.id="a1398"/>
-            <CWM:TaggedValue tag="BUSINESS_TABLE_PHYSICAL_TABLE_NAME" value="PT_EMPLOYEES" xmi.id="a1399"/>
-          </CWM:ModelElement.taggedValue>
-          <CWMMDB:Dimension.dimensionedObject>
-            <CWMMDB:DimensionedObject xmi.idref="a1365"/>
-            <CWMMDB:DimensionedObject xmi.idref="a1362"/>
-          </CWMMDB:Dimension.dimensionedObject>
-        </CWMMDB:Dimension>
-         */
-      }
-            
-      // second read all biz cols
-      NodeList bizcols = dimensionedObject.getElementsByTagName("CWMMDB:DimensionedObject"); //$NON-NLS-1$
-      for (int i = 0; i < bizcols.getLength(); i++) {
-        /*
-         <CWMMDB:DimensionedObject name="BC_EMPLOYEES_JOBTITLE" xmi.id="a1344">
-          <CWM:ModelElement.taggedValue>
-            <CWM:TaggedValue tag="BUSINESS_COLUMN_BUSINESS_TABLE" value="BT_EMPLOYEES_EMPLOYEES" xmi.id="a1345"/>
-            <CWM:TaggedValue tag="BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME" value="JOBTITLE" xmi.id="a1346"/>
-          </CWM:ModelElement.taggedValue>
-          <CWMMDB:DimensionedObject.dimension>
-            <CWMMDB:Dimension xmi.idref="a21"/>
-          </CWMMDB:DimensionedObject.dimension>
-         </CWMMDB:DimensionedObject>
-         */
-        Element bizcol = (Element)bizcols.item(i);
-        LogicalColumn col = new LogicalColumn();
-        col.setId(bizcol.getAttribute("name")); //$NON-NLS-1$
-        xmiConceptMap.put(bizcol.getAttribute("xmi.id"), col); //$NON-NLS-1$
-        bindParentConcept(bizcol, domain, col);
-        
-        Map<String, String> nvp = getKeyValuePairs(bizcol, "CWM:TaggedValue", "tag", "value"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        String biztbl = nvp.get("BUSINESS_COLUMN_BUSINESS_TABLE"); //$NON-NLS-1$
-        String pcol = nvp.get("BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME"); //$NON-NLS-1$
-        LogicalTable parent = logicalModel.findLogicalTable(biztbl);
-        col.setLogicalTable(parent);
-        parent.addLogicalColumn(col);
-        for (IPhysicalColumn phycol : parent.getPhysicalTable().getPhysicalColumns()) {
-          if (phycol.getId().equals(pcol)) {
-            col.setPhysicalColumn(phycol);
-            break;
+      if (dimension != null) {
+        // first read all biz tables
+        NodeList bizTables = dimension.getElementsByTagName("CWMMDB:Dimension"); //$NON-NLS-1$
+        for (int i = 0; i < bizTables.getLength(); i++) {
+          Element biztable = (Element)bizTables.item(i);
+          LogicalTable table = new LogicalTable();
+          table.setId(biztable.getAttribute("name")); //$NON-NLS-1$
+          bindParentConcept(biztable, domain, table);
+          Map<String, String> nvp = getKeyValuePairs(biztable, "CWM:TaggedValue", "tag", "value"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+          String pt = nvp.get("BUSINESS_TABLE_PHYSICAL_TABLE_NAME"); //$NON-NLS-1$
+          IPhysicalTable physTable = domain.findPhysicalTable(pt);
+          
+          // set the model's physical table if not already set and if available
+          if (physTable != null && logicalModel.getPhysicalModel() == null) {
+            logicalModel.setPhysicalModel(physTable.getPhysicalModel());
           }
-        }
-      }
-      
-      // third read categories 
-      NodeList categories = ownedElement.getElementsByTagName("CWM:Extent"); //$NON-NLS-1$
-      for (int i = 0; i < categories.getLength(); i++) {
-        /*
-         <CWM:Extent name="BC_OFFICES_" xmi.id="a13"> <-- Category
-          <CWM:ModelElement.taggedValue>
-            <CWM:TaggedValue tag="BUSINESS_CATEGORY_ROOT" value="Y" xmi.id="a1304"/>
-          </CWM:ModelElement.taggedValue>
-          <CWM:Namespace.ownedElement>
-            <CWM:Attribute name="BC_OFFICES_TERRITORY" xmi.id="a1305">
-              <CWM:ModelElement.taggedValue>
-                <CWM:TaggedValue tag="BUSINESS_CATEGORY_TYPE" value="Column" xmi.id="a1306"/>
-              </CWM:ModelElement.taggedValue>
-            </CWM:Attribute>
-            <CWM:Attribute name="BC_OFFICES_POSTALCODE" xmi.id="a1307">
-              <CWM:ModelElement.taggedValue>
-                <CWM:TaggedValue tag="BUSINESS_CATEGORY_TYPE" value="Column" xmi.id="a1308"/>
-              </CWM:ModelElement.taggedValue>
-            </CWM:Attribute>
-          </CWM:Namespace.ownedElement>
-        </CWM:Extent>
-         */
-        
-        Element category = (Element)categories.item(i);
-        Category cat = new Category(logicalModel);
-        cat.setId(category.getAttribute("name")); //$NON-NLS-1$
-        xmiConceptMap.put(category.getAttribute("xmi.id"), cat); //$NON-NLS-1$
-        bindParentConcept(category, domain, cat);
-        NodeList columns = category.getElementsByTagName("CWM:Attribute"); //$NON-NLS-1$
-        for (int j = 0; j < columns.getLength(); j++) {
-          Element column = (Element)columns.item(j);
-          String name = column.getAttribute("name"); //$NON-NLS-1$
-          LogicalColumn col = logicalModel.findLogicalColumn(name);
-          if (col == null) {
-            logger.warn(Messages.getString("XmiParser.ERROR_0010_UNABLE_TO_FIND_COL_FOR_CATEGORY", name, cat.getId())); //$NON-NLS-1$
-          } else {
-            cat.addLogicalColumn(col);
+          table.setPhysicalTable(physTable);
+          table.setLogicalModel(logicalModel);
+          // store legacy values
+          if (nvp.containsKey("TABLE_IS_DRAWN")) { //$NON-NLS-1$
+            table.setProperty("__LEGACY_TABLE_IS_DRAWN", nvp.get("TABLE_IS_DRAWN")); //$NON-NLS-1$ //$NON-NLS-2$
           }
+          if (nvp.containsKey("TAG_POSITION_Y")) { //$NON-NLS-1$
+            table.setProperty("__LEGACY_TAG_POSITION_Y", nvp.get("TAG_POSITION_Y")); //$NON-NLS-1$ //$NON-NLS-2$
+          }
+          if (nvp.containsKey("TAG_POSITION_X")) { //$NON-NLS-1$
+            table.setProperty("__LEGACY_TAG_POSITION_X", nvp.get("TAG_POSITION_X")); //$NON-NLS-1$ //$NON-NLS-2$
+          }
+          xmiConceptMap.put(biztable.getAttribute("xmi.id"), table); //$NON-NLS-1$
+          logicalModel.addLogicalTable(table);
+          /*
+           <CWMMDB:Dimension isAbstract="false" name="BT_EMPLOYEES_EMPLOYEES" xmi.id="a21"> <- Biz table
+            <CWM:ModelElement.taggedValue>
+              <CWM:TaggedValue tag="TABLE_IS_DRAWN" value="Y" xmi.id="a1396"/>
+              <CWM:TaggedValue tag="TAG_POSITION_Y" value="151" xmi.id="a1397"/>
+              <CWM:TaggedValue tag="TAG_POSITION_X" value="213" xmi.id="a1398"/>
+              <CWM:TaggedValue tag="BUSINESS_TABLE_PHYSICAL_TABLE_NAME" value="PT_EMPLOYEES" xmi.id="a1399"/>
+            </CWM:ModelElement.taggedValue>
+            <CWMMDB:Dimension.dimensionedObject>
+              <CWMMDB:DimensionedObject xmi.idref="a1365"/>
+              <CWMMDB:DimensionedObject xmi.idref="a1362"/>
+            </CWMMDB:Dimension.dimensionedObject>
+          </CWMMDB:Dimension>
+           */
         }
-        logicalModel.addCategory(cat);
       }
-      
-      
-      // fourth read relationships
-      NodeList rels = ownedElement.getElementsByTagName("CWM:KeyRelationship"); //$NON-NLS-1$
-      for (int i = 0; i < rels.getLength(); i++) {
-        Element rel = (Element)rels.item(i);
-        /*
-        <CWM:KeyRelationship xmi.id="a1338">
-          <CWM:ModelElement.taggedValue>
-            <CWM:TaggedValue tag="RELATIONSHIP_TYPE" value="1:N" xmi.id="a1339"/>
-            <CWM:TaggedValue tag="RELATIONSHIP_FIELDNAME_CHILD" value="BC_EMPLOYEES_OFFICECODE" xmi.id="a1340"/>
-            <CWM:TaggedValue tag="RELATIONSHIP_FIELDNAME_PARENT" value="BC_OFFICES_OFFICECODE" xmi.id="a1341"/>
-            <CWM:TaggedValue tag="RELATIONSHIP_TABLENAME_CHILD" value="BT_EMPLOYEES_EMPLOYEES" xmi.id="a1342"/>
-            <CWM:TaggedValue tag="RELATIONSHIP_TABLENAME_PARENT" value="BT_OFFICES_OFFICES" xmi.id="a1343"/>
-          </CWM:ModelElement.taggedValue>
-        </CWM:KeyRelationship>
-        */
-        Map<String, String> nvp = getKeyValuePairs(rel, "CWM:TaggedValue", "tag", "value"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        LogicalRelationship relation = new LogicalRelationship();
-        String type = nvp.get("RELATIONSHIP_TYPE"); //$NON-NLS-1$
-        RelationshipType reltype = RelationshipType.values()[RelationshipMeta.getType(type)];
-        relation.setRelationshipType(reltype);
-        
-        String tablechild = nvp.get("RELATIONSHIP_TABLENAME_CHILD"); // to //$NON-NLS-1$
-        String tableparent = nvp.get("RELATIONSHIP_TABLENAME_PARENT"); // from //$NON-NLS-1$
-        String fieldchild = nvp.get("RELATIONSHIP_FIELDNAME_CHILD"); //$NON-NLS-1$
-        String fieldparent = nvp.get("RELATIONSHIP_FIELDNAME_PARENT"); //$NON-NLS-1$
 
-        relation.setFromTable(logicalModel.findLogicalTable(tableparent));
-        if (fieldparent != null) {
-          relation.setFromColumn(logicalModel.findLogicalColumn(fieldparent));
-        }
-        relation.setToTable(logicalModel.findLogicalTable(tablechild));
-        if (fieldchild != null) {
-          relation.setToColumn(logicalModel.findLogicalColumn(fieldchild));
-        }
-        
-        relation.setComplex("Y".equals(nvp.get("RELATIONSHIP_IS_COMPLEX"))); //$NON-NLS-1$ //$NON-NLS-2$
-        String val = nvp.get("RELATIONSHIP_COMPLEX_JOIN"); //$NON-NLS-1$
-        if (val != null) {
-          relation.setComplexJoin(val);
-        }
-        if (nvp.get("RELATIONSHIP_DESCRIPTION") != null) { //$NON-NLS-1$
-          LocalizedString str = new LocalizedString();
-          String locale = null;
-          if (domain.getLocales().size() > 0) {
-            locale = domain.getLocales().get(0).getCode();
-          } else {
-            locale = LocaleHelper.getLocale().toString();
+      if (dimensionedObject != null) {
+        // second read all biz cols
+        NodeList bizcols = dimensionedObject.getElementsByTagName("CWMMDB:DimensionedObject"); //$NON-NLS-1$
+        for (int i = 0; i < bizcols.getLength(); i++) {
+          /*
+           <CWMMDB:DimensionedObject name="BC_EMPLOYEES_JOBTITLE" xmi.id="a1344">
+            <CWM:ModelElement.taggedValue>
+              <CWM:TaggedValue tag="BUSINESS_COLUMN_BUSINESS_TABLE" value="BT_EMPLOYEES_EMPLOYEES" xmi.id="a1345"/>
+              <CWM:TaggedValue tag="BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME" value="JOBTITLE" xmi.id="a1346"/>
+            </CWM:ModelElement.taggedValue>
+            <CWMMDB:DimensionedObject.dimension>
+              <CWMMDB:Dimension xmi.idref="a21"/>
+            </CWMMDB:DimensionedObject.dimension>
+           </CWMMDB:DimensionedObject>
+           */
+          Element bizcol = (Element)bizcols.item(i);
+          LogicalColumn col = new LogicalColumn();
+          col.setId(bizcol.getAttribute("name")); //$NON-NLS-1$
+          xmiConceptMap.put(bizcol.getAttribute("xmi.id"), col); //$NON-NLS-1$
+          bindParentConcept(bizcol, domain, col);
+          
+          Map<String, String> nvp = getKeyValuePairs(bizcol, "CWM:TaggedValue", "tag", "value"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+          String biztbl = nvp.get("BUSINESS_COLUMN_BUSINESS_TABLE"); //$NON-NLS-1$
+          String pcol = nvp.get("BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME"); //$NON-NLS-1$
+          LogicalTable parent = logicalModel.findLogicalTable(biztbl);
+          col.setLogicalTable(parent);
+          parent.addLogicalColumn(col);
+          for (IPhysicalColumn phycol : parent.getPhysicalTable().getPhysicalColumns()) {
+            if (phycol.getId().equals(pcol)) {
+              col.setPhysicalColumn(phycol);
+              break;
+            }
           }
-          str.setString(locale, nvp.get("RELATIONSHIP_DESCRIPTION")); //$NON-NLS-1$
         }
-        String joinOrderKey = nvp.get("RELATIONSHIP_JOIN_ORDER_KEY"); //$NON-NLS-1$
-        if (joinOrderKey != null) {
-          relation.setJoinOrderKey(joinOrderKey);
+      }
+      
+      if (ownedElement != null) {
+        // third read categories 
+        NodeList categories = ownedElement.getElementsByTagName("CWM:Extent"); //$NON-NLS-1$
+        for (int i = 0; i < categories.getLength(); i++) {
+          /*
+           <CWM:Extent name="BC_OFFICES_" xmi.id="a13"> <-- Category
+            <CWM:ModelElement.taggedValue>
+              <CWM:TaggedValue tag="BUSINESS_CATEGORY_ROOT" value="Y" xmi.id="a1304"/>
+            </CWM:ModelElement.taggedValue>
+            <CWM:Namespace.ownedElement>
+              <CWM:Attribute name="BC_OFFICES_TERRITORY" xmi.id="a1305">
+                <CWM:ModelElement.taggedValue>
+                  <CWM:TaggedValue tag="BUSINESS_CATEGORY_TYPE" value="Column" xmi.id="a1306"/>
+                </CWM:ModelElement.taggedValue>
+              </CWM:Attribute>
+              <CWM:Attribute name="BC_OFFICES_POSTALCODE" xmi.id="a1307">
+                <CWM:ModelElement.taggedValue>
+                  <CWM:TaggedValue tag="BUSINESS_CATEGORY_TYPE" value="Column" xmi.id="a1308"/>
+                </CWM:ModelElement.taggedValue>
+              </CWM:Attribute>
+            </CWM:Namespace.ownedElement>
+          </CWM:Extent>
+           */
+          
+          Element category = (Element)categories.item(i);
+          Category cat = new Category(logicalModel);
+          cat.setId(category.getAttribute("name")); //$NON-NLS-1$
+          xmiConceptMap.put(category.getAttribute("xmi.id"), cat); //$NON-NLS-1$
+          bindParentConcept(category, domain, cat);
+          NodeList columns = category.getElementsByTagName("CWM:Attribute"); //$NON-NLS-1$
+          for (int j = 0; j < columns.getLength(); j++) {
+            Element column = (Element)columns.item(j);
+            String name = column.getAttribute("name"); //$NON-NLS-1$
+            LogicalColumn col = logicalModel.findLogicalColumn(name);
+            if (col == null) {
+              logger.warn(Messages.getString("XmiParser.ERROR_0010_UNABLE_TO_FIND_COL_FOR_CATEGORY", name, cat.getId())); //$NON-NLS-1$
+            } else {
+              cat.addLogicalColumn(col);
+            }
+          }
+          logicalModel.addCategory(cat);
         }
         
-        logicalModel.addLogicalRelationship(relation);
-      }
+        
+        // fourth read relationships
+        NodeList rels = ownedElement.getElementsByTagName("CWM:KeyRelationship"); //$NON-NLS-1$
+        for (int i = 0; i < rels.getLength(); i++) {
+          Element rel = (Element)rels.item(i);
+          /*
+          <CWM:KeyRelationship xmi.id="a1338">
+            <CWM:ModelElement.taggedValue>
+              <CWM:TaggedValue tag="RELATIONSHIP_TYPE" value="1:N" xmi.id="a1339"/>
+              <CWM:TaggedValue tag="RELATIONSHIP_FIELDNAME_CHILD" value="BC_EMPLOYEES_OFFICECODE" xmi.id="a1340"/>
+              <CWM:TaggedValue tag="RELATIONSHIP_FIELDNAME_PARENT" value="BC_OFFICES_OFFICECODE" xmi.id="a1341"/>
+              <CWM:TaggedValue tag="RELATIONSHIP_TABLENAME_CHILD" value="BT_EMPLOYEES_EMPLOYEES" xmi.id="a1342"/>
+              <CWM:TaggedValue tag="RELATIONSHIP_TABLENAME_PARENT" value="BT_OFFICES_OFFICES" xmi.id="a1343"/>
+            </CWM:ModelElement.taggedValue>
+          </CWM:KeyRelationship>
+          */
+          Map<String, String> nvp = getKeyValuePairs(rel, "CWM:TaggedValue", "tag", "value"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+          LogicalRelationship relation = new LogicalRelationship();
+          String type = nvp.get("RELATIONSHIP_TYPE"); //$NON-NLS-1$
+          RelationshipType reltype = RelationshipType.values()[RelationshipMeta.getType(type)];
+          relation.setRelationshipType(reltype);
+          
+          String tablechild = nvp.get("RELATIONSHIP_TABLENAME_CHILD"); // to //$NON-NLS-1$
+          String tableparent = nvp.get("RELATIONSHIP_TABLENAME_PARENT"); // from //$NON-NLS-1$
+          String fieldchild = nvp.get("RELATIONSHIP_FIELDNAME_CHILD"); //$NON-NLS-1$
+          String fieldparent = nvp.get("RELATIONSHIP_FIELDNAME_PARENT"); //$NON-NLS-1$
+  
+          relation.setFromTable(logicalModel.findLogicalTable(tableparent));
+          if (fieldparent != null) {
+            relation.setFromColumn(logicalModel.findLogicalColumn(fieldparent));
+          }
+          relation.setToTable(logicalModel.findLogicalTable(tablechild));
+          if (fieldchild != null) {
+            relation.setToColumn(logicalModel.findLogicalColumn(fieldchild));
+          }
+          
+          relation.setComplex("Y".equals(nvp.get("RELATIONSHIP_IS_COMPLEX"))); //$NON-NLS-1$ //$NON-NLS-2$
+          String val = nvp.get("RELATIONSHIP_COMPLEX_JOIN"); //$NON-NLS-1$
+          if (val != null) {
+            relation.setComplexJoin(val);
+          }
+          if (nvp.get("RELATIONSHIP_DESCRIPTION") != null) { //$NON-NLS-1$
+            LocalizedString str = new LocalizedString();
+            String locale = null;
+            if (domain.getLocales().size() > 0) {
+              locale = domain.getLocales().get(0).getCode();
+            } else {
+              locale = LocaleHelper.getLocale().toString();
+            }
+            str.setString(locale, nvp.get("RELATIONSHIP_DESCRIPTION")); //$NON-NLS-1$
+          }
+          String joinOrderKey = nvp.get("RELATIONSHIP_JOIN_ORDER_KEY"); //$NON-NLS-1$
+          if (joinOrderKey != null) {
+            relation.setJoinOrderKey(joinOrderKey);
+          }
+          
+          logicalModel.addLogicalRelationship(relation);
+        }
       
       
       // fourth read categories
@@ -1194,6 +1199,7 @@ public class XmiParser {
       </CWMMDB:Schema.dimension>
     </CWMMDB:Schema>
        */
+      }
     }
 
     for (Element description : descriptions) {

@@ -301,7 +301,13 @@ public class XmiParserTest {
     XmiParser parser = new XmiParser();
     Domain domain = parser.parseXmi(new FileInputStream("test-res/missing_locale.xmi"));
     Assert.assertEquals(0, domain.getLocaleCodes().length);
-    
+  }
+
+  @Test
+  public void testPartialMetadataFile() throws Exception {
+    XmiParser parser = new XmiParser();
+    Domain domain = parser.parseXmi(new FileInputStream("test-res/partial_metadata.xmi"));
+    Assert.assertEquals(1, domain.getPhysicalModels().size());
   }
   
 }
