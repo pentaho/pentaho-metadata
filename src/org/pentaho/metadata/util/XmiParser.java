@@ -618,7 +618,9 @@ public class XmiParser {
   
                 Element modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
                 modelElement.appendChild(createTaggedValue(doc, "HIERARCHY_BUSINESS_TABLE", hier.getLogicalTable().getId(), idGen.getNextId())); //$NON-NLS-1$
-                modelElement.appendChild(createTaggedValue(doc, "HIERARCHY_PRIMARY_KEY", hier.getPrimaryKey().getId(), idGen.getNextId())); //$NON-NLS-1$
+                if (hier.getPrimaryKey() != null) {
+                  modelElement.appendChild(createTaggedValue(doc, "HIERARCHY_PRIMARY_KEY", hier.getPrimaryKey().getId(), idGen.getNextId())); //$NON-NLS-1$
+                }
                 modelElement.appendChild(createTaggedValue(doc, "HIERARCHY_HAVING_ALL", hier.isHavingAll() ? "Y" : "N", idGen.getNextId())); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 hierarchyElement.appendChild(modelElement);
   
@@ -1598,16 +1600,12 @@ public class XmiParser {
               LogicalTable table = null;
               if (ltblId != null) {
                 table = model.findLogicalTable(ltblId);
-              } else {
-                System.out.println("ERROR!");
               }
               
               String lcolId = nvp.get("HIERARCHY_PRIMARY_KEY"); //$NON-NLS-1$
               LogicalColumn primaryKey = null;
               if (lcolId != null) {
                 primaryKey = table.findLogicalColumn(lcolId);
-              } else {
-                System.out.println("ERROR");
               }
 
               hierarchyObj.setLogicalTable(table);
