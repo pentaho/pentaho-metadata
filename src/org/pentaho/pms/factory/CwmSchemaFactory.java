@@ -1042,6 +1042,11 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         Collection<CwmTaggedValue> c = cwmDimensionedObject.getTaggedValue();
         
         // store the physical column name...
+        if (businessColumn.getPhysicalColumn() == null) {
+          logger.error(Messages.getErrorString("CwmSchemaFactory.ERROR_0004_MISSING_PHYSICAL_COLUMN", businessColumn.getBusinessTable().getId(), businessColumn.getId())); //$NON-NLS-1$
+          // attempt a repair by selecting the first physical col
+          businessColumn.setPhysicalColumn(businessColumn.getBusinessTable().getPhysicalTable().getPhysicalColumn(0));
+        }
         String physicalColumnName = businessColumn.getPhysicalColumn().getId();
         c.add(cwm.createTaggedValue(CWM.TAG_BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME, physicalColumnName));
         
@@ -1090,7 +1095,12 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         // Set the physical column last to allow the business column to inherit from the physical column
         String physicalColumnName = cwm.getFirstTaggedValue(cwmDimensionedObject, CWM.TAG_BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME);
         PhysicalColumn physicalColumn = physicalTable.findPhysicalColumn(physicalColumnName);
-        businessColumn.setPhysicalColumn(physicalColumn);
+        if (physicalColumn == null) {
+          logger.error(Messages.getErrorString("CwmSchemaFactory.ERROR_0003_XMI_CORRUPT_MISSING_PHYSICAL_TABLE", physicalColumnName, businessColumn.getBusinessTable().getId(), businessColumn.getId())); //$NON-NLS-1$
+          businessColumn.setPhysicalColumn(physicalTable.getPhysicalColumn(0));
+        } else {
+          businessColumn.setPhysicalColumn(physicalColumn);
+        }
         
         return businessColumn;
     }
