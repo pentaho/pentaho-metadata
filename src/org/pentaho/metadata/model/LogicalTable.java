@@ -67,6 +67,18 @@ public class LogicalTable extends Concept {
     return logicalColumns;
   }
 
+  /**
+   * @return the display names of all the business columns
+   */
+  public List<String> getColumnNames(String locale) {
+    List<String> list = new ArrayList<String>();
+    for (LogicalColumn column : logicalColumns) {
+      list.add(column.getName(locale));
+    }
+
+    return list;
+  }
+  
   public void setLogicalColumns(List<LogicalColumn> columns) {
     this.logicalColumns = columns;
   }

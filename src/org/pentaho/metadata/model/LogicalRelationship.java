@@ -47,6 +47,14 @@ public class LogicalRelationship extends Concept {
     setRelationshipType(RelationshipType.UNDEFINED);
   }
   
+  public LogicalRelationship(LogicalTable fromTable, LogicalTable toTable, LogicalColumn fromColumn, LogicalColumn toColumn) {
+    this();
+    this.fromTable = fromTable;
+    this.toTable = toTable;
+    this.fromColumn = fromColumn;
+    this.toColumn = toColumn;
+  }
+  
   public Boolean isComplex() {
     return (Boolean)getProperty(COMPLEX);
   }

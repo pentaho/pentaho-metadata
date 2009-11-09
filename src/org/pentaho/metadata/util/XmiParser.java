@@ -73,6 +73,12 @@ import org.pentaho.metadata.model.concept.types.TableType;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
 import org.pentaho.metadata.model.concept.types.ColumnWidth.WidthType;
+import org.pentaho.metadata.model.olap.OlapCube;
+import org.pentaho.metadata.model.olap.OlapDimension;
+import org.pentaho.metadata.model.olap.OlapDimensionUsage;
+import org.pentaho.metadata.model.olap.OlapHierarchy;
+import org.pentaho.metadata.model.olap.OlapHierarchyLevel;
+import org.pentaho.metadata.model.olap.OlapMeasure;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.locale.LocaleInterface;
@@ -252,9 +258,10 @@ public class XmiParser {
         cwmParameter.appendChild(modelElement);
         xmiContent.appendChild(cwmParameter);
       }
-      
-      // CWMOLAP:Schema elements don't get converted
-      
+
+			// CWMOLAP:Schema elements get converted here
+      generateOlapXmi(domain, doc, idGen, xmiContent);
+        
       // CWMRDB:Catalog: Data Source objects
       for (IPhysicalModel model : domain.getPhysicalModels()) {
         if (model.getId().equals("__MISSING_PARENT_PHYSICAL_MODEL__")) { //$NON-NLS-1$
@@ -497,6 +504,191 @@ public class XmiParser {
 
   }
   
+  protected void generateOlapXmi(Domain domain, Document doc, IdGen idGen, Element xmiContent) {
+    for (LogicalModel model : domain.getLogicalModels()) {
+      List<OlapDimension> dims = (List<OlapDimension>)model.getProperty("olap_dimensions"); //$NON-NLS-1$
+      List<OlapCube> cubes = (List<OlapCube>)model.getProperty("olap_cubes"); //$NON-NLS-1$
+      Map<OlapDimension, String> dimMap = new HashMap<OlapDimension, String>();
+      Map<OlapDimensionUsage, String> dimUsageIdMap = new HashMap<OlapDimensionUsage, String>();
+      Map<OlapDimension, List<OlapDimensionUsage>> dimUsageMap = new HashMap<OlapDimension, List<OlapDimensionUsage>>();
+      
+      // if there is at least one dimension or cube...
+      if ((dims != null && dims.size() > 0) || (cubes != null && cubes.size() > 0)) {
+        Element olapSchema = doc.createElement("CWMOLAP:Schema"); //$NON-NLS-1$
+        olapSchema.setAttribute("name", model.getId()); //$NON-NLS-1$
+        olapSchema.setAttribute("xmi.id", idGen.getNextId()); //$NON-NLS-1$
+        if (cubes != null && cubes.size() > 0) {
+          Element cubesElement = doc.createElement("CWMOLAP:Schema.cube"); //$NON-NLS-1$
+          for (OlapCube cube : cubes) {
+            Element cubeElement = doc.createElement("CWMOLAP:Cube"); //$NON-NLS-1$
+            cubeElement.setAttribute("xmi.id", idGen.getNextId()); //$NON-NLS-1$
+            cubeElement.setAttribute("name", cube.getName()); //$NON-NLS-1$
+            cubeElement.setAttribute("isAbstract", "false"); //$NON-NLS-1$  //$NON-NLS-2$
+            cubeElement.setAttribute("isVirtual", "false"); //$NON-NLS-1$ //$NON-NLS-2$
+            cubesElement.appendChild(cubeElement);
+            
+            Element modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
+            modelElement.appendChild(createTaggedValue(doc, "CUBE_BUSINESS_TABLE", cube.getLogicalTable().getId(), idGen.getNextId())); //$NON-NLS-1$
+            cubeElement.appendChild(modelElement);
+  
+            if (cube.getOlapMeasures() != null && cube.getOlapMeasures().size() > 0) {
+              Element ownedElement = doc.createElement("CWM:Namespace.ownedElement"); //$NON-NLS-1$
+              // add measures
+              for (OlapMeasure measure : cube.getOlapMeasures()) {
+                Element measureElement = doc.createElement("CWMOLAP:Measure"); //$NON-NLS-1$
+                measureElement.setAttribute("xmi.id", idGen.getNextId()); //$NON-NLS-1$
+                measureElement.setAttribute("name", measure.getName()); //$NON-NLS-1$
+                
+                Element measModelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
+                measModelElement.appendChild(createTaggedValue(doc, "MEASURE_BUSINESS_COLUMN", measure.getLogicalColumn().getId(), idGen.getNextId())); //$NON-NLS-1$
+                measureElement.appendChild(measModelElement);
+                ownedElement.appendChild(measureElement);
+              }
+              cubeElement.appendChild(ownedElement);
+            }
+            
+            if (cube.getOlapDimensionUsages() != null && cube.getOlapDimensionUsages().size() > 0) {
+              Element cubeDimAssoc = doc.createElement("CWMOLAP:Cube.cubeDimensionAssociation"); //$NON-NLS-1$
+              
+              for (OlapDimensionUsage usage : cube.getOlapDimensionUsages()) {
+                Element assoc = doc.createElement("CWMOLAP:CubeDimensionAssociation"); //$NON-NLS-1$
+                assoc.setAttribute("isAbstract", "false"); //$NON-NLS-1$  //$NON-NLS-2$
+                String usageId = idGen.getNextId();
+                dimUsageIdMap.put(usage, usageId);
+                List<OlapDimensionUsage> list = dimUsageMap.get(usage.getOlapDimension());
+                if (list == null) {
+                  list = new ArrayList<OlapDimensionUsage>();
+                  dimUsageMap.put(usage.getOlapDimension(), list);
+                }
+                list.add(usage);
+                
+                assoc.setAttribute("xmi.id", usageId); //$NON-NLS-1$
+                assoc.setAttribute("name", usage.getName()); //$NON-NLS-1$
+                // generate dimension now
+                
+                Element cda = doc.createElement("CWMOLAP:CubeDimensionAssociation.dimension"); //$NON-NLS-1$
+                Element dim = doc.createElement("CWMOLAP:Dimension"); //$NON-NLS-1$
+                String id = idGen.getNextId();
+                dimMap.put(usage.getOlapDimension(), id);
+                dim.setAttribute("xmi.idref", id); //$NON-NLS-1$
+                cda.appendChild(dim);
+                assoc.appendChild(cda);
+                cubeDimAssoc.appendChild(assoc);
+              }
+              cubeElement.appendChild(cubeDimAssoc);
+            }
+          }
+          olapSchema.appendChild(cubesElement);
+        }
+        
+        if (dims != null && dims.size() > 0) {
+          Element dimsElement = doc.createElement("CWMOLAP:Schema.dimension"); //$NON-NLS-1$
+          for (OlapDimension dim : dims) {
+            Element dimElement = doc.createElement("CWMOLAP:Dimension"); //$NON-NLS-1$
+            String id = dimMap.get(dim);
+            if (id == null) {
+              id = idGen.getNextId();
+            }
+            dimElement.setAttribute("xmi.id", id); //$NON-NLS-1$
+            dimElement.setAttribute("name", dim.getName()); //$NON-NLS-1$
+            dimElement.setAttribute("isAbstract", "false"); //$NON-NLS-1$  //$NON-NLS-2$
+            dimElement.setAttribute("isTime", "" + dim.isTimeDimension()); //$NON-NLS-1$  //$NON-NLS-2$
+            dimElement.setAttribute("isMeasure", "false"); //$NON-NLS-1$  //$NON-NLS-2$
+            
+            List<OlapDimensionUsage> list = dimUsageMap.get(dim);
+            if (list != null && list.size() > 0) {
+              Element cubeDimAssoc = doc.createElement("CWMOLAP:Dimension.cubeDimensionAssociation"); //$NON-NLS-1$
+              for (OlapDimensionUsage usage : list) {
+                Element cda = doc.createElement("CWMOLAP:CubeDimensionAssociation"); //$NON-NLS-1$
+                cda.setAttribute("xmi.idref", dimUsageIdMap.get(usage)); //$NON-NLS-1$
+                cubeDimAssoc.appendChild(cda);
+              }
+              dimElement.appendChild(cubeDimAssoc);
+            }
+  
+            if (dim.getHierarchies() != null && dim.getHierarchies().size() > 0) {
+              Element hierElement = doc.createElement("CWMOLAP:Dimension.hierarchy"); //$NON-NLS-1$
+              Element memberSelElement = null;
+              for (OlapHierarchy hier : dim.getHierarchies()) {
+                Element hierarchyElement = doc.createElement("CWMOLAP:LevelBasedHierarchy"); //$NON-NLS-1$
+                String hierId = idGen.getNextId();
+                hierarchyElement.setAttribute("xmi.id", hierId); //$NON-NLS-1$
+                hierarchyElement.setAttribute("name", hier.getName()); //$NON-NLS-1$
+                hierarchyElement.setAttribute("isAbstract", "false"); //$NON-NLS-1$  //$NON-NLS-2$
+  
+                Element modelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
+                modelElement.appendChild(createTaggedValue(doc, "HIERARCHY_BUSINESS_TABLE", hier.getLogicalTable().getId(), idGen.getNextId())); //$NON-NLS-1$
+                modelElement.appendChild(createTaggedValue(doc, "HIERARCHY_PRIMARY_KEY", hier.getPrimaryKey().getId(), idGen.getNextId())); //$NON-NLS-1$
+                modelElement.appendChild(createTaggedValue(doc, "HIERARCHY_HAVING_ALL", hier.isHavingAll() ? "Y" : "N", idGen.getNextId())); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                hierarchyElement.appendChild(modelElement);
+  
+                if (hier.getHierarchyLevels() != null && hier.getHierarchyLevels().size() > 0) {
+                  Element hla = doc.createElement("CWMOLAP:LevelBasedHierarchy.hierarchyLevelAssociation"); //$NON-NLS-1$
+                  for (OlapHierarchyLevel level : hier.getHierarchyLevels()) {
+                    
+                    Element hierLvlAssoc = doc.createElement("CWMOLAP:HierarchyLevelAssociation"); //$NON-NLS-1$
+                    hierLvlAssoc.setAttribute("xmi.id", idGen.getNextId()); //$NON-NLS-1$
+                    hierLvlAssoc.setAttribute("name", level.getName()); //$NON-NLS-1$
+                    hierLvlAssoc.setAttribute("isAbstract", "false"); //$NON-NLS-1$  //$NON-NLS-2$
+                    Element currLvl = doc.createElement("CWMOLAP:HierarchyLevelAssociation.currentLevel"); //$NON-NLS-1$
+                    Element lvlref = doc.createElement("CWMOLAP:Level"); //$NON-NLS-1$
+                    String lvlId = idGen.getNextId();
+                    
+                    if (memberSelElement == null) {
+                      memberSelElement = doc.createElement("CWMOLAP:Dimension.memberSelection"); //$NON-NLS-1$
+                    }
+                    
+                    Element lvlElement = doc.createElement("CWMOLAP:Level"); //$NON-NLS-1$
+                    lvlElement.setAttribute("xmi.id", lvlId); //$NON-NLS-1$
+                    lvlElement.setAttribute("name", level.getName()); //$NON-NLS-1$
+                    lvlElement.setAttribute("isAbstract", "false"); //$NON-NLS-1$  //$NON-NLS-2$
+  
+                    Element lvlModelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
+                    lvlModelElement.appendChild(createTaggedValue(doc, "HIERARCHY_LEVEL_UNIQUE_MEMBERS", level.isHavingUniqueMembers() ? "Y" : "N", idGen.getNextId())); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    lvlModelElement.appendChild(createTaggedValue(doc, "HIERARCHY_LEVEL_REFERENCE_COLUMN", level.getReferenceColumn().getId(), idGen.getNextId())); //$NON-NLS-1$
+                    lvlElement.appendChild(lvlModelElement);
+  
+                    if (level.getLogicalColumns() != null && level.getLogicalColumns().size() > 0) {
+                      Element ownedElement = doc.createElement("CWM:Namespace.ownedElement"); //$NON-NLS-1$
+                      for (LogicalColumn col : level.getLogicalColumns()) {
+                        Element dimObj = doc.createElement("CWMMDB:DimensionedObject"); //$NON-NLS-1$
+                        dimObj.setAttribute("xmi.id", idGen.getNextId()); //$NON-NLS-1$
+                        dimObj.setAttribute("name", col.getId()); //$NON-NLS-1$
+                        ownedElement.appendChild(dimObj);
+                      }
+                      lvlElement.appendChild(ownedElement);
+                    }
+                    
+                    Element lvlHierLvlAssoc = doc.createElement("CWMOLAP:Level.hierarchyLevelAssociation"); //$NON-NLS-1$
+                    Element lhla = doc.createElement("CWMOLAP:HierarchyLevelAssociation"); //$NON-NLS-1$
+                    lhla.setAttribute("xmi.idref", hierId); //$NON-NLS-1$
+                    lvlHierLvlAssoc.appendChild(lhla);
+                    lvlElement.appendChild(lvlHierLvlAssoc);
+                    memberSelElement.appendChild(lvlElement);
+                    
+                    lvlref.setAttribute("xmi.idref", lvlId); //$NON-NLS-1$
+                    currLvl.appendChild(lvlref);
+                    hierLvlAssoc.appendChild(currLvl);
+                    hla.appendChild(hierLvlAssoc);
+                  }
+                  hierarchyElement.appendChild(hla);
+                }
+                hierElement.appendChild(hierarchyElement);
+              }
+              dimElement.appendChild(hierElement);
+              if (memberSelElement != null) {
+                dimElement.appendChild(memberSelElement);
+              }
+            }
+            dimsElement.appendChild(dimElement);
+          }
+          olapSchema.appendChild(dimsElement);
+        }
+        xmiContent.appendChild(olapSchema);
+      }
+    }
+  }
+  
   @SuppressWarnings("unchecked")
   protected void createDescriptions(Document doc, IConcept concept, String parentTag, String idstr, List<Element> allDescriptions, IdGen idGen) {
     for (String key : concept.getChildProperties().keySet()) {
@@ -610,11 +802,12 @@ public class XmiParser {
         type = "Aggregation"; //$NON-NLS-1$
       } else if (val instanceof List) {
         List objs = (List)val;
-        if (objs.size() == 0) {
+        if (objs.size() == 0 && "aggregation_list".equals(key)) {
           // assume this is an agg list
           ConceptPropertyAggregationList list = new ConceptPropertyAggregationList(key, new ArrayList<AggregationSettings>());
           type = "AggregationList"; //$NON-NLS-1$
           body = list.toXML();
+          
         } else {
           if (objs.get(0) instanceof AggregationType) {
             List<AggregationType> aggTypes = (List<AggregationType>)objs;
@@ -626,6 +819,8 @@ public class XmiParser {
             ConceptPropertyAggregationList list = new ConceptPropertyAggregationList(key, aggSettings);
             type = "AggregationList"; //$NON-NLS-1$
             body = list.toXML();
+          } else if (objs.get(0) instanceof OlapCube || objs.get(0) instanceof OlapDimension) {
+            // ignore
           } else {
             logger.error(Messages.getErrorString("XmiParser.ERROR_0004_UNSUPPORTED_CONCEPT_PROPERTY_LIST", objs.get(0).getClass())); //$NON-NLS-1$
           }
@@ -688,8 +883,8 @@ public class XmiParser {
       doc = db.parse(new InputSource(xmi));
     } catch (ParserConfigurationException pcx) {
       throw new PentahoMetadataException(pcx);
-    } catch (SAXException sex) {
-      throw new PentahoMetadataException(sex);
+    } catch (SAXException sax) {
+      throw new PentahoMetadataException(sax);
     } catch (IOException iex) {
       throw new PentahoMetadataException(iex);
     }
@@ -701,7 +896,6 @@ public class XmiParser {
     }
     
     // skipping CWM:Event = Security Service (skip for now)
-    // skipping CWMOLAP:Schema = not populated, name of business view?
     
     List<Element> concepts = new ArrayList<Element>();
     List<Element> descriptions = new ArrayList<Element>();
@@ -710,6 +904,7 @@ public class XmiParser {
     List<Element> parameters = new ArrayList<Element>();
     List<Element> schemas = new ArrayList<Element>();
     List<Element> events = new ArrayList<Element>();
+    List<Element> olapSchemas = new ArrayList<Element>();
     list = content.getChildNodes();
     for (int i = 0; i < list.getLength(); i++) {
       Node node = list.item(i);
@@ -728,6 +923,8 @@ public class XmiParser {
           descriptions.add((Element)node);
         } else if (node.getNodeName().equals("CWM:Event")) { //$NON-NLS-1$
           events.add((Element)node);
+        } else if (node.getNodeName().equals("CWMOLAP:Schema")) { //$NON-NLS-1$
+          olapSchemas.add((Element)node);
         } else {
           if (logger.isDebugEnabled()) {
             logger.debug("Ignoring root : " + node.getNodeName()); //$NON-NLS-1$
@@ -1202,6 +1399,9 @@ public class XmiParser {
       }
     }
 
+    // parse CWMOLAP:Schema
+    populateOlapSchemas(olapSchemas, domain);
+    
     for (Element description : descriptions) {
       /*
            <CWM:Description body="N" name="hidden" type="Boolean" xmi.id="a989">
@@ -1325,6 +1525,274 @@ public class XmiParser {
       }
     }
     return domain;
+  }
+  
+  protected void populateOlapSchemas(List<Element> olapSchemas, Domain domain) {
+
+    for (Element olapSchema : olapSchemas) {
+      // lookup metadata model
+      LogicalModel model = domain.findLogicalModel(olapSchema.getAttribute("name")); //$NON-NLS-1$
+      
+      Element dimensionList = null;
+      Element cubeList = null;
+      NodeList schemaChildren = olapSchema.getChildNodes();
+      for (int i = 0; i < schemaChildren.getLength(); i++) {
+        if (schemaChildren.item(i).getNodeType() == Node.ELEMENT_NODE) {
+          if (schemaChildren.item(i).getNodeName().equals("CWMOLAP:Schema.cube")) { //$NON-NLS-1$
+            cubeList = (Element)schemaChildren.item(i);
+          } else if (schemaChildren.item(i).getNodeName().equals("CWMOLAP:Schema.dimension")) { //$NON-NLS-1$
+            dimensionList = (Element)schemaChildren.item(i);
+          } else {
+            if (logger.isDebugEnabled()) {
+              logger.debug("Schema ignored: " + schemaChildren.item(i).getNodeName()); //$NON-NLS-1$
+            }
+          }
+        }
+      }
+      
+      Map<String, OlapDimension> dimensionMap = new HashMap<String, OlapDimension>();
+
+      if (dimensionList != null) {
+        
+        List<OlapDimension> dimensionObjs = new ArrayList<OlapDimension>();
+        
+        NodeList dimensions = dimensionList.getElementsByTagName("CWMOLAP:Dimension"); //$NON-NLS-1$
+        for (int i = 0; i < dimensions.getLength(); i++) {
+          Element dim = (Element)dimensions.item(i);
+          OlapDimension dimensionObj = new OlapDimension();
+          dimensionObj.setName(dim.getAttribute("name")); //$NON-NLS-1$
+          dimensionObj.setTimeDimension("true".equals(dim.getAttribute("isTime"))); //$NON-NLS-1$ //$NON-NLS-2$
+          dimensionMap.put(dim.getAttribute("xmi.id"), dimensionObj); //$NON-NLS-1$
+          Element hierarchies = null;
+          Element memberSelections = null;
+          NodeList dimensionChildren = dim.getChildNodes();
+          for (int j = 0; j < dimensionChildren.getLength(); j++) {
+            if (dimensionChildren.item(j).getNodeType() == Node.ELEMENT_NODE) {
+              if (dimensionChildren.item(j).getNodeName().equals("CWMOLAP:Dimension.hierarchy")) { //$NON-NLS-1$
+                hierarchies = (Element)dimensionChildren.item(j);
+              } else if (dimensionChildren.item(j).getNodeName().equals("CWMOLAP:Dimension.memberSelection")) { //$NON-NLS-1$
+                memberSelections = (Element)dimensionChildren.item(j);
+              } else if (dimensionChildren.item(j).getNodeName().equals("CWMOLAP:Dimension.cubeDimensionAssociation")) { //$NON-NLS-1$
+                // ignored, cubes and dimensions are mapped later through dimension usages.
+              } else {
+                if (logger.isDebugEnabled()) {
+                  logger.debug("Dimension object ignored: " + dimensionChildren.item(j).getNodeName()); //$NON-NLS-1$
+                }
+              }
+            }
+          }
+          Map<String, OlapHierarchyLevel> levelMap = new HashMap<String, OlapHierarchyLevel>();
+
+          if (hierarchies != null) {
+            NodeList hiers = hierarchies.getElementsByTagName("CWMOLAP:LevelBasedHierarchy"); //$NON-NLS-1$
+            for (int j = 0; j < hiers.getLength(); j++) {
+              Element hierarchy = (Element)hiers.item(j);
+              OlapHierarchy hierarchyObj = new OlapHierarchy(dimensionObj);
+              hierarchyObj.setName(hierarchy.getAttribute("name")); //$NON-NLS-1$
+              Map<String, String> nvp = getKeyValuePairs(hierarchy, "CWM:TaggedValue", "tag", "value"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+              
+              // tagged values
+              hierarchyObj.setHavingAll("Y".equals(nvp.get("HIERARCHY_HAVING_ALL")));  //$NON-NLS-1$ //$NON-NLS-2$
+              String ltblId = nvp.get("HIERARCHY_BUSINESS_TABLE");  //$NON-NLS-1$
+              
+              LogicalTable table = null;
+              if (ltblId != null) {
+                table = model.findLogicalTable(ltblId);
+              } else {
+                System.out.println("ERROR!");
+              }
+              
+              String lcolId = nvp.get("HIERARCHY_PRIMARY_KEY"); //$NON-NLS-1$
+              LogicalColumn primaryKey = null;
+              if (lcolId != null) {
+                primaryKey = table.findLogicalColumn(lcolId);
+              } else {
+                System.out.println("ERROR");
+              }
+
+              hierarchyObj.setLogicalTable(table);
+              hierarchyObj.setPrimaryKey(primaryKey);
+              
+              dimensionObj.getHierarchies().add(hierarchyObj);
+              
+              
+              NodeList levels = hierarchy.getElementsByTagName("CWMOLAP:HierarchyLevelAssociation"); //$NON-NLS-1$
+              List<OlapHierarchyLevel> hierarchyLevels = new ArrayList<OlapHierarchyLevel>();
+              for (int k = 0; k < levels.getLength(); k++) {
+                Element level = (Element)levels.item(k);
+                OlapHierarchyLevel levelObj = new OlapHierarchyLevel(hierarchyObj);
+                levelObj.setName(level.getAttribute("name")); //$NON-NLS-1$
+                hierarchyLevels.add(levelObj);
+                
+                NodeList levelrefs = level.getElementsByTagName("CWMOLAP:Level"); //$NON-NLS-1$
+                if (levelrefs.getLength() == 1) {
+                  String xmiid = ((Element)levelrefs.item(0)).getAttribute("xmi.idref"); //$NON-NLS-1$
+                  levelMap.put(xmiid, levelObj);
+                }
+                
+              }
+              hierarchyObj.setHierarchyLevels(hierarchyLevels);
+              
+              /*
+              <CWMOLAP:LevelBasedHierarchy.hierarchyLevelAssociation>
+                <CWMOLAP:HierarchyLevelAssociation xmi.id = 'a326' name = 'Lname - L' isAbstract = 'false'>
+                  <CWMOLAP:HierarchyLevelAssociation.currentLevel>
+                    <CWMOLAP:Level xmi.idref = 'a327'/>
+                  </CWMOLAP:HierarchyLevelAssociation.currentLevel>
+                </CWMOLAP:HierarchyLevelAssociation>
+                <CWMOLAP:HierarchyLevelAssociation xmi.id = 'a328' name = 'Mi' isAbstract = 'false'>
+                  <CWMOLAP:HierarchyLevelAssociation.currentLevel>
+                    <CWMOLAP:Level xmi.idref = 'a329'/>
+                  </CWMOLAP:HierarchyLevelAssociation.currentLevel>
+                </CWMOLAP:HierarchyLevelAssociation>
+              </CWMOLAP:LevelBasedHierarchy.hierarchyLevelAssociation>
+
+               */
+            }
+            
+            dimensionObjs.add(dimensionObj);
+          }
+          
+          model.setProperty("olap_dimensions", dimensionObjs); //$NON-NLS-1$
+          
+          if (memberSelections != null) {
+            NodeList levels = memberSelections.getElementsByTagName("CWMOLAP:Level"); //$NON-NLS-1$
+            for (int j = 0; j < levels.getLength(); j++) {
+              Element level = (Element)levels.item(j);
+              String xmiid = level.getAttribute("xmi.id"); //$NON-NLS-1$
+              OlapHierarchyLevel levelObj = levelMap.get(xmiid);
+              Map<String, String> nvp = getKeyValuePairs(level, "CWM:TaggedValue", "tag", "value"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+              levelObj.setHavingUniqueMembers("Y".equals(nvp.get("HIERARCHY_LEVEL_UNIQUE_MEMBERS"))); //$NON-NLS-1$ //$NON-NLS-2$
+              String levelRefCol = nvp.get("HIERARCHY_LEVEL_REFERENCE_COLUMN");
+              
+              levelObj.setReferenceColumn(model.findLogicalColumn(levelRefCol)); //$NON-NLS-1$
+              
+              // CWMMDB:DimensionedObject xmi.id = 'a340' name
+              List<LogicalColumn> referenceCols = new ArrayList<LogicalColumn>();
+              NodeList dimensionedObjs = level.getElementsByTagName("CWMMDB:DimensionedObject"); //$NON-NLS-1$
+              for (int k = 0; k < dimensionedObjs.getLength(); k++) {
+                Element col = (Element)dimensionedObjs.item(k);
+                referenceCols.add(model.findLogicalColumn(col.getAttribute("name"))); //$NON-NLS-1$
+              }
+              levelObj.setLogicalColumns(referenceCols);
+            }
+            
+          }
+        }
+      }
+      
+      if (cubeList != null) {
+        
+        List<OlapCube> cubesList = new ArrayList<OlapCube>();
+        
+        NodeList cubes = cubeList.getElementsByTagName("CWMOLAP:Cube"); //$NON-NLS-1$
+        for (int i = 0; i < cubes.getLength(); i++) {
+          Element cube = (Element)cubes.item(i);
+          OlapCube cubeObj = new OlapCube();
+          cubeObj.setName(cube.getAttribute("name")); //$NON-NLS-1$
+          Map<String, String> nvp = getKeyValuePairs(cube, "CWM:TaggedValue", "tag", "value"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+          cubeObj.setLogicalTable(model.findLogicalTable(nvp.get("CUBE_BUSINESS_TABLE"))); //$NON-NLS-1$
+          
+          List<OlapMeasure> measureList = new ArrayList<OlapMeasure>();
+          NodeList measures = cube.getElementsByTagName("CWMOLAP:Measure"); //$NON-NLS-1$
+          for (int j = 0; j < measures.getLength(); j++) {
+            Element measure = (Element)measures.item(j);
+            OlapMeasure measureObj = new OlapMeasure();
+            measureObj.setName(measure.getAttribute("name")); //$NON-NLS-1$
+            Map<String, String> nvp2 = getKeyValuePairs(measure, "CWM:TaggedValue", "tag", "value"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            measureObj.setLogicalColumn(model.findLogicalColumn(nvp2.get("MEASURE_BUSINESS_COLUMN"))); //$NON-NLS-1$
+            measureList.add(measureObj);
+          }
+          cubeObj.setOlapMeasures(measureList);
+          
+          
+          List<OlapDimensionUsage> dimensionUsages = new ArrayList<OlapDimensionUsage>();
+          NodeList usedDims = cube.getElementsByTagName("CWMOLAP:CubeDimensionAssociation"); //$NON-NLS-1$
+          for (int j = 0; j < usedDims.getLength(); j++) {
+            Element dim = (Element)usedDims.item(j);
+            OlapDimensionUsage dimUsage = new OlapDimensionUsage();
+            dimUsage.setName(dim.getAttribute("name")); //$NON-NLS-1$
+            dimensionUsages.add(dimUsage);
+            // CWMOLAP:Dimension xmi.idref
+            NodeList dimensionLinks = dim.getElementsByTagName("CWMOLAP:Dimension"); //$NON-NLS-1$
+            if (dimensionLinks.getLength() == 1) {
+              Element dimensionLink = (Element)dimensionLinks.item(0);
+              dimUsage.setOlapDimension(dimensionMap.get(dimensionLink.getAttribute("xmi.idref"))); //$NON-NLS-1$
+            } else {
+              // BAD
+            }
+          }
+          cubeObj.setOlapDimensionUsages(dimensionUsages);
+          
+          cubesList.add(cubeObj);
+        }
+        
+        model.setProperty("olap_cubes", cubesList); //$NON-NLS-1$
+      }
+
+      /*
+       * 
+       *          <CWMOLAP:Dimension.memberSelection>
+            <CWMOLAP:Level xmi.id = 'a318' name = 'fname' isAbstract = 'false'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a319' tag = 'HIERARCHY_LEVEL_UNIQUE_MEMBERS'
+                  value = 'Y'/>
+                <CWM:TaggedValue xmi.id = 'a320' tag = 'HIERARCHY_LEVEL_REFERENCE_COLUMN'
+                  value = 'LC_CUSTOMER2_FNAME'/>
+              </CWM:ModelElement.taggedValue>
+              <CWMOLAP:Level.hierarchyLevelAssociation>
+                <CWMOLAP:HierarchyLevelAssociation xmi.idref = 'a317'/>
+              </CWMOLAP:Level.hierarchyLevelAssociation>
+            </CWMOLAP:Level>
+          </CWMOLAP:Dimension.memberSelection>
+
+       * 
+       * 
+           <CWMOLAP:Schema xmi.id = 'a698' name = 'BV_MODEL_1'>
+      <CWMOLAP:Schema.cube>
+        <CWMOLAP:Cube xmi.id = 'a699' name = 'Customer' isAbstract = 'false' isVirtual = 'false'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a700' tag = 'CUBE_BUSINESS_TABLE' value = 'BT_CUSTOMER_CUSTOMER'/>
+          </CWM:ModelElement.taggedValue>
+          <CWM:Namespace.ownedElement>
+            <CWMOLAP:Measure xmi.id = 'a701' name = 'Num cars owned'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a702' tag = 'MEASURE_BUSINESS_COLUMN' value = 'BC_CUSTOMER_NUM_CARS_OWNED'/>
+              </CWM:ModelElement.taggedValue>
+            </CWMOLAP:Measure>
+          </CWM:Namespace.ownedElement>
+          <CWMOLAP:Cube.cubeDimensionAssociation>
+            <CWMOLAP:CubeDimensionAssociation xmi.id = 'a703' name = 'A Dimension' isAbstract = 'false'>
+              <CWMOLAP:CubeDimensionAssociation.dimension>
+                <CWMOLAP:Dimension xmi.idref = 'a704'/>
+              </CWMOLAP:CubeDimensionAssociation.dimension>
+            </CWMOLAP:CubeDimensionAssociation>
+          </CWMOLAP:Cube.cubeDimensionAssociation>
+        </CWMOLAP:Cube>
+      </CWMOLAP:Schema.cube>
+      <CWMOLAP:Schema.dimension>
+        <CWMOLAP:Dimension xmi.id = 'a704' name = 'A Dimension' isAbstract = 'false'
+          isTime = 'false' isMeasure = 'false'>
+          <CWMOLAP:Dimension.cubeDimensionAssociation>
+            <CWMOLAP:CubeDimensionAssociation xmi.idref = 'a703'/>
+          </CWMOLAP:Dimension.cubeDimensionAssociation>
+          <CWMOLAP:Dimension.hierarchy>
+            <CWMOLAP:LevelBasedHierarchy xmi.id = 'a705' name = 'A Hierarchy' isAbstract = 'false'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a706' tag = 'HIERARCHY_BUSINESS_TABLE' value = 'BT_CUSTOMER_CUSTOMER'/>
+                <CWM:TaggedValue xmi.id = 'a707' tag = 'HIERARCHY_PRIMARY_KEY' value = 'BC_CUSTOMER_CUSTOMER_ID'/>
+                <CWM:TaggedValue xmi.id = 'a708' tag = 'HIERARCHY_HAVING_ALL' value = 'Y'/>
+              </CWM:ModelElement.taggedValue>
+            </CWMOLAP:LevelBasedHierarchy>
+          </CWMOLAP:Dimension.hierarchy>
+        </CWMOLAP:Dimension>
+      </CWMOLAP:Schema.dimension>
+    </CWMOLAP:Schema>
+
+       */
+    }
+    
+    
   }
   
   protected void bindParentConcept(Element element, Domain domain, IConcept concept) {

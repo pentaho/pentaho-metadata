@@ -125,6 +125,32 @@ public class LogicalModel extends Concept {
     return null;
   }
   
+  /**
+   * finds a logical column within the model.
+   * 
+   * @param columnId the column to find
+   * @return a logical column object.
+   */
+  public LogicalColumn findLogicalColumnInCategories(String columnId) {
+    for (Category cat : getCategories()) {
+      for (LogicalColumn column : cat.getLogicalColumns()) {
+        if (columnId.equals(column.getId())) {
+          return column;
+        }
+      }
+    }
+    return null;
+  }
+  
+  public LogicalRelationship findRelationshipUsing(LogicalTable one, LogicalTable two) {
+    for (LogicalRelationship relationship : getLogicalRelationships()) {
+      if (relationship.isUsingTable(one) && relationship.isUsingTable(two)) {
+        return relationship;
+      }
+    }
+    return null;
+  }
+  
   @Override
   public Object clone() {
     LogicalModel clone = new LogicalModel();

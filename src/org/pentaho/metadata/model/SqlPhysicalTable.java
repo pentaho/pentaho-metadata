@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.metadata.model.concept.Concept;
+import org.pentaho.metadata.model.concept.types.TableType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
 
 /**
@@ -43,12 +44,13 @@ public class SqlPhysicalTable extends Concept implements IPhysicalTable{
 
   public SqlPhysicalTable() {
     super();
+    setTargetTableType(TargetTableType.TABLE);
   }
 
   
   public SqlPhysicalTable(SqlPhysicalModel model) {
+    this();
     this.model = model;
-    setTargetTableType(TargetTableType.TABLE);
   }
 
 
@@ -86,6 +88,14 @@ public class SqlPhysicalTable extends Concept implements IPhysicalTable{
   
   public void setTargetTableType(TargetTableType targetTableType) {
     setProperty(TARGET_TABLE_TYPE, targetTableType);
+  }
+  
+  public TableType getTableType() {
+    return (TableType)getProperty(TABLETYPE_PROPERTY);
+  }
+  
+  public void setTableType(TableType tableType) {
+    setProperty(TABLETYPE_PROPERTY, tableType);
   }
   
   public Integer getRelativeSize() {

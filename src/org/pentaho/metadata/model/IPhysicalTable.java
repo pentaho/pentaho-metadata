@@ -22,6 +22,9 @@ import org.pentaho.metadata.model.concept.IConcept;
 
 public interface IPhysicalTable extends IConcept {
   
+  public static final String TABLETYPE_PROPERTY = "tabletype"; //$NON-NLS-1$
+
+  
   public IPhysicalModel getPhysicalModel();
   
   public List<IPhysicalColumn> getPhysicalColumns();

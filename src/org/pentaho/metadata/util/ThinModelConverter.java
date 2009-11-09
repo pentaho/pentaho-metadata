@@ -528,6 +528,24 @@ public class ThinModelConverter {
     return null;
   }
   
+  public static SqlDataSource convertFromLegacy(DatabaseMeta database) {
+    SqlDataSource dataSource = new SqlDataSource();
+
+    dataSource.setDialectType(database.getDatabaseTypeDesc());
+    dataSource.setDatabaseName(database.getDatabaseName());
+    dataSource.setHostname(database.getHostname());
+    dataSource.setPort(database.getDatabasePortNumberString());
+    dataSource.setUsername(database.getUsername());
+    dataSource.setPassword(database.getPassword());
+    
+    if (database.getAccessType() == DatabaseMeta.TYPE_ACCESS_JNDI) {
+      dataSource.setType(DataSourceType.values()[database.getAccessType()]); 
+    } else if (database.getAccessType() == DatabaseMeta.TYPE_ACCESS_NATIVE) {
+      dataSource.setType(DataSourceType.NATIVE);
+    }
+    return dataSource;
+  }
+  
   @SuppressWarnings("unchecked")
   public static Domain convertFromLegacy(SchemaMeta schemaMeta) throws Exception {
     // SchemaMeta schemaMeta = new SchemaMeta();
@@ -562,20 +580,8 @@ public class ThinModelConverter {
     
     for (DatabaseMeta database : schemaMeta.getDatabases()) {
       SqlPhysicalModel sqlModel = new SqlPhysicalModel();
-      SqlDataSource dataSource = new SqlDataSource();
       
-      dataSource.setDialectType(database.getDatabaseTypeDesc());
-      dataSource.setDatabaseName(database.getDatabaseName());
-      dataSource.setHostname(database.getHostname());
-      dataSource.setPort(database.getDatabasePortNumberString());
-      dataSource.setUsername(database.getUsername());
-      dataSource.setPassword(database.getPassword());
-      
-      if (database.getAccessType() == DatabaseMeta.TYPE_ACCESS_JNDI) {
-        dataSource.setType(DataSourceType.values()[database.getAccessType()]); 
-      } else if (database.getAccessType() == DatabaseMeta.TYPE_ACCESS_NATIVE) {
-        dataSource.setType(DataSourceType.NATIVE);
-      }
+      SqlDataSource dataSource = convertFromLegacy(database);
       sqlModel.setDatasource(dataSource);
       
       PhysicalTable tables[] = schemaMeta.getTablesOnDatabase(database);

@@ -28,11 +28,16 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.openide.util.io.ReaderInputStream;
 import org.pentaho.di.core.database.DatabaseMeta;
-import org.pentaho.metadata.messages.LocaleHelper;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.SqlDataSource;
 import org.pentaho.metadata.model.SqlPhysicalModel;
 import org.pentaho.metadata.model.concept.types.AggregationType;
+import org.pentaho.metadata.model.olap.OlapCube;
+import org.pentaho.metadata.model.olap.OlapDimension;
+import org.pentaho.metadata.model.olap.OlapDimensionUsage;
+import org.pentaho.metadata.model.olap.OlapHierarchy;
+import org.pentaho.metadata.model.olap.OlapHierarchyLevel;
+import org.pentaho.metadata.model.olap.OlapMeasure;
 import org.pentaho.metadata.query.impl.sql.MappedQuery;
 import org.pentaho.metadata.query.impl.sql.SqlGenerator;
 import org.pentaho.metadata.query.model.Query;
@@ -308,6 +313,93 @@ public class XmiParserTest {
     XmiParser parser = new XmiParser();
     Domain domain = parser.parseXmi(new FileInputStream("test-res/partial_metadata.xmi"));
     Assert.assertEquals(1, domain.getPhysicalModels().size());
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  public void testOlapMetadataFile() throws Exception {
+    XmiParser parser = new XmiParser();
+    Domain domain = parser.parseXmi(new FileInputStream("test-res/example_olap.xmi"));
+    Assert.assertEquals(1, domain.getPhysicalModels().size());
+    
+    Assert.assertNotNull(domain.getLogicalModels().get(0).getProperty("olap_dimensions"));
+    List<OlapDimension> dimensions = (List<OlapDimension>)domain.getLogicalModels().get(0).getProperty("olap_dimensions");
+    Assert.assertEquals(2, dimensions.size());
+    
+    OlapDimension dim1 = dimensions.get(0);
+    OlapDimension dim2 = dimensions.get(1);
+    
+    Assert.assertEquals("fname", dim1.getName());
+    
+    Assert.assertEquals(1, dim1.getHierarchies().size());
+    OlapHierarchy hier1 = dim1.getHierarchies().get(0);
+    
+    Assert.assertEquals("fname", hier1.getName());
+    
+    Assert.assertNotNull(hier1.getLogicalTable());
+    Assert.assertEquals("BT_CUSTOMER2_CUSTOMER2", hier1.getLogicalTable().getId());
+    Assert.assertNotNull(hier1.getPrimaryKey());
+    Assert.assertEquals("LC_CUSTOMER2_FNAME", hier1.getPrimaryKey().getId());
+    
+    Assert.assertEquals(1, hier1.getHierarchyLevels().size());
+    
+    OlapHierarchyLevel level = hier1.getHierarchyLevels().get(0);
+    
+    Assert.assertEquals("fname", level.getName());
+    Assert.assertEquals(0, level.getLogicalColumns().size());
+    Assert.assertEquals("LC_CUSTOMER2_FNAME", level.getReferenceColumn().getId());
+    Assert.assertEquals(hier1, level.getOlapHierarchy());
+    
+    Assert.assertEquals("lname - D", dim2.getName());
+    Assert.assertEquals(2, dim2.getHierarchies().size());
+    
+    
+    
+    OlapHierarchy hier2 = dim2.getHierarchies().get(0);
+    
+    Assert.assertEquals("lname - H", hier2.getName());
+    
+    Assert.assertEquals(2, hier2.getHierarchyLevels().size());
+    OlapHierarchyLevel level2 = hier2.getHierarchyLevels().get(0);
+    OlapHierarchyLevel level3 = hier2.getHierarchyLevels().get(1);
+    
+    Assert.assertEquals(4, level3.getLogicalColumns().size());
+    Assert.assertEquals(false, level3.isHavingUniqueMembers());
+    
+    OlapHierarchy hier3 = dim2.getHierarchies().get(1);
+    
+    Assert.assertEquals("test", hier3.getName());
+    
+    Assert.assertNotNull(domain.getLogicalModels().get(0).getProperty("olap_cubes"));
+    List<OlapCube> cubes = (List<OlapCube>)domain.getLogicalModels().get(0).getProperty("olap_cubes");
+    Assert.assertEquals(1, cubes.size());
+    
+    OlapCube cube = cubes.get(0);
+    Assert.assertEquals("customer2 Table", cube.getName());
+    Assert.assertEquals(1, cube.getOlapDimensionUsages().size());
+    OlapDimensionUsage usage = cube.getOlapDimensionUsages().get(0);
+    Assert.assertEquals("fname", usage.getName());
+    Assert.assertEquals(dim1, usage.getOlapDimension());
+    
+    Assert.assertEquals(1, cube.getOlapMeasures().size());
+    
+    OlapMeasure measure = cube.getOlapMeasures().get(0);
+    Assert.assertEquals("num_children_at_home", measure.getName());
+    Assert.assertEquals("LC_CUSTOMER2_NUM_CHILDREN_AT_HOME", measure.getLogicalColumn().getId());
+    
+    String xmi = parser.generateXmi(domain);
+    
+    ByteArrayInputStream is = new ByteArrayInputStream(xmi.getBytes());
+    Domain domain2 = parser.parseXmi(is);
+    
+    SerializationService serializer = new SerializationService();
+   
+    String xml1 = serializeWithOrderedHashmaps(domain);
+    String xml2 = serializeWithOrderedHashmaps(domain2);
+
+    // note: this does not verify security objects at this time
+    Assert.assertEquals(xml1, xml2);
+    
   }
   
 }
