@@ -1,4 +1,7 @@
 <module>
 	<!-- org.pentaho.metadata.model package -->
-    <source path="model"/>
+    <source path="model">
+      <exclude name="**/OlapDimensionUsage*"/>
+      <exclude name="**/OlapCube*"/>
+    </source>
 </module>
