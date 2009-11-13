@@ -137,7 +137,7 @@ TYPICAL TARGET SEQUENCE
             value="true"
             description="Indicates whether source should be compiled with deprecation information" />
   <property name="javac.source" value="1.5" description="Provide source compatibility with specified release" />
-  <property name="javac.target" value="1.6" description="Generate class files for specific VM version" />
+  <property name="javac.target" value="1.5" description="Generate class files for specific VM version" />
 
   <!-- Build Cache properties -->
   <property name="build.cache.dir"
@@ -1340,7 +1340,7 @@ TYPICAL TARGET SEQUENCE
           depends="javadoc.init, compile">
     <javadoc destdir="${javadoc.dir}/docs/api"
              access="public"
-             source="1.5"
+             source="${javac.source}"
              use="true"
              notree="false"
              nonavbar="false"
@@ -1354,7 +1354,7 @@ TYPICAL TARGET SEQUENCE
              packagenames="${javadoc.packagenames}"
              sourcepath="${src.dir}"
              doctitle="${impl.title} documentation">
-      <link href="http://java.sun.com/j2se/1.5.0/docs/api/" />
+      <link href="http://java.sun.com/j2se/${javac.source}.0/docs/api/" />
       <classpath refid="classpath" />
     </javadoc>
   </target>
