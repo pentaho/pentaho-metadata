@@ -44,20 +44,23 @@ import org.pentaho.metadata.util.SerializationService;
  * @author Will Gorman(wgorman@pentaho.com)
  */
 public class FileBasedMetadataDomainRepository implements IMetadataDomainRepository {
-  
+
   private static final Log logger = LogFactory.getLog(FileBasedMetadataDomainRepository.class);
-  
+
   private static final String DOMAIN_SUFFIX = ".domain.xml"; //$NON-NLS-1$
+
   private static final String DEFAULT_DOMAIN_FOLDER = "domains"; //$NON-NLS-1$
-  
-  protected Map<String, Domain> domains = Collections.synchronizedMap(new HashMap<String, Domain>()); 
+
+  protected Map<String, Domain> domains = Collections.synchronizedMap(new HashMap<String, Domain>());
+
   private String domainFolder = null;
-  
+
   public void setDomainFolder(String folder) {
     this.domainFolder = folder;
   }
-  
-  public void storeDomain(Domain domain, boolean overwrite) throws DomainIdNullException, DomainAlreadyExistsException, DomainStorageException {
+
+  public void storeDomain(Domain domain, boolean overwrite) throws DomainIdNullException, DomainAlreadyExistsException,
+      DomainStorageException {
     if (domain.getId() == null) {
       throw new DomainIdNullException(Messages.getErrorString("IMetadataDomainRepository.ERROR_0001_DOMAIN_ID_NULL")); //$NON-NLS-1$
     }
@@ -66,54 +69,62 @@ public class FileBasedMetadataDomainRepository implements IMetadataDomainReposit
     if (!folder.exists()) {
       folder.mkdirs();
     }
-    
-    synchronized(domains) {
-      
+
+    synchronized (domains) {
+
       if (!overwrite && domains.get(domain.getId()) != null) {
-        throw new DomainAlreadyExistsException(Messages.getErrorString("IMetadataDomainRepository.ERROR_0002_DOMAIN_OBJECT_EXISTS", domain.getId())); //$NON-NLS-1$
+        throw new DomainAlreadyExistsException(Messages.getErrorString(
+            "IMetadataDomainRepository.ERROR_0002_DOMAIN_OBJECT_EXISTS", domain.getId())); //$NON-NLS-1$
       }
-      
+
       File domainFile = new File(folder, getDomainFilename(domain.getId()));
-      
+
       if (!overwrite && domainFile.exists()) {
-        throw new DomainAlreadyExistsException(Messages.getErrorString("FileBasedMetadataDomainRepository.ERROR_0003_DOMAIN_FILE_EXISTS", domain.getId())); //$NON-NLS-1$
+        throw new DomainAlreadyExistsException(Messages.getErrorString(
+            "FileBasedMetadataDomainRepository.ERROR_0003_DOMAIN_FILE_EXISTS", domain.getId())); //$NON-NLS-1$
       }
-      
+
       SerializationService service = new SerializationService();
       FileOutputStream output = null;
       try {
         output = new FileOutputStream(domainFile);
         service.serializeDomain(domain, output);
       } catch (FileNotFoundException e) {
-        throw new DomainStorageException(Messages.getErrorString("FileBasedMetadataDomainRepository.ERROR_0004_DOMAIN_STORAGE_EXCEPTION"), e); //$NON-NLS-1$
+        throw new DomainStorageException(Messages
+            .getErrorString("FileBasedMetadataDomainRepository.ERROR_0004_DOMAIN_STORAGE_EXCEPTION"), e); //$NON-NLS-1$
       } finally {
         try {
           if (output != null) {
             output.close();
           }
         } catch (IOException e) {
-          throw new DomainStorageException(Messages.getErrorString("FileBasedMetadataDomainRepository.ERROR_0004_DOMAIN_STORAGE_EXCEPTION"), e); //$NON-NLS-1$
+          throw new DomainStorageException(Messages
+              .getErrorString("FileBasedMetadataDomainRepository.ERROR_0004_DOMAIN_STORAGE_EXCEPTION"), e); //$NON-NLS-1$
         }
       }
-      
+
       // adds the domain to the domains list
       domains.put(domain.getId(), domain);
     }
   }
-  
+
   private String getDomainFilename(String id) {
     String cleansedName = id.replaceAll("[^a-zA-Z0-9_]", "_"); //$NON-NLS-1$ //$NON-NLS-2$
     return cleansedName + DOMAIN_SUFFIX;
   }
-  
+
   public Domain getDomain(String id) {
     // for now, lazy load all the domains at once.  We could be smarter,
     // loading the files as requested.
-    
+
     if (domains.size() == 0) {
       reloadDomains();
     }
     Domain domain = domains.get(id);
+    if(domain == null) {
+      //try to reference the metadata file implicitly, for backward compatibility
+      domain = domains.get(id+"/metadata.xmi");
+    }
     if (domain != null) {
       SecurityHelper helper = new SecurityHelper();
       Domain clone = helper.createSecureDomain(this, domain);
@@ -123,24 +134,24 @@ public class FileBasedMetadataDomainRepository implements IMetadataDomainReposit
       return null;
     }
   }
-  
+
   public Set<String> getDomainIds() {
     if (domains.size() == 0) {
       reloadDomains();
     }
     Set<String> set = null;
-    synchronized(domains) {
+    synchronized (domains) {
       set = new TreeSet<String>(domains.keySet());
     }
     return set;
   }
-  
+
   private static class DomainFileNameFilter implements FilenameFilter {
     public boolean accept(File dir, String name) {
       return name.endsWith(DOMAIN_SUFFIX);
     }
   }
-  
+
   protected File getDomainsFolder() {
     String domainsFolder = DEFAULT_DOMAIN_FOLDER;
     if (domainFolder != null) {
@@ -149,11 +160,11 @@ public class FileBasedMetadataDomainRepository implements IMetadataDomainReposit
     File folder = new File(domainsFolder);
     return folder;
   }
-  
+
   public void flushDomains() {
     domains.clear();
   }
-  
+
   public void reloadDomains() {
     // load the domains from the file system
     // for each file in the system/metadata/domains folder that ends with .domain.xml, load
@@ -169,7 +180,8 @@ public class FileBasedMetadataDomainRepository implements IMetadataDomainReposit
           Domain domain = service.deserializeDomain(fis);
           localDomains.put(domain.getId(), domain);
         } catch (FileNotFoundException e) {
-          logger.error(Messages.getErrorString("FileBasedMetadataDomainRepository.ERROR_0005_FAILED_TO_LOAD_DOMAIN", file.getName()) , e); //$NON-NLS-1$
+          logger.error(Messages.getErrorString(
+              "FileBasedMetadataDomainRepository.ERROR_0005_FAILED_TO_LOAD_DOMAIN", file.getName()), e); //$NON-NLS-1$
         } finally {
           if (fis != null) {
             try {
@@ -177,7 +189,8 @@ public class FileBasedMetadataDomainRepository implements IMetadataDomainReposit
                 fis.close();
               }
             } catch (IOException e) {
-              logger.error(Messages.getErrorString("FileBasedMetadataDomainRepository.ERROR_0005_FAILED_TO_LOAD_DOMAIN", file.getName()) , e); //$NON-NLS-1$
+              logger.error(Messages.getErrorString(
+                  "FileBasedMetadataDomainRepository.ERROR_0005_FAILED_TO_LOAD_DOMAIN", file.getName()), e); //$NON-NLS-1$
             }
           }
         }
@@ -188,16 +201,16 @@ public class FileBasedMetadataDomainRepository implements IMetadataDomainReposit
       domains.putAll(localDomains);
     }
   }
-  
+
   public void removeDomain(String domainId) {
-    synchronized(domains) {
+    synchronized (domains) {
       File folder = getDomainsFolder();
       File domainFile = new File(folder, getDomainFilename(domainId));
       domains.remove(domainId);
       domainFile.delete();
     }
   }
-  
+
   public void removeModel(String domainId, String modelId) throws DomainIdNullException, DomainStorageException {
     synchronized (domains) {
       // get a raw domain vs. the cloned secure domain
@@ -205,7 +218,7 @@ public class FileBasedMetadataDomainRepository implements IMetadataDomainReposit
       if (domain == null) {
         throw new DomainIdNullException(Messages.getErrorString("IMetadataDomainRepository.ERROR_0001_DOMAIN_ID_NULL")); //$NON-NLS-1$
       }
-      
+
       // remove the model
       Iterator<LogicalModel> iter = domain.getLogicalModels().iterator();
       while (iter.hasNext()) {
@@ -215,27 +228,28 @@ public class FileBasedMetadataDomainRepository implements IMetadataDomainReposit
           break;
         }
       }
-      
+
       if (domain.getLogicalModels().size() == 0) {
         // remove the domain all together
         removeDomain(domainId);
       } else {
-        
+
         // store the modified domain
         try {
           storeDomain(domain, true);
         } catch (DomainAlreadyExistsException e) {
           // this should not happen
-          logger.error(Messages.getErrorString("FileBasedMetadataDomainRepository.ERROR_0007_DOMAIN_ALREADY_EXISTS", domain.getId()), e); //$NON-NLS-1$
+          logger.error(Messages.getErrorString(
+              "FileBasedMetadataDomainRepository.ERROR_0007_DOMAIN_ALREADY_EXISTS", domain.getId()), e); //$NON-NLS-1$
         }
       }
     }
   }
-  
+
   public String generateRowLevelSecurityConstraint(LogicalModel model) {
     return null;
   }
-  
+
   /**
    * The aclHolder cannot be null unless the access type requested is ACCESS_TYPE_SCHEMA_ADMIN.
    */
