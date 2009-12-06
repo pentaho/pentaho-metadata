@@ -34,13 +34,11 @@ public class OlapDimensionUsage implements Cloneable {
   }
 
   public Object clone() {
-    try {
-      // shallow copy of the dimension is fine.
-      OlapDimensionUsage usage = (OlapDimensionUsage) super.clone();
-      return usage;
-    } catch (CloneNotSupportedException e) {
-      return null;
-    }
+    // shallow copy of the dimension is fine.
+    OlapDimensionUsage usage = new OlapDimensionUsage();
+    usage.name = this.name;
+    usage.olapDimension = this.olapDimension;
+    return usage;
   }
 
   public boolean equals(Object obj) {
