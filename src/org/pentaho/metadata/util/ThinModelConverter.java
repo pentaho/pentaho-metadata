@@ -119,7 +119,7 @@ public class ThinModelConverter {
     databaseMeta.setHostname(datasource.getHostname());
     if (datasource.getDialectType() == null) {
       // default to mysql if dialect is null
-      databaseMeta.setDatabaseType("MYSQL"); //$NON-NLS-1$
+      databaseMeta.setDatabaseType("GENERIC"); //$NON-NLS-1$
     } else {
       databaseMeta.setDatabaseType(datasource.getDialectType());
     }
