@@ -828,7 +828,11 @@ public class XmiParser {
           }
         }
       } else {
-        logger.error(Messages.getErrorString("XmiParser.ERROR_0005_UNSUPPORTED_CONCEPT_PROPERTY",val.getClass())); //$NON-NLS-1$
+        if (val == null) {
+          logger.error(Messages.getErrorString("XmiParser.ERROR_0005_UNSUPPORTED_CONCEPT_PROPERTY", "null")); //$NON-NLS-1$ //$NON-NLS-2$
+        } else {
+          logger.error(Messages.getErrorString("XmiParser.ERROR_0005_UNSUPPORTED_CONCEPT_PROPERTY",val.getClass())); //$NON-NLS-1$
+        }
       }
       if (type != null) {
         createDescription(doc, body, key, type, null, idGen, parentTag, idstr, allDescriptions);
