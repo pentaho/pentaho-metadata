@@ -22,7 +22,6 @@ import java.util.List;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.database.DatabaseMetaInformation;
 import org.pentaho.di.core.exception.KettleDatabaseException;
-import org.pentaho.di.core.logging.LoggingObject;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
@@ -70,7 +69,7 @@ public class AutoModelerScenario  {
 		// B1: look in the database...
 		//
 		DatabaseMetaInformation dmi = new DatabaseMetaInformation(databaseMeta);
-		dmi.getData(new LoggingObject("Auto Modeler"), null); // reads the metadata from the database, optional progress monitor (TODO: roll our own progress monitor)
+		dmi.getData(null); // reads the metadata from the database, optional progress monitor (TODO: roll our own progress monitor)
 		
 		// B2: optionally allow the user to select a schema
 		//

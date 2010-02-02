@@ -344,10 +344,10 @@ public class InlineEtlQueryExecutor {
       
       if (c > 0) {
         filterRows.setCondition(rootCondition);
-//        filterRows.setSendTrueStep(null);
-//        filterRows.setSendTrueStepname(null);
-//        filterRows.setSendFalseStep(null);
-//        filterRows.setSendFalseStepname(null);
+        filterRows.setSendTrueStep(null);
+        filterRows.setSendTrueStepname(null);
+        filterRows.setSendFalseStep(null);
+        filterRows.setSendFalseStepname(null);
       }
       
       if (groupBys > 0) {
@@ -389,10 +389,10 @@ public class InlineEtlQueryExecutor {
         }
         if (c > 0) {
           filterRows2.setCondition(rootCondition2);
-//          filterRows2.setSendTrueStep(null);
-//          filterRows2.setSendTrueStepname(null);
-//          filterRows2.setSendFalseStep(null);
-//          filterRows2.setSendFalseStepname(null);
+          filterRows2.setSendTrueStep(null);
+          filterRows2.setSendTrueStepname(null);
+          filterRows2.setSendFalseStep(null);
+          filterRows2.setSendFalseStepname(null);
 
         }
         
@@ -512,7 +512,7 @@ public class InlineEtlQueryExecutor {
     
     trans.startThreads();
     trans.waitUntilFinished();
-//    trans.endProcessing("end"); //$NON-NLS-1$
+    trans.endProcessing("end"); //$NON-NLS-1$
     
     return listener.results;
   }
