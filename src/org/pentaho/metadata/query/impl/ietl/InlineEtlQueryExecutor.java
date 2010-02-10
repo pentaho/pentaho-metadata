@@ -35,6 +35,7 @@ import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.core.row.ValueMetaAndData;
 import org.pentaho.di.core.row.ValueMetaInterface;
 import org.pentaho.di.trans.Trans;
+import org.pentaho.di.trans.TransHopMeta;
 import org.pentaho.di.trans.TransMeta;
 import org.pentaho.di.trans.step.RowListener;
 import org.pentaho.di.trans.step.StepMeta;
@@ -344,10 +345,11 @@ public class InlineEtlQueryExecutor {
       
       if (c > 0) {
         filterRows.setCondition(rootCondition);
-//        filterRows.setSendTrueStep(null);
-//        filterRows.setSendTrueStepname(null);
-//        filterRows.setSendFalseStep(null);
-//        filterRows.setSendFalseStepname(null);
+
+        // link the dummy step to FALSE hop
+        StepMeta dummy = getStepMeta(transMeta, "Dummy 1"); //$NON-NLS-1$
+        filterRows.getStepIOMeta().getTargetStreams().get(1).setStepMeta(dummy);
+        transMeta.addTransHop(new TransHopMeta(filter, dummy));
       }
       
       if (groupBys > 0) {
@@ -389,13 +391,11 @@ public class InlineEtlQueryExecutor {
         }
         if (c > 0) {
           filterRows2.setCondition(rootCondition2);
-//          filterRows2.setSendTrueStep(null);
-//          filterRows2.setSendTrueStepname(null);
-//          filterRows2.setSendFalseStep(null);
-//          filterRows2.setSendFalseStepname(null);
-
+          // link the dummy step to FALSE hop
+          StepMeta dummy2 = getStepMeta(transMeta, "Dummy 2"); //$NON-NLS-1$
+          filterRows2.getStepIOMeta().getTargetStreams().get(1).setStepMeta(dummy2);
+          transMeta.addTransHop(new TransHopMeta(filter2, dummy2));
         }
-        
       }
       
     } else {
@@ -512,7 +512,7 @@ public class InlineEtlQueryExecutor {
     
     trans.startThreads();
     trans.waitUntilFinished();
-//    trans.endProcessing("end"); //$NON-NLS-1$
+    trans.cleanup();
     
     return listener.results;
   }
