@@ -22,10 +22,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.pentaho.commons.connection.IPentahoResultSet;
+import org.pentaho.di.core.plugins.PluginRegistry;
 import org.pentaho.di.core.util.EnvUtil;
-import org.pentaho.di.trans.StepLoader;
+import org.pentaho.metadata.messages.LocaleHelper;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.InlineEtlPhysicalColumn;
@@ -45,11 +47,17 @@ import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.metadata.query.model.Order.Type;
 import org.pentaho.metadata.util.InlineEtlModelGenerator;
-import org.pentaho.metadata.messages.LocaleHelper;
 
 @SuppressWarnings("nls")
 public class InlineEtlModelGeneratorTest {
 
+  
+  @BeforeClass
+  public static void initKettle() throws Exception {
+    EnvUtil.environmentInit();
+    PluginRegistry.init();
+  }
+  
   @Test
   public void testGenerator() throws Exception {
     List<String> users = new ArrayList<String>();
@@ -121,9 +129,6 @@ public class InlineEtlModelGeneratorTest {
   @Test
   public void testQueryExecution() throws Exception {
     
-    EnvUtil.environmentInit();
-    StepLoader.init();
-    
     List<String> users = new ArrayList<String>();
     users.add("suzy");
     List<String> roles = new ArrayList<String>();
@@ -160,9 +165,6 @@ public class InlineEtlModelGeneratorTest {
   
   @Test
   public void testQueryExecutionWithOrder() throws Exception {
-    
-    EnvUtil.environmentInit();
-    StepLoader.init();
     
     List<String> users = new ArrayList<String>();
     users.add("suzy");
@@ -220,9 +222,6 @@ public class InlineEtlModelGeneratorTest {
   
   @Test
   public void testQueryExecutionWithConstraints() throws Exception {
-    
-    EnvUtil.environmentInit();
-    StepLoader.init();
     
     List<String> users = new ArrayList<String>();
     users.add("suzy");
@@ -335,15 +334,10 @@ public class InlineEtlModelGeneratorTest {
     resultset = executor.executeQuery(query6, "test/solution/system/metadata/csvfiles/", params);
     Assert.assertEquals(5, resultset.getRowCount());
     
-    
-    
   }
   
   @Test
   public void testQueryExecutionWithFormulaFunctions() throws Exception {
-    
-    EnvUtil.environmentInit();
-    StepLoader.init();
     
     List<String> users = new ArrayList<String>();
     users.add("suzy");
@@ -456,9 +450,6 @@ public class InlineEtlModelGeneratorTest {
   @Test
   public void testQueryExecutionWithAggregations() throws Exception {
     
-    EnvUtil.environmentInit();
-    StepLoader.init();
-    
     List<String> users = new ArrayList<String>();
     users.add("suzy");
     List<String> roles = new ArrayList<String>();
@@ -509,9 +500,6 @@ public class InlineEtlModelGeneratorTest {
    */
   @Test
   public void testQueryExecutionWithDifferentAggregations() throws Exception {
-    
-    EnvUtil.environmentInit();
-    StepLoader.init();
     
     List<String> users = new ArrayList<String>();
     users.add("suzy");
@@ -566,8 +554,6 @@ public class InlineEtlModelGeneratorTest {
   
   @Test
   public void testQueryExecutionWithAggregationsAndConstraints() throws Exception {
-    EnvUtil.environmentInit();
-    StepLoader.init();
     
     List<String> users = new ArrayList<String>();
     users.add("suzy");
@@ -613,9 +599,6 @@ public class InlineEtlModelGeneratorTest {
   
   @Test
   public void testQueryExecutionAllAggregations() throws Exception {
-    
-    EnvUtil.environmentInit();
-    StepLoader.init();
     
     List<String> users = new ArrayList<String>();
     users.add("suzy");
