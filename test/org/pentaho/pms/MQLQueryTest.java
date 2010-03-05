@@ -25,6 +25,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.database.DatabaseInterface;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.core.CWM;
@@ -52,7 +53,8 @@ public class MQLQueryTest extends TestCase {
 
   CwmSchemaFactory cwmSchemaFactory = null;
 
-  public void setUp() {
+  public void setUp() throws Exception {
+    KettleEnvironment.init(false);
     if (ordersModel == null || cwmSchemaFactory == null) {
       loadOrdersModel();
     }
@@ -636,7 +638,7 @@ public class MQLQueryTest extends TestCase {
       DatabaseInterface di[] = DatabaseMeta.getDatabaseInterfaces();
       DatabaseInterface oracleDI = null;
       for (int i = 0; i < di.length; i++) {
-        if (di[i].getDatabaseTypeDesc().toLowerCase().indexOf("oracle") >= 0) { //$NON-NLS-1$
+        if (di[i].getPluginId().toLowerCase().equals("oracle")) { //$NON-NLS-1$
           oracleDI = (DatabaseInterface) di[i].clone();
           break;
         }
