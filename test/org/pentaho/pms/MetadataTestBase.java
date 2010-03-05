@@ -23,7 +23,7 @@ import org.pentaho.di.core.database.DatabaseMeta;
 public class MetadataTestBase extends TestCase {
 	
 	public void testOracleDatabaseMeta() {
-		assertEquals(createOracleDatabaseMeta().getDatabaseType(), DatabaseMeta.TYPE_DATABASE_ORACLE);
+		assertEquals(createOracleDatabaseMeta().getPluginId(), "ORACLE"); //$NON-NLS-1$
 	}
 	
 	public static DatabaseMeta createOracleDatabaseMeta() {

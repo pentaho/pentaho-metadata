@@ -25,8 +25,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.pentaho.commons.connection.IPentahoResultSet;
-import org.pentaho.di.core.plugins.PluginRegistry;
-import org.pentaho.di.core.util.EnvUtil;
+import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.metadata.messages.LocaleHelper;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
@@ -54,8 +53,7 @@ public class InlineEtlModelGeneratorTest {
   
   @BeforeClass
   public static void initKettle() throws Exception {
-    EnvUtil.environmentInit();
-    PluginRegistry.init();
+    KettleEnvironment.init(false);
   }
   
   @Test

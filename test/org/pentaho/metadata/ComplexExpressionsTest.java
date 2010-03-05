@@ -17,8 +17,11 @@
 package org.pentaho.metadata;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
@@ -36,6 +39,12 @@ import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.Selection;
 
 public class ComplexExpressionsTest {
+  
+  @BeforeClass
+  public static void initKettle() throws KettleException {
+    KettleEnvironment.init(false);
+  }
+  
 	@Test
   public void testCombinedCalculationInSelection() throws Exception {
 		LogicalModel model = createModel();
@@ -93,7 +102,7 @@ public class ComplexExpressionsTest {
   */
   @Test
   public void testOracleDatabaseMeta() {
-    Assert.assertEquals(TestHelper.createOracleDatabaseMeta().getDatabaseType(), DatabaseMeta.TYPE_DATABASE_ORACLE);
+    Assert.assertEquals(TestHelper.createOracleDatabaseMeta().getPluginId(), "ORACLE"); //$NON-NLS-1$
   }
 
 	private LogicalModel createModel() {
