@@ -25,8 +25,10 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openide.util.io.ReaderInputStream;
+import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.SqlDataSource;
@@ -57,6 +59,11 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 
 @SuppressWarnings("nls")
 public class XmiParserTest {
+  
+  @BeforeClass
+  public static void initKettle() throws Exception {
+    KettleEnvironment.init(false);
+  }
   
   @Test
   public void testXmiParser() throws Exception {

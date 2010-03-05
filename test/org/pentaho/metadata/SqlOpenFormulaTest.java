@@ -23,7 +23,9 @@ import java.util.Calendar;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalColumn;
@@ -52,6 +54,10 @@ import org.pentaho.pms.schema.SchemaMeta;
 @SuppressWarnings({"deprecation","nls"})
 public class SqlOpenFormulaTest {
 
+  @BeforeClass
+  public static void initKettle() throws Exception {
+    KettleEnvironment.init(false);
+  }
 
   static LogicalModel ordersModel;
   

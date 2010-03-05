@@ -20,7 +20,9 @@ import java.io.File;
 import java.util.Locale;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalColumn;
@@ -53,6 +55,11 @@ import org.pentaho.pms.schema.concept.types.datatype.DataTypeSettings;
 
 @SuppressWarnings("deprecation")
 public class ThinModelTest {
+  
+  @BeforeClass
+  public static void initKettle() throws Exception {
+    KettleEnvironment.init(false);
+  }
   
   @Test
   public void testSqlPhysicalModel() {

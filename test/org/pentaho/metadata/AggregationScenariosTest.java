@@ -16,7 +16,9 @@
  */
 package org.pentaho.metadata;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.IPhysicalColumn;
@@ -35,6 +37,11 @@ import org.pentaho.metadata.query.model.Selection;
 
 public class AggregationScenariosTest {
 
+  @BeforeClass
+  public static void initKettle() throws Exception {
+    KettleEnvironment.init(false);
+  }
+  
   /**
    * Scenario: we have 2 sums and we want to calculate a ratio.<br>
    * The aggregation on the ratio is obviously "none".<br>

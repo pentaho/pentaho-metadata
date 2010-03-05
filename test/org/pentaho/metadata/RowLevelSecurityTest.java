@@ -21,7 +21,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.concept.security.RowLevelSecurity;
@@ -36,6 +38,11 @@ import org.pentaho.metadata.util.RowLevelSecurityHelper;
 
 
 public class RowLevelSecurityTest {
+  
+  @BeforeClass
+  public static void initKettle() throws Exception {
+    KettleEnvironment.init(false);
+  }
   
   @Test
   public void testRowLevelSecurity() throws Exception {

@@ -18,10 +18,15 @@ package org.pentaho.pms;
 
 import junit.framework.TestCase;
 
+import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.database.DatabaseMeta;
 
 public class MetadataTestBase extends TestCase {
 	
+  public void setUp() throws Exception {
+    KettleEnvironment.init(false);
+  }
+  
 	public void testOracleDatabaseMeta() {
 		assertEquals(createOracleDatabaseMeta().getPluginId(), "ORACLE"); //$NON-NLS-1$
 	}

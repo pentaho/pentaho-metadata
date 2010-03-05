@@ -29,7 +29,9 @@ import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.Props;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
@@ -57,6 +59,11 @@ import org.pentaho.pms.util.Settings;
 @SuppressWarnings("deprecation")
 public class SQLModelGeneratorTest {
 
+  @BeforeClass
+  public static void initKettle() throws Exception {
+    KettleEnvironment.init(false);
+  }
+  
   @Test
   public void testSQLModelGenerator() {
     // basic tests
