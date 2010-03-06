@@ -40,7 +40,7 @@ public class DatabaseMetaUtil {
   
     // look through all available database dialects for a match
     for (int i = 0; i < DatabaseMeta.getDatabaseInterfaces().length; i++) {
-      String typeDesc = DatabaseMeta.getDatabaseInterfaces()[i].getDatabaseTypeDesc().toLowerCase();
+      String typeDesc = DatabaseMeta.getDatabaseInterfaces()[i].getPluginId().toLowerCase();
       if (productName.indexOf(typeDesc) >= 0) {
         return DatabaseMeta.getDatabaseInterfaces()[i];
       }
