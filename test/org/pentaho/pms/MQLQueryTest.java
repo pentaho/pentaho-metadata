@@ -46,7 +46,7 @@ import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.util.Const;
 
-@SuppressWarnings("deprecation")
+@SuppressWarnings({"deprecation", "nls"})
 public class MQLQueryTest extends TestCase {
 
   BusinessModel ordersModel = null;
@@ -731,9 +731,13 @@ public class MQLQueryTest extends TestCase {
       fileInputStream.read(bytes);
       fileInputStream.close();
       String data = new String(bytes, Const.XML_ENCODING);
+      // remove the <?xml version="1.0" encoding="UTF-8"?>, it appears differently in different JVM versions
+      data = data.replaceAll("<\\?.*\\?>",""); //$NON-NLS-1$ //$NON-NLS-2$
       data = data.replaceAll("[\n\t]", ""); //$NON-NLS-1$ //$NON-NLS-2$
       String xml = mqlquery.getXML();
       assertNotNull(xml);
+      // remove the <?xml version="1.0" encoding="UTF-8"?>, it appears differently in different JVM versions
+      xml = xml.replaceAll("<\\?.*\\?>",""); //$NON-NLS-1$ //$NON-NLS-2$
       xml = xml.replaceAll("[\n\t]", ""); //$NON-NLS-1$ //$NON-NLS-2$
       /*
       System.out.println("Generated XML");
@@ -746,6 +750,8 @@ public class MQLQueryTest extends TestCase {
       // Checks that the rendered XML has the option with true instead of false
       xml = mqlquery2.getXML();
       assertNotNull(xml);
+      // remove the <?xml version="1.0" encoding="UTF-8"?>, it appears differently in different JVM versions
+      xml = xml.replaceAll("<\\?.*\\?>",""); //$NON-NLS-1$ //$NON-NLS-2$
       xml = xml.replaceAll("[\n\t]", ""); //$NON-NLS-1$ //$NON-NLS-2$
 
       assertFalse(data.equals(xml));
@@ -753,6 +759,8 @@ public class MQLQueryTest extends TestCase {
       // Tests that newly generated XML has the correct false flag in it.
       xml = mqlquery3.getXML();
       assertNotNull(xml);
+      // remove the <?xml version="1.0" encoding="UTF-8"?>, it appears differently in different JVM versions
+      xml = xml.replaceAll("<\\?.*\\?>",""); //$NON-NLS-1$ //$NON-NLS-2$
       xml = xml.replaceAll("[\n\t]", ""); //$NON-NLS-1$ //$NON-NLS-2$
 
       assertEquals(data, xml);
@@ -770,10 +778,12 @@ public class MQLQueryTest extends TestCase {
       fileInputStream.read(bytes);
       fileInputStream.close();
       String data = new String(bytes, Const.XML_ENCODING);
+      data = data.replaceAll("<\\?.*\\?>",""); //$NON-NLS-1$ //$NON-NLS-2$
       data = data.replaceAll("[\r\n\t]", ""); //$NON-NLS-1$ //$NON-NLS-2$
       data = data.replaceAll("<!--.*[-][-][>]", ""); //$NON-NLS-1$ //$NON-NLS-2$
       String xml = mqlquery4.getXML();
       assertNotNull(xml);
+      xml = xml.replaceAll("<\\?.*\\?>",""); //$NON-NLS-1$ //$NON-NLS-2$
       xml = xml.replaceAll("[\r\n\t]", ""); //$NON-NLS-1$ //$NON-NLS-2$
       xml = xml.replaceAll("<options><disable_distinct>false</disable_distinct></options>", ""); //$NON-NLS-1$ //$NON-NLS-2$
       assertEquals(data, xml);
