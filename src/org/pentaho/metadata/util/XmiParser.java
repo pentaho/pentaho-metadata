@@ -629,7 +629,8 @@ public class XmiParser {
                   for (OlapHierarchyLevel level : hier.getHierarchyLevels()) {
                     
                     Element hierLvlAssoc = doc.createElement("CWMOLAP:HierarchyLevelAssociation"); //$NON-NLS-1$
-                    hierLvlAssoc.setAttribute("xmi.id", idGen.getNextId()); //$NON-NLS-1$
+                    String hlaId = idGen.getNextId();
+                    hierLvlAssoc.setAttribute("xmi.id", hlaId); //$NON-NLS-1$
                     hierLvlAssoc.setAttribute("name", level.getName()); //$NON-NLS-1$
                     hierLvlAssoc.setAttribute("isAbstract", "false"); //$NON-NLS-1$  //$NON-NLS-2$
                     Element currLvl = doc.createElement("CWMOLAP:HierarchyLevelAssociation.currentLevel"); //$NON-NLS-1$
@@ -663,7 +664,7 @@ public class XmiParser {
                     
                     Element lvlHierLvlAssoc = doc.createElement("CWMOLAP:Level.hierarchyLevelAssociation"); //$NON-NLS-1$
                     Element lhla = doc.createElement("CWMOLAP:HierarchyLevelAssociation"); //$NON-NLS-1$
-                    lhla.setAttribute("xmi.idref", hierId); //$NON-NLS-1$
+                    lhla.setAttribute("xmi.idref", hlaId); //$NON-NLS-1$
                     lvlHierLvlAssoc.appendChild(lhla);
                     lvlElement.appendChild(lvlHierLvlAssoc);
                     memberSelElement.appendChild(lvlElement);
