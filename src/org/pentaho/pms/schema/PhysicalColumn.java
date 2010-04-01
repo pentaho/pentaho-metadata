@@ -16,6 +16,8 @@
  */
 package org.pentaho.pms.schema;
 
+import java.util.ArrayList;
+
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.pentaho.di.core.database.DatabaseMeta;
@@ -40,6 +42,7 @@ public class PhysicalColumn extends ConceptUtilityBase implements ConceptUtility
 		setFormula(formula);
 		setFieldType(fieldType);
 		setAggregationType(aggregationType);
+		setAggregationList(new ArrayList<AggregationSettings>());
 		setDataType(DataTypeSettings.UNKNOWN);
    this.physicalTable       = tableinfo;
 	}
