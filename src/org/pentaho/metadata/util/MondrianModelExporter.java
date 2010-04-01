@@ -104,6 +104,11 @@ public class MondrianModelExporter
                 xml.append(" name=\""); //$NON-NLS-1$
                 XMLHandler.appendReplacedChars(xml, (String)olapHierarchy.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_TABLE));
                 xml.append("\""); //$NON-NLS-1$
+                if (!StringUtils.isBlank((String)olapHierarchy.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_SCHEMA))) {
+                  xml.append(" schema=\""); //$NON-NLS-1$
+                  XMLHandler.appendReplacedChars(xml, (String)olapHierarchy.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_SCHEMA));
+                  xml.append("\""); //$NON-NLS-1$
+                }
                 xml.append("/>"); //$NON-NLS-1$
                 xml.append(Util.CR);
 
@@ -191,6 +196,11 @@ public class MondrianModelExporter
             xml.append(" name=\""); //$NON-NLS-1$
             XMLHandler.appendReplacedChars(xml, (String)olapCube.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_TABLE));
             xml.append("\""); //$NON-NLS-1$
+            if (!StringUtils.isBlank((String)olapCube.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_SCHEMA))) {
+              xml.append(" schema=\""); //$NON-NLS-1$
+              XMLHandler.appendReplacedChars(xml, (String)olapCube.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_SCHEMA));
+              xml.append("\""); //$NON-NLS-1$
+            }
             xml.append("/>").append(Util.CR); //$NON-NLS-1$
 
             //  DIMENSION USAGE
