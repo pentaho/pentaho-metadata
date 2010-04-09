@@ -44,6 +44,8 @@ import org.netbeans.api.xmi.XMIWriter;
 import org.netbeans.api.xmi.XMIWriterFactory;
 import org.netbeans.mdr.NBMDRepositoryImpl;
 import org.netbeans.mdr.persistence.btreeimpl.btreestorage.BtreeFactory;
+import org.pentaho.di.core.logging.LogChannel;
+import org.pentaho.di.core.logging.LogChannelInterface;
 import org.pentaho.di.core.logging.LogMessage;
 import org.pentaho.di.core.logging.LogWriter;
 import org.pentaho.di.core.row.RowMetaInterface;
@@ -102,8 +104,7 @@ import org.pentaho.pms.util.Const;
 @SuppressWarnings("deprecation")
 public class CWM
 {
-    public static final LogWriter log = LogWriter.getInstance();
-
+    public static final LogChannelInterface log = new LogChannel(Messages.getString("CWM.INFO_TITLE"));
     public static final String CWM = "CWM-Model-M3"; //$NON-NLS-1$
     
     public static final String PENTAHO         = "Pentaho"; //$NON-NLS-1$
@@ -403,12 +404,12 @@ public class CWM
             }
             
             if( pentahoPackage == null ) {
-            		if( autoCreate ){
-	                pentahoPackage  = (PentahoPackage) repository.createExtent(domainName, getModelPackage(PENTAHO) );
-	                log.println(new LogMessage(Messages.getString("CWM.INFO_TITLE"), Messages.getString("CWM.INFO_INSTANCED_TOP_PACKAGE"), LogWriter.LOG_LEVEL_DEBUG)); //$NON-NLS-1$ //$NON-NLS-2$
-	            } else {
-	            		throw new CWMException( Messages.getErrorString("CWM.ERROR_0004_DOMAIN_NOT_FOUND", domainName) ); //$NON-NLS-1$
-	            }
+              if( autoCreate ){
+                pentahoPackage  = (PentahoPackage) repository.createExtent(domainName, getModelPackage(PENTAHO) );
+                log.logDebug(Messages.getString("CWM.INFO_INSTANCED_TOP_PACKAGE")); //$NON-NLS-1$ //$NON-NLS-2$
+              } else {
+                throw new CWMException( Messages.getErrorString("CWM.ERROR_0004_DOMAIN_NOT_FOUND", domainName) ); //$NON-NLS-1$
+              }
             }
                         
             // The rest is just derived...
@@ -490,7 +491,7 @@ public class CWM
                     cwmPackageM3 = mdRepository.createExtent(CWM);
                     BufferedInputStream inputStream = new BufferedInputStream( xmiInputStream );
                     XMIReaderFactory.getDefault().createXMIReader().read(inputStream, null, cwmPackageM3);
-                    log.println(new LogMessage(Messages.getString("CWM.INFO_TITLE"), Messages.getString("CWM.INFO_LOADED_CWM_MODEL"), LogWriter.LOG_LEVEL_DEBUG)); //$NON-NLS-1$ //$NON-NLS-2$
+                    log.logDebug(Messages.getString("CWM.INFO_LOADED_CWM_MODEL")); //$NON-NLS-1$ //$NON-NLS-2$
                 }
 
                 return mdRepository;
@@ -970,7 +971,7 @@ public class CWM
         if (table!=null)
         {
             table.refDelete();
-            log.println(new LogMessage(Messages.getString("CWM.INFO_TITLE"), Messages.getString("CWM.INFO_REMOVED_TABLE", tableName), LogWriter.LOG_LEVEL_BASIC)); // Not working //$NON-NLS-1$ //$NON-NLS-2$
+            log.logBasic(Messages.getString("CWM.INFO_REMOVED_TABLE", tableName)); // Not working //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
     

@@ -30,13 +30,18 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.changed.ChangedFlag;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.exception.KettleXMLException;
+import org.pentaho.di.core.logging.LogChannel;
+import org.pentaho.di.core.logging.LogChannelInterface;
 import org.pentaho.di.core.logging.LogMessage;
 import org.pentaho.di.core.logging.LogWriter;
 import org.pentaho.di.core.xml.XMLHandler;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
+import org.pentaho.pms.factory.CwmSchemaFactory;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.util.Const;
 import org.w3c.dom.Document;
@@ -44,7 +49,7 @@ import org.w3c.dom.Node;
 
 @SuppressWarnings("deprecation")
 public class SecurityService extends ChangedFlag implements Cloneable {
-  
+    
   public static final int SERVICE_TYPE_ALL = 0;
 
   public static final int SERVICE_TYPE_USERS = 1;
@@ -83,16 +88,9 @@ public class SecurityService extends ChangedFlag implements Cloneable {
 
   private String filename;
   
-  LogWriter log = null;
+  LogChannelInterface log = new LogChannel(toString());
 
-  public SecurityService() {
-    try {
-      LogWriter log = LogWriter.getInstance(Const.META_EDITOR_LOG_FILE, false, LogWriter.LOG_LEVEL_BASIC);
-    } catch (KettleException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-  }
+  public SecurityService() {}
 
   public Object clone() {
     try {
@@ -270,8 +268,6 @@ public class SecurityService extends ChangedFlag implements Cloneable {
    */
   public Node getContentFromServer() throws PentahoMetadataException  {
     
-    LogWriter log = LogWriter.getInstance();
-
     String urlToUse = getURL();
     String result = null;
     int status = -1;
@@ -285,14 +281,13 @@ public class SecurityService extends ChangedFlag implements Cloneable {
     } catch (MalformedURLException e) {
     
       String msg = Messages.getString("SecurityService.ERROR_0002_INVALID_URL", urlToUse, e.getMessage()); //$NON-NLS-1$
-      log.println(new LogMessage(toString(), msg, LogWriter.LOG_LEVEL_ERROR));
-      log.println(new LogMessage(toString(), msg, LogWriter.LOG_LEVEL_ERROR), e );
+      log.logError(msg, e);
       throw new PentahoMetadataException(msg, e); 
     
     }
 
     HttpClient client = new HttpClient();
-    log.println(new LogMessage(toString(), Messages.getString("SecurityService.INFO_CONNECTING_TO_URL", urlToUse), LogWriter.LOG_LEVEL_DEBUG)); //$NON-NLS-1$
+    log.logDebug(Messages.getString("SecurityService.INFO_CONNECTING_TO_URL", urlToUse)); //$NON-NLS-1$
 
     // Assume we are using a proxy if proxyHostName is set? 
     // TODO: Mod ui to include check for enable or disable proxy; rather than rely on proxyhostname (post v1)
@@ -331,15 +326,15 @@ public class SecurityService extends ChangedFlag implements Cloneable {
     
       if (status == HttpStatus.SC_OK) {
 
-        log.println(new LogMessage(toString(), Messages.getString("SecurityService.INFO_START_READING_WEBSERVER_REPLY"), LogWriter.LOG_LEVEL_DETAILED)); //$NON-NLS-1$
+        log.logDetailed(Messages.getString("SecurityService.INFO_START_READING_WEBSERVER_REPLY")); //$NON-NLS-1$
         result = getMethod.getResponseBodyAsString();
         
-        log.println(new LogMessage(toString(), Messages.getString("SecurityService.INFO_FINISHED_READING_RESPONSE", Integer.toString(result.length())), LogWriter.LOG_LEVEL_BASIC)); //$NON-NLS-1$ 
+        log.logBasic(Messages.getString("SecurityService.INFO_FINISHED_READING_RESPONSE", Integer.toString(result.length()))); //$NON-NLS-1$ 
 
       } else if (status == HttpStatus.SC_UNAUTHORIZED) {
 
         String msg = Messages.getString("SecurityService.ERROR_0009_UNAUTHORIZED_ACCESS_TO_URL", urlToUse); //$NON-NLS-1$
-        log.println(new LogMessage(toString(), msg, LogWriter.LOG_LEVEL_ERROR)); 
+        log.logError(msg); 
         throw new PentahoMetadataException(msg);
       
       }
@@ -347,8 +342,8 @@ public class SecurityService extends ChangedFlag implements Cloneable {
     } catch (HttpException e) {
     
       String msg = Messages.getString("SecurityService.ERROR_0003_CANT_SAVE_IO_ERROR", e.getMessage()); //$NON-NLS-1$
-      log.println(new LogMessage(toString(), msg, LogWriter.LOG_LEVEL_ERROR)); 
-      log.println(new LogMessage(toString(), Const.getStackTracker(e), LogWriter.LOG_LEVEL_ERROR));
+      log.logError(msg); 
+      log.logError(Const.getStackTracker(e));
       throw new PentahoMetadataException(msg, e); 
     
     } catch (IOException e) {
@@ -372,8 +367,8 @@ public class SecurityService extends ChangedFlag implements Cloneable {
       } catch (KettleXMLException e) {
 
         String msg = Messages.getString("SecurityService.ERROR_0008_ERROR_PARSING_XML", e.getMessage()); //$NON-NLS-1$
-        log.println(new LogMessage(toString(), msg, LogWriter.LOG_LEVEL_ERROR)); 
-        log.println(new LogMessage(toString(), Const.getStackTracker(e), LogWriter.LOG_LEVEL_ERROR));
+        log.logError(msg); 
+        log.logError(Const.getStackTracker(e));
         throw new PentahoMetadataException(msg, e); 
         
       }
@@ -464,9 +459,9 @@ public class SecurityService extends ChangedFlag implements Cloneable {
             users.add(username);
         }
       } catch (PentahoMetadataException ex) {
-        log.println(new LogMessage(Messages.getString("SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML"), ex.getLocalizedMessage(), LogWriter.LOG_LEVEL_ERROR)); //$NON-NLS-1$
+        log.logError(Messages.getString("SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML"), ex); //$NON-NLS-1$
       } catch (Exception e) {
-        log.println(new LogMessage(Messages.getString("SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML"), e.getLocalizedMessage(), LogWriter.LOG_LEVEL_ERROR)); //$NON-NLS-1$
+        log.logError(Messages.getString("SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML"), e); //$NON-NLS-1$
       }
     }
     return users;
@@ -488,9 +483,9 @@ public class SecurityService extends ChangedFlag implements Cloneable {
             if (rolename!=null) roles.add(rolename);
         }
       } catch (PentahoMetadataException ex) {
-        log.println(new LogMessage(Messages.getString("SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML"), ex.getLocalizedMessage(), LogWriter.LOG_LEVEL_ERROR)); //$NON-NLS-1$
+        log.logError(Messages.getString("SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML"), ex); //$NON-NLS-1$
       } catch (Exception e) {
-        log.println(new LogMessage(Messages.getString("SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML"), e.getLocalizedMessage(), LogWriter.LOG_LEVEL_ERROR)); //$NON-NLS-1$
+        log.logError(Messages.getString("SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML"), e); //$NON-NLS-1$
       }
     }
     return roles;
@@ -513,9 +508,9 @@ public class SecurityService extends ChangedFlag implements Cloneable {
         }
         Collections.sort(acls); // sort by acl mask, from low to high
       } catch (PentahoMetadataException ex) {
-        log.println(new LogMessage(Messages.getString("SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML"), ex.getLocalizedMessage(), LogWriter.LOG_LEVEL_ERROR)); //$NON-NLS-1$
+        log.logError(Messages.getString("SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML"), ex.getLocalizedMessage()); //$NON-NLS-1$
       } catch (Exception e) {
-        log.println(new LogMessage(Messages.getString("SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML"), e.getLocalizedMessage(), LogWriter.LOG_LEVEL_ERROR)); //$NON-NLS-1$
+        log.logError(Messages.getString("SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML"), e.getLocalizedMessage()); //$NON-NLS-1$
       }
     }
     return acls;

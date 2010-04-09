@@ -23,7 +23,7 @@ import org.apache.log4j.Layout;
 import org.apache.log4j.spi.LoggingEvent;
 import org.pentaho.di.core.Const;
 import org.pentaho.di.core.logging.Log4JLayoutInterface;
-import org.pentaho.di.core.logging.Log4jMessage;
+import org.pentaho.di.core.logging.LogMessage;
 import org.pentaho.pms.messages.Messages;
 
 @SuppressWarnings("deprecation")
@@ -50,9 +50,9 @@ public class Log4jPMELayout extends Layout implements Log4JLayoutInterface
         }
 
         Object object = event.getMessage();
-        if (object instanceof Log4jMessage)
+        if (object instanceof LogMessage)
         {
-            Log4jMessage message = (Log4jMessage)object;
+          LogMessage message = (LogMessage)object;
 
             String parts[] = message.getMessage().split(Const.CR);
             for (int i=0;i<parts.length;i++)
