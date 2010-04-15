@@ -70,7 +70,7 @@ public class CsvDataReader {
       line = TextFileInput.getLine(null, reader, TextFileInputMeta.FILE_FORMAT_MIXED, stringBuilder);
       
       while(line != null && row < rowLimit) {
-        CSVTokenizer csvt = new CSVTokenizer(line, delimiter, enclosure);
+        CSVTokenizer csvt = new CSVTokenizer(line, delimiter, enclosure, false);
         List<String> rowData = new ArrayList<String>();
         int count = 0;
         
