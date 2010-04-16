@@ -32,34 +32,38 @@ public class SerializationService {
   
   public String serializeDomain(Domain domain) {
     
-    XStream xstream = new XStream(new DomDriver("UTF-8"));  //$NON-NLS-1$
+    XStream xstream = new XStream(new DomDriver());  //$NON-NLS-1$
     return xstream.toXML(domain);
   }
   
   public void serializeDomain(Domain domain, OutputStream out) {
-    XStream xstream = new XStream(new DomDriver("UTF-8"));  //$NON-NLS-1$
+    XStream xstream = new XStream(new DomDriver());  //$NON-NLS-1$
     xstream.toXML(domain, out);
   }
   
   public Domain deserializeDomain(String xml) {
     
     try{
-      XStream xstream = new XStream(new DomDriver("UTF-8"));  //$NON-NLS-1$
+      XStream xstream = new XStream(new DomDriver());  //$NON-NLS-1$
       return (Domain)xstream.fromXML(xml);
     } catch(StreamException e){
+      // try to load ASCII. This addresses sample domains being mixed with customer created ones in
+      // a different encoding.
       XStream xstream = new XStream(new DomDriver("ISO-8859-1")); //$NON-NLS-1$
       return (Domain)xstream.fromXML(xml);
     }
   }
   
-  public Domain deserializeDomain(InputStream xml) {
+  public Domain deserializeDomain(InputStream stream) {
     
     try{
-      XStream xstream = new XStream(new DomDriver("UTF-8"));  //$NON-NLS-1$
-      return (Domain)xstream.fromXML(xml);
+      XStream xstream = new XStream(new DomDriver());  //$NON-NLS-1$
+      return (Domain)xstream.fromXML(stream);
     } catch(StreamException e){
-      XStream xstream = new XStream(new DomDriver("ISO-8859-1")); //$NON-NLS-1$
-      return (Domain)xstream.fromXML(xml);
+      // try to load ASCII. This addresses sample domains being mixed with customer created ones in
+      // a different encoding.
+      XStream xstream = new XStream(new DomDriver("ISO-8859-1")); 
+      return (Domain)xstream.fromXML(stream);
     }
   }
 
