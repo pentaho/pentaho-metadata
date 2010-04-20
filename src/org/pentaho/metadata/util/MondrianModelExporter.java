@@ -88,9 +88,11 @@ public class MondrianModelExporter
                 OlapHierarchy olapHierarchy = (OlapHierarchy) olapHierarchies.get(h);
                 xml.append("    <Hierarchy"); //$NON-NLS-1$
 
-                xml.append(" allMemberName=\""); //$NON-NLS-1$
-                xml.append(olapHierarchy.getName());
-                xml.append("\""); //$NON-NLS-1$
+                if(StringUtils.isNotEmpty(olapHierarchy.getName())){
+                  xml.append(" name=\""); //$NON-NLS-1$
+                  xml.append(olapHierarchy.getName());
+                  xml.append("\""); //$NON-NLS-1$
+                }
                 
                 xml.append(" hasAll=\""); //$NON-NLS-1$
                 xml.append(olapHierarchy.isHavingAll()?"true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
