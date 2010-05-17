@@ -26,6 +26,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.xml.XMLHandler;
@@ -211,9 +212,9 @@ public class QueryXmlHelper {
     String type = paramElement.getAttribute("type"); //$NON-NLS-1$
     String defaultValue = paramElement.getAttribute("defaultValue"); //$NON-NLS-1$
     
-    if (name != null && type != null && defaultValue != null) {
+    Object defaultVal = null;
+    if (name != null && type != null && StringUtils.isNotEmpty(defaultValue)) {
       DataType dataType = DataType.valueOf(type.toUpperCase());
-      Object defaultVal = null;
       // todo: add support for additional objects
       switch(dataType) {
         case BOOLEAN:
@@ -225,9 +226,9 @@ public class QueryXmlHelper {
         default:
           defaultVal = defaultValue;  
       }
-      Parameter param = new Parameter(name, DataType.valueOf(type.toUpperCase()), defaultVal);
-      query.getParameters().add(param);
     }
+    Parameter param = new Parameter(name, DataType.valueOf(type.toUpperCase()), defaultVal);
+    query.getParameters().add(param);
   }
   
   protected void addSelectionToDocument(Document doc, Selection selection, Element selectionElement) {
