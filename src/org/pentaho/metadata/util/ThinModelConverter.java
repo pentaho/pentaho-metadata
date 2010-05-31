@@ -543,6 +543,14 @@ public class ThinModelConverter {
     } else if (database.getAccessType() == DatabaseMeta.TYPE_ACCESS_NATIVE) {
       dataSource.setType(DataSourceType.NATIVE);
     }
+    
+    // And now load the attributes...
+    if (database.getAttributes() != null) {
+      for (Object key : database.getAttributes().keySet()) {
+          dataSource.getAttributes().put((String)key, (String)database.getAttributes().get(key));
+      }
+    }
+    
     return dataSource;
   }
   
