@@ -548,15 +548,16 @@ public class DefaultSQLDialect implements SQLDialectInterface {
       query.getSecurityConstraint() != null &&
       !query.getSecurityConstraint().isContainingAggregate();
     
+    List<SQLWhereFormula> remainingFormulas = new ArrayList<SQLWhereFormula>();
     if (query.getWhereFormulas().size() > 0 || addSecurityConstraint) { 
       boolean first = true;
       
-      boolean whereFormulasRemaining = false;
       for (SQLWhereFormula whereFormula : query.getWhereFormulas()) {
         if (!usedSQLWhereFormula.contains(whereFormula)) {
-          whereFormulasRemaining = true;
+          remainingFormulas.add(whereFormula); 
         }
       }
+      boolean whereFormulasRemaining = remainingFormulas.size()>0;
 
       if (whereFormulasRemaining || addSecurityConstraint) {
         if (query.getJoins().size()==0 || query.containsOuterJoins()) {
@@ -572,18 +573,17 @@ public class DefaultSQLDialect implements SQLDialectInterface {
         sql.append("          "); //$NON-NLS-1$
         sql.append(query.getSecurityConstraint().getFormula()).append(Const.CR);
         
-        if (query.getWhereFormulas().size() > 0) {
+        if ( whereFormulasRemaining ) {
           sql.append("        ) AND ").append(Const.CR); //$NON-NLS-1$
         } else {
           sql.append("        )").append(Const.CR); //$NON-NLS-1$
         }
       }
 
-      if(query.getWhereFormulas().size() > 0 && usedSQLWhereFormula.size() < query.getWhereFormulas().size()){
+      if ( whereFormulasRemaining ){
         sql.append("        (").append(Const.CR); //$NON-NLS-1$
       
-        for (SQLWhereFormula whereFormula : query.getWhereFormulas()) {
-          if (!usedSQLWhereFormula.contains(whereFormula)) {
+        for (SQLWhereFormula whereFormula : remainingFormulas) {
             if (first) {
               if (whereFormula.getOperator().endsWith("NOT")) { //$NON-NLS-1$ 
                 sql.append("      NOT ("); //$NON-NLS-1$
@@ -602,7 +602,6 @@ public class DefaultSQLDialect implements SQLDialectInterface {
             sql.append(Const.CR);
             sql.append("          )").append(Const.CR); //$NON-NLS-1$
           }
-        }
         sql.append("        )").append(Const.CR); //$NON-NLS-1$
       }
       
@@ -914,9 +913,17 @@ public class DefaultSQLDialect implements SQLDialectInterface {
   	clause.append(joinFormula.getFormula());
   	
   	// Now see if there are any SQL where conditions that apply to either two tables...
-  	// NOTE: Don't even bother with this in the case of full outer joins.  In that case we want to delay the condition as long as possible (until outside this JOIN).
+  	// NOTE: Don't even bother with this in the case of full outer joins.  In that case we want 
+  	// to delay the condition as long as possible (until outside this JOIN).
   	//
-  	if (!joinType.equals(JoinType.FULL_OUTER_JOIN)) {
+  	// You can also force it to delay the join conditions by setting a property on the business model:
+  	// 1- Edit the business model
+  	// 2- Add new boolean property called "delay_outer_join_conditions" (no quotes)
+  	// 3- Set the value to "true" (checked)
+  	//
+  	// This will be picked up by the SQLGenerator and set in the query model.
+  	//
+  	if ( (!joinType.equals(JoinType.FULL_OUTER_JOIN)) && (!query.getDelayOuterJoinConditions())) {
 	  	for (SQLWhereFormula sqlWhereFormula : query.getWhereFormulas()) {
 	  		if (!usedSQLWhereFormula.contains(sqlWhereFormula) && !sqlWhereFormula.isContainingAggregate()) {
 	  			boolean allInvolvedAvailableHere = true;

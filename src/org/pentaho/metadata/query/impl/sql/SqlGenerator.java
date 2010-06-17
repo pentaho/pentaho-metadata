@@ -147,6 +147,8 @@ public class SqlGenerator {
       boolean genAsPreparedStatement, DatabaseMeta databaseMeta, String locale
     ) throws PentahoMetadataException {
 
+    // Boolean delayConditionOnOuterJoin = null;
+    // Object val = null;
     // FROM TABLES
     for (int i = 0; i < usedBusinessTables.size(); i++) {
       LogicalTable businessTable = usedBusinessTables.get(i);
@@ -154,6 +156,13 @@ public class SqlGenerator {
       if (businessTable.getProperty(SqlPhysicalTable.TARGET_SCHEMA) != null) {
         schemaName = databaseMeta.quoteField((String)businessTable.getProperty(SqlPhysicalTable.TARGET_SCHEMA));
       }
+      // ToDo: Allow table-level override of delaying conditions.
+      //      val = businessTable.getProperty("delay_table_outer_join_conditions");
+      //      if ( (val != null) && (val instanceof Boolean) ) {
+      //        delayConditionOnOuterJoin = (Boolean)val;
+      //      } else {
+      //        delayConditionOnOuterJoin = null;
+      //      }
       
       // this code allows subselects to drive the physical model.
       // TODO: make this key off a metadata flag vs. the 
@@ -167,8 +176,13 @@ public class SqlGenerator {
         tableName = databaseMeta.quoteField(tableName);
       }
       
+      // if (delayConditionOnOuterJoin == null) {
       query.addTable(databaseMeta.getSchemaTableCombination(schemaName, tableName),
           databaseMeta.quoteField(tableAliases.get(businessTable)));
+      // } else {
+      //  query.addTable(databaseMeta.getSchemaTableCombination(schemaName, tableName),
+      //      databaseMeta.quoteField(tableAliases.get(businessTable)), delayConditionOnOuterJoin.booleanValue());
+      // }
     }
     
     // JOIN CONDITIONS
@@ -384,6 +398,14 @@ public class SqlGenerator {
     
     SQLQueryModel query = new SQLQueryModel();
     
+    // Get settings for the query model
+    Object val = null;
+    val = model.getProperty("delay_outer_join_conditions"); //$NON-NLS-1$
+    if ( (val != null) && (val instanceof Boolean) ) {
+      query.setDelayOuterJoinConditions(((Boolean)val).booleanValue());
+    }
+    
+    
     Map<String,String> columnsMap = new HashMap<String,String>();
     
     // generate the formula objects for constraints 
@@ -468,7 +490,11 @@ public class SqlGenerator {
     }
     m.appendTail(sb);
     
-    return new MappedQuery(sb.toString(), columnsMap, selections, paramNames);
+    String sqlStr = sb.toString();
+    if (logger.isTraceEnabled()) {
+      logger.trace(sqlStr);
+    }
+    return new MappedQuery(sqlStr, columnsMap, selections, paramNames);
   }
 
   protected List<LogicalTable> getTablesInvolved (

@@ -40,6 +40,9 @@ import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.RelationshipMeta;
+import org.pentaho.pms.schema.concept.ConceptInterface;
+import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
+import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 
 /**
@@ -125,9 +128,23 @@ public class SQLGenerator {
    */
   public void generateFromAndWhere(SQLQueryModel query, List<BusinessTable> usedBusinessTables, BusinessModel model, Path path, List<WhereCondition> conditions, Map<BusinessTable, String> tableAliases, DatabaseMeta databaseMeta, String locale) throws PentahoMetadataException {
 
+    // ConceptInterface concept = null;
+    // ConceptPropertyInterface delayOuterJoin = null;
+    // Boolean delayTableConditionOnOuterJoin = null;
+    
     // FROM TABLES
     for (int i = 0; i < usedBusinessTables.size(); i++) {
       BusinessTable businessTable = usedBusinessTables.get(i);
+
+      // ToDo: Allow table-level override for outer-joins on specific tables
+      // concept = businessTable.getConcept();
+      //      delayOuterJoin = concept.getProperty("delay_table_outer_join_conditions");
+      //      if ((delayOuterJoin != null) && (delayOuterJoin.getType().equals(ConceptPropertyType.BOOLEAN) ) ) {
+      //        delayTableConditionOnOuterJoin = (Boolean)delayOuterJoin.getValue();
+      //      } else {
+      //        delayTableConditionOnOuterJoin = null;
+      //      }
+      
       String schemaName = null;
       if (businessTable.getTargetSchema() != null) {
         schemaName = databaseMeta.quoteField(businessTable.getTargetSchema());
@@ -144,8 +161,13 @@ public class SQLGenerator {
         tableName = databaseMeta.quoteField(businessTable.getTargetTable());
       }
       
+      // if (delayTableConditionOnOuterJoin == null) {
       query.addTable(databaseMeta.getSchemaTableCombination(schemaName, tableName),
           databaseMeta.quoteField(tableAliases.get(businessTable)));
+      // } else {
+      //  query.addTable(databaseMeta.getSchemaTableCombination(schemaName, tableName),
+      //      databaseMeta.quoteField(tableAliases.get(businessTable)), delayTableConditionOnOuterJoin.booleanValue());
+      // }
     }
     
     // JOIN CONDITIONS
@@ -313,6 +335,14 @@ public class SQLGenerator {
       boolean disableDistinct, 
       WhereCondition securityConstraint) throws PentahoMetadataException {
     SQLQueryModel query = new SQLQueryModel();
+    // Get settings for the query model
+    ConceptInterface concept = model.getConcept();
+    ConceptPropertyInterface delayOuterJoin = concept.getProperty("delay_outer_join_conditions");
+    if ((delayOuterJoin != null) && (delayOuterJoin.getType().equals(ConceptPropertyType.BOOLEAN) ) ) {
+      Boolean value = (Boolean)delayOuterJoin.getValue();
+      query.setDelayOuterJoinConditions(value.booleanValue());
+    }
+
     //StringBuffer sql = new StringBuffer();
     Map<String,String> columnsMap = new HashMap<String,String>();
     
@@ -367,7 +397,12 @@ public class SQLGenerator {
 
     SQLDialectInterface dialect = SQLDialectFactory.getSQLDialect(databaseMeta);
    
-    return new MappedQuery(dialect.generateSelectStatement(query), columnsMap, selections);
+    String sqlStr = dialect.generateSelectStatement(query);
+    if (logger.isTraceEnabled()) {
+      logger.trace(sqlStr);
+    }
+
+    return new MappedQuery(sqlStr, columnsMap, selections);
   }
 
   protected List<BusinessTable> getTablesInvolved(

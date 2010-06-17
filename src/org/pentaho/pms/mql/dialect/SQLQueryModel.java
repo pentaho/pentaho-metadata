@@ -28,6 +28,8 @@ import java.util.List;
  */
 public class SQLQueryModel {
   
+    private boolean delayOuterJoinConditions = false;
+  
     /**
      * defines the type of ordering available in a select statement
      */
@@ -76,12 +78,20 @@ public class SQLQueryModel {
     public static class SQLTable {
       private String tableName;
       private String alias;
+      // private boolean delayOuterJoinConditions; // defaults to false
       
       public SQLTable(String tableName, String alias) {
         this.tableName = tableName;
         this.alias = alias;
       }
       
+      // ToDo: Allow overriding condition delay at table level
+      
+      // public SQLTable(String tableName, String alias, boolean delayConditions) {
+      //  this(tableName, alias);
+      //  this.delayOuterJoinConditions = delayConditions;
+      //}
+
       /**
        * returns the table name of the sql table
        * 
@@ -98,6 +108,17 @@ public class SQLQueryModel {
       public String getAlias() {
         return alias;
       }
+
+      // ToDo: Allow overriding of condition-delay at table-level
+      
+      //      public boolean getDelayOuterJoinConditions() {
+      //        return this.delayOuterJoinConditions;
+      //      }
+      //      
+      //      public void setDelayOuterJoinConditions(boolean value) {
+      //        this.delayOuterJoinConditions = value;
+      //      }
+      
     }
     
     /**
@@ -284,6 +305,11 @@ public class SQLQueryModel {
       tables.add(new SQLTable(tableName, alias));
     }
     
+    // ToDo: Allow table-level override of condition-delay
+    //    public void addTable(String tableName, String alias, boolean delayCondition) {
+    //      tables.add(new SQLTable(tableName, alias, delayCondition));
+    //    }
+    
     /**
      * returns an uneditable list of where formulas
      * 
@@ -433,4 +459,22 @@ public class SQLQueryModel {
     	}
     	return false;
     }
+    
+    /**
+     * When set to true, forces where clause conditions to not be added to
+     * the join clause.
+     * @return true if where clause doesn't change join clauses
+     */
+    public boolean getDelayOuterJoinConditions() {
+      return this.delayOuterJoinConditions;
+    }
+    
+    /**
+     * When set to true, forces where clause conditions to not be added to
+     * the join clause.
+     */
+    public void setDelayOuterJoinConditions(boolean value) {
+      this.delayOuterJoinConditions = value;
+    }
+    
 }
