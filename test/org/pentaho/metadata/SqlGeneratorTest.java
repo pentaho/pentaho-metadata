@@ -2987,4 +2987,120 @@ public class SqlGeneratorTest {
       Assert.assertTrue(e.getMessage().indexOf("ERROR_0003") >= 0);
     }
   }
+
+  @Test
+  public void testPreProcessedQuery() {
+    try {
+
+      LogicalModel model = TestHelper.buildDefaultModel();
+      LogicalColumn bc1 = model.findLogicalColumn("bc1");
+      LogicalColumn bc2 = model.findLogicalColumn("bc2");
+      DatabaseMeta databaseMeta = new DatabaseMeta("", "HYPERSONIC", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+      databaseMeta.setQuoteAllFields(true);
+      Query query = new Query(null, model);
+      
+      query.getSelections().add(new Selection(null, bc1, null));
+      query.getSelections().add(new Selection(null, bc2, null));
+      
+      query.getConstraints().add(new Constraint(CombinationType.AND_NOT, "[bt1.bc1] > 1")); //$NON-NLS-1$
+
+      SqlGenerator generator = new TestPreSqlGenerator();
+      
+      MappedQuery mquery = generator.generateSql(query, "en_US", null, databaseMeta);
+
+      TestHelper.printOutJava(mquery.getQuery());
+      
+      TestHelper.assertEqualsIgnoreWhitespaces(
+          "SELECT DISTINCT \n" + 
+          "          \"bt1\".\"pc1\" AS \"COL0\"\n" + 
+          "         ,\"bt2\".\"pc2\" AS \"COL1\"\n" + 
+          "FROM \n" + 
+          "          \"pt1\" \"bt1\"\n" + 
+          "         ,\"pt2\" \"bt2\"\n" + 
+          "WHERE \n" + 
+          "          ( \"bt1\".\"pc1\" = \"bt2\".\"pc2\" )\n" + 
+          "      AND \n" + 
+          "        (\n" + 
+          "      NOT (\n" + 
+          "              \"bt1\".\"pc1\"  > 1\n" + 
+          "          )\n" + 
+          "      AND NOT (\n" + 
+          "              \"bt1\".\"pc1\"  < 1\n" + 
+          "          )\n" + 
+          "        )\n"
+          ,
+          mquery.getQuery()
+          );
+
+      
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.fail();
+    }
+  }
+
+  @Test
+  public void testPostProcessedQuery() {
+    try {
+
+      LogicalModel model = TestHelper.buildDefaultModel();
+      LogicalColumn bc1 = model.findLogicalColumn("bc1");
+      LogicalColumn bc2 = model.findLogicalColumn("bc2");
+      DatabaseMeta databaseMeta = new DatabaseMeta("", "HYPERSONIC", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+      databaseMeta.setQuoteAllFields(true);
+      Query query = new Query(null, model);
+      
+      query.getSelections().add(new Selection(null, bc1, null));
+      query.getSelections().add(new Selection(null, bc2, null));
+      
+      query.getConstraints().add(new Constraint(CombinationType.AND_NOT, "[bt1.bc1] > 1")); //$NON-NLS-1$
+
+      SqlGenerator generator = new TestPostSqlGenerator();
+      
+      MappedQuery mquery = generator.generateSql(query, "en_US", null, databaseMeta);
+
+      Assert.assertEquals("Totally bogus", mquery.getQuery());
+
+      TestHelper.printOutJava(mquery.getQuery());
+      
+      
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.fail();
+    }
+  }
+
+  public static class TestPreSqlGenerator extends SqlGenerator {
+    
+    @Override
+    protected void preprocessQueryModel(SQLQueryModel query, List<Selection> selections,
+        Map<LogicalTable, String> tableAliases, DatabaseMeta databaseMeta) {
+      
+      query.addWhereFormula(" \"bt1\".\"pc1\"  < 1", "AND NOT");
+
+      super.preprocessQueryModel(query, selections, tableAliases, databaseMeta);
+    }
+
+
+  }
+
+  public static class TestPostSqlGenerator extends SqlGenerator {
+
+    @Override
+    protected String processGeneratedSql(String sql) {
+      sql = "Totally bogus";
+      return super.processGeneratedSql(sql);
+    }
+    
+
+  }
+
+
+
+
+
+
+
+
+
 }

@@ -441,12 +441,14 @@ public class SqlGenerator {
       }
     }
 
+    Map<LogicalTable, String> tableAliases = null; 
+
     if (usedBusinessTables.size() > 0) {
 
       // generate tableAliases mapping
       
       int maxAliasNameWidth = SQLDialectFactory.getSQLDialect(databaseMeta).getMaxTableNameLength();
-      Map<LogicalTable, String> tableAliases = new HashMap<LogicalTable, String>();
+      tableAliases = new HashMap<LogicalTable, String>();
       for (LogicalTable table : usedBusinessTables) {
         String uniqueAlias = generateUniqueAlias(table.getId(), maxAliasNameWidth, tableAliases.values());
         tableAliases.put(table, uniqueAlias);
@@ -473,6 +475,9 @@ public class SqlGenerator {
       }
     }
     
+    // this is available to classes that override sql generation behavior
+    preprocessQueryModel( query, selections, tableAliases, databaseMeta);
+
     // Convert temporary param placements with Sql Prepared Statement ? values
     SQLDialectInterface dialect = SQLDialectFactory.getSQLDialect(databaseMeta);
     List<String> paramNames = null;
@@ -494,9 +499,31 @@ public class SqlGenerator {
     if (logger.isTraceEnabled()) {
       logger.trace(sqlStr);
     }
-    return new MappedQuery(sqlStr, columnsMap, selections, paramNames);
+    // this is available to classes that override sql generation behavior
+    String sqlOutput = processGeneratedSql(sb.toString());
+    
+    return new MappedQuery(sqlOutput, columnsMap, selections, paramNames);
   }
 
+  /**
+   * Before SQL has been generated, allow extenders the ability to override the query model
+   * 
+   * @param query 
+   */
+  protected void preprocessQueryModel(SQLQueryModel query,List<Selection> selections,Map<LogicalTable, String> tableAliases,DatabaseMeta databaseMeta) {
+  }
+
+  /**
+   * After SQL has been generated, allow extenders the ability to override the sql output
+   * 
+   * @param sql generated sql
+   * 
+   * @return processed sql
+   */
+  protected String processGeneratedSql(String sql) {
+    return sql;
+  }
+  
   protected List<LogicalTable> getTablesInvolved (
       LogicalModel model, 
       List<Selection> selections, 
