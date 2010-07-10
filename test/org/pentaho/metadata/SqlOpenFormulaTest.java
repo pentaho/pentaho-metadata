@@ -427,13 +427,16 @@ public class SqlOpenFormulaTest {
 
     handleFormula(getOrdersModel(), "MSSQL", //$NON-NLS-1$ 
         "TRUE()" //$NON-NLS-1$
-        ,"1" //$NON-NLS-1$
+        ,"(1=1)" //$NON-NLS-1$
       );
     handleFormula(getOrdersModel(), "MSSQL", //$NON-NLS-1$ 
         "FALSE()" //$NON-NLS-1$
-        ,"0" //$NON-NLS-1$
+        ,"(0=1)" //$NON-NLS-1$
       );
-    
+    handleFormula(getOrdersModel(), "MSSQL", //$NON-NLS-1$ 
+        "OR(TRUE();FALSE())" //$NON-NLS-1$
+        ,"(1=1) OR (0=1)" //$NON-NLS-1$
+      );
     handleFormula(getOrdersModel(), "MSAccess", //$NON-NLS-1$ 
         "TRUE()" //$NON-NLS-1$
         ,"TRUE" //$NON-NLS-1$

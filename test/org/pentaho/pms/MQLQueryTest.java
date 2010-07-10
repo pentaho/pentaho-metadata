@@ -294,11 +294,11 @@ public class MQLQueryTest extends TestCase {
 
     handleFormula(ordersModel, "MSSQL", //$NON-NLS-1$ 
         "TRUE()" //$NON-NLS-1$
-        ,"1" //$NON-NLS-1$
+        ,"(1=1)" //$NON-NLS-1$
       );
     handleFormula(ordersModel, "MSSQL", //$NON-NLS-1$ 
         "FALSE()" //$NON-NLS-1$
-        ,"0" //$NON-NLS-1$
+        ,"(0=1)" //$NON-NLS-1$
       );
     
     handleFormula(ordersModel, "MSAccess", //$NON-NLS-1$ 
