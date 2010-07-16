@@ -16,12 +16,13 @@
  */
 package org.pentaho.metadata.model.olap;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.metadata.model.LogicalTable;
 
-public class OlapCube implements Cloneable {
+public class OlapCube implements Cloneable, Serializable {
   private String name;
   private LogicalTable logicalTable;
 

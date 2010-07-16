@@ -16,12 +16,13 @@
  */
 package org.pentaho.metadata.model.olap;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.metadata.model.LogicalColumn;
 
-public class OlapHierarchyLevel implements Cloneable {
+public class OlapHierarchyLevel implements Cloneable, Serializable {
   private String name;
   private LogicalColumn referenceColumn; // Also has the logical table
                                          // of-course.
@@ -29,6 +30,10 @@ public class OlapHierarchyLevel implements Cloneable {
   private boolean havingUniqueMembers;
 
   private OlapHierarchy olapHierarchy;
+
+  public OlapHierarchyLevel(){
+    
+  }
 
   public OlapHierarchyLevel(OlapHierarchy olapHierarchy) {
     super();

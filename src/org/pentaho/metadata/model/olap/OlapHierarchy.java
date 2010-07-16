@@ -16,13 +16,14 @@
  */
 package org.pentaho.metadata.model.olap;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalTable;
 
-public class OlapHierarchy implements Cloneable {
+public class OlapHierarchy implements Cloneable, Serializable {
   private String name;
   private LogicalTable logicalTable;
   private LogicalColumn primaryKey;
@@ -37,6 +38,10 @@ public class OlapHierarchy implements Cloneable {
   // TODO: add allLevelName property
   // http://mondrian.pentaho.org/documentation/schema.php#The_all_member
   // 
+
+  public OlapHierarchy(){
+    
+  }
 
   public OlapHierarchy(OlapDimension olapDimension) {
     super();

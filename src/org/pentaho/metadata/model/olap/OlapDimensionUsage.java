@@ -16,7 +16,9 @@
  */
 package org.pentaho.metadata.model.olap;
 
-public class OlapDimensionUsage implements Cloneable {
+import java.io.Serializable;
+
+public class OlapDimensionUsage implements Cloneable, Serializable {
   private String name;
   private OlapDimension olapDimension;
 
