@@ -39,6 +39,7 @@ import org.pentaho.metadata.model.concept.security.Security;
 import org.pentaho.metadata.model.concept.security.SecurityOwner;
 import org.pentaho.metadata.model.concept.security.SecurityOwner.OwnerType;
 import org.pentaho.metadata.model.concept.types.*;
+import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.pms.util.Settings;
 
 public class SQLModelGenerator {
@@ -172,6 +173,7 @@ public class SQLModelGenerator {
             LogicalColumn logicalColumn = new LogicalColumn();
             String columnID = Settings.getBusinessColumnIDPrefix();
             logicalColumn.setId(columnID + columnHeader[i]);
+            logicalColumn.setAggregationType(AggregationType.NONE);
 
             // the default name of the logical column.
             // this inherits from the physical column.
