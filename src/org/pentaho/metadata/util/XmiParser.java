@@ -1525,6 +1525,8 @@ public class XmiParser {
             // NOTE: URL is not compatible with GWT at this time
             URL url = new URL(body);
             concept.setProperty(name, url);
+          } else if(propType.equals("TargetTableType")){
+            concept.setProperty(name, TargetTableType.valueOf(body));
           } else {
             logger.error(Messages.getErrorString("XmiParser.ERROR_0008_FAILED_TO_CONVERT_PROPERTY", propType, concept.getId() )); //$NON-NLS-1$
           }
