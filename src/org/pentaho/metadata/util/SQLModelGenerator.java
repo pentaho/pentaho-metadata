@@ -167,11 +167,6 @@ public class SQLModelGenerator {
             column.setDataType(converDataType(columnType[i]));
             String physicalColumnID = Settings.getPhysicalColumnIDPrefix() + "_" + columnHeader[i]; //$NON-NLS-1$
             column.setId(physicalColumnID);
-            if(column.getDataType() == DataType.NUMERIC){
-              column.setAggregationType(AggregationType.SUM);
-            } else {
-              column.setAggregationType(AggregationType.COUNT);
-            }
             table.getPhysicalColumns().add(column);
 
             LogicalColumn logicalColumn = new LogicalColumn();
