@@ -38,10 +38,7 @@ import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.security.Security;
 import org.pentaho.metadata.model.concept.security.SecurityOwner;
 import org.pentaho.metadata.model.concept.security.SecurityOwner.OwnerType;
-import org.pentaho.metadata.model.concept.types.DataType;
-import org.pentaho.metadata.model.concept.types.LocaleType;
-import org.pentaho.metadata.model.concept.types.LocalizedString;
-import org.pentaho.metadata.model.concept.types.TargetTableType;
+import org.pentaho.metadata.model.concept.types.*;
 import org.pentaho.pms.util.Settings;
 
 public class SQLModelGenerator {
@@ -65,6 +62,8 @@ public class SQLModelGenerator {
 
   String createdBy;
 
+  String dbType;
+
   public SQLModelGenerator() {
     super();
     if (!Props.isInitialized()) {
@@ -72,7 +71,7 @@ public class SQLModelGenerator {
     }
   }
 
-  public SQLModelGenerator(String modelName, String connectionName, int[] columnTypes, String[] columnNames, String query,
+  public SQLModelGenerator(String modelName, String connectionName, String dbType, int[] columnTypes, String[] columnNames, String query,
       Boolean securityEnabled, List<String> users, List<String> roles, int defaultAcls, String createdBy) {
     if (!Props.isInitialized()) {
       Props.init(Props.TYPE_PROPERTIES_EMPTY);
@@ -87,6 +86,7 @@ public class SQLModelGenerator {
     this.roles = roles;
     this.defaultAcls = defaultAcls;
     this.createdBy = createdBy;
+    this.dbType = dbType;
   }
 
   public String getModelName() {
@@ -128,8 +128,11 @@ public class SQLModelGenerator {
         SqlDataSource dataSource = new SqlDataSource();
         dataSource.getAttributes().put("QUOTE_ALL_FIELDS", "Y"); //$NON-NLS-1$ //$NON-NLS-2$
         dataSource.setType(DataSourceType.JNDI);
+        dataSource.setDialectType(dbType);
+
         dataSource.setDatabaseName(connectionName);
         model.setDatasource(dataSource);
+
         SqlPhysicalTable table = new SqlPhysicalTable(model);
         table.setId("INLINE_SQL_1"); //$NON-NLS-1$
         model.getPhysicalTables().add(table);
@@ -164,6 +167,11 @@ public class SQLModelGenerator {
             column.setDataType(converDataType(columnType[i]));
             String physicalColumnID = Settings.getPhysicalColumnIDPrefix() + "_" + columnHeader[i]; //$NON-NLS-1$
             column.setId(physicalColumnID);
+            if(column.getDataType() == DataType.NUMERIC){
+              column.setAggregationType(AggregationType.SUM);
+            } else {
+              column.setAggregationType(AggregationType.COUNT);
+            }
             table.getPhysicalColumns().add(column);
 
             LogicalColumn logicalColumn = new LogicalColumn();
