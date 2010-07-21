@@ -266,7 +266,7 @@ public class SQLModelGeneratorTest {
       } catch (SQLException e) {
       }
     }
-    SQLModelGenerator generator = new SQLModelGenerator("newdatasource", "SampleData", columnTypes, columnHeaders, query, securityEnabled, users, roles, defaultAcls, createdBy);
+    SQLModelGenerator generator = new SQLModelGenerator("newdatasource", "SampleData", "Hypersonic", columnTypes, columnHeaders, query, securityEnabled, users, roles, defaultAcls, createdBy);
     return generator.generate(); 
   }
 
