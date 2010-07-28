@@ -29,6 +29,7 @@ import org.pentaho.metadata.model.SqlPhysicalColumn;
 import org.pentaho.metadata.model.SqlPhysicalTable;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
+import org.pentaho.metadata.model.concept.types.TargetTableType;
 import org.pentaho.metadata.model.olap.OlapCube;
 import org.pentaho.metadata.model.olap.OlapDimension;
 import org.pentaho.metadata.model.olap.OlapDimensionUsage;
@@ -108,18 +109,26 @@ public class MondrianModelExporter
                 }
                 xml.append(">"); //$NON-NLS-1$
                 xml.append(Util.CR);
-                
-                xml.append("      <Table"); //$NON-NLS-1$
-                xml.append(" name=\""); //$NON-NLS-1$
-                XMLHandler.appendReplacedChars(xml, (String)olapHierarchy.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_TABLE));
-                xml.append("\""); //$NON-NLS-1$
-                if (!StringUtils.isBlank((String)olapHierarchy.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_SCHEMA))) {
-                  xml.append(" schema=\""); //$NON-NLS-1$
-                  XMLHandler.appendReplacedChars(xml, (String)olapHierarchy.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_SCHEMA));
+
+                if (olapHierarchy.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_TABLE_TYPE) == TargetTableType.INLINE_SQL) {
+                  xml.append("    <View alias=\"FACT\">").append(Util.CR);
+                  xml.append("        <SQL dialect=\"generic\">").append(Util.CR);
+                  xml.append("         <![CDATA["+ olapHierarchy.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_TABLE) + "]]>").append(Util.CR);
+                  xml.append("        </SQL>").append(Util.CR);
+                  xml.append("    </View>").append(Util.CR);
+                } else {
+                  xml.append("      <Table"); //$NON-NLS-1$
+                  xml.append(" name=\""); //$NON-NLS-1$
+                  XMLHandler.appendReplacedChars(xml, (String)olapHierarchy.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_TABLE));
                   xml.append("\""); //$NON-NLS-1$
+                  if (!StringUtils.isBlank((String)olapHierarchy.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_SCHEMA))) {
+                    xml.append(" schema=\""); //$NON-NLS-1$
+                    XMLHandler.appendReplacedChars(xml, (String)olapHierarchy.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_SCHEMA));
+                    xml.append("\""); //$NON-NLS-1$
+                  }
+                  xml.append("/>"); //$NON-NLS-1$
+                  xml.append(Util.CR);
                 }
-                xml.append("/>"); //$NON-NLS-1$
-                xml.append(Util.CR);
 
                 List hierarchyLevels = olapHierarchy.getHierarchyLevels();
                 for (int hl=0;hl<hierarchyLevels.size();hl++)
@@ -200,17 +209,24 @@ public class MondrianModelExporter
             xml.append("\""); //$NON-NLS-1$
             xml.append(">").append(Util.CR); //$NON-NLS-1$
 
-            xml.append("    <Table"); //$NON-NLS-1$
-            
-            xml.append(" name=\""); //$NON-NLS-1$
-            XMLHandler.appendReplacedChars(xml, (String)olapCube.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_TABLE));
-            xml.append("\""); //$NON-NLS-1$
-            if (!StringUtils.isBlank((String)olapCube.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_SCHEMA))) {
-              xml.append(" schema=\""); //$NON-NLS-1$
-              XMLHandler.appendReplacedChars(xml, (String)olapCube.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_SCHEMA));
+            if (olapCube.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_TABLE_TYPE) == TargetTableType.INLINE_SQL) {
+              xml.append("    <View alias=\"FACT\">").append(Util.CR);
+              xml.append("        <SQL dialect=\"generic\">").append(Util.CR);
+              xml.append("         <![CDATA["+ olapCube.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_TABLE) + "]]>").append(Util.CR);
+              xml.append("        </SQL>").append(Util.CR);
+              xml.append("    </View>").append(Util.CR);
+            } else {
+              xml.append("    <Table"); //$NON-NLS-1$
+              xml.append(" name=\""); //$NON-NLS-1$
+              XMLHandler.appendReplacedChars(xml, (String)olapCube.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_TABLE));
               xml.append("\""); //$NON-NLS-1$
+              if (!StringUtils.isBlank((String)olapCube.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_SCHEMA))) {
+                xml.append(" schema=\""); //$NON-NLS-1$
+                XMLHandler.appendReplacedChars(xml, (String)olapCube.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_SCHEMA));
+                xml.append("\""); //$NON-NLS-1$
+              }
+              xml.append("/>").append(Util.CR); //$NON-NLS-1$
             }
-            xml.append("/>").append(Util.CR); //$NON-NLS-1$
 
             //  DIMENSION USAGE
             //
