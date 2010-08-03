@@ -44,9 +44,9 @@ import org.pentaho.pms.util.Settings;
 
 public class SQLModelGenerator {
   String modelName;
-  
+
   int[] columnTypes;
-  
+
   String[] columnNames;
 
   String query;
@@ -72,7 +72,7 @@ public class SQLModelGenerator {
     }
   }
 
-  public SQLModelGenerator(String modelName, String connectionName, String dbType, int[] columnTypes, String[] columnNames, String query,
+  public SQLModelGenerator(String modelName, String connectionName, int[] columnTypes, String[] columnNames, String query,
       Boolean securityEnabled, List<String> users, List<String> roles, int defaultAcls, String createdBy) {
     if (!Props.isInitialized()) {
       Props.init(Props.TYPE_PROPERTIES_EMPTY);
@@ -80,13 +80,18 @@ public class SQLModelGenerator {
     this.query = query;
     this.connectionName = connectionName;
     this.columnTypes = columnTypes;
-    this.columnNames = columnNames;    
+    this.columnNames = columnNames;
     this.modelName = modelName;
     this.securityEnabled = securityEnabled;
     this.users = users;
     this.roles = roles;
     this.defaultAcls = defaultAcls;
     this.createdBy = createdBy;
+  }
+
+  public SQLModelGenerator(String modelName, String connectionName, String dbType, int[] columnTypes, String[] columnNames, String query,
+      Boolean securityEnabled, List<String> users, List<String> roles, int defaultAcls, String createdBy) {
+    this(modelName, connectionName, columnTypes, columnNames, query, securityEnabled, users, roles, defaultAcls, createdBy);
     this.dbType = dbType;
   }
 
@@ -107,7 +112,7 @@ public class SQLModelGenerator {
   }
 
   private boolean validate() {
-    return !StringUtils.isEmpty(this.modelName) && !StringUtils.isEmpty(this.query) 
+    return !StringUtils.isEmpty(this.modelName) && !StringUtils.isEmpty(this.query)
     && this.columnTypes != null && columnTypes.length > 0 && this.columnNames != null && columnNames.length > 0;
   }
 
@@ -129,7 +134,9 @@ public class SQLModelGenerator {
         SqlDataSource dataSource = new SqlDataSource();
         dataSource.getAttributes().put("QUOTE_ALL_FIELDS", "Y"); //$NON-NLS-1$ //$NON-NLS-2$
         dataSource.setType(DataSourceType.JNDI);
-        dataSource.setDialectType(dbType);
+        if(dbType != null){
+          dataSource.setDialectType(dbType);
+        }
 
         dataSource.setDatabaseName(connectionName);
         model.setDatasource(dataSource);
@@ -233,21 +240,21 @@ public class SQLModelGenerator {
     case Types.INTEGER:
     case Types.NUMERIC:
       return DataType.NUMERIC;
-    
+
     case Types.BINARY:
       return DataType.BINARY;
 
     case Types.BOOLEAN:
       return DataType.BOOLEAN;
-    
+
     case Types.DATE:
       return DataType.DATE;
-    
-    case Types.TIMESTAMP:  
+
+    case Types.TIMESTAMP:
       return DataType.DATE;
-    
+
     case Types.LONGVARCHAR:
-    
+
     case Types.VARCHAR:
       return DataType.STRING;
 
@@ -255,7 +262,7 @@ public class SQLModelGenerator {
       return DataType.UNKNOWN;
     }
   }
-  
+
   public void setSecurityEnabled(Boolean securityEnabled) {
     this.securityEnabled = securityEnabled;
   }
@@ -307,7 +314,7 @@ public class SQLModelGenerator {
   public Boolean getSecurityEnabled() {
     return securityEnabled;
   }
-  
+
   public int[] getColumnTypes() {
     return columnTypes;
   }
