@@ -45,6 +45,7 @@ public class SQLDialectFactory {
     addDialect(new PostgreSQLDialect());
     addDialect(new MySQLDialect());
     addDialect(new MSAccessDialect());
+    addDialect(new HiveDialect());
   }
   
   private void addDialect(SQLDialectInterface dialect) {
