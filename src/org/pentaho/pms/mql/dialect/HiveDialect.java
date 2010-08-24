@@ -30,7 +30,7 @@ public class HiveDialect extends DefaultSQLDialect {
   private final Pattern INVALID_JOIN_OPERATORS = Pattern.compile("[!]|[>]|[<]|is null|is not null"); //$NON-NLS-1$
 
   public HiveDialect() {
-    super("HADOOP HIVE"); //$NON-NLS-1$
+    super("HIVE"); //$NON-NLS-1$
   }
 
   /**

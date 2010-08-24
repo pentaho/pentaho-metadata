@@ -2,13 +2,17 @@ package org.pentaho.pms.mql.dialect;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.pentaho.di.core.KettleEnvironment;
+import org.pentaho.di.core.database.DatabaseInterface;
+import org.pentaho.di.core.database.HiveDatabaseMeta;
 import org.pentaho.di.core.exception.KettleException;
+import org.pentaho.metadata.util.DatabaseMetaUtil;
 
 /**
  * Tests the Hive Dialect to ensure joins are handled appropriately.
@@ -204,5 +208,13 @@ public class HiveDialectTest {
       assertTrue("Expected exception [HiveDialect.ERROR_0002] but received: " + ex.getMessage(), //$NON-NLS-1$
           ex.getMessage().contains("HiveDialect.ERROR_0002")); //$NON-NLS-1$
     }
+  }
+
+  @Test
+  public void lookupViaDatabaseMetaUtil() {
+	  // Verify the Database Product Name from the Hive JDBC Driver resolves to the correct database interface
+	  DatabaseInterface di = DatabaseMetaUtil.getDatabaseInterface("Hive"); //$NON_NLS-1$
+	  assertNotNull(di);
+	  assertTrue(di instanceof HiveDatabaseMeta);
   }
 }
