@@ -203,15 +203,15 @@ public class AdvancedSQLGenerator extends SQLGenerator {
       // later in the resultset metadata. 
       String alias = null;
       if(columnsMap != null){
+        alias = databaseMeta.generateColumnAlias(i, selection.getBusinessColumn().getId());
         if (selection.getBusinessColumn() != null && selection.getAlias().equals(DEFAULT_ALIAS)) {
           
           // BIG TODO: map bizcol correctly
-          
-          columnsMap.put("COL" + i, selection.getBusinessColumn().getId()); //$NON-NLS-1$
+          columnsMap.put(alias, selection.getBusinessColumn().getId());
         } else {
-          columnsMap.put("COL" + i, "CUSTOM_" +  i);
+          columnsMap.put(alias, "CUSTOM_" +  i);
         }
-        alias = databaseMeta.quoteField("COL" + Integer.toString(i)); //$NON-NLS-1$
+        alias = databaseMeta.quoteField(alias); //$NON-NLS-1$
       }else{
         alias = databaseMeta.quoteField(selection.getBusinessColumn().getId());
       }
