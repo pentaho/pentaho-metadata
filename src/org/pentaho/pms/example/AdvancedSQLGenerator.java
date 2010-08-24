@@ -203,14 +203,16 @@ public class AdvancedSQLGenerator extends SQLGenerator {
       // later in the resultset metadata. 
       String alias = null;
       if(columnsMap != null){
-        alias = databaseMeta.generateColumnAlias(i, selection.getBusinessColumn().getId());
+        String suggestedName;
         if (selection.getBusinessColumn() != null && selection.getAlias().equals(DEFAULT_ALIAS)) {
           
           // BIG TODO: map bizcol correctly
-          columnsMap.put(alias, selection.getBusinessColumn().getId());
+          suggestedName = selection.getBusinessColumn().getId();
         } else {
-          columnsMap.put(alias, "CUSTOM_" +  i);
+          suggestedName = "CUSTOM_" +  i;
         }
+        alias = databaseMeta.generateColumnAlias(i, suggestedName);
+        columnsMap.put(alias, suggestedName);
         alias = databaseMeta.quoteField(alias); //$NON-NLS-1$
       }else{
         alias = databaseMeta.quoteField(selection.getBusinessColumn().getId());
