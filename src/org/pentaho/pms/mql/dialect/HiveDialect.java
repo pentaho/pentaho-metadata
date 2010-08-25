@@ -127,8 +127,8 @@ public class HiveDialect extends DefaultSQLDialect {
     while (iter.hasNext()) {
       // Hive does not support more than one table reference.  When more than one table is 
       // used we must explicitly join it.
-      sql.append("     JOIN "); //$NON-NLS-1$
-      appendTableAndAlias(sql, table);
+      sql.append(Const.CR).append("     JOIN "); //$NON-NLS-1$
+      appendTableAndAlias(sql, iter.next());
     }
     sql.append(Const.CR);
     return sql.toString();
@@ -172,9 +172,7 @@ public class HiveDialect extends DefaultSQLDialect {
           getTableAndAlias(join.getRightTablename(), join.getRightTableAlias()))));
     }
     // Add any joins that have where conditions that cannot be put into the ON clause because of Hive's join syntax
-    if (!joinsForWhereClause.isEmpty()) {
-      generateInnerJoinWhereConditions(query, sql, joinsForWhereClause);
-    }
+    generateInnerJoinWhereConditions(query, sql, joinsForWhereClause);
     return sql.toString();
   }
 

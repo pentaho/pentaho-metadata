@@ -69,12 +69,58 @@ public class HiveDialectTest {
   }
 
   @Test
+  public void simpleQuery_not_distinct() {
+    SQLQueryModel query = new SQLQueryModel();
+    query.setDistinct(false);
+    query.addSelection("a", null); //$NON-NLS-1$
+    query.addTable("TABLE", null); //$NON-NLS-1$
+
+    String expected = "SELECT \n          a\nFROM \n          TABLE\n"; //$NON-NLS-1$
+
+    SQLDialectInterface dialect = new HiveDialect();
+    String result = dialect.generateSelectStatement(query);
+
+    assertEquals(expected, result);
+  }
+
+  @Test
+  public void simpleQuery_multiple_selects() {
+    SQLQueryModel query = new SQLQueryModel();
+    query.addSelection("a", null); //$NON-NLS-1$
+    query.addSelection("b", null); //$NON-NLS-1$
+    query.addTable("TABLE", null); //$NON-NLS-1$
+
+    String expected = "SELECT DISTINCT \n          a\n         ,b\nFROM \n          TABLE\n"; //$NON-NLS-1$
+
+    SQLDialectInterface dialect = new HiveDialect();
+    String result = dialect.generateSelectStatement(query);
+
+    assertEquals(expected, result);
+  }
+
+  @Test
   public void simpleQuery_with_aliases() {
     SQLQueryModel query = new SQLQueryModel();
     query.addSelection("a", "alias"); //$NON-NLS-1$ //$NON-NLS-2$
     query.addTable("TABLE", "t"); //$NON-NLS-1$ //$NON-NLS-2$
     // Column aliases are currently not supported
     String expected = "SELECT DISTINCT \n          a\nFROM \n          TABLE t\n"; //$NON-NLS-1$
+
+    SQLDialectInterface dialect = new HiveDialect();
+    String result = dialect.generateSelectStatement(query);
+
+    assertEquals(expected, result);
+  }
+
+  @Test
+  public void simpleQuery_multiple_tables() {
+    SQLQueryModel query = new SQLQueryModel();
+    query.addSelection("a", null); //$NON-NLS-1$
+    query.addSelection("b", null); //$NON-NLS-1$
+    query.addTable("TABLE", null); //$NON-NLS-1$
+    query.addTable("TABLE2", null); //$NON-NLS-1$
+
+    String expected = "SELECT DISTINCT \n          a\n         ,b\nFROM \n          TABLE\n     JOIN TABLE2\n"; //$NON-NLS-1$
 
     SQLDialectInterface dialect = new HiveDialect();
     String result = dialect.generateSelectStatement(query);
@@ -125,6 +171,18 @@ public class HiveDialectTest {
     query.addJoin("A", null, "B", null, JoinType.INNER_JOIN, "A.b = B.id", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     query.addJoin("B", null, "C", null, JoinType.INNER_JOIN, "B.c = C.id", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     String expected = "SELECT DISTINCT \n          id\nFROM \n          A\n          JOIN B ON ( A.b = B.id )\n          JOIN C ON ( B.c = C.id )\n"; //$NON-NLS-1$
+    SQLDialectInterface dialect = new HiveDialect();
+    String result = dialect.generateSelectStatement(query);
+    assertEquals(expected, result);
+  }
+
+  @Test
+  public void innerJoin_double_inequalities() {
+    SQLQueryModel query = new SQLQueryModel();
+    query.addSelection("id", null); //$NON-NLS-1$
+    query.addJoin("A", null, "B", null, JoinType.INNER_JOIN, "A.b > B.id", "1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    query.addJoin("B", null, "C", null, JoinType.INNER_JOIN, "B.c > C.id", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    String expected = "SELECT DISTINCT \n          id\nFROM \n          A\n          JOIN B\n          JOIN C\nWHERE\n          ( A.b > B.id )\n      AND ( B.c > C.id )\n"; //$NON-NLS-1$
     SQLDialectInterface dialect = new HiveDialect();
     String result = dialect.generateSelectStatement(query);
     assertEquals(expected, result);
@@ -230,18 +288,6 @@ public class HiveDialectTest {
     DatabaseInterface di = DatabaseMetaUtil.getDatabaseInterface("Hive"); //$NON-NLS-1$
     assertNotNull(di);
     assertTrue(di instanceof HiveDatabaseMeta);
-  }
-
-  @Test
-  public void multipleJoinsWithInvalidOnClauseConditions() {
-    SQLQueryModel query = new SQLQueryModel();
-    query.addSelection("id", null); //$NON-NLS-1$
-    query.addJoin("A", null, "B", null, JoinType.INNER_JOIN, "A.b > B.id", "1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-    query.addJoin("B", null, "C", null, JoinType.INNER_JOIN, "B.c > C.id", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    String expected = "SELECT DISTINCT \n          id\nFROM \n          A\n          JOIN B\n          JOIN C\nWHERE\n          ( A.b > B.id )\n      AND ( B.c > C.id )\n"; //$NON-NLS-1$
-    SQLDialectInterface dialect = new HiveDialect();
-    String result = dialect.generateSelectStatement(query);
-    assertEquals(expected, result);
   }
 
   @Test
