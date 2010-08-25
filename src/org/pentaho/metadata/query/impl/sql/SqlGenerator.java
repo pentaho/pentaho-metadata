@@ -116,8 +116,9 @@ public class SqlGenerator {
       // later in the resultset metadata. 
       String alias = null;
       if(columnsMap != null){
-        columnsMap.put("COL" + Integer.toString(i), selections.get(i).getLogicalColumn().getId()); //$NON-NLS-1$
-        alias = databaseMeta.quoteField("COL" + Integer.toString(i)); //$NON-NLS-1$
+        alias = databaseMeta.generateColumnAlias(i, selections.get(i).getLogicalColumn().getId());
+        columnsMap.put(alias, selections.get(i).getLogicalColumn().getId());
+        alias = databaseMeta.quoteField(alias);
       }else{
         alias = databaseMeta.quoteField(selections.get(i).getLogicalColumn().getId());
       }

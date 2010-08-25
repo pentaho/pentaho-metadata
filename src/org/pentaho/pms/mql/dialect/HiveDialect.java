@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.pentaho.metadata.messages.Messages;
+import org.pentaho.pms.mql.dialect.SQLQueryModel.SQLSelection;
 import org.pentaho.pms.mql.dialect.SQLQueryModel.SQLTable;
 import org.pentaho.pms.mql.dialect.SQLQueryModel.SQLWhereFormula;
 import org.pentaho.pms.util.Const;
@@ -67,6 +68,31 @@ public class HiveDialect extends DefaultSQLDialect {
   @Override
   protected List<SQLWhereFormula> generateOuterJoin(SQLQueryModel query, StringBuilder sql) {
     throw new RuntimeException(Messages.getErrorString("HiveDialect.ERROR_0001_OUTER_JOIN_NOT_SUPPORTED")); //$NON-NLS-1$
+  }
+  
+  @Override
+  protected void generateSelect(SQLQueryModel query, StringBuilder sql) {
+    sql.append("SELECT "); //$NON-NLS-1$
+    if (query.getDistinct()) {
+      sql.append("DISTINCT "); //$NON-NLS-1$
+    }
+    sql.append(Const.CR);
+    boolean first = true;
+    for (SQLSelection selection : query.getSelections()) {
+      if (first) {
+        first = false;
+        sql.append("          "); //$NON-NLS-1$
+      } else {
+        sql.append("         ,"); //$NON-NLS-1$
+      }
+      sql.append(selection.getFormula());
+      // Hive does not support column aliases
+//      if (selection.getAlias() != null) {
+//        sql.append(" AS "); //$NON-NLS-1$
+//        sql.append(selection.getAlias());
+//      }
+      sql.append(Const.CR);
+    }
   }
 
   @Override

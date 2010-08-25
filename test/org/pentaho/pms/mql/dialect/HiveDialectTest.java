@@ -69,6 +69,20 @@ public class HiveDialectTest {
   }
 
   @Test
+  public void simpleQuery_with_aliases() {
+    SQLQueryModel query = new SQLQueryModel();
+    query.addSelection("a", "alias"); //$NON-NLS-1$ //$NON-NLS-2$
+    query.addTable("TABLE", "t"); //$NON-NLS-1$ //$NON-NLS-2$
+    // Column aliases are currently not supported
+    String expected = "SELECT DISTINCT \n          a\nFROM \n          TABLE t\n"; //$NON-NLS-1$
+
+    SQLDialectInterface dialect = new HiveDialect();
+    String result = dialect.generateSelectStatement(query);
+
+    assertEquals(expected, result);
+  }
+
+  @Test
   public void outerJoin() {
     SQLQueryModel query = new SQLQueryModel();
     query.addJoin("A", null, "B", null, JoinType.LEFT_OUTER_JOIN, "A.id = B.id", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -212,9 +226,35 @@ public class HiveDialectTest {
 
   @Test
   public void lookupViaDatabaseMetaUtil() {
-	  // Verify the Database Product Name from the Hive JDBC Driver resolves to the correct database interface
-	  DatabaseInterface di = DatabaseMetaUtil.getDatabaseInterface("Hive"); //$NON_NLS-1$
-	  assertNotNull(di);
-	  assertTrue(di instanceof HiveDatabaseMeta);
+    // Verify the Database Product Name from the Hive JDBC Driver resolves to the correct database interface
+    DatabaseInterface di = DatabaseMetaUtil.getDatabaseInterface("Hive"); //$NON-NLS-1$
+    assertNotNull(di);
+    assertTrue(di instanceof HiveDatabaseMeta);
+  }
+
+  @Test
+  public void multipleJoinsWithInvalidOnClauseConditions() {
+    SQLQueryModel query = new SQLQueryModel();
+    query.addSelection("id", null); //$NON-NLS-1$
+    query.addJoin("A", null, "B", null, JoinType.INNER_JOIN, "A.b > B.id", "1"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    query.addJoin("B", null, "C", null, JoinType.INNER_JOIN, "B.c > C.id", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    String expected = "SELECT DISTINCT \n          id\nFROM \n          A\n          JOIN B\n          JOIN C\nWHERE\n          ( A.b > B.id )\n      AND ( B.c > C.id )\n"; //$NON-NLS-1$
+    SQLDialectInterface dialect = new HiveDialect();
+    String result = dialect.generateSelectStatement(query);
+    assertEquals(expected, result);
+  }
+
+  @Test
+  public void repeatedlyJoinedTables() {
+    SQLQueryModel query = new SQLQueryModel();
+    query.addJoin("A", null, "B", null, JoinType.INNER_JOIN, "A.b = B.id", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    query.addJoin("B", null, "A", null, JoinType.INNER_JOIN, "B.a = A.id", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    SQLDialectInterface dialect = new HiveDialect();
+    try {
+      dialect.generateSelectStatement(query);
+    } catch (Exception ex) {
+      assertTrue("Expected exception [HiveDialect.ERROR_0003] but received: " + ex.getMessage(), //$NON-NLS-1$
+          ex.getMessage().contains("HiveDialect.ERROR_0003")); //$NON-NLS-1$      
+    }
   }
 }

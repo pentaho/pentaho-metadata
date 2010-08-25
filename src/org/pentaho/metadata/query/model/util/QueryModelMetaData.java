@@ -64,6 +64,10 @@ public class QueryModelMetaData extends MemoryMetaData {
           if (key != null) {
             newHeader = (String)columnsMap.get(key.toString().toUpperCase());
             if (newHeader == null) {
+              // Look up key by raw value (required by Hive until support is added for column aliases)
+              newHeader = (String) columnsMap.get(key.toString());
+            }
+            if (newHeader == null) {
               throw new RuntimeException(Messages.getErrorString("QueryModelMetaData.ERROR_0001_MetadataColumnNotFound", key.toString())); //$NON-NLS-1$
             }
             newHeader = getUniqueHeader(newHeader, existingHeaders);

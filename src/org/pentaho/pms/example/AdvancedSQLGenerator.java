@@ -213,7 +213,7 @@ public class AdvancedSQLGenerator extends SQLGenerator {
         }
         alias = databaseMeta.generateColumnAlias(i, suggestedName);
         columnsMap.put(alias, suggestedName);
-        alias = databaseMeta.quoteField(alias); //$NON-NLS-1$
+        alias = databaseMeta.quoteField(alias);
       }else{
         alias = databaseMeta.quoteField(selection.getBusinessColumn().getId());
       }
