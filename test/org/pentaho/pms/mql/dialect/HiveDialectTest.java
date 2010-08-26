@@ -13,6 +13,7 @@ import org.pentaho.di.core.database.DatabaseInterface;
 import org.pentaho.di.core.database.HiveDatabaseMeta;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.metadata.util.DatabaseMetaUtil;
+import org.pentaho.pms.mql.dialect.SQLQueryModel.OrderType;
 
 /**
  * Tests the Hive Dialect to ensure joins are handled appropriately.
@@ -300,7 +301,105 @@ public class HiveDialectTest {
       dialect.generateSelectStatement(query);
     } catch (Exception ex) {
       assertTrue("Expected exception [HiveDialect.ERROR_0003] but received: " + ex.getMessage(), //$NON-NLS-1$
-          ex.getMessage().contains("HiveDialect.ERROR_0003")); //$NON-NLS-1$      
+          ex.getMessage().contains("HiveDialect.ERROR_0003")); //$NON-NLS-1$
     }
+  }
+
+  @Test
+  public void removeAliases_orderBy() {
+    SQLQueryModel query = new SQLQueryModel();
+    query.addSelection("a.a_column", "alias"); //$NON-NLS-1$ //$NON-NLS-2$
+    query.addTable("A", "a"); //$NON-NLS-1$ //$NON-NLS-2$
+    query.addOrderBy("a.a_column", "alias", OrderType.ASCENDING); //$NON-NLS-1$ //$NON-NLS-2$
+
+    String expected = "SELECT DISTINCT \n          a.a_column\nFROM \n          A a\nORDER BY \n          a_column ASC\n"; //$NON-NLS-1$
+
+    SQLDialectInterface dialect = new HiveDialect();
+    String result = dialect.generateSelectStatement(query);
+
+    assertEquals(expected, result);
+  }
+
+  @Test
+  public void havingClause() {
+    SQLQueryModel query = new SQLQueryModel();
+    query.addTable("TABLE", null); //$NON-NLS-1$
+    query.addHavingFormula("a", null); //$NON-NLS-1$
+    SQLDialectInterface dialect = new HiveDialect();
+    try {
+      dialect.generateSelectStatement(query);
+    } catch (Exception ex) {
+      assertTrue("Expected exception [HiveDialect.ERROR_0004] but received: " + ex.getMessage(), //$NON-NLS-1$
+          ex.getMessage().contains("HiveDialect.ERROR_0004")); //$NON-NLS-1$
+    }
+  }
+
+  @Test
+  public void stripTableAliasesFromFormula() {
+    String formula = "a.id"; //$NON-NLS-1$
+    String expected = "id"; //$NON-NLS-1$
+    String result = new HiveDialect().stripTableAliasesFromFormula(formula);
+    assertEquals(expected, result);
+  }
+
+  @Test
+  public void stripTableAliasesFromFormula_no_aliases() {
+    String formula = "id"; //$NON-NLS-1$
+    String result = new HiveDialect().stripTableAliasesFromFormula(formula);
+    assertEquals(formula, result);
+  }
+
+  @Test
+  public void stripTableAliasesFromFormula_aggregate() {
+    String formula = "count(a.id)"; //$NON-NLS-1$
+    String expected = "count(id)"; //$NON-NLS-1$
+    String result = new HiveDialect().stripTableAliasesFromFormula(formula);
+    assertEquals(expected, result);
+  }
+
+  @Test
+  public void stripTableAliasesFromFormula_with_spaces() {
+    String formula = "count( a .id)"; //$NON-NLS-1$
+    String expected = "count( id)"; //$NON-NLS-1$
+    String result = new HiveDialect().stripTableAliasesFromFormula(formula);
+    assertEquals(expected, result);
+  }
+
+  @Test
+  public void where_simple() {
+    SQLQueryModel query = new SQLQueryModel();
+    query.addSelection("id", null); //$NON-NLS-1$
+    query.addTable("TABLE", "t"); //$NON-NLS-1$ //$NON-NLS-2$
+    query.addWhereFormula("name <> 'test'", null); //$NON-NLS-1$
+    String expected = "SELECT DISTINCT \n          id\nFROM \n          TABLE t\nWHERE \n        (\n          (\n             name <> 'test'\n          )\n        )\n"; //$NON-NLS-1$
+    SQLDialectInterface dialect = new HiveDialect();
+    String result = dialect.generateSelectStatement(query);
+    assertEquals(expected, result);
+  }
+
+  @Test
+  public void where_multiple() {
+    SQLQueryModel query = new SQLQueryModel();
+    query.addSelection("id", null); //$NON-NLS-1$
+    query.addTable("TABLE", "t"); //$NON-NLS-1$ //$NON-NLS-2$
+    query.addWhereFormula("name <> 'test'", null); //$NON-NLS-1$
+    query.addWhereFormula("age = 10", null); //$NON-NLS-1$
+    String expected = "SELECT DISTINCT \n          id\nFROM \n          TABLE t\nWHERE \n        (\n          (\n             name <> 'test'\n          )\n      AND (\n             age = 10\n          )\n        )\n"; //$NON-NLS-1$
+    SQLDialectInterface dialect = new HiveDialect();
+    String result = dialect.generateSelectStatement(query);
+    assertEquals(expected, result);
+  }
+
+  @Test
+  public void where_with_join_inequality() {
+    SQLQueryModel query = new SQLQueryModel();
+    query.addSelection("id", null); //$NON-NLS-1$
+    query.addTable("TABLE", "t"); //$NON-NLS-1$ //$NON-NLS-2$
+    query.addJoin("TABLE2", "two", "TABLE", "t", JoinType.INNER_JOIN, "two.id > t.id", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+    query.addWhereFormula("name <> 'test'", null); //$NON-NLS-1$
+    String expected = "SELECT DISTINCT \n          id\nFROM \n          TABLE2 two\n          JOIN TABLE t\nWHERE\n          ( two.id > t.id )\n      AND \n        (\n          (\n             name <> 'test'\n          )\n        )\n"; //$NON-NLS-1$
+    SQLDialectInterface dialect = new HiveDialect();
+    String result = dialect.generateSelectStatement(query);
+    assertEquals(expected, result);
   }
 }

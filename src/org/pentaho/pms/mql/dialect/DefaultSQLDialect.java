@@ -560,7 +560,7 @@ public class DefaultSQLDialect implements SQLDialectInterface {
       boolean whereFormulasRemaining = remainingFormulas.size()>0;
 
       if (whereFormulasRemaining || addSecurityConstraint) {
-        if (query.getJoins().size()==0 || query.containsOuterJoins()) {
+        if(!containsWhereCondition(query, sql, usedSQLWhereFormula)) {
           sql.append("WHERE ").append(Const.CR); //$NON-NLS-1$
         } else {
           sql.append("      AND ").append(Const.CR); //$NON-NLS-1$
@@ -607,7 +607,19 @@ public class DefaultSQLDialect implements SQLDialectInterface {
       
     }
   }
-  
+
+  /**
+   * Determines if there have been any WHERE conditions appended to the query already.  The result of this determines
+   * if "WHERE" or "AND" is used to concatenate the next WHERE condition on to {@code sql}.
+   * 
+   * @param query Query Model
+   * @param sql In-progress query string being built
+   * @return True if the query has already been appended with a WHERE keyword.
+   */
+  protected boolean containsWhereCondition(SQLQueryModel query, StringBuilder sql, List<SQLWhereFormula> usedSQLWhereFormula) {
+    return query.getJoins().size()==0 || query.containsOuterJoins();
+  }
+
   /**
    * Generates the WHERE clause portion of the SQL statement.<br>
    * In this case, we generate the joins between the tables.<br>

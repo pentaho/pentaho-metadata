@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.pentaho.metadata.messages.Messages;
+import org.pentaho.pms.mql.dialect.SQLQueryModel.SQLOrderBy;
 import org.pentaho.pms.mql.dialect.SQLQueryModel.SQLSelection;
 import org.pentaho.pms.mql.dialect.SQLQueryModel.SQLTable;
 import org.pentaho.pms.mql.dialect.SQLQueryModel.SQLWhereFormula;
@@ -29,6 +30,13 @@ public class HiveDialect extends DefaultSQLDialect {
    * operators in a join condition.
    */
   private final Pattern INVALID_JOIN_OPERATORS = Pattern.compile("[!]|[>]|[<]|is null|is not null"); //$NON-NLS-1$
+
+  /**
+   * Pattern that matches any table qualifier before a column name in a SQL formula.<br>
+   * 
+   * e.g. "a.id" should match "a.", "count(a.id)" should match "a."
+   */
+  private final Pattern TABLE_QUALIFIER_PATTERN = Pattern.compile("([^\\(\\s.])+(\\s)*[.]"); //$NON-NLS-1$
 
   public HiveDialect() {
     super("HIVE"); //$NON-NLS-1$
@@ -69,7 +77,14 @@ public class HiveDialect extends DefaultSQLDialect {
   protected List<SQLWhereFormula> generateOuterJoin(SQLQueryModel query, StringBuilder sql) {
     throw new RuntimeException(Messages.getErrorString("HiveDialect.ERROR_0001_OUTER_JOIN_NOT_SUPPORTED")); //$NON-NLS-1$
   }
-  
+
+  @Override
+  protected void generateHaving(SQLQueryModel query, StringBuilder sql) {
+    if (!query.getHavings().isEmpty()) {
+      throw new RuntimeException(Messages.getErrorString("HiveDialect.ERROR_0004_HAVING_NOT_SUPPORTED")); //$NON-NLS-1$
+    }
+  }
+
   @Override
   protected void generateSelect(SQLQueryModel query, StringBuilder sql) {
     sql.append("SELECT "); //$NON-NLS-1$
@@ -287,5 +302,85 @@ public class HiveDialect extends DefaultSQLDialect {
       tableAndAlias += " " + alias; //$NON-NLS-1$
     }
     return tableAndAlias;
+  }
+
+  protected void generateGroupBy(SQLQueryModel query, StringBuilder sql) {
+    if (query.getGroupBys().size() > 0) {
+      sql.append("GROUP BY ").append(Const.CR); //$NON-NLS-1$
+      boolean first = true;
+      for (SQLSelection groupby : query.getGroupBys()) {
+        if (first) {
+          first = false;
+          sql.append("          "); //$NON-NLS-1$
+        } else {
+          sql.append("         ,"); //$NON-NLS-1$
+        }
+
+        // Hive does not support column aliases
+        //        if (groupby.getAlias() != null) {
+        //          sql.append(groupby.getAlias());
+        //        } else {
+        sql.append(groupby.getFormula());
+        //        }
+        sql.append(Const.CR);
+      }
+    }
+  }
+
+  protected void generateOrderBy(SQLQueryModel query, StringBuilder sql) {
+    // Hive does not support column aliases and due to this bug: Due to https://issues.apache.org/jira/browse/HIVE-1449
+    // we cannot use the syntax "table.column" in the order by clause either.  To work around this we remove table 
+    // aliases from the formula for each Order By and fall back to direct column references.  This can cause errors due 
+    // to ambiguous column names but it's a risk we need to take for now.
+
+    if (query.getOrderBys().size() > 0) {
+      sql.append("ORDER BY ").append(Const.CR); //$NON-NLS-1$
+      boolean first = true;
+      for (SQLOrderBy orderby : query.getOrderBys()) {
+        if (first) {
+          first = false;
+          sql.append("          "); //$NON-NLS-1$
+        } else {
+          sql.append("         ,"); //$NON-NLS-1$
+        }
+        // Hive does not support column aliases or table qualifiers used in ORDER BY.
+        // See https://issues.apache.org/jira/browse/HIVE-1449.
+        //        if (orderby.getSelection().getAlias() != null) {
+        //          sql.append(orderby.getSelection().getAlias());
+        //        } else {
+        String formula = stripTableAliasesFromFormula(orderby.getSelection().getFormula());
+        sql.append(formula);
+        //        }
+        if (orderby.getOrder() != null) {
+          sql.append(" "); //$NON-NLS-1$
+          switch (orderby.getOrder()) {
+            case ASCENDING:
+              sql.append("ASC"); //$NON-NLS-1$
+              break;
+            case DESCENDING:
+              sql.append("DESC"); //$NON-NLS-1$
+              break;
+            default:
+              throw new RuntimeException("unsupported order type: " + orderby.getOrder()); //$NON-NLS-1$
+          }
+        }
+        sql.append(Const.CR);
+      }
+    }
+  }
+
+  /**
+   * Remote table aliases from the provided SQL formula
+   * @param formula
+   * @return
+   */
+  protected String stripTableAliasesFromFormula(String formula) {
+    return TABLE_QUALIFIER_PATTERN.matcher(formula).replaceAll(new String());
+  }
+  
+  @Override
+  protected boolean containsWhereCondition(SQLQueryModel query, StringBuilder sql,
+      List<SQLWhereFormula> usedSQLWhereFormula) {
+    return sql.indexOf("WHERE") != -1; //$NON-NLS-1$
   }
 }
