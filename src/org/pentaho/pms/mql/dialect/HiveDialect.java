@@ -383,4 +383,16 @@ public class HiveDialect extends DefaultSQLDialect {
       List<SQLWhereFormula> usedSQLWhereFormula) {
     return sql.indexOf("WHERE") != -1; //$NON-NLS-1$
   }
+  
+  @Override
+  protected String generateStringConcat(String... vals) {
+    StringBuilder sb = new StringBuilder("CONCAT("); //$NON-NLS-1$
+    for(int i = 0; i < vals.length; i ++) {
+      if(i != 0) {
+        sb.append(","); //$NON-NLS-1$
+      }
+      sb.append(vals[i]);
+    }
+    return sb.append(")").toString(); //$NON-NLS-1$
+  }
 }

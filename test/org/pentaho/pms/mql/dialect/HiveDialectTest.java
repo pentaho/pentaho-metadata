@@ -402,4 +402,22 @@ public class HiveDialectTest {
     String result = dialect.generateSelectStatement(query);
     assertEquals(expected, result);
   }
+
+  @Test
+  public void generateStringConcat_single() {
+    String[] vals = new String[] { "'string'" }; //$NON-NLS-1$
+    String expected = "CONCAT('string')"; //$NON-NLS-1$
+    HiveDialect dialect = new HiveDialect();
+    String result = dialect.generateStringConcat(vals);
+    assertEquals(expected, result);
+  }
+
+  @Test
+  public void generateStringConcat_multiple() {
+    String[] vals = new String[] { "'%'", "value", "'%'" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    String expected = "CONCAT('%',value,'%')"; //$NON-NLS-1$
+    HiveDialect dialect = new HiveDialect();
+    String result = dialect.generateStringConcat(vals);
+    assertEquals(expected, result);
+  }
 }
