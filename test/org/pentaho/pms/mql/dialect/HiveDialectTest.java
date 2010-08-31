@@ -402,6 +402,19 @@ public class HiveDialectTest {
     String result = dialect.generateSelectStatement(query);
     assertEquals(expected, result);
   }
+  
+  @Test
+  public void where_with_WHERE() {
+    SQLQueryModel query = new SQLQueryModel();
+    query.addSelection("t.WHERES_WALDO", null); //$NON-NLS-1$
+    query.addTable("TABLE", "t"); //$NON-NLS-1$ //$NON-NLS-2$
+    query.addWhereFormula("name <> 'test'", null); //$NON-NLS-1$
+    String expected = "SELECT DISTINCT \n          t.WHERES_WALDO\nFROM \n          TABLE t\nWHERE \n        (\n          (\n             name <> 'test'\n          )\n        )\n"; //$NON-NLS-1$
+    SQLDialectInterface dialect = new HiveDialect();
+    String result = dialect.generateSelectStatement(query);
+    assertEquals(expected, result);
+    
+  }
 
   @Test
   public void generateStringConcat_single() {

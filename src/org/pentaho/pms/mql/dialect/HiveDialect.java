@@ -377,13 +377,27 @@ public class HiveDialect extends DefaultSQLDialect {
   protected String stripTableAliasesFromFormula(String formula) {
     return TABLE_QUALIFIER_PATTERN.matcher(formula).replaceAll(new String());
   }
-  
+
+  /**
+   * The query should already contain a WHERE condition if there are any joins
+   * that have "invalid" join formulas.
+   * 
+   * @see #isValidJoinFormula(String)
+   */
   @Override
   protected boolean containsWhereCondition(SQLQueryModel query, StringBuilder sql,
       List<SQLWhereFormula> usedSQLWhereFormula) {
-    return sql.indexOf("WHERE") != -1; //$NON-NLS-1$
+    for (SQLJoin join : query.getJoins()) {
+      // If we have a join with an invalid join formula the WHERE clause should have
+      // already been started
+      if (!isValidJoinFormula(join.getSqlWhereFormula().getFormula())) {
+        return true;
+      }
+    }
+    // No join conditions with invalid formulas so no WHERE clause yet
+    return false;
   }
-  
+
   @Override
   protected String generateStringConcat(String... vals) {
     StringBuilder sb = new StringBuilder("CONCAT("); //$NON-NLS-1$

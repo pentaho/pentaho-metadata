@@ -617,7 +617,7 @@ public class DefaultSQLDialect implements SQLDialectInterface {
    * @return True if the query has already been appended with a WHERE keyword.
    */
   protected boolean containsWhereCondition(SQLQueryModel query, StringBuilder sql, List<SQLWhereFormula> usedSQLWhereFormula) {
-    return query.getJoins().size()==0 || query.containsOuterJoins();
+    return query.getJoins().size() != 0 && !query.containsOuterJoins();
   }
 
   /**
