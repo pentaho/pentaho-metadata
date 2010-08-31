@@ -27,6 +27,7 @@ import org.pentaho.di.core.vfs.KettleVFS;
 import org.pentaho.di.trans.steps.textfileinput.TextFileInput;
 import org.pentaho.di.trans.steps.textfileinput.TextFileInputMeta;
 import org.pentaho.metadata.messages.Messages;
+import org.pentaho.metadata.query.model.util.QueryXmlHelper;
 import org.pentaho.reporting.libraries.base.util.CSVTokenizer;
 
 public class CsvDataReader {

@@ -21,10 +21,28 @@ import java.util.Date;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.pentaho.metadata.messages.Messages;
 import org.pentaho.metadata.model.concept.types.DataType;
+import org.pentaho.metadata.query.model.util.BooleanComparator;
 
 public class DataTypeDetector {
+
+  public static final String[] COMMON_DATE_FORMATS = new String[] {
+      "MM-dd-yyyy",
+      "MM/dd/yyyy HH:mm:ss",
+      "MM/dd/yyyy",
+      "dd-MM-yyyy",
+      "dd/MM/yyyy",
+      "yyyy-MM-dd HH:mm:ss",
+      "yyyy-MM-dd",
+      "yyyy/MM/dd",
+      "MM-dd-yy",
+      "MM/dd/yy",
+      "dd-MM-yy",
+      "dd/MM/yy"
+  };
 
   /**
    * Class used to detect and modify the column type based on incoming string
@@ -79,11 +97,17 @@ public class DataTypeDetector {
           }
         }
         if (_datePossible) {
-          try {
-            new LocalDate(valueAsString);
-          } catch (IllegalArgumentException e) {
-            _datePossible = false;
-          }
+            DateTimeFormatter fmt = null;
+            for (String mask : COMMON_DATE_FORMATS) {
+              try {
+                fmt = DateTimeFormat.forPattern(mask);
+                fmt.parseDateTime(valueAsString);
+                _datePossible = true;
+                break;
+              } catch (IllegalArgumentException e) {
+                _datePossible = false;
+              }
+            }
         }
         if (_timePossible) {
           try {
@@ -144,4 +168,5 @@ public class DataTypeDetector {
       }
       return null;
     }
+
 }

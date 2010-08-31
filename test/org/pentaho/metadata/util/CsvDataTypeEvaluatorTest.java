@@ -97,4 +97,37 @@ public class CsvDataTypeEvaluatorTest {
     DataType guessType = type.evaluateDataType(columnValues);
     Assert.assertEquals(DataType.BOOLEAN, guessType);
   }
+
+  @Test
+  public void testGuessBestDateFormat() {
+    List<String> columnValues = new ArrayList<String>();
+    columnValues.add("2008-11-04");
+    columnValues.add("2008-11-04 12:12:12");
+    columnValues.add("2008-04-04");
+    columnValues.add("2008-05-04");
+    columnValues.add("2008/11/04");
+    columnValues.add("2008/04/04");
+    columnValues.add("11/04/2009");
+    columnValues.add("11/04/2009 3:30:40");    
+    columnValues.add("23-11-2009");
+    columnValues.add("2323.33");
+    columnValues.add("23.33");
+    String guessFormat = CsvDataTypeEvaluator.getBestDateFormat(columnValues);
+
+    Assert.assertEquals("yyyy-MM-dd", guessFormat);
+
+  }
+
+  @Test
+  public void testGuessBestDateFormat_Time() {
+    List<String> columnValues = new ArrayList<String>();
+    columnValues.add("2008-11-04");
+    columnValues.add("2008-11-04 12:12:12");
+    columnValues.add("2008-11-05 14:42:22");
+    String guessFormat = CsvDataTypeEvaluator.getBestDateFormat(columnValues);
+
+    Assert.assertEquals("yyyy-MM-dd HH:mm:ss", guessFormat);
+  }
+
+
 }

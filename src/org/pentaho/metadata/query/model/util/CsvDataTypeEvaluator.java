@@ -16,14 +16,15 @@
  */
 package org.pentaho.metadata.query.model.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
-
+import org.apache.commons.lang.ArrayUtils;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.pentaho.metadata.model.concept.types.DataType;
+//import org.pentaho.metadata.query.model.util.DataTypeDetector;
+
+import java.text.DateFormat;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class CsvDataTypeEvaluator {
   List<String> columnValues;
@@ -93,4 +94,64 @@ public class CsvDataTypeEvaluator {
     this.columnValues = columnValues;
   }
 
+  public static String getBestDateFormat(List<String> dateSamples) {
+    String[] formats = DataTypeDetector.COMMON_DATE_FORMATS;
+
+    ArrayList<FormatterHits> formatters = new ArrayList<FormatterHits>(formats.length);
+
+    for (String format : formats) {
+      formatters.add(new FormatterHits(format));
+    }
+
+    // try each common format on the sample, counting which one works
+    for (String sample : dateSamples) {
+      for (FormatterHits fh : formatters) {
+        try {
+          fh.getFormatter().parseDateTime(sample);
+          fh.increment();
+        } catch (IllegalArgumentException e) {
+          // not a goo one, try the others
+        }
+      }
+    }
+
+    Collections.sort(formatters);
+    if (formatters.get(0).getHits() > 0) {
+      return formatters.get(0).getFormat();
+    } else {
+      return null;
+    }
+  }
+
+}
+
+class FormatterHits implements Comparable<FormatterHits> {
+  String format = null;
+  DateTimeFormatter formatter = null;
+  Integer hits = 0;
+
+  public FormatterHits(String format) {
+    this.format = format;
+    formatter = DateTimeFormat.forPattern(format);
+  }
+
+  public Integer getHits() {
+    return hits;
+  }
+
+  public void increment() {
+    hits++;
+  }
+
+  public String getFormat() {
+    return format;
+  }
+
+  public DateTimeFormatter getFormatter() {
+    return formatter;
+  }
+
+  public int compareTo(FormatterHits formatterHits) {
+    return formatterHits.getHits().compareTo(hits);
+  }
 }
