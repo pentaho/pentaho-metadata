@@ -27,8 +27,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 <!--===========================================================================
     == SUBFLOOR-GWT ==
     
-    $Rev: 102 $
-    $Date: 2010-08-17 10:26:04 -0400 (Tue, 17 Aug 2010) $
+    $Rev: 107 $
+    $Date: 2010-08-30 11:50:20 -0400 (Mon, 30 Aug 2010) $
     Project Home: http://code.google.com/p/subfloor/
     
     Provides default targets for building GWT applications.
@@ -63,8 +63,24 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </fileset>
     <path refid="classpath"/>
     <pathelement path="${src.dir}" />
-  </path>	
-  
+  </path>
+
+  <!-- override the compile classpath so client source 
+    can be compiled with javac (even though strictly speaking, this is
+    not necessary, it is helpful because it will fish out errors much quicker
+    than waiting until gwt-compile -->
+  <path id="classpath">
+    <fileset dir="${devlib.dir}">
+      <include name="*.jar" />
+    </fileset>
+    <fileset dir="${lib.dir}">
+      <include name="*.jar" />
+    </fileset>
+    <fileset dir="${codegenlib.dir}">
+      <include name="*.jar" />
+    </fileset>
+  </path>
+
   <!--=======================================================================
 	    init (override)
 	    
@@ -90,7 +106,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       using the ivy dependencies.
       ====================================================================-->
   <target name="clean-jars" depends="clean-codegen,subfloor.clean-jars"/>
-  
+
   <!--=======================================================================
       clean-codegen
       
@@ -130,8 +146,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           unless="gwtBuild.notRequired"
           description="Perform GWT Compile">
     <java classname="com.google.gwt.dev.Compiler" fork="true" failonerror="true" maxmemory="${gwt-compile.maxmemory}">
- 	  <classpath refid="codegen.classpath"/>
-      <jvmarg value="-Xss${gwt-compile.maxstack}"/>    	
+      <classpath refid="codegen.classpath"/>
+      <jvmarg value="-Xss${gwt-compile.maxstack}"/>
       <arg value="-war" />
       <arg value="${gwt.output.dir}" />
       <arg value="${gwt-module.path}" />
@@ -145,7 +161,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <touch file="${bin.dir}/.gwtBuild-${gwt-module.path}" />
   </target>
 
-  
+
   <!--=======================================================================
       gwt-compile.check
       
@@ -158,7 +174,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     </uptodate>
   </target>
 
-  
+
   <!--=======================================================================
       assemble (override)
       
