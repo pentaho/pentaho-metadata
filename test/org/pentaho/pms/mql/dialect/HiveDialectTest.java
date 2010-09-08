@@ -321,6 +321,43 @@ public class HiveDialectTest {
   }
 
   @Test
+  public void orderBy_multiple() {
+    SQLQueryModel query = new SQLQueryModel();
+    query.addSelection("a.a_column", null); //$NON-NLS-1$
+    query.addSelection("a.b_column", null); //$NON-NLS-1$
+    query.addSelection("a.c_column", null); //$NON-NLS-1$
+    query.addTable("A", "a"); //$NON-NLS-1$ //$NON-NLS-2$
+    query.addOrderBy("a.a_column", null, OrderType.ASCENDING); //$NON-NLS-1$
+    query.addOrderBy("a.b_column", null, null); //$NON-NLS-1$
+    query.addOrderBy("a.c_column", null, OrderType.DESCENDING); //$NON-NLS-1$
+
+    String expected = "SELECT DISTINCT \n          a.a_column\n         ,a.b_column\n         ,a.c_column\nFROM \n          A a\nORDER BY \n          a_column ASC\n         ,b_column\n         ,c_column DESC\n"; //$NON-NLS-1$
+
+    SQLDialectInterface dialect = new HiveDialect();
+    String result = dialect.generateSelectStatement(query);
+
+    assertEquals(expected, result);
+  }
+
+  @Test
+  public void groupBy() {
+    SQLQueryModel query = new SQLQueryModel();
+    query.addSelection("a.a_column", null); //$NON-NLS-1$
+    query.addSelection("a.b_column", null); //$NON-NLS-1$
+    query.addSelection("a.c_column", null); //$NON-NLS-1$
+    query.addTable("A", "a"); //$NON-NLS-1$ //$NON-NLS-2$
+    query.addGroupBy("b_column", null); //$NON-NLS-1$
+    query.addGroupBy("c_column", null); //$NON-NLS-1$
+
+    String expected = "SELECT DISTINCT \n          a.a_column\n         ,a.b_column\n         ,a.c_column\nFROM \n          A a\nGROUP BY \n          b_column\n         ,c_column\n"; //$NON-NLS-1$
+
+    SQLDialectInterface dialect = new HiveDialect();
+    String result = dialect.generateSelectStatement(query);
+
+    assertEquals(expected, result);
+  }
+
+  @Test
   public void havingClause() {
     SQLQueryModel query = new SQLQueryModel();
     query.addTable("TABLE", null); //$NON-NLS-1$
