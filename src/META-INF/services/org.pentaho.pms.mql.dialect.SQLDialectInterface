@@ -1,0 +1,7 @@
+org.pentaho.pms.mql.dialect.DefaultSQLDialect
+org.pentaho.pms.mql.dialect.OracleDialect
+org.pentaho.pms.mql.dialect.MSSQLDialect
+org.pentaho.pms.mql.dialect.DB2Dialect
+org.pentaho.pms.mql.dialect.PostgreSQLDialect
+org.pentaho.pms.mql.dialect.MySQLDialect
+org.pentaho.pms.mql.dialect.MSAccessDialect

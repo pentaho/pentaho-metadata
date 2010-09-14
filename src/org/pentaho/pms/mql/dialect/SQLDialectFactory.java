@@ -17,9 +17,14 @@
 package org.pentaho.pms.mql.dialect;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.ServiceLoader;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.metadata.messages.Messages;
 
 /**
  * This class should eventually load additional plugin dialects
@@ -30,32 +35,53 @@ import org.pentaho.di.core.database.DatabaseMeta;
 public class SQLDialectFactory {
   /** singleton instance, one per classloader */
   private static SQLDialectFactory singleton = new SQLDialectFactory();
-  
+
   private Map<String, SQLDialectInterface> supportedDialects = new HashMap<String, SQLDialectInterface>();
-  
+
+  private final Log logger;
+
   /**
-   * private constructor, for now supported functions and operators are hardcoded, in the future
-   * this may be moved to a config file
+   * private constructor
    */
   private SQLDialectFactory() {
-    addDialect(new DefaultSQLDialect());
-    addDialect(new OracleDialect());
-    addDialect(new MSSQLDialect());
-    addDialect(new DB2Dialect());
-    addDialect(new PostgreSQLDialect());
-    addDialect(new MySQLDialect());
-    addDialect(new MSAccessDialect());
-    addDialect(new HiveDialect());
+    logger = LogFactory.getLog(SQLDialectFactory.class);
+    loadDialects();
   }
-  
+
+  /**
+   * Load and register dialects defined as service providers implementing {@link SQLDialectInterface}
+   * (via Java's ServiceLoader mechanism).
+   */
+  private void loadDialects() {
+    ServiceLoader<SQLDialectInterface> dialects = ServiceLoader.load(SQLDialectInterface.class);
+    Iterator<SQLDialectInterface> dialectIter = dialects.iterator();
+    while (dialectIter.hasNext()) {
+      SQLDialectInterface dialect = null;
+      try {
+        dialect = dialectIter.next(); // Try to instantiate the next dialect
+      } catch (Throwable t) {
+        // Log an error if dialect instantiation/registration fails.  We don't know the dialect 
+        // we attempted to load here so log it as a generic error with stack trace.  
+        logger.error(Messages.getErrorString("SQLDialectFactory.ERROR_0001_ERROR_LOADING_DIALECT"), t); //$NON-NLS-1$
+      }
+      if (dialect != null) {
+        addDialect(dialect);
+        logger.info(Messages.getString("SQLDialectFactory.INFO_0001_DIALECT_REGISTERED", dialect.getDatabaseType())); //$NON-NLS-1$
+      }
+    }
+  }
+
   private void addDialect(SQLDialectInterface dialect) {
-     supportedDialects.put(dialect.getDatabaseType(), dialect);
+    // Don't check for existing dialects for this database type, just overwrite the old one.
+    // Possibly change this to prevent conflicting dialects?
+    supportedDialects.put(dialect.getDatabaseType(), dialect);
   }
-  
+
   public static SQLDialectInterface getSQLDialect(DatabaseMeta databaseMeta) {
-    SQLDialectInterface sqlDialect = (SQLDialectInterface)singleton.supportedDialects.get(databaseMeta.getDatabaseTypeDesc());
+    SQLDialectInterface sqlDialect = (SQLDialectInterface) singleton.supportedDialects.get(databaseMeta
+        .getDatabaseTypeDesc());
     if (sqlDialect == null) {
-      sqlDialect = (SQLDialectInterface)singleton.supportedDialects.get("GENERIC"); //$NON-NLS-1$
+      sqlDialect = (SQLDialectInterface) singleton.supportedDialects.get("GENERIC"); //$NON-NLS-1$
     }
     return sqlDialect;
   }
