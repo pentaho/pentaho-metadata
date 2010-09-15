@@ -45,14 +45,29 @@ public class SQLDialectFactory {
    */
   private SQLDialectFactory() {
     logger = LogFactory.getLog(SQLDialectFactory.class);
-    loadDialects();
+    registerCoreDialects();
+    loadDialectPlugins();
   }
 
+  /**
+   * Register all dialects explicitly here as a stopgap solution so the core dialects are guaranteed 
+   * to load before any Dialect Plugins.
+   */
+  private void registerCoreDialects() {
+    addDialect(new DefaultSQLDialect());
+    addDialect(new OracleDialect());
+    addDialect(new MSSQLDialect());
+    addDialect(new DB2Dialect());
+    addDialect(new PostgreSQLDialect());
+    addDialect(new MySQLDialect());
+    addDialect(new MSAccessDialect());
+  }
+  
   /**
    * Load and register dialects defined as service providers implementing {@link SQLDialectInterface}
    * (via Java's ServiceLoader mechanism).
    */
-  private void loadDialects() {
+  private void loadDialectPlugins() {
     ServiceLoader<SQLDialectInterface> dialects = ServiceLoader.load(SQLDialectInterface.class);
     Iterator<SQLDialectInterface> dialectIter = dialects.iterator();
     while (dialectIter.hasNext()) {
@@ -66,7 +81,6 @@ public class SQLDialectFactory {
       }
       if (dialect != null) {
         addDialect(dialect);
-        logger.info(Messages.getString("SQLDialectFactory.INFO_0001_DIALECT_REGISTERED", dialect.getDatabaseType())); //$NON-NLS-1$
       }
     }
   }
@@ -75,6 +89,7 @@ public class SQLDialectFactory {
     // Don't check for existing dialects for this database type, just overwrite the old one.
     // Possibly change this to prevent conflicting dialects?
     supportedDialects.put(dialect.getDatabaseType(), dialect);
+    logger.info(Messages.getString("SQLDialectFactory.INFO_0001_DIALECT_REGISTERED", dialect.getDatabaseType())); //$NON-NLS-1$
   }
 
   public static SQLDialectInterface getSQLDialect(DatabaseMeta databaseMeta) {
