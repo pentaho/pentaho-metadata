@@ -236,30 +236,37 @@ public class SQLModelGenerator {
   {
     switch (type)
     {
-    case Types.BIGINT:
-    case Types.INTEGER:
-    case Types.NUMERIC:
-      return DataType.NUMERIC;
-
-    case Types.BINARY:
-      return DataType.BINARY;
-
-    case Types.BOOLEAN:
-      return DataType.BOOLEAN;
-
-    case Types.DATE:
-      return DataType.DATE;
-
-    case Types.TIMESTAMP:
-      return DataType.DATE;
-
-    case Types.LONGVARCHAR:
-
-    case Types.VARCHAR:
-      return DataType.STRING;
-
-    default:
-      return DataType.UNKNOWN;
+	    case Types.FLOAT:
+	    case Types.BIT:
+	    case Types.DOUBLE:
+	    case Types.SMALLINT:
+	    case Types.REAL:
+	    case Types.DECIMAL:
+	    case Types.BIGINT:
+	    case Types.INTEGER:
+	    case Types.NUMERIC:
+	      return DataType.NUMERIC;
+	      
+	    case Types.BINARY:
+	    case Types.CLOB:
+	    case Types.BLOB:
+	      return DataType.BINARY;
+	
+	    case Types.BOOLEAN:
+	      return DataType.BOOLEAN;
+	
+	    case Types.DATE:
+	      return DataType.DATE;
+	
+	    case Types.TIMESTAMP:
+	      return DataType.DATE;
+	
+	    case Types.LONGVARCHAR:
+	    case Types.VARCHAR:
+	      return DataType.STRING;
+	
+	    default:
+	      return DataType.UNKNOWN;
     }
   }
 
