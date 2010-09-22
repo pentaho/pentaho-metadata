@@ -16,6 +16,11 @@
  */
 package org.pentaho.metadata.messages;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
 import java.util.Locale;
 
 public class LocaleHelper {
@@ -109,5 +114,103 @@ public class LocaleHelper {
           locale = locales[ 0 ];
         }
         return locale;
+    }
+  // From the BI-Platform LocaleHelper
+    
+    /**
+     * This method is called to convert strings from ISO-8859-1 (post/get parameters for example)
+     * into the default system locale.
+     * @param isoString
+     * @return Re-encoded string
+     */
+    public static String convertISOStringToSystemDefaultEncoding(String isoString) {
+      return convertEncodedStringToSystemDefaultEncoding("ISO-8859-1", isoString); //$NON-NLS-1$
+    }
+    
+    /**
+     * This method converts strings from a known encoding into a string encoded by
+     * the system default encoding.
+     * @param fromEncoding
+     * @param encodedStr
+     * @return Re-encoded string
+     */
+    public static String convertEncodedStringToSystemDefaultEncoding(String fromEncoding, String encodedStr) {
+      return convertStringEncoding(encodedStr, fromEncoding, LocaleHelper.getSystemEncoding());
+    }
+
+    /**
+     * This method converts an ISO-8859-1 encoded string to a UTF-8
+     * encoded string.
+     * @param isoString
+     * @return Re-encoded string
+     */
+    public static String isoToUtf8(String isoString) {
+      return convertStringEncoding(isoString, "ISO-8859-1", "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
+     }
+    
+    /**
+     * This method converts a UTF8-encoded string to ISO-8859-1
+     * @param utf8String
+     * @return Re-encoded string
+     */
+    public static String utf8ToIso(String utf8String) {
+      return convertStringEncoding(utf8String, "UTF-8", "ISO-8859-1"); //$NON-NLS-1$ //$NON-NLS-2$
+     }
+    
+    /**
+     * This method converts strings between various encodings.
+     * @param sourceString
+     * @param sourceEncoding
+     * @param targetEncoding
+     * @return Re-encoded string.
+     */
+    public static String convertStringEncoding(String sourceString, String sourceEncoding, String targetEncoding) {
+      String targetString = null;
+      if (null != sourceString && !sourceString.equals("")) { //$NON-NLS-1$
+        try {
+          byte[] stringBytesSource = sourceString.getBytes(sourceEncoding);
+          targetString = new String(stringBytesSource, targetEncoding);
+        } catch(UnsupportedEncodingException e) {
+          throw new RuntimeException(e); 
+        } 
+      } else {
+        targetString = sourceString; 
+      } return targetString; 
+    }
+    
+    /**
+     * @param aString
+     * @return true if the provided string is completely within the
+     * US-ASCII character set.
+     */
+    public static boolean isAscii(String aString) {
+      return isWithinCharset(aString, "US-ASCII"); //$NON-NLS-1$
+    }
+
+    
+    /**
+     * @param aString
+     * @return true if the provided string is completely within the
+     * Latin-1 character set (ISO-8859-1).
+     */
+    public static boolean isLatin1(String aString) {
+      return isWithinCharset(aString, "ISO-8859-1"); //$NON-NLS-1$
+    }
+
+    /**
+     * @param aString
+     * @param charsetTarget
+     * @return true if the provided string is completely within the
+     * target character set.
+     */
+    public static boolean isWithinCharset(String aString, String charsetTarget) {
+      byte[] stringBytes = aString.getBytes();
+      CharsetDecoder decoder = Charset.forName(charsetTarget).newDecoder();
+      try {
+        decoder.decode(ByteBuffer.wrap(stringBytes));
+        return true;
+      } catch (CharacterCodingException ignored) {
+      }
+      return false;
     }
 }

@@ -80,4 +80,11 @@ public class OracleDialect extends DefaultSQLDialect {
   protected String getStringConcatOperator() {
     return "||"; //$NON-NLS-1$
   }
+  
+  
+  // Oracle supports the N'xxxx' notation for Unicode strings.
+  public boolean supportsNLSLiteral() {
+    return true;
+  }
+  
 }

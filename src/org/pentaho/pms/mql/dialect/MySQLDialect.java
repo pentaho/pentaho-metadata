@@ -72,4 +72,9 @@ public class MySQLDialect extends DefaultSQLDialect {
     sb.append(")");
     return sb.toString();
   }
+  
+  // MySql supports the N'xxxx' notation for Unicode strings.
+  public boolean supportsNLSLiteral() {
+    return true;
+  }
 }

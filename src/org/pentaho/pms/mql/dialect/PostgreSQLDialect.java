@@ -65,4 +65,10 @@ public class PostgreSQLDialect extends DefaultSQLDialect {
   protected String getStringConcatOperator() {
     return "||"; //$NON-NLS-1$
   }
+  
+  // PostgreSQL the N'xxxx' notation for Unicode strings.
+  public boolean supportsNLSLiteral() {
+    return true;
+  }
+  
 }

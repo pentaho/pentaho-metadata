@@ -107,4 +107,10 @@ public interface SQLDialectInterface {
    * Maximum Table Name Length
    */
   public int getMaxTableNameLength();
+  
+  /**
+   * @return True if the dialect supports N'xxxx' notation on
+   * string literals. 
+   */
+  boolean supportsNLSLiteral();
 }

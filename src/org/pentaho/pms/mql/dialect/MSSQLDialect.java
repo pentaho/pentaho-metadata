@@ -76,4 +76,9 @@ public class MSSQLDialect extends DefaultSQLDialect {
   public int getMaxTableNameLength() {
     return 128;
   }
+  
+  // MS SQL Server supports the N'xxxx' notation for Unicode strings.
+  public boolean supportsNLSLiteral() {
+    return true;
+  }
 }

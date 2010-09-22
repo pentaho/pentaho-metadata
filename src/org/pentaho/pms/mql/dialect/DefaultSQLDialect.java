@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.messages.Messages;
+import org.pentaho.pms.messages.util.LocaleHelper;
 import org.pentaho.pms.mql.DateMath;
 import org.pentaho.pms.mql.dialect.SQLQueryModel.SQLOrderBy;
 import org.pentaho.pms.mql.dialect.SQLQueryModel.SQLSelection;
@@ -98,6 +99,7 @@ public class DefaultSQLDialect implements SQLDialectInterface {
       public void generateFunctionSQL(FormulaTraversalInterface formula, StringBuffer sb, String locale, FormulaFunction f) throws PentahoMetadataException {
         if (f.getChildValues() != null && f.getChildValues().length > 0) {
           formula.generateSQL(f, f.getChildValues()[0], sb, locale);
+          String quotedWildcard = quoteStringLiteral(getStringWildCard());
           for (int i = 1; i < f.getChildValues().length; i++) {
             sb.append(" " + getSQL() + " "); //$NON-NLS-1$ //$NON-NLS-2$
             StringBuffer tmpsb = new StringBuffer();
@@ -105,9 +107,9 @@ public class DefaultSQLDialect implements SQLDialectInterface {
             
             sb.append(
                 generateStringConcat(
-                    quoteStringLiteral(getStringWildCard()), 
+                    quotedWildcard, 
                     tmpsb.toString(), 
-                    quoteStringLiteral(getStringWildCard())
+                    quotedWildcard
                 )
             );
             
@@ -123,6 +125,7 @@ public class DefaultSQLDialect implements SQLDialectInterface {
       public void generateFunctionSQL(FormulaTraversalInterface formula, StringBuffer sb, String locale, FormulaFunction f) throws PentahoMetadataException {
         if (f.getChildValues() != null && f.getChildValues().length > 0) {
           formula.generateSQL(f, f.getChildValues()[0], sb, locale);
+          String quotedWildcard = quoteStringLiteral(getStringWildCard());
           for (int i = 1; i < f.getChildValues().length; i++) {
             sb.append(" " + getSQL() + " "); //$NON-NLS-1$ //$NON-NLS-2$
             StringBuffer tmpsb = new StringBuffer();
@@ -131,7 +134,7 @@ public class DefaultSQLDialect implements SQLDialectInterface {
             sb.append(
                 generateStringConcat(
                     tmpsb.toString(), 
-                    quoteStringLiteral(getStringWildCard())
+                    quotedWildcard
                 )
             );
             
@@ -148,6 +151,7 @@ public class DefaultSQLDialect implements SQLDialectInterface {
       public void generateFunctionSQL(FormulaTraversalInterface formula, StringBuffer sb, String locale, FormulaFunction f) throws PentahoMetadataException {
         if (f.getChildValues() != null && f.getChildValues().length > 0) {
           formula.generateSQL(f, f.getChildValues()[0], sb, locale);
+          String quotedWildcard = quoteStringLiteral(getStringWildCard());
           for (int i = 1; i < f.getChildValues().length; i++) {
             sb.append(" " + getSQL() + " "); //$NON-NLS-1$ //$NON-NLS-2$
             StringBuffer tmpsb = new StringBuffer();
@@ -155,7 +159,7 @@ public class DefaultSQLDialect implements SQLDialectInterface {
             
             sb.append(
                 generateStringConcat(
-                    quoteStringLiteral(getStringWildCard()),
+                    quotedWildcard,
                     tmpsb.toString() 
                 )
             );
@@ -457,11 +461,12 @@ public class DefaultSQLDialect implements SQLDialectInterface {
   public SQLOperatorGeneratorInterface getInfixOperatorSQLGenerator(String operatorName) {
     return (SQLOperatorGeneratorInterface)supportedInfixOperators.get(operatorName);
   }
-  
-  
+    
   /**
    * This method quotes a string literal.  Note that for the time being we just
    * use the ANSI standard
+   * 
+   * Note - if the input string is null, this (oddly) returns 'null'
    * 
    * @param databaseMeta passed in for potential future use
    * @param str string to quote
@@ -473,8 +478,15 @@ public class DefaultSQLDialect implements SQLDialectInterface {
       strval = str.toString();
       strval = strval.replaceAll("'", "''"); //$NON-NLS-1$  //$NON-NLS-2$
     }
-    
-    return "'" + strval + "'"; //$NON-NLS-1$  //$NON-NLS-2$
+    if (!LocaleHelper.isAscii(strval) && (supportsNLSLiteral())) {
+      return "N'" + strval + "'"; //$NON-NLS-1$  //$NON-NLS-2$
+    } else {
+      return "'" + strval + "'"; //$NON-NLS-1$  //$NON-NLS-2$
+    }
+  }
+
+  public boolean supportsNLSLiteral() {
+    return false;
   }
   
   //
