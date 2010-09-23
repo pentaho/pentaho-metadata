@@ -757,11 +757,13 @@ public class SqlGenerator {
     Path minPath = null;
     for (int i = 0; i < paths.size(); i++) {
       Path path = (Path) paths.get(i);
-      if (path.size() < minScore || (path.size() == minScore && path.score() < minSize))
+      if (path.size() < minScore || (path.size() == minSize && path.score() < minScore)) {
         minPath = path;
+        minScore = path.score();
+        minSize = path.size();
+      }
     }
-
-    return minPath;
+    return minPath; 
   }
 
   protected List<LogicalTable> getNonSelectedTables(LogicalModel model, List<LogicalTable> selectedTables) {
