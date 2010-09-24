@@ -630,7 +630,7 @@ public class SQLGenerator {
     Path minPath = null;
     for (int i = 0; i < paths.size(); i++) {
       Path path = (Path) paths.get(i);
-      if (path.size() < minScore || (path.size() == minSize && path.score() < minScore)) {
+      if (path.size() < minSize || (path.size() == minSize && path.score() < minScore)) {
         minPath = path;
         minScore = path.score();
         minSize = path.size();

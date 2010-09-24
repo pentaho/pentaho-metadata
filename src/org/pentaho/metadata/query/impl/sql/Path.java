@@ -66,17 +66,21 @@ public class Path {
 	
 	public int score() {
 		int score=0;
+		Integer relSize = null;
 		for (int i=0;i<size();i++) {
 		  LogicalRelationship rel = getRelationship(i);
 		  LogicalTable from = rel.getFromTable();
-            int size = (Integer)from.getProperty(SqlPhysicalTable.RELATIVE_SIZE); 
-			if (size>0) score+=size;
+		  relSize = (Integer)from.getProperty(SqlPhysicalTable.RELATIVE_SIZE);
+		  if ( (relSize != null) && (relSize.intValue()>0) ) {
+		    score+=relSize;
+		  }
 		}
-		if (size()>0)
-		{
+		if (size()>0) {
 			LogicalTable to = getLastRelationship().getToTable();
-            int size = (Integer)to.getProperty(SqlPhysicalTable.RELATIVE_SIZE); 
-			if (size>0) score+=size;
+      relSize = (Integer)to.getProperty(SqlPhysicalTable.RELATIVE_SIZE); 
+      if ( (relSize != null) && (relSize.intValue()>0) ) {
+        score+=relSize;
+      }
 		}
 		return score;
 	}
