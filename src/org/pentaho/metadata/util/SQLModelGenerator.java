@@ -39,7 +39,6 @@ import org.pentaho.metadata.model.concept.security.Security;
 import org.pentaho.metadata.model.concept.security.SecurityOwner;
 import org.pentaho.metadata.model.concept.security.SecurityOwner.OwnerType;
 import org.pentaho.metadata.model.concept.types.*;
-import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.pms.util.Settings;
 
 public class SQLModelGenerator {
@@ -152,6 +151,9 @@ public class SQLModelGenerator {
           logicalModel.setPhysicalModel(model);
           logicalModel.setId("MODEL_1"); //$NON-NLS-1$
           logicalModel.setName(new LocalizedString(locale.getCode(), modelName));
+          
+          logicalModel.setDescription(new LocalizedString(locale.getCode(), "This is the data model for "
+  		        + modelName));          
 
           Category mainCategory = new Category(logicalModel);
           String categoryID = Settings.getBusinessCategoryIDPrefix() + modelName;
