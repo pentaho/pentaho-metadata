@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.metadata.model.concept.Concept;
-import org.pentaho.metadata.query.impl.ietl.InlineEtlQueryExecutor;
 
 /**
  * This is the SQL implementation of the physical model.  For now 
