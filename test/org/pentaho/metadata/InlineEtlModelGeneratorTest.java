@@ -190,7 +190,8 @@ public class InlineEtlModelGeneratorTest {
     query.getOrders().add(new Order(new Selection(category, category.getLogicalColumns().get(1), null), Type.ASC));
     
     InlineEtlQueryExecutor executor = new InlineEtlQueryExecutor();
-    IPentahoResultSet resultset = executor.executeQuery(query, "test/solution/system/metadata/csvfiles/", null);
+    executor.setCsvFileLoc("test/solution/system/metadata/csvfiles/");
+    IPentahoResultSet resultset = executor.executeQuery(query);
     
     Assert.assertEquals(5, resultset.getRowCount());
     Assert.assertEquals(1, resultset.getColumnCount());

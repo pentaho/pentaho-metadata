@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.metadata.model.concept.Concept;
+import org.pentaho.metadata.query.impl.ietl.InlineEtlQueryExecutor;
 
 /**
  * The Inline ETL Physical model is designed to handle CSV files and uses
@@ -44,6 +45,14 @@ public class InlineEtlPhysicalModel extends Concept implements IPhysicalModel {
     super();
   }
 
+  public String getQueryExecName() {
+    return "metadataqueryexec-ETL";
+  }
+  
+  public String getDefaultQueryClassname() {
+    return InlineEtlQueryExecutor.class.getName();
+  }
+  
   public String getFileLocation() {
     return (String)getProperty(FILE_LOCATION);
   }

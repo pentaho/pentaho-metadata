@@ -35,6 +35,12 @@ public class LogicalModel extends Concept {
   
   public static final String ROW_LEVEL_SECURITY = "row_level_security"; //$NON-NLS-1$
   
+  public static final String PROPERTY_OLAP_DIMS = "olap_dimensions"; //$NON-NLS-1$
+  
+  public static final String PROPERTY_OLAP_CUBES = "olap_cubes"; //$NON-NLS-1$
+
+  public static final String PROPERTY_TARGET_TABLE_STAGED = "target_table_staged"; //$NON-NLS-1$
+
   private IPhysicalModel physicalModel;
   private List<LogicalTable> logicalTables = new ArrayList<LogicalTable>();
   private List<LogicalRelationship> logicalRelationships = new ArrayList<LogicalRelationship>();

@@ -18,7 +18,9 @@ package org.pentaho.metadata.model;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.pentaho.metadata.model.concept.Concept;
+import org.pentaho.metadata.query.impl.ietl.InlineEtlQueryExecutor;
 
 /**
  * This is the SQL implementation of the physical model.  For now 
@@ -43,6 +45,14 @@ public class SqlPhysicalModel extends Concept implements IPhysicalModel{
 
   public SqlPhysicalModel() {
     super();
+  }
+  
+  public String getQueryExecName() {
+    return "metadataqueryexec-SQL";
+  }
+
+  public String getDefaultQueryClassname() {
+    return "org.pentaho.platform.plugin.services.connections.metadata.sql.SqlMetadataQueryExec";
   }
   
   public void setDatasource(SqlDataSource datasource) {
