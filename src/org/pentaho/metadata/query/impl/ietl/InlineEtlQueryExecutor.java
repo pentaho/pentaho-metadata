@@ -48,6 +48,7 @@ import org.pentaho.di.trans.steps.groupby.GroupByMeta;
 import org.pentaho.di.trans.steps.selectvalues.SelectValuesMeta;
 import org.pentaho.di.trans.steps.sort.SortRowsMeta;
 import org.pentaho.di.trans.steps.textfileinput.TextFileInputField;
+import org.pentaho.metadata.messages.Messages;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.InlineEtlPhysicalColumn;
 import org.pentaho.metadata.model.InlineEtlPhysicalModel;
@@ -55,6 +56,7 @@ import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalTable;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
+import org.pentaho.metadata.query.BaseMetadataQueryExec;
 import org.pentaho.metadata.query.model.CombinationType;
 import org.pentaho.metadata.query.model.Constraint;
 import org.pentaho.metadata.query.model.Order;
@@ -62,7 +64,6 @@ import org.pentaho.metadata.query.model.Parameter;
 import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.metadata.query.model.util.QueryModelMetaData;
-import org.pentaho.metadata.messages.Messages;
 
 /**
  * This query executor generates an inline ETL result set, based on the inline etl 
@@ -71,7 +72,7 @@ import org.pentaho.metadata.messages.Messages;
  * @author Will Gorman (wgorman@pentaho.com)
  *
  */
-public class InlineEtlQueryExecutor {
+public class InlineEtlQueryExecutor extends BaseMetadataQueryExec {
   
   private static final String __FORMULA_ = "__FORMULA_"; //$NON-NLS-1$
 
@@ -79,6 +80,32 @@ public class InlineEtlQueryExecutor {
   
   String transformLocation = "res:org/pentaho/metadata/query/impl/ietl/"; //$NON-NLS-1$
   
+  private String csvFileLoc = null;
+  
+  @Override
+  public void setParameter(Parameter param, Object value) {
+    
+    super.setParameter(param, convertParameterValue( param, value ));
+  }
+  
+  public IPentahoResultSet executeQuery(Query queryObject) {
+    
+    try {
+      return executeQuery(queryObject, csvFileLoc, parameters);
+    } catch (Exception e ) {
+      logger.error("error", e); //$NON-NLS-1$
+      return null;
+    }
+  }
+  
+  protected void init() {
+    
+  }
+  
+  public boolean isLive() {
+    return false;
+  }
+
   protected String getTransformLocation() {
     return transformLocation;
   }
@@ -682,4 +709,13 @@ public class InlineEtlQueryExecutor {
         return ValueMetaInterface.TYPE_STRING;
     }
   }
+
+  public String getCsvFileLoc() {
+    return csvFileLoc;
+  }
+
+  public void setCsvFileLoc(String csvFileLoc) {
+    this.csvFileLoc = csvFileLoc;
+  }
+
 }
