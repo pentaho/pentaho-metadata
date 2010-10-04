@@ -22,7 +22,6 @@ import org.pentaho.commons.connection.IPentahoResultSet;
 import org.pentaho.metadata.query.model.Parameter;
 import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.repository.IMetadataDomainRepository;
-import org.pentaho.platform.api.engine.IPentahoSession;
 
 /**
  * This is an interface for metadata query execution.
@@ -57,12 +56,6 @@ public interface IMetadataQueryExec {
    * @param timeout
    */
   public void setTimeout(Integer timeout);
-  
-  /**
-   * Sets the current sessions
-   * @param session
-   */
-  public void setSession( IPentahoSession session );
   
   /**
    * Sets the repository that the metadata model is stored in

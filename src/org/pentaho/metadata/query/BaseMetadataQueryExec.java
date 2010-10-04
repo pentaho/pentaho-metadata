@@ -23,7 +23,6 @@ import org.pentaho.metadata.model.IMetadataQueryExec;
 import org.pentaho.metadata.model.IPhysicalModel;
 import org.pentaho.metadata.query.model.Parameter;
 import org.pentaho.metadata.repository.IMetadataDomainRepository;
-import org.pentaho.platform.api.engine.IPentahoSession;
 
 /**
  * This is a base abstract class for IMetadataQueryExec implementations.
@@ -45,8 +44,6 @@ public abstract class BaseMetadataQueryExec implements IMetadataQueryExec {
   private boolean readOnly = true;
   
   private boolean forwardOnly = false;
-  
-  private IPentahoSession session;
   
   public IMetadataDomainRepository metadataDomainRepository;
   
@@ -78,14 +75,6 @@ public abstract class BaseMetadataQueryExec implements IMetadataQueryExec {
 
   public Integer getTimeout() {
     return timeout;
-  }
-
-  public IPentahoSession getSession() {
-    return session;
-  }
-
-  public void setSession(IPentahoSession session) {
-    this.session = session;
   }
 
   public IMetadataDomainRepository getMetadataDomainRepository() {
