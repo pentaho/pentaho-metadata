@@ -532,11 +532,11 @@ public class ThinModelConverter {
     SqlDataSource dataSource = new SqlDataSource();
 
     dataSource.setDialectType(database.getDatabaseTypeDesc());
-    dataSource.setDatabaseName(database.getDatabaseName());
-    dataSource.setHostname(database.getHostname());
-    dataSource.setPort(database.getDatabasePortNumberString());
-    dataSource.setUsername(database.getUsername());
-    dataSource.setPassword(database.getPassword());
+    dataSource.setDatabaseName(database.environmentSubstitute(database.getDatabaseName()));
+    dataSource.setHostname(database.environmentSubstitute(database.getHostname()));
+    dataSource.setPort(database.environmentSubstitute(database.getDatabasePortNumberString()));
+    dataSource.setUsername(database.environmentSubstitute(database.getUsername()));
+    dataSource.setPassword(database.environmentSubstitute(database.getPassword()));
     
     if (database.getAccessType() == DatabaseMeta.TYPE_ACCESS_JNDI) {
       dataSource.setType(DataSourceType.values()[database.getAccessType()]); 
