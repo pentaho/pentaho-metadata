@@ -35,7 +35,7 @@ public class LocalizedString implements Serializable {
   // English is the default!
   // NOTE: please see http://jira.pentaho.org/browse/PMD-166 for more
   // information
-  private static final String DEFAULT_LOCALE = "en_US"; //$NON-NLS-1$
+  public static final String DEFAULT_LOCALE = "en_US"; //$NON-NLS-1$
   
   private Map<String,String> localeStringMap;
   
