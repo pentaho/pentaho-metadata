@@ -282,21 +282,37 @@ public class DefaultSQLDialect implements SQLDialectInterface {
     
     supportedFunctions.put("DATEVALUE", new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_FUNCTION, "DATE", 1) { //$NON-NLS-1$ //$NON-NLS-2$
       public void generateFunctionSQL(FormulaTraversalInterface formula, StringBuffer sb, String locale, FormulaFunction f) throws PentahoMetadataException {
-        Pattern p = Pattern.compile("(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)"); //$NON-NLS-1$
-        String dateValue = null;
+        Object dateValue = null;
         if (f.getChildValues()[0] instanceof StaticValue) {
-          dateValue = (String)((StaticValue)f.getChildValues()[0]).getValue();
+          dateValue = ((StaticValue)f.getChildValues()[0]).getValue();
         } else if (f.getChildValues()[0] instanceof ContextLookup) {
-          dateValue = (String)formula.getParameterValue((ContextLookup)f.getChildValues()[0]);
+          dateValue = formula.getParameterValue((ContextLookup)f.getChildValues()[0]);
         }
         
-        Matcher m = p.matcher(dateValue);
-        if (!m.matches()) {
-          throw new PentahoMetadataException(Messages.getErrorString("DefaultSQLDialect.ERROR_0001_DATE_STRING_SYNTAX_INVALID", dateValue)); //$NON-NLS-1$
+        int year = 0;
+        int month = 0;
+        int day = 0;
+        
+        if (dateValue instanceof String) {
+          Pattern p = Pattern.compile("(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)"); //$NON-NLS-1$
+          Matcher m = p.matcher((String) dateValue);
+          if (!m.matches()) {
+            throw new PentahoMetadataException(Messages.getErrorString("DefaultSQLDialect.ERROR_0001_DATE_STRING_SYNTAX_INVALID", (String) dateValue)); //$NON-NLS-1$
+          }
+          year = Integer.parseInt(m.group(1));
+          month = Integer.parseInt(m.group(2));
+          day = Integer.parseInt(m.group(3));
+        } else if (dateValue instanceof java.util.Date) {
+          Calendar c = Calendar.getInstance();
+          c.setTime((java.util.Date) dateValue);
+          year = c.get(Calendar.YEAR);
+          month = c.get(Calendar.MONTH) + 1;
+          day = c.get(Calendar.DAY_OF_MONTH);
+        } else {
+          // The dateValue could be null here or some other data type we're not expecting
+          String dateValueType = dateValue == null ? "null" : dateValue.getClass().getName(); //$NON-NLS-1$
+          throw new PentahoMetadataException(Messages.getErrorString("DefaultSQLDialect.ERROR_0003_DATE_PARAMETER_UNRECOGNIZED", dateValueType));     //$NON-NLS-1$
         }
-        int year = Integer.parseInt(m.group(1));
-        int month = Integer.parseInt(m.group(2));
-        int day = Integer.parseInt(m.group(3));
        sb.append(getDateSQL(year, month, day));
       }
       

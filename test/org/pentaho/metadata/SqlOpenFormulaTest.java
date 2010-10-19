@@ -20,6 +20,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -222,6 +225,78 @@ public class SqlOpenFormulaTest {
           "        (\n" + 
           "          (\n" + 
           "              BT_ORDERS_ORDERS.ORDERDATE  > TO_DATE('2004-01-01','YYYY-MM-DD')\n" + 
+          "          )\n" + 
+          "        )\n"
+          , mappedQuery.getQuery());
+  }
+  
+  @Test
+  public void testMqlDateParams_with_Date_object() throws Exception {
+    Domain steelWheelsDomain = new XmiParser().parseXmi(new FileInputStream("test-res/steel-wheels.xmi")); 
+    
+    String mql = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+      + "<mql>"
+      + "<domain_id>Steel-Wheels</domain_id>"
+      + "<model_id>BV_ORDERS</model_id>"
+      + "<options>"
+      + "<disable_distinct>false</disable_distinct>"
+      + "</options>"
+      + "<parameters>"
+      + "<parameter defaultValue=\"2004-01-01\" name=\"date\" type=\"STRING\"/>"
+      + "</parameters>"
+      + "<selections>"
+      + "<selection>"
+      + "<view>BC_CUSTOMER_W_TER_</view>"
+      + "<column>BC_CUSTOMER_W_TER_CUSTOMERNUMBER</column>"
+      + "<aggregation>NONE</aggregation>"
+      + "</selection>"
+      + "<selection>"
+      + "<view>CAT_ORDERS</view>"
+      + "<column>BC_ORDERS_ORDERDATE</column>"
+      + "<aggregation>NONE</aggregation>"
+      + "</selection>"
+      + "</selections>"
+      + "<constraints>"
+      + "<constraint>"
+      + "<operator/>"
+      + "<condition>[CAT_ORDERS.BC_ORDERS_ORDERDATE] "
+      + "&gt;DATEVALUE([param:date])</condition>"
+      + "</constraint>"
+      + "</constraints>"
+      + "<orders/>"
+      + "</mql>";
+    
+      QueryXmlHelper helper = new QueryXmlHelper();
+      InMemoryMetadataDomainRepository repo = new InMemoryMetadataDomainRepository();
+      steelWheelsDomain.setId("Steel-Wheels");
+      
+      repo.storeDomain(steelWheelsDomain, false);
+      Query query = helper.fromXML(repo, mql);
+    
+      DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+      
+      SqlGenerator generator = new SqlGenerator();
+      Map<String, Object> parameters = new HashMap<String, Object>();
+      Date now = new Date();
+      parameters.put("date", now);
+      MappedQuery mappedQuery = generator.generateSql(query, "en_US", repo, databaseMeta, parameters, false);
+      
+      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+      String nowAsString = sdf.format(now);
+      
+      Assert.assertEquals(
+          "SELECT DISTINCT \n" + 
+          "          BT_CUSTOMER_W_TER_CUSTOMER_W01.CUSTOMERNUMBER AS COL0\n" + 
+          "         ,BT_ORDERS_ORDERS.ORDERDATE AS COL1\n" + 
+          "FROM \n" + 
+          "          CUSTOMER_W_TER BT_CUSTOMER_W_TER_CUSTOMER_W01\n" + 
+          "         ,ORDERS BT_ORDERS_ORDERS\n" + 
+          "WHERE \n" + 
+          "          ( BT_ORDERS_ORDERS.CUSTOMERNUMBER = BT_CUSTOMER_W_TER_CUSTOMER_W01.CUSTOMERNUMBER )\n" + 
+          "      AND \n" + 
+          "        (\n" + 
+          "          (\n" + 
+          "              BT_ORDERS_ORDERS.ORDERDATE  > TO_DATE('" + nowAsString + "','YYYY-MM-DD')\n" + 
           "          )\n" + 
           "        )\n"
           , mappedQuery.getQuery());
