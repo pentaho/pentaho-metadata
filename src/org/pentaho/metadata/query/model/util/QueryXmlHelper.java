@@ -202,7 +202,7 @@ public class QueryXmlHelper {
       Element paramElement = doc.createElement("parameter"); //$NON-NLS-1$
       paramElement.setAttribute("name", param.getName()); //$NON-NLS-1$
       paramElement.setAttribute("type", param.getType().toString()); //$NON-NLS-1$
-      paramElement.setAttribute("defaultValue", param.getDefaultValue().toString()); //$NON-NLS-1$
+      paramElement.setAttribute("defaultValue", param.getDefaultValue() == null ? "" : param.getDefaultValue().toString()); //$NON-NLS-1$ //$NON-NLS-2$
       parametersElement.appendChild(paramElement);
     }
   }
