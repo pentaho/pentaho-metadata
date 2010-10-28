@@ -121,6 +121,30 @@ public class XmiParserTest {
     Assert.assertEquals(xml1, xml2);
   }
   
+  @Test
+  public void testMissingDescriptionRef() throws Exception {
+    XmiParser parser = new XmiParser();
+    Domain domain = parser.parseXmi(new FileInputStream("test-res/missing_ref.xmi"));
+    
+    String xmi = parser.generateXmi(domain);
+    
+    ByteArrayInputStream is = new ByteArrayInputStream(xmi.getBytes());
+    Domain domain2 = parser.parseXmi(is);
+    
+    ByteArrayInputStream is2 = new ByteArrayInputStream(parser.generateXmi(domain2).getBytes());
+    Domain domain3 = parser.parseXmi(is2);
+    
+    
+    SerializationService serializer = new SerializationService();
+   
+    String xml1 = serializeWithOrderedHashmaps(domain2);
+    String xml2 = serializeWithOrderedHashmaps(domain3);
+
+    // note: this does not verify security objects at this time
+    Assert.assertEquals(xml1, xml2);
+  }
+
+  
   public String serializeWithOrderedHashmaps(Domain domain) {
     XStream xstream = new XStream(new DomDriver());
     xstream.registerConverter(new Converter() {

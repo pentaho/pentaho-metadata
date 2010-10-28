@@ -1418,6 +1418,8 @@ public class XmiParser {
     </CWM:Description>
        */
       Element modelElem = (Element)description.getElementsByTagName("CWM:Description.modelElement").item(0); //$NON-NLS-1$
+      if (modelElem == null) continue;
+      
       NodeList mecn = modelElem.getChildNodes();
       String parentRef = null;
       String type = null;
