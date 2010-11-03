@@ -19,6 +19,7 @@ package org.pentaho.pms.mql.dialect;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 
 import org.apache.commons.logging.Log;
@@ -74,10 +75,13 @@ public class SQLDialectFactory {
       SQLDialectInterface dialect = null;
       try {
         dialect = dialectIter.next(); // Try to instantiate the next dialect
-      } catch (Throwable t) {
-        // Log an error if dialect instantiation/registration fails.  We don't know the dialect 
+      } catch (ServiceConfigurationError err) {
+        // Log an error if dialect instantiation/registration fails for any other reason.  We don't know the dialect 
         // we attempted to load here so log it as a generic error with stack trace.  
-        logger.error(Messages.getErrorString("SQLDialectFactory.ERROR_0001_ERROR_LOADING_DIALECT"), t); //$NON-NLS-1$
+        logger.warn(Messages.getErrorString("SQLDialectFactory.WARN_0001_DIALECT_COULD_NOT_BE_LOADED", err.getMessage())); //$NON-NLS-1$
+        if (logger.isDebugEnabled()) {
+          logger.debug(Messages.getErrorString("SQLDialectFactory.WARN_0001_DIALECT_COULD_NOT_BE_LOADED", err.getMessage()), err); //$NON-NLS-1$
+        }
       }
       if (dialect != null) {
         addDialect(dialect);
