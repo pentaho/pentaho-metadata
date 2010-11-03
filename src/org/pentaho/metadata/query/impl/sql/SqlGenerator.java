@@ -174,16 +174,9 @@ public class SqlGenerator {
       if (type == TargetTableType.INLINE_SQL) {
         tableName = "(" + tableName + ")";   //$NON-NLS-1$ //$NON-NLS-2$
       } else {
-        tableName = databaseMeta.quoteField(tableName);
+        tableName = databaseMeta.getQuotedSchemaTableCombination(schemaName, tableName); 
       }
-      
-      // if (delayConditionOnOuterJoin == null) {
-      query.addTable(databaseMeta.getSchemaTableCombination(schemaName, tableName),
-          databaseMeta.quoteField(tableAliases.get(businessTable)));
-      // } else {
-      //  query.addTable(databaseMeta.getSchemaTableCombination(schemaName, tableName),
-      //      databaseMeta.quoteField(tableAliases.get(businessTable)), delayConditionOnOuterJoin.booleanValue());
-      // }
+      query.addTable(tableName, databaseMeta.quoteField(tableAliases.get(businessTable)));
     }
     
     // JOIN CONDITIONS

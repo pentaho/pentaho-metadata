@@ -159,16 +159,10 @@ public class SQLGenerator {
       if (tableName.toLowerCase().startsWith("select ")) {
         tableName = "(" + tableName + ")"; 
       } else {
-        tableName = databaseMeta.quoteField(businessTable.getTargetTable());
+        tableName = databaseMeta.getQuotedSchemaTableCombination(schemaName, tableName);
       }
       
-      // if (delayTableConditionOnOuterJoin == null) {
-      query.addTable(databaseMeta.getSchemaTableCombination(schemaName, tableName),
-          databaseMeta.quoteField(tableAliases.get(businessTable)));
-      // } else {
-      //  query.addTable(databaseMeta.getSchemaTableCombination(schemaName, tableName),
-      //      databaseMeta.quoteField(tableAliases.get(businessTable)), delayTableConditionOnOuterJoin.booleanValue());
-      // }
+      query.addTable(tableName, databaseMeta.quoteField(tableAliases.get(businessTable)));
     }
     
     // JOIN CONDITIONS
