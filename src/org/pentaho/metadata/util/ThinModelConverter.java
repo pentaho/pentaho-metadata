@@ -547,7 +547,7 @@ public class ThinModelConverter {
     // And now load the attributes...
     if (database.getAttributes() != null) {
       for (Object key : database.getAttributes().keySet()) {
-          dataSource.getAttributes().put((String)key, (String)database.getAttributes().get(key));
+          dataSource.getAttributes().put((String)key, database.environmentSubstitute((String)database.getAttributes().get(key)));
       }
     }
     
