@@ -611,6 +611,22 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
             }
           } else if (paramValue instanceof Double) {
             sb.append(paramValue.toString());
+          } else if (paramValue instanceof Double[]) {
+            Double param[] = (Double[])paramValue;
+            for (int i = 0; i < param.length; i++) {
+              if (i != 0) {
+                sb.append(" , ");
+              }
+              sb.append(param[i].toString());
+            }
+          } else if (paramValue instanceof Object[]) {
+            Object param[] = (Object[])paramValue;
+            for (int i = 0; i < param.length; i++) {
+              if (i != 0) {
+                sb.append(" , ");
+              }
+              sb.append(sqlDialect.quoteStringLiteral(param[i].toString()));
+            }
           } else {
             // assume a string, string literal quote
             sb.append(sqlDialect.quoteStringLiteral(paramValue.toString())); 

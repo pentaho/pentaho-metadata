@@ -197,6 +197,29 @@ public class DefaultSQLDialect implements SQLDialectInterface {
       }
     });
     
+    supportedFunctions.put("EQUALS",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_FUNCTION, "EQUALS", 2) { //$NON-NLS-1$ //$NON-NLS-2$
+      
+      /**
+       * render the necessary sql
+       */
+      public void generateFunctionSQL(FormulaTraversalInterface formula, StringBuffer sb, String locale, FormulaFunction f) throws PentahoMetadataException {
+        boolean multiVal = false;
+        if (f.getChildValues()[1] instanceof ContextLookup) {
+          multiVal = formula.getParameterValue((ContextLookup)f.getChildValues()[1]) instanceof Object[];
+        }
+        if (multiVal) {
+          formula.generateSQL(f, f.getChildValues()[0], sb, locale);
+          sb.append(" IN ( "); //$NON-NLS-1$
+          formula.generateSQL(f, f.getChildValues()[1], sb, locale);
+          sb.append(" ) "); //$NON-NLS-1$
+        } else {
+          formula.generateSQL(f, f.getChildValues()[0], sb, locale);
+          sb.append(" = ");
+          formula.generateSQL(f, f.getChildValues()[1], sb, locale);
+        }
+      }
+    });
+    
     //
     // aggregator functions
     //

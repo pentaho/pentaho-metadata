@@ -820,11 +820,141 @@ public class SqlGeneratorTest {
       e.printStackTrace();
       Assert.fail();
     }
-    
-    
-    
   }
 
+  @Test
+  public void testMultiParameterSqlGeneration() {
+    try {
+
+      LogicalModel model = TestHelper.buildDefaultModel();
+      LogicalColumn bc1 = model.findLogicalColumn("bc1");
+      LogicalColumn bc2 = model.findLogicalColumn("bc2");
+      LogicalColumn bce2 = model.findLogicalColumn("bce2");
+      DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+      Query query = new Query(null, model);
+
+      query.getParameters().add(new Parameter("test1", DataType.NUMERIC, new Double[] {1.2, 1.3}));
+      query.getParameters().add(new Parameter("test2", DataType.STRING, new String[] {"value", "value2"}));
+      
+      query.getSelections().add(new Selection(null, bc1, null));
+      query.getSelections().add(new Selection(null, bc2, null));
+
+      query.getConstraints().add(new Constraint(CombinationType.AND, "EQUALS([bt1.bc1];[param:test1])")); //$NON-NLS-1$
+      query.getConstraints().add(new Constraint(CombinationType.AND, "EQUALS([bt2.bc2];[param:test2])")); //$NON-NLS-1$
+
+      SqlGenerator generator = new SqlGenerator();
+      
+      MappedQuery mquery = generator.generateSql(query, "en_US", null, databaseMeta, null, false);
+      TestHelper.assertEqualsIgnoreWhitespaces(
+          "SELECT DISTINCT \n" + 
+          "          bt1.pc1 AS COL0\n" + 
+          "         ,bt2.pc2 AS COL1\n" + 
+          "FROM \n" + 
+          "          pt1 bt1\n" + 
+          "         ,pt2 bt2\n" + 
+          "WHERE \n" + 
+          "          ( bt1.pc1 = bt2.pc2 )\n" + 
+          "      AND \n" + 
+          "        (\n" + 
+          "          (\n" + 
+          "              bt1.pc1  IN ( 1.2 , 1.3 ) \n" + 
+          "          )\n" + 
+          "      AND (\n" + 
+          "              bt2.pc2  IN ( 'value' , 'value2' ) \n" + 
+          "          )\n" + 
+          "        )\n",
+          mquery.getQuery()
+          );
+
+      Map<String, Object> parameters = new HashMap<String, Object>();
+      parameters.put("test1", "value1");
+      parameters.put("test2", 2.1);
+      
+      mquery = generator.generateSql(query, "en_US", null, databaseMeta, parameters, false);
+      TestHelper.assertEqualsIgnoreWhitespaces(
+          "SELECT DISTINCT \n" + 
+          "          bt1.pc1 AS COL0\n" + 
+          "         ,bt2.pc2 AS COL1\n" + 
+          "FROM \n" + 
+          "          pt1 bt1\n" + 
+          "         ,pt2 bt2\n" + 
+          "WHERE \n" + 
+          "          ( bt1.pc1 = bt2.pc2 )\n" + 
+          "      AND \n" + 
+          "        (\n" + 
+          "          (\n" + 
+          "              bt1.pc1  = 'value1'\n" + 
+          "          )\n" + 
+          "      AND (\n" + 
+          "              bt2.pc2  = 2.1\n" + 
+          "          )\n" + 
+          "        )\n",
+          mquery.getQuery()
+          );
+
+      Assert.assertNull(mquery.getParamList());
+      
+      mquery = generator.generateSql(query, "en_US", null, databaseMeta, parameters, true);
+      TestHelper.assertEqualsIgnoreWhitespaces(
+          "SELECT DISTINCT \n" + 
+          "          bt1.pc1 AS COL0\n" + 
+          "         ,bt2.pc2 AS COL1\n" + 
+          "FROM \n" + 
+          "          pt1 bt1\n" + 
+          "         ,pt2 bt2\n" + 
+          "WHERE \n" + 
+          "          ( bt1.pc1 = bt2.pc2 )\n" + 
+          "      AND \n" + 
+          "        (\n" + 
+          "          (\n" + 
+          "              bt1.pc1  = ?\n" + 
+          "          )\n" + 
+          "      AND (\n" + 
+          "              bt2.pc2  = ?\n" + 
+          "          )\n" + 
+          "        )\n",
+          mquery.getQuery()
+        );
+      Assert.assertNotNull(mquery.getParamList());
+      Assert.assertEquals(2, mquery.getParamList().size());
+      Assert.assertEquals("test1", mquery.getParamList().get(0));
+      Assert.assertEquals("test2", mquery.getParamList().get(1));
+      
+      parameters = new HashMap<String, Object>();
+      parameters.put("test1", new String[] {"value1", "value2"});
+      parameters.put("test2", new Double[] {2.1, 2.2, 2.3});
+       
+      mquery = generator.generateSql(query, "en_US", null, databaseMeta, parameters, true);
+      TestHelper.assertEqualsIgnoreWhitespaces(
+          "SELECT DISTINCT \n" + 
+          "          bt1.pc1 AS COL0\n" + 
+          "         ,bt2.pc2 AS COL1\n" + 
+          "FROM \n" + 
+          "          pt1 bt1\n" + 
+          "         ,pt2 bt2\n" + 
+          "WHERE \n" + 
+          "          ( bt1.pc1 = bt2.pc2 )\n" + 
+          "      AND \n" + 
+          "        (\n" + 
+          "          (\n" + 
+          "              bt1.pc1  IN ( ?, ? ) \n" + 
+          "          )\n" + 
+          "      AND (\n" + 
+          "              bt2.pc2  IN ( ?, ?, ? ) \n" + 
+          "          )\n" + 
+          "        )\n",
+          mquery.getQuery()
+        );
+      Assert.assertNotNull(mquery.getParamList());
+      Assert.assertEquals(2, mquery.getParamList().size());
+      Assert.assertEquals("test1", mquery.getParamList().get(0));
+      Assert.assertEquals("test2", mquery.getParamList().get(1));
+      
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.fail();
+    }
+  }
   
   @Test
   public void testAggListSQLGeneration() {

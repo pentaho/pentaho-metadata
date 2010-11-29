@@ -480,11 +480,18 @@ public class SqlGenerator {
     Matcher m = p.matcher(sql);
     StringBuffer sb = new StringBuffer();
     while (m.find()) {
-      m.appendReplacement(sb, "?"); //$NON-NLS-1$
+      String paramName = m.group(1);
+      String repl = "?";
+      if (parameters.get(paramName) instanceof Object[]) {
+        Object[] paramz = (Object[])parameters.get(paramName);
+        for (int i = 1; i < paramz.length; i++) {
+          repl += ", ?";
+        }
+      }
+      m.appendReplacement(sb, repl); //$NON-NLS-1$
       if (paramNames == null) {
         paramNames = new ArrayList<String>();
       }
-      String paramName = m.group(1);
       paramNames.add(paramName);
     }
     m.appendTail(sb);
