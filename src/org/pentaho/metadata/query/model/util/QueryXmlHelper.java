@@ -229,7 +229,7 @@ public class QueryXmlHelper {
       return null;
     }
 
-    CSVTokenizer csvt = new CSVTokenizer(defaultValue, ";", "\"", true);
+    CSVTokenizer csvt = new CSVTokenizer(defaultValue, "|", "\"", true);
     switch(dataType) {
       case BOOLEAN:
         return parseBooleanDefaultParam(defaultValue, csvt);
