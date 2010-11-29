@@ -18,6 +18,7 @@ package org.pentaho.metadata.query.model.util;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -29,6 +30,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.di.core.util.StringEvaluator;
 import org.pentaho.di.core.xml.XMLHandler;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
@@ -45,6 +47,7 @@ import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.metadata.repository.IMetadataDomainRepository;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.metadata.messages.Messages;
+import org.pentaho.reporting.libraries.base.util.CSVTokenizer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -215,22 +218,67 @@ public class QueryXmlHelper {
     Object defaultVal = null;
     if (name != null && type != null && StringUtils.isNotEmpty(defaultValue)) {
       DataType dataType = DataType.valueOf(type.toUpperCase());
-      // todo: add support for additional objects
-      switch(dataType) {
-        case BOOLEAN:
-          defaultVal = Boolean.parseBoolean(defaultValue);
-          break;
-        case NUMERIC:
-          defaultVal = Double.parseDouble(defaultValue);
-          break;
-        default:
-          defaultVal = defaultValue;  
-      }
+      defaultVal = parseDefaultValue(defaultValue, dataType);
     }
     Parameter param = new Parameter(name, DataType.valueOf(type.toUpperCase()), defaultVal);
     query.getParameters().add(param);
   }
-  
+
+  protected Object parseDefaultValue(String defaultValue, DataType dataType) {
+    if (defaultValue == null) {
+      return null;
+    }
+
+    CSVTokenizer csvt = new CSVTokenizer(defaultValue, ";", "\"", true);
+    switch(dataType) {
+      case BOOLEAN:
+        return parseBooleanDefaultParam(defaultValue, csvt);
+      case NUMERIC:
+        return parseDoubleDefaultParam(defaultValue, csvt);
+      default:
+        return parseStringDefaultParam(defaultValue, csvt);
+    }
+  }
+
+  private Object parseBooleanDefaultParam(String defaultValue, CSVTokenizer csvt) {
+    if (csvt.countTokens() == 1) {
+      return Boolean.parseBoolean(csvt.nextToken());
+    } else {
+      ArrayList<Boolean> vals = new ArrayList<Boolean>();
+      while (csvt.hasMoreTokens()) {
+        String token = csvt.nextToken();
+        vals.add(Boolean.parseBoolean(token));
+      }
+      return vals.toArray(new Boolean[0]);
+    }
+  }
+  private Object parseDoubleDefaultParam(String defaultValue, CSVTokenizer csvt) {
+    if (csvt.countTokens() == 1) {
+      return Double.parseDouble(csvt.nextToken());
+    } else {
+      ArrayList<Double> vals = new ArrayList<Double>();
+      while (csvt.hasMoreTokens()) {
+        String token = csvt.nextToken();
+        vals.add(Double.parseDouble(token));
+      }
+      return vals.toArray(new Double[0]);
+    }
+  }
+  private Object parseStringDefaultParam(String defaultValue, CSVTokenizer csvt) {
+    if (csvt.countTokens() == 1) {
+      return csvt.nextToken();
+    } else {
+      ArrayList<String> vals = new ArrayList<String>();
+      while (csvt.hasMoreTokens()) {
+        String token = csvt.nextToken();
+        vals.add(token);
+      }
+      return vals.toArray(new String[0]);
+    }
+  }
+
+
+
   protected void addSelectionToDocument(Document doc, Selection selection, Element selectionElement) {
     addTextElement(doc, selectionElement, "view", selection.getCategory().getId()); //$NON-NLS-1$
     addTextElement(doc, selectionElement, "column", selection.getLogicalColumn().getId()); //$NON-NLS-1$
@@ -546,4 +594,5 @@ public class QueryXmlHelper {
       return null;
     }
   }
+
 }
