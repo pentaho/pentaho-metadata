@@ -191,14 +191,6 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
     }
   }
   
-  
-  /**
-   * constructor
-   * 
-   * @param model logical model for logical column lookup
-   * @param formulaString formula string
-   * @throws PentahoMetadataException throws an exception if we're missing anything important
-   */
   public void setTableAliases(Map<LogicalTable, String> tableAliases) {
     this.tableAliases = tableAliases;
   }
@@ -444,6 +436,14 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
       validateAndResolveObjectModel(t.getHeadValue());
       for (int i = 0; i < t.getOperators().length; i++) {
         validateAndResolveObjectModel(t.getOperators()[i]);
+
+        if (t.getOperands()[i] instanceof ContextLookup) {
+          if (paramContainsMultipleValues((ContextLookup)t.getOperands()[i])) {
+            // no infix operators support multi-valued parameters
+            throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0024_MULTIPLE_VALUES_NOT_SUPPORTED",
+                t.getOperators()[i].toString())); //$NON-NLS-1$
+          }
+        }
         validateAndResolveObjectModel(t.getOperands()[i]);
       }
     } else if (val instanceof ContextLookup) {
@@ -458,6 +458,7 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
       if (sqlDialect.isSupportedFunction(f.getFunctionName())) {
         SQLFunctionGeneratorInterface gen = sqlDialect.getFunctionSQLGenerator(f.getFunctionName());
         gen.validateFunction(f);
+
         // note, if aggregator function, we should make sure it is part of the table formula vs. conditional formula
         if (!allowAggregateFunctions && tables == null && sqlDialect.isAggregateFunction(f.getFunctionName())) {
           throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0013_AGGREGATE_USAGE_ERROR", f.getFunctionName(), formulaString)); //$NON-NLS-1$
@@ -470,7 +471,13 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
         // validate functions parameters
         if (f.getChildValues() != null && f.getChildValues().length > 0) {
           validateAndResolveObjectModel(f.getChildValues()[0]);
+
           for (int i = 1; i < f.getChildValues().length; i++) {
+            if(f.getChildValues()[i] instanceof ContextLookup) {
+              if (paramContainsMultipleValues((ContextLookup)f.getChildValues()[i]) && !gen.isMultiValuedParamAware()) {
+                throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0024_MULTIPLE_VALUES_NOT_SUPPORTED", f.getFunctionName())); //$NON-NLS-1$
+              }
+            }
             validateAndResolveObjectModel(f.getChildValues()[i]);
           }
         }
@@ -488,7 +495,30 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
       throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0016_CLASS_TYPE_NOT_SUPPORTED", val.getClass().toString())); //$NON-NLS-1$
     }
   }
-  
+
+  private boolean paramContainsMultipleValues(ContextLookup contextLookup) {
+    String fieldName = contextLookup.getName();
+    // we need to validate that "fieldName" actually maps to a field!
+    if (!selectionMap.containsKey(fieldName)) {
+
+      // check to see if it's a parameter
+      if (fieldName.startsWith(PARAM)) {
+        String paramName = fieldName.substring(6);
+        if (parameters.containsKey(paramName)) {
+          Object param = parameters.get(paramName);
+          if (param instanceof Object[] && ((Object[])param).length > 1) {
+            return true;
+          } else {
+            return false;
+          }
+        } else {
+          return false;
+        }
+      }
+    }
+    return false;
+  }
+
   /**
    * Determines whether or not child val needs to be wrapped with parens.
    * The determining factor is if both the current object and the parent are sql infix operators

@@ -218,6 +218,11 @@ public class DefaultSQLDialect implements SQLDialectInterface {
           formula.generateSQL(f, f.getChildValues()[1], sb, locale);
         }
       }
+
+      public boolean isMultiValuedParamAware() {
+        return true;
+      }
+
     });
     
     //

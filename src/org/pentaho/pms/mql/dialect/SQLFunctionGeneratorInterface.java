@@ -54,4 +54,11 @@ public interface SQLFunctionGeneratorInterface {
    * @return type enumerator
    */
   public int getType();
+
+  /**
+   * This method indicates whether or not the function supports multi-valued parameters
+   * @return
+   */
+  public boolean isMultiValuedParamAware();
+
 }

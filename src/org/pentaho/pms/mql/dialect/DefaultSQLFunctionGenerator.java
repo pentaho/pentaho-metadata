@@ -39,7 +39,8 @@ public class DefaultSQLFunctionGenerator implements SQLFunctionGeneratorInterfac
   protected int paramCount = -1;
   protected String sql;
   protected boolean parens = true;
-  
+  protected boolean multiValuedParamAware = false;
+
   /**
    * constructor
    * 
@@ -110,13 +111,13 @@ public class DefaultSQLFunctionGenerator implements SQLFunctionGeneratorInterfac
       }
     }
   }
-  
+
   /**
    * This is a utility function that may be used by child classes to verify 
    * all params are static numbers.
    * 
    * @param f function to verify
-   * @throws PMSFormulaException if params are not numbers
+   * @throws PentahoMetadataException if params are not numbers
    */
   protected void verifyAllStaticNumbers(FormulaFunction f) throws PentahoMetadataException {
   
@@ -132,7 +133,7 @@ public class DefaultSQLFunctionGenerator implements SQLFunctionGeneratorInterfac
    * This method may be used by child classes to verify all params are static numbers.
    * 
    * @param f function to verify
-   * @throws PMSFormulaException if params are not numbers
+   * @throws PentahoMetadataException if params are not numbers
    */
   protected void verifyAllStaticStrings(FormulaFunction f) throws PentahoMetadataException {
   
@@ -204,5 +205,13 @@ public class DefaultSQLFunctionGenerator implements SQLFunctionGeneratorInterfac
         sb.append(")"); //$NON-NLS-1$
       }
     }
+  }
+
+  public boolean isMultiValuedParamAware() {
+    return multiValuedParamAware;
+  }
+
+  public void setMultiValuedParamAware(boolean multiValuedParamAware) {
+    this.multiValuedParamAware = multiValuedParamAware;
   }
 }
