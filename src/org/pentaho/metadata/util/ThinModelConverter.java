@@ -16,46 +16,18 @@
  */
 package org.pentaho.metadata.util;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.database.DatabaseMeta;
-import org.pentaho.metadata.model.Category;
-import org.pentaho.metadata.model.Domain;
-import org.pentaho.metadata.model.IPhysicalColumn;
-import org.pentaho.metadata.model.IPhysicalModel;
-import org.pentaho.metadata.model.IPhysicalTable;
-import org.pentaho.metadata.model.LogicalColumn;
-import org.pentaho.metadata.model.LogicalModel;
-import org.pentaho.metadata.model.LogicalRelationship;
-import org.pentaho.metadata.model.LogicalTable;
-import org.pentaho.metadata.model.SqlDataSource;
-import org.pentaho.metadata.model.SqlPhysicalColumn;
-import org.pentaho.metadata.model.SqlPhysicalModel;
-import org.pentaho.metadata.model.SqlPhysicalTable;
+import org.pentaho.di.core.exception.KettleException;
+import org.pentaho.metadata.model.*;
 import org.pentaho.metadata.model.SqlDataSource.DataSourceType;
 import org.pentaho.metadata.model.concept.IConcept;
 import org.pentaho.metadata.model.concept.security.RowLevelSecurity;
 import org.pentaho.metadata.model.concept.security.Security;
 import org.pentaho.metadata.model.concept.security.SecurityOwner;
-import org.pentaho.metadata.model.concept.types.AggregationType;
-import org.pentaho.metadata.model.concept.types.Alignment;
-import org.pentaho.metadata.model.concept.types.Color;
-import org.pentaho.metadata.model.concept.types.DataType;
-import org.pentaho.metadata.model.concept.types.FieldType;
-import org.pentaho.metadata.model.concept.types.Font;
-import org.pentaho.metadata.model.concept.types.LocaleType;
-import org.pentaho.metadata.model.concept.types.LocalizedString;
-import org.pentaho.metadata.model.concept.types.TableType;
-import org.pentaho.metadata.model.concept.types.TargetColumnType;
-import org.pentaho.metadata.model.concept.types.TargetTableType;
+import org.pentaho.metadata.model.concept.types.*;
 import org.pentaho.metadata.model.concept.types.ColumnWidth.WidthType;
 import org.pentaho.metadata.query.model.Constraint;
 import org.pentaho.metadata.query.model.Order;
@@ -64,14 +36,7 @@ import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.pms.locale.LocaleInterface;
 import org.pentaho.pms.locale.LocaleMeta;
 import org.pentaho.pms.mql.MQLQueryImpl;
-import org.pentaho.pms.schema.BusinessCategory;
-import org.pentaho.pms.schema.BusinessColumn;
-import org.pentaho.pms.schema.BusinessModel;
-import org.pentaho.pms.schema.BusinessTable;
-import org.pentaho.pms.schema.PhysicalColumn;
-import org.pentaho.pms.schema.PhysicalTable;
-import org.pentaho.pms.schema.RelationshipMeta;
-import org.pentaho.pms.schema.SchemaMeta;
+import org.pentaho.pms.schema.*;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.schema.concept.types.aggregation.ConceptPropertyAggregation;
@@ -100,6 +65,9 @@ import org.pentaho.pms.schema.concept.types.tabletype.TableTypeSettings;
 import org.pentaho.pms.schema.concept.types.url.ConceptPropertyURL;
 import org.pentaho.pms.util.ObjectAlreadyExistsException;
 
+import java.math.BigDecimal;
+import java.util.*;
+
 /**
  * This class converts to and from the original metadata model 
  * (org.pentaho.pms.schema) to the new model (org.pentaho.metadata.model)
@@ -112,6 +80,14 @@ public class ThinModelConverter {
   private static final Log logger = LogFactory.getLog(ThinModelConverter.class);
 
   public static DatabaseMeta convertToLegacy(String name, SqlDataSource datasource) {
+    // make sure that the Kettle environment is initialized before DatabaseMeta creation
+    try {
+      KettleEnvironment.init(false);
+    } catch (KettleException e) {
+      logger.error("Error initializing the Kettle Environment", e);
+      throw new RuntimeException("Error initializing the Kettle Environment", e);
+    }
+
     DatabaseMeta databaseMeta = new DatabaseMeta();
     
     databaseMeta.setName(name);

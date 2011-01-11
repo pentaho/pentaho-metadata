@@ -16,12 +16,6 @@
  */
 package org.pentaho.metadata;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -29,32 +23,18 @@ import org.pentaho.commons.connection.memory.MemoryMetaData;
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.exception.KettleException;
-import org.pentaho.metadata.model.Category;
-import org.pentaho.metadata.model.IPhysicalColumn;
-import org.pentaho.metadata.model.LogicalColumn;
-import org.pentaho.metadata.model.LogicalModel;
-import org.pentaho.metadata.model.LogicalRelationship;
-import org.pentaho.metadata.model.LogicalTable;
-import org.pentaho.metadata.model.SqlPhysicalColumn;
-import org.pentaho.metadata.model.SqlPhysicalTable;
-import org.pentaho.metadata.model.concept.types.AggregationType;
-import org.pentaho.metadata.model.concept.types.DataType;
-import org.pentaho.metadata.model.concept.types.RelationshipType;
-import org.pentaho.metadata.model.concept.types.TargetColumnType;
-import org.pentaho.metadata.model.concept.types.TargetTableType;
+import org.pentaho.metadata.model.*;
+import org.pentaho.metadata.model.concept.types.*;
 import org.pentaho.metadata.query.impl.sql.MappedQuery;
 import org.pentaho.metadata.query.impl.sql.Path;
 import org.pentaho.metadata.query.impl.sql.SqlGenerator;
-import org.pentaho.metadata.query.model.CombinationType;
-import org.pentaho.metadata.query.model.Constraint;
-import org.pentaho.metadata.query.model.Order;
-import org.pentaho.metadata.query.model.Parameter;
-import org.pentaho.metadata.query.model.Query;
-import org.pentaho.metadata.query.model.Selection;
+import org.pentaho.metadata.query.model.*;
 import org.pentaho.metadata.query.model.Order.Type;
 import org.pentaho.metadata.query.model.util.QueryModelMetaData;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.mql.dialect.SQLQueryModel;
+
+import java.util.*;
 
 @SuppressWarnings("nls")
 public class SqlGeneratorTest {
@@ -949,7 +929,40 @@ public class SqlGeneratorTest {
       Assert.assertEquals(2, mquery.getParamList().size());
       Assert.assertEquals("test1", mquery.getParamList().get(0));
       Assert.assertEquals("test2", mquery.getParamList().get(1));
-      
+
+
+      // test that a single-value array translates into an '=' operation, not an IN
+      parameters = new HashMap<String, Object>();
+      parameters.put("test1", new String[] {"value1"});
+      parameters.put("test2", new Double[] {2.1, 2.2, 2.3});
+
+      mquery = generator.generateSql(query, "en_US", null, databaseMeta, parameters, true);
+      TestHelper.assertEqualsIgnoreWhitespaces(
+          "SELECT DISTINCT \n" +
+          "          bt1.pc1 AS COL0\n" +
+          "         ,bt2.pc2 AS COL1\n" +
+          "FROM \n" +
+          "          pt1 bt1\n" +
+          "         ,pt2 bt2\n" +
+          "WHERE \n" +
+          "          ( bt1.pc1 = bt2.pc2 )\n" +
+          "      AND \n" +
+          "        (\n" +
+          "          (\n" +
+          "              bt1.pc1 = ? \n" +
+          "          )\n" +
+          "      AND (\n" +
+          "              bt2.pc2 IN ( ?, ?, ? ) \n" +
+          "          )\n" +
+          "        )\n",
+          mquery.getQuery()
+        );
+      Assert.assertNotNull(mquery.getParamList());
+      Assert.assertEquals(2, mquery.getParamList().size());
+      Assert.assertEquals("test1", mquery.getParamList().get(0));
+      Assert.assertEquals("test2", mquery.getParamList().get(1));
+
+
     } catch (Exception e) {
       e.printStackTrace();
       Assert.fail();

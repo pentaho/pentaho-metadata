@@ -205,7 +205,8 @@ public class DefaultSQLDialect implements SQLDialectInterface {
       public void generateFunctionSQL(FormulaTraversalInterface formula, StringBuffer sb, String locale, FormulaFunction f) throws PentahoMetadataException {
         boolean multiVal = false;
         if (f.getChildValues()[1] instanceof ContextLookup) {
-          multiVal = formula.getParameterValue((ContextLookup)f.getChildValues()[1]) instanceof Object[];
+          Object val = formula.getParameterValue((ContextLookup)f.getChildValues()[1]);
+          multiVal = (val instanceof Object[]) && ( ((Object[])val).length > 1 );
         }
         if (multiVal) {
           formula.generateSQL(f, f.getChildValues()[0], sb, locale);
