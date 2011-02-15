@@ -52,4 +52,9 @@ public class MSAccessDialect extends DefaultSQLDialect {
   public int getMaxTableNameLength() {
     return 64;
   }
+  
+  protected String getStringConcatOperator() {
+    return "+";
+  }  
+  
 }
