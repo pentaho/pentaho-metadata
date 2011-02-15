@@ -81,4 +81,8 @@ public class MSSQLDialect extends DefaultSQLDialect {
   public boolean supportsNLSLiteral() {
     return true;
   }
+  
+  protected String getStringConcatOperator() {
+    return "+";
+  }  
 }
