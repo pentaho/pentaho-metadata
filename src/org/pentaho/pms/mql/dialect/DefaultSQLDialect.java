@@ -54,9 +54,12 @@ public class DefaultSQLDialect implements SQLDialectInterface {
   protected Map<String,SQLOperatorGeneratorInterface> supportedInfixOperators = new HashMap<String,SQLOperatorGeneratorInterface>();
   String databaseType;
   DatabaseMeta databaseMeta;
+  private String concatOperator; // will default to "||", can be overridden by -Ddefault.sql.dialect.concat.operator="+"
+  
   
   public DefaultSQLDialect() {
     this("GENERIC"); //$NON-NLS-1$
+    concatOperator = System.getProperty("default.sql.dialect.concat.operator", "||"); //$NON-NLS-1$    
   }
   
   public DefaultSQLDialect(String databaseType) {
@@ -788,7 +791,7 @@ public class DefaultSQLDialect implements SQLDialectInterface {
   }
 
   protected String getStringConcatOperator() {
-    return "+"; //$NON-NLS-1$
+    return concatOperator; //$NON-NLS-1$
   }
   
   
