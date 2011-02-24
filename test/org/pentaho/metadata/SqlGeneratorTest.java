@@ -585,7 +585,7 @@ public class SqlGeneratorTest {
           "      AND \n" + 
           "        (\n" + 
           "          (\n" + 
-          "              \"bt1\".\"pc1\"  LIKE '%' + 'a''b' + '%'\n" + 
+          "              \"bt1\".\"pc1\"  LIKE '%' || 'a''b' || '%'\n" + 
           "          )\n" + 
           "        )\n"
           ,
@@ -3000,13 +3000,13 @@ public class SqlGeneratorTest {
           "              bt2.pc2  LIKE ?\n" + 
           "          )\n" + 
           "      AND (\n" + 
-          "              bt2.pc2  LIKE '%' + ? + '%'\n" + 
+          "              bt2.pc2  LIKE '%' || ? || '%'\n" + 
           "          )\n" + 
           "      AND (\n" + 
-          "              bt2.pc2  LIKE ? + '%'\n" + 
+          "              bt2.pc2  LIKE ? || '%'\n" + 
           "          )\n" + 
           "      AND (\n" + 
-          "              bt2.pc2  LIKE '%' + ?\n" + 
+          "              bt2.pc2  LIKE '%' || ?\n" + 
           "          )\n" + 
           "        )\n",
           mquery.getQuery()
