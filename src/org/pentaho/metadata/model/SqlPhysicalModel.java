@@ -19,7 +19,7 @@ package org.pentaho.metadata.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.pentaho.metadata.model.concept.Concept;
+import org.pentaho.metadata.model.concept.IConcept;
 
 /**
  * This is the SQL implementation of the physical model.  For now 
@@ -28,7 +28,7 @@ import org.pentaho.metadata.model.concept.Concept;
  * @author Will Gorman (wgorman@pentaho.com)
  *
  */
-public class SqlPhysicalModel extends Concept implements IPhysicalModel{
+public class SqlPhysicalModel extends AbstractPhysicalModel {
   
   private static final long serialVersionUID = 8834210720816769790L;
   
@@ -44,6 +44,13 @@ public class SqlPhysicalModel extends Concept implements IPhysicalModel{
 
   public SqlPhysicalModel() {
     super();
+  }
+
+  @Override
+  public List<IConcept> getChildren() {
+    List<IConcept> children = new ArrayList<IConcept>();
+    children.addAll(physicalTables);
+    return children;
   }
   
   public String getQueryExecName() {

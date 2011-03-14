@@ -19,7 +19,7 @@ package org.pentaho.metadata.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.pentaho.metadata.model.concept.Concept;
+import org.pentaho.metadata.model.concept.IConcept;
 
 /**
  * The Inline ETL Physical model is designed to handle CSV files and uses
@@ -28,7 +28,7 @@ import org.pentaho.metadata.model.concept.Concept;
  * @author Will Gorman (wgorman@pentaho.com)
  *
  */
-public class InlineEtlPhysicalModel extends Concept implements IPhysicalModel {
+public class InlineEtlPhysicalModel extends AbstractPhysicalModel {
 
   private static final long serialVersionUID = 998991922256017536L;
   
@@ -42,6 +42,13 @@ public class InlineEtlPhysicalModel extends Concept implements IPhysicalModel {
 
   public InlineEtlPhysicalModel() {
     super();
+  }
+  
+  @Override
+  public List<IConcept> getChildren() {
+    List<IConcept> children = new ArrayList<IConcept>();
+    children.addAll(physicalTables);
+    return children;
   }
 
   public String getQueryExecName() {

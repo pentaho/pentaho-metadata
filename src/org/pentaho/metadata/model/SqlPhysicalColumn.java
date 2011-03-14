@@ -16,6 +16,7 @@
  */
 package org.pentaho.metadata.model;
 
+import org.pentaho.metadata.model.concept.IConcept;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
 
 
@@ -42,6 +43,11 @@ public class SqlPhysicalColumn extends AbstractPhysicalColumn {
   public SqlPhysicalColumn(SqlPhysicalTable table) {
     this.table = table;
     setTargetColumnType(TargetColumnType.COLUMN_NAME);
+  }
+
+  @Override
+  public IConcept getParent() {
+    return table;
   }
   
   public String getTargetColumn() {

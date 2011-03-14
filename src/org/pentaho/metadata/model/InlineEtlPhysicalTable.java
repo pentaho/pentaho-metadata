@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.metadata.model.concept.Concept;
+import org.pentaho.metadata.model.concept.IConcept;
 
 /**
  * The inline etl physical table simply holds pointers to the physical columns.
@@ -37,7 +38,18 @@ public class InlineEtlPhysicalTable extends Concept implements IPhysicalTable {
 
   public InlineEtlPhysicalTable() {
     super();
+  }
   
+  @Override
+  public IConcept getParent() {
+    return parent;
+  }
+  
+  @Override
+  public List<IConcept> getChildren() {
+    List<IConcept> children = new ArrayList<IConcept>();
+    children.addAll(physicalColumns);
+    return children;
   }
 
   public InlineEtlPhysicalTable(InlineEtlPhysicalModel parent) {

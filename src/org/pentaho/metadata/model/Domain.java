@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.metadata.model.concept.Concept;
+import org.pentaho.metadata.model.concept.IConcept;
 import org.pentaho.metadata.model.concept.types.LocaleType;
 
 /**
@@ -43,6 +44,34 @@ public class Domain extends Concept {
   private List<IPhysicalModel> physicalModels = new ArrayList<IPhysicalModel>();
   private List<LogicalModel> logicalModels = new ArrayList<LogicalModel>();  
   private List<Concept> concepts = new ArrayList<Concept>();
+  
+  /**
+   * the domain is the root of uniqueness for all children, it does not maintain it's own id.
+   * 
+   * @return null
+   */
+  @Override
+  public List<String> getUniqueId() {
+    // there is only one domain, so id is null.
+    return null;
+  }
+  
+  /**
+   * the domain does not have a parent. 
+   */
+  @Override
+  public IConcept getParent() {
+    return null;
+  }
+  
+  @Override
+  public List<IConcept> getChildren() {
+    ArrayList<IConcept> children = new ArrayList<IConcept>();
+    children.addAll(physicalModels);
+    children.addAll(logicalModels);
+    children.addAll(concepts);
+    return children;
+  }
   
   /**
    * The physical models stored in this domain.

@@ -17,7 +17,9 @@
 package org.pentaho.metadata.model.concept;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.pentaho.metadata.model.concept.types.LocalizedString;
@@ -45,7 +47,41 @@ public class Concept implements IConcept, Serializable, Cloneable, Comparable {
   
   Map<String, Object> properties = new HashMap<String, Object>();
   String id;
-  IConcept parent;
+  IConcept parentConcept;
+  List<IConcept> children = null;
+  
+  public IConcept getParent() {
+    return parentConcept;
+  }
+  
+  public List<String> getUniqueId() {
+    List<String> uid = new ArrayList<String>();
+    if (getParent() != null && getParent().getUniqueId() != null) {
+      uid.addAll(getParent().getUniqueId());
+    }
+    uid.add(getId());
+    return uid;
+  }
+  
+  public IConcept getChildByUniqueId(List<String> uid) {
+    return getChildByUniqueId(uid, 0);
+  }
+
+  protected IConcept getChildByUniqueId(List<String> uid, int index) {
+    List<IConcept> children = getChildren();
+    for (IConcept concept : children) {
+      List<String> cuid = concept.getUniqueId();
+      if (cuid.get(cuid.size() - 1).equals(uid.get(index))) {
+        if (index == uid.size() - 1) {
+          return concept;
+        } else {
+          return ((Concept)concept).getChildByUniqueId(uid, index + 1);
+        }
+      }
+    }
+    return null;
+  }
+
   
   public Map<String, Object> getChildProperties() {
     return properties;
@@ -71,13 +107,12 @@ public class Concept implements IConcept, Serializable, Cloneable, Comparable {
     return null;
   }
   
-
   public IConcept getParentConcept() {
-    return parent;
+    return parentConcept;
   }
   
-  public void setParentConcept(IConcept parent) {
-    this.parent = parent;
+  public void setParentConcept(IConcept parentConcept) {
+    this.parentConcept = parentConcept;
   }
 
   
@@ -97,8 +132,8 @@ public class Concept implements IConcept, Serializable, Cloneable, Comparable {
     // Properties inherited from the pre-defined concepts like 
     // "Base", "ID", "Name", "Description", etc.
     //
-    if (parent != null) {
-      all.putAll(parent.getProperties());
+    if (parentConcept != null) {
+      all.putAll(parentConcept.getProperties());
     }
 
     // The security settings from the security parent: 
@@ -186,5 +221,16 @@ public class Concept implements IConcept, Serializable, Cloneable, Comparable {
     clone.setChildProperties(getChildProperties());
     clone.setParentConcept(getParentConcept());
     return clone;
+  }
+
+  public List<IConcept> getChildren() {
+    return children;
+  }
+  
+  public void addChild(IConcept child) {
+    if (children == null) {
+      children = new ArrayList<IConcept>();
+    }
+    children.add(child);
   }
 }

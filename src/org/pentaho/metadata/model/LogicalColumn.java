@@ -43,6 +43,11 @@ public class LogicalColumn extends Concept {
   }
   
   @Override
+  public IConcept getParent() {
+    return logicalTable;
+  }
+  
+  @Override
   public IConcept getInheritedConcept() {
     return physicalColumn;
   }

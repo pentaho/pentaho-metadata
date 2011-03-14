@@ -16,6 +16,7 @@
  */
 package org.pentaho.metadata.model.concept;
 
+import java.util.List;
 import java.util.Map;
 
 import org.pentaho.metadata.model.concept.types.LocalizedString;
@@ -27,19 +28,33 @@ import org.pentaho.metadata.model.concept.types.LocalizedString;
  * Concepts have three forms of inheritance
  * 
  * - the first form is inherit, which is derived from the relationships of 
- *   the metadata objects
+ *   the metadata objects.
  *   
- * - the second form is parent, which may be explicitly configured in the UI 
+ * - the second form is parent concept, which may be explicitly configured in the UI 
  * 
  * - the third form is security parent, which is derived from the relationships
  *   of the metadata objects and only applies to the security types.
  * 
+ *  In addition to inheritance, concepts act as the base objects for all other
+ *  metadata model objects.  These model objects reflect their structural relationships 
+ *  in a generic way, so that tools like LocalizationUtil can easily reference via uniqueID
+ *  all objects within a model. The methods getParent() and getChildren() are 
+ *  used to generically access these predefined relationships.
+ *
  * @author Will Gorman (wgorman@pentaho.com)
  *
  */
 public interface IConcept extends Cloneable {
 
-  /** @return get the id of the property */
+  /**
+   * This is used to denote the separator between the UID's type and id.
+   */
+  public static String UID_TYPE_SEPARATOR = "-";
+  
+  /** @return the unique id of the concept, this provides a full path reference from the root of the domain to this concept */
+  public List<String> getUniqueId();
+  
+  /** @return get the id of the concept */
   public String getId();
 
   /** @param id the property id to set */
@@ -57,7 +72,6 @@ public interface IConcept extends Cloneable {
   /** @param name the localized name of the concept */
   public void setName(LocalizedString name);
 
-  
   /** @return get the localized description */
   public LocalizedString getDescription();
 
@@ -121,6 +135,29 @@ public interface IConcept extends Cloneable {
    * @return inherited concept
    */
   public IConcept getInheritedConcept();
+  
+  /**
+   * returns all child concept objects defined by the structure of the model.
+   * 
+   * @return model children
+   */
+  public List<IConcept> getChildren();
+  
+  /**
+   * return a child object matching the specified unique ID, or null if not found
+   *
+   * @param uid unique identifier
+   * @return child concept object
+   */
+  public IConcept getChildByUniqueId(List<String> uid);
+  
+  /**
+   * return the concepts parent represented in the model.  This is different
+   * then the inheritance parent and is a structural relationship.
+   * 
+   * @return parent model object
+   */
+  public IConcept getParent();
   
   /**
    * returns the inherited concept

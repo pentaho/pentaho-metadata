@@ -135,7 +135,7 @@ public class AutoModelerScenario {
 
       // We can add the join to the list...
       //
-      model.addLogicalRelationship(new LogicalRelationship(leftTable, rightTable, leftColumn, rightColumn));
+      model.addLogicalRelationship(new LogicalRelationship(model, leftTable, rightTable, leftColumn, rightColumn));
     }
 
     // ////////////////////////////////////////////////////////////

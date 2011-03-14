@@ -504,6 +504,7 @@ public class XmiParser {
 
   }
   
+  @SuppressWarnings("unchecked")
   protected void generateOlapXmi(Domain domain, Document doc, IdGen idGen, Element xmiContent) {
     for (LogicalModel model : domain.getLogicalModels()) {
       List<OlapDimension> dims = (List<OlapDimension>)model.getProperty("olap_dimensions"); //$NON-NLS-1$
@@ -897,9 +898,8 @@ public class XmiParser {
     }
     Element content = null;
     NodeList list = doc.getElementsByTagName("XMI.content"); //$NON-NLS-1$
-    for (int i = 0; i < list.getLength(); i++) {
-      content = (Element)list.item(i);
-      break;
+    if (list.getLength() > 0) {
+      content = (Element)list.item(0);
     }
     
     // skipping CWM:Event = Security Service (skip for now)
@@ -976,7 +976,10 @@ public class XmiParser {
       String parentName = (String)concept.getChildProperty("__TMP_CONCEPT_PARENT_NAME"); //$NON-NLS-1$
       if (parentName != null) {
         concept.removeChildProperty("__TMP_CONCEPT_PARENT_NAME"); //$NON-NLS-1$
-        concept.setParentConcept(domain.findConcept(parentName));
+        Concept conceptParent = domain.findConcept(parentName);
+        concept.setParentConcept(conceptParent);
+        conceptParent.addChild(concept);
+        
       }
       
     }
@@ -1294,6 +1297,8 @@ public class XmiParser {
           String type = nvp.get("RELATIONSHIP_TYPE"); //$NON-NLS-1$
           RelationshipType reltype = RelationshipType.values()[RelationshipMeta.getType(type)];
           relation.setRelationshipType(reltype);
+          
+          relation.setLogicalModel(logicalModel);
           
           String tablechild = nvp.get("RELATIONSHIP_TABLENAME_CHILD"); // to //$NON-NLS-1$
           String tableparent = nvp.get("RELATIONSHIP_TABLENAME_PARENT"); // from //$NON-NLS-1$

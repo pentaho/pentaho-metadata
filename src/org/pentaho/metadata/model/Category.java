@@ -44,6 +44,18 @@ public class Category extends Concept {
     this.logicalModel = logicalModel;
   }
   
+  @Override
+  public IConcept getParent() {
+    return logicalModel;
+  }
+  
+  @Override
+  public List<String> getUniqueId() {
+    List<String> uid = new ArrayList<String>(logicalModel.getUniqueId());
+    uid.add(Category.class.getSimpleName() + UID_TYPE_SEPARATOR + getId());
+    return uid;
+  }
+  
   public void setLogicalModel(LogicalModel logicalModel) {
     this.logicalModel = logicalModel;
   }

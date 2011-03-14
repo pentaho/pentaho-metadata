@@ -16,7 +16,11 @@
  */
 package org.pentaho.metadata.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.pentaho.metadata.model.concept.Concept;
+import org.pentaho.metadata.model.concept.IConcept;
 import org.pentaho.metadata.model.concept.types.RelationshipType;
 
 /**
@@ -38,6 +42,7 @@ public class LogicalRelationship extends Concept {
   public static final String RELATIONSHIP_TYPE = "relationship_type"; //$NON-NLS-1$
   public static final String JOIN_ORDER_KEY = "join_order_key"; //$NON-NLS-1$
   
+  private LogicalModel logicalModel;
   private LogicalTable fromTable, toTable;
   private LogicalColumn fromColumn, toColumn;
   
@@ -47,12 +52,33 @@ public class LogicalRelationship extends Concept {
     setRelationshipType(RelationshipType.UNDEFINED);
   }
   
-  public LogicalRelationship(LogicalTable fromTable, LogicalTable toTable, LogicalColumn fromColumn, LogicalColumn toColumn) {
+  public LogicalRelationship(LogicalModel logicalModel, LogicalTable fromTable, LogicalTable toTable, LogicalColumn fromColumn, LogicalColumn toColumn) {
     this();
+    this.logicalModel = logicalModel;
     this.fromTable = fromTable;
     this.toTable = toTable;
     this.fromColumn = fromColumn;
     this.toColumn = toColumn;
+  }
+  
+  public void setLogicalModel(LogicalModel logicalModel) {
+    this.logicalModel = logicalModel;
+  }
+  
+  public LogicalModel getLogicalModel() {
+    return logicalModel;
+  }
+  
+  @Override
+  public IConcept getParent() {
+    return logicalModel;
+  }
+  
+  @Override
+  public List<String> getUniqueId() {
+    List<String> uid = new ArrayList<String>(logicalModel.getUniqueId());
+    uid.add(LogicalRelationship.class.getSimpleName() + UID_TYPE_SEPARATOR + getId());
+    return uid;
   }
   
   public Boolean isComplex() {

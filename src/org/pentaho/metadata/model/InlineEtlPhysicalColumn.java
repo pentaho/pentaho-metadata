@@ -16,6 +16,8 @@
  */
 package org.pentaho.metadata.model;
 
+import org.pentaho.metadata.model.concept.IConcept;
+
 /**
  * The Inline Etl column inherits from the abstract physical column, and also
  * defines a column number to get data from.
@@ -31,8 +33,14 @@ public class InlineEtlPhysicalColumn extends AbstractPhysicalColumn {
   public static final String FIELD_NAME = "field_name"; //$NON-NLS-1$
   
   private InlineEtlPhysicalTable table;
+
   public InlineEtlPhysicalColumn() {
     super();
+  }
+  
+  @Override
+  public IConcept getParent() {
+    return table;
   }
   
   public void setTable(InlineEtlPhysicalTable table) {

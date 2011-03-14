@@ -46,7 +46,26 @@ public class LogicalTable extends Concept {
     this.logicalModel = logicalModel;
     this.physicalTable = physicalTable;
   }
+  
+  @Override
+  public IConcept getParent() {
+    return logicalModel;
+  }
 
+  @Override
+  public List<IConcept> getChildren() {
+    List<IConcept> children = new ArrayList<IConcept>();
+    children.addAll(logicalColumns);
+    return children;
+  }
+
+  @Override
+  public List<String> getUniqueId() {
+    List<String> uid = new ArrayList<String>(logicalModel.getUniqueId());
+    uid.add(LogicalTable.class.getSimpleName() + UID_TYPE_SEPARATOR + getId());
+    return uid;
+  }
+  
   public void setLogicalModel(LogicalModel logicalModel) {
     this.logicalModel = logicalModel;
   }
