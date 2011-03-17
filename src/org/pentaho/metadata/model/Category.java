@@ -35,6 +35,7 @@ public class Category extends Concept {
 
   private LogicalModel logicalModel;
   private List<LogicalColumn> logicalColumns = new ArrayList<LogicalColumn>();
+  private static final String CLASS_ID = "Category";
 
   public Category() {
     super();
@@ -52,7 +53,7 @@ public class Category extends Concept {
   @Override
   public List<String> getUniqueId() {
     List<String> uid = new ArrayList<String>(logicalModel.getUniqueId());
-    uid.add(Category.class.getSimpleName() + UID_TYPE_SEPARATOR + getId());
+    uid.add(CLASS_ID.concat(UID_TYPE_SEPARATOR).concat(getId()));
     return uid;
   }
   
