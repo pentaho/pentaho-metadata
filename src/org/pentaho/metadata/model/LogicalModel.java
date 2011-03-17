@@ -47,6 +47,7 @@ public class LogicalModel extends Concept {
   private List<LogicalTable> logicalTables = new ArrayList<LogicalTable>();
   private List<LogicalRelationship> logicalRelationships = new ArrayList<LogicalRelationship>();
   private List<Category> categories = new ArrayList<Category>();
+  private static final String CLASS_ID = "LogicalModel";
 
   public LogicalModel() {
     super();
@@ -55,7 +56,7 @@ public class LogicalModel extends Concept {
   @Override
   public List<String> getUniqueId() {
     List<String> uid = new ArrayList<String>();
-    uid.add(LogicalModel.class.getSimpleName() + UID_TYPE_SEPARATOR + getId());
+    uid.add(CLASS_ID.concat(UID_TYPE_SEPARATOR).concat(getId()));
     return uid;
   }
   

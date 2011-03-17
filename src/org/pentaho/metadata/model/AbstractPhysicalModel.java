@@ -34,7 +34,8 @@ public abstract class AbstractPhysicalModel extends Concept implements IPhysical
   private static final long serialVersionUID = -3317176543443308764L;
   
   private Domain domain;
-  
+  private static final String CLASS_ID = "IPhysicalModel";
+
   @Override
   public IConcept getParent() {
     return domain;
@@ -51,7 +52,7 @@ public abstract class AbstractPhysicalModel extends Concept implements IPhysical
   @Override
   public List<String> getUniqueId() {
     List<String> uid = new ArrayList<String>();
-    uid.add(IPhysicalModel.class.getSimpleName() + UID_TYPE_SEPARATOR + getId());
+    uid.add(CLASS_ID.concat(UID_TYPE_SEPARATOR).concat(getId()));
     return uid;
   }
   

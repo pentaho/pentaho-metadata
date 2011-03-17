@@ -37,6 +37,7 @@ public class LogicalTable extends Concept {
   private LogicalModel logicalModel;
   private IPhysicalTable physicalTable;
   private List<LogicalColumn> logicalColumns = new ArrayList<LogicalColumn>();
+  private static final String CLASS_ID = "LogicalTable";
 
   public LogicalTable() {
     super();
@@ -62,7 +63,7 @@ public class LogicalTable extends Concept {
   @Override
   public List<String> getUniqueId() {
     List<String> uid = new ArrayList<String>(logicalModel.getUniqueId());
-    uid.add(LogicalTable.class.getSimpleName() + UID_TYPE_SEPARATOR + getId());
+    uid.add(CLASS_ID.concat(UID_TYPE_SEPARATOR).concat(getId()));
     return uid;
   }
   
