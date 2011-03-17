@@ -52,7 +52,7 @@ public abstract class AbstractPhysicalModel extends Concept implements IPhysical
   @Override
   public List<String> getUniqueId() {
     List<String> uid = new ArrayList<String>();
-    uid.add(CLASS_ID.concat(UID_TYPE_SEPARATOR).concat(getId()));
+    uid.add(CLASS_ID.concat(UID_TYPE_SEPARATOR) + getId());
     return uid;
   }
   

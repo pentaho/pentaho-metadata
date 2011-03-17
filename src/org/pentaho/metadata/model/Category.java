@@ -53,7 +53,7 @@ public class Category extends Concept {
   @Override
   public List<String> getUniqueId() {
     List<String> uid = new ArrayList<String>(logicalModel.getUniqueId());
-    uid.add(CLASS_ID.concat(UID_TYPE_SEPARATOR).concat(getId()));
+    uid.add(CLASS_ID.concat(UID_TYPE_SEPARATOR) + getId());
     return uid;
   }
   
