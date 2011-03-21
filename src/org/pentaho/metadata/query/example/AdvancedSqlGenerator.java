@@ -90,6 +90,7 @@ public class AdvancedSqlGenerator extends SqlGenerator {
       Map<String, Object> parameters,
       boolean genAsPreparedStatement,
       boolean disableDistinct, 
+      int limit,
       Constraint securityConstraint) throws PentahoMetadataException {
 
     // generate the formula objects for constraints 
@@ -206,6 +207,7 @@ public class AdvancedSqlGenerator extends SqlGenerator {
     // SELECT
     
     sqlquery.setDistinct(!disableDistinct && !group);
+    sqlquery.setLimit(limit);
     for (int i = 0; i < selections.size(); i++) {
       AliasedSelection selection = (AliasedSelection)selections.get(i);
       String formula;

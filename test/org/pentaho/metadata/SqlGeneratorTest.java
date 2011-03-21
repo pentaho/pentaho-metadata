@@ -3220,6 +3220,23 @@ public class SqlGeneratorTest {
       Assert.fail();
     }
   }
+  
+  @Test
+  public void testLimitedQuery() throws Exception {
+    LogicalModel model = TestHelper.buildDefaultModel();
+    LogicalColumn bc1 = model.findLogicalColumn("bc1");
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "HYPERSONIC", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    Query query = new Query(null, model);
+    query.setLimit(10);
+    
+    query.getSelections().add(new Selection(null, bc1, null));
+    
+    SqlGenerator generator = new SqlGenerator();
+    
+    MappedQuery mquery = generator.generateSql(query, "en_US", null, databaseMeta);
+
+    TestHelper.assertEqualsIgnoreWhitespaces("SELECT TOP 10 DISTINCT bt1.pc1 AS COL0 FROM pt1 bt1", mquery.getQuery());
+  }
 
   public static class TestPreSqlGenerator extends SqlGenerator {
     

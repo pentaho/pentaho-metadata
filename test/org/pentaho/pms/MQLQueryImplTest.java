@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Test;
 import org.pentaho.commons.connection.memory.MemoryMetaData;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.mql.ExtendedMetaData;
@@ -2339,6 +2340,36 @@ public class MQLQueryImplTest extends MetadataTestBase {
         + "          )\n",
         query.getQuery()    
     ); //$NON-NLS-1$
+  }
+  
+  @Test
+  public void testLimitedQuery() throws Exception {
+    final BusinessModel model = new BusinessModel();
+    final BusinessTable bt1 = new BusinessTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setTargetTable("select * from mytable"); //$NON-NLS-1$
+    final BusinessColumn bc1 = new BusinessColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setFormula("pc1"); //$NON-NLS-1$
+    bc1.setBusinessTable(bt1);
+    bt1.addBusinessColumn(bc1);
+    bt1.setRelativeSize(1);
+    model.addBusinessTable(bt1);
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "HYPERSONIC", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    MQLQueryImpl myTest = new MQLQueryImpl(null, model, databaseMeta, "en_US"); //$NON-NLS-1$
+    myTest.setLimit(10);
+    myTest.addSelection(new Selection(bc1));
+    
+    MappedQuery query = myTest.getQuery();
+    // System.out.println(query.getQuery());
+    assertEqualsIgnoreWhitespaces( 
+        "SELECT TOP 10 DISTINCT \n" //$NON-NLS-1$
+        + "          bt1.pc1 AS COL0\n" //$NON-NLS-1$
+        + "FROM \n" //$NON-NLS-1$
+        + "          (select * from mytable) bt1\n", //$NON-NLS-1,
+        query.getQuery()    
+    ); //$NON-NLS-1$
+    
   }
 
 }

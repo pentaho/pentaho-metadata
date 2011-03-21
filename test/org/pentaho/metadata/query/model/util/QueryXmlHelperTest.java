@@ -17,22 +17,27 @@
 
 package org.pentaho.metadata.query.model.util;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.pentaho.metadata.TestHelper;
-import org.pentaho.metadata.model.concept.types.DataType;
-import org.pentaho.metadata.query.model.Query;
-import org.pentaho.metadata.repository.IMetadataDomainRepository;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.pentaho.metadata.TestHelper;
+import org.pentaho.metadata.model.Domain;
+import org.pentaho.metadata.model.LogicalModel;
+import org.pentaho.metadata.model.concept.types.DataType;
+import org.pentaho.metadata.query.model.Query;
+import org.pentaho.metadata.repository.IMetadataDomainRepository;
+import org.pentaho.metadata.repository.InMemoryMetadataDomainRepository;
+import org.pentaho.pms.core.exception.PentahoMetadataException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
 
 public class QueryXmlHelperTest {
 
@@ -41,14 +46,21 @@ public class QueryXmlHelperTest {
   private DocumentBuilder db;
   private Document doc;
   private Query query;
+  private IMetadataDomainRepository metadataDomainRepository;
 
   @Before
   public void init() throws Exception {
     helper = new QueryXmlHelper();
-    query = new Query(TestHelper.getBasicDomain(), TestHelper.buildDefaultModel());
+    Domain domain = TestHelper.getBasicDomain();
+    LogicalModel model = TestHelper.buildDefaultModel();
+    domain.addLogicalModel(model);
+    model.setId("MODEL1");
+    query = new Query(domain, model);
     documentBuilderFactory = DocumentBuilderFactory.newInstance();
     db = documentBuilderFactory.newDocumentBuilder();
     doc = db.newDocument();
+    metadataDomainRepository = new InMemoryMetadataDomainRepository();
+    metadataDomainRepository.storeDomain(domain, true);
   }
 
   @Test
@@ -109,4 +121,61 @@ public class QueryXmlHelperTest {
     assertTrue(boolValues[0]);
     assertFalse(boolValues[1]);
   }
+  
+  @Test
+  public void testLimit() throws Exception {
+    final int LIMIT = 10;
+
+    String xml;
+    String limitString;
+    
+    // to xml, no limit
+    xml = helper.toXML(query);
+    limitString = getLimitFromXML(xml);
+    assertTrue(Integer.parseInt(limitString) < 0);
+    
+    // from xml, no limit
+    query = helper.fromXML(metadataDomainRepository, xml);
+    assertTrue(query.getLimit() < 0);
+    
+    // to xml, limit
+    query.setLimit(LIMIT);
+    xml = helper.toXML(query);
+    limitString = getLimitFromXML(xml);
+    assertEquals(String.valueOf(LIMIT), limitString);
+    
+    // from xml, limit
+    query = helper.fromXML(metadataDomainRepository, xml);
+    assertEquals(LIMIT, query.getLimit());
+    
+    // legacy (no limit element in xml)
+    xml = helper.toXML(query);
+    xml = xml.replaceAll("<limit>\\s*\\w*\\s*</limit>", "");
+    query = helper.fromXML(metadataDomainRepository, xml);
+    assertTrue(query.getLimit() < 0);
+    
+    // invalid limit in xml
+    query.setLimit(1234);
+    xml = helper.toXML(query);
+    xml = xml.replaceAll("<limit>\\s*123\\s*</limit>", "<limit>abc</limit>");
+    
+    try {
+      query = helper.fromXML(metadataDomainRepository, xml);
+      fail();
+    } catch (PentahoMetadataException e) {
+      // expected
+    }
+  }
+  
+  private String getLimitFromXML(String xml) throws Exception {
+    Document doc = db.parse(new InputSource(new java.io.StringReader(xml)));
+    if (doc.getElementsByTagName("options").getLength() > 0) {
+      Element optionsElement = ((Element) doc.getElementsByTagName("options").item(0));
+      if (optionsElement.getElementsByTagName("limit").getLength() > 0) {
+        return optionsElement.getElementsByTagName("limit").item(0).getFirstChild().getNodeValue();
+      }
+    }
+    return null;
+  }
+
 }

@@ -44,6 +44,10 @@ public interface MQLQuery {
  
   public void setDisableDistinct(boolean value);
   
+  public int getLimit();
+  
+  public void setLimit(int limit);
+  
   public List<Selection> getSelections();
   
   public void setSelections(List<Selection> list);

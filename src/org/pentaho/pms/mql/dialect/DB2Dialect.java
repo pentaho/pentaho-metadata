@@ -79,4 +79,14 @@ public class DB2Dialect extends DefaultSQLDialect {
   protected String getStringConcatOperator() {
     return "||"; //$NON-NLS-1$
   }
+
+  @Override
+  protected void generatePostOrderBy(SQLQueryModel query, StringBuilder sql) {
+    if (query.getLimit() >= 0) {
+      sql.append(" FETCH FIRST "); //$NON-NLS-1$
+      sql.append(query.getLimit());
+      sql.append(" ROWS ONLY "); //$NON-NLS-1$
+    }
+  }
+  
 }

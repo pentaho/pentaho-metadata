@@ -224,6 +224,7 @@ public class SQLQueryModel {
     }
     
     private boolean distinct = true;
+    private int limit = -1;
     private List<SQLSelection> selections = new ArrayList<SQLSelection>();
     private List<SQLSelection> ulSelections = Collections.unmodifiableList(selections);
 
@@ -264,6 +265,22 @@ public class SQLQueryModel {
      */
     public void setDistinct(boolean distinct) {
       this.distinct = distinct;
+    }
+    
+    /**
+     * Returns row limit. Negative integer means no limit.
+     * @return limit
+     */
+    public int getLimit() {
+      return limit;
+    }
+    
+    /**
+     * Sets row limit. Negative integer means no limit.
+     * @param limit
+     */
+    public void setLimit(int limit) {
+      this.limit = limit;
     }
     
     /**

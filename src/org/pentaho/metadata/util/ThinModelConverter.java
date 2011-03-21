@@ -350,6 +350,7 @@ public class ThinModelConverter {
     // Options 
     
     impl.setDisableDistinct(query.getDisableDistinct());
+    impl.setLimit(query.getLimit());
     
     // Selections
     

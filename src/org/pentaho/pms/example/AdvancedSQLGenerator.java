@@ -84,6 +84,7 @@ public class AdvancedSQLGenerator extends SQLGenerator {
       List<OrderBy> orderbys,
       DatabaseMeta databaseMeta, 
       boolean disableDistinct, 
+      int limit,
       String locale) throws PentahoMetadataException 
   { 
     Map<String,String> columnsMap = new HashMap<String,String>();
@@ -181,6 +182,7 @@ public class AdvancedSQLGenerator extends SQLGenerator {
     // SELECT
     
     sqlquery.setDistinct(!disableDistinct && !group);
+    sqlquery.setLimit(limit);
     for (int i = 0; i < selections.size(); i++) {
       AliasedSelection selection = (AliasedSelection)selections.get(i);
       String formula;

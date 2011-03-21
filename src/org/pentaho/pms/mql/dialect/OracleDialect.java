@@ -86,5 +86,20 @@ public class OracleDialect extends DefaultSQLDialect {
   public boolean supportsNLSLiteral() {
     return true;
   }
+
+  @Override
+  public String generateSelectStatement(SQLQueryModel query) {
+    if (query.getLimit() >= 0) {
+      String origSelect = super.generateSelectStatement(query);
+      StringBuilder sql = new StringBuilder();
+      sql.append("SELECT * FROM ("); //$NON-NLS-1$
+      sql.append(origSelect);
+      sql.append(") WHERE ROWNUM <= "); //$NON-NLS-1$
+      sql.append(query.getLimit());
+      return sql.toString();
+    } else {
+      return super.generateSelectStatement(query);
+    }
+  }
   
 }

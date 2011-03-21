@@ -93,8 +93,9 @@ public class SQLGenerator {
    * @param locale locale string
    * @param columnsMap map of column aliases to populate
    */
-  public void generateSelect(SQLQueryModel query, BusinessModel model, DatabaseMeta databaseMeta, List<Selection> selections, boolean disableDistinct, boolean group, String locale, Map<BusinessTable, String> tableAliases, Map<String, String> columnsMap) {
+  public void generateSelect(SQLQueryModel query, BusinessModel model, DatabaseMeta databaseMeta, List<Selection> selections, boolean disableDistinct, int limit, boolean group, String locale, Map<BusinessTable, String> tableAliases, Map<String, String> columnsMap) {
     query.setDistinct(!disableDistinct && !group);
+    query.setLimit(limit);
     for (int i = 0; i < selections.size(); i++) {
       // in some database implementations, the "as" name has a finite length;
       // for instance, oracle cannot handle a name longer than 30 characters. 
@@ -328,6 +329,7 @@ public class SQLGenerator {
       DatabaseMeta databaseMeta, 
       String locale, 
       boolean disableDistinct, 
+      int limit,
       WhereCondition securityConstraint) throws PentahoMetadataException {
     SQLQueryModel query = new SQLQueryModel();
     // Get settings for the query model
@@ -373,7 +375,7 @@ public class SQLGenerator {
       
       boolean group = hasFactsInIt(model, selections, conditions, databaseMeta, locale);
 
-      generateSelect(query, model, databaseMeta, selections, disableDistinct, group, locale, tableAliases, columnsMap);
+      generateSelect(query, model, databaseMeta, selections, disableDistinct, limit, group, locale, tableAliases, columnsMap);
       generateFromAndWhere(query, usedBusinessTables, model, path, conditions, tableAliases, databaseMeta, locale);
       if (group) {
         generateGroupBy(query, model, selections, tableAliases, databaseMeta, locale);

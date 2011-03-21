@@ -662,6 +662,7 @@ public class MQLQueryTest extends TestCase {
     String mqlfile2 = "test/org/pentaho/pms/mqlquery02.xmql"; //$NON-NLS-1$ // Distinct is off, but otherwise the same
     String mqlfile3 = "test/org/pentaho/pms/mqlquery_oldformat.xmql"; //$NON-NLS-1$
     String mqlfile4 = "test/org/pentaho/pms/mqlquery03.xmql"; //$NON-NLS-1$
+    String mqlfile5 = "test/org/pentaho/pms/mqlquery04.xmql"; //$NON-NLS-1$
 
     String mqldata = loadXmlFile(mqlfile1);
     assertNotNull(mqldata);
@@ -691,7 +692,16 @@ public class MQLQueryTest extends TestCase {
     MQLQuery mqlquery3 = null;
     mqlquery3 = MQLQueryFactory.getMQLQuery(mqldata, null, "en_US", cwmSchemaFactory); //$NON-NLS-1$
     assertEquals(((MQLQueryImpl) mqlquery3).getDisableDistinct(), false);
+    assertTrue(((MQLQueryImpl) mqlquery3).getLimit() < 0);
 
+    // Tests parsing an old-format (without options tag) still works, and defaults disableDistinct to false
+    mqldata = null;
+    mqldata = loadXmlFile(mqlfile5);
+    assertNotNull(mqldata);
+    MQLQuery mqlquery5 = null;
+    mqlquery3 = MQLQueryFactory.getMQLQuery(mqldata, null, "en_US", cwmSchemaFactory); //$NON-NLS-1$
+    assertEquals(10, ((MQLQueryImpl) mqlquery5).getLimit());
+    
     assertNotNull(mqlquery);
     assertNotNull(((MQLQueryImpl) mqlquery).getSchemaMeta());
     assertEquals("Orders", ((MQLQueryImpl) mqlquery).getSchemaMeta().getDomainName()); //$NON-NLS-1$

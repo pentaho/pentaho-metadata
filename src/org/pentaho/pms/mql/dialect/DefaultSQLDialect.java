@@ -59,10 +59,10 @@ public class DefaultSQLDialect implements SQLDialectInterface {
   
   public DefaultSQLDialect() {
     this("GENERIC"); //$NON-NLS-1$
-    concatOperator = System.getProperty("default.sql.dialect.concat.operator", "||"); //$NON-NLS-1$    
   }
   
   public DefaultSQLDialect(String databaseType) {
+    concatOperator = System.getProperty("default.sql.dialect.concat.operator", "||"); //$NON-NLS-1$    
     this.databaseType = databaseType;
     this.databaseMeta = new DatabaseMeta("", databaseType, "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 
@@ -549,9 +549,7 @@ public class DefaultSQLDialect implements SQLDialectInterface {
    */
   protected void generateSelect(SQLQueryModel query, StringBuilder sql) {
     sql.append("SELECT "); //$NON-NLS-1$
-    if (query.getDistinct()) {
-      sql.append("DISTINCT "); //$NON-NLS-1$
-    }
+    generateSelectPredicate(query, sql);
     sql.append(Const.CR);
     boolean first = true;
     for (SQLSelection selection : query.getSelections()) {
@@ -567,6 +565,69 @@ public class DefaultSQLDialect implements SQLDialectInterface {
         sql.append(selection.getAlias());
       }
       sql.append(Const.CR);
+    }
+  }
+
+  /**
+   * Generates any predicates (e.g. DISTINCT or TOP)
+   * 
+   * @param query query model
+   * @param sql string buffer
+   */
+  protected void generateSelectPredicate(SQLQueryModel query, StringBuilder sql) {
+    generateDistinct(query, sql);
+  }
+  
+  /**
+   * Generates DISTINCT.
+   * 
+   * @param query query model
+   * @param sql string buffer
+   */
+  protected void generateDistinct(SQLQueryModel query, StringBuilder sql) {
+    if (query.getDistinct()) {
+      sql.append("DISTINCT "); //$NON-NLS-1$
+    }
+  }
+  
+  /**
+   * Convenience method. Appends &quot; topKeyword n distinct &quot; where n is the query limit.
+   * 
+   * @param query query model
+   * @param sql string buffer
+   * @param topKeyword top keyword (e.g. TOP or FIRST)
+   */
+  protected void generateTopBeforeDistinct(SQLQueryModel query, StringBuilder sql, String topKeyword) {
+    generateTop(query, sql, topKeyword);
+    generateDistinct(query, sql);
+  }
+  
+  /**
+   * Convenience method. Appends &quot; distinct topKeyword n &quot; where n is the query limit.
+   * 
+   * @param query query model
+   * @param sql string buffer
+   * @param topKeyword top keyword (e.g. TOP or FIRST)
+   */
+  protected void generateTopAfterDistinct(SQLQueryModel query, StringBuilder sql, String topKeyword) {
+    generateDistinct(query, sql);
+    generateTop(query, sql, topKeyword);
+  }
+  
+  /**
+   * Appends &quot; topKeyword n &quot; where n is the query limit.
+   * 
+   * @param query query model
+   * @param sql string buffer
+   * @param topKeyword top keyword (e.g. TOP or FIRST)
+   */
+  protected void generateTop(SQLQueryModel query, StringBuilder sql, String topKeyword) {
+    if (query.getLimit() >= 0) {
+      sql.append(" ");
+      sql.append(topKeyword);
+      sql.append(" ");
+      sql.append(query.getLimit());
+      sql.append(" ");
     }
   }
 
@@ -847,6 +908,28 @@ public class DefaultSQLDialect implements SQLDialectInterface {
   }
   
   /**
+   * Generates anything after the ORDER BY clause of the SQL statement. Example: LIMIT.
+   * 
+   * @param query query model
+   * @param sql string buffer
+   */
+  protected void generatePostOrderBy(SQLQueryModel query, StringBuilder sql) {
+    
+  }
+  
+  /**
+   * Convenience method. Calls {@code DatabaseMeta#getLimitClause(int)} if available.
+   * 
+   * @param query query model
+   * @param sql string buffer
+   */
+  protected void generateLimit(SQLQueryModel query, StringBuilder sql) {
+    if (query.getLimit() >= 0) {
+      sql.append(databaseMeta.getLimitClause(query.getLimit()));
+    }
+  }
+  
+  /**
    * Generates the outer joins portion of the query.<br>
    * <br>
    * We added the joins in a particular order that we simply unroll here.<br>
@@ -1062,6 +1145,7 @@ public class DefaultSQLDialect implements SQLDialectInterface {
     generateGroupBy(query, sql);
     generateHaving(query, sql);
     generateOrderBy(query, sql);
+    generatePostOrderBy(query, sql);
     
     return sql.toString();
   }

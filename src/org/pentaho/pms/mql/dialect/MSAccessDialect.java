@@ -23,6 +23,8 @@ package org.pentaho.pms.mql.dialect;
  *
  */
 public class MSAccessDialect extends DefaultSQLDialect {
+
+  private static final String TOP_KEYWORD = "TOP"; //$NON-NLS-1$
   
   /**
    * constructor
@@ -30,7 +32,7 @@ public class MSAccessDialect extends DefaultSQLDialect {
   public MSAccessDialect() {
     super("MSACCESS"); //$NON-NLS-1$
   }
-  
+
   /**
    * return MS Access formatsted date, #MM/DD/YYYY#
    * 
@@ -43,7 +45,7 @@ public class MSAccessDialect extends DefaultSQLDialect {
   public String getDateSQL(int year, int month, int day) {
     return "#" + displayAsTwoOrMoreDigits(month) + "/" + displayAsTwoOrMoreDigits(day) + "/" + year + "#"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
   }
-  
+
   /**
    * MSAccess has a 64 character limit on table name length
    * 
@@ -52,9 +54,20 @@ public class MSAccessDialect extends DefaultSQLDialect {
   public int getMaxTableNameLength() {
     return 64;
   }
-  
+
   protected String getStringConcatOperator() {
     return "+";
-  }  
-  
+  }
+
+  @Override
+  protected void generateSelectPredicate(SQLQueryModel query, StringBuilder sql) {
+    generateTop(query, sql, TOP_KEYWORD);
+    // top replaces distinct
+    if (query.getLimit() < 0) {
+      generateDistinct(query, sql);
+    }
+  }
+
+
+
 }

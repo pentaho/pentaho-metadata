@@ -20,6 +20,9 @@ import junit.framework.TestCase;
 
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.pms.mql.dialect.SQLDialectInterface;
+import org.pentaho.pms.mql.dialect.SQLQueryModel;
+import org.pentaho.pms.mql.dialect.SQLQueryModel.OrderType;
 
 public class MetadataTestBase extends TestCase {
 	
@@ -77,5 +80,29 @@ public class MetadataTestBase extends TestCase {
 		if (stripped.length() > 0 && Character.isWhitespace(stripped.charAt(stripped.length()-1))) stripped.deleteCharAt(stripped.length()-1);
 		
 		return stripped.toString();
+	}
+	
+	public SQLQueryModel createLimitedQuery() {
+    SQLQueryModel query = new SQLQueryModel();
+    query.addSelection("t.id", null); //$NON-NLS-1$
+    query.addTable("TABLE", "t"); //$NON-NLS-1$ //$NON-NLS-2$
+    query.addWhereFormula("t.id is null", null); //$NON-NLS-1$
+    query.setLimit(10);
+    query.addOrderBy(null, "t.id", OrderType.ASCENDING);
+    return query;
+	}
+	
+	public SQLQueryModel createUnlimitedQuery() {
+    SQLQueryModel query = new SQLQueryModel();
+    query.addSelection("t.id", null); //$NON-NLS-1$
+    query.addTable("TABLE", "t"); //$NON-NLS-1$ //$NON-NLS-2$
+    query.addWhereFormula("t.id is null", null); //$NON-NLS-1$
+    query.addOrderBy(null, "t.id", OrderType.ASCENDING);
+    return query;
+	}
+	
+	public void assertSelect(String expected, SQLDialectInterface dialect, SQLQueryModel query) {
+    String result = dialect.generateSelectStatement(query);
+    assertEqualsIgnoreWhitespacesAndCase(expected, result);
 	}
 }

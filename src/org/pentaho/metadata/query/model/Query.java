@@ -38,6 +38,7 @@ public class Query implements Serializable {
   private LogicalModel logicalModel;
   
   private boolean disableDistinct;
+  private int limit = -1;
   
   private List<Parameter> parameters = new ArrayList<Parameter>();
   private List<Selection> selections = new ArrayList<Selection>();
@@ -63,6 +64,22 @@ public class Query implements Serializable {
   
   public void setDisableDistinct(boolean disableDistinct) {
     this.disableDistinct = disableDistinct;
+  }
+  
+  /**
+   * Returns row limit. Negative integer means no limit.
+   * @return limit
+   */
+  public int getLimit() {
+    return limit;
+  }
+  
+  /**
+   * Sets row limit. Negative integer means no limit.
+   * @param limit
+   */
+  public void setLimit(int limit) {
+    this.limit = limit;
   }
   
   public List<Parameter> getParameters() {

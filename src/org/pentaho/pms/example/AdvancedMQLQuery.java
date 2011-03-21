@@ -355,7 +355,7 @@ public class AdvancedMQLQuery extends MQLQueryImpl
 	public MappedQuery getQuery() throws PentahoMetadataException
 	{
 		return advancedSQLGenerator.getQuery(getModel(), getSelections(), getConstraints(), getOrder(), getDatabaseMeta(),
-				getDisableDistinct(), getLocale());
+				getDisableDistinct(), getLimit(), getLocale());
 	}
 
 }

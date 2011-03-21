@@ -198,6 +198,7 @@ public class QueryXmlHelper {
   
   protected void addOptionsToDocument(Document doc, Element optionsElement, Query query) {
     addTextElement(doc, optionsElement, "disable_distinct", Boolean.toString(query.getDisableDistinct())); //$NON-NLS-1$
+    addTextElement(doc, optionsElement, "limit", String.valueOf(query.getLimit())); //$NON-NLS-1$
   }
   
   protected void addParametersToDocument(Document doc, Element parametersElement, Query query) {
@@ -407,15 +408,25 @@ public class QueryXmlHelper {
     return query;
   }
   
-  protected void setOptionsFromXmlNode(Query query, Element optionElement) {
+  protected void setOptionsFromXmlNode(Query query, Element optionElement) throws PentahoMetadataException {
+    // Keep default behavior...
+    query.setDisableDistinct(false);
+    query.setLimit(-1);
     if (optionElement != null) {
       String disableStr = getElementText(optionElement, "disable_distinct");//$NON-NLS-1$
       if (disableStr != null) {
         query.setDisableDistinct(disableStr.equalsIgnoreCase("true"));//$NON-NLS-1$
-        return;
+      }
+      String limitStr = getElementText(optionElement, "limit");
+      if (limitStr != null) {
+        try {
+          query.setLimit(Integer.parseInt(limitStr));
+        } catch (NumberFormatException e) {
+          throw new PentahoMetadataException(Messages.getErrorString("QueryXmlHelper.ERROR_00xxxxxxxxxx")); //$NON-NLS-1$
+        }
       }
     }
-    query.setDisableDistinct(false); // Keep default behavior...
+    
   }
   
   protected void addSelectionFromXmlNode(Query query, Element selectionElement) {

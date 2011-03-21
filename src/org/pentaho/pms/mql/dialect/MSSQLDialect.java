@@ -27,6 +27,8 @@ import org.pentaho.reporting.libraries.formula.lvalues.FormulaFunction;
  */
 public class MSSQLDialect extends DefaultSQLDialect {
   
+  private static final String TOP_KEYWORD = "TOP"; //$NON-NLS-1$
+  
   /**
    * constructor
    */
@@ -84,5 +86,14 @@ public class MSSQLDialect extends DefaultSQLDialect {
   
   protected String getStringConcatOperator() {
     return "+";
-  }  
+  }
+
+  @Override
+  protected void generateSelectPredicate(SQLQueryModel query, StringBuilder sql) {
+    generateTopAfterDistinct(query, sql, TOP_KEYWORD);
+  }
+
+
+  
+  
 }

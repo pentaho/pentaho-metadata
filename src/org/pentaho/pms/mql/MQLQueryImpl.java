@@ -75,6 +75,8 @@ public class MQLQueryImpl implements MQLQuery {
   private SchemaMeta schemaMeta;
   
   private boolean disableDistinct; // = false;
+  
+  private int limit = -1;
 
   private CwmSchemaFactoryInterface cwmSchemaFactory;
   
@@ -189,7 +191,7 @@ public class MQLQueryImpl implements MQLQuery {
       }
     }
     
-    return sqlGenerator.getSQL(model, selections, constraints, order, getDatabaseMeta(), locale, this.disableDistinct, securityConstraint);
+    return sqlGenerator.getSQL(model, selections, constraints, order, getDatabaseMeta(), locale, this.disableDistinct, this.limit, securityConstraint);
   }
 
   public String getXML() {
@@ -744,6 +746,14 @@ public class MQLQueryImpl implements MQLQuery {
     return this.disableDistinct;
   }
 
+  public int getLimit() {
+    return limit;
+  }
+
+  public void setLimit(int limit) {
+    this.limit = limit;
+  }
+  
   // dom utility methods
   
   protected String getElementText(Document doc, String name) {
@@ -761,6 +771,5 @@ public class MQLQueryImpl implements MQLQuery {
       return null;
     }
   }
-
   
 }

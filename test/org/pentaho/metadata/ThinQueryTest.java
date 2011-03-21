@@ -95,6 +95,7 @@ public class ThinQueryTest {
     query.getConstraints().add(new Constraint(CombinationType.AND, "[CATEGORY.LC_CUSTOMERNAME] = \"bob\""));
 
     query.getOrders().add(new Order(new Selection(category, column, null), Order.Type.ASC));
+
     MQLQueryImpl impl = null;
     try {
       impl = ThinModelConverter.convertToLegacy(query, null);
@@ -118,7 +119,10 @@ public class ThinQueryTest {
         "          COL0\n",
         impl.getQuery().getQuery()
     );
-
+    
+    query.setLimit(10);
+    impl = ThinModelConverter.convertToLegacy(query, null);
+    Assert.assertEquals(10, impl.getLimit());
   }
   
   

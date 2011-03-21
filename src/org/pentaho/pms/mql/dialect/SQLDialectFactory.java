@@ -62,6 +62,12 @@ public class SQLDialectFactory {
     addDialect(new PostgreSQLDialect());
     addDialect(new MySQLDialect());
     addDialect(new MSAccessDialect());
+    addDialect(new NetezzaDialect());
+    addDialect(new H2Dialect());
+    addDialect(new HypersonicDialect());
+    addDialect(new SybaseDialect());
+    addDialect(new IngresDialect());
+    addDialect(new FirebirdDialect());
   }
   
   /**

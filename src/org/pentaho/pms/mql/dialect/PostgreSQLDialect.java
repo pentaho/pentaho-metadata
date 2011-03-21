@@ -70,5 +70,12 @@ public class PostgreSQLDialect extends DefaultSQLDialect {
   public boolean supportsNLSLiteral() {
     return true;
   }
+
+  @Override
+  protected void generatePostOrderBy(SQLQueryModel query, StringBuilder sql) {
+    generateLimit(query, sql); 
+  }
+
   
+
 }

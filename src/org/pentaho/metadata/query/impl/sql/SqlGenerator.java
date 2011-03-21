@@ -106,9 +106,10 @@ public class SqlGenerator {
    */
   protected void generateSelect(
       SQLQueryModel query, LogicalModel model, DatabaseMeta databaseMeta, List<Selection> selections, 
-      boolean disableDistinct, boolean group, String locale, Map<LogicalTable, String> tableAliases, 
+      boolean disableDistinct, int limit, boolean group, String locale, Map<LogicalTable, String> tableAliases, 
       Map<String, String> columnsMap, Map<String, Object> parameters, boolean genAsPreparedStatement) {
     query.setDistinct(!disableDistinct && !group);
+    query.setLimit(limit);
     for (int i = 0; i < selections.size(); i++) {
       // in some database implementations, the "as" name has a finite length;
       // for instance, oracle cannot handle a name longer than 30 characters. 
@@ -361,7 +362,7 @@ public class SqlGenerator {
 
     return getSQL(query.getLogicalModel(), query.getSelections(), 
         query.getConstraints(), query.getOrders(), databaseMeta, 
-        locale, parameters, genAsPreparedStatement, query.getDisableDistinct(), securityConstraint);
+        locale, parameters, genAsPreparedStatement, query.getDisableDistinct(), query.getLimit(), securityConstraint);
   }
   
   /**
@@ -388,6 +389,7 @@ public class SqlGenerator {
       Map<String, Object> parameters,
       boolean genAsPreparedStatement,
       boolean disableDistinct, 
+      int limit,
       Constraint securityConstraint) throws PentahoMetadataException {
     
     SQLQueryModel query = new SQLQueryModel();
@@ -451,7 +453,7 @@ public class SqlGenerator {
       boolean group = hasFactsInIt(model, selections, conditions, constraintFormulaMap, 
                                     parameters, genAsPreparedStatement, databaseMeta, locale);
 
-      generateSelect(query, model, databaseMeta, selections, disableDistinct, group, locale, tableAliases, columnsMap, parameters, genAsPreparedStatement);
+      generateSelect(query, model, databaseMeta, selections, disableDistinct, limit, group, locale, tableAliases, columnsMap, parameters, genAsPreparedStatement);
       generateFromAndWhere(query, usedBusinessTables, model, path, conditions, tableAliases, constraintFormulaMap, parameters, genAsPreparedStatement, databaseMeta, locale);
       if (group) {
         generateGroupBy(query, model, selections, tableAliases, parameters, genAsPreparedStatement, databaseMeta, locale);
