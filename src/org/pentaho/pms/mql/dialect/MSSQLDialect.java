@@ -33,8 +33,14 @@ public class MSSQLDialect extends DefaultSQLDialect {
    * constructor
    */
   public MSSQLDialect() {
-    super("MSSQL"); //$NON-NLS-1$
-    
+    this("MSSQL"); //$NON-NLS-1$
+  }
+
+  /**
+   * constructor
+   */
+  protected MSSQLDialect(String databaseType) {
+    super(databaseType);
     // microsoft sql server specific date functions 
     supportedFunctions.put("NOW", new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_FUNCTION, "GETDATE()", 0) { //$NON-NLS-1$ //$NON-NLS-2$
       public void generateFunctionSQL(FormulaTraversalInterface formula, StringBuffer sb, String locale, FormulaFunction f) throws PentahoMetadataException {
@@ -56,7 +62,7 @@ public class MSSQLDialect extends DefaultSQLDialect {
       }
     });
   }
-  
+
   /**
    * return MSSQL formatted date, 'YYYYMMDD'
    * 
