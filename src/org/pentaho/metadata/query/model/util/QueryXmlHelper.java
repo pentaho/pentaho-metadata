@@ -30,8 +30,8 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.pentaho.di.core.util.StringEvaluator;
 import org.pentaho.di.core.xml.XMLHandler;
+import org.pentaho.metadata.messages.Messages;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalColumn;
@@ -46,7 +46,6 @@ import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.metadata.repository.IMetadataDomainRepository;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
-import org.pentaho.metadata.messages.Messages;
 import org.pentaho.reporting.libraries.base.util.CSVTokenizer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -422,7 +421,7 @@ public class QueryXmlHelper {
         try {
           query.setLimit(Integer.parseInt(limitStr));
         } catch (NumberFormatException e) {
-          throw new PentahoMetadataException(Messages.getErrorString("QueryXmlHelper.ERROR_00xxxxxxxxxx")); //$NON-NLS-1$
+          throw new PentahoMetadataException(Messages.getErrorString("QueryXmlHelper.ERROR_0017_CANNOT_PARSE_LIMIT")); //$NON-NLS-1$
         }
       }
     }

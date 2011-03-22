@@ -699,7 +699,7 @@ public class MQLQueryTest extends TestCase {
     mqldata = loadXmlFile(mqlfile5);
     assertNotNull(mqldata);
     MQLQuery mqlquery5 = null;
-    mqlquery3 = MQLQueryFactory.getMQLQuery(mqldata, null, "en_US", cwmSchemaFactory); //$NON-NLS-1$
+    mqlquery5 = MQLQueryFactory.getMQLQuery(mqldata, null, "en_US", cwmSchemaFactory); //$NON-NLS-1$
     assertEquals(10, ((MQLQueryImpl) mqlquery5).getLimit());
     
     assertNotNull(mqlquery);

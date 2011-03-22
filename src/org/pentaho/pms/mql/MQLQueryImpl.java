@@ -581,15 +581,24 @@ public class MQLQueryImpl implements MQLQuery {
     }
   }
   
-  protected void setOptionsFromXmlNode(Element optionElement) {
+  protected void setOptionsFromXmlNode(Element optionElement) throws PentahoMetadataException {
+    // Keep default behavior...
+    this.disableDistinct = false;
+    this.limit = -1;
     if (optionElement != null) {
       String disableStr = getElementText(optionElement, "disable_distinct");//$NON-NLS-1$
       if (disableStr != null) {
         this.disableDistinct = disableStr.equalsIgnoreCase("true");//$NON-NLS-1$
-        return;
+      }
+      String limitStr = getElementText(optionElement, "limit");
+      if (limitStr != null) {
+        try {
+          this.limit = Integer.parseInt(limitStr);
+        } catch (NumberFormatException e) {
+          throw new PentahoMetadataException(Messages.getErrorString("MQLQuery.ERROR_0021_CANNOT_PARSE_LIMIT")); //$NON-NLS-1$
+        }
       }
     }
-    this.disableDistinct = false; // Keep default behavior...
   }
   
   protected void addOrderByFromXmlNode(Element orderElement) throws PentahoMetadataException {

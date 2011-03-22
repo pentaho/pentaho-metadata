@@ -155,7 +155,7 @@ public class QueryXmlHelperTest {
     assertTrue(query.getLimit() < 0);
     
     // invalid limit in xml
-    query.setLimit(1234);
+    query.setLimit(123);
     xml = helper.toXML(query);
     xml = xml.replaceAll("<limit>\\s*123\\s*</limit>", "<limit>abc</limit>");
     
