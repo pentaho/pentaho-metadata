@@ -11,5 +11,10 @@ public class NetezzaDialect extends DefaultSQLDialect {
   protected void generatePostOrderBy(SQLQueryModel query, StringBuilder sql) {
     generateLimit(query, sql);
   }
+  
+  @Override
+  protected void generateSelectPredicate(SQLQueryModel query, StringBuilder sql) {
+    generateDistinct(query, sql);
+  }
 
 }

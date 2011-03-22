@@ -76,6 +76,9 @@ public class PostgreSQLDialect extends DefaultSQLDialect {
     generateLimit(query, sql); 
   }
 
-  
+  @Override
+  protected void generateSelectPredicate(SQLQueryModel query, StringBuilder sql) {
+    generateDistinct(query, sql);
+  }
 
 }

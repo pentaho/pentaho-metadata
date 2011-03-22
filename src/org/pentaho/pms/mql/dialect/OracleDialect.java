@@ -102,4 +102,9 @@ public class OracleDialect extends DefaultSQLDialect {
     }
   }
   
+  @Override
+  protected void generateSelectPredicate(SQLQueryModel query, StringBuilder sql) {
+    generateDistinct(query, sql);
+  }
+  
 }
