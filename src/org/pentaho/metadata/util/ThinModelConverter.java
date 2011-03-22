@@ -569,6 +569,8 @@ public class ThinModelConverter {
       SqlDataSource dataSource = convertFromLegacy(database);
       sqlModel.setDatasource(dataSource);
       
+      sqlModel.setId(database.getName());
+      
       PhysicalTable tables[] = schemaMeta.getTablesOnDatabase(database);
       for (PhysicalTable table : tables) {
         SqlPhysicalTable sqlTable = new SqlPhysicalTable(sqlModel);
@@ -630,7 +632,9 @@ public class ThinModelConverter {
         logical.setComplex(rel.isComplex());
         logical.setComplexJoin(rel.getComplexJoin());
         logical.setJoinOrderKey(rel.getJoinOrderKey());
-        logical.setDescription(new LocalizedString(domain.getLocales().get(0).getCode(), rel.getDescription()));
+        if(domain.getLocales().size() > 0) {
+          logical.setDescription(new LocalizedString(domain.getLocales().get(0).getCode(), rel.getDescription()));
+        }
         
         // what happens if we set a null value for a property? from an inheritance perspective, there should be a difference
         // between null and inherited.
@@ -656,6 +660,33 @@ public class ThinModelConverter {
         logical.setToColumn(toColumn);
         logical.setFromTable(fromTable);
         logical.setFromColumn(fromColumn);
+        
+        /*
+         *  Build the logical relationship's id using as much information is available:
+         *  
+         *  toTable.toColumn-fromTable.fromColumn        
+         */
+        String logicalRelationshipId = "";
+        if(fromTable != null) {
+          logicalRelationshipId += fromTable.getId();
+          if(fromColumn != null) {
+            logicalRelationshipId += "." + fromColumn.getId();
+          }
+        }
+        
+        if(fromTable != null && toTable != null) {
+          logicalRelationshipId += "-";
+        }
+        
+        if(toTable != null) {
+          logicalRelationshipId += toTable.getId();
+          if(toColumn != null) {
+            logicalRelationshipId += "." + toColumn.getId();
+          }
+        }
+        
+        logical.setId(logicalRelationshipId);
+        logical.setLogicalModel(logicalModel);
         logicalModel.getLogicalRelationships().add(logical);
       }
       
