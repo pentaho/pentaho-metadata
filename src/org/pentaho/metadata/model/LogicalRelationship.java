@@ -42,6 +42,9 @@ public class LogicalRelationship extends Concept {
   public static final String RELATIONSHIP_TYPE = "relationship_type"; //$NON-NLS-1$
   public static final String JOIN_ORDER_KEY = "join_order_key"; //$NON-NLS-1$
   
+  // A relationship's descriptions is not to be localized
+  private String relationshipDescription = null;
+  
   private LogicalModel logicalModel;
   private LogicalTable fromTable, toTable;
   private LogicalColumn fromColumn, toColumn;
@@ -68,6 +71,14 @@ public class LogicalRelationship extends Concept {
   
   public LogicalModel getLogicalModel() {
     return logicalModel;
+  }
+  
+  public String getRelationshipDescription() {
+    return this.relationshipDescription;
+  }
+  
+  public void setRelationshipDescription(String description) {
+    this.relationshipDescription = description;
   }
   
   @Override

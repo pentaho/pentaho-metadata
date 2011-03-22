@@ -40,6 +40,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.di.core.util.StringUtil;
 import org.pentaho.metadata.messages.LocaleHelper;
 import org.pentaho.metadata.messages.Messages;
 import org.pentaho.metadata.model.Category;
@@ -409,10 +410,7 @@ public class XmiParser {
             modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_COMPLEX_JOIN", rel.getComplexJoin(), idGen.getNextId()));//$NON-NLS-1$
           }
           if (rel.getDescription() != null) {
-            for (String locale : rel.getDescription().getLocales()) {
-              modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_DESCRIPTION", rel.getDescription(locale), idGen.getNextId()));//$NON-NLS-1$
-              break;
-            }
+            modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_DESCRIPTION", rel.getRelationshipDescription(), idGen.getNextId()));//$NON-NLS-1$
           }
           if (rel.getJoinOrderKey() != null) {
             modelElement.appendChild(createTaggedValue(doc, "RELATIONSHIP_JOIN_ORDER_KEY", rel.getJoinOrderKey(), idGen.getNextId()));//$NON-NLS-1$
@@ -1319,15 +1317,8 @@ public class XmiParser {
           if (val != null) {
             relation.setComplexJoin(val);
           }
-          if (nvp.get("RELATIONSHIP_DESCRIPTION") != null) { //$NON-NLS-1$
-            LocalizedString str = new LocalizedString();
-            String locale = null;
-            if (domain.getLocales().size() > 0) {
-              locale = domain.getLocales().get(0).getCode();
-            } else {
-              locale = LocaleHelper.getLocale().toString();
-            }
-            str.setString(locale, nvp.get("RELATIONSHIP_DESCRIPTION")); //$NON-NLS-1$
+          if (!StringUtil.isEmpty(nvp.get("RELATIONSHIP_DESCRIPTION"))) { //$NON-NLS-1$
+            relation.setRelationshipDescription(nvp.get("RELATIONSHIP_DESCRIPTION")); //$NON-NLS-1$
           }
           String joinOrderKey = nvp.get("RELATIONSHIP_JOIN_ORDER_KEY"); //$NON-NLS-1$
           if (joinOrderKey != null) {

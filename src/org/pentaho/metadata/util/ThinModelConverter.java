@@ -633,7 +633,7 @@ public class ThinModelConverter {
         logical.setComplexJoin(rel.getComplexJoin());
         logical.setJoinOrderKey(rel.getJoinOrderKey());
         if(domain.getLocales().size() > 0) {
-          logical.setDescription(new LocalizedString(domain.getLocales().get(0).getCode(), rel.getDescription()));
+          logical.setRelationshipDescription(rel.getDescription());
         }
         
         // what happens if we set a null value for a property? from an inheritance perspective, there should be a difference
