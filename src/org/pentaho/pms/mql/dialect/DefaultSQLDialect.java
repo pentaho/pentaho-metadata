@@ -49,7 +49,7 @@ import org.pentaho.reporting.libraries.formula.lvalues.StaticValue;
  */
 @SuppressWarnings("deprecation")
 public class DefaultSQLDialect implements SQLDialectInterface {
-  
+  private static final String TOP_KEYWORD = "TOP"; //$NON-NLS-1$
   protected Map<String,SQLFunctionGeneratorInterface>  supportedFunctions = new HashMap<String,SQLFunctionGeneratorInterface> ();
   protected Map<String,SQLOperatorGeneratorInterface> supportedInfixOperators = new HashMap<String,SQLOperatorGeneratorInterface>();
   String databaseType;
@@ -575,7 +575,7 @@ public class DefaultSQLDialect implements SQLDialectInterface {
    * @param sql string buffer
    */
   protected void generateSelectPredicate(SQLQueryModel query, StringBuilder sql) {
-    generateDistinct(query, sql);
+    generateTopAfterDistinct(query, sql, TOP_KEYWORD);
   }
   
   /**

@@ -331,6 +331,11 @@ public class MQLQueryImpl implements MQLQuery {
     String data = Boolean.toString(this.disableDistinct);
     disableDistinct.appendChild(doc.createTextNode(data));
     optionsElement.appendChild(disableDistinct);
+    
+    Element limit = doc.createElement("limit"); //$NON-NLS-1$
+    String limitData = String.valueOf(this.limit);
+    limit.appendChild(doc.createTextNode(limitData));
+    optionsElement.appendChild(limit);
   }
 
   protected void addSelectionToDocument(Document doc, Selection selection, Element selectionElement) {

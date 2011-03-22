@@ -749,6 +749,7 @@ public class MQLQueryTest extends TestCase {
       // remove the <?xml version="1.0" encoding="UTF-8"?>, it appears differently in different JVM versions
       xml = xml.replaceAll("<\\?.*\\?>",""); //$NON-NLS-1$ //$NON-NLS-2$
       xml = xml.replaceAll("[\n\t]", ""); //$NON-NLS-1$ //$NON-NLS-2$
+      xml = xml.replaceAll("<limit>-1</limit>", "");
       /*
       System.out.println("Generated XML");
       System.out.println(xml);
@@ -772,7 +773,8 @@ public class MQLQueryTest extends TestCase {
       // remove the <?xml version="1.0" encoding="UTF-8"?>, it appears differently in different JVM versions
       xml = xml.replaceAll("<\\?.*\\?>",""); //$NON-NLS-1$ //$NON-NLS-2$
       xml = xml.replaceAll("[\n\t]", ""); //$NON-NLS-1$ //$NON-NLS-2$
-
+      xml = xml.replaceAll("<limit>-1</limit>", "");
+      
       assertEquals(data, xml);
 
     } catch (IOException e) {
@@ -795,14 +797,35 @@ public class MQLQueryTest extends TestCase {
       assertNotNull(xml);
       xml = xml.replaceAll("<\\?.*\\?>",""); //$NON-NLS-1$ //$NON-NLS-2$
       xml = xml.replaceAll("[\r\n\t]", ""); //$NON-NLS-1$ //$NON-NLS-2$
-      xml = xml.replaceAll("<options><disable_distinct>false</disable_distinct></options>", ""); //$NON-NLS-1$ //$NON-NLS-2$
+      xml = xml.replaceAll("<options><disable_distinct>false</disable_distinct><limit>-1</limit></options>", ""); //$NON-NLS-1$ //$NON-NLS-2$
       assertEquals(data, xml);
 
     } catch (IOException e) {
       e.printStackTrace();
       fail();
     }
-
+    
+    try {
+      File file = new File(mqlfile5);
+      FileInputStream fileInputStream = new FileInputStream(file);
+      byte bytes[] = new byte[(int) file.length()];
+      fileInputStream.read(bytes);
+      fileInputStream.close();
+      String data = new String(bytes, Const.XML_ENCODING);
+      data = data.replaceAll("<\\?.*\\?>",""); //$NON-NLS-1$ //$NON-NLS-2$
+      data = data.replaceAll("[\r\n\t]", ""); //$NON-NLS-1$ //$NON-NLS-2$
+      data = data.replaceAll("<!--.*[-][-][>]", ""); //$NON-NLS-1$ //$NON-NLS-2$
+      String xml = mqlquery5.getXML();
+      assertNotNull(xml);
+      xml = xml.replaceAll("<\\?.*\\?>",""); //$NON-NLS-1$ //$NON-NLS-2$
+      xml = xml.replaceAll("[\r\n\t]", ""); //$NON-NLS-1$ //$NON-NLS-2$
+      assertEquals(data, xml);
+    } catch (IOException e) {
+      e.printStackTrace();
+      fail();
+    }
+    
+    
     try {
       // Now, look at generated SQL for distinct -vs- no distinct...
       String SQL1 = mqlquery.getQuery().getQuery();

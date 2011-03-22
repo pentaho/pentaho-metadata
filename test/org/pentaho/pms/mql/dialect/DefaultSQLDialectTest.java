@@ -68,4 +68,14 @@ public class DefaultSQLDialectTest extends MetadataTestBase {
     String result = dialect.generateSelectStatement(query);
     assertEqualsIgnoreWhitespaces(expected, result);
   }
+  
+  public void testLimitSQL() {
+    assertSelect("SELECT DISTINCT TOP 10 t.id FROM TABLE t WHERE ( ( t.id is null ) ) ORDER BY t.id ASC",
+        new DefaultSQLDialect(), createLimitedQuery());
+  }
+
+  public void testNoLimitSQL() {
+    assertSelect("SELECT DISTINCT t.id FROM TABLE t WHERE ( ( t.id is null ) ) ORDER BY t.id ASC",
+        new DefaultSQLDialect(), createUnlimitedQuery());
+  }
 }
