@@ -223,7 +223,7 @@ public class LocalizationUtilTest {
     
     String xmi = parser.generateXmi(domain);
     
-    ByteArrayInputStream is = new ByteArrayInputStream(xmi.getBytes());
+    ByteArrayInputStream is = new ByteArrayInputStream(xmi.getBytes("UTF-8"));
     Domain domain2 = parser.parseXmi(is);
     Properties newProps2 = util.exportLocalizedProperties(domain, "en_TEST");
     Assert.assertEquals(newProps2.size(), props.size());

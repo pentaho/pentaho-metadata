@@ -109,7 +109,7 @@ public class XmiParserTest {
     
     String xmi = parser.generateXmi(domain);
     
-    ByteArrayInputStream is = new ByteArrayInputStream(xmi.getBytes());
+    ByteArrayInputStream is = new ByteArrayInputStream(xmi.getBytes("UTF-8"));
     Domain domain2 = parser.parseXmi(is);
     
     SerializationService serializer = new SerializationService();
