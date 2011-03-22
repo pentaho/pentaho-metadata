@@ -61,11 +61,7 @@ public class MSAccessDialect extends DefaultSQLDialect {
 
   @Override
   protected void generateSelectPredicate(SQLQueryModel query, StringBuilder sql) {
-    generateTop(query, sql, TOP_KEYWORD);
-    // top replaces distinct
-    if (query.getLimit() < 0) {
-      generateDistinct(query, sql);
-    }
+    generateTopAfterDistinct(query, sql, TOP_KEYWORD);
   }
 
 
