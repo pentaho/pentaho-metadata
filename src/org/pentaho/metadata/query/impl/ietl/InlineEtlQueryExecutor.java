@@ -214,7 +214,10 @@ public class InlineEtlQueryExecutor extends BaseMetadataQueryExec {
   }
 
   public IPentahoResultSet executeQuery(Query query, String csvFilePath, Map<String, Object> parameters) throws Exception {
-
+    if (query.getLimit() >= 0) {
+      throw new UnsupportedOperationException(Messages.getErrorString("InlineEtlQueryExecutor.ERROR_0003_LIMIT_NOT_SUPPORTED"));
+    }
+    
     // resolve any missing parameters with default values
     if (parameters == null && query.getParameters().size() > 0) {
       parameters = new HashMap<String, Object>();

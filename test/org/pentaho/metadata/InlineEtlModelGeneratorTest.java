@@ -161,6 +161,14 @@ public class InlineEtlModelGeneratorTest {
     Assert.assertEquals(5.0, resultset.getValueAt(4, 0));
   }
   
+  @Test(expected=UnsupportedOperationException.class)
+  public void testQueryLimitNotSupported() throws Exception {
+    Query query = new Query(null, null);
+    query.setLimit(10);
+    InlineEtlQueryExecutor executor = new InlineEtlQueryExecutor();
+    IPentahoResultSet resultset = executor.executeQuery(query, null, null);
+  }
+  
   @Test
   public void testQueryExecutionWithOrder() throws Exception {
     
