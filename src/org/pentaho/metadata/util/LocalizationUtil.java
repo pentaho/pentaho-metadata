@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.metadata.messages.Messages;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.concept.IConcept;
+import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 /**
  * This utility class imports and exports all localized strings that exist in a Pentaho Metadata domain.
@@ -175,6 +176,26 @@ public class LocalizationUtil {
    * @param locale the locale in which to populate
    */
   public void importLocalizedProperties(Domain domain, Properties props, String locale) {
+    // Add new locale if it does not already exist in the domain
+    List<LocaleType> localeTypes = domain.getLocales();
+    boolean addLocale = true;
+    
+    if(localeTypes != null) {
+      for(LocaleType localeType : localeTypes) {
+        if(localeType.getCode().equals(locale)) {
+          addLocale = false;
+          break;
+        }
+      }
+    }
+    
+    if(addLocale) {
+      LocaleType localeType = new LocaleType();
+      localeType.setCode(locale);
+      
+      domain.addLocale(localeType);
+    }
+    
     for (Object key : props.keySet()) {
       String k = (String)key;
       if (logger.isDebugEnabled()) {

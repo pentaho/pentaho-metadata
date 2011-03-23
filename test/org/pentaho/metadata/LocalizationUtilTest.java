@@ -18,6 +18,8 @@ package org.pentaho.metadata;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.util.List;
 import java.util.Properties;
 
@@ -26,6 +28,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
+import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.util.LocalizationUtil;
 import org.pentaho.metadata.util.XmiParser;
@@ -58,7 +61,12 @@ public class LocalizationUtilTest {
     props.setProperty("[LogicalModel-BV_MODEL_1].[name]", "日本語");
     props.setProperty("[LogicalModel-BV_MODEL_1].[Category-TEST_WITH_日本語_CHARS].[name]","2nd Version 日本語");
 
+    Assert.assertEquals("en_US", domain.getLocales().get(0).getCode());
+    
     util.importLocalizedProperties(domain, props, "jp");
+    
+    Assert.assertEquals("en_US", domain.getLocales().get(0).getCode());
+    Assert.assertEquals("jp", domain.getLocales().get(1).getCode());
     
     Assert.assertEquals(domain.getLogicalModels().get(0).getName("jp"), "日本語");
     Assert.assertEquals(domain.getLogicalModels().get(0).getCategories().get(1).getName("jp"), "2nd Version 日本語");
@@ -98,7 +106,12 @@ public class LocalizationUtilTest {
     
     Assert.assertEquals(19, messages.size());
     
+    Assert.assertEquals("en_US", domain.getLocales().get(0).getCode());
+    
     util.importLocalizedProperties(domain, props, "en_TEST");
+    
+    Assert.assertEquals("en_US", domain.getLocales().get(0).getCode());
+    Assert.assertEquals("en_TEST", domain.getLocales().get(1).getCode());
 
   }
   
@@ -174,6 +187,9 @@ public class LocalizationUtilTest {
       String k = (String)key;
       Assert.assertEquals(props.getProperty(k), newProps2.getProperty(k));
     }
+    
+    Assert.assertEquals("en_US", domain.getLocales().get(0).getCode());
+    Assert.assertEquals("en_TEST", domain.getLocales().get(1).getCode());
   }
   
   @Test
@@ -232,5 +248,8 @@ public class LocalizationUtilTest {
       String k = (String)key;
       Assert.assertEquals(props.getProperty(k), newProps2.getProperty(k));
     }
+    
+    Assert.assertEquals("en_US", domain.getLocales().get(0).getCode());
+    Assert.assertEquals("en_TEST", domain.getLocales().get(1).getCode());
   }
 }
