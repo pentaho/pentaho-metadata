@@ -250,6 +250,7 @@ public class LocalizationUtilTest {
     }
     
     Assert.assertEquals("en_US", domain.getLocales().get(0).getCode());
-    Assert.assertEquals("en_TEST", domain.getLocales().get(1).getCode());
+    Assert.assertEquals("es", domain.getLocales().get(1).getCode());
+    Assert.assertEquals("en_TEST", domain.getLocales().get(2).getCode());
   }
 }
