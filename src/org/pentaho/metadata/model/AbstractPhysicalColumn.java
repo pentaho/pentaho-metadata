@@ -22,6 +22,7 @@ import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.FieldType;
+import org.pentaho.metadata.model.concept.types.LocalizedString;
 
 /**
  * this class implements the some of the shared functionality required by all
@@ -34,6 +35,12 @@ public abstract class AbstractPhysicalColumn extends Concept implements IPhysica
 
   private static final long serialVersionUID = 8636970915875556072L;
 
+  public AbstractPhysicalColumn() {
+    // physical column has the following default properties:
+    setName(new LocalizedString());
+    setDescription(new LocalizedString());
+  }
+  
   public DataType getDataType() {
     return (DataType)getProperty(IPhysicalColumn.DATATYPE_PROPERTY);
   }

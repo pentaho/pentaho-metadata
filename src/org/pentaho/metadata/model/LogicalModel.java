@@ -22,6 +22,7 @@ import java.util.List;
 import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.IConcept;
 import org.pentaho.metadata.model.concept.security.RowLevelSecurity;
+import org.pentaho.metadata.model.concept.types.LocalizedString;
 
 /**
  * The logical model contains logical tables and categories, and the name and description
@@ -51,6 +52,9 @@ public class LogicalModel extends Concept {
 
   public LogicalModel() {
     super();
+    // logical model has the following default properties:
+    setName(new LocalizedString());
+    setDescription(new LocalizedString());
   }
 
   @Override

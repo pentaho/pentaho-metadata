@@ -17,7 +17,10 @@
 package org.pentaho.metadata;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.util.List;
 import java.util.Locale;
+import java.util.Properties;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -42,8 +45,10 @@ import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
 import org.pentaho.metadata.repository.InMemoryMetadataDomainRepository;
+import org.pentaho.metadata.util.LocalizationUtil;
 import org.pentaho.metadata.util.SerializationService;
 import org.pentaho.metadata.util.ThinModelConverter;
+import org.pentaho.metadata.util.XmiParser;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.factory.CwmSchemaFactory;
 import org.pentaho.pms.messages.util.LocaleHelper;
@@ -224,6 +229,53 @@ public class ThinModelTest {
     }
   }
 
+  
+  @Test 
+  public void testLocalizationUtilWithConversion() throws Exception {
+    
+    deleteFile("mdr.btb");
+    deleteFile("mdr.btd");
+    deleteFile("mdr.btx");
+    
+    CWM cwm = null;
+    try {
+      cwm = CWM.getInstance("Orders", true); //$NON-NLS-1$
+      Assert.assertNotNull("CWM singleton instance is null", cwm);
+      cwm.importFromXMI("samples/steelwheels.xmi"); //$NON-NLS-1$      
+    } catch (Exception e) {
+      e.printStackTrace();
+      Assert.fail();
+    }
+    CwmSchemaFactory factory = new CwmSchemaFactory();
+
+    SchemaMeta schemaMeta = factory.getSchemaMeta(cwm);
+
+    Domain domain = null;
+    
+    try {
+      domain = ThinModelConverter.convertFromLegacy(schemaMeta);
+    } catch (Exception e){
+      e.printStackTrace();
+      Assert.fail();
+    }
+    
+    LocalizationUtil util = new LocalizationUtil();
+    Properties props = util.exportLocalizedProperties(domain, "en_US");
+    
+    XmiParser parser = new XmiParser();
+    
+    Domain domain2 = parser.parseXmi(new FileInputStream("samples/steelwheels.xmi"));
+    
+    List<String> list = util.analyzeImport(domain2, props, "en_US");
+    
+    for (String str : list) {
+      System.out.println(str);
+    }
+    
+    Assert.assertEquals(0, list.size());
+  }
+
+  
   
   @Test 
   public void loadLegacyXMI() {

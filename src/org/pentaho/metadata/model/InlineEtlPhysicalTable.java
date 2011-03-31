@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.IConcept;
+import org.pentaho.metadata.model.concept.types.LocalizedString;
 
 /**
  * The inline etl physical table simply holds pointers to the physical columns.
@@ -38,6 +39,9 @@ public class InlineEtlPhysicalTable extends Concept implements IPhysicalTable {
 
   public InlineEtlPhysicalTable() {
     super();
+    // physical table has the following default properties:
+    setName(new LocalizedString());
+    setDescription(new LocalizedString());
   }
   
   @Override

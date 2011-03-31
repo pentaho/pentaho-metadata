@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.IConcept;
+import org.pentaho.metadata.model.concept.types.LocalizedString;
 
 /**
  * The category class contains links to logical columns, which are part of 
@@ -39,6 +40,9 @@ public class Category extends Concept {
 
   public Category() {
     super();
+    // category has the following default properties
+    setName(new LocalizedString());
+    setDescription(new LocalizedString());
   }
   
   public Category(LogicalModel logicalModel) {

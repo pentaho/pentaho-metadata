@@ -17,9 +17,8 @@
 package org.pentaho.metadata;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
 import java.util.List;
 import java.util.Properties;
 
@@ -28,7 +27,6 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
-import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.util.LocalizationUtil;
 import org.pentaho.metadata.util.XmiParser;
@@ -46,7 +44,7 @@ public class LocalizationUtilTest {
     // 日本語
     
     XmiParser parser = new XmiParser();
-    Domain domain = parser.parseXmi(new FileInputStream("samples/simple_model.xmi"));
+    Domain domain = parser.parseXmi(new FileInputStream("test-res/simple_model.xmi"));
     Category category = new Category(domain.getLogicalModels().get(0));
     category.setId("TEST_WITH_日本語_CHARS");
     LocalizedString str = new LocalizedString("en_US", "日本語");
@@ -75,7 +73,7 @@ public class LocalizationUtilTest {
   @Test
   public void testNonHappyPaths() throws Exception {
     XmiParser parser = new XmiParser();
-    Domain domain = parser.parseXmi(new FileInputStream("samples/simple_model.xmi"));
+    Domain domain = parser.parseXmi(new FileInputStream("test-res/simple_model.xmi"));
     LocalizationUtil util = new LocalizationUtil();
     Properties props = util.exportLocalizedProperties(domain, "en_US");
 
@@ -119,7 +117,7 @@ public class LocalizationUtilTest {
   public void testAnalyzeImport() throws Exception {
     // this test exercises all known places where localized strings are located
     XmiParser parser = new XmiParser();
-    Domain domain = parser.parseXmi(new FileInputStream("samples/simple_model.xmi"));
+    Domain domain = parser.parseXmi(new FileInputStream("test-res/simple_model.xmi"));
     LocalizationUtil util = new LocalizationUtil();
     
     Properties props = util.exportLocalizedProperties(domain, "en_US");
@@ -142,13 +140,13 @@ public class LocalizationUtilTest {
   public void testSimpleModel() throws Exception {
     // this test exercises all known places where localized strings are located
     XmiParser parser = new XmiParser();
-    Domain domain = parser.parseXmi(new FileInputStream("samples/simple_model.xmi"));
+    Domain domain = parser.parseXmi(new FileInputStream("test-res/simple_model.xmi"));
     LocalizationUtil util = new LocalizationUtil();
     
     Properties props = util.exportLocalizedProperties(domain, "en_US");
 
     // There are 153 externalized strings in steel wheels
-    Assert.assertEquals(12, props.size());
+    Assert.assertEquals(19, props.size());
     for (Object key : props.keySet()) {
       System.out.println(key + "=" + props.get(key));
     }
@@ -204,8 +202,8 @@ public class LocalizationUtilTest {
     
     Properties props = util.exportLocalizedProperties(domain, "en_US");
 
-    // There are 153 externalized strings in steel wheels
-    Assert.assertEquals(153, props.size());
+    // There are 277 externalized strings in steel wheels
+    Assert.assertEquals(277, props.size());
     
     // Spot Checks
     
@@ -253,4 +251,63 @@ public class LocalizationUtilTest {
     Assert.assertEquals("es", domain.getLocales().get(1).getCode());
     Assert.assertEquals("en_TEST", domain.getLocales().get(2).getCode());
   }
+  
+  /**
+   * Tests the import of localization properties exported from a  model that was published 
+   * from aAgile BI to a BI Server. 
+   **/
+  @Test
+  public void testImportPropertiesIntoAgileBiPublishedModel() throws Exception {
+     
+     // this test exercises all known places where localized strings are located
+     XmiParser parser = new XmiParser();
+     Domain domain = null;
+     domain = parser.parseXmi(new FileInputStream("test-res/agileBiGenerated.xmi"));
+     LocalizationUtil util = new LocalizationUtil();
+          
+     //  Load the properties from the exported properties file
+     Properties exportedPropertyFileProps = new Properties();
+     exportedPropertyFileProps.load(new FileInputStream(new File("test-res/agileBiGenerated_en_US.properties")));
+
+     // import the properties into the domain
+     List<String> messages = util.analyzeImport(domain, exportedPropertyFileProps, "en_US");
+     if (messages.isEmpty())  {
+        Assert.assertTrue(messages.isEmpty());
+     } else {
+        for (String message: messages) {
+           System.out.println(message);
+        }
+        Assert.fail("The analysis of the export failed.");
+     }
+  }
+  
+  /**
+   * Tests the import of localization properties exported from a  model that was published 
+   * from aAgile BI to a BI Server. 
+   **/
+  @Test
+  public void testImportPropertiesExportedFromPME() throws Exception {
+     
+     // this test exercises all known places where localized strings are located
+     XmiParser parser = new XmiParser();
+     Domain domain = null;
+     domain = parser.parseXmi(new FileInputStream("test-res/exportedFromPME.xmi"));
+     LocalizationUtil util = new LocalizationUtil();
+          
+     //  Load the properties from the exported properties file
+     Properties exportedPropertyFileProps = new Properties();
+     exportedPropertyFileProps.load(new FileInputStream(new File("test-res/exportedFromPME_en_US.properties")));
+
+     // import the properties into the domain
+     List<String> messages = util.analyzeImport(domain, exportedPropertyFileProps, "en_US");
+     if (messages.isEmpty())  {
+        Assert.assertTrue(messages.isEmpty());
+     } else {
+        for (String message: messages) {
+           System.out.println(message);
+        }
+        Assert.fail("The analysis of the export failed.");
+     }
+  }
+
 }

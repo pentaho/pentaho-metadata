@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.IConcept;
+import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.model.concept.types.TableType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
 
@@ -46,6 +47,9 @@ public class SqlPhysicalTable extends Concept implements IPhysicalTable{
   public SqlPhysicalTable() {
     super();
     setTargetTableType(TargetTableType.TABLE);
+    // physical table has the following default properties:
+    setName(new LocalizedString());
+    setDescription(new LocalizedString());
   }
   
   public SqlPhysicalTable(SqlPhysicalModel model) {

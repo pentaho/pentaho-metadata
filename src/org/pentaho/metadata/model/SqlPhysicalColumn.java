@@ -41,8 +41,8 @@ public class SqlPhysicalColumn extends AbstractPhysicalColumn {
   }
   
   public SqlPhysicalColumn(SqlPhysicalTable table) {
+    this();
     this.table = table;
-    setTargetColumnType(TargetColumnType.COLUMN_NAME);
   }
 
   @Override
