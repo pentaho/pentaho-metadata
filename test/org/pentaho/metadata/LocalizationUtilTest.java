@@ -16,10 +16,13 @@
  */
 package org.pentaho.metadata;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import junit.framework.Assert;
@@ -280,6 +283,36 @@ public class LocalizationUtilTest {
         Assert.fail("The analysis of the export failed.");
      }
   }
+  
+  @Test
+  public void testImportedLocaleIntoDomainWithSameLocale() throws Exception {
+     
+     // this test exercises all known places where localized strings are located
+     String locale = "en_US";
+     XmiParser parser = new XmiParser();
+     Domain domain = null;
+     domain = parser.parseXmi(new FileInputStream("test-res/modelWith_EN_US.xmi"));
+     LocalizationUtil util = new LocalizationUtil();
+          
+     //  Load the properties from the exported properties file
+     Properties exportedPropertyFileProps = new Properties();
+     exportedPropertyFileProps.load(new FileInputStream(new File("test-res/modelWith_EN_US_en_US.properties")));
+
+     // import the properties into the domain
+     util.importLocalizedProperties(domain, exportedPropertyFileProps, locale);
+     
+     //  Out imported localization will have the string "en_US" before each non empty string.
+     //  take the printing of all the properties out before checking in
+     Properties en_US_FromDomain = util.exportLocalizedProperties(domain, locale);
+     for (Entry<Object, Object> entry : en_US_FromDomain.entrySet()) {
+        System.out.println(entry.getKey().toString() + " => " + entry.getValue().toString());
+     }
+     
+     assertEquals("en_US Num children at home", en_US_FromDomain.get("[IPhysicalModel-foodmart].[PT_CUSTOMER].[num_children_at_home].[name]"));
+        
+  }
+
+  
   
   /**
    * Tests the import of localization properties exported from a  model that was published 
