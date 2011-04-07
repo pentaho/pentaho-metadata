@@ -63,15 +63,22 @@ public class LocalizedString implements Serializable {
       return (String) localeStringMap.get(locale);
   }
 
-  public String getLocalizedString(String locale) {
+  public String getLocalizedString(final String locale) {
     String str = getString(locale);
-    if ((str == null || str.trim().length() == 0) && locale != null && locale.indexOf('_') > 0) {
-      str = getLocalizedString(locale.substring(0, locale.lastIndexOf('_')));
+    String tmpLocale = locale;
+    while (stringIsEmpty(str) && tmpLocale != null && tmpLocale.indexOf('_') > 0) {
+      tmpLocale = tmpLocale.substring(0, tmpLocale.lastIndexOf('_'));
+      str = getString(tmpLocale);
     }
-    if ((str == null || str.trim().length() == 0) && !DEFAULT_LOCALE.startsWith(locale)) {
-      str = getLocalizedString(DEFAULT_LOCALE);
+    if (!stringIsEmpty(str)) {
+      return str;
+    } else {
+      return getString(DEFAULT_LOCALE);
     }
-    return str;
+  }
+  
+  private boolean stringIsEmpty(String str) {
+    return (str == null || str.length() == 0);
   }
   
   public void setString(String locale, String string) {
