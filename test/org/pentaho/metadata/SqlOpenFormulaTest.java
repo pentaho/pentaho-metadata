@@ -133,8 +133,10 @@ public class SqlOpenFormulaTest {
       String sql = formula.generateSQL("en_US"); //$NON-NLS-1$
       Assert.assertNotNull(sql);
       sql = sql.trim();
+      Assert.assertEquals(expectedSql, sql);
     } catch (Exception e) {
       e.printStackTrace();
+      Assert.fail();
     }
   }
   public void handleFormula(LogicalModel model, String databaseToTest, String mqlFormula, String expectedSql) {
@@ -851,7 +853,7 @@ public class SqlOpenFormulaTest {
 
     handleFormula(getOrdersModel(), "Hypersonic", //$NON-NLS-1$ 
         "CONTAINS([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
-        , "BT_CUSTOMERS.COUNTRY  LIKE '%' + 'AMERICA' + '%'" //$NON-NLS-1$
+        , "BT_CUSTOMERS.COUNTRY  LIKE '%' || 'AMERICA' || '%'" //$NON-NLS-1$
     );
 
     handleFormula(getOrdersModel(), "DB2", //$NON-NLS-1$ 
@@ -889,7 +891,7 @@ public class SqlOpenFormulaTest {
 
     handleFormula(getOrdersModel(), "Hypersonic", //$NON-NLS-1$ 
         "BEGINSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
-        , "BT_CUSTOMERS.COUNTRY  LIKE 'AMERICA' + '%'" //$NON-NLS-1$
+        , "BT_CUSTOMERS.COUNTRY  LIKE 'AMERICA' || '%'" //$NON-NLS-1$
     );
 
     handleFormula(getOrdersModel(), "DB2", //$NON-NLS-1$ 
@@ -927,7 +929,7 @@ public class SqlOpenFormulaTest {
 
     handleFormula(getOrdersModel(), "Hypersonic", //$NON-NLS-1$ 
         "ENDSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
-        , "BT_CUSTOMERS.COUNTRY  LIKE '%' + 'AMERICA'" //$NON-NLS-1$
+        , "BT_CUSTOMERS.COUNTRY  LIKE '%' || 'AMERICA'" //$NON-NLS-1$
     );
 
     handleFormula(getOrdersModel(), "DB2", //$NON-NLS-1$ 
