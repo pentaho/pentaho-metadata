@@ -198,6 +198,10 @@ public class DefaultSQLDialect implements SQLDialectInterface {
         }
         sb.append(" ) "); //$NON-NLS-1$
       }
+      
+      public boolean isMultiValuedParamAware() {
+        return true;
+      }
     });
     
     supportedFunctions.put("EQUALS",  new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_FUNCTION, "EQUALS", 2) { //$NON-NLS-1$ //$NON-NLS-2$
