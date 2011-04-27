@@ -26,7 +26,7 @@ import java.io.Serializable;
  * @since 01-NOV-2006
  * 
  */
-public class SecurityOwner implements Serializable, Cloneable {
+public class SecurityOwner implements Serializable, Cloneable, Comparable {
 
   private static final long serialVersionUID = 6657148420948786542L;
 
@@ -89,9 +89,22 @@ public class SecurityOwner implements Serializable, Cloneable {
   
   @Override
   public boolean equals(Object object) {
+    if (!(object instanceof SecurityOwner)) {
+      return false;
+    }
     SecurityOwner s = (SecurityOwner)object;
     return  
       getOwnerType().equals(s.getOwnerType()) &&
       getOwnerName().equals(s.getOwnerName());
+  }
+  
+  @Override
+  public String toString() {
+    return "{class=SecurityOwner, ownerType=" + getOwnerType() + ", ownerName=" + getOwnerName() +"}"; 
+  }
+
+  @Override
+  public int compareTo(Object object) {
+    return toString().compareTo(object.toString());
   }
 }

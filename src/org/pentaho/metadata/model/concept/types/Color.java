@@ -90,7 +90,15 @@ public class Color implements Serializable {
 
   @Override
   public boolean equals(Object object) {
+    if (!(object instanceof Color)) {
+      return false;
+    }
     Color c = (Color)object;
     return getRed() == c.getRed() && getBlue() == c.getBlue() && getGreen() == c.getGreen();
+  }
+  
+  @Override
+  public String toString() {
+    return "{class=Color, red=" + getRed() + ", green="+ getGreen() + ", blue=" + getBlue() + "}";
   }
 }

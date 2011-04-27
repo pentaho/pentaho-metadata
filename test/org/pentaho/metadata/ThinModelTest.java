@@ -473,6 +473,8 @@ public class ThinModelTest {
     
     Domain joesDomain = repo.getDomain(domain.getId());
     
+    Assert.assertEquals("{class=SecurityOwner, ownerType=USER, ownerName=joe}", joe.toString());
+    
     Assert.assertEquals(1, joesDomain.getLogicalModels().get(0).getLogicalTables().get(0).getLogicalColumns().size());
     Assert.assertEquals(1, joesDomain.getLogicalModels().get(0).getCategories().get(0).getLogicalColumns().size());
 
