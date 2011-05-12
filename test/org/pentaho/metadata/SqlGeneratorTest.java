@@ -962,6 +962,41 @@ public class SqlGeneratorTest {
       Assert.assertEquals("test1", mquery.getParamList().get(0));
       Assert.assertEquals("test2", mquery.getParamList().get(1));
 
+      // Test multiple params in a single constraint
+      query.getConstraints().add(new Constraint(CombinationType.AND, "AND(EQUALS([bt1.bc1];[param:test1]);EQUALS([bt2.bc2];[param:test2]))")); //$NON-NLS-1$
+
+      mquery = generator.generateSql(query, "en_US", null, databaseMeta, parameters, true);
+      TestHelper.printOutJava(mquery.getQuery());
+      TestHelper.assertEqualsIgnoreWhitespaces(
+          "SELECT DISTINCT \n" +
+          "          bt1.pc1 AS COL0\n" +
+          "         ,bt2.pc2 AS COL1\n" +
+          "FROM \n" +
+          "          pt1 bt1\n" +
+          "         ,pt2 bt2\n" +
+          "WHERE \n" +
+          "          ( bt1.pc1 = bt2.pc2 )\n" +
+          "      AND \n" + 
+          "        (\n" + 
+          "          (\n" + 
+          "              bt1.pc1  = ?\n" + 
+          "          )\n" + 
+          "      AND (\n" + 
+          "              bt2.pc2  IN ( ?, ?, ? ) \n" + 
+          "          )\n" + 
+          "      AND (\n" + 
+          "              bt1.pc1  = ? AND  bt2.pc2  IN ( ?, ?, ? ) \n" + 
+          "          )\n" + 
+          "        )\n",
+          mquery.getQuery()
+        );
+      
+      Assert.assertNotNull(mquery.getParamList());
+      Assert.assertEquals(4, mquery.getParamList().size());
+      Assert.assertEquals("test1", mquery.getParamList().get(0));
+      Assert.assertEquals("test2", mquery.getParamList().get(1));
+      Assert.assertEquals("test1", mquery.getParamList().get(2));
+      Assert.assertEquals("test2", mquery.getParamList().get(3));
 
     } catch (Exception e) {
       e.printStackTrace();

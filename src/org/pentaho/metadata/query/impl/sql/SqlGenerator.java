@@ -478,7 +478,7 @@ public class SqlGenerator {
     SQLDialectInterface dialect = SQLDialectFactory.getSQLDialect(databaseMeta);
     List<String> paramNames = null;
     String sql = dialect.generateSelectStatement(query);
-    Pattern p = Pattern.compile("___PARAM\\[(.*)\\]___"); //$NON-NLS-1$
+    Pattern p = Pattern.compile("___PARAM\\[(.*?)\\]___"); //$NON-NLS-1$
     Matcher m = p.matcher(sql);
     StringBuffer sb = new StringBuffer();
     while (m.find()) {
