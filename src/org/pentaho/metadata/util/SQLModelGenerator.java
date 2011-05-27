@@ -16,23 +16,10 @@
  */
 package org.pentaho.metadata.util;
 
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.pentaho.di.core.Props;
-import org.pentaho.metadata.messages.LocaleHelper;
 import org.pentaho.metadata.messages.Messages;
-import org.pentaho.metadata.model.Category;
-import org.pentaho.metadata.model.Domain;
-import org.pentaho.metadata.model.LogicalColumn;
-import org.pentaho.metadata.model.LogicalModel;
-import org.pentaho.metadata.model.LogicalTable;
-import org.pentaho.metadata.model.SqlDataSource;
-import org.pentaho.metadata.model.SqlPhysicalColumn;
-import org.pentaho.metadata.model.SqlPhysicalModel;
-import org.pentaho.metadata.model.SqlPhysicalTable;
+import org.pentaho.metadata.model.*;
 import org.pentaho.metadata.model.SqlDataSource.DataSourceType;
 import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.security.Security;
@@ -40,6 +27,11 @@ import org.pentaho.metadata.model.concept.security.SecurityOwner;
 import org.pentaho.metadata.model.concept.security.SecurityOwner.OwnerType;
 import org.pentaho.metadata.model.concept.types.*;
 import org.pentaho.pms.util.Settings;
+
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class SQLModelGenerator {
   String modelName;
@@ -123,8 +115,7 @@ public class SQLModelGenerator {
   public Domain generate(String modelName, String connectionName, int[] columnType, String[] columnHeader, String query,
       Boolean securityEnabled, List<String> users, List<String> roles, int defaultAcls, String createdBy)
       throws SQLModelGeneratorException {
-
-    LocaleType locale = new LocaleType(LocaleHelper.getLocale().toString(), LocaleHelper.getLocale().getDisplayName());
+      LocaleType locale = new LocaleType(LocalizedString.DEFAULT_LOCALE, Locale.US.getDisplayName());
       if (validate()) {
         SqlPhysicalModel model = new SqlPhysicalModel();
         String modelID = Settings.getBusinessModelIDPrefix() + modelName;
