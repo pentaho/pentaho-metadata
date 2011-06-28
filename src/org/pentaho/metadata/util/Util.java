@@ -65,7 +65,7 @@ public class Util {
     name = name.replaceAll("[*]","_TIMES_"); //$NON-NLS-1$ //$NON-NLS-2$
     name = name.replaceAll("[/]","_DIVIDED_BY_"); //$NON-NLS-1$ //$NON-NLS-2$
     name = name.replaceAll("[+]","_PLUS_"); //$NON-NLS-1$ //$NON-NLS-2$
-    name = name.replaceAll("[-]","_MINUS_"); //$NON-NLS-1$ //$NON-NLS-2$
+    name = name.replaceAll("[-]","_HYPHEN_"); //$NON-NLS-1$ //$NON-NLS-2$
     name = name.replaceAll("_+", "_"); //$NON-NLS-1$ //$NON-NLS-2$
     return name;
   }

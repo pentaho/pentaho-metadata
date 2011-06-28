@@ -628,7 +628,7 @@ public class Const
         name = Const.replace(name, "*", "_TIMES_"); //$NON-NLS-1$ //$NON-NLS-2$
         name = Const.replace(name, "/", "_DIVIDED_BY_"); //$NON-NLS-1$ //$NON-NLS-2$
         name = Const.replace(name, "+", "_PLUS_"); //$NON-NLS-1$ //$NON-NLS-2$
-        name = Const.replace(name, "-", "_MINUS_"); //$NON-NLS-1$ //$NON-NLS-2$
+        name = Const.replace(name, "-", "_HYPHEN_"); //$NON-NLS-1$ //$NON-NLS-2$
         name = Const.replace(name, "____", "_"); //$NON-NLS-1$ //$NON-NLS-2$
         name = Const.replace(name, "___", "_"); //$NON-NLS-1$ //$NON-NLS-2$
         name = Const.replace(name, "__", "_"); //$NON-NLS-1$ //$NON-NLS-2$
