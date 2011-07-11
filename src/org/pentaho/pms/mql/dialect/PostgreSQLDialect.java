@@ -51,7 +51,13 @@ public class PostgreSQLDialect extends DefaultSQLDialect {
     return "date " + //$NON-NLS-1$
        quoteStringLiteral(year + "-" + displayAsTwoOrMoreDigits(month) + "-" + displayAsTwoOrMoreDigits(day)); //$NON-NLS-1$ //$NON-NLS-2$
   }
-  
+
+  public String getDateSQL(int year, int month, int day, int hour, int minute, int second, int milli) {
+    return "timestamp " +
+        quoteStringLiteral(year + "-" + displayAsTwoOrMoreDigits(month) + "-" + displayAsTwoOrMoreDigits(day) +  //$NON-NLS-1$ //$NON-NLS-2$
+        " " + displayAsTwoOrMoreDigits(hour) + ":" + displayAsTwoOrMoreDigits(minute) + ":" + displayAsTwoOrMoreDigits(second) + "." + milli);  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+  }
+
   /**
    * PostgreSQL has a 63 character limit on table name length
    * 

@@ -18,6 +18,9 @@ package org.pentaho.pms.mql.dialect;
 
 import org.pentaho.pms.MetadataTestBase;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class DefaultSQLDialectTest extends MetadataTestBase {
 
   /**
@@ -78,4 +81,16 @@ public class DefaultSQLDialectTest extends MetadataTestBase {
     assertSelect("SELECT DISTINCT t.id FROM TABLE t WHERE ( ( t.id is null ) ) ORDER BY t.id ASC",
         new DefaultSQLDialect(), createUnlimitedQuery());
   }
+
+  public void testGetDateSQL() {
+    String dateExpected = "'2000-01-01'";
+    DefaultSQLDialect dialect = new DefaultSQLDialect();
+    assertEquals(dateExpected, dialect.getDateSQL(2000, 1, 1));
+  }
+  public void testGetDateSQL_withTime() {
+    String dateExpected = "'2000-01-01 12:00:00.0'";
+    DefaultSQLDialect dialect = new DefaultSQLDialect();
+    assertEquals(dateExpected, dialect.getDateSQL(2000, 1, 1, 12, 0, 0, 0));
+  }
+
 }

@@ -68,6 +68,21 @@ public class OracleDialect extends DefaultSQLDialect {
   }
   
   /**
+   * return Oracle formatted date, TO_DATE('YYYY-MM-DD','YYYY-MM-DD')
+   *
+   * @param year
+   * @param month
+   * @param day
+   *
+   * @return date string
+   */
+  public String getDateSQL(int year, int month, int day, int hour, int minute, int second, int milli) {
+    return "TO_DATE(" + //$NON-NLS-1$
+       quoteStringLiteral(year + "-" + displayAsTwoOrMoreDigits(month) + "-" + displayAsTwoOrMoreDigits(day) + //$NON-NLS-1$ //$NON-NLS-2$
+         " " + displayAsTwoOrMoreDigits(hour) + ":" + displayAsTwoOrMoreDigits(minute) + ":" + displayAsTwoOrMoreDigits(second)) +  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+       "," + quoteStringLiteral("YYYY-MM-DD HH24:MI:SS") + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+  }
+  /**
    * Oracle has a 30 character limit on table name length
    * 
    * @return max table name length

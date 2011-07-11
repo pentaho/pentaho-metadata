@@ -328,12 +328,26 @@ public class DefaultSQLDialect implements SQLDialectInterface {
         int year = 0;
         int month = 0;
         int day = 0;
-        
+        int hour = 0;
+        int minute = 0;
+        int second = 0;
+        int milli = 0;
+        boolean useTime = false;
         if (dateValue instanceof String) {
-          Pattern p = Pattern.compile("(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)"); //$NON-NLS-1$
+          Pattern p = Pattern.compile("(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d) (\\d\\d):(\\d\\d):(\\d\\d)\\.(\\d*)"); //$NON-NLS-1$
           Matcher m = p.matcher((String) dateValue);
-          if (!m.matches()) {
-            throw new PentahoMetadataException(Messages.getErrorString("DefaultSQLDialect.ERROR_0001_DATE_STRING_SYNTAX_INVALID", (String) dateValue)); //$NON-NLS-1$
+          if (m.matches()) {
+            useTime = true;
+            hour = Integer.parseInt(m.group(4));
+            minute = Integer.parseInt(m.group(5));
+            second = Integer.parseInt(m.group(6));
+            milli = Integer.parseInt(m.group(7));
+          } else {
+            p = Pattern.compile("(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)"); //$NON-NLS-1$
+            m = p.matcher((String) dateValue);
+            if (!m.matches()) {
+              throw new PentahoMetadataException(Messages.getErrorString("DefaultSQLDialect.ERROR_0001_DATE_STRING_SYNTAX_INVALID", (String) dateValue)); //$NON-NLS-1$
+            }
           }
           year = Integer.parseInt(m.group(1));
           month = Integer.parseInt(m.group(2));
@@ -349,7 +363,11 @@ public class DefaultSQLDialect implements SQLDialectInterface {
           String dateValueType = dateValue == null ? "null" : dateValue.getClass().getName(); //$NON-NLS-1$
           throw new PentahoMetadataException(Messages.getErrorString("DefaultSQLDialect.ERROR_0003_DATE_PARAMETER_UNRECOGNIZED", dateValueType));     //$NON-NLS-1$
         }
-       sb.append(getDateSQL(year, month, day));
+        if (useTime) {
+          sb.append(getDateSQL(year, month, day, hour, minute, second, milli));
+        } else {
+          sb.append(getDateSQL(year, month, day));
+        }
       }
       
       public void validateFunction(FormulaFunction f) throws PentahoMetadataException {
@@ -449,7 +467,12 @@ public class DefaultSQLDialect implements SQLDialectInterface {
   public String getDateSQL(int year, int month, int day) {
     return quoteStringLiteral(year + "-" + displayAsTwoOrMoreDigits(month) + "-" + displayAsTwoOrMoreDigits(day)); //$NON-NLS-1$ //$NON-NLS-2$
   }
-  
+
+  public String getDateSQL(int year, int month, int day, int hour, int minute, int second, int milli) {
+    return quoteStringLiteral(year + "-" + displayAsTwoOrMoreDigits(month) + "-" + displayAsTwoOrMoreDigits(day) +  //$NON-NLS-1$ //$NON-NLS-2$
+        " " + displayAsTwoOrMoreDigits(hour) + ":" + displayAsTwoOrMoreDigits(minute) + ":" + displayAsTwoOrMoreDigits(second) + "." + milli);  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+  }
+
   /**
    * return the database type that this dialect implements
    * 

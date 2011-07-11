@@ -93,7 +93,20 @@ public interface SQLDialectInterface {
    * @return appropriate sql
    */
   public String getDateSQL(int year, int month, int day);
-  
+
+  /**
+   * this method renders a date into dialect specific SQL
+   * @param year
+   * @param month
+   * @param day
+   * @param hour
+   * @param minute
+   * @param second
+   * @param milli
+   * @return
+   */
+  public String getDateSQL(int year, int month, int day, int hour, int minute, int second, int milli);
+
   /**
    * this method renders a SQLQueryModel to a string
    * 
