@@ -265,7 +265,7 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
       // check to see if it's a parameter
       if (fieldName.startsWith(PARAM)) {
         String paramName = fieldName.substring(6);
-        if (parameters.get(paramName) == null) {
+        if (!parameters.containsKey(paramName)) {
           throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_00XX_PARAM_NOT_FOUND", paramName)); //$NON-NLS-1$
         }
         return;
