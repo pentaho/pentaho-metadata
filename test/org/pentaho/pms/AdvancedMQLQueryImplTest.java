@@ -166,6 +166,8 @@ public class AdvancedMQLQueryImplTest extends MetadataTestBase {
     myTest.addSelection(new AdvancedMQLQuery.AliasedSelection(bc1, "alias1"));
     myTest.addSelection(new AdvancedMQLQuery.AliasedSelection(bc3, null));
 
+    String qry = myTest.getQuery().getQuery(); 
+    // System.out.println("Generated query: " + qry);
     assertEqualsIgnoreWhitespaces(
         "SELECT DISTINCT \n" + 
         "          bt1_alias1.pc1 AS COL0\n" + 
@@ -181,7 +183,8 @@ public class AdvancedMQLQueryImplTest extends MetadataTestBase {
         "      AND (\n" + 
         "             bt3.pc3 = bt2_alias1.pc2\n" + 
         "          )\n",
-        myTest.getQuery().getQuery());
+        qry);
+    
   }
   
   
@@ -1278,29 +1281,49 @@ public class AdvancedMQLQueryImplTest extends MetadataTestBase {
   }
   
   public void testComplexJoinMQL() throws Exception {
-    
+// System.out.println("******************* testComplexJoinMQL *******************");    
     String locale = "en_US"; //$NON-NLS-1$
     
     final BusinessModel model = new BusinessModel();
+    model.setId("model_01");
+    BusinessCategory rootCat = new BusinessCategory();
+    rootCat.setRootCategory(true);
+    BusinessCategory mainCat = new BusinessCategory();
+    mainCat.setId("cat_01");
+    rootCat.addBusinessCategory(mainCat);
+    model.setRootCategory(rootCat);
     
     final BusinessTable bt1 = new BusinessTable();
     bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setTargetTable("pt1");
     final BusinessColumn bc1 = new BusinessColumn();
     bc1.setId("bc1"); //$NON-NLS-1$
     bc1.setFormula("pc1"); //$NON-NLS-1$
     bc1.setBusinessTable(bt1);
     bt1.addBusinessColumn(bc1);
+    mainCat.addBusinessColumn(bc1);
     
     final BusinessTable bt2 = new BusinessTable();
     bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setTargetTable("pt2");
     final BusinessColumn bc2 = new BusinessColumn();
     bc2.setId("bc2"); //$NON-NLS-1$
     bc2.setFormula("pc2"); //$NON-NLS-1$
     bc2.setBusinessTable(bt2);
     bt2.addBusinessColumn(bc2);
+    mainCat.addBusinessColumn(bc2);
 
     final BusinessTable bt3 = new BusinessTable();
     bt3.setId("bt3"); //$NON-NLS-1$
+    bt3.setTargetTable("pt3");
+
+    final BusinessColumn bc3 = new BusinessColumn();
+    bc3.setId("bc3"); //$NON-NLS-1$
+    bc3.setFormula("pc3"); //$NON-NLS-1$
+    bc3.setBusinessTable(bt3);
+    bt3.addBusinessColumn(bc3);
+    mainCat.addBusinessColumn(bc3);
+
 
     final RelationshipMeta rl1 = new RelationshipMeta();
     
@@ -1335,14 +1358,14 @@ public class AdvancedMQLQueryImplTest extends MetadataTestBase {
     
     MappedQuery query = myTest.getQuery();
     assertEqualsIgnoreWhitespaces( 
-        "SELECT DISTINCT bt1.pc1 AS COL0 ,bt2.pc2 AS COL1 FROM null bt1 ,null bt2 WHERE ( bt1.pc1 = bt2.pc2 )", //$NON-NLS-1$
+        "SELECT DISTINCT bt1.pc1 AS COL0 ,bt2.pc2 AS COL1 FROM pt1 bt1 ,pt2 bt2 WHERE ( bt1.pc1 = bt2.pc2 )", //$NON-NLS-1$
         query.getQuery()    
     ); 
     
     myTest.addSelection(new AdvancedMQLQuery.AliasedSelection(bc2, "alias"));
     query = myTest.getQuery();
     assertEqualsIgnoreWhitespaces( 
-        "SELECT DISTINCT bt1.pc1 AS COL0 ,bt2.pc2 AS COL1 ,bt2_alias.pc2 AS COL2 FROM null bt1 ,null bt2 ,null bt2_alias WHERE ( bt1.pc1 = bt2.pc2 ) AND ( bt1.pc1 = bt2_alias.pc2 )", //$NON-NLS-1$
+        "SELECT DISTINCT bt1.pc1 AS COL0 ,bt2.pc2 AS COL1 ,bt2_alias.pc2 AS COL2 FROM pt1 bt1 ,pt2 bt2 ,pt2 bt2_alias WHERE ( bt1.pc1 = bt2.pc2 ) AND ( bt1.pc1 = bt2_alias.pc2 )", //$NON-NLS-1$
         query.getQuery()    
     );
   } 

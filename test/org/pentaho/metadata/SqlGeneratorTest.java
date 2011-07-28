@@ -16,6 +16,12 @@
  */
 package org.pentaho.metadata;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -23,18 +29,32 @@ import org.pentaho.commons.connection.memory.MemoryMetaData;
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.exception.KettleException;
-import org.pentaho.metadata.model.*;
-import org.pentaho.metadata.model.concept.types.*;
+import org.pentaho.metadata.model.Category;
+import org.pentaho.metadata.model.IPhysicalColumn;
+import org.pentaho.metadata.model.LogicalColumn;
+import org.pentaho.metadata.model.LogicalModel;
+import org.pentaho.metadata.model.LogicalRelationship;
+import org.pentaho.metadata.model.LogicalTable;
+import org.pentaho.metadata.model.SqlPhysicalColumn;
+import org.pentaho.metadata.model.SqlPhysicalTable;
+import org.pentaho.metadata.model.concept.types.AggregationType;
+import org.pentaho.metadata.model.concept.types.DataType;
+import org.pentaho.metadata.model.concept.types.RelationshipType;
+import org.pentaho.metadata.model.concept.types.TargetColumnType;
+import org.pentaho.metadata.model.concept.types.TargetTableType;
 import org.pentaho.metadata.query.impl.sql.MappedQuery;
 import org.pentaho.metadata.query.impl.sql.Path;
 import org.pentaho.metadata.query.impl.sql.SqlGenerator;
-import org.pentaho.metadata.query.model.*;
+import org.pentaho.metadata.query.model.CombinationType;
+import org.pentaho.metadata.query.model.Constraint;
+import org.pentaho.metadata.query.model.Order;
 import org.pentaho.metadata.query.model.Order.Type;
+import org.pentaho.metadata.query.model.Parameter;
+import org.pentaho.metadata.query.model.Query;
+import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.metadata.query.model.util.QueryModelMetaData;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.mql.dialect.SQLQueryModel;
-
-import java.util.*;
 
 @SuppressWarnings("nls")
 public class SqlGeneratorTest {
@@ -156,11 +176,28 @@ public class SqlGeneratorTest {
     
     // this should return a path, but it is returning null instead
     
-    Assert.assertEquals(path.size(), 4);
-    Assert.assertEquals(path.getRelationship(0), rl3);
-    Assert.assertEquals(path.getRelationship(1), rl4); // may be rl3 
-    Assert.assertEquals(path.getRelationship(2), rl2); // may be rl5
-    Assert.assertEquals(path.getRelationship(3), rl1);
+    // MB - Fixed - should be expects, is not is, expects
+    Assert.assertEquals(4, path.size());
+
+    // Note - path is unordered - this test was invalid. Joins will
+    // be ordered by join-order keys. This should simply be relationships
+    // that will get us from point to point.
+    // Now, test that all joins are returned, and no dupes are found
+    ArrayList<LogicalRelationship> rtns = new ArrayList<LogicalRelationship>(4);
+    rtns.add(rl1);
+    rtns.add(rl2);
+    rtns.add(rl3);
+    rtns.add(rl4);
+    for (int i=0; i<path.size(); i++) {
+      LogicalRelationship rel = path.getRelationship(i);
+      int idx = rtns.indexOf(rel);
+      if (idx < 0) {
+        Assert.fail("Relationship returned twice - " + rel);
+      } else {
+        rtns.remove(idx);
+      }
+    }
+    
   }
   
   @Test
@@ -232,11 +269,27 @@ public class SqlGeneratorTest {
     // is a cycle, a bug is evident - there is no consideration
     // for the path 1->2, 2->3, 3->5, 5->6
     
-    Assert.assertEquals(path.size(), 4);
-    Assert.assertEquals(path.getRelationship(0), rl5);
-    Assert.assertEquals(path.getRelationship(1), rl6);  
-    Assert.assertEquals(path.getRelationship(2), rl3); 
-    Assert.assertEquals(path.getRelationship(3), rl1);
+    Assert.assertEquals(4, path.size());
+    
+    // Note - path is unordered - the old test was invalid. Joins will
+    // be ordered by join-order keys. This should simply be relationships
+    // that will get us from point to point.
+    // Now, test that all joins are returned, and no dupes are found
+    ArrayList<LogicalRelationship> rtns = new ArrayList<LogicalRelationship>(4);
+    rtns.add(rl1);
+    rtns.add(rl3);
+    rtns.add(rl5);
+    rtns.add(rl6);
+    for (int i=0; i<path.size(); i++) {
+      LogicalRelationship rel = path.getRelationship(i);
+      int idx = rtns.indexOf(rel);
+      if (idx < 0) {
+        Assert.fail("Relationship returned twice - " + rel);
+      } else {
+        rtns.remove(idx);
+      }
+    }
+    
   }
 
   @Test
@@ -522,7 +575,7 @@ public class SqlGeneratorTest {
       SqlGenerator generator = new SqlGenerator();
       
       MappedQuery mquery = generator.generateSql(query, "en_US", null, databaseMeta);
-      TestHelper.printOutJava(mquery.getQuery());
+      // TestHelper.printOutJava(mquery.getQuery());
       
       TestHelper.assertEqualsIgnoreWhitespaces(
           "SELECT \n" + 
@@ -619,7 +672,7 @@ public class SqlGeneratorTest {
       
       MappedQuery mquery = generator.generateSql(query, "en_US", null, databaseMeta);
 
-      TestHelper.printOutJava(mquery.getQuery());
+      // TestHelper.printOutJava(mquery.getQuery());
       
       TestHelper.assertEqualsIgnoreWhitespaces(
           "SELECT DISTINCT \n" + 
@@ -707,7 +760,7 @@ public class SqlGeneratorTest {
       SqlGenerator generator = new SqlGenerator();
       
       MappedQuery mquery = generator.generateSql(query, "en_US", null, databaseMeta, null, false);
-      TestHelper.printOutJava(mquery.getQuery());
+      // TestHelper.printOutJava(mquery.getQuery());
       TestHelper.assertEqualsIgnoreWhitespaces(
           "SELECT DISTINCT \n" + 
           "          bt1.pc1 AS COL0\n" + 
@@ -765,7 +818,7 @@ public class SqlGeneratorTest {
       Assert.assertNull(mquery.getParamList());
       
       mquery = generator.generateSql(query, "en_US", null, databaseMeta, parameters, true);
-      TestHelper.printOutJava(mquery.getQuery());
+      // TestHelper.printOutJava(mquery.getQuery());
       TestHelper.assertEqualsIgnoreWhitespaces(
           "SELECT DISTINCT \n" + 
           "          bt1.pc1 AS COL0\n" + 
@@ -966,7 +1019,7 @@ public class SqlGeneratorTest {
       query.getConstraints().add(new Constraint(CombinationType.AND, "AND(EQUALS([bt1.bc1];[param:test1]);EQUALS([bt2.bc2];[param:test2]))")); //$NON-NLS-1$
 
       mquery = generator.generateSql(query, "en_US", null, databaseMeta, parameters, true);
-      TestHelper.printOutJava(mquery.getQuery());
+      // TestHelper.printOutJava(mquery.getQuery());
       TestHelper.assertEqualsIgnoreWhitespaces(
           "SELECT DISTINCT \n" +
           "          bt1.pc1 AS COL0\n" +
@@ -1211,9 +1264,270 @@ public class SqlGeneratorTest {
   
   @Test
   public void testGetShortestPathBetween4() throws Exception {
+    // This test makes sure that inner-join join-orders are respected
     
     final LogicalModel model = new LogicalModel();
     
+    final LogicalTable bt1 = new LogicalTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt1"); //$NON-NLS-1$
+    final LogicalColumn bc1 = new LogicalColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc1"); //$NON-NLS-1$
+    bc1.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc1.setLogicalTable(bt1);
+    bt1.addLogicalColumn(bc1);
+    bt1.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt2 = new LogicalTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt2"); //$NON-NLS-1$
+    final LogicalColumn bc2 = new LogicalColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc2"); //$NON-NLS-1$
+    bc2.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc2.setLogicalTable(bt2);
+    bt2.addLogicalColumn(bc2);
+
+    bt2.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt3 = new LogicalTable();
+    bt3.setId("bt3"); //$NON-NLS-1$
+    bt3.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt3"); //$NON-NLS-1$
+    final LogicalColumn bc3 = new LogicalColumn();
+    bc3.setId("bc3"); //$NON-NLS-1$
+    bc3.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc3"); //$NON-NLS-1$
+    bc3.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc3.setLogicalTable(bt3);
+    bt3.addLogicalColumn(bc3);
+    bt3.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt4 = new LogicalTable();
+    bt4.setId("bt4"); //$NON-NLS-1$
+    bt4.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt4"); //$NON-NLS-1$
+    final LogicalColumn bc4 = new LogicalColumn();
+    bc4.setId("bc4"); //$NON-NLS-1$
+    bc4.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc4"); //$NON-NLS-1$
+    bc4.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc4.setLogicalTable(bt4);
+    bt4.addLogicalColumn(bc4);
+    bt4.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt5 = new LogicalTable();
+    bt5.setId("bt5"); //$NON-NLS-1$
+    bt5.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt5"); //$NON-NLS-1$
+    final LogicalColumn bc5 = new LogicalColumn();
+    bc5.setId("bc5"); //$NON-NLS-1$
+    bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc5"); //$NON-NLS-1$
+    bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc5.setLogicalTable(bt5);
+    bt5.addLogicalColumn(bc5);
+    bt5.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    final LogicalRelationship rl1 = new LogicalRelationship();
+    
+    rl1.setFromTable(bt1);
+    rl1.setFromColumn(bc1);
+    rl1.setToTable(bt2);
+    rl1.setToColumn(bc2);
+    rl1.setJoinOrderKey("A");
+    
+    final LogicalRelationship rl2 = new LogicalRelationship();
+    
+    rl2.setFromTable(bt2);
+    rl2.setFromColumn(bc2);
+    rl2.setToTable(bt3);
+    rl2.setToColumn(bc3);
+    rl2.setJoinOrderKey("C");
+
+    final LogicalRelationship rl3 = new LogicalRelationship();
+    
+    rl3.setFromTable(bt3);
+    rl3.setFromColumn(bc3);
+    rl3.setToTable(bt4);
+    rl3.setToColumn(bc4);
+    rl3.setJoinOrderKey("B");
+
+    final LogicalRelationship rl4 = new LogicalRelationship();
+    
+    rl4.setFromTable(bt4);
+    rl4.setFromColumn(bc4);
+    rl4.setToTable(bt5);
+    rl4.setToColumn(bc5);
+    rl4.setJoinOrderKey("D");
+    
+    model.getLogicalTables().add(bt1);
+    model.getLogicalTables().add(bt2);
+    model.getLogicalTables().add(bt3);
+    model.getLogicalTables().add(bt4);
+    model.getLogicalTables().add(bt5);
+    
+    model.getLogicalRelationships().add(rl1);
+    model.getLogicalRelationships().add(rl2);
+    model.getLogicalRelationships().add(rl3);
+    model.getLogicalRelationships().add(rl4);
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    Query myTest = new Query(null, model); //$NON-NLS-1$
+    myTest.getSelections().add(new Selection(null, bc1, null));
+    myTest.getSelections().add(new Selection(null, bc4, null));
+    SqlGenerator generator = new SqlGenerator();
+    MappedQuery query = generator.generateSql(myTest, "en_US", null, databaseMeta);
+    TestHelper.assertEqualsIgnoreWhitespaces( 
+        "SELECT DISTINCT \n" //$NON-NLS-1$
+        + "          bt1.pc1 AS COL0\n" //$NON-NLS-1$
+        + "         ,bt4.pc4 AS COL1\n" //$NON-NLS-1$
+        + "FROM \n" //$NON-NLS-1$
+        + "          pt1 bt1\n" //$NON-NLS-1$
+        + "         ,pt2 bt2\n" //$NON-NLS-1$
+        + "         ,pt3 bt3\n" //$NON-NLS-1$
+        + "         ,pt4 bt4\n" //$NON-NLS-1$
+        + "WHERE \n" //$NON-NLS-1$
+        + "          (\n"
+        + "             bt2.pc2 = bt3.pc3\n" //$NON-NLS-1$
+        + "          )\n"
+        + "      AND (\n"
+        + "             bt3.pc3 = bt4.pc4\n" //$NON-NLS-1$
+        + "          )\n"
+        + "      AND (\n" 
+        + "             bt1.pc1 = bt2.pc2\n"
+        + "          )\n",
+        query.getQuery()    
+    ); //$NON-NLS-1$
+  }
+
+  @Test
+  public void testGetShortestPathBetween5() throws Exception {
+    // This test makes sure that inner-join join-orders are respected
+    
+    final LogicalModel model = new LogicalModel();
+    
+    final LogicalTable bt1 = new LogicalTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt1"); //$NON-NLS-1$
+    final LogicalColumn bc1 = new LogicalColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc1"); //$NON-NLS-1$
+    bc1.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc1.setLogicalTable(bt1);
+    bt1.addLogicalColumn(bc1);
+    bt1.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt2 = new LogicalTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt2"); //$NON-NLS-1$
+    final LogicalColumn bc2 = new LogicalColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc2"); //$NON-NLS-1$
+    bc2.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc2.setLogicalTable(bt2);
+    bt2.addLogicalColumn(bc2);
+
+    bt2.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt3 = new LogicalTable();
+    bt3.setId("bt3"); //$NON-NLS-1$
+    bt3.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt3"); //$NON-NLS-1$
+    final LogicalColumn bc3 = new LogicalColumn();
+    bc3.setId("bc3"); //$NON-NLS-1$
+    bc3.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc3"); //$NON-NLS-1$
+    bc3.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc3.setLogicalTable(bt3);
+    bt3.addLogicalColumn(bc3);
+    bt3.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt4 = new LogicalTable();
+    bt4.setId("bt4"); //$NON-NLS-1$
+    bt4.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt4"); //$NON-NLS-1$
+    final LogicalColumn bc4 = new LogicalColumn();
+    bc4.setId("bc4"); //$NON-NLS-1$
+    bc4.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc4"); //$NON-NLS-1$
+    bc4.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc4.setLogicalTable(bt4);
+    bt4.addLogicalColumn(bc4);
+    bt4.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt5 = new LogicalTable();
+    bt5.setId("bt5"); //$NON-NLS-1$
+    bt5.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt5"); //$NON-NLS-1$
+    final LogicalColumn bc5 = new LogicalColumn();
+    bc5.setId("bc5"); //$NON-NLS-1$
+    bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc5"); //$NON-NLS-1$
+    bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc5.setLogicalTable(bt5);
+    bt5.addLogicalColumn(bc5);
+    bt5.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    final LogicalRelationship rl1 = new LogicalRelationship();
+    
+    rl1.setFromTable(bt1);
+    rl1.setFromColumn(bc1);
+    rl1.setToTable(bt2);
+    rl1.setToColumn(bc2);
+    
+    final LogicalRelationship rl2 = new LogicalRelationship();
+    
+    rl2.setFromTable(bt2);
+    rl2.setFromColumn(bc2);
+    rl2.setToTable(bt3);
+    rl2.setToColumn(bc3);
+
+    final LogicalRelationship rl3 = new LogicalRelationship();
+    
+    rl3.setFromTable(bt3);
+    rl3.setFromColumn(bc3);
+    rl3.setToTable(bt4);
+    rl3.setToColumn(bc4);
+
+    final LogicalRelationship rl4 = new LogicalRelationship();
+    
+    rl4.setFromTable(bt4);
+    rl4.setFromColumn(bc4);
+    rl4.setToTable(bt5);
+    rl4.setToColumn(bc5);
+    
+    model.getLogicalTables().add(bt1);
+    model.getLogicalTables().add(bt2);
+    model.getLogicalTables().add(bt3);
+    model.getLogicalTables().add(bt4);
+    model.getLogicalTables().add(bt5);
+    
+    model.getLogicalRelationships().add(rl1);
+    model.getLogicalRelationships().add(rl2);
+    model.getLogicalRelationships().add(rl3);
+    model.getLogicalRelationships().add(rl4);
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    Query myTest = new Query(null, model); //$NON-NLS-1$
+    myTest.getSelections().add(new Selection(null, bc1, null));
+    myTest.getSelections().add(new Selection(null, bc4, null));
+    SqlGenerator generator = new SqlGenerator();
+    MappedQuery query = generator.generateSql(myTest, "en_US", null, databaseMeta);
+    String actualQuery = query.getQuery();
+    TestHelper.assertEqualsIgnoreWhitespaces( 
+        "SELECT DISTINCT \n" //$NON-NLS-1$
+        + "          bt1.pc1 AS COL0\n" //$NON-NLS-1$
+        + "         ,bt4.pc4 AS COL1\n" //$NON-NLS-1$
+        + "FROM \n" //$NON-NLS-1$
+        + "          pt1 bt1\n" //$NON-NLS-1$
+        + "         ,pt2 bt2\n" //$NON-NLS-1$
+        + "         ,pt3 bt3\n" //$NON-NLS-1$
+        + "         ,pt4 bt4\n" //$NON-NLS-1$
+        + "WHERE \n" //$NON-NLS-1$
+        + "          (\n"
+        + "             bt1.pc1 = bt2.pc2\n"
+        + "          )\n"
+        + "      AND (\n"
+        + "             bt2.pc2 = bt3.pc3\n" //$NON-NLS-1$
+        + "          )\n"
+        + "      AND (\n" 
+        + "             bt3.pc3 = bt4.pc4\n" //$NON-NLS-1$
+        + "          )\n",
+        actualQuery    
+    ); //$NON-NLS-1$
+  }
+
+  @Test
+  public void testClassicGetShortestPathBetween() throws Exception {
+    
+    final LogicalModel model = new LogicalModel();
+    model.setProperty("path_build_method", "CLASSIC");
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId("bt1"); //$NON-NLS-1$
     bt1.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt1"); //$NON-NLS-1$
@@ -1336,6 +1650,609 @@ public class SqlGeneratorTest {
     ); //$NON-NLS-1$
   }
 
+  @Test
+  public void testClassicGetShortestPathBetweenNoPathPossible() throws Exception {
+    
+    final LogicalModel model = new LogicalModel();
+    model.setProperty("path_build_method", "CLASSIC");
+    final LogicalTable bt1 = new LogicalTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt1"); //$NON-NLS-1$
+    final LogicalColumn bc1 = new LogicalColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc1"); //$NON-NLS-1$
+    bc1.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc1.setLogicalTable(bt1);
+    bt1.addLogicalColumn(bc1);
+    bt1.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt2 = new LogicalTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt2"); //$NON-NLS-1$
+    final LogicalColumn bc2 = new LogicalColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc2"); //$NON-NLS-1$
+    bc2.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc2.setLogicalTable(bt2);
+    bt2.addLogicalColumn(bc2);
+
+    bt2.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt3 = new LogicalTable();
+    bt3.setId("bt3"); //$NON-NLS-1$
+    bt3.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt3"); //$NON-NLS-1$
+    final LogicalColumn bc3 = new LogicalColumn();
+    bc3.setId("bc3"); //$NON-NLS-1$
+    bc3.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc3"); //$NON-NLS-1$
+    bc3.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc3.setLogicalTable(bt3);
+    bt3.addLogicalColumn(bc3);
+    bt3.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt4 = new LogicalTable();
+    bt4.setId("bt4"); //$NON-NLS-1$
+    bt4.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt4"); //$NON-NLS-1$
+    final LogicalColumn bc4 = new LogicalColumn();
+    bc4.setId("bc4"); //$NON-NLS-1$
+    bc4.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc4"); //$NON-NLS-1$
+    bc4.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc4.setLogicalTable(bt4);
+    bt4.addLogicalColumn(bc4);
+    bt4.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt5 = new LogicalTable();
+    bt5.setId("bt5"); //$NON-NLS-1$
+    bt5.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt5"); //$NON-NLS-1$
+    final LogicalColumn bc5 = new LogicalColumn();
+    bc5.setId("bc5"); //$NON-NLS-1$
+    bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc5"); //$NON-NLS-1$
+    bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc5.setLogicalTable(bt5);
+    bt5.addLogicalColumn(bc5);
+    bt5.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    final LogicalRelationship rl1 = new LogicalRelationship();
+    
+    rl1.setFromTable(bt1);
+    rl1.setFromColumn(bc1);
+    rl1.setToTable(bt2);
+    rl1.setToColumn(bc2);
+    
+    final LogicalRelationship rl2 = new LogicalRelationship();
+    
+    rl2.setFromTable(bt3);
+    rl2.setFromColumn(bc3);
+    rl2.setToTable(bt4);
+    rl2.setToColumn(bc4);
+
+    final LogicalRelationship rl3 = new LogicalRelationship();
+    
+    rl3.setFromTable(bt4);
+    rl3.setFromColumn(bc4);
+    rl3.setToTable(bt5);
+    rl3.setToColumn(bc5);
+    
+    model.getLogicalTables().add(bt1);
+    model.getLogicalTables().add(bt2);
+    model.getLogicalTables().add(bt3);
+    model.getLogicalTables().add(bt4);
+    model.getLogicalTables().add(bt5);
+    
+    model.getLogicalRelationships().add(rl1);
+    model.getLogicalRelationships().add(rl2);
+    model.getLogicalRelationships().add(rl3);
+
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    
+    SqlGenerator generator = new SqlGenerator();
+    
+    List<LogicalTable> tbls = new ArrayList<LogicalTable>();
+    tbls.add(bt1);
+    tbls.add(bt5);
+
+    // There is no path between table 1 and table 5...
+    Path path = generator.getShortestPathBetween(model, tbls);
+    Assert.assertNull(path);
+  }
+  
+  @Test
+  public void testNewAlgorithmGetShortestPathBetweenNoPathPossible() throws Exception {
+    
+    final LogicalModel model = new LogicalModel();
+    model.setProperty("path_build_method", "SHORTEST");
+    final LogicalTable bt1 = new LogicalTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt1"); //$NON-NLS-1$
+    final LogicalColumn bc1 = new LogicalColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc1"); //$NON-NLS-1$
+    bc1.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc1.setLogicalTable(bt1);
+    bt1.addLogicalColumn(bc1);
+    bt1.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt2 = new LogicalTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt2"); //$NON-NLS-1$
+    final LogicalColumn bc2 = new LogicalColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc2"); //$NON-NLS-1$
+    bc2.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc2.setLogicalTable(bt2);
+    bt2.addLogicalColumn(bc2);
+
+    bt2.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt3 = new LogicalTable();
+    bt3.setId("bt3"); //$NON-NLS-1$
+    bt3.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt3"); //$NON-NLS-1$
+    final LogicalColumn bc3 = new LogicalColumn();
+    bc3.setId("bc3"); //$NON-NLS-1$
+    bc3.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc3"); //$NON-NLS-1$
+    bc3.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc3.setLogicalTable(bt3);
+    bt3.addLogicalColumn(bc3);
+    bt3.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt4 = new LogicalTable();
+    bt4.setId("bt4"); //$NON-NLS-1$
+    bt4.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt4"); //$NON-NLS-1$
+    final LogicalColumn bc4 = new LogicalColumn();
+    bc4.setId("bc4"); //$NON-NLS-1$
+    bc4.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc4"); //$NON-NLS-1$
+    bc4.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc4.setLogicalTable(bt4);
+    bt4.addLogicalColumn(bc4);
+    bt4.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt5 = new LogicalTable();
+    bt5.setId("bt5"); //$NON-NLS-1$
+    bt5.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt5"); //$NON-NLS-1$
+    final LogicalColumn bc5 = new LogicalColumn();
+    bc5.setId("bc5"); //$NON-NLS-1$
+    bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc5"); //$NON-NLS-1$
+    bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc5.setLogicalTable(bt5);
+    bt5.addLogicalColumn(bc5);
+    bt5.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    final LogicalRelationship rl1 = new LogicalRelationship();
+    
+    rl1.setFromTable(bt1);
+    rl1.setFromColumn(bc1);
+    rl1.setToTable(bt2);
+    rl1.setToColumn(bc2);
+    
+    final LogicalRelationship rl2 = new LogicalRelationship();
+    
+    rl2.setFromTable(bt3);
+    rl2.setFromColumn(bc3);
+    rl2.setToTable(bt4);
+    rl2.setToColumn(bc4);
+
+    final LogicalRelationship rl3 = new LogicalRelationship();
+    
+    rl3.setFromTable(bt4);
+    rl3.setFromColumn(bc4);
+    rl3.setToTable(bt5);
+    rl3.setToColumn(bc5);
+    
+    model.getLogicalTables().add(bt1);
+    model.getLogicalTables().add(bt2);
+    model.getLogicalTables().add(bt3);
+    model.getLogicalTables().add(bt4);
+    model.getLogicalTables().add(bt5);
+    
+    model.getLogicalRelationships().add(rl1);
+    model.getLogicalRelationships().add(rl2);
+    model.getLogicalRelationships().add(rl3);
+
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    
+    SqlGenerator generator = new SqlGenerator();
+    
+    List<LogicalTable> tbls = new ArrayList<LogicalTable>();
+    tbls.add(bt1);
+    tbls.add(bt5);
+
+    // There is no path between table 1 and table 5...
+    Path path = generator.getShortestPathBetween(model, tbls);
+    Assert.assertNull(path);
+  }
+  
+  @Test
+  public void testAnyRelevantGetShortestPathBetween() throws Exception {
+    // Note - this returns all possible joins between the tables. In this
+    // example, the following two paths are possible:
+    // [1-2, 2-5] and [1-3, 3-5]
+    // This path provides both sets of joins, ignoring the spurious
+    // relationship [4-5] because you can't get from table 1 trough to
+    // table 4.
+    final LogicalModel model = new LogicalModel();
+    model.setProperty("path_build_method", "ANY_RELEVANT");
+    final LogicalTable bt1 = new LogicalTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt1"); //$NON-NLS-1$
+    final LogicalColumn bc1 = new LogicalColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc1"); //$NON-NLS-1$
+    bc1.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc1.setLogicalTable(bt1);
+    bt1.addLogicalColumn(bc1);
+    bt1.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt2 = new LogicalTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt2"); //$NON-NLS-1$
+    final LogicalColumn bc2 = new LogicalColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc2"); //$NON-NLS-1$
+    bc2.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc2.setLogicalTable(bt2);
+    bt2.addLogicalColumn(bc2);
+
+    bt2.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt3 = new LogicalTable();
+    bt3.setId("bt3"); //$NON-NLS-1$
+    bt3.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt3"); //$NON-NLS-1$
+    final LogicalColumn bc3 = new LogicalColumn();
+    bc3.setId("bc3"); //$NON-NLS-1$
+    bc3.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc3"); //$NON-NLS-1$
+    bc3.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc3.setLogicalTable(bt3);
+    bt3.addLogicalColumn(bc3);
+    bt3.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt4 = new LogicalTable();
+    bt4.setId("bt4"); //$NON-NLS-1$
+    bt4.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt4"); //$NON-NLS-1$
+    final LogicalColumn bc4 = new LogicalColumn();
+    bc4.setId("bc4"); //$NON-NLS-1$
+    bc4.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc4"); //$NON-NLS-1$
+    bc4.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc4.setLogicalTable(bt4);
+    bt4.addLogicalColumn(bc4);
+    bt4.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt5 = new LogicalTable();
+    bt5.setId("bt5"); //$NON-NLS-1$
+    bt5.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt5"); //$NON-NLS-1$
+    final LogicalColumn bc5 = new LogicalColumn();
+    bc5.setId("bc5"); //$NON-NLS-1$
+    bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc5"); //$NON-NLS-1$
+    bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc5.setLogicalTable(bt5);
+    bt5.addLogicalColumn(bc5);
+    bt5.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    
+    final LogicalRelationship rl1 = new LogicalRelationship();
+    
+    rl1.setFromTable(bt1);
+    rl1.setFromColumn(bc1);
+    rl1.setToTable(bt3);
+    rl1.setToColumn(bc3);
+    
+    final LogicalRelationship rl2 = new LogicalRelationship();
+    
+    rl2.setFromTable(bt1);
+    rl2.setFromColumn(bc1);
+    rl2.setToTable(bt2);
+    rl2.setToColumn(bc2);
+
+    final LogicalRelationship rl3 = new LogicalRelationship();
+    
+    rl3.setFromTable(bt2);
+    rl3.setFromColumn(bc2);
+    rl3.setToTable(bt5);
+    rl3.setToColumn(bc5);
+
+    final LogicalRelationship rl4 = new LogicalRelationship();
+    
+    rl4.setFromTable(bt4);
+    rl4.setFromColumn(bc4);
+    rl4.setToTable(bt5);
+    rl4.setToColumn(bc5);
+    
+    final LogicalRelationship rl5 = new LogicalRelationship();
+    
+    rl5.setFromTable(bt3);
+    rl5.setFromColumn(bc3);
+    rl5.setToTable(bt5);
+    rl5.setToColumn(bc5);
+    
+    model.getLogicalTables().add(bt1);
+    model.getLogicalTables().add(bt2);
+    model.getLogicalTables().add(bt3);
+    model.getLogicalTables().add(bt4);
+    model.getLogicalTables().add(bt5);
+    
+    model.getLogicalRelationships().add(rl1);
+    model.getLogicalRelationships().add(rl2);
+    model.getLogicalRelationships().add(rl3);
+    model.getLogicalRelationships().add(rl4);
+    model.getLogicalRelationships().add(rl5);
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    Query myTest = new Query(null, model); //$NON-NLS-1$
+    myTest.getSelections().add(new Selection(null, bc1, null));
+    myTest.getSelections().add(new Selection(null, bc5, null));
+    SqlGenerator generator = new SqlGenerator();
+    MappedQuery query = generator.generateSql(myTest, "en_US", null, databaseMeta);
+    String queryString = query.getQuery();
+    // System.out.println("*********");
+    // System.out.println(queryString);
+    TestHelper.assertEqualsIgnoreWhitespaces( 
+        "SELECT DISTINCT  " + 
+        "          bt1.pc1 AS COL0 " + 
+        "         ,bt5.pc5 AS COL1 " + 
+        "FROM  " + 
+        "          pt1 bt1 " + 
+        "         ,pt2 bt2 " + 
+        "         ,pt3 bt3 " + 
+        "         ,pt5 bt5 " + 
+        "WHERE  " + 
+        "          ( bt1.pc1 = bt3.pc3 ) " + 
+        "      AND ( bt1.pc1 = bt2.pc2 ) " + 
+        "      AND ( bt2.pc2 = bt5.pc5 ) " + 
+        "      AND ( bt3.pc3 = bt5.pc5 ) "
+        , queryString
+    ); //$NON-NLS-1$
+  }
+  
+  @Test
+  public void testfirstShortGetShortestPathBetween() throws Exception {
+    // This one is testing FIRST_SHORT
+    // It can logically choose [1-2, 2-5] or [1-3, 3-5]
+    // Note that the relative size of '3' is 100 - this algorithm
+    // doesn't consider this relative size, - it stops on the first one it finds
+    // based on hops.
+    
+    final LogicalModel model = new LogicalModel();
+    model.setProperty("path_build_method", "FIRST_SHORT");
+    final LogicalTable bt1 = new LogicalTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt1"); //$NON-NLS-1$
+    final LogicalColumn bc1 = new LogicalColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc1"); //$NON-NLS-1$
+    bc1.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc1.setLogicalTable(bt1);
+    bt1.addLogicalColumn(bc1);
+    bt1.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt2 = new LogicalTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt2"); //$NON-NLS-1$
+    final LogicalColumn bc2 = new LogicalColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc2"); //$NON-NLS-1$
+    bc2.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc2.setLogicalTable(bt2);
+    bt2.addLogicalColumn(bc2);
+
+    bt2.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt3 = new LogicalTable();
+    bt3.setId("bt3"); //$NON-NLS-1$
+    bt3.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt3"); //$NON-NLS-1$
+    final LogicalColumn bc3 = new LogicalColumn();
+    bc3.setId("bc3"); //$NON-NLS-1$
+    bc3.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc3"); //$NON-NLS-1$
+    bc3.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc3.setLogicalTable(bt3);
+    bt3.addLogicalColumn(bc3);
+    bt3.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 100);
+    
+    final LogicalTable bt4 = new LogicalTable();
+    bt4.setId("bt4"); //$NON-NLS-1$
+    bt4.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt4"); //$NON-NLS-1$
+    final LogicalColumn bc4 = new LogicalColumn();
+    bc4.setId("bc4"); //$NON-NLS-1$
+    bc4.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc4"); //$NON-NLS-1$
+    bc4.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc4.setLogicalTable(bt4);
+    bt4.addLogicalColumn(bc4);
+    bt4.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt5 = new LogicalTable();
+    bt5.setId("bt5"); //$NON-NLS-1$
+    bt5.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt5"); //$NON-NLS-1$
+    final LogicalColumn bc5 = new LogicalColumn();
+    bc5.setId("bc5"); //$NON-NLS-1$
+    bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc5"); //$NON-NLS-1$
+    bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc5.setLogicalTable(bt5);
+    bt5.addLogicalColumn(bc5);
+    bt5.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    final LogicalRelationship rl1 = new LogicalRelationship();
+    
+    rl1.setFromTable(bt1);
+    rl1.setFromColumn(bc1);
+    rl1.setToTable(bt2);
+    rl1.setToColumn(bc2);
+    
+    final LogicalRelationship rl2 = new LogicalRelationship();
+    
+    rl2.setFromTable(bt2);
+    rl2.setFromColumn(bc2);
+    rl2.setToTable(bt5);
+    rl2.setToColumn(bc5);
+
+    final LogicalRelationship rl3 = new LogicalRelationship();
+    
+    rl3.setFromTable(bt1);
+    rl3.setFromColumn(bc1);
+    rl3.setToTable(bt3);
+    rl3.setToColumn(bc3);
+
+    final LogicalRelationship rl4 = new LogicalRelationship();
+    
+    rl4.setFromTable(bt3);
+    rl4.setFromColumn(bc3);
+    rl4.setToTable(bt5);
+    rl4.setToColumn(bc5);
+
+    
+    model.getLogicalTables().add(bt1);
+    model.getLogicalTables().add(bt2);
+    model.getLogicalTables().add(bt3);
+    model.getLogicalTables().add(bt4);
+    model.getLogicalTables().add(bt5);
+    
+    model.getLogicalRelationships().add(rl1);
+    model.getLogicalRelationships().add(rl2);
+    model.getLogicalRelationships().add(rl3);
+    model.getLogicalRelationships().add(rl4);
+
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    Query myTest = new Query(null, model); //$NON-NLS-1$
+    myTest.getSelections().add(new Selection(null, bc1, null));
+    myTest.getSelections().add(new Selection(null, bc5, null));
+    SqlGenerator generator = new SqlGenerator();
+    MappedQuery query = generator.generateSql(myTest, "en_US", null, databaseMeta);
+    String queryString = query.getQuery();
+    // System.out.println("*************");
+    // System.out.println(queryString);
+    
+    TestHelper.assertEqualsIgnoreWhitespaces( 
+        "SELECT DISTINCT  " + 
+        "          bt1.pc1 AS COL0 " + 
+        "         ,bt5.pc5 AS COL1 " + 
+        "FROM  " + 
+        "          pt1 bt1 " + 
+        "         ,pt3 bt3 " + 
+        "         ,pt5 bt5 " + 
+        "WHERE  " + 
+        "          ( bt1.pc1 = bt3.pc3 ) " + 
+        "      AND ( bt3.pc3 = bt5.pc5 ) "
+        , queryString
+    ); //$NON-NLS-1$
+  }
+  
+  @Test
+  public void testlowestScoreGetShortestPathBetween() throws Exception {
+    // Note - the relative size of table 2 is huge (100) compared with the others.
+    // so - path should favor [1->3, 3->5] and avoid joins through table 2.
+    final LogicalModel model = new LogicalModel();
+    model.setProperty("path_build_method", "LOWEST_SCORE");
+    final LogicalTable bt1 = new LogicalTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt1"); //$NON-NLS-1$
+    final LogicalColumn bc1 = new LogicalColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc1"); //$NON-NLS-1$
+    bc1.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc1.setLogicalTable(bt1);
+    bt1.addLogicalColumn(bc1);
+    bt1.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt2 = new LogicalTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt2"); //$NON-NLS-1$
+    final LogicalColumn bc2 = new LogicalColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc2"); //$NON-NLS-1$
+    bc2.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc2.setLogicalTable(bt2);
+    bt2.addLogicalColumn(bc2);
+    bt2.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 100);
+
+    final LogicalTable bt3 = new LogicalTable();
+    bt3.setId("bt3"); //$NON-NLS-1$
+    bt3.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt3"); //$NON-NLS-1$
+    final LogicalColumn bc3 = new LogicalColumn();
+    bc3.setId("bc3"); //$NON-NLS-1$
+    bc3.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc3"); //$NON-NLS-1$
+    bc3.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc3.setLogicalTable(bt3);
+    bt3.addLogicalColumn(bc3);
+    bt3.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt4 = new LogicalTable();
+    bt4.setId("bt4"); //$NON-NLS-1$
+    bt4.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt4"); //$NON-NLS-1$
+    final LogicalColumn bc4 = new LogicalColumn();
+    bc4.setId("bc4"); //$NON-NLS-1$
+    bc4.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc4"); //$NON-NLS-1$
+    bc4.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc4.setLogicalTable(bt4);
+    bt4.addLogicalColumn(bc4);
+    bt4.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt5 = new LogicalTable();
+    bt5.setId("bt5"); //$NON-NLS-1$
+    bt5.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt5"); //$NON-NLS-1$
+    final LogicalColumn bc5 = new LogicalColumn();
+    bc5.setId("bc5"); //$NON-NLS-1$
+    bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc5"); //$NON-NLS-1$
+    bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc5.setLogicalTable(bt5);
+    bt5.addLogicalColumn(bc5);
+    bt5.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalRelationship rl1 = new LogicalRelationship();
+    
+    rl1.setFromTable(bt1);
+    rl1.setFromColumn(bc1);
+    rl1.setToTable(bt2);
+    rl1.setToColumn(bc2);
+    
+    final LogicalRelationship rl2 = new LogicalRelationship();
+    
+    rl2.setFromTable(bt2);
+    rl2.setFromColumn(bc2);
+    rl2.setToTable(bt5);
+    rl2.setToColumn(bc5);
+
+    final LogicalRelationship rl3 = new LogicalRelationship();
+    
+    rl3.setFromTable(bt1);
+    rl3.setFromColumn(bc1);
+    rl3.setToTable(bt3);
+    rl3.setToColumn(bc3);
+
+    final LogicalRelationship rl4 = new LogicalRelationship();
+    
+    rl4.setFromTable(bt3);
+    rl4.setFromColumn(bc3);
+    rl4.setToTable(bt5);
+    rl4.setToColumn(bc5);
+    
+    
+    model.getLogicalTables().add(bt1);
+    model.getLogicalTables().add(bt2);
+    model.getLogicalTables().add(bt3);
+    model.getLogicalTables().add(bt4);
+    model.getLogicalTables().add(bt5);
+    
+    model.getLogicalRelationships().add(rl1);
+    model.getLogicalRelationships().add(rl2);
+    model.getLogicalRelationships().add(rl3);
+    model.getLogicalRelationships().add(rl4);
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    Query myTest = new Query(null, model); //$NON-NLS-1$
+    myTest.getSelections().add(new Selection(null, bc1, null));
+    myTest.getSelections().add(new Selection(null, bc5, null));
+    SqlGenerator generator = new SqlGenerator();
+    MappedQuery query = generator.generateSql(myTest, "en_US", null, databaseMeta);
+    String queryString = query.getQuery();
+    //    System.out.println("**************");
+    //    System.out.println(queryString);
+    // Should be 1->3 3->5 ... table 2 is relatively huge
+    TestHelper.assertEqualsIgnoreWhitespaces( 
+       " SELECT DISTINCT " + 
+       " bt1.pc1 AS COL0 " +
+       " ,bt5.pc5 AS COL1 " +
+       " FROM  " +
+       " pt1 bt1 " +
+       " ,pt3 bt3 " +
+       " ,pt5 bt5 " +
+       " WHERE  " +
+       " ( bt1.pc1 = bt3.pc3 ) " +
+       "  AND ( bt3.pc3 = bt5.pc5 ) "
+       , queryString
+    ); //$NON-NLS-1$
+  }
+  
   public static String subsetsToString(List subsets) {
     StringBuffer sb = new StringBuffer();
     for (int i = 0; i < subsets.size(); i++) {
@@ -2405,7 +3322,7 @@ public class SqlGeneratorTest {
   
   @Test
   public void testAliasGeneration() throws Exception {
-    
+    // Testing alias generation with Join Order Keys
     final LogicalModel model = new LogicalModel();
     
     final LogicalTable bt1 = new LogicalTable();
@@ -2483,6 +3400,7 @@ public class SqlGeneratorTest {
     rl1.setToTable(bt2);
     rl1.setComplex(true);
     rl1.setComplexJoin("[metadata_business_table_very_long_name_1.bc1] = [metadata_business_table_very_long_name_2.bc2]");
+    rl1.setJoinOrderKey("A");
     
     final LogicalRelationship rl2 = new LogicalRelationship();
     
@@ -2490,6 +3408,7 @@ public class SqlGeneratorTest {
     rl2.setFromColumn(bc2);
     rl2.setToTable(bt3);
     rl2.setToColumn(bc3);
+    rl2.setJoinOrderKey("D");
 
     final LogicalRelationship rl3 = new LogicalRelationship();
     
@@ -2497,6 +3416,7 @@ public class SqlGeneratorTest {
     rl3.setFromColumn(bc3);
     rl3.setToTable(bt4);
     rl3.setToColumn(bc4);
+    rl3.setJoinOrderKey("B");
 
     final LogicalRelationship rl4 = new LogicalRelationship();
     
@@ -2504,6 +3424,7 @@ public class SqlGeneratorTest {
     rl4.setFromColumn(bc4);
     rl4.setToTable(bt5);
     rl4.setToColumn(bc5);
+    rl4.setJoinOrderKey("E");
     
     model.getLogicalTables().add(bt1);
     model.getLogicalTables().add(bt2);
@@ -2578,6 +3499,181 @@ public class SqlGeneratorTest {
     );
   }
 
+  @Test
+  public void testAliasGenerationWithoutJoinOrderKeys() throws Exception {
+    // Testing alias generation without Join Order Keys
+    final LogicalModel model = new LogicalModel();
+    
+    final LogicalTable bt1 = new LogicalTable();
+    bt1.setId("metadata_business_table_very_long_name_1"); //$NON-NLS-1$
+    bt1.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt1"); //$NON-NLS-1$
+    final LogicalColumn bc1 = new LogicalColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc1"); //$NON-NLS-1$
+    bc1.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc1.setLogicalTable(bt1);
+    bt1.addLogicalColumn(bc1);
+    bt1.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt2 = new LogicalTable();
+    bt2.setId("metadata_business_table_very_long_name_2"); //$NON-NLS-1$
+    bt2.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt2"); //$NON-NLS-1$
+    final LogicalColumn bc2 = new LogicalColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc2"); //$NON-NLS-1$
+    bc2.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc2.setLogicalTable(bt2);
+    bt2.addLogicalColumn(bc2);
+
+    bt2.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt3 = new LogicalTable();
+    bt3.setId("metadata_business_table_very_long_name_3"); //$NON-NLS-1$
+    bt3.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt3"); //$NON-NLS-1$
+    final LogicalColumn bc3 = new LogicalColumn();
+    bc3.setId("bc3"); //$NON-NLS-1$
+    bc3.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc3"); //$NON-NLS-1$
+    bc3.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc3.setLogicalTable(bt3);
+    bt3.addLogicalColumn(bc3);
+    bt3.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt4 = new LogicalTable();
+    bt4.setId("metadata_business_table_very_long_name_4"); //$NON-NLS-1$
+    bt4.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt4"); //$NON-NLS-1$
+    final LogicalColumn bc4 = new LogicalColumn();
+    bc4.setId("bc4"); //$NON-NLS-1$
+    bc4.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc4"); //$NON-NLS-1$
+    bc4.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc4.setLogicalTable(bt4);
+    bt4.addLogicalColumn(bc4);
+    bt4.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt5 = new LogicalTable();
+    bt5.setId("metadata_business_table_very_long_name_5"); //$NON-NLS-1$
+    bt5.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt5"); //$NON-NLS-1$
+    final LogicalColumn bc5 = new LogicalColumn();
+    bc5.setId("bc5"); //$NON-NLS-1$
+    bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc5");
+    bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc5.setLogicalTable(bt5);
+    bt5.addLogicalColumn(bc5);
+    bt5.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+
+    final LogicalColumn bc6 = new LogicalColumn();
+    bc6.setId("bc6"); //$NON-NLS-1$
+    // bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc5"); //$NON-NLS-1$
+    bc6.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.OPEN_FORMULA);
+    bc6.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "SUM([pc5]*2)");
+    bc6.setAggregationType(AggregationType.SUM);
+    
+    
+    //bc6.setAggregationList(list);
+    bc6.setLogicalTable(bt5);
+    bt5.addLogicalColumn(bc6);
+    bt5.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+
+    final LogicalRelationship rl1 = new LogicalRelationship();
+    
+    rl1.setFromTable(bt1);
+    rl1.setToTable(bt2);
+    rl1.setComplex(true);
+    rl1.setComplexJoin("[metadata_business_table_very_long_name_1.bc1] = [metadata_business_table_very_long_name_2.bc2]");
+
+    final LogicalRelationship rl2 = new LogicalRelationship();
+    
+    rl2.setFromTable(bt2);
+    rl2.setFromColumn(bc2);
+    rl2.setToTable(bt3);
+    rl2.setToColumn(bc3);
+
+    final LogicalRelationship rl3 = new LogicalRelationship();
+    
+    rl3.setFromTable(bt3);
+    rl3.setFromColumn(bc3);
+    rl3.setToTable(bt4);
+    rl3.setToColumn(bc4);
+
+    final LogicalRelationship rl4 = new LogicalRelationship();
+    
+    rl4.setFromTable(bt4);
+    rl4.setFromColumn(bc4);
+    rl4.setToTable(bt5);
+    rl4.setToColumn(bc5);
+    
+    model.getLogicalTables().add(bt1);
+    model.getLogicalTables().add(bt2);
+    model.getLogicalTables().add(bt3);
+    model.getLogicalTables().add(bt4);
+    model.getLogicalTables().add(bt5);
+    
+    model.getLogicalRelationships().add(rl1);
+    model.getLogicalRelationships().add(rl2);
+    model.getLogicalRelationships().add(rl3);
+    model.getLogicalRelationships().add(rl4);
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    Query myTest = new Query(null, model); //$NON-NLS-1$
+    myTest.getSelections().add(new Selection(null, bc1, null));
+    myTest.getSelections().add(new Selection(null, bc4, null));
+
+    myTest.getConstraints().add(new Constraint(CombinationType.AND, "[metadata_business_table_very_long_name_1.bc1] > 25")); //$NON-NLS-1$
+    
+    SqlGenerator generator = new SqlGenerator();
+    MappedQuery query = generator.generateSql(myTest, "en_US", null, databaseMeta);
+    TestHelper.assertEqualsIgnoreWhitespaces( 
+        "SELECT DISTINCT \n" //$NON-NLS-1$
+        + "          metadata_business_table_very01.pc1 AS COL0\n" //$NON-NLS-1$
+        + "         ,metadata_business_table_very04.pc4 AS COL1\n" //$NON-NLS-1$
+        + "FROM \n" //$NON-NLS-1$
+        + "          pt1 metadata_business_table_very01\n" //$NON-NLS-1$
+        + "         ,pt2 metadata_business_table_very02\n" //$NON-NLS-1$
+        + "         ,pt3 metadata_business_table_very03\n" //$NON-NLS-1$
+        + "         ,pt4 metadata_business_table_very04\n" //$NON-NLS-1$
+        + "WHERE \n" //$NON-NLS-1$
+        + "          (\n"
+        + "             metadata_business_table_very01.pc1 = metadata_business_table_very02.pc2\n"
+        + "          )\n"
+        + "      AND (\n"
+        + "             metadata_business_table_very02.pc2 = metadata_business_table_very03.pc3\n" //$NON-NLS-1$
+        + "          )\n"
+        + "      AND (\n" 
+        + "             metadata_business_table_very03.pc3 = metadata_business_table_very04.pc4\n" //$NON-NLS-1$
+        + "          )\n"
+        + "      AND (\n"
+        + "          (\n"
+        + "             metadata_business_table_very01.pc1 > 25"
+        + "          )"
+        + "          )",
+        query.getQuery()    
+    ); //$NON-NLS-1$
+
+    //
+    // This tests the physical column aliasing
+    //
+    
+    myTest = new Query(null, model); //$NON-NLS-1$
+    myTest.getSelections().add(new Selection(null, bc4, null));
+    myTest.getSelections().add(new Selection(null, bc6, null));
+    
+    query = generator.generateSql(myTest, "en_US", null, databaseMeta);
+
+    TestHelper.assertEqualsIgnoreWhitespaces( 
+          "SELECT \n" 
+        + "             metadata_business_table_very01.pc4 AS COL0 \n"
+        + "           , SUM( metadata_business_table_very02.pc5  * 2) AS COL1 \n"
+        + "FROM \n" 
+        + "             pt4 metadata_business_table_very01 \n" 
+        + "            ,pt5 metadata_business_table_very02 \n"
+        + "WHERE \n"
+        + "             (\n" 
+        + "                metadata_business_table_very01.pc4 = metadata_business_table_very02.pc5 "
+        + "             )\n" 
+        + "GROUP BY \n"  
+        + "             metadata_business_table_very01.pc4 \n",
+        query.getQuery()    
+    );
+  }
+  
   @Test
   public void testAliasOuterJoinGeneration() throws Exception {
     
@@ -2700,7 +3796,7 @@ public class SqlGeneratorTest {
     
     SqlGenerator generator = new SqlGenerator();
     MappedQuery query = generator.generateSql(myTest, "en_US", null, databaseMeta);
-    TestHelper.printOutJava(query.getQuery());
+    // TestHelper.printOutJava(query.getQuery());
     
     TestHelper.assertEqualsIgnoreWhitespaces(
         "SELECT DISTINCT \n" + 
@@ -2749,6 +3845,185 @@ public class SqlGeneratorTest {
   
   @Test
   public void testSumFormula() throws Exception {
+    
+    final LogicalModel model = new LogicalModel();
+    
+    final LogicalTable bt1 = new LogicalTable();
+    bt1.setId("metadata_business_table_very_long_name_1"); //$NON-NLS-1$
+    bt1.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt1"); //$NON-NLS-1$
+    final LogicalColumn bc1 = new LogicalColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc1"); //$NON-NLS-1$
+    bc1.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc1.setLogicalTable(bt1);
+    bt1.addLogicalColumn(bc1);
+    bt1.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt2 = new LogicalTable();
+    bt2.setId("metadata_business_table_very_long_name_2"); //$NON-NLS-1$
+    bt2.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt2"); //$NON-NLS-1$
+    final LogicalColumn bc2 = new LogicalColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc2"); //$NON-NLS-1$
+    bc2.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc2.setLogicalTable(bt2);
+    bt2.addLogicalColumn(bc2);
+
+    bt2.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt3 = new LogicalTable();
+    bt3.setId("metadata_business_table_very_long_name_3"); //$NON-NLS-1$
+    bt3.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt3"); //$NON-NLS-1$
+    final LogicalColumn bc3 = new LogicalColumn();
+    bc3.setId("bc3"); //$NON-NLS-1$
+    bc3.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc3"); //$NON-NLS-1$
+    bc3.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc3.setLogicalTable(bt3);
+    bt3.addLogicalColumn(bc3);
+    bt3.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt4 = new LogicalTable();
+    bt4.setId("metadata_business_table_very_long_name_4"); //$NON-NLS-1$
+    bt4.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt4"); //$NON-NLS-1$
+    final LogicalColumn bc4 = new LogicalColumn();
+    bc4.setId("bc4"); //$NON-NLS-1$
+    bc4.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc4"); //$NON-NLS-1$
+    bc4.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc4.setLogicalTable(bt4);
+    bt4.addLogicalColumn(bc4);
+    bt4.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt5 = new LogicalTable();
+    bt5.setId("metadata_business_table_very_long_name_5"); //$NON-NLS-1$
+    bt5.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt5"); //$NON-NLS-1$
+    final LogicalColumn bc5 = new LogicalColumn();
+    bc5.setId("bc5"); //$NON-NLS-1$
+    bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc5");
+    bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc5.setLogicalTable(bt5);
+    bt5.addLogicalColumn(bc5);
+    bt5.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+
+    final LogicalColumn bc6 = new LogicalColumn();
+    bc6.setId("bc6"); //$NON-NLS-1$
+    // bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc5"); //$NON-NLS-1$
+    bc6.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.OPEN_FORMULA);
+    bc6.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "[pc5]*2");
+    bc6.setAggregationType(AggregationType.SUM);
+    
+    
+    //bc6.setAggregationList(list);
+    bc6.setLogicalTable(bt5);
+    bt5.addLogicalColumn(bc6);
+    bt5.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+
+    final LogicalRelationship rl1 = new LogicalRelationship();
+    
+    rl1.setFromTable(bt1);
+    rl1.setFromColumn(bc1);
+    rl1.setToTable(bt2);
+    rl1.setToColumn(bc2);
+    rl1.setJoinOrderKey("A");
+    
+    final LogicalRelationship rl2 = new LogicalRelationship();
+    
+    rl2.setFromTable(bt2);
+    rl2.setFromColumn(bc2);
+    rl2.setToTable(bt3);
+    rl2.setToColumn(bc3);
+    rl2.setJoinOrderKey("D");
+
+    final LogicalRelationship rl3 = new LogicalRelationship();
+    
+    rl3.setFromTable(bt3);
+    rl3.setFromColumn(bc3);
+    rl3.setToTable(bt4);
+    rl3.setToColumn(bc4);
+    rl3.setJoinOrderKey("B");
+
+    final LogicalRelationship rl4 = new LogicalRelationship();
+    
+    rl4.setFromTable(bt4);
+    rl4.setFromColumn(bc4);
+    rl4.setToTable(bt5);
+    rl4.setToColumn(bc5);
+    rl4.setJoinOrderKey("E");
+    
+    model.getLogicalTables().add(bt1);
+    model.getLogicalTables().add(bt2);
+    model.getLogicalTables().add(bt3);
+    model.getLogicalTables().add(bt4);
+    model.getLogicalTables().add(bt5);
+    
+    model.getLogicalRelationships().add(rl1);
+    model.getLogicalRelationships().add(rl2);
+    model.getLogicalRelationships().add(rl3);
+    model.getLogicalRelationships().add(rl4);
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    Query myTest = new Query(null, model); //$NON-NLS-1$
+    myTest.getSelections().add(new Selection(null, bc1, null));
+    myTest.getSelections().add(new Selection(null, bc4, null));
+
+    myTest.getConstraints().add(new Constraint(CombinationType.AND, "[metadata_business_table_very_long_name_1.bc1] > 25")); //$NON-NLS-1$
+    
+    SqlGenerator generator = new SqlGenerator();
+    MappedQuery query = generator.generateSql(myTest, "en_US", null, databaseMeta);
+    TestHelper.assertEqualsIgnoreWhitespaces( 
+        "SELECT DISTINCT \n" //$NON-NLS-1$
+        + "          metadata_business_table_very01.pc1 AS COL0\n" //$NON-NLS-1$
+        + "         ,metadata_business_table_very04.pc4 AS COL1\n" //$NON-NLS-1$
+        + "FROM \n" //$NON-NLS-1$
+        + "          pt1 metadata_business_table_very01\n" //$NON-NLS-1$
+        + "         ,pt2 metadata_business_table_very02\n" //$NON-NLS-1$
+        + "         ,pt3 metadata_business_table_very03\n" //$NON-NLS-1$
+        + "         ,pt4 metadata_business_table_very04\n" //$NON-NLS-1$
+        + "WHERE \n" //$NON-NLS-1$
+        + "          (\n"
+        + "             metadata_business_table_very02.pc2 = metadata_business_table_very03.pc3\n" //$NON-NLS-1$
+        + "          )\n"
+        + "      AND (\n"
+        + "             metadata_business_table_very03.pc3 = metadata_business_table_very04.pc4\n" //$NON-NLS-1$
+        + "          )\n"
+        + "      AND (\n" 
+        + "             metadata_business_table_very01.pc1 = metadata_business_table_very02.pc2\n"
+        + "          )\n"
+        + "      AND (\n"
+        + "          (\n"
+        + "             metadata_business_table_very01.pc1 > 25"
+        + "          )"
+        + "          )",
+        query.getQuery()    
+    ); //$NON-NLS-1$
+
+    //
+    // This tests the physical column aliasing
+    //
+    
+    myTest = new Query(null, model); //$NON-NLS-1$
+    myTest.getSelections().add(new Selection(null, bc4, null));
+    myTest.getSelections().add(new Selection(null, bc6, null));
+
+    query = generator.generateSql(myTest, "en_US", null, databaseMeta);
+
+    TestHelper.assertEqualsIgnoreWhitespaces( 
+          "SELECT \n" 
+        + "             metadata_business_table_very01.pc4 AS COL0 \n"
+        + "           , SUM( metadata_business_table_very02.pc5  * 2) AS COL1 \n"
+        + "FROM \n" 
+        + "             pt4 metadata_business_table_very01 \n" 
+        + "            ,pt5 metadata_business_table_very02 \n"
+        + "WHERE \n"
+        + "             (\n" 
+        + "                metadata_business_table_very01.pc4 = metadata_business_table_very02.pc5 "
+        + "             )\n" 
+        + "GROUP BY \n"  
+        + "             metadata_business_table_very01.pc4 \n",
+        query.getQuery()    
+    );
+  }
+
+  @Test
+  public void testSumFormulaWithoutJoinKeys() throws Exception {
     
     final LogicalModel model = new LogicalModel();
     
@@ -2879,13 +4154,13 @@ public class SqlGeneratorTest {
         + "         ,pt4 metadata_business_table_very04\n" //$NON-NLS-1$
         + "WHERE \n" //$NON-NLS-1$
         + "          (\n"
-        + "             metadata_business_table_very02.pc2 = metadata_business_table_very03.pc3\n" //$NON-NLS-1$
+        + "             metadata_business_table_very01.pc1 = metadata_business_table_very02.pc2\n"
         + "          )\n"
         + "      AND (\n"
-        + "             metadata_business_table_very03.pc3 = metadata_business_table_very04.pc4\n" //$NON-NLS-1$
+        + "             metadata_business_table_very02.pc2 = metadata_business_table_very03.pc3\n" //$NON-NLS-1$
         + "          )\n"
         + "      AND (\n" 
-        + "             metadata_business_table_very01.pc1 = metadata_business_table_very02.pc2\n"
+        + "             metadata_business_table_very03.pc3 = metadata_business_table_very04.pc4\n" //$NON-NLS-1$
         + "          )\n"
         + "      AND (\n"
         + "          (\n"
@@ -2921,9 +4196,142 @@ public class SqlGeneratorTest {
         query.getQuery()    
     );
   }
-
+  
   @Test
   public void testInlineTable() throws Exception {
+    
+    final LogicalModel model = new LogicalModel();
+    
+    final LogicalTable bt1 = new LogicalTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setProperty(SqlPhysicalTable.TARGET_TABLE_TYPE, TargetTableType.INLINE_SQL);
+    bt1.setProperty(SqlPhysicalTable.TARGET_TABLE, "select * from mytable"); //$NON-NLS-1$
+    final LogicalColumn bc1 = new LogicalColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc1"); //$NON-NLS-1$
+    bc1.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc1.setLogicalTable(bt1);
+    bt1.addLogicalColumn(bc1);
+    bt1.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt2 = new LogicalTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt2"); //$NON-NLS-1$
+    final LogicalColumn bc2 = new LogicalColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc2"); //$NON-NLS-1$
+    bc2.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc2.setLogicalTable(bt2);
+    bt2.addLogicalColumn(bc2);
+
+    bt2.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt3 = new LogicalTable();
+    bt3.setId("bt3"); //$NON-NLS-1$
+    bt3.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt3"); //$NON-NLS-1$
+    final LogicalColumn bc3 = new LogicalColumn();
+    bc3.setId("bc3"); //$NON-NLS-1$
+    bc3.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc3"); //$NON-NLS-1$
+    bc3.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc3.setLogicalTable(bt3);
+    bt3.addLogicalColumn(bc3);
+    bt3.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt4 = new LogicalTable();
+    bt4.setId("bt4"); //$NON-NLS-1$
+    bt4.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt4"); //$NON-NLS-1$
+    final LogicalColumn bc4 = new LogicalColumn();
+    bc4.setId("bc4"); //$NON-NLS-1$
+    bc4.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc4"); //$NON-NLS-1$
+    bc4.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);
+    bc4.setLogicalTable(bt4);
+    bt4.addLogicalColumn(bc4);
+    bt4.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    
+    final LogicalTable bt5 = new LogicalTable();
+    bt5.setId("bt5"); //$NON-NLS-1$
+    bt5.setProperty(SqlPhysicalTable.TARGET_TABLE, "pt5"); //$NON-NLS-1$
+    final LogicalColumn bc5 = new LogicalColumn();
+    bc5.setId("bc5"); //$NON-NLS-1$
+    bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc5"); //$NON-NLS-1$
+    bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME);    
+    bc5.setLogicalTable(bt5);
+    bt5.addLogicalColumn(bc5);
+    bt5.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
+    final LogicalRelationship rl1 = new LogicalRelationship();
+    
+    rl1.setFromTable(bt1);
+    rl1.setFromColumn(bc1);
+    rl1.setToTable(bt2);
+    rl1.setToColumn(bc2);
+    rl1.setJoinOrderKey("A");
+    
+    final LogicalRelationship rl2 = new LogicalRelationship();
+    
+    rl2.setFromTable(bt2);
+    rl2.setFromColumn(bc2);
+    rl2.setToTable(bt3);
+    rl2.setToColumn(bc3);
+    rl2.setJoinOrderKey("D");
+
+    final LogicalRelationship rl3 = new LogicalRelationship();
+    
+    rl3.setFromTable(bt3);
+    rl3.setFromColumn(bc3);
+    rl3.setToTable(bt4);
+    rl3.setToColumn(bc4);
+    rl3.setJoinOrderKey("B");
+
+    final LogicalRelationship rl4 = new LogicalRelationship();
+    
+    rl4.setFromTable(bt4);
+    rl4.setFromColumn(bc4);
+    rl4.setToTable(bt5);
+    rl4.setToColumn(bc5);
+    rl4.setJoinOrderKey("E");
+    
+    model.getLogicalTables().add(bt1);
+    model.getLogicalTables().add(bt2);
+    model.getLogicalTables().add(bt3);
+    model.getLogicalTables().add(bt4);
+    model.getLogicalTables().add(bt5);
+    
+    model.getLogicalRelationships().add(rl1);
+    model.getLogicalRelationships().add(rl2);
+    model.getLogicalRelationships().add(rl3);
+    model.getLogicalRelationships().add(rl4);
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    Query myTest = new Query(null, model); //$NON-NLS-1$
+    myTest.getSelections().add(new Selection(null, bc1, null));
+    myTest.getSelections().add(new Selection(null, bc4, null));
+
+    SqlGenerator generator = new SqlGenerator();
+    MappedQuery query = generator.generateSql(myTest, "en_US", null, databaseMeta);
+    TestHelper.assertEqualsIgnoreWhitespaces( 
+        "SELECT DISTINCT \n" //$NON-NLS-1$
+        + "          bt1.pc1 AS COL0\n" //$NON-NLS-1$
+        + "         ,bt4.pc4 AS COL1\n" //$NON-NLS-1$
+        + "FROM \n" //$NON-NLS-1$
+        + "          (select * from mytable) bt1\n" //$NON-NLS-1$
+        + "         ,pt2 bt2\n" //$NON-NLS-1$
+        + "         ,pt3 bt3\n" //$NON-NLS-1$
+        + "         ,pt4 bt4\n" //$NON-NLS-1$
+        + "WHERE \n" //$NON-NLS-1$
+        + "          (\n"
+        + "             bt2.pc2 = bt3.pc3\n" //$NON-NLS-1$
+        + "          )\n"
+        + "      AND (\n"
+        + "             bt3.pc3 = bt4.pc4\n" //$NON-NLS-1$
+        + "          )\n"
+        + "      AND (\n" 
+        + "             bt1.pc1 = bt2.pc2\n"
+        + "          )\n",
+        query.getQuery()    
+    ); //$NON-NLS-1$
+  }
+
+  @Test
+  public void testInlineTableWithoutJoinOrderKeys() throws Exception {
     
     final LogicalModel model = new LogicalModel();
     
@@ -3039,18 +4447,18 @@ public class SqlGeneratorTest {
         + "         ,pt4 bt4\n" //$NON-NLS-1$
         + "WHERE \n" //$NON-NLS-1$
         + "          (\n"
-        + "             bt2.pc2 = bt3.pc3\n" //$NON-NLS-1$
+        + "             bt1.pc1 = bt2.pc2\n"
         + "          )\n"
         + "      AND (\n"
-        + "             bt3.pc3 = bt4.pc4\n" //$NON-NLS-1$
+        + "             bt2.pc2 = bt3.pc3\n" //$NON-NLS-1$
         + "          )\n"
         + "      AND (\n" 
-        + "             bt1.pc1 = bt2.pc2\n"
+        + "             bt3.pc3 = bt4.pc4\n" //$NON-NLS-1$
         + "          )\n",
         query.getQuery()    
     ); //$NON-NLS-1$
   }
-
+  
   @Test
   public void testParameterSqlGenerationWithFunctions() {
     try {
@@ -3074,7 +4482,7 @@ public class SqlGeneratorTest {
       SqlGenerator generator = new SqlGenerator();
       
       MappedQuery mquery = generator.generateSql(query, "en_US", null, databaseMeta, null, true);
-      TestHelper.printOutJava(mquery.getQuery());
+      // TestHelper.printOutJava(mquery.getQuery());
       TestHelper.assertEqualsIgnoreWhitespaces(
           "SELECT DISTINCT \n" + 
           "          bt1.pc1 AS COL0\n" + 
@@ -3249,7 +4657,7 @@ public class SqlGeneratorTest {
       
       MappedQuery mquery = generator.generateSql(query, "en_US", null, databaseMeta);
 
-      TestHelper.printOutJava(mquery.getQuery());
+      // TestHelper.printOutJava(mquery.getQuery());
       
       TestHelper.assertEqualsIgnoreWhitespaces(
           "SELECT DISTINCT \n" + 
@@ -3302,7 +4710,7 @@ public class SqlGeneratorTest {
 
       Assert.assertEquals("Totally bogus", mquery.getQuery());
 
-      TestHelper.printOutJava(mquery.getQuery());
+      // TestHelper.printOutJava(mquery.getQuery());
       
       
     } catch (Exception e) {

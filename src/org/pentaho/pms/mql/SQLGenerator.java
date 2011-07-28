@@ -36,6 +36,8 @@ import org.pentaho.pms.mql.dialect.SQLDialectFactory;
 import org.pentaho.pms.mql.dialect.SQLDialectInterface;
 import org.pentaho.pms.mql.dialect.SQLQueryModel;
 import org.pentaho.pms.mql.dialect.SQLQueryModel.OrderType;
+import org.pentaho.pms.mql.graph.MqlGraph;
+import org.pentaho.pms.mql.graph.PathType;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
@@ -57,6 +59,7 @@ import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 public class SQLGenerator {
   
   private static final Log logger = LogFactory.getLog(SQLGenerator.class);
+  public boolean preferClassicShortestPath = false;
   
   /**
    * This private class is used to sort the business tables in terms of the number of neighbours they have. We use
@@ -560,7 +563,7 @@ public class SQLGenerator {
    * @param tables include tables
    * @return shortest path
    */
-  public Path getShortestPathBetween(BusinessModel model, List<BusinessTable> tables) {
+  public Path getShortestPathBetweenOrig(BusinessModel model, List<BusinessTable> tables) {
     // We have the business tables.
     // Let's try to see if they are somehow connected first.
     // If they are not, we add a table that's not being used so far and add it to the equation.
@@ -632,9 +635,97 @@ public class SQLGenerator {
         minSize = path.size();
       }
     }
+    
+    if (logger.isDebugEnabled()) logger.debug("Exiting getShortestPathBetween() " + tables + "  with result " + minPath);
     return minPath; 
   }
 
+  /**
+   * This method determines the shortest path between the list of included
+   * tables within the MQL Query. The algorithm first determines if there is an
+   * existing path between all selected tables.  If not, the algorithm 
+   * continues to add new tables to the list until a path is discovered.  If 
+   * more than one path is available with a certain number of tables, the 
+   * algorithm uses the relative size values if specified to determine which 
+   * path to traverse in the SQL Join.
+   * 
+   * @param model the business model
+   * @param tables include tables
+   * @return shortest path
+   */
+  @SuppressWarnings("unchecked")
+  public Path getShortestPathBetween(BusinessModel model, List<BusinessTable> tables) {
+    logger.debug("Enter getShortestPathBetween() - new");
+    
+    // Based on previous results, one table in the list means no path - should return empty path.
+    if (tables.size() == 1) {
+      if (logger.isDebugEnabled()) logger.debug("Optimization 1 - one table = empty path.");
+      return new Path();
+    } else if (tables.size() == 2) {
+      // Quick optimization - for only two involved tables, check to see if
+      // a relation exists that satisfies everyone...
+      List<RelationshipMeta> rels = model.getRelationships();
+      BusinessTable t1 = tables.get(0);
+      BusinessTable t2 = tables.get(1);
+      BusinessTable t3 = null;
+      BusinessTable t4 = null;
+      for (RelationshipMeta rel : rels) {
+        t3 = rel.getTableFrom();
+        t4 = rel.getTableTo();
+        if ( 
+            ( t3.equals(t1) && t4.equals(t2) ) || 
+            ( t3.equals(t2) && t4.equals(t1) )  ) {
+          Path rtn = new Path();
+          rtn.addRelationship(rel);
+          if (logger.isDebugEnabled()) logger.debug("Optimization 2 - two tables + matching relation: " + rtn);
+          return rtn;
+        }
+      }
+    }
+    
+    // Using this for quick POC
+    ConceptInterface concept = model.getConcept();
+    ConceptPropertyInterface pathMethod = concept.getProperty("path_build_method");
+    String pathMethodString;
+    if ((pathMethod != null) && (pathMethod.getType().equals(ConceptPropertyType.STRING) ) ) {
+      pathMethodString = (String)pathMethod.getValue();
+    } else {
+      if (preferClassicShortestPath) {
+        pathMethodString = "CLASSIC";
+      } else {
+        pathMethodString = "SHORTEST";
+      }
+    }
+    
+    PathType pathBuildMethod = null;
+    
+    if (pathMethodString.equals("CLASSIC")) {
+      return getShortestPathBetweenOrig(model, tables);
+    } else {
+      pathBuildMethod = PathType.valueOf(pathMethodString);
+    }
+    
+    MqlGraph graph = new MqlGraph(model);
+
+    
+    // determine method to use for building the path from the model
+    // Potentially consider next bit for SUGAR
+      // Use when fully integrated into editor and such
+      // pathBuildMethod = PathType.valueOf(model.getPathBuildMethod().getCode()); 
+    
+    // do work to actually build the path
+    if (logger.isDebugEnabled()) logger.debug("Attempting to build path using technique: " + pathBuildMethod);
+    Path p = graph.getPath(pathBuildMethod, tables);
+    
+    if (p==null) {
+      logger.debug("Unable to calculate shortest path for query, no path found");
+    }
+    
+    if (logger.isDebugEnabled()) logger.debug("Exiting getShortestPathBetween() " + tables + "  with result " + p);
+    return p;
+  }
+  
+  
   protected List<BusinessTable> getNonSelectedTables(BusinessModel model, List<BusinessTable> selectedTables) {
     List<BusinessTableNeighbours> extra = new ArrayList<BusinessTableNeighbours>(model.nrBusinessTables());
     List<BusinessTable> unused = new ArrayList<BusinessTable>();

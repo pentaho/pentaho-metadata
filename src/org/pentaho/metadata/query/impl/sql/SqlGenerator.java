@@ -41,6 +41,8 @@ import org.pentaho.metadata.model.SqlPhysicalTable;
 import org.pentaho.metadata.model.concept.types.RelationshipType;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
+import org.pentaho.metadata.query.impl.sql.graph.MqlGraph;
+import org.pentaho.metadata.query.impl.sql.graph.PathType;
 import org.pentaho.metadata.query.model.CombinationType;
 import org.pentaho.metadata.query.model.Constraint;
 import org.pentaho.metadata.query.model.Order;
@@ -68,6 +70,7 @@ import org.pentaho.pms.mql.dialect.SQLQueryModel.OrderType;
 public class SqlGenerator {
   
   private static final Log logger = LogFactory.getLog(SqlGenerator.class);
+  public boolean preferClassicShortestPath = false;
   
   /**
    * This private class is used to sort the business tables in terms of the number of neighbours they have. We use
@@ -693,7 +696,7 @@ public class SqlGenerator {
    * @param tables include tables
    * @return shortest path
    */
-  protected Path getShortestPathBetween(LogicalModel model, List<LogicalTable> tables) {
+  protected Path getShortestPathBetweenOrig(LogicalModel model, List<LogicalTable> tables) {
     // We have the business tables.
     // Let's try to see if they are somehow connected first.
     // If they are not, we add a table that's not being used so far and add it to the equation.
@@ -767,6 +770,95 @@ public class SqlGenerator {
     }
     return minPath; 
   }
+
+  /**
+   * This method determines the shortest path between the list of included
+   * tables within the MQL Query. The algorithm first determines if there is an
+   * existing path between all selected tables.  If not, the algorithm 
+   * continues to add new tables to the list until a path is discovered.  If 
+   * more than one path is available with a certain number of tables, the 
+   * algorithm uses the relative size values if specified to determine which 
+   * path to traverse in the SQL Join.
+   * 
+   * @param model the business model
+   * @param tables include tables
+   * @return shortest path
+   */
+  @SuppressWarnings("unchecked")
+  public Path getShortestPathBetween(LogicalModel model, List<LogicalTable> tables) {
+    logger.debug("Enter getShortestPathBetween() - new");
+    
+    // Based on previous results, one table in the list means no path - should return empty path.
+    if (tables.size() == 1) {
+      if (logger.isDebugEnabled()) logger.debug("Optimization 1 - one table = empty path.");
+      return new Path();
+    } else if (tables.size() == 2) {
+      // Quick optimization - for only two involved tables, check to see if
+      // a relation exists that satisfies everyone...
+      List<LogicalRelationship> rels = model.getLogicalRelationships();
+      LogicalTable t1 = tables.get(0);
+      LogicalTable t2 = tables.get(1);
+      LogicalTable t3 = null;
+      LogicalTable t4 = null;
+      for (LogicalRelationship rel : rels) {
+        t3 = rel.getFromTable();
+        t4 = rel.getToTable();
+        if ( 
+            ( t3.equals(t1) && t4.equals(t2) ) || 
+            ( t3.equals(t2) && t4.equals(t1) )  ) {
+          Path rtn = new Path();
+          rtn.addRelationship(rel);
+          if (logger.isDebugEnabled()) logger.debug("Optimization 2 - two tables + matching relation: " + rtn);
+          return rtn;
+        }
+      }
+    }
+    
+    // Using this for quick POC
+    Object pathBuildProperty = model.getProperty("path_build_method");
+    String pathMethodString;
+    if ((pathBuildProperty != null) && (pathBuildProperty instanceof String ) ) {
+      pathMethodString = (String)pathBuildProperty;
+    } else {
+      if (preferClassicShortestPath) {
+        pathMethodString = "CLASSIC";
+      } else {
+        pathMethodString = "SHORTEST";
+      }
+    }
+    
+    PathType pathBuildMethod = null;
+    
+    if (pathMethodString.equals("CLASSIC")) {
+      return getShortestPathBetweenOrig(model, tables);
+    } else {
+      pathBuildMethod = PathType.valueOf(pathMethodString);
+    }
+    
+    MqlGraph graph = new MqlGraph(model);
+
+    // determine method to use for building the path from the model
+    // try {
+      // Use when fully integrated into editor and such
+      // pathBuildMethod = PathType.valueOf(model.getPathBuildMethod().getCode()); 
+    // }
+    // catch(Exception ignored){}
+    
+    // do work to actually build the path
+    logger.debug("Attempting to build path using technique: " + pathBuildMethod);
+    Path p = graph.getPath(pathBuildMethod, tables);
+    
+    // not sure if this really is a good idea, but what do we do when
+    // no valid path exists?
+    if (p==null) {
+      logger.debug("Unable to calculate shortest path for query, returning null");
+    }
+    
+    if (logger.isDebugEnabled()) logger.debug("Exiting getShortestPathBetween() " + tables + "  with result " + p);
+    return p;
+  }
+  
+  
 
   protected List<LogicalTable> getNonSelectedTables(LogicalModel model, List<LogicalTable> selectedTables) {
     List<BusinessTableNeighbours> extra = new ArrayList<BusinessTableNeighbours>(model.getLogicalTables().size());

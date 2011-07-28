@@ -74,7 +74,7 @@ public class MessageSearchUtility {
     }
     
     pw.close();
-    System.out.println(val + " messages found");
+    // System.out.println(val + " messages found");
   }
   
   public static void traverse(File f) throws Exception {
@@ -96,7 +96,7 @@ public class MessageSearchUtility {
   static int val = 0;
   
   public static void parseJavaFile(File f) throws Exception {
-    System.out.println("Parsing " + f.getCanonicalPath());
+    // System.out.println("Parsing " + f.getCanonicalPath());
     
     StringBuffer sb = new StringBuffer();
     BufferedReader br = new BufferedReader(new FileReader(f));
@@ -120,12 +120,12 @@ public class MessageSearchUtility {
         String messageKey = m2.group(1);
         String messageVal = found ? existingMessages.getProperty(messageKey) : "__NOT_FOUND__"; 
          
-        System.out.println(
-            "" + 
-            found
-            + " " +  m2.group(1) + "=" 
-            + messageVal
-            );
+//        System.out.println(
+//            "" + 
+//            found
+//            + " " +  m2.group(1) + "=" 
+//            + messageVal
+//            );
         if (writeFound || !found) {
           if (!keys.contains(messageKey)) {
             towrite.add(messageKey + "=" + messageVal);

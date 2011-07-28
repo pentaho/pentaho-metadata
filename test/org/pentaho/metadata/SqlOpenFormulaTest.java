@@ -225,7 +225,7 @@ public class SqlOpenFormulaTest {
       SqlGenerator generator = new SqlGenerator();
       MappedQuery mappedQuery = generator.generateSql(query, "en_US", repo, databaseMeta);
       
-      Assert.assertEquals(
+      TestHelper.assertEqualsIgnoreWhitespaces(
           "SELECT DISTINCT \n" + 
           "          BT_CUSTOMER_W_TER_CUSTOMER_W01.CUSTOMERNUMBER AS COL0\n" + 
           "         ,BT_ORDERS_ORDERS.ORDERDATE AS COL1\n" + 
@@ -297,7 +297,7 @@ public class SqlOpenFormulaTest {
       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
       String nowAsString = sdf.format(now);
       
-      Assert.assertEquals(
+      TestHelper.assertEqualsIgnoreWhitespaces(
           "SELECT DISTINCT \n" + 
           "          BT_CUSTOMER_W_TER_CUSTOMER_W01.CUSTOMERNUMBER AS COL0\n" + 
           "         ,BT_ORDERS_ORDERS.ORDERDATE AS COL1\n" + 
@@ -365,9 +365,9 @@ public class SqlOpenFormulaTest {
       SqlGenerator generator = new SqlGenerator();
       MappedQuery mappedQuery = generator.generateSql(query, "en_US", repo, databaseMeta);
       
-      TestHelper.printOutJava(mappedQuery.getQuery());
+      // TestHelper.printOutJava(mappedQuery.getQuery());
       
-      Assert.assertEquals(
+      TestHelper.assertEqualsIgnoreWhitespaces(
           "SELECT DISTINCT \n" + 
           "          BT_CUSTOMER_W_TER_CUSTOMER_W01.CUSTOMERNUMBER AS COL0\n" + 
           "         ,BT_ORDERS_ORDERS.ORDERDATE AS COL1\n" + 

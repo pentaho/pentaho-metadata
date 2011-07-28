@@ -896,7 +896,7 @@ public class XmiParser {
     }
     Element content = null;
     NodeList list = doc.getElementsByTagName("XMI.content"); //$NON-NLS-1$
-    if (list.getLength() > 0) {
+    if ( (list != null) && (list.getLength() > 0) ) {
       content = (Element)list.item(0);
     }
     

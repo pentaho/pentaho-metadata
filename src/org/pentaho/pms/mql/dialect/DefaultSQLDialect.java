@@ -781,7 +781,9 @@ public class DefaultSQLDialect implements SQLDialectInterface {
     if (query.getJoins().size() > 0) {
       boolean first = true;
       sql.append("WHERE ").append(Const.CR); //$NON-NLS-1$
-      for (SQLJoin join : query.getJoins()) {
+      List<SQLJoin> sortedJoins = new ArrayList<SQLJoin>(query.getJoins());
+      Collections.sort(sortedJoins);
+      for (SQLJoin join : sortedJoins ) {
         if (first) {
           first = false;
           sql.append("          ( "); //$NON-NLS-1$

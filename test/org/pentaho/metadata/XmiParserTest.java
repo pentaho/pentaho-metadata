@@ -318,8 +318,8 @@ public class XmiParserTest {
     SqlGenerator generator = new SqlGenerator();
     DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
     MappedQuery queryObj = generator.generateSql(query, "en_US", repo, databaseMeta);
-    TestHelper.printOutJava(queryObj.getQuery());
-    Assert.assertEquals(
+    // TestHelper.printOutJava(queryObj.getQuery());
+    TestHelper.assertEqualsIgnoreWhitespaces(
         "SELECT DISTINCT \n" + 
         "          BT_ORDERS_ORDERS.STATUS AS COL0\n" + 
         "         ,BT_ORDERFACT_ORDERFACT.PRODUCTCODE AS COL1\n" + 

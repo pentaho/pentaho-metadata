@@ -37,7 +37,10 @@ import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.PhysicalColumn;
 import org.pentaho.pms.schema.PhysicalTable;
 import org.pentaho.pms.schema.RelationshipMeta;
+import org.pentaho.pms.schema.concept.ConceptInterface;
+import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
+import org.pentaho.pms.schema.concept.types.string.ConceptPropertyString;
 
 @SuppressWarnings("deprecation")
 public class MQLQueryImplTest extends MetadataTestBase {
@@ -129,11 +132,20 @@ public class MQLQueryImplTest extends MetadataTestBase {
     
     // this should return a path, but it is returning null instead
     
-    assertEquals(path.size(), 4);
-    assertEquals(path.getRelationship(0), rl3);
-    assertEquals(path.getRelationship(1), rl4); // may be rl3 
-    assertEquals(path.getRelationship(2), rl2); // may be rl5
-    assertEquals(path.getRelationship(3), rl1);
+    // MB - Fixed - should be expects, is not is, expects
+    assertEquals(4, path.size());
+    
+    // Note - path is unordered - this test is invalid. Joins will
+    // be ordered by join-order keys. This should simply be relationships
+    // that will get us from point to point.
+    
+    //    assertEquals(rl3, path.getRelationship(0));
+    //    assertEquals(rl4, path.getRelationship(1));
+    //    assertEquals(rl2, path.getRelationship(2));
+    //    assertEquals(rl1, path.getRelationship(3));
+
+    // No need to check which relationships came back - we expected 4, and got 4.
+    
   }
   
   public void testCircularJoin() throws Exception {
@@ -204,11 +216,26 @@ public class MQLQueryImplTest extends MetadataTestBase {
     // is a cycle, a bug is evident - there is no consideration
     // for the path 1->2, 2->3, 3->5, 5->6
     
-    assertEquals(path.size(), 4);
-    assertEquals(path.getRelationship(0), rl5);
-    assertEquals(path.getRelationship(1), rl6); 
-    assertEquals(path.getRelationship(2), rl3);
-    assertEquals(path.getRelationship(3), rl1);
+    assertEquals(4, path.size());
+
+    // Asserting based on order is invalid. We just need to make
+    // sure that the number is correct, and that the contents is
+    // contains the expected relationships. The JoinOrderKey will
+    // determine the order they appear in the SQL.
+    for (int i=0; i<path.size(); i++) {
+      RelationshipMeta rel = path.getRelationship(i);
+      assertTrue(
+          rel.equals(rl1) ||
+          rel.equals(rl3) || 
+          rel.equals(rl6) ||
+          rel.equals(rl5)
+          );
+    }
+    
+    //    assertEquals(path.getRelationship(0), rl5);
+    //    assertEquals(path.getRelationship(1), rl6); 
+    //    assertEquals(path.getRelationship(2), rl3);
+    //    assertEquals(path.getRelationship(3), rl1);
   }
 
   public void testGetShortestPathBetween2() throws Exception {
@@ -820,6 +847,136 @@ public class MQLQueryImplTest extends MetadataTestBase {
     rl1.setFieldFrom(bc1);
     rl1.setTableTo(bt2);
     rl1.setFieldTo(bc2);
+    rl1.setJoinOrderKey("A");
+    
+    final RelationshipMeta rl2 = new RelationshipMeta();
+    
+    rl2.setTableFrom(bt2);
+    rl2.setFieldFrom(bc2);
+    rl2.setTableTo(bt3);
+    rl2.setFieldTo(bc3);
+    rl2.setJoinOrderKey("C");
+
+    final RelationshipMeta rl3 = new RelationshipMeta();
+    
+    rl3.setTableFrom(bt3);
+    rl3.setFieldFrom(bc3);
+    rl3.setTableTo(bt4);
+    rl3.setFieldTo(bc4);
+    rl3.setJoinOrderKey("B");
+
+    final RelationshipMeta rl4 = new RelationshipMeta();
+    
+    rl4.setTableFrom(bt4);
+    rl4.setFieldFrom(bc4);
+    rl4.setTableTo(bt5);
+    rl4.setFieldTo(bc5);
+    rl4.setJoinOrderKey("D");
+    
+    model.addBusinessTable(bt1);
+    model.addBusinessTable(bt2);
+    model.addBusinessTable(bt3);
+    model.addBusinessTable(bt4);
+    model.addBusinessTable(bt5);
+    
+    model.addRelationship(rl1);
+    model.addRelationship(rl2);
+    model.addRelationship(rl3);
+    model.addRelationship(rl4);
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    MQLQueryImpl myTest = new MQLQueryImpl(null, model, databaseMeta, "en_US"); //$NON-NLS-1$
+    myTest.addSelection(new Selection(bc1));
+    myTest.addSelection(new Selection(bc4));
+
+    MappedQuery query = myTest.getQuery();
+    String queryString = query.getQuery();
+    // System.out.println(queryString);
+    assertEqualsIgnoreWhitespaces( 
+        "SELECT DISTINCT \n" //$NON-NLS-1$
+        + "          bt1.pc1 AS COL0\n" //$NON-NLS-1$
+        + "         ,bt4.pc4 AS COL1\n" //$NON-NLS-1$
+        + "FROM \n" //$NON-NLS-1$
+        + "          pt1 bt1\n" //$NON-NLS-1$
+        + "         ,pt2 bt2\n" //$NON-NLS-1$
+        + "         ,pt3 bt3\n" //$NON-NLS-1$
+        + "         ,pt4 bt4\n" //$NON-NLS-1$
+        + "WHERE \n" //$NON-NLS-1$
+        + "          (\n"
+        + "             bt2.pc2 = bt3.pc3\n" //$NON-NLS-1$
+        + "          )\n"
+        + "      AND (\n"
+        + "             bt3.pc3 = bt4.pc4\n" //$NON-NLS-1$
+        + "          )\n"
+        + "      AND (\n" 
+        + "             bt1.pc1 = bt2.pc2\n"
+        + "          )\n",
+        queryString    
+    ); //$NON-NLS-1$
+  }
+
+  public void testClassicGetShortestPathBetween() throws Exception {
+    
+    final BusinessModel model = new BusinessModel();
+    ConceptInterface concept = model.getConcept();
+    ConceptPropertyString pathMethodPropertyString = new ConceptPropertyString("path_build_method", "CLASSIC");
+    concept.addProperty(pathMethodPropertyString);
+    
+    final BusinessTable bt1 = new BusinessTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setTargetTable("pt1"); //$NON-NLS-1$
+    final BusinessColumn bc1 = new BusinessColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setFormula("pc1"); //$NON-NLS-1$
+    bc1.setBusinessTable(bt1);
+    bt1.addBusinessColumn(bc1);
+    bt1.setRelativeSize(1);
+    
+    final BusinessTable bt2 = new BusinessTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setTargetTable("pt2"); //$NON-NLS-1$
+    final BusinessColumn bc2 = new BusinessColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setFormula("pc2"); //$NON-NLS-1$
+    bc2.setBusinessTable(bt2);
+    bt2.addBusinessColumn(bc2);
+
+    bt2.setRelativeSize(1);
+    
+    final BusinessTable bt3 = new BusinessTable();
+    bt3.setId("bt3"); //$NON-NLS-1$
+    bt3.setTargetTable("pt3"); //$NON-NLS-1$
+    final BusinessColumn bc3 = new BusinessColumn();
+    bc3.setId("bc3"); //$NON-NLS-1$
+    bc3.setFormula("pc3"); //$NON-NLS-1$
+    bc3.setBusinessTable(bt3);
+    bt3.addBusinessColumn(bc3);
+    bt3.setRelativeSize(1);
+    
+    final BusinessTable bt4 = new BusinessTable();
+    bt4.setId("bt4"); //$NON-NLS-1$
+    bt4.setTargetTable("pt4"); //$NON-NLS-1$
+    final BusinessColumn bc4 = new BusinessColumn();
+    bc4.setId("bc4"); //$NON-NLS-1$
+    bc4.setFormula("pc4"); //$NON-NLS-1$
+    bc4.setBusinessTable(bt4);
+    bt4.addBusinessColumn(bc4);
+    bt4.setRelativeSize(1);
+    
+    final BusinessTable bt5 = new BusinessTable();
+    bt5.setId("bt5"); //$NON-NLS-1$
+    bt5.setTargetTable("pt5"); //$NON-NLS-1$
+    final BusinessColumn bc5 = new BusinessColumn();
+    bc5.setId("bc5"); //$NON-NLS-1$
+    bc5.setFormula("pc5"); //$NON-NLS-1$
+    bc5.setBusinessTable(bt5);
+    bt5.addBusinessColumn(bc5);
+    bt5.setRelativeSize(1);
+    final RelationshipMeta rl1 = new RelationshipMeta();
+    
+    rl1.setTableFrom(bt1);
+    rl1.setFieldFrom(bc1);
+    rl1.setTableTo(bt2);
+    rl1.setFieldTo(bc2);
     
     final RelationshipMeta rl2 = new RelationshipMeta();
     
@@ -858,6 +1015,8 @@ public class MQLQueryImplTest extends MetadataTestBase {
     myTest.addSelection(new Selection(bc4));
 
     MappedQuery query = myTest.getQuery();
+    String queryString = query.getQuery();
+    // System.out.println(queryString);
     assertEqualsIgnoreWhitespaces( 
         "SELECT DISTINCT \n" //$NON-NLS-1$
         + "          bt1.pc1 AS COL0\n" //$NON-NLS-1$
@@ -877,10 +1036,717 @@ public class MQLQueryImplTest extends MetadataTestBase {
         + "      AND (\n" 
         + "             bt1.pc1 = bt2.pc2\n"
         + "          )\n",
-        query.getQuery()    
+        queryString    
     ); //$NON-NLS-1$
   }
 
+  
+  public void testGetShortestPathBetween5() throws Exception {
+    
+    final BusinessModel model = new BusinessModel();
+    
+    final BusinessTable bt1 = new BusinessTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setTargetTable("pt1"); //$NON-NLS-1$
+    final BusinessColumn bc1 = new BusinessColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setFormula("pc1"); //$NON-NLS-1$
+    bc1.setBusinessTable(bt1);
+    bt1.addBusinessColumn(bc1);
+    bt1.setRelativeSize(1);
+    
+    final BusinessTable bt2 = new BusinessTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setTargetTable("pt2"); //$NON-NLS-1$
+    final BusinessColumn bc2 = new BusinessColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setFormula("pc2"); //$NON-NLS-1$
+    bc2.setBusinessTable(bt2);
+    bt2.addBusinessColumn(bc2);
+
+    bt2.setRelativeSize(1);
+    
+    final BusinessTable bt3 = new BusinessTable();
+    bt3.setId("bt3"); //$NON-NLS-1$
+    bt3.setTargetTable("pt3"); //$NON-NLS-1$
+    final BusinessColumn bc3 = new BusinessColumn();
+    bc3.setId("bc3"); //$NON-NLS-1$
+    bc3.setFormula("pc3"); //$NON-NLS-1$
+    bc3.setBusinessTable(bt3);
+    bt3.addBusinessColumn(bc3);
+    bt3.setRelativeSize(1);
+    
+    final BusinessTable bt4 = new BusinessTable();
+    bt4.setId("bt4"); //$NON-NLS-1$
+    bt4.setTargetTable("pt4"); //$NON-NLS-1$
+    final BusinessColumn bc4 = new BusinessColumn();
+    bc4.setId("bc4"); //$NON-NLS-1$
+    bc4.setFormula("pc4"); //$NON-NLS-1$
+    bc4.setBusinessTable(bt4);
+    bt4.addBusinessColumn(bc4);
+    bt4.setRelativeSize(1);
+    
+    final BusinessTable bt5 = new BusinessTable();
+    bt5.setId("bt5"); //$NON-NLS-1$
+    bt5.setTargetTable("pt5"); //$NON-NLS-1$
+    final BusinessColumn bc5 = new BusinessColumn();
+    bc5.setId("bc5"); //$NON-NLS-1$
+    bc5.setFormula("pc5"); //$NON-NLS-1$
+    bc5.setBusinessTable(bt5);
+    bt5.addBusinessColumn(bc5);
+    bt5.setRelativeSize(1);
+    final RelationshipMeta rl1 = new RelationshipMeta();
+    
+    rl1.setTableFrom(bt1);
+    rl1.setFieldFrom(bc1);
+    rl1.setTableTo(bt2);
+    rl1.setFieldTo(bc2);
+    
+    final RelationshipMeta rl2 = new RelationshipMeta();
+    
+    rl2.setTableFrom(bt2);
+    rl2.setFieldFrom(bc2);
+    rl2.setTableTo(bt3);
+    rl2.setFieldTo(bc3);
+
+    final RelationshipMeta rl3 = new RelationshipMeta();
+    
+    rl3.setTableFrom(bt3);
+    rl3.setFieldFrom(bc3);
+    rl3.setTableTo(bt4);
+    rl3.setFieldTo(bc4);
+
+    final RelationshipMeta rl4 = new RelationshipMeta();
+    
+    rl4.setTableFrom(bt4);
+    rl4.setFieldFrom(bc4);
+    rl4.setTableTo(bt5);
+    rl4.setFieldTo(bc5);
+    
+    model.addBusinessTable(bt1);
+    model.addBusinessTable(bt2);
+    model.addBusinessTable(bt3);
+    model.addBusinessTable(bt4);
+    model.addBusinessTable(bt5);
+    
+    model.addRelationship(rl1);
+    model.addRelationship(rl2);
+    model.addRelationship(rl3);
+    model.addRelationship(rl4);
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    MQLQueryImpl myTest = new MQLQueryImpl(null, model, databaseMeta, "en_US"); //$NON-NLS-1$
+    myTest.addSelection(new Selection(bc1));
+    myTest.addSelection(new Selection(bc4));
+
+    MappedQuery query = myTest.getQuery();
+    String queryString = query.getQuery();
+    // System.out.println(queryString);
+    assertEqualsIgnoreWhitespaces( 
+        "SELECT DISTINCT \n" //$NON-NLS-1$
+        + "          bt1.pc1 AS COL0\n" //$NON-NLS-1$
+        + "         ,bt4.pc4 AS COL1\n" //$NON-NLS-1$
+        + "FROM \n" //$NON-NLS-1$
+        + "          pt1 bt1\n" //$NON-NLS-1$
+        + "         ,pt2 bt2\n" //$NON-NLS-1$
+        + "         ,pt3 bt3\n" //$NON-NLS-1$
+        + "         ,pt4 bt4\n" //$NON-NLS-1$
+        + "WHERE \n" //$NON-NLS-1$
+        + "          (\n"
+        + "             bt1.pc1 = bt2.pc2\n"
+        + "          )\n"
+        + "      AND (\n"
+        + "             bt2.pc2 = bt3.pc3\n" //$NON-NLS-1$
+        + "          )\n"
+        + "      AND (\n" 
+        + "             bt3.pc3 = bt4.pc4\n" //$NON-NLS-1$
+        + "          )\n",
+        queryString    
+    ); //$NON-NLS-1$
+  }
+  
+  public void testClassicGetShortestPathBetweenNoPathPossible() throws Exception {
+    final BusinessModel model = new BusinessModel();
+    ConceptInterface concept = model.getConcept();
+    ConceptPropertyString pathMethodPropertyString = new ConceptPropertyString("path_build_method", "CLASSIC");
+    concept.addProperty(pathMethodPropertyString);
+    
+    final BusinessTable bt1 = new BusinessTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setTargetTable("pt1"); //$NON-NLS-1$
+    final BusinessColumn bc1 = new BusinessColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setFormula("pc1"); //$NON-NLS-1$
+    bc1.setBusinessTable(bt1);
+    bt1.addBusinessColumn(bc1);
+    bt1.setRelativeSize(1);
+    
+    final BusinessTable bt2 = new BusinessTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setTargetTable("pt2"); //$NON-NLS-1$
+    final BusinessColumn bc2 = new BusinessColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setFormula("pc2"); //$NON-NLS-1$
+    bc2.setBusinessTable(bt2);
+    bt2.addBusinessColumn(bc2);
+
+    bt2.setRelativeSize(1);
+    
+    final BusinessTable bt3 = new BusinessTable();
+    bt3.setId("bt3"); //$NON-NLS-1$
+    bt3.setTargetTable("pt3"); //$NON-NLS-1$
+    final BusinessColumn bc3 = new BusinessColumn();
+    bc3.setId("bc3"); //$NON-NLS-1$
+    bc3.setFormula("pc3"); //$NON-NLS-1$
+    bc3.setBusinessTable(bt3);
+    bt3.addBusinessColumn(bc3);
+    bt3.setRelativeSize(1);
+    
+    final BusinessTable bt4 = new BusinessTable();
+    bt4.setId("bt4"); //$NON-NLS-1$
+    bt4.setTargetTable("pt4"); //$NON-NLS-1$
+    final BusinessColumn bc4 = new BusinessColumn();
+    bc4.setId("bc4"); //$NON-NLS-1$
+    bc4.setFormula("pc4"); //$NON-NLS-1$
+    bc4.setBusinessTable(bt4);
+    bt4.addBusinessColumn(bc4);
+    bt4.setRelativeSize(1);
+    
+    final BusinessTable bt5 = new BusinessTable();
+    bt5.setId("bt5"); //$NON-NLS-1$
+    bt5.setTargetTable("pt5"); //$NON-NLS-1$
+    final BusinessColumn bc5 = new BusinessColumn();
+    bc5.setId("bc5"); //$NON-NLS-1$
+    bc5.setFormula("pc5"); //$NON-NLS-1$
+    bc5.setBusinessTable(bt5);
+    bt5.addBusinessColumn(bc5);
+    bt5.setRelativeSize(1);
+    final RelationshipMeta rl1 = new RelationshipMeta();
+    
+    rl1.setTableFrom(bt1);
+    rl1.setFieldFrom(bc1);
+    rl1.setTableTo(bt2);
+    rl1.setFieldTo(bc2);
+    
+    final RelationshipMeta rl2 = new RelationshipMeta();
+    
+    rl2.setTableFrom(bt3);
+    rl2.setFieldFrom(bc3);
+    rl2.setTableTo(bt4);
+    rl2.setFieldTo(bc4);
+
+    final RelationshipMeta rl3 = new RelationshipMeta();
+    
+    rl3.setTableFrom(bt4);
+    rl3.setFieldFrom(bc4);
+    rl3.setTableTo(bt5);
+    rl3.setFieldTo(bc5);
+
+    model.addBusinessTable(bt1);
+    model.addBusinessTable(bt2);
+    model.addBusinessTable(bt3);
+    model.addBusinessTable(bt4);
+    model.addBusinessTable(bt5);
+    
+    model.addRelationship(rl1);
+    model.addRelationship(rl2);
+    model.addRelationship(rl3);
+
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    List<BusinessTable> tbls = new ArrayList<BusinessTable>();
+    tbls.add(bt1);
+    tbls.add(bt5);
+    
+    SQLGenerator generator = new SQLGenerator();
+    
+    // There is no path between table 1 and table 5...
+    Path path = generator.getShortestPathBetween(model, tbls);
+    assertNull(path);
+      
+  }
+  
+  public void testNewAlgorithmGetShortestPathBetweenNoPathPossible() throws Exception {
+    final BusinessModel model = new BusinessModel();
+    ConceptInterface concept = model.getConcept();
+    ConceptPropertyString pathMethodPropertyString = new ConceptPropertyString("path_build_method", "SHORTEST");
+    concept.addProperty(pathMethodPropertyString);
+    
+    final BusinessTable bt1 = new BusinessTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setTargetTable("pt1"); //$NON-NLS-1$
+    final BusinessColumn bc1 = new BusinessColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setFormula("pc1"); //$NON-NLS-1$
+    bc1.setBusinessTable(bt1);
+    bt1.addBusinessColumn(bc1);
+    bt1.setRelativeSize(1);
+    
+    final BusinessTable bt2 = new BusinessTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setTargetTable("pt2"); //$NON-NLS-1$
+    final BusinessColumn bc2 = new BusinessColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setFormula("pc2"); //$NON-NLS-1$
+    bc2.setBusinessTable(bt2);
+    bt2.addBusinessColumn(bc2);
+
+    bt2.setRelativeSize(1);
+    
+    final BusinessTable bt3 = new BusinessTable();
+    bt3.setId("bt3"); //$NON-NLS-1$
+    bt3.setTargetTable("pt3"); //$NON-NLS-1$
+    final BusinessColumn bc3 = new BusinessColumn();
+    bc3.setId("bc3"); //$NON-NLS-1$
+    bc3.setFormula("pc3"); //$NON-NLS-1$
+    bc3.setBusinessTable(bt3);
+    bt3.addBusinessColumn(bc3);
+    bt3.setRelativeSize(1);
+    
+    final BusinessTable bt4 = new BusinessTable();
+    bt4.setId("bt4"); //$NON-NLS-1$
+    bt4.setTargetTable("pt4"); //$NON-NLS-1$
+    final BusinessColumn bc4 = new BusinessColumn();
+    bc4.setId("bc4"); //$NON-NLS-1$
+    bc4.setFormula("pc4"); //$NON-NLS-1$
+    bc4.setBusinessTable(bt4);
+    bt4.addBusinessColumn(bc4);
+    bt4.setRelativeSize(1);
+    
+    final BusinessTable bt5 = new BusinessTable();
+    bt5.setId("bt5"); //$NON-NLS-1$
+    bt5.setTargetTable("pt5"); //$NON-NLS-1$
+    final BusinessColumn bc5 = new BusinessColumn();
+    bc5.setId("bc5"); //$NON-NLS-1$
+    bc5.setFormula("pc5"); //$NON-NLS-1$
+    bc5.setBusinessTable(bt5);
+    bt5.addBusinessColumn(bc5);
+    bt5.setRelativeSize(1);
+    final RelationshipMeta rl1 = new RelationshipMeta();
+    
+    rl1.setTableFrom(bt1);
+    rl1.setFieldFrom(bc1);
+    rl1.setTableTo(bt2);
+    rl1.setFieldTo(bc2);
+    
+    final RelationshipMeta rl2 = new RelationshipMeta();
+    
+    rl2.setTableFrom(bt3);
+    rl2.setFieldFrom(bc3);
+    rl2.setTableTo(bt4);
+    rl2.setFieldTo(bc4);
+
+    final RelationshipMeta rl3 = new RelationshipMeta();
+    
+    rl3.setTableFrom(bt4);
+    rl3.setFieldFrom(bc4);
+    rl3.setTableTo(bt5);
+    rl3.setFieldTo(bc5);
+
+    model.addBusinessTable(bt1);
+    model.addBusinessTable(bt2);
+    model.addBusinessTable(bt3);
+    model.addBusinessTable(bt4);
+    model.addBusinessTable(bt5);
+    
+    model.addRelationship(rl1);
+    model.addRelationship(rl2);
+    model.addRelationship(rl3);
+
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    List<BusinessTable> tbls = new ArrayList<BusinessTable>();
+    tbls.add(bt1);
+    tbls.add(bt5);
+    
+    SQLGenerator generator = new SQLGenerator();
+    
+    // There is no path between table 1 and table 5...
+    Path path = generator.getShortestPathBetween(model, tbls);
+    assertNull(path);
+      
+  }
+  
+  public void testAnyRelevantGetShortestPathBetween() throws Exception {
+    // Note - this returns all possible joins between the tables. In this
+    // example, the following two paths are possible:
+    // [1-2, 2-5] and [1-3, 3-5]
+    // This path provides both sets of joins, ignoring the spurious
+    // relationship [4-5] because you can't get from table 1 trough to
+    // table 4.
+    final BusinessModel model = new BusinessModel();
+    ConceptInterface concept = model.getConcept();
+    ConceptPropertyString pathMethodPropertyString = new ConceptPropertyString("path_build_method", "ANY_RELEVANT");
+    concept.addProperty(pathMethodPropertyString);
+    
+    final BusinessTable bt1 = new BusinessTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setTargetTable("pt1"); //$NON-NLS-1$
+    final BusinessColumn bc1 = new BusinessColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setFormula("pc1"); //$NON-NLS-1$
+    bc1.setBusinessTable(bt1);
+    bt1.addBusinessColumn(bc1);
+    bt1.setRelativeSize(1);
+    
+    final BusinessTable bt2 = new BusinessTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setTargetTable("pt2"); //$NON-NLS-1$
+    final BusinessColumn bc2 = new BusinessColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setFormula("pc2"); //$NON-NLS-1$
+    bc2.setBusinessTable(bt2);
+    bt2.addBusinessColumn(bc2);
+
+    bt2.setRelativeSize(1);
+    
+    final BusinessTable bt3 = new BusinessTable();
+    bt3.setId("bt3"); //$NON-NLS-1$
+    bt3.setTargetTable("pt3"); //$NON-NLS-1$
+    final BusinessColumn bc3 = new BusinessColumn();
+    bc3.setId("bc3"); //$NON-NLS-1$
+    bc3.setFormula("pc3"); //$NON-NLS-1$
+    bc3.setBusinessTable(bt3);
+    bt3.addBusinessColumn(bc3);
+    bt3.setRelativeSize(1);
+    
+    final BusinessTable bt4 = new BusinessTable();
+    bt4.setId("bt4"); //$NON-NLS-1$
+    bt4.setTargetTable("pt4"); //$NON-NLS-1$
+    final BusinessColumn bc4 = new BusinessColumn();
+    bc4.setId("bc4"); //$NON-NLS-1$
+    bc4.setFormula("pc4"); //$NON-NLS-1$
+    bc4.setBusinessTable(bt4);
+    bt4.addBusinessColumn(bc4);
+    bt4.setRelativeSize(1);
+    
+    final BusinessTable bt5 = new BusinessTable();
+    bt5.setId("bt5"); //$NON-NLS-1$
+    bt5.setTargetTable("pt5"); //$NON-NLS-1$
+    final BusinessColumn bc5 = new BusinessColumn();
+    bc5.setId("bc5"); //$NON-NLS-1$
+    bc5.setFormula("pc5"); //$NON-NLS-1$
+    bc5.setBusinessTable(bt5);
+    bt5.addBusinessColumn(bc5);
+    bt5.setRelativeSize(1);
+    final RelationshipMeta rl1 = new RelationshipMeta();
+    
+    rl1.setTableFrom(bt1);
+    rl1.setFieldFrom(bc1);
+    rl1.setTableTo(bt3);
+    rl1.setFieldTo(bc3);
+    
+    final RelationshipMeta rl2 = new RelationshipMeta();
+    
+    rl2.setTableFrom(bt1);
+    rl2.setFieldFrom(bc1);
+    rl2.setTableTo(bt2);
+    rl2.setFieldTo(bc2);
+
+    final RelationshipMeta rl3 = new RelationshipMeta();
+    
+    rl3.setTableFrom(bt2);
+    rl3.setFieldFrom(bc2);
+    rl3.setTableTo(bt5);
+    rl3.setFieldTo(bc5);
+
+    final RelationshipMeta rl4 = new RelationshipMeta();
+    
+    rl4.setTableFrom(bt4);
+    rl4.setFieldFrom(bc4);
+    rl4.setTableTo(bt5);
+    rl4.setFieldTo(bc5);
+    
+    final RelationshipMeta rl5 = new RelationshipMeta();
+    
+    rl5.setTableFrom(bt3);
+    rl5.setFieldFrom(bc3);
+    rl5.setTableTo(bt5);
+    rl5.setFieldTo(bc5);
+    
+    model.addBusinessTable(bt1);
+    model.addBusinessTable(bt2);
+    model.addBusinessTable(bt3);
+    model.addBusinessTable(bt4);
+    model.addBusinessTable(bt5);
+    
+    model.addRelationship(rl1);
+    model.addRelationship(rl2);
+    model.addRelationship(rl3);
+    model.addRelationship(rl4);
+    model.addRelationship(rl5);
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    MQLQueryImpl myTest = new MQLQueryImpl(null, model, databaseMeta, "en_US"); //$NON-NLS-1$
+    myTest.addSelection(new Selection(bc1));
+    myTest.addSelection(new Selection(bc5));
+
+    MappedQuery query = myTest.getQuery();
+
+    String queryString = query.getQuery();
+    // System.out.println("*********");
+    // System.out.println(queryString);
+    assertEqualsIgnoreWhitespaces( 
+        "SELECT DISTINCT  " + 
+        "          bt1.pc1 AS COL0 " + 
+        "         ,bt5.pc5 AS COL1 " + 
+        "FROM  " + 
+        "          pt1 bt1 " + 
+        "         ,pt2 bt2 " + 
+        "         ,pt3 bt3 " + 
+        "         ,pt5 bt5 " + 
+        "WHERE  " + 
+        "          ( bt1.pc1 = bt3.pc3 ) " + 
+        "      AND ( bt1.pc1 = bt2.pc2 ) " + 
+        "      AND ( bt2.pc2 = bt5.pc5 ) " + 
+        "      AND ( bt3.pc3 = bt5.pc5 ) "
+        , queryString
+    ); //$NON-NLS-1$
+  }  
+
+  public void testfirstShortGetShortestPathBetween() throws Exception {
+    // This one is testing FIRST_SHORT
+    // It can logically choose [1-2, 2-5] or [1-3, 3-5]
+    // Note that the relative size of '3' is 100 - this algorithm
+    // doesn't consider this relative size, - it stops on the first one it finds
+    // based on hops.
+    final BusinessModel model = new BusinessModel();
+    ConceptInterface concept = model.getConcept();
+    ConceptPropertyString pathMethodPropertyString = new ConceptPropertyString("path_build_method", "FIRST_SHORT");
+    concept.addProperty(pathMethodPropertyString);
+    
+    final BusinessTable bt1 = new BusinessTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setTargetTable("pt1"); //$NON-NLS-1$
+    final BusinessColumn bc1 = new BusinessColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setFormula("pc1"); //$NON-NLS-1$
+    bc1.setBusinessTable(bt1);
+    bt1.addBusinessColumn(bc1);
+    bt1.setRelativeSize(1);
+    
+    final BusinessTable bt2 = new BusinessTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setTargetTable("pt2"); //$NON-NLS-1$
+    final BusinessColumn bc2 = new BusinessColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setFormula("pc2"); //$NON-NLS-1$
+    bc2.setBusinessTable(bt2);
+    bt2.addBusinessColumn(bc2);
+
+    bt2.setRelativeSize(1);
+    
+    final BusinessTable bt3 = new BusinessTable();
+    bt3.setId("bt3"); //$NON-NLS-1$
+    bt3.setTargetTable("pt3"); //$NON-NLS-1$
+    final BusinessColumn bc3 = new BusinessColumn();
+    bc3.setId("bc3"); //$NON-NLS-1$
+    bc3.setFormula("pc3"); //$NON-NLS-1$
+    bc3.setBusinessTable(bt3);
+    bt3.addBusinessColumn(bc3);
+    bt3.setRelativeSize(1);
+    
+    final BusinessTable bt4 = new BusinessTable();
+    bt4.setId("bt4"); //$NON-NLS-1$
+    bt4.setTargetTable("pt4"); //$NON-NLS-1$
+    final BusinessColumn bc4 = new BusinessColumn();
+    bc4.setId("bc4"); //$NON-NLS-1$
+    bc4.setFormula("pc4"); //$NON-NLS-1$
+    bc4.setBusinessTable(bt4);
+    bt4.addBusinessColumn(bc4);
+    bt4.setRelativeSize(1);
+    
+    final BusinessTable bt5 = new BusinessTable();
+    bt5.setId("bt5"); //$NON-NLS-1$
+    bt5.setTargetTable("pt5"); //$NON-NLS-1$
+    final BusinessColumn bc5 = new BusinessColumn();
+    bc5.setId("bc5"); //$NON-NLS-1$
+    bc5.setFormula("pc5"); //$NON-NLS-1$
+    bc5.setBusinessTable(bt5);
+    bt5.addBusinessColumn(bc5);
+    bt5.setRelativeSize(1);
+    final RelationshipMeta rl1 = new RelationshipMeta();
+    
+    rl1.setTableFrom(bt1);
+    rl1.setFieldFrom(bc1);
+    rl1.setTableTo(bt2);
+    rl1.setFieldTo(bc2);
+    
+    final RelationshipMeta rl2 = new RelationshipMeta();
+    
+    rl2.setTableFrom(bt2);
+    rl2.setFieldFrom(bc2);
+    rl2.setTableTo(bt5);
+    rl2.setFieldTo(bc5);
+
+    final RelationshipMeta rl3 = new RelationshipMeta();
+    
+    rl3.setTableFrom(bt1);
+    rl3.setFieldFrom(bc1);
+    rl3.setTableTo(bt3);
+    rl3.setFieldTo(bc3);
+
+    final RelationshipMeta rl4 = new RelationshipMeta();
+    
+    rl4.setTableFrom(bt3);
+    rl4.setFieldFrom(bc3);
+    rl4.setTableTo(bt5);
+    rl4.setFieldTo(bc5);
+    
+    
+    model.addBusinessTable(bt1);
+    model.addBusinessTable(bt2);
+    model.addBusinessTable(bt3);
+    model.addBusinessTable(bt4);
+    model.addBusinessTable(bt5);
+    
+    model.addRelationship(rl1);
+    model.addRelationship(rl2);
+    model.addRelationship(rl3);
+    model.addRelationship(rl4);
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    MQLQueryImpl myTest = new MQLQueryImpl(null, model, databaseMeta, "en_US"); //$NON-NLS-1$
+    myTest.addSelection(new Selection(bc1));
+    myTest.addSelection(new Selection(bc5));
+
+    MappedQuery query = myTest.getQuery();
+
+    String queryString = query.getQuery();
+    // System.out.println("*********");
+    // System.out.println(queryString);
+    assertEqualsIgnoreWhitespaces( 
+        "SELECT DISTINCT  " + 
+        "          bt1.pc1 AS COL0 " + 
+        "         ,bt5.pc5 AS COL1 " + 
+        "FROM  " + 
+        "          pt1 bt1 " + 
+        "         ,pt3 bt3 " + 
+        "         ,pt5 bt5 " + 
+        "WHERE  " + 
+        "          ( bt1.pc1 = bt3.pc3 ) " + 
+        "      AND ( bt3.pc3 = bt5.pc5 ) "
+        , queryString
+    ); //$NON-NLS-1$
+  }  
+
+  public void testlowestScoreGetShortestPathBetween() throws Exception {
+    // Note - the relative size of table 2 is huge (100) compared with the others.
+    // so - path should favor [1->3, 3->5] and avoid joins through table 2.
+    final BusinessModel model = new BusinessModel();
+    ConceptInterface concept = model.getConcept();
+    ConceptPropertyString pathMethodPropertyString = new ConceptPropertyString("path_build_method", "LOWEST_SCORE");
+    concept.addProperty(pathMethodPropertyString);
+    
+    final BusinessTable bt1 = new BusinessTable();
+    bt1.setId("bt1"); //$NON-NLS-1$
+    bt1.setTargetTable("pt1"); //$NON-NLS-1$
+    final BusinessColumn bc1 = new BusinessColumn();
+    bc1.setId("bc1"); //$NON-NLS-1$
+    bc1.setFormula("pc1"); //$NON-NLS-1$
+    bc1.setBusinessTable(bt1);
+    bt1.addBusinessColumn(bc1);
+    bt1.setRelativeSize(1);
+    
+    final BusinessTable bt2 = new BusinessTable();
+    bt2.setId("bt2"); //$NON-NLS-1$
+    bt2.setTargetTable("pt2"); //$NON-NLS-1$
+    final BusinessColumn bc2 = new BusinessColumn();
+    bc2.setId("bc2"); //$NON-NLS-1$
+    bc2.setFormula("pc2"); //$NON-NLS-1$
+    bc2.setBusinessTable(bt2);
+    bt2.addBusinessColumn(bc2);
+
+    bt2.setRelativeSize(100);
+    
+    final BusinessTable bt3 = new BusinessTable();
+    bt3.setId("bt3"); //$NON-NLS-1$
+    bt3.setTargetTable("pt3"); //$NON-NLS-1$
+    final BusinessColumn bc3 = new BusinessColumn();
+    bc3.setId("bc3"); //$NON-NLS-1$
+    bc3.setFormula("pc3"); //$NON-NLS-1$
+    bc3.setBusinessTable(bt3);
+    bt3.addBusinessColumn(bc3);
+    bt3.setRelativeSize(1);
+    
+    final BusinessTable bt4 = new BusinessTable();
+    bt4.setId("bt4"); //$NON-NLS-1$
+    bt4.setTargetTable("pt4"); //$NON-NLS-1$
+    final BusinessColumn bc4 = new BusinessColumn();
+    bc4.setId("bc4"); //$NON-NLS-1$
+    bc4.setFormula("pc4"); //$NON-NLS-1$
+    bc4.setBusinessTable(bt4);
+    bt4.addBusinessColumn(bc4);
+    bt4.setRelativeSize(1);
+    
+    final BusinessTable bt5 = new BusinessTable();
+    bt5.setId("bt5"); //$NON-NLS-1$
+    bt5.setTargetTable("pt5"); //$NON-NLS-1$
+    final BusinessColumn bc5 = new BusinessColumn();
+    bc5.setId("bc5"); //$NON-NLS-1$
+    bc5.setFormula("pc5"); //$NON-NLS-1$
+    bc5.setBusinessTable(bt5);
+    bt5.addBusinessColumn(bc5);
+    bt5.setRelativeSize(1);
+    final RelationshipMeta rl1 = new RelationshipMeta();
+    
+    rl1.setTableFrom(bt1);
+    rl1.setFieldFrom(bc1);
+    rl1.setTableTo(bt2);
+    rl1.setFieldTo(bc2);
+    
+    final RelationshipMeta rl2 = new RelationshipMeta();
+    
+    rl2.setTableFrom(bt2);
+    rl2.setFieldFrom(bc2);
+    rl2.setTableTo(bt5);
+    rl2.setFieldTo(bc5);
+
+    final RelationshipMeta rl3 = new RelationshipMeta();
+    
+    rl3.setTableFrom(bt1);
+    rl3.setFieldFrom(bc1);
+    rl3.setTableTo(bt3);
+    rl3.setFieldTo(bc3);
+
+    final RelationshipMeta rl4 = new RelationshipMeta();
+    
+    rl4.setTableFrom(bt3);
+    rl4.setFieldFrom(bc3);
+    rl4.setTableTo(bt5);
+    rl4.setFieldTo(bc5);
+    
+    
+    model.addBusinessTable(bt1);
+    model.addBusinessTable(bt2);
+    model.addBusinessTable(bt3);
+    model.addBusinessTable(bt4);
+    model.addBusinessTable(bt5);
+    
+    model.addRelationship(rl1);
+    model.addRelationship(rl2);
+    model.addRelationship(rl3);
+    model.addRelationship(rl4);
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    MQLQueryImpl myTest = new MQLQueryImpl(null, model, databaseMeta, "en_US"); //$NON-NLS-1$
+    myTest.addSelection(new Selection(bc1));
+    myTest.addSelection(new Selection(bc5));
+
+    MappedQuery query = myTest.getQuery();
+
+    String queryString = query.getQuery();
+    // System.out.println("*********");
+    // System.out.println(queryString);
+    assertEqualsIgnoreWhitespaces( 
+        " SELECT DISTINCT " + 
+        " bt1.pc1 AS COL0 " +
+        " ,bt5.pc5 AS COL1 " +
+        " FROM  " +
+        " pt1 bt1 " +
+        " ,pt3 bt3 " +
+        " ,pt5 bt5 " +
+        " WHERE  " +
+        " ( bt1.pc1 = bt3.pc3 ) " +
+        "  AND ( bt3.pc3 = bt5.pc5 ) "
+        , queryString
+    ); //$NON-NLS-1$
+  }  
+  
   public static String subsetsToString(List subsets) {
     StringBuffer sb = new StringBuffer();
     for (int i = 0; i < subsets.size(); i++) {
@@ -1955,6 +2821,7 @@ public class MQLQueryImplTest extends MetadataTestBase {
     rl1.setFieldFrom(bc1);
     rl1.setTableTo(bt2);
     rl1.setFieldTo(bc2);
+    rl1.setJoinOrderKey("A");
     
     final RelationshipMeta rl2 = new RelationshipMeta();
     
@@ -1962,6 +2829,7 @@ public class MQLQueryImplTest extends MetadataTestBase {
     rl2.setFieldFrom(bc2);
     rl2.setTableTo(bt3);
     rl2.setFieldTo(bc3);
+    rl2.setJoinOrderKey("D");
 
     final RelationshipMeta rl3 = new RelationshipMeta();
     
@@ -1969,6 +2837,7 @@ public class MQLQueryImplTest extends MetadataTestBase {
     rl3.setFieldFrom(bc3);
     rl3.setTableTo(bt4);
     rl3.setFieldTo(bc4);
+    rl3.setJoinOrderKey("B");
 
     final RelationshipMeta rl4 = new RelationshipMeta();
     
@@ -1976,6 +2845,7 @@ public class MQLQueryImplTest extends MetadataTestBase {
     rl4.setFieldFrom(bc4);
     rl4.setTableTo(bt5);
     rl4.setFieldTo(bc5);
+    rl4.setJoinOrderKey("E");
     
     model.addBusinessTable(bt1);
     model.addBusinessTable(bt2);
@@ -1995,6 +2865,7 @@ public class MQLQueryImplTest extends MetadataTestBase {
     myTest.addConstraint(WhereCondition.operators[0], "[metadata_business_table_very_long_name_1.bc1] > 25"); //$NON-NLS-1$
     
     MappedQuery query = myTest.getQuery();
+    String queryString = query.getQuery();
     assertEqualsIgnoreWhitespaces( 
         "SELECT DISTINCT \n" //$NON-NLS-1$
         + "          metadata_business_table_very01.pc1 AS COL0\n" //$NON-NLS-1$
@@ -2019,7 +2890,7 @@ public class MQLQueryImplTest extends MetadataTestBase {
         + "             metadata_business_table_very01.pc1 > 25"
         + "          )"
         + "          )",
-        query.getQuery()    
+        queryString
     ); //$NON-NLS-1$
 
     //
@@ -2124,6 +2995,7 @@ public class MQLQueryImplTest extends MetadataTestBase {
     rl1.setFieldFrom(bc1);
     rl1.setTableTo(bt2);
     rl1.setFieldTo(bc2);
+    rl1.setJoinOrderKey("A");
     
     final RelationshipMeta rl2 = new RelationshipMeta();
     
@@ -2131,6 +3003,7 @@ public class MQLQueryImplTest extends MetadataTestBase {
     rl2.setFieldFrom(bc2);
     rl2.setTableTo(bt3);
     rl2.setFieldTo(bc3);
+    rl2.setJoinOrderKey("D");
 
     final RelationshipMeta rl3 = new RelationshipMeta();
     
@@ -2138,6 +3011,7 @@ public class MQLQueryImplTest extends MetadataTestBase {
     rl3.setFieldFrom(bc3);
     rl3.setTableTo(bt4);
     rl3.setFieldTo(bc4);
+    rl3.setJoinOrderKey("B");
 
     final RelationshipMeta rl4 = new RelationshipMeta();
     
@@ -2145,6 +3019,7 @@ public class MQLQueryImplTest extends MetadataTestBase {
     rl4.setFieldFrom(bc4);
     rl4.setTableTo(bt5);
     rl4.setFieldTo(bc5);
+    rl4.setJoinOrderKey("E");
     
     model.addBusinessTable(bt1);
     model.addBusinessTable(bt2);
@@ -2164,6 +3039,8 @@ public class MQLQueryImplTest extends MetadataTestBase {
     myTest.addConstraint(WhereCondition.operators[0], "[metadata_business_table_very_long_name_1.bc1] > 25"); //$NON-NLS-1$
     
     MappedQuery query = myTest.getQuery();
+    String queryString = query.getQuery();
+    // System.out.println(queryString);
     assertEqualsIgnoreWhitespaces( 
         "SELECT DISTINCT \n" //$NON-NLS-1$
         + "          metadata_business_table_very01.pc1 AS COL0\n" //$NON-NLS-1$
@@ -2188,7 +3065,7 @@ public class MQLQueryImplTest extends MetadataTestBase {
         + "             metadata_business_table_very01.pc1 > 25"
         + "          )"
         + "          )",
-        query.getQuery()    
+        queryString    
     ); //$NON-NLS-1$
 
     //
@@ -2280,6 +3157,7 @@ public class MQLQueryImplTest extends MetadataTestBase {
     rl1.setFieldFrom(bc1);
     rl1.setTableTo(bt2);
     rl1.setFieldTo(bc2);
+    rl1.setJoinOrderKey("A");
     
     final RelationshipMeta rl2 = new RelationshipMeta();
     
@@ -2287,6 +3165,7 @@ public class MQLQueryImplTest extends MetadataTestBase {
     rl2.setFieldFrom(bc2);
     rl2.setTableTo(bt3);
     rl2.setFieldTo(bc3);
+    rl2.setJoinOrderKey("D");
 
     final RelationshipMeta rl3 = new RelationshipMeta();
     
@@ -2294,6 +3173,7 @@ public class MQLQueryImplTest extends MetadataTestBase {
     rl3.setFieldFrom(bc3);
     rl3.setTableTo(bt4);
     rl3.setFieldTo(bc4);
+    rl3.setJoinOrderKey("B");
 
     final RelationshipMeta rl4 = new RelationshipMeta();
     
@@ -2301,6 +3181,7 @@ public class MQLQueryImplTest extends MetadataTestBase {
     rl4.setFieldFrom(bc4);
     rl4.setTableTo(bt5);
     rl4.setFieldTo(bc5);
+    rl4.setJoinOrderKey("E");
     
     model.addBusinessTable(bt1);
     model.addBusinessTable(bt2);
@@ -2318,7 +3199,8 @@ public class MQLQueryImplTest extends MetadataTestBase {
     myTest.addSelection(new Selection(bc4));
 
     MappedQuery query = myTest.getQuery();
-    // System.out.println(query.getQuery());
+    String queryString = query.getQuery();
+    // System.out.println(queryString);
     assertEqualsIgnoreWhitespaces( 
         "SELECT DISTINCT \n" //$NON-NLS-1$
         + "          bt1.pc1 AS COL0\n" //$NON-NLS-1$
@@ -2338,7 +3220,7 @@ public class MQLQueryImplTest extends MetadataTestBase {
         + "      AND (\n" 
         + "             bt1.pc1 = bt2.pc2\n"
         + "          )\n",
-        query.getQuery()    
+        queryString    
     ); //$NON-NLS-1$
   }
   

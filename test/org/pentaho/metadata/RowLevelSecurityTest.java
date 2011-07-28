@@ -71,7 +71,7 @@ public class RowLevelSecurityTest {
     DatabaseMeta databaseMeta = new DatabaseMeta("", "ORACLE", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
     
     MappedQuery mquery = generator.generateSql(query, "en_US", repo, databaseMeta);
-    TestHelper.printOutJava(mquery.getQuery());
+    // TestHelper.printOutJava(mquery.getQuery());
     TestHelper.assertEqualsIgnoreWhitespaces( 
         "SELECT DISTINCT \n" + 
         "          bt1.pc1 AS COL0\n" + 

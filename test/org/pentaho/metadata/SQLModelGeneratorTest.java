@@ -72,7 +72,7 @@ public class SQLModelGeneratorTest {
 
       String xml = service.serializeDomain(generateModel());
 
-      System.out.println(xml);
+      // System.out.println(xml);
 
       Domain domain2 = service.deserializeDomain(xml);
 
@@ -184,14 +184,16 @@ public class SQLModelGeneratorTest {
       Assert.fail();
     }
     Assert.assertNotNull(impl);
-    Assert.assertEquals(
+    String queryString = impl.getQuery().getQuery();
+    // System.out.println(queryString);
+    TestHelper.assertEqualsIgnoreWhitespaces(
 
     "SELECT DISTINCT \n" + "          LOGICAL_TABLE_1.CUSTOMERNAME AS COL0\n" + "FROM \n"
         + "          (select customername from customers where customernumber < 171) LOGICAL_TABLE_1\n" + "WHERE \n"
         + "        (\n" + "          (\n" + "              LOGICAL_TABLE_1.CUSTOMERNAME  = 'bob'\n" + "          )\n"
         + "        )\n" + "ORDER BY \n" + "          COL0\n",
 
-    impl.getQuery().getQuery());
+    queryString);
 
   }
 

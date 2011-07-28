@@ -268,9 +268,9 @@ public class ThinModelTest {
     
     List<String> list = util.analyzeImport(domain2, props, "en_US");
     
-    for (String str : list) {
-      System.out.println(str);
-    }
+//    for (String str : list) {
+//      System.out.println(str);
+//    }
     
     Assert.assertEquals(0, list.size());
   }

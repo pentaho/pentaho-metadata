@@ -83,7 +83,7 @@ public class MondrianModelExporterTest {
     MondrianModelExporter exporter = new MondrianModelExporter(businessModel, "en_US");
     String data = exporter.createMondrianModelXML();
     
-    Assert.assertEquals(
+    TestHelper.assertEqualsIgnoreWhitespaces(
         "<Schema name=\"model\">\n" + 
         "  <Dimension name=\"Dim1\">\n" + 
         "    <Hierarchy name=\"Hier1\" hasAll=\"false\">\n" + 

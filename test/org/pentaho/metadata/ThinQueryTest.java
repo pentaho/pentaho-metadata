@@ -104,7 +104,7 @@ public class ThinQueryTest {
       Assert.fail();
     }
     Assert.assertNotNull(impl);
-    Assert.assertEquals(
+    TestHelper.assertEqualsIgnoreWhitespaces(
         "SELECT DISTINCT \n" + 
         "          LT.customername AS COL0\n" + 
         "FROM \n" + 
