@@ -48,7 +48,6 @@
     
     <!-- external dependencies hosted by pentaho -->
     <dependency org="jug-lgpl" name="jug-lgpl" rev="2.0.0" />
-    <dependency org="javax.activation" name="activation" rev="1.0.2" />
     <dependency org="org.netbeans" name="jmi" rev="200507110943" />
     <dependency org="org.netbeans" name="jmiutils" rev="200507110943" />
     <dependency org="org.netbeans" name="mdrapi" rev="200507110943" />
