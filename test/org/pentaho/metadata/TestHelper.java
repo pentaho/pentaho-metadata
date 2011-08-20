@@ -47,6 +47,7 @@ public class TestHelper {
       bc1.setId("bc1"); //$NON-NLS-1$
       bc1.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc1"); //$NON-NLS-1$
       bc1.setLogicalTable(bt1);
+      bc1.setDataType(DataType.NUMERIC);
       bt1.addLogicalColumn(bc1);
       bt1.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 1);
       

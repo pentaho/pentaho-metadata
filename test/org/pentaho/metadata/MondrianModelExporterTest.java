@@ -3,7 +3,6 @@ package org.pentaho.metadata;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
@@ -92,7 +91,7 @@ public class MondrianModelExporterTest {
         "         <![CDATA[select * from customer]]>\n" + 
         "        </SQL>\n" + 
         "    </View>\n" + 
-        "      <Level name=\"Lvl1\" column=\"pc1\" uniqueMembers=\"false\">\n" + 
+        "      <Level name=\"Lvl1\" column=\"pc1\" type=\"Numeric\" uniqueMembers=\"false\">\n" + 
         "      </Level>\n" + 
         "    </Hierarchy>\n" + 
         "  </Dimension>\n" + 

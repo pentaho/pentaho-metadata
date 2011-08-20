@@ -63,6 +63,7 @@ public class MondrianModelExporter
         xml.append("\">"); //$NON-NLS-1$
         xml.append(Util.CR);
         
+        @SuppressWarnings("unchecked")
         List<OlapDimension> olapDimensions = (List<OlapDimension>)businessModel.getProperty("olap_dimensions"); //$NON-NLS-1$
         for (int d=0;d<olapDimensions.size();d++)
         {
@@ -144,6 +145,22 @@ public class MondrianModelExporter
                     XMLHandler.appendReplacedChars(xml, (String)olapHierarchyLevel.getReferenceColumn().getProperty(SqlPhysicalColumn.TARGET_COLUMN));
                     xml.append("\""); //$NON-NLS-1$
 
+                    DataType dataTypeLevel = olapHierarchyLevel.getReferenceColumn().getDataType();
+                    String typeDescLevel = null;
+                    switch(dataTypeLevel) {
+                      case STRING:  typeDescLevel = "String"; break; //$NON-NLS-1$
+                      case NUMERIC: typeDescLevel = "Numeric"; break; //$NON-NLS-1$
+                      case BOOLEAN: typeDescLevel = "Boolean"; break; //$NON-NLS-1$
+                      case DATE:    typeDescLevel = "Date"; break; //$NON-NLS-1$
+                    }
+                        
+                    if (typeDescLevel!=null)
+                    {
+                        xml.append(" type=\""); //$NON-NLS-1$
+                        XMLHandler.appendReplacedChars(xml, typeDescLevel);
+                        xml.append("\""); //$NON-NLS-1$
+                    }
+
                     xml.append(" uniqueMembers=\""); //$NON-NLS-1$
                     XMLHandler.appendReplacedChars(xml, olapHierarchyLevel.isHavingUniqueMembers()?"true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
                     xml.append("\""); //$NON-NLS-1$
@@ -197,6 +214,7 @@ public class MondrianModelExporter
         
         // Now do the cubes too...
         
+        @SuppressWarnings("unchecked")
         List<OlapCube> olapCubes = (List<OlapCube>)businessModel.getProperty("olap_cubes"); //$NON-NLS-1$
         for (int c=0;c<olapCubes.size();c++)
         {
