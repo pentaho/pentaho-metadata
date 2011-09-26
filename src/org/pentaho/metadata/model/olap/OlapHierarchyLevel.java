@@ -29,6 +29,8 @@ public class OlapHierarchyLevel implements Cloneable, Serializable {
   private List<LogicalColumn> logicalColumns;
   private boolean havingUniqueMembers;
 
+  private List<OlapAnnotation> annotations;
+
   private OlapHierarchy olapHierarchy;
 
   public OlapHierarchyLevel(){
@@ -39,6 +41,7 @@ public class OlapHierarchyLevel implements Cloneable, Serializable {
     super();
     this.olapHierarchy = olapHierarchy;
     logicalColumns = new ArrayList<LogicalColumn>();
+    annotations = new ArrayList<OlapAnnotation>();
   }
 
   /**
@@ -52,7 +55,18 @@ public class OlapHierarchyLevel implements Cloneable, Serializable {
     this.name = name;
     this.referenceColumn = referenceColumn;
     this.logicalColumns = logicalColumns;
+    this.annotations = new ArrayList<OlapAnnotation>();
   }
+
+  public OlapHierarchyLevel(OlapHierarchy olapHierarchy, String name, LogicalColumn referenceColumn,
+      List<LogicalColumn> logicalColumns, List<OlapAnnotation> annotations) {
+    this(olapHierarchy);
+    this.name = name;
+    this.referenceColumn = referenceColumn;
+    this.logicalColumns = logicalColumns;
+    this.annotations = annotations;
+  }
+
 
   public Object clone() {
     // weak link again to the parent
@@ -159,5 +173,16 @@ public class OlapHierarchyLevel implements Cloneable, Serializable {
    */
   public void setHavingUniqueMembers(boolean havingUniqueMembers) {
     this.havingUniqueMembers = havingUniqueMembers;
+  }
+
+  public List<OlapAnnotation> getAnnotations() {
+    if(annotations == null) {
+      annotations = new ArrayList<OlapAnnotation>();
+    }
+    return annotations;
+  }
+
+  public void setAnnotations(List<OlapAnnotation> annotations) {
+    this.annotations = annotations;
   }
 }

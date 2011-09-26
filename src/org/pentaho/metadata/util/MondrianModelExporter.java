@@ -30,12 +30,7 @@ import org.pentaho.metadata.model.SqlPhysicalTable;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
-import org.pentaho.metadata.model.olap.OlapCube;
-import org.pentaho.metadata.model.olap.OlapDimension;
-import org.pentaho.metadata.model.olap.OlapDimensionUsage;
-import org.pentaho.metadata.model.olap.OlapHierarchy;
-import org.pentaho.metadata.model.olap.OlapHierarchyLevel;
-import org.pentaho.metadata.model.olap.OlapMeasure;
+import org.pentaho.metadata.model.olap.*;
 
 public class MondrianModelExporter
 {
@@ -166,7 +161,19 @@ public class MondrianModelExporter
                     xml.append("\""); //$NON-NLS-1$
                     xml.append(">"); //$NON-NLS-1$
                     xml.append(Util.CR);
-                    
+
+                    if(olapHierarchyLevel.getAnnotations().size() > 0) {
+                      xml.append("        <Annotations>");
+
+                      for(OlapAnnotation annotation : olapHierarchyLevel.getAnnotations()) {
+                        xml.append(Util.CR);
+                        xml.append(annotation.asXml());
+                      }
+                      xml.append(Util.CR);
+                      xml.append("        </Annotations>");
+                      xml.append(Util.CR);
+                    }
+
                     List businessColumns = olapHierarchyLevel.getLogicalColumns();
                     for (int i=0;i<businessColumns.size();i++)
                     {
@@ -174,7 +181,9 @@ public class MondrianModelExporter
                         xml.append("        <Property"); //$NON-NLS-1$
 
                         xml.append(" name=\""); //$NON-NLS-1$
+
                         XMLHandler.appendReplacedChars(xml, businessColumn.getName(locale));
+
                         xml.append("\""); //$NON-NLS-1$
                         
                         xml.append(" column=\""); //$NON-NLS-1$
