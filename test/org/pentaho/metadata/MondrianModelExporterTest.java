@@ -117,6 +117,7 @@ public class MondrianModelExporterTest {
     level.setName("Lvl1");
 
     level.getAnnotations().add(new OlapAnnotation("GeoRole", "city"));
+    level.getAnnotations().add(new OlapAnnotation("RequiredParents", "country,state"));
 
     hierarchyLevels.add(level);
 
@@ -178,6 +179,7 @@ public class MondrianModelExporterTest {
         "      <Level name=\"Lvl1\" column=\"pc1\" type=\"Numeric\" uniqueMembers=\"false\">\n" +
         "        <Annotations>\n" +
         "          <Annotation name=\"GeoRole\">city</Annotation>\n" +
+        "          <Annotation name=\"RequiredParents\">country,state</Annotation>\n" +
         "        </Annotations>\n" +
         "      </Level>\n" +
         "    </Hierarchy>\n" +
