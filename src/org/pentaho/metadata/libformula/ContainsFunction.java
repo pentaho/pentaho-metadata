@@ -29,21 +29,26 @@ import org.pentaho.reporting.libraries.formula.typing.coretypes.LogicalType;
 /**
  * This function checks to see if a substring is within a larger string and is needed
  * for the inline ETL implementation of Pentaho Metadata.
- * 
+ *
  * @author Will Gorman (wgorman@pentaho.com)
  */
-public class ContainsFunction implements Function {
+public class ContainsFunction implements Function
+{
   private static final long serialVersionUID = 5834421661720115093L;
-  
+
   private static final TypeValuePair RETURN_FALSE = new TypeValuePair(LogicalType.TYPE, Boolean.FALSE);
   private static final TypeValuePair RETURN_TRUE = new TypeValuePair(LogicalType.TYPE, Boolean.TRUE);
 
-  public ContainsFunction(){
+  public ContainsFunction()
+  {
   }
 
-  public TypeValuePair evaluate(final FormulaContext context, final ParameterCallback parameters) throws EvaluationException {
+  public TypeValuePair evaluate(final FormulaContext context,
+                                final ParameterCallback parameters) throws EvaluationException
+  {
     final int parameterCount = parameters.getParameterCount();
-    if (parameterCount != 2) {
+    if (parameterCount != 2)
+    {
       throw new EvaluationException(LibFormulaErrorValue.ERROR_ARGUMENTS_VALUE);
     }
     final TypeRegistry typeRegistry = context.getTypeRegistry();
@@ -55,8 +60,8 @@ public class ContainsFunction implements Function {
 
     final String text = typeRegistry.convertToText(textType1, textValue1);
     final String substring = typeRegistry.convertToText(textType2, textValue2);
-    
-    return text.indexOf(substring) >= 0 ? RETURN_TRUE : RETURN_FALSE;
+
+    return text.contains(substring) ? RETURN_TRUE : RETURN_FALSE;
   }
 
   public String getCanonicalName()
