@@ -146,7 +146,8 @@ public class MondrianModelExporter
                       case STRING:  typeDescLevel = "String"; break; //$NON-NLS-1$
                       case NUMERIC: typeDescLevel = "Numeric"; break; //$NON-NLS-1$
                       case BOOLEAN: typeDescLevel = "Boolean"; break; //$NON-NLS-1$
-                      case DATE:    typeDescLevel = "Date"; break; //$NON-NLS-1$
+                      // Date Type caused BISERVER-6670, removing it for now until we can investigate further 
+                      // case DATE:    typeDescLevel = "Date"; break; //$NON-NLS-1$
                     }
                         
                     if (typeDescLevel!=null)
