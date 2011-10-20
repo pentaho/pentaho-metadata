@@ -74,12 +74,7 @@ import org.pentaho.metadata.model.concept.types.TableType;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
 import org.pentaho.metadata.model.concept.types.ColumnWidth.WidthType;
-import org.pentaho.metadata.model.olap.OlapCube;
-import org.pentaho.metadata.model.olap.OlapDimension;
-import org.pentaho.metadata.model.olap.OlapDimensionUsage;
-import org.pentaho.metadata.model.olap.OlapHierarchy;
-import org.pentaho.metadata.model.olap.OlapHierarchyLevel;
-import org.pentaho.metadata.model.olap.OlapMeasure;
+import org.pentaho.metadata.model.olap.*;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.locale.LocaleInterface;
@@ -659,6 +654,18 @@ public class XmiParser {
                         ownedElement.appendChild(dimObj);
                       }
                       lvlElement.appendChild(ownedElement);
+                    }
+
+                    // add any annotations
+                    if(level.getAnnotations() != null & level.getAnnotations().size() > 0) {
+                      Element annotationsElement = doc.createElement("CWMOLAP:Level.annotation");
+                      for(OlapAnnotation annotation : level.getAnnotations()) {
+                        Element annotationElement = doc.createElement("CWMOLAP:Annotation");
+                        annotationElement.setAttribute("name", annotation.getName());
+                        annotationElement.setAttribute("value", annotation.getValue());
+                        annotationsElement.appendChild(annotationElement);
+                      }
+                      lvlElement.appendChild(annotationsElement);
                     }
                     
                     Element lvlHierLvlAssoc = doc.createElement("CWMOLAP:Level.hierarchyLevelAssociation"); //$NON-NLS-1$
@@ -1629,7 +1636,8 @@ public class XmiParser {
                 
                 NodeList levelrefs = level.getElementsByTagName("CWMOLAP:Level"); //$NON-NLS-1$
                 if (levelrefs.getLength() == 1) {
-                  String xmiid = ((Element)levelrefs.item(0)).getAttribute("xmi.idref"); //$NON-NLS-1$
+                  Element levelRefElem = (Element)levelrefs.item(0);
+                  String xmiid = levelRefElem.getAttribute("xmi.idref"); //$NON-NLS-1$
                   levelMap.put(xmiid, levelObj);
                 }
                 
@@ -1641,7 +1649,7 @@ public class XmiParser {
                 <CWMOLAP:HierarchyLevelAssociation xmi.id = 'a326' name = 'Lname - L' isAbstract = 'false'>
                   <CWMOLAP:HierarchyLevelAssociation.currentLevel>
                     <CWMOLAP:Level xmi.idref = 'a327'/>
-                  </CWMOLAP:HierarchyLevelAssociation.currentLevel>
+                  </CWMOLAP:HierarchyLevelAssociation.currentLevel> 
                 </CWMOLAP:HierarchyLevelAssociation>
                 <CWMOLAP:HierarchyLevelAssociation xmi.id = 'a328' name = 'Mi' isAbstract = 'false'>
                   <CWMOLAP:HierarchyLevelAssociation.currentLevel>
@@ -1677,6 +1685,17 @@ public class XmiParser {
                 Element col = (Element)dimensionedObjs.item(k);
                 referenceCols.add(model.findLogicalColumn(col.getAttribute("name"))); //$NON-NLS-1$
               }
+
+              //<CWMOLAP:Annotation name="Geo.Role" value="location"/>
+              NodeList annotations = level.getElementsByTagName("CWMOLAP:Annotation");
+              for(int count = 0; count < annotations.getLength(); count++) {
+                Element annotation = (Element)annotations.item(count);
+                OlapAnnotation annotationObj = new OlapAnnotation();
+                annotationObj.setName(annotation.getAttribute("name"));
+                annotationObj.setValue(annotation.getAttribute("value"));
+                levelObj.getAnnotations().add(annotationObj);
+              }
+
               levelObj.setLogicalColumns(referenceCols);
             }
             
