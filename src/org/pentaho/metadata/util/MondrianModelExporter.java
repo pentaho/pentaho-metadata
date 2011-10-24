@@ -207,6 +207,12 @@ public class MondrianModelExporter
                             xml.append("\""); //$NON-NLS-1$
                         }
 
+                        if(businessColumn.getDescription() != null) {
+                          xml.append(" description=\""); //$NON-NLS-1$
+                          XMLHandler.appendReplacedChars(xml, businessColumn.getDescription(locale));
+                          xml.append("\""); //$NON-NLS-1$
+                        }
+                      
                         xml.append("/>"); //$NON-NLS-1$
                         xml.append(Util.CR);
                     }
