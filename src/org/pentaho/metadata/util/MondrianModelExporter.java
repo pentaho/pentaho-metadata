@@ -232,132 +232,134 @@ public class MondrianModelExporter
         
         @SuppressWarnings("unchecked")
         List<OlapCube> olapCubes = (List<OlapCube>)businessModel.getProperty("olap_cubes"); //$NON-NLS-1$
-        for (int c=0;c<olapCubes.size();c++)
-        {
-            OlapCube olapCube = (OlapCube) olapCubes.get(c);
-            
-            xml.append("  <Cube"); //$NON-NLS-1$
-            
-            xml.append(" name=\""); //$NON-NLS-1$
-            XMLHandler.appendReplacedChars(xml, olapCube.getName());
-            xml.append("\""); //$NON-NLS-1$
-            xml.append(">").append(Util.CR); //$NON-NLS-1$
+        if(olapCubes != null){
+          for (int c=0;c<olapCubes.size();c++)
+          {
+              OlapCube olapCube = (OlapCube) olapCubes.get(c);
 
-            if (olapCube.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_TABLE_TYPE) == TargetTableType.INLINE_SQL) {
-              xml.append("    <View alias=\"FACT\">").append(Util.CR);
-              xml.append("        <SQL dialect=\"generic\">").append(Util.CR);
-              xml.append("         <![CDATA["+ olapCube.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_TABLE) + "]]>").append(Util.CR);
-              xml.append("        </SQL>").append(Util.CR);
-              xml.append("    </View>").append(Util.CR);
-            } else {
-              xml.append("    <Table"); //$NON-NLS-1$
+              xml.append("  <Cube"); //$NON-NLS-1$
+
               xml.append(" name=\""); //$NON-NLS-1$
-              XMLHandler.appendReplacedChars(xml, (String)olapCube.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_TABLE));
+              XMLHandler.appendReplacedChars(xml, olapCube.getName());
               xml.append("\""); //$NON-NLS-1$
-              if (!StringUtils.isBlank((String)olapCube.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_SCHEMA))) {
-                xml.append(" schema=\""); //$NON-NLS-1$
-                XMLHandler.appendReplacedChars(xml, (String)olapCube.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_SCHEMA));
+              xml.append(">").append(Util.CR); //$NON-NLS-1$
+
+              if (olapCube.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_TABLE_TYPE) == TargetTableType.INLINE_SQL) {
+                xml.append("    <View alias=\"FACT\">").append(Util.CR);
+                xml.append("        <SQL dialect=\"generic\">").append(Util.CR);
+                xml.append("         <![CDATA["+ olapCube.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_TABLE) + "]]>").append(Util.CR);
+                xml.append("        </SQL>").append(Util.CR);
+                xml.append("    </View>").append(Util.CR);
+              } else {
+                xml.append("    <Table"); //$NON-NLS-1$
+                xml.append(" name=\""); //$NON-NLS-1$
+                XMLHandler.appendReplacedChars(xml, (String)olapCube.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_TABLE));
                 xml.append("\""); //$NON-NLS-1$
+                if (!StringUtils.isBlank((String)olapCube.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_SCHEMA))) {
+                  xml.append(" schema=\""); //$NON-NLS-1$
+                  XMLHandler.appendReplacedChars(xml, (String)olapCube.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_SCHEMA));
+                  xml.append("\""); //$NON-NLS-1$
+                }
+                xml.append("/>").append(Util.CR); //$NON-NLS-1$
               }
-              xml.append("/>").append(Util.CR); //$NON-NLS-1$
-            }
 
-            //  DIMENSION USAGE
-            //
-            List usages = olapCube.getOlapDimensionUsages();
-            for (int u=0;u<usages.size();u++)
-            {
-                OlapDimensionUsage usage = (OlapDimensionUsage) usages.get(u);
-                
-                xml.append("    <DimensionUsage"); //$NON-NLS-1$
-                
-                xml.append(" name=\""); //$NON-NLS-1$
-                XMLHandler.appendReplacedChars(xml, usage.getName());
-                xml.append("\""); //$NON-NLS-1$
+              //  DIMENSION USAGE
+              //
+              List usages = olapCube.getOlapDimensionUsages();
+              for (int u=0;u<usages.size();u++)
+              {
+                  OlapDimensionUsage usage = (OlapDimensionUsage) usages.get(u);
 
-                xml.append(" source=\""); //$NON-NLS-1$
-                XMLHandler.appendReplacedChars(xml, usage.getOlapDimension().getName());
-                xml.append("\""); //$NON-NLS-1$
+                  xml.append("    <DimensionUsage"); //$NON-NLS-1$
 
-                // To know the foreign key, look up the relationship between the cube table and the dimension table...
-                LogicalTable dimTable = usage.getOlapDimension().findLogicalTable();
-                LogicalTable cubeTable = olapCube.getLogicalTable();
-                LogicalRelationship relationshipMeta = businessModel.findRelationshipUsing(dimTable, cubeTable);
+                  xml.append(" name=\""); //$NON-NLS-1$
+                  XMLHandler.appendReplacedChars(xml, usage.getName());
+                  xml.append("\""); //$NON-NLS-1$
 
-                if( dimTable.equals( cubeTable ) && relationshipMeta == null ) {
-                	// this is ok
-                } 
-                else if (relationshipMeta!=null)
-                {
-                    LogicalColumn keyColumn;
-                    if (relationshipMeta.getFromTable().equals(dimTable))
-                    {
-                        keyColumn = relationshipMeta.getToColumn();
-                    }
-                    else
-                    {
-                        keyColumn = relationshipMeta.getFromColumn();
-                    }
-                    
-                    xml.append(" foreignKey=\""); //$NON-NLS-1$
-                    XMLHandler.appendReplacedChars(xml, (String)keyColumn.getProperty(SqlPhysicalColumn.TARGET_COLUMN));
-                    xml.append("\""); //$NON-NLS-1$
-                }
-                else
-                {
-                    throw new Exception(Messages.getString("MondrianModelExporter.ERROR_0001_ERROR_NO_RELATIONSHIP", dimTable.getName(locale),cubeTable.toString())); //$NON-NLS-1$  
-                }
-                xml.append("/>").append(Util.CR); //$NON-NLS-1$
-            }
-            
-            // MEASURES
-            //
-            List measures = olapCube.getOlapMeasures();
-            for (int m=0;m<measures.size();m++)
-            {
-                OlapMeasure measure = (OlapMeasure) measures.get(m);
-                LogicalColumn businessColumn = measure.getLogicalColumn();
-                
-                xml.append("    <Measure"); //$NON-NLS-1$
+                  xml.append(" source=\""); //$NON-NLS-1$
+                  XMLHandler.appendReplacedChars(xml, usage.getOlapDimension().getName());
+                  xml.append("\""); //$NON-NLS-1$
 
-                xml.append(" name=\""); //$NON-NLS-1$
-                XMLHandler.appendReplacedChars(xml, businessColumn.getName(locale));
-                xml.append("\"");    //$NON-NLS-1$
+                  // To know the foreign key, look up the relationship between the cube table and the dimension table...
+                  LogicalTable dimTable = usage.getOlapDimension().findLogicalTable();
+                  LogicalTable cubeTable = olapCube.getLogicalTable();
+                  LogicalRelationship relationshipMeta = businessModel.findRelationshipUsing(dimTable, cubeTable);
 
-                xml.append(" column=\""); //$NON-NLS-1$
-                XMLHandler.appendReplacedChars(xml, (String)businessColumn.getProperty(SqlPhysicalColumn.TARGET_COLUMN));
-                xml.append("\"");    //$NON-NLS-1$
+                  if( dimTable.equals( cubeTable ) && relationshipMeta == null ) {
+                    // this is ok
+                  }
+                  else if (relationshipMeta!=null)
+                  {
+                      LogicalColumn keyColumn;
+                      if (relationshipMeta.getFromTable().equals(dimTable))
+                      {
+                          keyColumn = relationshipMeta.getToColumn();
+                      }
+                      else
+                      {
+                          keyColumn = relationshipMeta.getFromColumn();
+                      }
 
-                AggregationType aggregationType = businessColumn.getAggregationType();
-                String typeDesc=null;
-                switch(aggregationType) {
-                  case NONE            : typeDesc="none"; break; //$NON-NLS-1$
-                  case SUM             : typeDesc="sum"; break; //$NON-NLS-1$
-                  case AVERAGE         : typeDesc="avg"; break; //$NON-NLS-1$
-                  case COUNT           : typeDesc="count"; break; //$NON-NLS-1$
-                  case COUNT_DISTINCT  : typeDesc="distinct count"; break; //$NON-NLS-1$
-                  case MINIMUM         : typeDesc="min"; break; //$NON-NLS-1$
-                  case MAXIMUM         : typeDesc="max"; break; //$NON-NLS-1$
-                }
-                
-                if (typeDesc!=null)
-                {
-                    xml.append(" aggregator=\""); //$NON-NLS-1$
-                    XMLHandler.appendReplacedChars(xml, typeDesc);
-                    xml.append("\""); //$NON-NLS-1$
-                }
-                
-                String formatString = (String)businessColumn.getProperty("mask"); //$NON-NLS-1$
-                if (StringUtils.isEmpty(formatString)) formatString = "Standard"; //$NON-NLS-1$
+                      xml.append(" foreignKey=\""); //$NON-NLS-1$
+                      XMLHandler.appendReplacedChars(xml, (String)keyColumn.getProperty(SqlPhysicalColumn.TARGET_COLUMN));
+                      xml.append("\""); //$NON-NLS-1$
+                  }
+                  else
+                  {
+                      throw new Exception(Messages.getString("MondrianModelExporter.ERROR_0001_ERROR_NO_RELATIONSHIP", dimTable.getName(locale),cubeTable.toString())); //$NON-NLS-1$
+                  }
+                  xml.append("/>").append(Util.CR); //$NON-NLS-1$
+              }
 
-                xml.append(" formatString=\""); //$NON-NLS-1$
-                XMLHandler.appendReplacedChars(xml, formatString);
-                xml.append("\""); //$NON-NLS-1$
-                
-                xml.append("/>").append(Util.CR); //$NON-NLS-1$
-            }
-            
-            xml.append("  </Cube>").append(Util.CR); //$NON-NLS-1$
+              // MEASURES
+              //
+              List measures = olapCube.getOlapMeasures();
+              for (int m=0;m<measures.size();m++)
+              {
+                  OlapMeasure measure = (OlapMeasure) measures.get(m);
+                  LogicalColumn businessColumn = measure.getLogicalColumn();
+
+                  xml.append("    <Measure"); //$NON-NLS-1$
+
+                  xml.append(" name=\""); //$NON-NLS-1$
+                  XMLHandler.appendReplacedChars(xml, businessColumn.getName(locale));
+                  xml.append("\"");    //$NON-NLS-1$
+
+                  xml.append(" column=\""); //$NON-NLS-1$
+                  XMLHandler.appendReplacedChars(xml, (String)businessColumn.getProperty(SqlPhysicalColumn.TARGET_COLUMN));
+                  xml.append("\"");    //$NON-NLS-1$
+
+                  AggregationType aggregationType = businessColumn.getAggregationType();
+                  String typeDesc=null;
+                  switch(aggregationType) {
+                    case NONE            : typeDesc="none"; break; //$NON-NLS-1$
+                    case SUM             : typeDesc="sum"; break; //$NON-NLS-1$
+                    case AVERAGE         : typeDesc="avg"; break; //$NON-NLS-1$
+                    case COUNT           : typeDesc="count"; break; //$NON-NLS-1$
+                    case COUNT_DISTINCT  : typeDesc="distinct count"; break; //$NON-NLS-1$
+                    case MINIMUM         : typeDesc="min"; break; //$NON-NLS-1$
+                    case MAXIMUM         : typeDesc="max"; break; //$NON-NLS-1$
+                  }
+
+                  if (typeDesc!=null)
+                  {
+                      xml.append(" aggregator=\""); //$NON-NLS-1$
+                      XMLHandler.appendReplacedChars(xml, typeDesc);
+                      xml.append("\""); //$NON-NLS-1$
+                  }
+
+                  String formatString = (String)businessColumn.getProperty("mask"); //$NON-NLS-1$
+                  if (StringUtils.isEmpty(formatString)) formatString = "Standard"; //$NON-NLS-1$
+
+                  xml.append(" formatString=\""); //$NON-NLS-1$
+                  XMLHandler.appendReplacedChars(xml, formatString);
+                  xml.append("\""); //$NON-NLS-1$
+
+                  xml.append("/>").append(Util.CR); //$NON-NLS-1$
+              }
+
+              xml.append("  </Cube>").append(Util.CR); //$NON-NLS-1$
+          }
         }
 
 
