@@ -984,7 +984,8 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         int y = cwm.getPositionY(cwmDimension);
         businessTable.setLocation(x, y);
         // Drawn?
-        boolean drawn = "Y".equalsIgnoreCase( cwm.getFirstTaggedValue(cwmDimension, CWM.TAG_TABLE_IS_DRAWN) ); //$NON-NLS-1$
+        // True if not explicitly set to false.
+        boolean drawn = !("N".equalsIgnoreCase( cwm.getFirstTaggedValue(cwmDimension, CWM.TAG_TABLE_IS_DRAWN) )); //$NON-NLS-1$
         businessTable.setDrawn(drawn);
         
         // The physical columns...
