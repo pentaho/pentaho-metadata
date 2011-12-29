@@ -994,7 +994,7 @@ public class SqlGenerator {
         } catch (PentahoMetadataException e) {
           // this is for backwards compatibility.
           // eventually throw any errors
-          logger.error(Messages.getErrorString("SqlGenerator.ERROR_0001_FAILED_TO_PARSE_FORMULA", targetColumn), e); //$NON-NLS-1$
+          logger.warn(Messages.getErrorString("SqlGenerator.ERROR_0001_FAILED_TO_PARSE_FORMULA", targetColumn), e); //$NON-NLS-1$
 
           // Report just this table and column as being used along with the formula.
           //
@@ -1077,7 +1077,7 @@ public class SqlGenerator {
         join = formula.generateSQL(locale);
       } catch(PentahoMetadataException e) {
         // backward compatibility, deprecate
-        logger.error(Messages.getErrorString("SqlGenerator.ERROR_0017_FAILED_TO_PARSE_COMPLEX_JOIN", relation.getComplexJoin()), e); //$NON-NLS-1$
+        logger.warn(Messages.getErrorString("SqlGenerator.ERROR_0017_FAILED_TO_PARSE_COMPLEX_JOIN", relation.getComplexJoin()), e); //$NON-NLS-1$
         join = relation.getComplexJoin();
       }
     } else if (relation.getFromTable() != null && relation.getToTable() != null && 
