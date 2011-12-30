@@ -869,7 +869,7 @@ public class InlineEtlModelGeneratorTest {
     String msg = evaluateBadFormula(context, "EQUALS(1;1;1)", null);
     Assert.assertTrue("Wrong Message: " + msg, msg.indexOf("Invalid number of arguments") >= 0);
   
-    msg = evaluateBadFormula(context, "EQUALS(NA();NA())", null);
+    msg = evaluateBadFormula(context, "EQUALS([Test];2)", null);
     Assert.assertTrue("Wrong Message: " + msg, msg.indexOf("errorMessage=NA") >= 0);
   }
   
@@ -891,7 +891,7 @@ public class InlineEtlModelGeneratorTest {
     String msg = evaluateBadFormula(context, "IN(1)", null);
     Assert.assertTrue("Wrong Message: " + msg, msg.indexOf("Invalid number of arguments") >= 0);
   
-    msg = evaluateBadFormula(context, "IN(NA();NA())", null);
+    msg = evaluateBadFormula(context, "IN([Test];1)", null);
     Assert.assertTrue("Wrong Message: " + msg, msg.indexOf("errorMessage=NA") >= 0);
     
   }
