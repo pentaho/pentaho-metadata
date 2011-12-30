@@ -91,7 +91,7 @@ public class InlineEtlQueryExecutor extends BaseMetadataQueryExec {
   public IPentahoResultSet executeQuery(Query queryObject) {
     
     try {
-      return executeQuery(queryObject, csvFileLoc, parameters);
+      return executeQuery(queryObject, parameters);
     } catch (Exception e ) {
       logger.error("error", e); //$NON-NLS-1$
       return null;
@@ -213,7 +213,57 @@ public class InlineEtlQueryExecutor extends BaseMetadataQueryExec {
     return constraints;
   }
 
-  public IPentahoResultSet executeQuery(Query query, String csvFilePath, Map<String, Object> parameters) throws Exception {
+  protected void doInputWiring(Query query, TransMeta transMeta) {
+    //
+    // CSV FILE LOCATION AND FIELDS
+    //
+
+    InlineEtlPhysicalModel physicalModel = (InlineEtlPhysicalModel)query.getLogicalModel().getPhysicalModel();
+    
+    CsvInputMeta csvinput = (CsvInputMeta)getStepMeta(transMeta, "CSV file input").getStepMetaInterface(); //$NON-NLS-1$
+    
+    // the file name might need to be translated to the correct location here
+    if (csvFileLoc != null) {
+      csvinput.setFilename(csvFileLoc + physicalModel.getFileLocation());
+    } else {
+      csvinput.setFilename(physicalModel.getFileLocation());
+    }
+    
+    csvinput.setDelimiter(physicalModel.getDelimiter());
+    csvinput.setEnclosure(physicalModel.getEnclosure());
+    csvinput.setHeaderPresent(physicalModel.getHeaderPresent());
+    
+    // update fields
+    
+    LogicalTable table = query.getLogicalModel().getLogicalTables().get(0);
+    
+    csvinput.allocate(table.getLogicalColumns().size());
+    
+    for (int i = 0; i < csvinput.getInputFields().length; i++) {
+      // Update csv input
+      
+      LogicalColumn col = table.getLogicalColumns().get(i);
+      csvinput.getInputFields()[i] = new TextFileInputField();
+      String fieldName = (String)col.getProperty(InlineEtlPhysicalColumn.FIELD_NAME);
+      if (logger.isDebugEnabled()) {
+        logger.debug("FROM CSV: " + fieldName); //$NON-NLS-1$
+      }
+      csvinput.getInputFields()[i].setName(fieldName);
+      csvinput.getInputFields()[i].setType(convertType(col.getDataType()));
+    }
+    
+  }
+  
+  protected void doInjector(Query query, Trans trans) throws Exception {
+    // nothing to do in CSV mode, folks can override this behavior.
+  }
+  
+  public IPentahoResultSet executeQuery(Query query, String fileLoc, Map<String, Object> parameters) throws Exception {
+    setCsvFileLoc(fileLoc);
+    return executeQuery(query, parameters);
+  }
+  
+  public IPentahoResultSet executeQuery(Query query, Map<String, Object> parameters) throws Exception {
     if (query.getLimit() >= 0) {
       throw new UnsupportedOperationException(Messages.getErrorString("InlineEtlQueryExecutor.ERROR_0003_LIMIT_NOT_SUPPORTED"));
     }
@@ -259,43 +309,7 @@ public class InlineEtlQueryExecutor extends BaseMetadataQueryExec {
     TransMeta transMeta = new TransMeta(fileAddress, null, true);
     transMeta.setFilename(fileAddress);
     
-    //
-    // CSV FILE LOCATION AND FIELDS
-    //
-
-    InlineEtlPhysicalModel physicalModel = (InlineEtlPhysicalModel)query.getLogicalModel().getPhysicalModel();
-    
-    CsvInputMeta csvinput = (CsvInputMeta)getStepMeta(transMeta, "CSV file input").getStepMetaInterface(); //$NON-NLS-1$
-    
-    // the file name might need to be translated to the correct location here
-    if (csvFilePath != null) {
-      csvinput.setFilename(csvFilePath + physicalModel.getFileLocation());
-    } else {
-      csvinput.setFilename(physicalModel.getFileLocation());
-    }
-    
-    csvinput.setDelimiter(physicalModel.getDelimiter());
-    csvinput.setEnclosure(physicalModel.getEnclosure());
-    csvinput.setHeaderPresent(physicalModel.getHeaderPresent());
-    
-    // update fields
-    
-    LogicalTable table = query.getLogicalModel().getLogicalTables().get(0);
-    
-    csvinput.allocate(table.getLogicalColumns().size());
-    
-    for (int i = 0; i < csvinput.getInputFields().length; i++) {
-      // Update csv input
-      
-      LogicalColumn col = table.getLogicalColumns().get(i);
-      csvinput.getInputFields()[i] = new TextFileInputField();
-      String fieldName = (String)col.getProperty(InlineEtlPhysicalColumn.FIELD_NAME);
-      if (logger.isDebugEnabled()) {
-        logger.debug("FROM CSV: " + fieldName); //$NON-NLS-1$
-      }
-      csvinput.getInputFields()[i].setName(fieldName);
-      csvinput.getInputFields()[i].setType(convertType(col.getDataType()));
-    }
+    doInputWiring(query, transMeta);
     
     //
     // SELECT
@@ -538,6 +552,10 @@ public class InlineEtlQueryExecutor extends BaseMetadataQueryExec {
     InlineEtlRowListener listener = new InlineEtlRowListener();
     Trans trans = new Trans(transMeta);
     trans.prepareExecution(transMeta.getArguments());
+
+    // allows for subclasses to swap the csv step with an injector step
+    doInjector(query, trans);
+    
     listener.registerAsStepListener(trans, query, fieldNameMap);
     
     trans.startThreads();
@@ -582,7 +600,7 @@ public class InlineEtlQueryExecutor extends BaseMetadataQueryExec {
     }
   }
   
-  private StepMeta getStepMeta(TransMeta meta, String name) {
+  protected StepMeta getStepMeta(TransMeta meta, String name) {
     for (StepMeta step : meta.getSteps()) {
       if (name.equals(step.getName())) {
         return step;

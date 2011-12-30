@@ -46,6 +46,10 @@ import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.metadata.query.model.Order.Type;
 import org.pentaho.metadata.util.InlineEtlModelGenerator;
+import org.pentaho.reporting.libraries.formula.DefaultFormulaContext;
+import org.pentaho.reporting.libraries.formula.Formula;
+import org.pentaho.reporting.libraries.formula.FormulaContext;
+import org.pentaho.reporting.libraries.formula.LibFormulaBoot;
 
 @SuppressWarnings("nls")
 public class InlineEtlModelGeneratorTest {
@@ -782,6 +786,44 @@ public class InlineEtlModelGeneratorTest {
     Assert.assertEquals(1L, resultset.getValueAt(1, 1));
     Assert.assertEquals(1L, resultset.getValueAt(2, 1));
     
+  }
+  
+  public boolean evaluateFormula(FormulaContext context, String formulaStr, Object result) throws Exception {
+    final Formula formula = new Formula(formulaStr);
+    formula.initialize(context);
+    final Object eval = (Boolean)formula.evaluateTyped().getValue();
+    return result.equals(eval);
+  }
+  
+  @Test
+  public void testEqualsFunction() throws Exception {
+    LibFormulaBoot.getInstance().start();
+    DefaultFormulaContext context = new DefaultFormulaContext();
+    Assert.assertTrue(evaluateFormula(context, "EQUALS(1;1)", true));
+    Assert.assertTrue(evaluateFormula(context,"EQUALS(TRUE();FALSE())", Boolean.FALSE));
+    Assert.assertTrue(evaluateFormula(context,"EQUALS(TRUE();TRUE())", Boolean.TRUE));
+    Assert.assertTrue(evaluateFormula(context,"EQUALS(1;2)", Boolean.FALSE));
+    Assert.assertTrue(evaluateFormula(context,"EQUALS(1;1)", Boolean.TRUE));
+    Assert.assertTrue(evaluateFormula(context,"EQUALS(\"A\";\"B\")", Boolean.FALSE));
+    Assert.assertTrue(evaluateFormula(context,"EQUALS(\"A\";\"A\")", Boolean.TRUE));
+    Assert.assertTrue(evaluateFormula(context,"EQUALS(1.5;1.2)", Boolean.FALSE));
+    Assert.assertTrue(evaluateFormula(context,"EQUALS(1.5;1.5)", Boolean.TRUE));
+  }
+  
+  @Test
+  public void testInFunction() throws Exception {
+    LibFormulaBoot.getInstance().start();
+    DefaultFormulaContext context = new DefaultFormulaContext();
+    Assert.assertTrue(evaluateFormula(context, "IN(TRUE();FALSE())", Boolean.FALSE));
+    Assert.assertTrue(evaluateFormula(context, "IN(TRUE();FALSE();TRUE())", Boolean.TRUE));
+    Assert.assertTrue(evaluateFormula(context, "IN(TRUE();TRUE())", Boolean.TRUE));
+    Assert.assertTrue(evaluateFormula(context, "IN(1;2)", Boolean.FALSE));
+    Assert.assertTrue(evaluateFormula(context, "IN(1;1)", Boolean.TRUE));
+    Assert.assertTrue(evaluateFormula(context, "IN(1;2;1)", Boolean.TRUE));
+    Assert.assertTrue(evaluateFormula(context, "IN(\"A\";\"B\")", Boolean.FALSE));
+    Assert.assertTrue(evaluateFormula(context, "IN(\"A\";\"B\";\"A\")", Boolean.TRUE));
+    Assert.assertTrue(evaluateFormula(context, "IN(1.5;1.2)", Boolean.FALSE));
+    Assert.assertTrue(evaluateFormula(context, "IN(1.5;1.2;1.5)", Boolean.TRUE));
   }
 }
 
