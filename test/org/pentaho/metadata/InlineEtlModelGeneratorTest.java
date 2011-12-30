@@ -50,6 +50,7 @@ import org.pentaho.reporting.libraries.formula.DefaultFormulaContext;
 import org.pentaho.reporting.libraries.formula.Formula;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
 import org.pentaho.reporting.libraries.formula.LibFormulaBoot;
+import org.pentaho.reporting.libraries.formula.LibFormulaErrorValue;
 
 @SuppressWarnings("nls")
 public class InlineEtlModelGeneratorTest {
@@ -795,6 +796,62 @@ public class InlineEtlModelGeneratorTest {
     return result.equals(eval);
   }
   
+  public String evaluateBadFormula(FormulaContext context, String formulaStr, Object result) throws Exception {
+    final Formula formula = new Formula(formulaStr);
+    formula.initialize(context);
+    Object eval = formula.evaluateTyped().getValue();
+    return eval.toString();
+  }
+  
+  @Test
+  public void testContainsFunction() throws Exception {
+    LibFormulaBoot.getInstance().start();
+    DefaultFormulaContext context = new DefaultFormulaContext();
+    Assert.assertTrue(evaluateFormula(context,"CONTAINS(\"ABC\";\"B\")", true));
+    Assert.assertTrue(evaluateFormula(context,"CONTAINS(\"CBA\";\"Z\")", Boolean.FALSE));
+    Assert.assertTrue(evaluateFormula(context,"CONTAINS(\"This is a test\"; \"is a\")", Boolean.TRUE));
+    
+    String msg = evaluateBadFormula(context, "CONTAINS(1)", null);
+    Assert.assertTrue("Wrong Message: " + msg, msg.indexOf("Invalid number of arguments") >= 0);
+  }
+  
+  @Test
+  public void testLikeFunction() throws Exception {
+    LibFormulaBoot.getInstance().start();
+    DefaultFormulaContext context = new DefaultFormulaContext();
+    Assert.assertTrue(evaluateFormula(context,"LIKE(\"ABC\";\"*B*\")", true));
+    Assert.assertTrue(evaluateFormula(context,"LIKE(\"CBA\";\"*Z*\")", Boolean.FALSE));
+    Assert.assertTrue(evaluateFormula(context,"LIKE(\"This is a test\"; \"%test%\")", Boolean.TRUE));
+    
+    String msg = evaluateBadFormula(context, "LIKE(1)", null);
+    Assert.assertTrue("Wrong Message: " + msg, msg.indexOf("Invalid number of arguments") >= 0);
+  }
+  
+  @Test
+  public void testEndsWithFunction() throws Exception {
+    LibFormulaBoot.getInstance().start();
+    DefaultFormulaContext context = new DefaultFormulaContext();
+    Assert.assertTrue(evaluateFormula(context,"ENDSWITH(\"ABC\";\"C\")", true));
+    Assert.assertTrue(evaluateFormula(context,"ENDSWITH(\"CBA\";\"C\")", Boolean.FALSE));
+    Assert.assertTrue(evaluateFormula(context,"ENDSWITH(\"This is a test\"; \"test\")", Boolean.TRUE));
+    
+    String msg = evaluateBadFormula(context, "ENDSWITH(1)", null);
+    Assert.assertTrue("Wrong Message: " + msg, msg.indexOf("Invalid number of arguments") >= 0);
+  }
+  
+  
+  @Test
+  public void testBeginsWithFunction() throws Exception {
+    LibFormulaBoot.getInstance().start();
+    DefaultFormulaContext context = new DefaultFormulaContext();
+    Assert.assertTrue(evaluateFormula(context,"BEGINSWITH(\"ABC\";\"A\")", true));
+    Assert.assertTrue(evaluateFormula(context,"BEGINSWITH(\"CBA\";\"A\")", Boolean.FALSE));
+    Assert.assertTrue(evaluateFormula(context,"BEGINSWITH(\"This is a test\"; \"This\")", Boolean.TRUE));
+    
+    String msg = evaluateBadFormula(context, "BEGINSWITH(1)", null);
+    Assert.assertTrue("Wrong Message: " + msg, msg.indexOf("Invalid number of arguments") >= 0);
+  }
+  
   @Test
   public void testEqualsFunction() throws Exception {
     LibFormulaBoot.getInstance().start();
@@ -808,6 +865,12 @@ public class InlineEtlModelGeneratorTest {
     Assert.assertTrue(evaluateFormula(context,"EQUALS(\"A\";\"A\")", Boolean.TRUE));
     Assert.assertTrue(evaluateFormula(context,"EQUALS(1.5;1.2)", Boolean.FALSE));
     Assert.assertTrue(evaluateFormula(context,"EQUALS(1.5;1.5)", Boolean.TRUE));
+    
+    String msg = evaluateBadFormula(context, "EQUALS(1;1;1)", null);
+    Assert.assertTrue("Wrong Message: " + msg, msg.indexOf("Invalid number of arguments") >= 0);
+  
+    msg = evaluateBadFormula(context, "EQUALS(NA();NA())", null);
+    Assert.assertTrue("Wrong Message: " + msg, msg.indexOf("errorMessage=NA") >= 0);
   }
   
   @Test
@@ -824,6 +887,13 @@ public class InlineEtlModelGeneratorTest {
     Assert.assertTrue(evaluateFormula(context, "IN(\"A\";\"B\";\"A\")", Boolean.TRUE));
     Assert.assertTrue(evaluateFormula(context, "IN(1.5;1.2)", Boolean.FALSE));
     Assert.assertTrue(evaluateFormula(context, "IN(1.5;1.2;1.5)", Boolean.TRUE));
+    
+    String msg = evaluateBadFormula(context, "IN(1)", null);
+    Assert.assertTrue("Wrong Message: " + msg, msg.indexOf("Invalid number of arguments") >= 0);
+  
+    msg = evaluateBadFormula(context, "IN(NA();NA())", null);
+    Assert.assertTrue("Wrong Message: " + msg, msg.indexOf("errorMessage=NA") >= 0);
+    
   }
 }
 
