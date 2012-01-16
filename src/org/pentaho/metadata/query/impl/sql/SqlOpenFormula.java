@@ -45,6 +45,7 @@ import org.pentaho.reporting.libraries.formula.Formula;
 import org.pentaho.reporting.libraries.formula.lvalues.ContextLookup;
 import org.pentaho.reporting.libraries.formula.lvalues.FormulaFunction;
 import org.pentaho.reporting.libraries.formula.lvalues.LValue;
+import org.pentaho.reporting.libraries.formula.lvalues.PrefixTerm;
 import org.pentaho.reporting.libraries.formula.lvalues.StaticValue;
 import org.pentaho.reporting.libraries.formula.lvalues.Term;
 import org.pentaho.reporting.libraries.formula.operators.InfixOperator;
@@ -265,7 +266,7 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
       // check to see if it's a parameter
       if (fieldName.startsWith(PARAM)) {
         String paramName = fieldName.substring(6);
-        if (!parameters.containsKey(paramName)) {
+        if (parameters.get(paramName) == null) {
           throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_00XX_PARAM_NOT_FOUND", paramName)); //$NON-NLS-1$
         }
         return;
@@ -491,7 +492,9 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
       } else {
         throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0021_OPERATOR_NOT_SUPPORTED", val.toString())); //$NON-NLS-1$
       }
-    } else {
+    }else if (val instanceof PrefixTerm) {
+        return;
+    }else {
       throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0016_CLASS_TYPE_NOT_SUPPORTED", val.getClass().toString())); //$NON-NLS-1$
     }
   }
@@ -605,7 +608,10 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
         SQLOperatorGeneratorInterface gen = sqlDialect.getInfixOperatorSQLGenerator(val.toString());
         sb.append(" " + gen.getOperatorSQL() + " "); //$NON-NLS-1$ //$NON-NLS-2$
       }
-    } else {
+    } else  if (val instanceof PrefixTerm) {
+      PrefixTerm v = (PrefixTerm)val;
+      sb.append(v.toString());
+    }else {
       throw new PentahoMetadataException(Messages.getErrorString("SqlOpenFormula.ERROR_0016_CLASS_TYPE_NOT_SUPPORTED", val.getClass().toString())); //$NON-NLS-1$
     }
   }
