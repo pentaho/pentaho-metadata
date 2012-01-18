@@ -29,6 +29,7 @@ import org.pentaho.pms.mql.MappedQuery;
 import org.pentaho.pms.mql.Path;
 import org.pentaho.pms.mql.SQLGenerator;
 import org.pentaho.pms.mql.Selection;
+import org.pentaho.pms.mql.SpiderWebTestModel;
 import org.pentaho.pms.mql.WhereCondition;
 import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
@@ -3253,5 +3254,213 @@ public class MQLQueryImplTest extends MetadataTestBase {
     ); //$NON-NLS-1$
     
   }
+
+
+  @Test
+  public void testSpiderModelQuery1() throws Exception {
+    SpiderWebTestModel spiderweb = new SpiderWebTestModel();
+    BusinessModel model = spiderweb.getSpiderModel();
+    BusinessCategory bcat = model.getRootCategory();
+
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "HYPERSONIC", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+
+    // Get all business tables for future processing
+    BusinessTable bt01 = model.getBusinessTable(0); // zero-based index
+    BusinessTable bt02 = model.getBusinessTable(1); // zero-based index
+    BusinessTable bt03 = model.getBusinessTable(2); // zero-based index
+    BusinessTable bt04 = model.getBusinessTable(3); // zero-based index
+    BusinessTable bt05 = model.getBusinessTable(4); // zero-based index
+    BusinessTable bt06 = model.getBusinessTable(5); // zero-based index
+    BusinessTable bt07 = model.getBusinessTable(6); // zero-based index
+    BusinessTable bt08 = model.getBusinessTable(7); // zero-based index
+    BusinessTable bt09 = model.getBusinessTable(8); // zero-based index
+    BusinessTable bt10 = model.getBusinessTable(9); // zero-based index
+    BusinessTable bt11 = model.getBusinessTable(10); // zero-based index
+    BusinessTable bt12 = model.getBusinessTable(11); // zero-based index
+    BusinessTable bt13 = model.getBusinessTable(12); // zero-based index
+    BusinessTable bt14 = model.getBusinessTable(13); // zero-based index
+    BusinessTable bt15 = model.getBusinessTable(14); // zero-based index
+    BusinessTable bt16 = model.getBusinessTable(15); // zero-based index
+    BusinessTable bt17 = model.getBusinessTable(16); // zero-based index
+    
+    BusinessColumn bcs03 = bt03.getBusinessColumn(12); // bcs_xx columns are all the last column in the table. 
+    BusinessColumn bcs05 = bt05.getBusinessColumn(12); // bcs_xx columns are all the last column in the table. 
+
+    
+    MQLQueryImpl test1 = new MQLQueryImpl(null, model, databaseMeta, "en_US"); //$NON-NLS-1$
+    test1.addSelection(new Selection(bcs03));
+    test1.addSelection(new Selection(bcs05));
+    MappedQuery query1 = test1.getQuery();
+    String queryString1 = query1.getQuery();
+    // Valid "from" answers (because there's no weighting and the route is shortest) include:
+    // pt_03, pt_05, pt_13
+    // pt_03, pt_05, pt_12
+    // pt_03, pt_05, pt_11
+    // pt_03, pt_05, pt_10
+    // pt_03, pt_05, pt_09
+    // pt_03, pt_05, pt_06
+    // pt_03, pt_05, pt_04
+
+    // Current algorithm (SHORTEST) favors last relationship added - so this check
+    // looks for pt_13 - the code in SpiderWebTestModel adds the bt03->bt13 rel 
+    // as the last bt03 rel
+    assertEqualsIgnoreWhitespaces(
+        "SELECT " + 
+          " SUM(bt_03.pc_03) AS COL0 " + 
+          " ,SUM(bt_05.pc_05) AS COL1 " + 
+          " FROM  " + 
+          " pt_03 bt_03 " + 
+          " ,pt_05 bt_05 " + 
+          " ,pt_13 bt_13 " + 
+          " WHERE  " + 
+          " ( bt_03.pc_keya_03 = bt_13.pc_keyk_13 ) " + 
+          " AND ( bt_05.pc_keyb_05 = bt_13.pc_keyi_13 )", 
+        query1.getQuery()    
+    ); 
+    
+    // Now, do the same query, but with "LOWEST_SCORE"
+    ConceptInterface concept = model.getConcept();
+    ConceptPropertyString pathMethodPropertyString = new ConceptPropertyString("path_build_method", "LOWEST_SCORE");
+    concept.addProperty(pathMethodPropertyString);
+    // Set relative sizes to favor the bt03->bt06->bt05 relationship...
+    bt01.setRelativeSize(58);
+    bt02.setRelativeSize(177);
+    bt03.setRelativeSize(11);
+    bt04.setRelativeSize(43);
+    bt05.setRelativeSize(7);
+    bt06.setRelativeSize(17);
+    bt07.setRelativeSize(91);
+    bt08.setRelativeSize(113);
+    bt09.setRelativeSize(57);
+    bt10.setRelativeSize(35);
+    bt11.setRelativeSize(65);
+    bt12.setRelativeSize(25);
+    bt13.setRelativeSize(99);
+    bt14.setRelativeSize(97);
+    bt15.setRelativeSize(96);
+    bt16.setRelativeSize(95);
+    bt17.setRelativeSize(94);
+    
+    
+    MQLQueryImpl test2 = new MQLQueryImpl(null, model, databaseMeta, "en_US"); //$NON-NLS-1$
+    test2.addSelection(new Selection(bcs03));
+    test2.addSelection(new Selection(bcs05));
+    MappedQuery query2 = test2.getQuery();
+    String queryString2 = query2.getQuery();    
+    assertEqualsIgnoreWhitespaces(
+    " SELECT  " +
+    "           SUM(bt_03.pc_03) AS COL0 " +
+    "          ,SUM(bt_05.pc_05) AS COL1 " +
+    " FROM  " +
+    "           pt_03 bt_03 " +
+    "          ,pt_05 bt_05 " +
+    "          ,pt_06 bt_06 " +
+    " WHERE  " +
+    "           ( bt_03.pc_keya_03 = bt_06.pc_keyd_06 ) " +
+    "       AND ( bt_05.pc_keyb_05 = bt_06.pc_keyc_06 ) ", 
+        query2.getQuery()    
+    ); 
+
+    
+  }
+
+  @Test
+  public void testSpiderModelQuery2() throws Exception {
+    SpiderWebTestModel spiderweb = new SpiderWebTestModel();
+    BusinessModel model = spiderweb.getSpiderModel();
+    BusinessCategory bcat = model.getRootCategory();
+
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "HYPERSONIC", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+
+    // Get all business tables for future processing
+    BusinessTable bt05 = model.getBusinessTable(4); // zero-based index
+    BusinessTable bt14 = model.getBusinessTable(13); // zero-based index
+    BusinessTable bt17 = model.getBusinessTable(16); // zero-based index
+
+    BusinessColumn bcs05 = bt05.getBusinessColumn(12); // bcs_xx columns are all the last column in the table.
+    BusinessColumn bcs14 = bt14.getBusinessColumn(12); // bcs_xx columns are all the last column in the table.
+    BusinessColumn bcs17 = bt17.getBusinessColumn(12); // bcs_xx columns are all the last column in the table.
+
+    MQLQueryImpl test1 = new MQLQueryImpl(null, model, databaseMeta, "en_US"); //$NON-NLS-1$
+    test1.addSelection(new Selection(bcs05));
+    test1.addSelection(new Selection(bcs14));
+    test1.addSelection(new Selection(bcs17));
+    MappedQuery query1 = test1.getQuery();
+    String queryString1 = query1.getQuery();
+
+    // Valid "from" answers (because there's no weighting and the route is shortest) include:
+      // 05,13,14,16,17 (we're testing for this one)
+      // 05,12,14,16,17 
+      // 05,11,14,16,17 
+      // 05,07,14,16,17 
+      // 05,13,14,15,17 
+      // 05,12,14,15,17 
+      // 05,11,14,15,17 
+      // 05,07,14,15,17 
+    
+    assertEqualsIgnoreWhitespaces(
+      " SELECT  " +
+      "           SUM(bt_05.pc_05) AS COL0 " +
+      "          ,SUM(bt_14.pc_14) AS COL1 " +
+      "          ,SUM(bt_17.pc_17) AS COL2 " +
+      " FROM  " +
+      "           pt_05 bt_05 " +
+      "          ,pt_13 bt_13 " +
+      "          ,pt_14 bt_14 " +
+      "          ,pt_16 bt_16 " +
+      "          ,pt_17 bt_17 " +
+      " WHERE  " +
+      "           ( bt_05.pc_keyb_05 = bt_13.pc_keyi_13 ) " +
+      "       AND ( bt_14.pc_keyc_14 = bt_16.pc_keye_16 ) " +
+      "       AND ( bt_17.pc_keyd_17 = bt_13.pc_keye_13 ) " +
+      "       AND ( bt_17.pc_keyd_17 = bt_16.pc_keyg_16 ) ",
+      query1.getQuery()    
+    ); 
+  
+  }
+  
+  @Test
+  public void testSpiderModelQuery3() throws Exception {
+    SpiderWebTestModel spiderweb = new SpiderWebTestModel();
+    BusinessModel model = spiderweb.getSpiderModel();
+    BusinessCategory bcat = model.getRootCategory();
+
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "HYPERSONIC", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+
+    // Get all business tables for future processing
+    BusinessTable bt05 = model.getBusinessTable(4); // zero-based index
+    BusinessTable bt07 = model.getBusinessTable(6); // zero-based index
+    BusinessTable bt17 = model.getBusinessTable(16); // zero-based index
+
+    BusinessColumn bcs07 = bt07.getBusinessColumn(12); // bcs_xx columns are all the last column in the table.
+    BusinessColumn bcs05 = bt05.getBusinessColumn(12); // bcs_xx columns are all the last column in the table.
+    BusinessColumn bcs17 = bt17.getBusinessColumn(12); // bcs_xx columns are all the last column in the table.
+
+    MQLQueryImpl test1 = new MQLQueryImpl(null, model, databaseMeta, "en_US"); //$NON-NLS-1$
+    test1.addSelection(new Selection(bcs07));
+    test1.addSelection(new Selection(bcs05));
+    test1.addSelection(new Selection(bcs17));
+    MappedQuery query1 = test1.getQuery();
+    String queryString1 = query1.getQuery();
+
+    // In this case, the correct answer is 07/05/17 - There are direct joins (if you can ignore all the noise)
+    
+    assertEqualsIgnoreWhitespaces(
+        " SELECT  " +
+        "           SUM(bt_07.pc_07) AS COL0 " +
+        "          ,SUM(bt_05.pc_05) AS COL1 " +
+        "          ,SUM(bt_17.pc_17) AS COL2 " +
+        " FROM  " +
+        "           pt_05 bt_05 " +
+        "          ,pt_07 bt_07 " +
+        "          ,pt_17 bt_17 " +
+        " WHERE  " +
+        "           ( bt_05.pc_keyb_05 = bt_07.pc_keyd_07 ) " +
+        "       AND ( bt_17.pc_keyd_17 = bt_07.pc_keyb_07 ) ",
+      query1.getQuery()    
+    ); 
+  
+  }
+
 
 }

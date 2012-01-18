@@ -4761,12 +4761,212 @@ public class SqlGeneratorTest {
 
   }
 
+  @Test
+  public void testSpiderModelQuery1() throws Exception {
+    SpiderWebTestModel spiderweb = new SpiderWebTestModel();
+    LogicalModel model = spiderweb.getSpiderModel();
+    Category bcat = model.getCategories().get(0);
 
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "HYPERSONIC", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
 
+    // Get all business tables for future processing
+    LogicalTable bt01 = model.getLogicalTables().get(0); // zero-based index
+    LogicalTable bt02 = model.getLogicalTables().get(1); // zero-based index
+    LogicalTable bt03 = model.getLogicalTables().get(2); // zero-based index
+    LogicalTable bt04 = model.getLogicalTables().get(3); // zero-based index
+    LogicalTable bt05 = model.getLogicalTables().get(4); // zero-based index
+    LogicalTable bt06 = model.getLogicalTables().get(5); // zero-based index
+    LogicalTable bt07 = model.getLogicalTables().get(6); // zero-based index
+    LogicalTable bt08 = model.getLogicalTables().get(7); // zero-based index
+    LogicalTable bt09 = model.getLogicalTables().get(8); // zero-based index
+    LogicalTable bt10 = model.getLogicalTables().get(9); // zero-based index
+    LogicalTable bt11 = model.getLogicalTables().get(10); // zero-based index
+    LogicalTable bt12 = model.getLogicalTables().get(11); // zero-based index
+    LogicalTable bt13 = model.getLogicalTables().get(12); // zero-based index
+    LogicalTable bt14 = model.getLogicalTables().get(13); // zero-based index
+    LogicalTable bt15 = model.getLogicalTables().get(14); // zero-based index
+    LogicalTable bt16 = model.getLogicalTables().get(15); // zero-based index
+    LogicalTable bt17 = model.getLogicalTables().get(16); // zero-based index
+    
+    LogicalColumn bcs03 = bt03.getLogicalColumns().get(12); // bcs_xx columns are all the last column in the table. 
+    LogicalColumn bcs05 = bt05.getLogicalColumns().get(12); // bcs_xx columns are all the last column in the table. 
 
+    
+    Query test1 = new Query(null, model); //$NON-NLS-1$
+    test1.getSelections().add(new Selection(null, bcs03, null));
+    test1.getSelections().add(new Selection(null, bcs05, null));
+    SqlGenerator generator1 = new SqlGenerator();
+    MappedQuery query1 = generator1.generateSql(test1, "en_US", null, databaseMeta);
+    String queryString1 = query1.getQuery();
+    // Valid "from" answers (because there's no weighting and the route is shortest) include:
+    // pt_03, pt_05, pt_13
+    // pt_03, pt_05, pt_12
+    // pt_03, pt_05, pt_11
+    // pt_03, pt_05, pt_10
+    // pt_03, pt_05, pt_09
+    // pt_03, pt_05, pt_06
+    // pt_03, pt_05, pt_04
 
+    // Current algorithm (SHORTEST) favors last relationship added - so this check
+    // looks for pt_13 - the code in SpiderWebTestModel adds the bt03->bt13 rel 
+    // as the last bt03 rel
+    TestHelper.assertEqualsIgnoreWhitespaces(
+        "SELECT " + 
+          " SUM(bt_03.pc_03) AS COL0 " + 
+          " ,SUM(bt_05.pc_05) AS COL1 " + 
+          " FROM  " + 
+          " pt_03 bt_03 " + 
+          " ,pt_05 bt_05 " + 
+          " ,pt_13 bt_13 " + 
+          " WHERE  " + 
+          " ( bt_03.pc_keya_03 = bt_13.pc_keyk_13 ) " + 
+          " AND ( bt_05.pc_keyb_05 = bt_13.pc_keyi_13 )", 
+        query1.getQuery()    
+    ); 
+    
+    // Now, do the same query, but with "LOWEST_SCORE"
+    model.setProperty("path_build_method", "LOWEST_SCORE");
+    // Set relative sizes to favor the bt03->bt06->bt05 relationship...
+    bt01.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 58);
+    bt02.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 177);
+    bt03.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 11);
+    bt04.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 43);
+    bt05.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 7);
+    bt06.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 17);
+    bt07.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 91);
+    bt08.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 113);
+    bt09.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 57);
+    bt10.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 35);
+    bt11.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 65);
+    bt12.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 25);
+    bt13.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 99);
+    bt14.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 97);
+    bt15.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 96);
+    bt16.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 95);
+    bt17.setProperty(SqlPhysicalTable.RELATIVE_SIZE, 94);
+    
+    
+    Query test2 = new Query(null, model); //$NON-NLS-1$
+    SqlGenerator generator2 = new SqlGenerator();
+    test2.getSelections().add(new Selection(null, bcs03, null));
+    test2.getSelections().add(new Selection(null, bcs05, null));
+    MappedQuery query2 = generator2.generateSql(test1, "en_US", null, databaseMeta);
+    String queryString2 = query2.getQuery();    
+    TestHelper.assertEqualsIgnoreWhitespaces(
+    " SELECT  " +
+    "           SUM(bt_03.pc_03) AS COL0 " +
+    "          ,SUM(bt_05.pc_05) AS COL1 " +
+    " FROM  " +
+    "           pt_03 bt_03 " +
+    "          ,pt_05 bt_05 " +
+    "          ,pt_06 bt_06 " +
+    " WHERE  " +
+    "           ( bt_03.pc_keya_03 = bt_06.pc_keyd_06 ) " +
+    "       AND ( bt_05.pc_keyb_05 = bt_06.pc_keyc_06 ) ", 
+        query2.getQuery()    
+    ); 
 
+    
+  }
 
+  @Test
+  public void testSpiderModelQuery2() throws Exception {
+    SpiderWebTestModel spiderweb = new SpiderWebTestModel();
+    LogicalModel model = spiderweb.getSpiderModel();
+    Category bcat = model.getCategories().get(0);
 
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "HYPERSONIC", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+
+    // Get all business tables for future processing
+    LogicalTable bt05 = model.getLogicalTables().get(4); // zero-based index
+    LogicalTable bt14 = model.getLogicalTables().get(13); // zero-based index
+    LogicalTable bt17 = model.getLogicalTables().get(16); // zero-based index
+
+    LogicalColumn bcs05 = bt05.getLogicalColumns().get(12); // bcs_xx columns are all the last column in the table.
+    LogicalColumn bcs14 = bt14.getLogicalColumns().get(12); // bcs_xx columns are all the last column in the table.
+    LogicalColumn bcs17 = bt17.getLogicalColumns().get(12); // bcs_xx columns are all the last column in the table.
+
+    Query test1 = new Query(null, model); //$NON-NLS-1$
+    test1.getSelections().add(new Selection(null, bcs05, null));
+    test1.getSelections().add(new Selection(null, bcs14, null));
+    test1.getSelections().add(new Selection(null, bcs17, null));
+    SqlGenerator generator1 = new SqlGenerator();
+    MappedQuery query1 = generator1.generateSql(test1, "en_US", null, databaseMeta);
+    String queryString1 = query1.getQuery();
+
+    // Valid "from" answers (because there's no weighting and the route is shortest) include:
+      // 05,13,14,16,17 (we're testing for this one)
+      // 05,12,14,16,17 
+      // 05,11,14,16,17 
+      // 05,07,14,16,17 
+      // 05,13,14,15,17 
+      // 05,12,14,15,17 
+      // 05,11,14,15,17 
+      // 05,07,14,15,17 
+    
+    TestHelper.assertEqualsIgnoreWhitespaces(
+      " SELECT  " +
+      "           SUM(bt_05.pc_05) AS COL0 " +
+      "          ,SUM(bt_14.pc_14) AS COL1 " +
+      "          ,SUM(bt_17.pc_17) AS COL2 " +
+      " FROM  " +
+      "           pt_05 bt_05 " +
+      "          ,pt_13 bt_13 " +
+      "          ,pt_14 bt_14 " +
+      "          ,pt_16 bt_16 " +
+      "          ,pt_17 bt_17 " +
+      " WHERE  " +
+      "           ( bt_05.pc_keyb_05 = bt_13.pc_keyi_13 ) " +
+      "       AND ( bt_14.pc_keyc_14 = bt_16.pc_keye_16 ) " +
+      "       AND ( bt_17.pc_keyd_17 = bt_13.pc_keye_13 ) " +
+      "       AND ( bt_17.pc_keyd_17 = bt_16.pc_keyg_16 ) ",
+      query1.getQuery()    
+    ); 
+  
+  }
+  
+  @Test
+  public void testSpiderModelQuery3() throws Exception {
+    SpiderWebTestModel spiderweb = new SpiderWebTestModel();
+    LogicalModel model = spiderweb.getSpiderModel();
+    Category bcat = model.getCategories().get(0);
+
+    DatabaseMeta databaseMeta = new DatabaseMeta("", "HYPERSONIC", "Native", "", "", "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+
+    // Get all business tables for future processing
+    LogicalTable bt05 = model.getLogicalTables().get(4); // zero-based index
+    LogicalTable bt07 = model.getLogicalTables().get(6); // zero-based index
+    LogicalTable bt17 = model.getLogicalTables().get(16); // zero-based index
+
+    LogicalColumn bcs07 = bt07.getLogicalColumns().get(12); // bcs_xx columns are all the last column in the table.
+    LogicalColumn bcs05 = bt05.getLogicalColumns().get(12); // bcs_xx columns are all the last column in the table.
+    LogicalColumn bcs17 = bt17.getLogicalColumns().get(12); // bcs_xx columns are all the last column in the table.
+
+    Query test1 = new Query(null, model); //$NON-NLS-1$
+    test1.getSelections().add(new Selection(null, bcs07, null));
+    test1.getSelections().add(new Selection(null, bcs05, null));
+    test1.getSelections().add(new Selection(null, bcs17, null));
+    SqlGenerator generator1 = new SqlGenerator();
+    MappedQuery query1 = generator1.generateSql(test1, "en_US", null, databaseMeta);
+    String queryString1 = query1.getQuery();
+
+    // In this case, the correct answer is 07/05/17 - There are direct joins (if you can ignore all the noise)
+    
+    TestHelper.assertEqualsIgnoreWhitespaces(
+        " SELECT  " +
+        "           SUM(bt_07.pc_07) AS COL0 " +
+        "          ,SUM(bt_05.pc_05) AS COL1 " +
+        "          ,SUM(bt_17.pc_17) AS COL2 " +
+        " FROM  " +
+        "           pt_05 bt_05 " +
+        "          ,pt_07 bt_07 " +
+        "          ,pt_17 bt_17 " +
+        " WHERE  " +
+        "           ( bt_05.pc_keyb_05 = bt_07.pc_keyd_07 ) " +
+        "       AND ( bt_17.pc_keyd_17 = bt_07.pc_keyb_07 ) ",
+      query1.getQuery()    
+    ); 
+  
+  }
 
 }
