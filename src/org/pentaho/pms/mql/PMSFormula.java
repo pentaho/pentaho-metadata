@@ -38,11 +38,7 @@ import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.reporting.libraries.formula.EvaluationException;
 import org.pentaho.reporting.libraries.formula.Formula;
-import org.pentaho.reporting.libraries.formula.lvalues.ContextLookup;
-import org.pentaho.reporting.libraries.formula.lvalues.FormulaFunction;
-import org.pentaho.reporting.libraries.formula.lvalues.LValue;
-import org.pentaho.reporting.libraries.formula.lvalues.StaticValue;
-import org.pentaho.reporting.libraries.formula.lvalues.Term;
+import org.pentaho.reporting.libraries.formula.lvalues.*;
 import org.pentaho.reporting.libraries.formula.operators.InfixOperator;
 import org.pentaho.reporting.libraries.formula.parser.ParseException;
 import org.pentaho.reporting.libraries.formula.typing.coretypes.TextType;
@@ -505,6 +501,8 @@ public class PMSFormula implements FormulaTraversalInterface {
       } else {
         throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0021_OPERATOR_NOT_SUPPORTED", val.toString())); //$NON-NLS-1$
       }
+    } else if (val instanceof PrefixTerm) {
+        return;
     } else {
       throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0016_CLASS_TYPE_NOT_SUPPORTED", val.getClass().toString())); //$NON-NLS-1$
     }
