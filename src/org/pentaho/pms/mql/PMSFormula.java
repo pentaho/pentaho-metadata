@@ -594,6 +594,9 @@ public class PMSFormula implements FormulaTraversalInterface {
         SQLOperatorGeneratorInterface gen = sqlDialect.getInfixOperatorSQLGenerator(val.toString());
         sb.append(" " + gen.getOperatorSQL() + " "); //$NON-NLS-1$ //$NON-NLS-2$
       }
+    } else  if (val instanceof PrefixTerm) {
+      PrefixTerm v = (PrefixTerm)val;
+      sb.append(v.toString());
     } else {
       throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0016_CLASS_TYPE_NOT_SUPPORTED", val.getClass().toString())); //$NON-NLS-1$
     }
