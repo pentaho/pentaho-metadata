@@ -643,6 +643,15 @@ public class XmiParser {
                     Element lvlModelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
                     lvlModelElement.appendChild(createTaggedValue(doc, "HIERARCHY_LEVEL_UNIQUE_MEMBERS", level.isHavingUniqueMembers() ? "Y" : "N", idGen.getNextId())); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                     lvlModelElement.appendChild(createTaggedValue(doc, "HIERARCHY_LEVEL_REFERENCE_COLUMN", level.getReferenceColumn().getId(), idGen.getNextId())); //$NON-NLS-1$
+
+                    // add annotations as tagged values
+                    if(level.getAnnotations() != null & level.getAnnotations().size() > 0) {
+                      for(OlapAnnotation annotation : level.getAnnotations()) {
+                        Element annotationElement = createTaggedValue(doc, "ANNOTATION_" + annotation.getName(), annotation.getValue(), idGen.getNextId()); //$NON-NLS1$
+                        lvlModelElement.appendChild(annotationElement);
+                      }
+                    }
+
                     lvlElement.appendChild(lvlModelElement);
   
                     if (level.getLogicalColumns() != null && level.getLogicalColumns().size() > 0) {
@@ -657,16 +666,16 @@ public class XmiParser {
                     }
 
                     // add any annotations
-                    if(level.getAnnotations() != null & level.getAnnotations().size() > 0) {
-                      Element annotationsElement = doc.createElement("CWMOLAP:Level.annotation");
-                      for(OlapAnnotation annotation : level.getAnnotations()) {
-                        Element annotationElement = doc.createElement("CWMOLAP:Annotation");
-                        annotationElement.setAttribute("name", annotation.getName());
-                        annotationElement.setAttribute("value", annotation.getValue());
-                        annotationsElement.appendChild(annotationElement);
-                      }
-                      lvlElement.appendChild(annotationsElement);
-                    }
+//                    if(level.getAnnotations() != null & level.getAnnotations().size() > 0) {
+//                      Element annotationsElement = doc.createElement("CWMOLAP:Level.annotation");
+//                      for(OlapAnnotation annotation : level.getAnnotations()) {
+//                        Element annotationElement = doc.createElement("CWMOLAP:Annotation");
+//                        annotationElement.setAttribute("name", annotation.getName());
+//                        annotationElement.setAttribute("value", annotation.getValue());
+//                        annotationsElement.appendChild(annotationElement);
+//                      }
+//                      lvlElement.appendChild(annotationsElement);
+//                    }
                     
                     Element lvlHierLvlAssoc = doc.createElement("CWMOLAP:Level.hierarchyLevelAssociation"); //$NON-NLS-1$
                     Element lhla = doc.createElement("CWMOLAP:HierarchyLevelAssociation"); //$NON-NLS-1$
@@ -1686,15 +1695,25 @@ public class XmiParser {
                 referenceCols.add(model.findLogicalColumn(col.getAttribute("name"))); //$NON-NLS-1$
               }
 
-              //<CWMOLAP:Annotation name="Geo.Role" value="location"/>
-              NodeList annotations = level.getElementsByTagName("CWMOLAP:Annotation");
-              for(int count = 0; count < annotations.getLength(); count++) {
-                Element annotation = (Element)annotations.item(count);
-                OlapAnnotation annotationObj = new OlapAnnotation();
-                annotationObj.setName(annotation.getAttribute("name"));
-                annotationObj.setValue(annotation.getAttribute("value"));
-                levelObj.getAnnotations().add(annotationObj);
+              // CWM:TaggedValue tag="ANNOTATION_*
+              for(String taggedValueKey : nvp.keySet()) {
+                if(taggedValueKey != null && taggedValueKey.startsWith("ANNOTATION_")) {
+                  String name = taggedValueKey.substring(11);
+                  String value = nvp.get(taggedValueKey);
+                  OlapAnnotation annotationObj = new OlapAnnotation();
+                  annotationObj.setName(name);
+                  annotationObj.setValue(value);
+                  levelObj.getAnnotations().add(annotationObj);                  
+                }
               }
+//              NodeList annotations = level.getElementsByTagName("CWMOLAP:Annotation");
+//              for(int count = 0; count < annotations.getLength(); count++) {
+//                Element annotation = (Element)annotations.item(count);
+//                OlapAnnotation annotationObj = new OlapAnnotation();
+//                annotationObj.setName(annotation.getAttribute("name"));
+//                annotationObj.setValue(annotation.getAttribute("value"));
+//                levelObj.getAnnotations().add(annotationObj);
+//              }
 
               levelObj.setLogicalColumns(referenceCols);
             }
