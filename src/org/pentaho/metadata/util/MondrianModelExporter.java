@@ -54,7 +54,13 @@ public class MondrianModelExporter
 
         xml.append("<Schema "); //$NON-NLS-1$
         xml.append("name=\""); //$NON-NLS-1$
-        XMLHandler.appendReplacedChars(xml, businessModel.getName(locale));
+      
+        String name = businessModel.getName(locale);
+        if (businessModel.getProperty("AGILE_BI_GENERATED_SCHEMA") != null) {
+          // clean up the _OLAP suffix on the name
+          name = name.replace("_OLAP", "");
+        }
+        XMLHandler.appendReplacedChars(xml, name);
         xml.append("\">"); //$NON-NLS-1$
         xml.append(Util.CR);
         

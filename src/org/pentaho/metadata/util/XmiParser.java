@@ -351,7 +351,7 @@ public class XmiParser {
         String idstr = idGen.getNextId();
         mdbSchema.setAttribute("xmi.id", idstr); //$NON-NLS-1$
         createDescriptions(doc, model, "CWMMDB:Schema", idstr, allDescriptions, idGen); //$NON-NLS-1$
-        
+
         Element ownedElement = doc.createElement("CWM:Namespace.ownedElement"); //$NON-NLS-1$
         mdbSchema.appendChild(ownedElement);
         for (Category category : model.getCategories()) {
