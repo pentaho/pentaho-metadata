@@ -1236,12 +1236,14 @@ public class XmiParser {
           String biztbl = nvp.get("BUSINESS_COLUMN_BUSINESS_TABLE"); //$NON-NLS-1$
           String pcol = nvp.get("BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME"); //$NON-NLS-1$
           LogicalTable parent = logicalModel.findLogicalTable(biztbl);
-          col.setLogicalTable(parent);
-          parent.addLogicalColumn(col);
-          for (IPhysicalColumn phycol : parent.getPhysicalTable().getPhysicalColumns()) {
-            if (phycol.getId().equals(pcol)) {
-              col.setPhysicalColumn(phycol);
-              break;
+          if(parent != null) {
+            col.setLogicalTable(parent);
+            parent.addLogicalColumn(col);
+            for (IPhysicalColumn phycol : parent.getPhysicalTable().getPhysicalColumns()) {
+              if (phycol.getId().equals(pcol)) {
+                col.setPhysicalColumn(phycol);
+                break;
+              }
             }
           }
         }
