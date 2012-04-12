@@ -84,7 +84,7 @@ public class PhysicalTableImporter {
   }
 
   public static final String beautifyName(String name) {
-    return StringUtils.capitalize(name.replace("_", " ")); //$NON-NLS-1$  //$NON-NLS-2$
+    return StringUtils.capitalize(name.replace("\"", "").replace("_", " ")); //$NON-NLS-1$  //$NON-NLS-2$
   }
 
   private static IPhysicalColumn importPhysicalColumnDefinition(ValueMetaInterface v, SqlPhysicalTable physicalTable,
