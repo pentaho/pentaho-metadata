@@ -62,7 +62,7 @@ public class Util {
       return name;
     }
     name = name.replaceAll("[ .,:(){}\\[\\]]", "_"); //$NON-NLS-1$ //$NON-NLS-2$
-    name = name.replaceAll("[\"]", ""); //$NON-NLS-1$ //$NON-NLS-2$
+    name = name.replaceAll("[\"`']", ""); //$NON-NLS-1$ //$NON-NLS-2$
     name = name.replaceAll("[*]","_TIMES_"); //$NON-NLS-1$ //$NON-NLS-2$
     name = name.replaceAll("[/]","_DIVIDED_BY_"); //$NON-NLS-1$ //$NON-NLS-2$
     name = name.replaceAll("[+]","_PLUS_"); //$NON-NLS-1$ //$NON-NLS-2$

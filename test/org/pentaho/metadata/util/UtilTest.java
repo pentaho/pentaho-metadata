@@ -9,6 +9,8 @@ public class UtilTest {
   @Test
   public void testToId() {
     assertEquals("Hello_World", Util.toId("\"Hello World\""));
+    assertEquals("Hello_World", Util.toId("`Hello World`"));
+    assertEquals("Hello_World", Util.toId("'Hello World'"));
     assertEquals("Hello_TIMES_World", Util.toId("\"Hello*World\""));
     assertEquals("Hello_World", Util.toId("\"Hello.World\""));
     assertEquals("Hello_DIVIDED_BY_World", Util.toId("\"Hello/World\""));

@@ -633,7 +633,8 @@ public class Const
         name = Const.replace(name, "___", "_"); //$NON-NLS-1$ //$NON-NLS-2$
         name = Const.replace(name, "__", "_"); //$NON-NLS-1$ //$NON-NLS-2$
         name = Const.replace(name, "\"", ""); //$NON-NLS-1$ //$NON-NLS-2$
-
+        name = Const.replace(name, "`", ""); //$NON-NLS-1$ //$NON-NLS-2$
+        name = Const.replace(name, "'", ""); //$NON-NLS-1$ //$NON-NLS-2$
       // this line replaces any non ascii chars with an underscore
         name = name.replaceAll("[^a-zA-Z_0-9]", "_"); //$NON-NLS-1$ //$NON-NLS-2$
         
