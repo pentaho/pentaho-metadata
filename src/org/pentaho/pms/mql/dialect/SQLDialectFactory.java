@@ -69,7 +69,10 @@ public class SQLDialectFactory {
     addDialect(new IngresDialect());
     addDialect(new FirebirdDialect());
     addDialect(new LucidDbDialect());
-    addDialect(new HiveDialect());
+    // Conditionally load the Hive Dialect if it can be loaded
+    if (HiveDialect.canLoad()) {
+      addDialect(new HiveDialect());
+    }
   }
   
   /**

@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.di.core.exception.KettleDatabaseException;
 import org.pentaho.metadata.messages.Messages;
 import org.pentaho.pms.mql.dialect.SQLQueryModel.SQLOrderBy;
 import org.pentaho.pms.mql.dialect.SQLQueryModel.SQLSelection;
@@ -60,6 +62,19 @@ public class HiveDialect extends DefaultSQLDialect {
   
   public HiveDialect() {
     super("HIVE"); //$NON-NLS-1$
+  }
+
+  /**
+   * Determine if this dialect can be loaded in the current environment.
+   *
+   * @return True if the Hive Database Meta Plugin is registered with the Kettle environment
+   */
+  public static final boolean canLoad() {
+    try {
+      return DatabaseMeta.getDatabaseInterface("HIVE") != null;
+    } catch (KettleDatabaseException ex) {
+      return false;
+    }
   }
 
   /**

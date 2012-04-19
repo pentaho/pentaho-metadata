@@ -30,6 +30,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.pentaho.di.core.Const;
 import org.pentaho.di.core.KettleEnvironment;
+import org.pentaho.di.core.database.DatabaseInterface;
+import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.database.mock.MockHiveDatabaseMeta;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.pms.MetadataTestBase;
@@ -554,5 +556,21 @@ public class HiveDialectTest {
     String expected = "SELECT DISTINCT \n          a.a_column\nFROM \n          A a\nORDER BY \n          a_column ASC\n";
     String result = new HiveDialect().generateSelectStatement(query);
     assertEquals(expected, result);
+  }
+
+  @Test
+  public void testCanLoad() {
+    // We should be able to load ourselves since we've registered the MockHiveDatabaseMeta
+    assertTrue(HiveDialect.canLoad());
+
+    // Remove the MockHiveDatabaseMeta. Without it we shouldn't be able to load HiveDialect
+    DatabaseInterface hiveMeta = DatabaseMeta.getDatabaseInterfacesMap().get("HIVE");
+    DatabaseMeta.getDatabaseInterfacesMap().put("HIVE", null);
+    try {
+      assertFalse(HiveDialect.canLoad());
+    } finally {
+      // Restore the database meta so any other tests that depend on it will work
+      DatabaseMeta.getDatabaseInterfacesMap().put("HIVE", hiveMeta);
+    }
   }
 }
