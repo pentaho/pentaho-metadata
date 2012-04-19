@@ -68,7 +68,8 @@ public class SQLDialectFactory {
     addDialect(new SybaseDialect());
     addDialect(new IngresDialect());
     addDialect(new FirebirdDialect());
-    addDialect(new LucidDbDialect()); 
+    addDialect(new LucidDbDialect());
+    addDialect(new HiveDialect());
   }
   
   /**

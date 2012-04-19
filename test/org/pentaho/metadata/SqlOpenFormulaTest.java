@@ -44,6 +44,7 @@ import org.pentaho.metadata.query.model.util.QueryXmlHelper;
 import org.pentaho.metadata.repository.InMemoryMetadataDomainRepository;
 import org.pentaho.metadata.util.ThinModelConverter;
 import org.pentaho.metadata.util.XmiParser;
+import org.pentaho.pms.MetadataTestBase;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.factory.CwmSchemaFactory;
@@ -66,7 +67,7 @@ public class SqlOpenFormulaTest {
 
   @BeforeClass
   public static void initKettle() throws Exception {
-    KettleEnvironment.init(false);
+    MetadataTestBase.initKettleEnvironment();
   }
 
   static LogicalModel ordersModel;

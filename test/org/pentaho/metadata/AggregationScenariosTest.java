@@ -18,8 +18,10 @@ package org.pentaho.metadata;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.pentaho.di.core.Const;
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.di.core.database.mock.MockHiveDatabaseMeta;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.IPhysicalColumn;
 import org.pentaho.metadata.model.LogicalColumn;
@@ -34,12 +36,13 @@ import org.pentaho.metadata.query.impl.sql.MappedQuery;
 import org.pentaho.metadata.query.impl.sql.SqlGenerator;
 import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.Selection;
+import org.pentaho.pms.MetadataTestBase;
 
 public class AggregationScenariosTest {
 
   @BeforeClass
   public static void initKettle() throws Exception {
-    KettleEnvironment.init(false);
+    MetadataTestBase.initKettleEnvironment();
   }
   
   /**

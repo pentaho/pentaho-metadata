@@ -19,8 +19,10 @@ package org.pentaho.metadata;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.pentaho.di.core.Const;
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.di.core.database.mock.MockHiveDatabaseMeta;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalColumn;
@@ -42,12 +44,13 @@ import org.pentaho.metadata.query.model.Order;
 import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.Order.Type;
 import org.pentaho.metadata.repository.InMemoryMetadataDomainRepository;
+import org.pentaho.pms.MetadataTestBase;
 
 public class AdvancedQueryTest {
   
   @BeforeClass
   public static void initKettle() throws Exception {
-    KettleEnvironment.init(false);
+    MetadataTestBase.initKettleEnvironment();
   }
   
   @Test

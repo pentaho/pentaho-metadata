@@ -23,7 +23,7 @@ import org.pentaho.di.core.plugins.DatabaseMetaPlugin;
 import org.pentaho.di.core.row.ValueMetaInterface;
 
 /**
- * Mock database interface for Hive so we don't have to depend on the Hadoop Plugin EE project at all.  It is purely a runtime dependency.
+ * Mock database interface for Hive so we don't have to depend on the Pentaho Big Data Plugin project at all.  It is purely a runtime dependency.
  * 
  * @author Jordan Ganoff (jganoff@pentaho.com)
  *

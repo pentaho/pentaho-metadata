@@ -32,6 +32,7 @@ import org.pentaho.di.core.Const;
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.database.mock.MockHiveDatabaseMeta;
 import org.pentaho.di.core.exception.KettleException;
+import org.pentaho.pms.MetadataTestBase;
 import org.pentaho.pms.mql.dialect.SQLQueryModel.OrderType;
 
 /**
@@ -45,9 +46,7 @@ public class HiveDialectTest {
 
   @BeforeClass
   public static void initKettle() throws KettleException {
-    // Register the Mock Hive Kettle Database Plugin
-    System.setProperty(Const.KETTLE_PLUGIN_CLASSES, MockHiveDatabaseMeta.class.getName()); //$NON-NLS-1$
-    KettleEnvironment.init(false);
+    MetadataTestBase.initKettleEnvironment();
   }
 
   @Test

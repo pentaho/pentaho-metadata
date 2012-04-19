@@ -25,7 +25,9 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.pentaho.commons.connection.IPentahoResultSet;
+import org.pentaho.di.core.Const;
 import org.pentaho.di.core.KettleEnvironment;
+import org.pentaho.di.core.database.mock.MockHiveDatabaseMeta;
 import org.pentaho.metadata.messages.LocaleHelper;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
@@ -46,6 +48,7 @@ import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.metadata.query.model.Order.Type;
 import org.pentaho.metadata.util.InlineEtlModelGenerator;
+import org.pentaho.pms.MetadataTestBase;
 import org.pentaho.reporting.libraries.formula.DefaultFormulaContext;
 import org.pentaho.reporting.libraries.formula.Formula;
 import org.pentaho.reporting.libraries.formula.FormulaContext;
@@ -58,7 +61,7 @@ public class InlineEtlModelGeneratorTest {
   
   @BeforeClass
   public static void initKettle() throws Exception {
-    KettleEnvironment.init(false);
+    MetadataTestBase.initKettleEnvironment();
   }
   
   @Test

@@ -19,8 +19,10 @@ package org.pentaho.metadata;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.pentaho.di.core.Const;
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.di.core.database.mock.MockHiveDatabaseMeta;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.LogicalColumn;
@@ -37,12 +39,13 @@ import org.pentaho.metadata.query.model.Constraint;
 import org.pentaho.metadata.query.model.Order;
 import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.Selection;
+import org.pentaho.pms.MetadataTestBase;
 
 public class ComplexExpressionsTest {
   
   @BeforeClass
   public static void initKettle() throws KettleException {
-    KettleEnvironment.init(false);
+    MetadataTestBase.initKettleEnvironment();
   }
   
 	@Test

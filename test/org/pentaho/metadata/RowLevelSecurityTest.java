@@ -23,8 +23,10 @@ import java.util.Map;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.pentaho.di.core.Const;
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.di.core.database.mock.MockHiveDatabaseMeta;
 import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.concept.security.RowLevelSecurity;
 import org.pentaho.metadata.model.concept.security.SecurityOwner;
@@ -35,13 +37,14 @@ import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.metadata.repository.InMemoryMetadataDomainRepository;
 import org.pentaho.metadata.util.RowLevelSecurityHelper;
+import org.pentaho.pms.MetadataTestBase;
 
 
 public class RowLevelSecurityTest {
   
   @BeforeClass
   public static void initKettle() throws Exception {
-    KettleEnvironment.init(false);
+    MetadataTestBase.initKettleEnvironment();
   }
   
   @Test

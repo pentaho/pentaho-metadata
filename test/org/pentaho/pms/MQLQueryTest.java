@@ -54,7 +54,7 @@ public class MQLQueryTest extends TestCase {
   CwmSchemaFactory cwmSchemaFactory = null;
 
   public void setUp() throws Exception {
-    KettleEnvironment.init(false);
+    MetadataTestBase.initKettleEnvironment();
     if (ordersModel == null || cwmSchemaFactory == null) {
       loadOrdersModel();
     }

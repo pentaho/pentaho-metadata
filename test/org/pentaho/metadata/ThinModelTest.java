@@ -49,6 +49,7 @@ import org.pentaho.metadata.util.LocalizationUtil;
 import org.pentaho.metadata.util.SerializationService;
 import org.pentaho.metadata.util.ThinModelConverter;
 import org.pentaho.metadata.util.XmiParser;
+import org.pentaho.pms.MetadataTestBase;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.factory.CwmSchemaFactory;
 import org.pentaho.pms.messages.util.LocaleHelper;
@@ -63,7 +64,7 @@ public class ThinModelTest {
   
   @BeforeClass
   public static void initKettle() throws Exception {
-    KettleEnvironment.init(false);
+    MetadataTestBase.initKettleEnvironment();
   }
   
   @Test

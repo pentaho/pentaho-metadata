@@ -34,6 +34,7 @@ import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.metadata.query.model.util.QueryXmlHelper;
 import org.pentaho.metadata.repository.InMemoryMetadataDomainRepository;
 import org.pentaho.metadata.util.ThinModelConverter;
+import org.pentaho.pms.MetadataTestBase;
 import org.pentaho.pms.mql.MQLQueryImpl;
 
 @SuppressWarnings("deprecation")
@@ -41,7 +42,7 @@ public class ThinQueryTest {
   
   @BeforeClass
   public static void initKettle() throws Exception {
-    KettleEnvironment.init(false);
+    MetadataTestBase.initKettleEnvironment();
   }
   
   @Test

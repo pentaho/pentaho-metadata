@@ -18,16 +18,25 @@ package org.pentaho.pms;
 
 import junit.framework.TestCase;
 
+import org.pentaho.di.core.Const;
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.di.core.database.mock.MockHiveDatabaseMeta;
+import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.pms.mql.dialect.SQLDialectInterface;
 import org.pentaho.pms.mql.dialect.SQLQueryModel;
 import org.pentaho.pms.mql.dialect.SQLQueryModel.OrderType;
 
 public class MetadataTestBase extends TestCase {
-	
-  public void setUp() throws Exception {
+
+  public static void initKettleEnvironment() throws KettleException {
+    // Register the Mock Hive Kettle Database Plugin
+    System.setProperty(Const.KETTLE_PLUGIN_CLASSES, MockHiveDatabaseMeta.class.getName()); //$NON-NLS-1$
     KettleEnvironment.init(false);
+  }
+
+  public void setUp() throws Exception {
+    initKettleEnvironment();
   }
   
 	public void testOracleDatabaseMeta() {

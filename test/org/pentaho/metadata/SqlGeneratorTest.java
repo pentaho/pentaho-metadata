@@ -26,8 +26,10 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.pentaho.commons.connection.memory.MemoryMetaData;
+import org.pentaho.di.core.Const;
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.di.core.database.mock.MockHiveDatabaseMeta;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.IPhysicalColumn;
@@ -53,6 +55,7 @@ import org.pentaho.metadata.query.model.Parameter;
 import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.metadata.query.model.util.QueryModelMetaData;
+import org.pentaho.pms.MetadataTestBase;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.mql.dialect.SQLQueryModel;
 
@@ -61,7 +64,7 @@ public class SqlGeneratorTest {
   
   @BeforeClass
   public static void initKettle() throws KettleException {
-    KettleEnvironment.init(false);
+    MetadataTestBase.initKettleEnvironment();
   }
   
   @Test
