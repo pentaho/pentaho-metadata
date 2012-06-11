@@ -12,43 +12,27 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation.  All rights reserved.
+ * Copyright (c) 2011 Pentaho Corporation.  All rights reserved.
  * 
  * Created Jun, 2012
  * @author jdixon
- */
-package org.pentaho.metadata.datatable;
+*/
+package org.pentaho.metadata.model.thin;
+
+import java.util.Comparator;
 
 /**
- * An object that stores the @see Cell objects for a row in a @see DataTable
+ * compares two model info objects so that they can be sorted by name
  * @author jamesdixon
  *
  */
-public class Row {
+public class ModelInfoComparator implements Comparator {
 
-	private Cell c[];
-
-	public Row() {
-	}
-	
-	public Row( Cell cells[] ) {
-		c = cells;
-	}
-
-	/**
-	 * Returns the @see cell objects for this row
-	 * @return
-	 */
-	public Cell[] getc() {
-		return c;
-	}
-
-	/**
-	 * Sets the cells for this row
-	 * @param c
-	 */
-	public void setc(Cell[] c) {
-		this.c = c;
-	}
+  @Override
+  public int compare(Object obj1, Object obj2) {
+    ModelInfo model1 = (ModelInfo) obj1;
+    ModelInfo model2 = (ModelInfo) obj2;
+    return model1.getName().compareTo(model2.getName());
+  }
 
 }

@@ -17,38 +17,42 @@
  * Created Jun, 2012
  * @author jdixon
  */
-package org.pentaho.metadata.datatable;
+package org.pentaho.metadata.model.thin;
 
 /**
- * An object that stores the @see Cell objects for a row in a @see DataTable
+ * Concrete, lightweight, serializable object that holds information about a model provider
  * @author jamesdixon
  *
  */
-public class Row {
+public class Provider {
 
-	private Cell c[];
+	private String id;
+	
+	private String name;
 
-	public Row() {
+	public Provider() {
+		
 	}
 	
-	public Row( Cell cells[] ) {
-		c = cells;
+	public Provider( String id, String name ) {
+		this.id = id;
+		this.name = name;
+	}
+	
+	public String getId() {
+		return id;
 	}
 
-	/**
-	 * Returns the @see cell objects for this row
-	 * @return
-	 */
-	public Cell[] getc() {
-		return c;
+	public void setId(String id) {
+		this.id = id;
 	}
 
-	/**
-	 * Sets the cells for this row
-	 * @param c
-	 */
-	public void setc(Cell[] c) {
-		this.c = c;
+	public String getName() {
+		return name;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+	
 }

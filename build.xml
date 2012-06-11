@@ -24,4 +24,16 @@
       FOUND IN build-res/subfloor.xml.
     --> 
 
+	  <target name="jar.splint"
+	          depends="compile,set-build.id,generate.manifest">
+	  	
+	    <delete file="${dist.dir}/${ivy.artifact.id}-${project.revision}-splint.jar" />
+	  	
+	    <jar destfile="${dist.dir}/${ivy.artifact.id}-${project.revision}-splint.jar" manifest="${dist.manifest.file}"
+	    	basedir="${classes.dir}"
+	    	includes="org/pentaho/metadata/model/thin/*.class,org/pentaho/metadata/datatable/*.class,org/pentaho/metadata/registry/*.class"
+	    	>
+	    </jar>
+	  </target>
+	
 </project>
