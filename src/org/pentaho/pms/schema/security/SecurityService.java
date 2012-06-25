@@ -252,9 +252,9 @@ public class SecurityService extends ChangedFlag implements Cloneable {
     return SERVICE_TYPE_ALL;
   }
 
-  public Node getContent() throws Exception {
+  public Node getContent(String url) throws Exception {
     if (hasService()) {
-      return getContentFromServer();
+      return getContentFromServer(url);
     } else if (hasFile()) {
       return getContentFromFile();
     }
@@ -266,9 +266,8 @@ public class SecurityService extends ChangedFlag implements Cloneable {
    * @return the requested security reference information
    * @throws Exception in case something goes awry 
    */
-  public Node getContentFromServer() throws PentahoMetadataException  {
+  public Node getContentFromServer(String urlToUse) throws PentahoMetadataException  {
     
-    String urlToUse = getURL();
     String result = null;
     int status = -1;
 
@@ -372,7 +371,9 @@ public class SecurityService extends ChangedFlag implements Cloneable {
         throw new PentahoMetadataException(msg, e); 
         
       }
+      return doc.getFirstChild();
       
+      /*
       Node envelope = XMLHandler.getSubNode(doc, "SOAP-ENV:Envelope"); //$NON-NLS-1$
       if (envelope != null) {
         Node body = XMLHandler.getSubNode(envelope, "SOAP-ENV:Body"); //$NON-NLS-1$
@@ -384,7 +385,7 @@ public class SecurityService extends ChangedFlag implements Cloneable {
           }
         }
       }
-      
+      */
     }
     return null;
 
@@ -406,18 +407,19 @@ public class SecurityService extends ChangedFlag implements Cloneable {
   }
 
   public String getContentAsXMLString() throws Exception {
-    Node content = getContent();
+    Node content = getContent(getURL(null));
     if (content == null)
       return null;
     return content.getChildNodes().toString();
   }
 
-  public String getURL() {
+  public String getURL(String serviceTypeCode) {
     StringBuffer url = new StringBuffer();
     url.append(serviceURL);
-    url.append("?").append(ACTION).append("=").append(serviceName); //$NON-NLS-1$ //$NON-NLS-2$
-    url.append("&").append(detailNameParameter).append("=").append(getServiceTypeCode()); //$NON-NLS-1$ //$NON-NLS-2$
-
+    if(serviceTypeCode != null) {
+    	if(!serviceURL.endsWith("/")) url.append("/");
+    	url.append(serviceTypeCode);
+    }
     return url.toString();
   }
 
@@ -447,17 +449,20 @@ public class SecurityService extends ChangedFlag implements Cloneable {
     List<String> users = new ArrayList<String>();
     if (hasService() || hasFile()) {
       try {
-        Node contentNode = getContent();
-
-        // Load the users
-        Node usersNode = XMLHandler.getSubNode(contentNode, "users"); //$NON-NLS-1$
-        int nrUsers = XMLHandler.countNodes(usersNode, "user"); //$NON-NLS-1$
-        for (int i = 0; i < nrUsers; i++) {
-          Node userNode = XMLHandler.getSubNodeByNr(usersNode, "user", i); //$NON-NLS-1$
-          String username = XMLHandler.getNodeValue(userNode);
-          if (username != null)
-            users.add(username);
-        }
+    	  
+    	if(getDetailServiceType() == SecurityService.SERVICE_TYPE_USERS || getDetailServiceType() == SERVICE_TYPE_ALL) {  
+	    	String url = getURL(serviceTypeCodes[SERVICE_TYPE_USERS]);  
+	        Node contentNode = getContent(url);
+	
+	        // Load the users
+	        int nrUsers = XMLHandler.countNodes(contentNode, "users"); //$NON-NLS-1$
+	        for (int i = 0; i < nrUsers; i++) {
+	          Node userNode = XMLHandler.getSubNodeByNr(contentNode, "users", i); //$NON-NLS-1$
+	          String username = XMLHandler.getNodeValue(userNode);
+	          if (username != null)
+	            users.add(username);
+	        }
+    	}
       } catch (PentahoMetadataException ex) {
         log.logError(Messages.getString("SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML"), ex); //$NON-NLS-1$
       } catch (Exception e) {
@@ -471,17 +476,19 @@ public class SecurityService extends ChangedFlag implements Cloneable {
     List<String> roles = new ArrayList<String>();
     if (hasService() || hasFile()) {
       try {
-        Node contentNode = getContent();
-
-        // Load the roles
-        Node rolesNode = XMLHandler.getSubNode(contentNode, "roles"); //$NON-NLS-1$
-        int nrRoles = XMLHandler.countNodes(rolesNode, "role"); //$NON-NLS-1$
-        for (int i=0;i<nrRoles;i++)
-        {
-            Node roleNode = XMLHandler.getSubNodeByNr(rolesNode, "role", i); //$NON-NLS-1$
-            String rolename = XMLHandler.getNodeValue(roleNode);
-            if (rolename!=null) roles.add(rolename);
-        }
+    	  if(getDetailServiceType() == SecurityService.SERVICE_TYPE_ROLES || getDetailServiceType() == SERVICE_TYPE_ALL) {  
+	    	String url = getURL(serviceTypeCodes[SERVICE_TYPE_ROLES]); 
+	        Node contentNode = getContent(url);
+	
+	        // Load the roles
+	        int nrRoles = XMLHandler.countNodes(contentNode, "roles"); //$NON-NLS-1$
+	        for (int i=0;i<nrRoles;i++)
+	        {
+	            Node roleNode = XMLHandler.getSubNodeByNr(contentNode, "roles", i); //$NON-NLS-1$
+	            String rolename = XMLHandler.getNodeValue(roleNode);
+	            if (rolename!=null) roles.add(rolename);
+	        }
+    	  }
       } catch (PentahoMetadataException ex) {
         log.logError(Messages.getString("SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML"), ex); //$NON-NLS-1$
       } catch (Exception e) {
@@ -495,7 +502,7 @@ public class SecurityService extends ChangedFlag implements Cloneable {
     List<SecurityACL> acls = new ArrayList<SecurityACL>();
     if (hasService() || hasFile()) {
       try {
-        Node contentNode = getContent();
+        Node contentNode = getContent(getURL(null));
 
         // Load the ACLs
         Node aclsNode = XMLHandler.getSubNode(contentNode, "acls"); //$NON-NLS-1$

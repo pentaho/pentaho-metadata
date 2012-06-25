@@ -429,7 +429,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
 
         cwm.addTaggedValue(cwmEvent, CWM.TAG_SECURITY_FILENAME, securityService.getFilename());
 
-        cwm.addTaggedValue(cwmEvent, CWM.TAG_SECURITY_URL, securityService.getURL());
+        cwm.addTaggedValue(cwmEvent, CWM.TAG_SECURITY_URL, securityService.getURL(null));
     }
 
 
