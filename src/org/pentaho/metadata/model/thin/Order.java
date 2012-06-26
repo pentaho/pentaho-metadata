@@ -25,16 +25,20 @@ public class Order {
 
   private static final long serialVersionUID = 4824503466813354111L;
 
-  private String column;
+  private String elementId;
   
-  private String category;
+  private String parentId;
 
   private String orderType;
 
-  public String getColumn() {
-    return column;
-  }
+  public String getElementId() {
+	    return this.elementId;    
+	  }
 
+  public void setElementId(String elementId) {
+	    this.elementId = elementId;  
+	  }
+  
   public String getOrderType() {
     return orderType;
   }
@@ -43,15 +47,11 @@ public class Order {
     this.orderType = orderType;
   }
 
-  public void setColumn(String column) {
-    this.column = column;
+  public String getParentId() {
+	return parentId;
   }
 
-  public String getCategory() {
-    return category;
-  }
-
-  public void setCategory(String category) {
-    this.category = category;
-  }
+	public void setParentId(String parentId) {
+		this.parentId = parentId;
+	}
 }

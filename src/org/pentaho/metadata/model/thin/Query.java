@@ -27,7 +27,7 @@ public class Query {
 
   private static final long serialVersionUID = 8616769258583080677L;
 
-  private Column[] columns = new Column[0];
+  private Element[] elements = new Element[0];
 
   private Condition[] conditions = new Condition[0];
 
@@ -48,8 +48,8 @@ public class Query {
     super();
   }
   
-  public Column[] getColumns() {
-    return columns;
+  public Element[] getElements() {
+    return elements;
   }
 
   public Condition[] getConditions() {
@@ -64,9 +64,9 @@ public class Query {
     return orders;
   }
 
-  public void setColumns(Column[] columns) {
+  public void setElements(Element[] elements) {
 
-    this.columns = columns;
+    this.elements = elements;
   }
 
   public void setConditions(Condition[] conditions) {

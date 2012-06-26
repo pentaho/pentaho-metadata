@@ -29,7 +29,7 @@ import java.io.Serializable;
 public class Parameter implements Serializable {
   
   private static final long serialVersionUID = -3581457277760183764L;
-  private String column;
+  private String elementId;
   private String name;
   private String type;
   private String defaultValue[];
@@ -54,15 +54,15 @@ public class Parameter implements Serializable {
     this.defaultValue = defaultValue;
   }
 
-  public String getColumn() {
-    return column;
+  public String getElementId() {
+	return elementId;
   }
 
-  public void setColumn(String column) {
-    this.column = column;
+  public void setElementId(String elementId) {
+	this.elementId = elementId;
   }
 
-  public String getName() {
+public String getName() {
     return name;
   }
 

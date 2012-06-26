@@ -23,21 +23,21 @@ import org.pentaho.metadata.query.model.CombinationType;
 public class Condition {
 
   private static final long serialVersionUID = 6382700024558898605L;
-  private String column;
-  private String category;
+  private String elementId;
+  private String parentId;
   private String operator = Operator.EQUAL.name();
   private String value[];
   private String comboType = CombinationType.AND.name();
   private boolean parameterized;
 //  private String defaultValue;
-  private String selectedAggType;
+  private String selectedAggregation;
 
   public Condition(){
     
   }
   
-  public String getColumn() {
-    return this.column;    
+  public String getElementId() {
+    return this.elementId;    
   }
 
   public String getCombinationType() {
@@ -52,8 +52,8 @@ public class Condition {
     return this.value;
   }
 
-  public void setColumn(String column) {
-    this.column = column;  
+  public void setElementId(String elementId) {
+    this.elementId = elementId;  
   }
 
   public void setCombinationType(String combinationType) {
@@ -96,7 +96,7 @@ public class Condition {
       }
     }
 
-    String columnName = "["+category+"."+column + (StringUtils.isEmpty(selectedAggType) ? "" : "." + selectedAggType) +"]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$;
+    String columnName = "["+parentId+"."+elementId + (StringUtils.isEmpty(selectedAggregation) ? "" : "." + selectedAggregation) +"]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$;
     // Date is a special case where we craft a formula function.
     if(type.equals(DataType.DATE.getName())){
       if(enforceParameters){
@@ -131,20 +131,20 @@ public class Condition {
     return this.defaultValue;
   }
 */
-  public void setSelectedAggType(String aggType) {
-    this.selectedAggType = aggType;
+  public void setSelectedAggregation(String aggType) {
+    this.selectedAggregation = aggType;
   }
   
-  public String getSelectedAggType() {
-    return this.selectedAggType;
+  public String getSelectedAggregation() {
+    return this.selectedAggregation;
   }
 
-  public String getCategory() {
-    return category;
+  public String getParentId() {
+	return parentId;
   }
 
-  public void setCategory(String category) {
-    this.category = category;
-  }
+	public void setParentId(String parentId) {
+		this.parentId = parentId;
+	}
 
 }

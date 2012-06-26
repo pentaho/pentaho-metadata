@@ -19,6 +19,8 @@
 */
 package org.pentaho.metadata.model.thin;
 
+import java.util.HashMap;
+
 
 /**
  * Concrete, lightweight, serializable implementation of an {@see IModel} object
@@ -29,29 +31,39 @@ public class Model extends ModelInfo {
 
   private static final long serialVersionUID = 6865069259179116876L;
 
-  private Category[] categories = new Category[0];
+  public static final String CAPABILITY_HAS_ACROSS_AXIS = "across-axis"; // default is true
+  public static final String CAPABILITY_IS_ACROSS_CUSTOM = "across-axis-customizable"; // default is true
+  public static final String CAPABILITY_HAS_DOWN_AXIS = "down-axis"; // default is false
+  public static final String CAPABILITY_IS_DOWN_CUSTOM = "down-axis-customizable"; // default is false
+  public static final String CAPABILITY_HAS_FILTERS = "filter-axis";  // default is true
+  public static final String CAPABILITY_IS_FILTER_CUSTOM = "filter-axis-customizable"; // default is true
+  public static final String CAPABILITY_CAN_SORT = "sortable"; // default is true
+  
+  private Element[] elements = new Element[0];
 
+  private HashMap capabilities = new HashMap();
+  
 /**
    * Returns an array of categories for the model
    * @return
    */
-  public Category[] getCategories() {
-    return categories;
+  public Element[] getElements() {
+    return elements;
   }
 
   /**
    * Sets the categories for the model
    * @param categories
    */
-  public void setCategories(Category[] categories) {
-    this.categories = categories;
+  public void setElements(Element[] elements) {
+    this.elements = elements;
   }
 
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((categories == null) ? 0 : categories.hashCode());
+    result = prime * result + ((elements == null) ? 0 : elements.hashCode());
     result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
     result = prime * result + ((name == null) ? 0 : name.hashCode());
     return result;
@@ -72,18 +84,18 @@ public class Model extends ModelInfo {
       return false;
     }
     Model other = (Model) obj;
-    if (categories == null) {
-      if (other.categories != null) {
+    if (elements == null) {
+      if (other.elements != null) {
         return false;
       }
     }
-    else if (categories.length != other.categories.length) {
+    else if (elements.length != other.elements.length) {
       return false;
     }
     else {
       int idx=0;
-      for( Category category : categories ) {
-        if(!category.equals(other.categories[idx])) {
+      for( Element element : elements ) {
+        if(!element.equals(other.elements[idx])) {
           return false;
         }
         idx++;
