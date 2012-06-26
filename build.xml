@@ -23,7 +23,16 @@
       THE TASKS THAT NEED TO DIFFER FROM THE DEFAULT IMPLEMENTATION OF THE TASKS
       FOUND IN build-res/subfloor.xml.
     --> 
-
+	
+	  <target name="jar.main"
+	          depends="compile,set-build.id,generate.manifest">
+	    <jar destfile="${dist.dir}/${ivy.artifact.id}-${project.revision}.jar" manifest="${dist.manifest.file}"
+	    	basedir="${classes.dir}"
+	    	excludes="org/pentaho/metadata/model/thin/*.class,org/pentaho/metadata/datatable/*.class,org/pentaho/metadata/registry/*.class"
+	    	>
+	    </jar>
+	  </target>	
+	
 	  <target name="jar.splint"
 	          depends="compile,set-build.id,generate.manifest">
 	  	
