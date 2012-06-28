@@ -30,18 +30,12 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.changed.ChangedFlag;
-import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.exception.KettleXMLException;
 import org.pentaho.di.core.logging.LogChannel;
 import org.pentaho.di.core.logging.LogChannelInterface;
-import org.pentaho.di.core.logging.LogMessage;
-import org.pentaho.di.core.logging.LogWriter;
 import org.pentaho.di.core.xml.XMLHandler;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
-import org.pentaho.pms.factory.CwmSchemaFactory;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.util.Const;
 import org.w3c.dom.Document;
@@ -372,20 +366,6 @@ public class SecurityService extends ChangedFlag implements Cloneable {
         
       }
       return doc.getFirstChild();
-      
-      /*
-      Node envelope = XMLHandler.getSubNode(doc, "SOAP-ENV:Envelope"); //$NON-NLS-1$
-      if (envelope != null) {
-        Node body = XMLHandler.getSubNode(envelope, "SOAP-ENV:Body"); //$NON-NLS-1$
-        if (body != null) {
-          Node response = XMLHandler.getSubNode(body, "ExecuteActivityResponse"); //$NON-NLS-1$
-          if (response != null) {
-            Node content = XMLHandler.getSubNode(response, "content"); //$NON-NLS-1$
-            return content;
-          }
-        }
-      }
-      */
     }
     return null;
 
