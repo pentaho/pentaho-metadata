@@ -30,6 +30,8 @@ import java.util.Map;
  */
 public class ModelInfo implements Serializable {
 
+	public static final String ID_SEPERATOR = "~";
+	
   private static final long serialVersionUID = -8341925508348437605L;
 
   protected String groupId;
@@ -91,9 +93,9 @@ public void setProvider(Provider provider) {
    */
   public String getId() {
 	  if( provider == null ) {
-		  return "unknownprovider"+"~"+groupId+"~"+modelId;
+		  return "unknownprovider"+ID_SEPERATOR+groupId+ID_SEPERATOR+modelId;
 	  }
-    return provider.getId()+"~"+groupId+"~"+modelId;
+    return provider.getId()+ID_SEPERATOR+groupId+ID_SEPERATOR+modelId;
   }
 
   /**

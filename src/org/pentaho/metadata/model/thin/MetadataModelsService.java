@@ -48,11 +48,20 @@ public class MetadataModelsService implements ModelProvider {
 		return PROVIDER_ID;
 	}
 	
+	protected String getProviderId( String modelId ) {
+		
+		int pos = modelId.indexOf(ModelInfo.ID_SEPERATOR);
+		if( pos != -1 ) {
+			return modelId.substring(0, pos );
+		}
+		return null;
+		
+	}
+	
 	@Override
 	public ModelInfo[] getModelList( String providerId, String groupId, String match ) {
 		List<ModelInfo> infoList = new ArrayList<ModelInfo>();
 		for( ModelProvider provider : modelProviders ) {
-			
 			if( providerId == null || providerId.equals(provider.getId())) {
 				ModelInfo[] providerInfos = provider.getModelList( providerId, groupId, match );
 				for( ModelInfo info : providerInfos ) {
@@ -67,10 +76,13 @@ public class MetadataModelsService implements ModelProvider {
 
 	@Override
 	public Model getModel(String id) {
+		String providerId = getProviderId( id );
 		for( ModelProvider provider : modelProviders ) {
-			Model model = provider.getModel(id);
-			if( model != null ) {
-				return model;
+			if( provider.getId().equals(providerId)) {
+				Model model = provider.getModel(id);
+				if( model != null ) {
+					return model;
+				}
 			}
 		}
 		return null;
@@ -81,11 +93,13 @@ public class MetadataModelsService implements ModelProvider {
 		
 		String id = query.getSourceId();
 		// find the provider
-
+		String providerId = getProviderId( id );
 		for( ModelProvider provider : modelProviders ) {
-			Model model = provider.getModel(id);
-			if( model != null ) {
-				return provider.executeQuery(query, rowLimit);
+			if( provider.getId().equals(providerId)) {
+				Model model = provider.getModel(id);
+				if( model != null ) {
+					return provider.executeQuery(query, rowLimit);
+				}
 			}
 		}
 		return null;
