@@ -393,6 +393,11 @@ public class SecurityService extends ChangedFlag implements Cloneable {
     return content.getChildNodes().toString();
   }
 
+  
+  public String getURL() {
+	return getURL(getServiceTypeCode());  
+  }
+  
   public String getURL(String serviceTypeCode) {
     StringBuffer url = new StringBuffer();
     url.append(serviceURL);
