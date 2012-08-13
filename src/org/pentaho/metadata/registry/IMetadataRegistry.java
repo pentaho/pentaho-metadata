@@ -65,6 +65,13 @@ public interface IMetadataRegistry {
 	public List<Entity> getEntities( String id );
 
 	/**
+	 * Deletes an entity from the registry
+	 * @param id
+	 * @return true if the operation succeeded
+	 */
+	public boolean removeEntity( Entity entity );
+	
+	/**
 	 * Adds a namespace to the registry
 	 * @param namespace
 	 */
@@ -130,6 +137,13 @@ public interface IMetadataRegistry {
 	 */
 	public List<Link> getLinks();
 	
+	/**
+	 * Deletes a link from the registry
+	 * @param id
+	 * @return
+	 */
+	public boolean removeLink( Link link );
+
 	/**
 	 * Adds a new link type
 	 * @param link

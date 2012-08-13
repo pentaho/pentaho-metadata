@@ -1,6 +1,7 @@
 package org.pentaho.metadata.registry;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,7 +92,7 @@ public class SimpleRegistryTest {
 		// find all links to the table
 
 		List<Entity> entities = metadataRegistry.findAllLinkedEntities(table1.getId(), (String) null);
-		Assert.assertEquals("id list is wrong size", 3, entities.size());
+		Assert.assertEquals("Entity list is wrong size", 3, entities.size());
 		Assert.assertTrue(ktr1.getId().equals(entities.get(0).getId()) || ktr1.getId().equals(entities.get(1).getId()) || ktr1.getId().equals(entities.get(2).getId()));
 		Assert.assertTrue(model1.getId().equals(entities.get(0).getId()) || model1.getId().equals(entities.get(1).getId()) || model1.getId().equals(entities.get(2).getId()));
 		Assert.assertTrue(view1.getId().equals(entities.get(0).getId()) || view1.getId().equals(entities.get(1).getId()) || view1.getId().equals(entities.get(2).getId()));
@@ -99,6 +100,44 @@ public class SimpleRegistryTest {
 		entities = metadataRegistry.findAllLinkedEntities(table1.getId(), Type.TYPE_ANALYZER_VIEW.getId());
 		Assert.assertEquals("id list is wrong size", 1, entities.size());
 		Assert.assertTrue(view1.getId().equals(entities.get(0).getId()) );
+		
+		entities = metadataRegistry.getEntities("bogus");
+		Assert.assertNotNull("Entites is null", entities);
+		Assert.assertEquals("Entity list is wrong size", 0, entities.size());
+		
+		entities = metadataRegistry.getEntities(ktr1.getId());
+		Assert.assertNotNull("Entites is null", entities);
+		Assert.assertEquals("Entity list is wrong size", 1, entities.size());
+		Assert.assertEquals("Entity list is wrong size", ktr1.getId(), entities.get(0).getId());
+		
+		List<Namespace> namespaces = metadataRegistry.getNamespaces();
+		List<Namespace> namespaces2 = new ArrayList<Namespace>();
+		metadataRegistry.setNamespaces(namespaces2);
+		Assert.assertEquals("Namespaces is wrong", namespaces2, metadataRegistry.getNamespaces());
+		metadataRegistry.setNamespaces(namespaces);
+		Assert.assertEquals("Namespaces is wrong", namespaces, metadataRegistry.getNamespaces());
+		
+		List<Type> types = metadataRegistry.getTypes();
+		List<Type> types2 = new ArrayList<Type>();
+		metadataRegistry.setTypes(types2);
+		Assert.assertEquals("Namespaces is wrong", types2, metadataRegistry.getTypes());
+		metadataRegistry.setTypes(types);
+		Assert.assertEquals("Namespaces is wrong", types, metadataRegistry.getTypes());
+		
+		List<Verb> verbs = metadataRegistry.getVerbs();
+		List<Verb> verbs2 = new ArrayList<Verb>();
+		metadataRegistry.setVerbs(verbs2);
+		Assert.assertEquals("Namespaces is wrong", verbs2, metadataRegistry.getVerbs());
+		metadataRegistry.setVerbs(verbs);
+		Assert.assertEquals("Namespaces is wrong", verbs, metadataRegistry.getVerbs());
+		
+		Map<String, Map<String,Entity>> entities1 = metadataRegistry.getEntities();
+		Map<String, Map<String,Entity>> entities2 = new HashMap<String, Map<String,Entity>>();
+		metadataRegistry.setEntities(entities2);
+		Assert.assertEquals("Namespaces is wrong", entities2, metadataRegistry.getEntities());
+		metadataRegistry.setEntities(entities1);
+		Assert.assertEquals("Namespaces is wrong", entities1, metadataRegistry.getEntities());
+		
 	}
 	
 	@Test
@@ -345,6 +384,62 @@ public class SimpleRegistryTest {
 		Assert.assertEquals("id is wrong", "table1", list.get(0).getId());
 		Assert.assertEquals("type is wrong", Type.TYPE_PHYSICAL_TABLE.getId(), list.get(0).getTypeId());
 
+	}
+	
+	@Test
+	public void testDelete() {
+
+		RegistryFactory factory = RegistryFactory.getInstance();
+
+		SimpleFileRegistry metadataRegistry = (SimpleFileRegistry) factory.getMetadataRegistry();
+		
+		metadataRegistry.clear();
+		
+		Entity ktr1 = new Entity("ktr1", "My Trans", Type.TYPE_TRANSFORMATION.getId());
+		Entity table1 = new Entity("table1", null, Type.TYPE_PHYSICAL_TABLE.getId());
+		Entity bogus = new Entity("bogus", "my view", Type.TYPE_ANALYZER_VIEW.getId());
+
+		metadataRegistry.addEntity(ktr1);
+		metadataRegistry.addEntity(table1);
+	
+		Link link1 = new Link(ktr1.getId(), ktr1.getTypeId(), Verb.VERB_POPULATES.getId(), table1.getId(), table1.getTypeId());
+
+		Link bogusLink = new Link(ktr1.getId(), ktr1.getTypeId(), Verb.VERB_POPULATES.getId(), bogus.getId(), bogus.getTypeId());
+		
+		metadataRegistry.addLink(link1);
+		
+		Entity tmp = metadataRegistry.getEntity(ktr1.getId(), Type.TYPE_TRANSFORMATION.getId());
+		Assert.assertNotNull("Entity is null", tmp);
+		Assert.assertEquals("Entities list is wrong size", 2, metadataRegistry.getEntities().size());
+		Assert.assertEquals("Links list is wrong size", 1, metadataRegistry.getLinks().size());
+		
+		boolean result = metadataRegistry.removeEntity(bogus);
+		Assert.assertFalse("Wrong result", result);
+		Assert.assertEquals("Entities list is wrong size", 2, metadataRegistry.getEntities().size());
+		Assert.assertEquals("Links list is wrong size", 1, metadataRegistry.getLinks().size());
+
+		result = metadataRegistry.removeEntity(ktr1);
+		Assert.assertTrue("Wrong result", result);
+		tmp = metadataRegistry.getEntity(ktr1.getId(), Type.TYPE_TRANSFORMATION.getId());
+		Assert.assertNull("Entity is not null", tmp);
+		Assert.assertEquals("Entities list is wrong size", 1, metadataRegistry.getEntities().size());
+		Assert.assertEquals("Links list is wrong size", 1, metadataRegistry.getLinks().size());
+
+		result = metadataRegistry.removeEntity(table1);
+		Assert.assertTrue("Wrong result", result);
+		tmp = metadataRegistry.getEntity(table1.getId(), Type.TYPE_PHYSICAL_TABLE.getId());
+		Assert.assertNull("Entity is not null", tmp);
+		Assert.assertEquals("Entities list is wrong size", 0, metadataRegistry.getEntities().size());
+		Assert.assertEquals("Links list is wrong size", 1, metadataRegistry.getLinks().size());
+		
+		result = metadataRegistry.removeLink(bogusLink);
+		Assert.assertFalse("Wrong result", result);
+		Assert.assertEquals("Links list is wrong size", 1, metadataRegistry.getLinks().size());
+		
+		result = metadataRegistry.removeLink(link1);
+		Assert.assertTrue("Wrong result", result);
+		Assert.assertEquals("Links list is wrong size", 0, metadataRegistry.getLinks().size());
+		
 	}
 	
 }

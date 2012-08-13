@@ -251,6 +251,18 @@ public abstract class SimpleRegistry extends RegistryBase {
 	public void addLink(Link link) {
 		links.add(link);
 	}
+
+	/**
+	 * @see org.pentaho.metadata.registry.IMetadataRegistry#addLink(Link)
+	 */
+	@Override
+	public boolean removeLink(Link link) {
+		if( links.contains(link) ) {
+			links.remove(link);
+			return true;
+		}
+		return false;
+	}
 	
 	/**
 	 * @see org.pentaho.metadata.registry.IMetadataRegistry#getLinks()
@@ -343,6 +355,25 @@ public abstract class SimpleRegistry extends RegistryBase {
 			entities.put(entity.getId(), typeMap);
 		}
 		typeMap.put(entity.getTypeId(), entity);
+	}
+	
+	/**
+	 * @see org.pentaho.metadata.registry.IMetadataRegistry#deleteEntity(String)
+	 */
+	@Override
+	public boolean removeEntity( Entity entity ) {
+		
+		Map<String,Entity> typeMap = entities.get(entity.getId());
+		if( typeMap == null || typeMap.get(entity.getTypeId()) == null ) {
+			// the entity could not be found
+			return false;
+		}
+		typeMap.remove(entity.getTypeId());
+		if( typeMap.size() == 0 ) {
+			// there are no entities of any type with this id
+			entities.remove(entity.getId());
+		}
+		return true;
 	}
 	
 	/**
