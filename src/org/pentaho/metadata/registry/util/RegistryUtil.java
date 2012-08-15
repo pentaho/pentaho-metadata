@@ -39,6 +39,37 @@ public class RegistryUtil {
   private static final Pattern COMPOUND_ID_SEPARATOR_PATTERN = Pattern.compile(COMPOUND_ID_SEPARATOR);
 
   /**
+   * Generates a composite id for a typed entity
+   * @param name The name of the entity
+   * @param type the type of the entity
+   * @return the composite id
+   */
+  public String generateTypedId( String name, String type ) {
+	  return generateCompositeId(type, name);
+  }
+  
+  /**
+   * Generates a composite id for a database table
+   * @param databaseName
+   * @param schemaName
+   * @param tableName
+   * @return the composite id
+   */
+  public String generateTableId( String databaseName, String schemaName, String tableName ) {
+	  return generateCompositeId(databaseName, schemaName, tableName);
+  }
+  
+  /**
+   * Generates a composite id for a document
+   * @param documentName The name of the document
+   * @param documentIdOrPath The document id or document path
+   * @return
+   */
+  public String generateDocumentId( String documentName, String documentIdOrPath ) {
+	  return generateCompositeId(documentName, documentIdOrPath);
+  }
+  
+  /**
    * Generate an composite id by concatenating the provided parts together with the {@link #COMPOUND_ID_SEPARATOR}.
    * <p>
    * See {@link #splitCompositeId} to break a composite id apart.
