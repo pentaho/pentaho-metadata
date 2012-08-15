@@ -37,6 +37,7 @@ public class Type {
 	public static final Type TYPE_REPORT = new Type( "REPORT", "REPORTING", "REPORT" );
 	public static final Type TYPE_OLAP_MODEL = new Type( "OLAP_MODEL", "MODELING", "OLAP MODEL" );
 	public static final Type TYPE_REL_MODEL = new Type( "REL_MODEL", "MODELING", "RELATIONAL MODEL" );
+	public static final Type TYPE_USER = new Type( "USER", "GLOBAL", "USER" );
 	
 	private String id;
 	
