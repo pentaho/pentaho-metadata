@@ -65,6 +65,7 @@ public class SimpleFileRegistry extends SimpleRegistry {
 	@Override
 	protected void load() throws InvalidPropertiesFormatException, IOException {
 
+		// empty the registry
 		clear();
 
 		File file = new File(filePath);
@@ -91,7 +92,6 @@ public class SimpleFileRegistry extends SimpleRegistry {
 			setLinks(links);
 
 			idx = 0;
-			// empty the registry
 			while( true ) {
 				String id = (String) props.get("entity-"+idx+"-id");
 				String title = (String) props.get("entity-"+idx+"-title");
@@ -99,6 +99,18 @@ public class SimpleFileRegistry extends SimpleRegistry {
 				if( id != null && typeId != null ) {
 					Entity entity = new Entity(id, title, typeId);
 					addEntity(entity);
+					
+					int idx2 = 0;
+					while(true) {
+						String key = (String) props.get("entity-"+idx+"-attrkey-"+idx2);
+						String value = (String) props.get("entity-"+idx+"-attrvalue-"+idx2);
+						if( key != null && value != null ) {
+							entity.setAttribute(key, value);
+							idx2++;
+						} else {
+							break;
+						}
+					}
 					idx++;
 				} else {
 					break;
@@ -142,6 +154,18 @@ public class SimpleFileRegistry extends SimpleRegistry {
 				} else {
 					props.put("entity-"+idx+"-title", entity.getId());
 				}
+				
+				Map<String,String> attrMap = entity.getAttributes();
+
+				int idx2 = 0;
+				for( Entry<String,String> attrEntry : attrMap.entrySet() ) {
+					String key = attrEntry.getKey();
+					String value = attrEntry.getValue();
+					props.put("entity-"+idx+"-attrkey-"+idx2, key);
+					props.put("entity-"+idx+"-attrvalue-"+idx2, value);
+					idx2++;
+				}
+				
 				idx++;
 			}
 		}

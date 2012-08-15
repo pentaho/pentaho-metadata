@@ -80,7 +80,8 @@ public class Model extends ModelInfo {
     if (obj == null) {
       return false;
     }
-    if (getClass() != obj.getClass()) {
+//    if (!getClass().getName().equals(obj.getClass().getName())) {
+    if (!(obj instanceof Model)) {
       return false;
     }
     Model other = (Model) obj;
@@ -95,18 +96,14 @@ public class Model extends ModelInfo {
     else {
       int idx=0;
       for( Element element : elements ) {
-        if(!element.equals(other.elements[idx])) {
+        if(!element.getId().equals(other.elements[idx].getId())) {
           return false;
         }
         idx++;
       }
     }
     String id = getId();
-    if (id == null) {
-      if (other.getId() != null) {
-        return false;
-      }
-    } else if (!id.equals(other.getId())) {
+    if (!id.equals(other.getId())) {
       return false;
     }
     if (name == null) {

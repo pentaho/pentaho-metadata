@@ -50,6 +50,9 @@ public class MetadataModelsService implements ModelProvider {
 	
 	protected String getProviderId( String modelId ) {
 		
+		if( modelId == null ) {
+			return null;
+		}
 		int pos = modelId.indexOf(ModelInfo.ID_SEPERATOR);
 		if( pos != -1 ) {
 			return modelId.substring(0, pos );

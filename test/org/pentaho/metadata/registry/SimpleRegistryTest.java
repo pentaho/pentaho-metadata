@@ -167,7 +167,7 @@ public class SimpleRegistryTest {
 
 		Assert.assertEquals("Entity attribute is wrong", "value1", entity.getAttribute("attr1"));
 		
-		Map<String,Serializable> attributes = new HashMap<String,Serializable>();
+		Map<String,String> attributes = new HashMap<String,String>();
 		attributes.put("attr2", "value2");
 		attributes.put("attr3", "value3");
 		entity.setAttributes(attributes);
@@ -311,6 +311,7 @@ public class SimpleRegistryTest {
 		metadataRegistry.clear();
 		
 		Entity ktr1 = new Entity("ktr1", "My Trans", Type.TYPE_TRANSFORMATION.getId());
+		ktr1.setAttribute("attr1", "value1");
 		Entity table1 = new Entity("table1", null, Type.TYPE_PHYSICAL_TABLE.getId());
 		Entity model1 = new Entity("model1", "my model", Type.TYPE_OLAP_MODEL.getId());
 		Entity view1 = new Entity("view1", "my view", Type.TYPE_ANALYZER_VIEW.getId());
@@ -331,6 +332,7 @@ public class SimpleRegistryTest {
 		Entity tmp = metadataRegistry.getEntity(ktr1.getId(), Type.TYPE_TRANSFORMATION.getId());
 		Assert.assertEquals("Entity id is wrong", ktr1.getId(), tmp.getId());
 		Assert.assertEquals("links list is wrong size", 3, metadataRegistry.getLinks().size());
+		Assert.assertEquals("Entity attribute is wrong", "value1", tmp.getAttribute("attr1"));
 		
 		Assert.assertEquals("Wrong number of verbs", 5, metadataRegistry.getVerbs().size());
 		Assert.assertEquals("Wrong verb", Verb.VERB_POPULATES.getId(), metadataRegistry.getVerbs().get(0).getId());
@@ -357,6 +359,7 @@ public class SimpleRegistryTest {
 		Assert.assertNotNull("Entity is null", tmp);
 		Assert.assertEquals("Entity id is wrong", ktr1.getId(), tmp.getId());
 		Assert.assertEquals("links list is wrong size", 3, metadataRegistry.getLinks().size());
+		Assert.assertEquals("Entity attribute is wrong", "value1", tmp.getAttribute("attr1"));
 		
 	}
 	

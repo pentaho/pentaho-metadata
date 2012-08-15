@@ -36,7 +36,7 @@ public class Entity implements Serializable {
 	
 	private String title;
 	
-	private Map<String,Serializable> attributes = new HashMap<String,Serializable>();
+	private Map<String,String> attributes = new HashMap<String,String>();
 	
 	public Entity() {
 		
@@ -100,7 +100,7 @@ public class Entity implements Serializable {
 	 * Returns the attribute map of the entity
 	 * @return
 	 */
-	public Map<String, ? extends Serializable> getAttributes() {
+	public Map<String, String> getAttributes() {
 		return attributes;
 	}
 
@@ -108,7 +108,7 @@ public class Entity implements Serializable {
 	 * Sets the attribute map of the entity. Arrtibute valuse should be serializable
 	 * @param attributes
 	 */
-	public void setAttributes(Map<String, Serializable> attributes) {
+	public void setAttributes(Map<String, String> attributes) {
 		this.attributes = attributes;
 	}
 	
@@ -117,7 +117,7 @@ public class Entity implements Serializable {
 	 * @param name
 	 * @return
 	 */
-	public Serializable getAttribute( String name ) {
+	public String getAttribute( String name ) {
 		return attributes.get(name);
 	}
 	
@@ -126,7 +126,7 @@ public class Entity implements Serializable {
 	 * @param name
 	 * @param object
 	 */
-	public void setAttribute( String name, Serializable object ) {
+	public void setAttribute( String name, String object ) {
 		attributes.put( name, object );
 	}
 	
