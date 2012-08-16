@@ -139,7 +139,7 @@ public abstract class SimpleRegistry extends RegistryBase {
 		for( Link link : links ) {
 			if( link.getSubjectId().equalsIgnoreCase(subjectId) ) {
 				if( ( verbIds == null || verbIds.contains(link.getVerbId() ) ) && 
-					( typeIds == null || typeIds.contains(link.getSubjectTypeId())) ) {
+					( typeIds == null || typeIds.contains(link.getObjectTypeId())) ) {
 					results.add(link);
 				}
 			}
