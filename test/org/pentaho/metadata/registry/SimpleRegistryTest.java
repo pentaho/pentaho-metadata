@@ -59,7 +59,7 @@ public class SimpleRegistryTest {
 		Assert.assertEquals("id list is wrong size", 1, links.size());
 		Assert.assertEquals("id is wrong size", table1.getId(), links.get(0).getObjectId());
 
-		links = metadataRegistry.findObjectLinks(ktr1.getId(), Verb.VERB_POPULATES.getId(), Type.TYPE_TRANSFORMATION.getId());
+		links = metadataRegistry.findObjectLinks(ktr1.getId(), Verb.VERB_POPULATES.getId(), Type.TYPE_PHYSICAL_TABLE.getId());
 		Assert.assertEquals("id list is wrong size", 1, links.size());
 		Assert.assertEquals("id is wrong size", table1.getId(), links.get(0).getObjectId());
 
