@@ -147,5 +147,96 @@ public class RegistryUtil {
 	    }
 		return entity;
 	}
+
+	/**
+	 * Modifies a numeric entity attribute by adding an offset to it. If the attribute does not exist, its initial
+	 * value is set to the offset. The entity must exist in the registry.
+	 * @param entityId
+	 * @param typeId
+	 * @param attrId
+	 * @param offset
+	 * @return true if the update succeeded.
+	 */
+	public boolean updateAttribute( String entityId, String typeId, String attrId, long offset ) {
+	    RegistryFactory factory = RegistryFactory.getInstance();
+	    IMetadataRegistry registry = factory.getMetadataRegistry();
+	    Entity entity = registry.getEntity(entityId, typeId);
+	    if( entity == null ) {
+	    	return false;
+	    }
+	    return updateAttribute(entity, attrId, offset);
+	}
 	
+	/**
+	 * Modifies a numeric entity attribute by adding an offset to it. If the attribute does not exist, its initial
+	 * value is set to the offset. The entity must exist in the registry.
+	 * @param entity
+	 * @param attrId
+	 * @param offset
+	 * @return true if the update succeeded.
+	 */
+	public boolean updateAttribute( Entity entity, String attrId, long offset ) {
+		String attrValue = entity.getAttribute(attrId);
+		long newValue = 0;
+		if( attrValue == null ) {
+			newValue = offset;
+		} else {
+			long value = Long.parseLong(attrValue);
+			newValue = value + offset;
+		}
+		return setAttribute(entity, attrId, newValue);
+	}	
+
+	/**
+	 * Sets an entity attribute
+	 * @param attrId
+	 * @param boost
+	 * @return true if the update succeeded.
+	 */
+	public boolean setAttribute( String entityId, String typeId, String attrId, long value ) {
+	    RegistryFactory factory = RegistryFactory.getInstance();
+	    IMetadataRegistry registry = factory.getMetadataRegistry();
+	    Entity entity = registry.getEntity(entityId, typeId);
+	    if( entity == null ) {
+	    	return false;
+	    }
+		return setAttribute( entity, attrId, Long.toString(value));
+	}
+
+	/**
+	 * Sets an entity attribute
+	 * @param attrId
+	 * @param boost
+	 * @return true if the update succeeded.
+	 */
+	public boolean setAttribute( String entityId, String typeId, String attrId, String value ) {
+	    RegistryFactory factory = RegistryFactory.getInstance();
+	    IMetadataRegistry registry = factory.getMetadataRegistry();
+	    Entity entity = registry.getEntity(entityId, typeId);
+	    if( entity == null ) {
+	    	return false;
+	    }
+		return setAttribute( entity, attrId, value);
+	}
+
+	/**
+	 * Sets an entity attribute
+	 * @param attrId
+	 * @param boost
+	 * @return true if the update succeeded.
+	 */
+	public boolean setAttribute( Entity entity, String attrId, long value ) {
+		return setAttribute( entity, attrId, Long.toString(value));
+	}
+	
+	/**
+	 * Sets an entity attribute
+	 * @param attrId
+	 * @param boost
+	 * @return true if the update succeeded.
+	 */
+	public boolean setAttribute( Entity entity, String attrId, String value ) {
+		entity.setAttribute(attrId, value);
+	    return true;
+	}	
 }
