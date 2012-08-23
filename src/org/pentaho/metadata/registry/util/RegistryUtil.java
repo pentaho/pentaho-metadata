@@ -18,6 +18,11 @@ package org.pentaho.metadata.registry.util;
 
 import java.util.regex.Pattern;
 
+import org.pentaho.metadata.registry.Entity;
+import org.pentaho.metadata.registry.IMetadataRegistry;
+import org.pentaho.metadata.registry.RegistryFactory;
+import org.pentaho.metadata.registry.Type;
+
 /**
  * Collection of utility methods for interacting with the Metadata Registry.
  */
@@ -120,4 +125,38 @@ public class RegistryUtil {
     }
     return parts;
   }
+  
+  /**
+   * Returns an id that can be used to store an entity representing a database table
+   * @param databaseName
+   * @param schemaName
+   * @param tableName
+   * @return
+   */
+	public String getTableEntityId( String databaseName, String schemaName, String tableName ) {
+		return generateTableId(databaseName.toLowerCase(), (schemaName==null) ? null : schemaName.toLowerCase(), tableName.toLowerCase());
+	}
+	
+	/**
+	 * Returns an entity representing a database table. The entity is retrieved from the registry. If 'create' is false, returns
+	 * null if the entity does not exist in the registry. If it is true, the entity will be created if it does not exist. If the
+	 * entity is created the registry will be be committed, the caller needs to commit the registry.
+	 * @param databaseName
+	 * @param schemaName
+	 * @param tableName
+	 * @param create
+	 * @return
+	 */
+	public Entity getTableEntity( String databaseName, String schemaName, String tableName, boolean create ) {
+		String id = getTableEntityId(databaseName, schemaName, tableName);
+	    RegistryFactory factory = RegistryFactory.getInstance();
+	    IMetadataRegistry registry = factory.getMetadataRegistry();
+	    Entity entity = registry.getEntity(id, Type.TYPE_PHYSICAL_TABLE.getId());
+	    if( entity == null && create ) {
+	    	entity = new Entity(id, tableName, Type.TYPE_PHYSICAL_TABLE.getId());
+	    	registry.addEntity(entity);
+	    }
+		return entity;
+	}
+	
 }
