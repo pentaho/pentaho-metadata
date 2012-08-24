@@ -26,7 +26,7 @@ import java.util.Map;
  * @author jamesdixon
  *
  */
-public class Entity implements Serializable {
+public class Entity implements Serializable, Comparable<Entity> {
 
 	private static final long serialVersionUID = -3474839958774808729L;
 
@@ -128,6 +128,11 @@ public class Entity implements Serializable {
 	 */
 	public void setAttribute( String name, String object ) {
 		attributes.put( name, object );
+	}
+
+	@Override
+	public int compareTo(Entity arg0) {
+		return id.compareTo(arg0.getId());
 	}
 	
 }
