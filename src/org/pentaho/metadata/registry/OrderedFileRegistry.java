@@ -64,9 +64,9 @@ public class OrderedFileRegistry extends SimpleFileRegistry {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("");
 			
-			buffer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			buffer.append("<!DOCTYPE properties SYSTEM \"http://java.sun.com/dtd/properties.dtd\">");
-			buffer.append("<properties>");
+			buffer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+			buffer.append("<!DOCTYPE properties SYSTEM \"http://java.sun.com/dtd/properties.dtd\">\n");
+			buffer.append("<properties>\n");
 
 			idx=0;
 			for(Entity entity : entityList ) {
