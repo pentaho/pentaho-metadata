@@ -15,11 +15,15 @@ public class OrderedRegistryTest {
 		metadataRegistry.clear();
 		
 		Entity ktr1 = new Entity("ktr1", "My Trans", Type.TYPE_TRANSFORMATION.getId());
-		ktr1.setAttribute("attr1", "value1");
+		String attrValue1 = "attribute value 1";
+		byte bytes[] = new byte[] {97,05,97};
+		String attrValue2 = "attribute\tvalue 2\n"+new String(bytes);
+		ktr1.setAttribute("attr1", attrValue1);
+		ktr1.setAttribute("attr2", attrValue2);
 		Entity table1 = new Entity("table1", null, Type.TYPE_PHYSICAL_TABLE.getId());
 		Entity model1 = new Entity("model1", "my model", Type.TYPE_OLAP_MODEL.getId());
 		Entity view1 = new Entity("view1", "my view", Type.TYPE_ANALYZER_VIEW.getId());
-
+		
 		metadataRegistry.addEntity(ktr1);
 		metadataRegistry.addEntity(table1);
 		metadataRegistry.addEntity(model1);
@@ -36,7 +40,8 @@ public class OrderedRegistryTest {
 		Entity tmp = metadataRegistry.getEntity(ktr1.getId(), Type.TYPE_TRANSFORMATION.getId());
 		Assert.assertEquals("Entity id is wrong", ktr1.getId(), tmp.getId());
 		Assert.assertEquals("links list is wrong size", 3, metadataRegistry.getLinks().size());
-		Assert.assertEquals("Entity attribute is wrong", "value1", tmp.getAttribute("attr1"));
+		Assert.assertEquals("Entity attribute is wrong", attrValue1, tmp.getAttribute("attr1"));
+		Assert.assertEquals("Entity attribute is wrong", attrValue2, tmp.getAttribute("attr2"));
 		
 		Assert.assertEquals("Wrong number of verbs", 5, metadataRegistry.getVerbs().size());
 		Assert.assertEquals("Wrong verb", Verb.VERB_POPULATES.getId(), metadataRegistry.getVerbs().get(0).getId());
@@ -63,7 +68,10 @@ public class OrderedRegistryTest {
 		Assert.assertNotNull("Entity is null", tmp);
 		Assert.assertEquals("Entity id is wrong", ktr1.getId(), tmp.getId());
 		Assert.assertEquals("links list is wrong size", 3, metadataRegistry.getLinks().size());
-		Assert.assertEquals("Entity attribute is wrong", "value1", tmp.getAttribute("attr1"));
+		Assert.assertEquals("Entity attribute is wrong", attrValue1, tmp.getAttribute("attr1"));
+		Assert.assertEquals("Entity attribute is wrong", attrValue2, tmp.getAttribute("attr2"));
+		
+		
 		
 	}
 	

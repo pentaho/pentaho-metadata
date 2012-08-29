@@ -30,6 +30,8 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 /**
  * A subclass of the simple registry that persists the registry in an XML document on the file system
  * @author jamesdixon
@@ -105,7 +107,7 @@ public class SimpleFileRegistry extends SimpleRegistry {
 						String key = (String) props.get("entity-"+idx+"-attrkey-"+idx2);
 						String value = (String) props.get("entity-"+idx+"-attrvalue-"+idx2);
 						if( key != null && value != null ) {
-							entity.setAttribute(key, value);
+							entity.setAttribute(key, StringEscapeUtils.unescapeJava(value));
 							idx2++;
 						} else {
 							break;
@@ -162,7 +164,7 @@ public class SimpleFileRegistry extends SimpleRegistry {
 					String key = attrEntry.getKey();
 					String value = attrEntry.getValue();
 					props.put("entity-"+idx+"-attrkey-"+idx2, key);
-					props.put("entity-"+idx+"-attrvalue-"+idx2, value);
+					props.put("entity-"+idx+"-attrvalue-"+idx2, StringEscapeUtils.escapeJava(value));
 					idx2++;
 				}
 				

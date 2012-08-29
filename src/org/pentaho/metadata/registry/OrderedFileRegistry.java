@@ -26,6 +26,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 /**
  * A subclass of the simple registry that persists the registry in an XML document on the file system
  * @author jamesdixon
@@ -105,7 +107,7 @@ public class OrderedFileRegistry extends SimpleFileRegistry {
 			String key = attrEntry.getKey();
 			String value = attrEntry.getValue();
 			addToBuffer("entity-"+idx+"-attrkey-"+idx2, key, buffer);
-			addToBuffer("entity-"+idx+"-attrvalue-"+idx2, value, buffer);
+			addToBuffer("entity-"+idx+"-attrvalue-"+idx2, StringEscapeUtils.escapeJava(value), buffer);
 			idx2++;
 		}
 		
