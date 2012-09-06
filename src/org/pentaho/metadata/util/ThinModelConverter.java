@@ -610,6 +610,14 @@ public class ThinModelConverter {
         }
         logicalTable.setPhysicalTable(physicalTable);
         logicalTable.setLogicalModel(logicalModel);
+        
+        if (businessTable.getLocation() != null) {
+          logicalTable.setProperty("__LEGACY_TAG_POSITION_X", "" + businessTable.getLocation().x);
+          logicalTable.setProperty("__LEGACY_TAG_POSITION_Y", "" + businessTable.getLocation().y);
+        }
+        
+        logicalTable.setProperty("__LEGACY_TABLE_IS_DRAWN", "" + businessTable.isDrawn());
+          
         convertConceptFromLegacy(businessTable, logicalTable);
         
         for (BusinessColumn column : businessTable.getBusinessColumns()) {
@@ -635,6 +643,8 @@ public class ThinModelConverter {
         if(domain.getLocales().size() > 0) {
           logical.setRelationshipDescription(rel.getDescription());
         }
+        
+        logical.setRelationshipType(RelationshipType.values()[rel.getType()]);
         
         // what happens if we set a null value for a property? from an inheritance perspective, there should be a difference
         // between null and inherited.
