@@ -16,7 +16,6 @@
  */
 package org.pentaho.pms.schema.security;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.di.core.xml.XMLHandler;
@@ -101,16 +100,8 @@ public class SecurityReference
     
     public String toXML() throws Exception
     {
-    	//List users = new ArrayList();
-    	//if(securityService.getDetailServiceType() == SecurityService.SERVICE_TYPE_USERS || securityService.getDetailServiceType() == SecurityService.SERVICE_TYPE_ALL) {
-    		List users = securityService.getUsers();
-    	//}
-        //List roles = new ArrayList();
-        //if(securityService.getDetailServiceType() == SecurityService.SERVICE_TYPE_ROLES || securityService.getDetailServiceType() == SecurityService.SERVICE_TYPE_ALL) {
-        	List roles = securityService.getRoles();
-    	//}
-        
-        //List acls = securityService.getAcls();
+   		List users = securityService.getUsers();
+       	List roles = securityService.getRoles();
         StringBuffer xml = new StringBuffer();
         
         xml.append("<content>").append(Const.CR); //$NON-NLS-1$
@@ -128,14 +119,6 @@ public class SecurityReference
             xml.append("    ").append(XMLHandler.addTagValue("role", (String)roles.get(i)) ); //$NON-NLS-1$ //$NON-NLS-2$
         }
         xml.append("  </roles>").append(Const.CR); //$NON-NLS-1$
-
-        /*xml.append("  <acls>").append(Const.CR); //$NON-NLS-1$
-        for (int i=0;i<acls.size();i++)
-        {
-            xml.append("    ").append(((SecurityACL)acls.get(i)).toXML() ).append(Const.CR); //$NON-NLS-1$
-        }
-        xml.append("  </acls>").append(Const.CR); //$NON-NLS-1$*/
-
         xml.append("</content>").append(Const.CR); //$NON-NLS-1$
         
         return xml.toString();
