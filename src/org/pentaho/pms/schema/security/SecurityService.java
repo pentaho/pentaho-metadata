@@ -365,7 +365,22 @@ public class SecurityService extends ChangedFlag implements Cloneable {
         throw new PentahoMetadataException(msg, e); 
         
       }
-      return doc.getFirstChild();
+      
+      if(serviceURL.endsWith("ServiceAction")) {
+          Node envelope = XMLHandler.getSubNode(doc, "SOAP-ENV:Envelope"); //$NON-NLS-1$
+          if (envelope != null) {
+            Node body = XMLHandler.getSubNode(envelope, "SOAP-ENV:Body"); //$NON-NLS-1$
+            if (body != null) {
+              Node response = XMLHandler.getSubNode(body, "ExecuteActivityResponse"); //$NON-NLS-1$
+              if (response != null) {
+                Node content = XMLHandler.getSubNode(response, "content"); //$NON-NLS-1$
+                return content;
+              }
+            }
+          }
+      } else {
+    	  return doc.getFirstChild();
+      }
     }
     return null;
 
@@ -401,7 +416,10 @@ public class SecurityService extends ChangedFlag implements Cloneable {
   public String getURL(String serviceTypeCode) {
     StringBuffer url = new StringBuffer();
     url.append(serviceURL);
-    if(serviceTypeCode != null) {
+    if(serviceURL.endsWith("ServiceAction")) {
+    	url.append("?").append(ACTION).append("=").append(serviceName); //$NON-NLS-1$ //$NON-NLS-2$
+        url.append("&").append(detailNameParameter).append("=").append(getServiceTypeCode()); //$NON-NLS-1$ //$NON-NLS-2$
+    } else if(serviceTypeCode != null) {
     	if(!serviceURL.endsWith("/")) url.append("/");
     	url.append(serviceTypeCode);
     }
@@ -438,11 +456,16 @@ public class SecurityService extends ChangedFlag implements Cloneable {
     	if(getDetailServiceType() == SecurityService.SERVICE_TYPE_USERS || getDetailServiceType() == SERVICE_TYPE_ALL) {  
 	    	String url = getURL(serviceTypeCodes[SERVICE_TYPE_USERS]);  
 	        Node contentNode = getContent(url);
+	        String usersNode = "users";
+	        if(serviceURL.endsWith("ServiceAction")) {
+	        	contentNode = XMLHandler.getSubNode(contentNode, usersNode); //$NON-NLS-1$
+	        	usersNode = "user";
+	        } 
 	
 	        // Load the users
-	        int nrUsers = XMLHandler.countNodes(contentNode, "users"); //$NON-NLS-1$
+	        int nrUsers = XMLHandler.countNodes(contentNode, usersNode); //$NON-NLS-1$
 	        for (int i = 0; i < nrUsers; i++) {
-	          Node userNode = XMLHandler.getSubNodeByNr(contentNode, "users", i); //$NON-NLS-1$
+	          Node userNode = XMLHandler.getSubNodeByNr(contentNode, usersNode, i); //$NON-NLS-1$
 	          String username = XMLHandler.getNodeValue(userNode);
 	          if (username != null)
 	            users.add(username);
@@ -461,15 +484,21 @@ public class SecurityService extends ChangedFlag implements Cloneable {
     List<String> roles = new ArrayList<String>();
     if (hasService() || hasFile()) {
       try {
-    	  if(getDetailServiceType() == SecurityService.SERVICE_TYPE_ROLES || getDetailServiceType() == SERVICE_TYPE_ALL) {  
+    	  
+    	if(getDetailServiceType() == SecurityService.SERVICE_TYPE_ROLES || getDetailServiceType() == SERVICE_TYPE_ALL) {  
 	    	String url = getURL(serviceTypeCodes[SERVICE_TYPE_ROLES]); 
 	        Node contentNode = getContent(url);
+	        String rolesNode = "roles";
+	        if(serviceURL.endsWith("ServiceAction")) {
+	        	contentNode = XMLHandler.getSubNode(contentNode, rolesNode); //$NON-NLS-1$
+	        	rolesNode = "role";
+	        } 
 	
 	        // Load the roles
-	        int nrRoles = XMLHandler.countNodes(contentNode, "roles"); //$NON-NLS-1$
+	        int nrRoles = XMLHandler.countNodes(contentNode, rolesNode); //$NON-NLS-1$
 	        for (int i=0;i<nrRoles;i++)
 	        {
-	            Node roleNode = XMLHandler.getSubNodeByNr(contentNode, "roles", i); //$NON-NLS-1$
+	            Node roleNode = XMLHandler.getSubNodeByNr(contentNode, rolesNode, i); //$NON-NLS-1$
 	            String rolename = XMLHandler.getNodeValue(roleNode);
 	            if (rolename!=null) roles.add(rolename);
 	        }
