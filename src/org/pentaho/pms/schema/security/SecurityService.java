@@ -416,7 +416,7 @@ public class SecurityService extends ChangedFlag implements Cloneable {
   public String getURL(String serviceTypeCode) {
     StringBuffer url = new StringBuffer();
     url.append(serviceURL);
-    if(serviceURL.endsWith("ServiceAction")) {
+    if(serviceURL != null && serviceURL.endsWith("ServiceAction")) {
     	url.append("?").append(ACTION).append("=").append(serviceName); //$NON-NLS-1$ //$NON-NLS-2$
         url.append("&").append(detailNameParameter).append("=").append(getServiceTypeCode()); //$NON-NLS-1$ //$NON-NLS-2$
     } else if(serviceTypeCode != null) {
