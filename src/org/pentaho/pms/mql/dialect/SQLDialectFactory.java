@@ -58,6 +58,7 @@ public class SQLDialectFactory {
     addDialect(new DefaultSQLDialect());
     addDialect(new OracleDialect());
     addDialect(new MSSQLDialect());
+    addDialect(new MSSQLNativeDialect());
     addDialect(new DB2Dialect());
     addDialect(new PostgreSQLDialect());
     addDialect(new MySQLDialect());
