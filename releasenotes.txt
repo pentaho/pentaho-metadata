@@ -1,0 +1,242 @@
+10/09/2007
+Pentaho Metadata Release Notes for: 1.6.0
+
+This is the GA (General Availabilty) build of the Pentaho Metadata.
+
+For installation instructions and info for getting started:
+http://wiki.pentaho.org/display/studio/02.+Pentaho+Metadata+Editor+Getting+Started+Guide
+
+For a complete change log including previous releases:
+http://jira.pentaho.org/browse/PDS?report=com.atlassian.jira.plugin.system.project:changelog-panel
+
+For a complete list of the open issues:
+http://jira.pentaho.org/secure/IssueNavigator.jspa?reset=true&&pid=10030&status=1&sorter/field=issuekey&sorter/order=DESC&sorter/field=priority&sorter/order=DESC&sorter/field=fixVersions&sorter/order=ASC
+
+
+Release History 
+=====================================
+ Pentaho 1.6 RC 2 			06/Sep/07
+ Pentaho 1.6 RC 1 			09/Aug/07
+ Pentaho 1.6 M5 (1.5.5) 	11/Jul/07
+ Pentaho 1.6 M4 (1.5.4) 	12/Jun/07
+ Pentaho 1.6 M3 (1.5.3) 	25/Apr/07
+ Pentaho 1.6 M2 (1.5.2) 	20/Mar/07
+
+===================================================================================================================
+Changes Since Release Candidate 2 - Pentaho 1.6 RC2:
+===================================================================================================================
+Bug
+    * [PMD-96] - System.out.println references in more than 60 places
+    * [PMD-134] - When defining a custom property, the user is not able to add a localized description, in addition to the ID and type.
+    * [PMD-139] - All dialogs need an application icon on the title bar (coil)
+    * [PMD-146] - General Metadata UI issues
+    * [PMD-153] - Outstanding PME Items for 1.6 release
+    * [PMD-159] - Model Description on Graphical View needs to wrap text
+    * [PMD-160] - Adding category does not provide a default ID
+    * [PMD-173] - Some icons do not have transparent backgrounds.
+    * [PMD-180] - Cannot create XMI that will generate correct SQL for total sales by country
+    * [PMD-189] - Error in MQL Query Builder
+    * [PMD-190] - Version displayed on PME splash screen still says 1.5.x
+    * [PMD-197] - Names get out of sync in Tree View
+    * [PMD-201] - Text Alignment, URL, and Column Width property types cause Exceptions when creating
+    * [PMD-202] - Query Designer does not respect current locale setting
+    * [PMD-204] - icons in the Graphical View still show as boxes
+    * [PMD-205] - Manage Categories dialog needs proper icons
+    * [PMD-209] - Query Designer does not pickup changes to model
+    * [PMD-215] - There is no way to disable DISTINCT in MQL if the report has no groupings
+    * [PMD-216] - PMD SecurityService uses webservice call to get users and roles from the server
+    * [PMD-217] - missing resources returned in PME when retrieving security from the platform
+    * [PMD-227] - RC3 BUILD 147: Error: Invalid ID - pop up dialog appears and pressing OK results in repeat of the error message box if the properties ID field is left blank
+    * [PMD-230] - PME relationships: complex joins generate incorrect SQL
+    * [PMD-231] - Changes to the physical column's parent concept properties are not being honored
+    * [PMD-235] - Define Default concept for PME
+    * [PMD-236] - Do not allow removal of base default concept
+    * [PMD-237] - Deleting a concept in the concept editor does not delete its children.
+    * [PMD-238] - Do not allow duplicate concept names in the concept editor
+    * [PMD-239] - Delete a concept does not delete the concept from the CWM repository
+    * [PMD-241] - Representation of required properties in dialog, inherited parent concepts in tree is confusing
+
+Improvement
+    * [PMD-69] - Display physical and logical columns in alphabetical order
+
+Task
+    * [PMD-33] - Review PMD architecture
+    * [PMD-210] - review docs
+
+===================================================================================================================
+Changes Since Release Candidate 1 - Pentaho 1.6 RC1:
+===================================================================================================================
+Bug
+    * [PMD-26] - Cannot create condition with rundemo
+    * [PMD-91] - PostgreSQL Adhoc Returns Empty Results
+    * [PMD-111] - Middle mouse button click and drag between two tables in Graphical View (aka canvas) results in NullPointerException.
+    * [PMD-140] - No progress indicator when importing a model
+    * [PMD-142] - Main toolbar buttons all need flyover text
+    * [PMD-144] - The alignment buttons only become enabled when your mouse leaves the graphical workspace
+    * [PMD-148] - Locale: should be removed from the graphical view
+    * [PMD-149] - Override Security does not keep inherited properties as a starting point
+    * [PMD-151] - Help About
+    * [PMD-166] - Locale Handling
+    * [PMD-168] - Unable to edit properties on model elements.
+    * [PMD-170] - Overriding the name/description properties on a business table actually modifies the properties of the physical table.
+    * [PMD-172] - PMD doesn't compile, something wrong with build.xml
+    * [PMD-175] - SQL Generation creates column aliases that are too long
+    * [PMD-178] - Incorrect SQL generated for a WAQR report
+    * [PMD-183] - Error in MQL Query Builder: Kettle Pentaho Dependency Issue
+    * [PMD-184] - Exception importing table
+    * [PMD-186] - Publish Dialog hides password field in Linux
+    * [PMD-187] - Successfully miss-spelled when publishing a metadata.xmi file to server
+    * [PMD-194] - Metadata SQL Generation: ANDS and ORS need parens around their expressions
+    * [PMD-198] - Cannot create concept properties in PME
+    * [PMD-207] - MQL Query Builder is displaying an exception when query results in empty.
+
+Improvement
+    * [PMD-46] - Create Sample Model that will ship with MetaData Editor.
+    * [PMD-76] - Refactor Metadata Editor classes for renaming of major metadata objects
+    * [PMD-120] - Warnings should appear when publishing to BI Platform
+
+Task
+    * [PMD-171] - RunDemo needs to be removed from the Metadata Editor distribution
+
+===================================================================================================================
+Changes Since Milestone 5 - Pentaho 1.6 M5:
+===================================================================================================================
+Bug
+    * [PMD-62] - Alignment issues on the Business Tables Properties dialog
+    * [PMD-63] - Business View Properties dialog has layout problems
+    * [PMD-95] - Save doesn't clear "Changed" flag
+    * [PMD-98] - Metadata Editor - Cancel doesn't work in New Business Model dialog
+    * [PMD-108] - No Connection Defined Inconsistency
+    * [PMD-114] - Dragging a Business Table to the Business Tables Tree Element results in a new Category
+    * [PMD-115] - Dragging a Relationship Instance into its parent "Relationships" causes MetaEditor to freeze in Linux
+    * [PMD-126] - MQL Generation needs quoted Tables and Columns
+    * [PMD-132] - User reported NPE in 1.5M3
+    * [PMD-138] - SQL generation for AS400
+    * [PMD-164] - No properties show up in the add properties dialog in the concept editor
+    * [PMD-167] - PME Message resources missing in the server
+
+Improvement
+    * [PMD-43] - Color coding of business tables
+    * [PMD-100] - PME Import Tables dialog should automatically pop up after adding a new connection
+    * [PMD-105] - UI doesn't validate Formula attribute
+    * [PMD-109] - Business Column ID generation
+    * [PMD-118] - The process of adding/removing colums to a catagory in PME is extremely unintuitive.
+    * [PMD-135] - Provide a custom property editor which will allow the user to define re-usable custom properties.
+
+Task
+    * [PMD-89] - Needed Icons for PME
+    
+===================================================================================================================
+Changes Since Milestone 4 - Pentaho 1.6 M4:
+===================================================================================================================
+Bug
+    * [PMD-29] - After saving model in metaeditor client application cannot list models
+    * [PMD-39] - Adding Business Tables without selecting column causes crash
+    * [PMD-53] - Subject field overlaps new column button
+    * [PMD-59] - cannot use command-click to multi-select objects in graphical view on osx
+    * [PMD-60] - right-click menu on Linux does not populate with all options
+    * [PMD-110] - Tree View in Properties Editor inconsistent with Tree View in main window
+    * [PMD-112] - PME allows user to remove child properties of a column that are integral to SQL execution.
+    * [PMD-113] - Add unused columns button click handler not implemented in Add New Column dialog.
+    * [PMD-116] - Unable to initialize Pentaho metadata - error in Design Studio
+    * [PMD-117] - The process of overriding column properties is unintuitive and prone to error.
+    * [PMD-125] - Publish allows you to publish to a folder other than a solution
+    * [PMD-131] - The new column/table properties editor dialog does not allow users to create new custom properties.
+    * [PMD-137] - Build Problem: .gif images not included in metadata .jar dist; causes failure to launch
+
+Improvement
+    * [PMD-97] - Select Table by default when adding a new business table to model by dragging from physical table
+    * [PMD-102] - PME uses two different dialogs to edit physical column properties. Only one dialog should be used.
+    * [PMD-106] - Inconsistency with Physical Table Column Name Editing
+    * [PMD-107] - Creating new business model requires the name to be entered twice for proper display.
+    * [PMD-124] - New models should have a description property by default
+
+New Feature
+
+    * [PMD-6] - Publish Business View to Pentaho Server
+    * [PMD-7] - Apply security to Business Views
+    * [PMD-11] - PMD Service: Server component for supporting MQL clients
+    * [PMD-122] - Implement a Reusable MQL Editor
+    * [PMD-127] - Change UI to allow setting and changing the connection on a business model
+
+Task
+    * [PMD-3] - Review persistence and security of metadata repository
+    * [PMD-32] - Present and Review CWM and MDR
+    * [PMD-123] - Update Kettle in the BI Server to Kettle 2.5.X
+
+===================================================================================================================
+Changes Since Milestone 3 - Pentaho 1.6 M3:
+===================================================================================================================
+Bug
+    * [PMD-35] - Unable to save Pentaho MetaData Model (XMI).
+    * [PMD-37] - Name doesn't show in tree when new business view is created
+    * [PMD-38] - Testing connection against hypersonic JNDI hangs client
+    * [PMD-40] - Table names change after closing/opening a business view
+    * [PMD-41] - Clicking Add property in Business Table Properties causes crash
+    * [PMD-54] - Get unused columns button does not function
+    * [PMD-55] - Business table name gets cleared after closing the Business Table dialog on initial creation
+    * [PMD-56] - Metadata editor Security Service configuration dialogs "test" button reveals ArrayIndexOutOfBounds
+    * [PMD-57] - cannot remove an individual field in category editor
+    * [PMD-58] - removing an entire category in category editor causes crash
+    * [PMD-71] - Remove Conditions Tab from Physical Tables properties dialog
+    * [PMD-72] - Prevent Models from including Business Tables or columns from multiple data sources
+    * [PMD-74] - New and open options in the query editor do not work
+    * [PMD-77] - Physical Tables do not hold property changes
+    * [PMD-80] - Metadata architecture supports nested categories in a business view, but WAQR and CWM do not
+    * [PMD-83] - New Property Dialog disables elements when Use a Default Property checkbox is toggled
+    * [PMD-84] - Program hangs when creating new relationship between tables via Right Click on canvas
+    * [PMD-92] - Current Pentaho Metadata Editor is only built for Windows
+    * [PMD-93] - WAQR points at business tables; should be looking at the business view of the metamodel
+    * [PMD-99] - Tools Menu brings up the wrong dilaog/panel
+    * [PMD-121] - Java 1.4 Issue - BigDecimal
+
+Improvement
+    * [PMD-82] - Added pentaho-core.jar to PME
+    * [PMD-88] - Additional Security Service improvements for PME
+    * [PMD-90] - Improve Security Dialog per PM UI Review
+    * [PMD-119] - User shouldn't be able to change the metadata file name.
+
+===================================================================================================================
+Changes Since Initial Coding:
+===================================================================================================================
+Bug
+    * [PMD-42] - Examine Preview Data window has no horizontal scrollbar
+    * [PMD-30] - Cannot save localized strings
+    * [PMD-2] - Business Table properties settings (e.g. description) do not seem to save
+    * [PMD-4] - Support Hypersonic DB for MDR
+    * [PMD-20] - Aggregations not working
+    * [PMD-24] - Errors when ordering aggregated calculated columns
+
+New Feature
+    * [PMD-12] - SWT MQL designer prototype
+    * [PMD-13] - Prototype SWT client (Action Sequence Editor or Report Design Wizard)
+    * [PMD-14] - AJAX library that provides access to Pentaho services
+    * [PMD-15] - Web-Based Ad-Hoc script library
+    * [PMD-17] - Web-Based Ad-Hoc user interface prototype
+    * [PMD-18] - PCI UI changes for Web-Based Ad-Hoc
+    * [PMD-16] - Javascript library for browser-side XSL
+    * [PMD-22] - Add export/import functionality to/from XMI
+    * [PMD-27] - Ability to load XSLs over HTTP
+
+Improvement
+    * [PMD-128] - Document the creation process for a MetaData Model and steps to create a report via WAQR
+    * [PMD-75] - Externalize Strings for Metadata Editor
+    * [PMD-28] - Metadata should store physical column types (e.g. integer, date)
+
+Task
+    * [PMD-19] - Check license of all PMD third party libraries
+    * [PMD-23] - Create an HTML mockup of step 2 of the Web-Based Ad-Hoc Report Wizard
+    * [PMD-31] - Demonstrate localized names and descriptions in the ad-hoc client
+    * [PMD-34] - Review Web-Based Ad-Hoc Requirements
+
+
+Contributors
+============
+
+We would like to thank our Pentaho community members for their interest and support.
+
+We also would like to extend a special thank you to those of you that take the time
+and effort to contribute to the Pentaho projects. Check out 
+http://community.pentaho.org/contributors/ for complete list of contributors to all 
+of the Pentaho projects. 
+

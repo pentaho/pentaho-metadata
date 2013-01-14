@@ -1,0 +1,4 @@
+<module>
+	<!-- org.pentaho.metadata.model package -->
+    <source path="model"/>
+</module>

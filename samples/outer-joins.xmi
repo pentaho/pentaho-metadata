@@ -1,0 +1,2397 @@
+<?xml version = '1.0' encoding = 'UTF-8' ?>
+<XMI xmi.version = '1.2' xmlns:CWMTFM = 'org.omg.xmi.namespace.CWMTFM' xmlns:CWM = 'org.omg.xmi.namespace.CWM'
+  xmlns:CWMMDB = 'org.omg.xmi.namespace.CWMMDB' xmlns:CWMOLAP = 'org.omg.xmi.namespace.CWMOLAP'
+  xmlns:CWMRDB = 'org.omg.xmi.namespace.CWMRDB' timestamp = 'Fri Mar 14 15:22:20 CET 2008'>
+  <XMI.header>
+    <XMI.documentation>
+      <XMI.exporter>Netbeans XMI Writer</XMI.exporter>
+      <XMI.exporterVersion>1.0</XMI.exporterVersion>
+    </XMI.documentation>
+  </XMI.header>
+  <XMI.content>
+    <CWM:Class xmi.id = 'a1' name = 'Base' isAbstract = 'false'/>
+    <CWM:Description xmi.id = 'a2' name = 'foreground_color' body = '0,0,0'
+      type = 'Color'>
+      <CWM:Description.modelElement>
+        <CWM:Class xmi.idref = 'a1'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a3' name = 'font' body = 'Arial-10' type = 'Font'>
+      <CWM:Description.modelElement>
+        <CWM:Class xmi.idref = 'a1'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a4' name = 'alignment' body = 'left' type = 'Alignment'>
+      <CWM:Description.modelElement>
+        <CWM:Class xmi.idref = 'a1'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a5' name = 'name' body = 'TABLE4' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Table xmi.idref = 'a6'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a7' name = 'tabletype' body = 'Other' type = 'TableType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Table xmi.idref = 'a6'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a8' name = 'target_table' body = 'TABLE4' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Table xmi.idref = 'a6'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a9' name = 'name' body = 'NAME' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a10'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a11' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a10'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a12' name = 'formula' body = 'NAME' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a10'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a13' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a10'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a14' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a10'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a15' name = 'datatype' body = 'String,-1,-1'
+      type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a10'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a16' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a10'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a17' name = 'name' body = 'FOREIGNKEY' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a18'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a19' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a18'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a20' name = 'formula' body = 'FOREIGNKEY' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a18'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a21' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a18'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a22' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a18'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a23' name = 'datatype' body = 'Numeric,-1,-1'
+      type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a18'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a24' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a18'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a25' name = 'name' body = 'PRIMARYKEY' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a26'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a27' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a26'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a28' name = 'formula' body = 'PRIMARYKEY' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a26'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a29' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a26'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a30' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a26'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a31' name = 'datatype' body = 'Numeric,-1,-1'
+      type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a26'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a32' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a26'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a33' name = 'name' body = 'TABLE4' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Table xmi.idref = 'a34'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a35' name = 'tabletype' body = 'Other' type = 'TableType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Table xmi.idref = 'a34'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a36' name = 'target_table' body = 'TABLE4' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Table xmi.idref = 'a34'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a37' name = 'name' body = 'NAME' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a38'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a39' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a38'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a40' name = 'formula' body = 'NAME' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a38'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a41' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a38'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a42' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a38'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a43' name = 'datatype' body = 'String,-1,-1'
+      type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a38'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a44' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a38'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a45' name = 'name' body = 'T4_FK' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a46'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a47' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a46'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a48' name = 'formula' body = 'FOREIGNKEY' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a46'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a49' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a46'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a50' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a46'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a51' name = 'datatype' body = 'Numeric,-1,-1'
+      type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a46'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a52' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a46'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a53' name = 'name' body = 'T4_PK' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a54'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a55' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a54'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a56' name = 'formula' body = 'PRIMARYKEY' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a54'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a57' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a54'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a58' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a54'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a59' name = 'datatype' body = 'Numeric,-1,-1'
+      type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a54'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a60' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a54'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a61' name = 'name' body = 'TABLE3' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Table xmi.idref = 'a62'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a63' name = 'tabletype' body = 'Other' type = 'TableType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Table xmi.idref = 'a62'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a64' name = 'target_table' body = 'TABLE3' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Table xmi.idref = 'a62'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a65' name = 'name' body = 'T3_FK' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a66'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a67' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a66'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a68' name = 'formula' body = 'FOREIGNKEY' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a66'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a69' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a66'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a70' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a66'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a71' name = 'datatype' body = 'Numeric,-1,-1'
+      type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a66'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a72' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a66'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a73' name = 'name' body = 'T3_PK' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a74'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a75' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a74'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a76' name = 'formula' body = 'PRIMARYKEY' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a74'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a77' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a74'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a78' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a74'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a79' name = 'datatype' body = 'Numeric,-1,-1'
+      type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a74'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a80' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a74'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a81' name = 'name' body = 'TABLE2' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Table xmi.idref = 'a82'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a83' name = 'tabletype' body = 'Other' type = 'TableType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Table xmi.idref = 'a82'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a84' name = 'target_table' body = 'TABLE2' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Table xmi.idref = 'a82'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a85' name = 'name' body = 'T2_FK' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a86'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a87' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a86'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a88' name = 'formula' body = 'FOREIGNKEY' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a86'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a89' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a86'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a90' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a86'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a91' name = 'datatype' body = 'Numeric,-1,-1'
+      type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a86'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a92' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a86'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a93' name = 'name' body = 'T2_PK' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a94'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a95' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a94'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a96' name = 'formula' body = 'PRIMARYKEY' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a94'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a97' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a94'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a98' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a94'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a99' name = 'datatype' body = 'Numeric,-1,-1'
+      type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a94'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a100' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a94'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a101' name = 'name' body = 'TABLE1' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Table xmi.idref = 'a102'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a103' name = 'tabletype' body = 'Other' type = 'TableType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Table xmi.idref = 'a102'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a104' name = 'target_table' body = 'TABLE1' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Table xmi.idref = 'a102'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a105' name = 'name' body = 'Aggregate' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a106'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a107' name = 'aggregation' body = 'sum' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a106'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a108' name = 'formula' body = 'PRIMARYKEY' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a106'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a109' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a106'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a110' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a106'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a111' name = 'fieldtype' body = 'Fact' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a106'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a112' name = 'name' body = 'T1_FK' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a113'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a114' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a113'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a115' name = 'formula' body = 'FOREIGNKEY' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a113'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a116' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a113'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a117' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a113'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a118' name = 'datatype' body = 'Numeric,-1,-1'
+      type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a113'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a119' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a113'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a120' name = 'name' body = 'T1_PK' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a121'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a122' name = 'aggregation' body = 'none' type = 'Aggregation'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a121'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a123' name = 'formula' body = 'PRIMARYKEY' type = 'String'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a121'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a124' name = 'hidden' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a121'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a125' name = 'exact' body = 'N' type = 'Boolean'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a121'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a126' name = 'datatype' body = 'Numeric,-1,-1'
+      type = 'DataType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a121'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a127' name = 'fieldtype' body = 'Dimension' type = 'FieldType'>
+      <CWM:Description.modelElement>
+        <CWMRDB:Column xmi.idref = 'a121'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a128' name = 'name' body = 'Scenario6' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Schema xmi.idref = 'a129'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a130' name = 'description' body = '4 tables outer joined'
+      language = 'en_US' type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Schema xmi.idref = 'a129'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a131' name = 'security' body = '&lt;security&gt;&#10;&lt;/security&gt;&#10;'
+      type = 'Security'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Schema xmi.idref = 'a129'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a132' name = 'name' body = 'TABLE4' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Dimension xmi.idref = 'a133'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a134' name = 'name' body = 'TABLE3' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Dimension xmi.idref = 'a135'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a136' name = 'name' body = 'TABLE2' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Dimension xmi.idref = 'a137'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a138' name = 'name' body = 'TABLE1' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Dimension xmi.idref = 'a139'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a140' name = 'Documentation URL' body = 'http:'
+      type = 'URL'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Dimension xmi.idref = 'a139'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a141' name = 'NumberOfWTFs' body = '934' type = 'Number'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Dimension xmi.idref = 'a139'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a142' name = 'name' body = 'TABLE1' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a143'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a144' name = 'security' body = '&lt;security&gt;&#10;&lt;/security&gt;&#10;'
+      type = 'Security'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a143'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a145' name = 'name' body = 'TABLE2' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a146'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a147' name = 'security' body = '&lt;security&gt;&#10;&lt;/security&gt;&#10;'
+      type = 'Security'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a146'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a148' name = 'name' body = 'TABLE3' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a149'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a150' name = 'security' body = '&lt;security&gt;&#10;&lt;/security&gt;&#10;'
+      type = 'Security'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a149'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a151' name = 'name' body = 'TABLE4' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a152'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a153' name = 'security' body = '&lt;security&gt;&#10;&lt;/security&gt;&#10;'
+      type = 'Security'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a152'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a154' name = 'name' body = 'Scenario5' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Schema xmi.idref = 'a155'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a156' name = 'description' body = 'Two outer joins in the oposite direction'
+      language = 'en_US' type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Schema xmi.idref = 'a155'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a157' name = 'security' body = '&lt;security&gt;&#10;&lt;/security&gt;&#10;'
+      type = 'Security'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Schema xmi.idref = 'a155'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a158' name = 'name' body = 'TABLE3' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Dimension xmi.idref = 'a159'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a160' name = 'name' body = 'TABLE2' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Dimension xmi.idref = 'a161'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a162' name = 'name' body = 'TABLE1' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Dimension xmi.idref = 'a163'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a164' name = 'name' body = 'TABLE1' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a165'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a166' name = 'security' body = '&lt;security&gt;&#10;&lt;/security&gt;&#10;'
+      type = 'Security'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a165'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a167' name = 'name' body = 'TABLE2' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a168'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a169' name = 'security' body = '&lt;security&gt;&#10;&lt;/security&gt;&#10;'
+      type = 'Security'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a168'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a170' name = 'name' body = 'TABLE3' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a171'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a172' name = 'security' body = '&lt;security&gt;&#10;&lt;/security&gt;&#10;'
+      type = 'Security'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a171'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a173' name = 'name' body = 'Scenario4' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Schema xmi.idref = 'a174'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a175' name = 'description' body = 'Two outer joins on a single table'
+      language = 'en_US' type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Schema xmi.idref = 'a174'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a176' name = 'security' body = '&lt;security&gt;&#10;&lt;/security&gt;&#10;'
+      type = 'Security'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Schema xmi.idref = 'a174'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a177' name = 'name' body = 'TABLE3' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Dimension xmi.idref = 'a178'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a179' name = 'name' body = 'TABLE2' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Dimension xmi.idref = 'a180'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a181' name = 'name' body = 'TABLE1' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Dimension xmi.idref = 'a182'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a183' name = 'name' body = 'TABLE1' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a184'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a185' name = 'security' body = '&lt;security&gt;&#10;&lt;/security&gt;&#10;'
+      type = 'Security'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a184'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a186' name = 'name' body = 'TABLE2' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a187'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a188' name = 'security' body = '&lt;security&gt;&#10;&lt;/security&gt;&#10;'
+      type = 'Security'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a187'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a189' name = 'name' body = 'TABLE3' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a190'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a191' name = 'security' body = '&lt;security&gt;&#10;&lt;/security&gt;&#10;'
+      type = 'Security'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a190'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a192' name = 'name' body = 'Scenario3' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Schema xmi.idref = 'a193'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a194' name = 'description' body = 'Three tables are outer joined'
+      language = 'en_US' type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Schema xmi.idref = 'a193'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a195' name = 'security' body = '&lt;security&gt;&#10;&lt;/security&gt;&#10;'
+      type = 'Security'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Schema xmi.idref = 'a193'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a196' name = 'name' body = 'TABLE3' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Dimension xmi.idref = 'a197'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a198' name = 'name' body = 'TABLE2' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Dimension xmi.idref = 'a199'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a200' name = 'name' body = 'TABLE1' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Dimension xmi.idref = 'a201'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a202' name = 'name' body = 'TABLE1' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a203'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a204' name = 'security' body = '&lt;security&gt;&#10;&lt;/security&gt;&#10;'
+      type = 'Security'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a203'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a205' name = 'name' body = 'TABLE2' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a206'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a207' name = 'security' body = '&lt;security&gt;&#10;&lt;/security&gt;&#10;'
+      type = 'Security'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a206'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a208' name = 'name' body = 'TABLE3' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a209'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a210' name = 'security' body = '&lt;security&gt;&#10;&lt;/security&gt;&#10;'
+      type = 'Security'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a209'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a211' name = 'name' body = 'Scenario2' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Schema xmi.idref = 'a212'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a213' name = 'description' body = 'Test scenario 2'
+      language = 'en_US' type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Schema xmi.idref = 'a212'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a214' name = 'security' body = '&lt;security&gt;&#10;&lt;/security&gt;&#10;'
+      type = 'Security'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Schema xmi.idref = 'a212'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a215' name = 'name' body = 'TABLE3' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Dimension xmi.idref = 'a216'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a217' name = 'name' body = 'TABLE2' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Dimension xmi.idref = 'a218'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a219' name = 'name' body = 'TABLE1' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Dimension xmi.idref = 'a220'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a221' name = 'name' body = 'TABLE1' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a222'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a223' name = 'security' body = '&lt;security&gt;&#10;&lt;/security&gt;&#10;'
+      type = 'Security'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a222'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a224' name = 'name' body = 'TABLE2' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a225'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a226' name = 'security' body = '&lt;security&gt;&#10;&lt;/security&gt;&#10;'
+      type = 'Security'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a225'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a227' name = 'name' body = 'TABLE3' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a228'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a229' name = 'security' body = '&lt;security&gt;&#10;&lt;/security&gt;&#10;'
+      type = 'Security'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a228'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a230' name = 'name' body = 'Scenario1' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Schema xmi.idref = 'a231'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a232' name = 'description' body = 'Test scenario 1'
+      language = 'en_US' type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Schema xmi.idref = 'a231'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a233' name = 'security' body = '&lt;security&gt;&#10;&lt;/security&gt;&#10;'
+      type = 'Security'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Schema xmi.idref = 'a231'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a234' name = 'name' body = 'TABLE2' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Dimension xmi.idref = 'a235'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a236' name = 'name' body = 'TABLE1' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWMMDB:Dimension xmi.idref = 'a237'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a238' name = 'name' body = 'TABLE1' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a239'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a240' name = 'security' body = '&lt;security&gt;&#10;&lt;/security&gt;&#10;'
+      type = 'Security'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a239'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a241' name = 'name' body = 'TABLE2' language = 'en_US'
+      type = 'LocString'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a242'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Description xmi.id = 'a243' name = 'security' body = '&lt;security&gt;&#10;&lt;/security&gt;&#10;'
+      type = 'Security'>
+      <CWM:Description.modelElement>
+        <CWM:Extent xmi.idref = 'a242'/>
+      </CWM:Description.modelElement>
+    </CWM:Description>
+    <CWM:Event xmi.id = 'a244' name = 'SECURITY_SERVICE'>
+      <CWM:ModelElement.taggedValue>
+        <CWM:TaggedValue xmi.id = 'a245' tag = 'SECURITY_SERVICE_URL'/>
+        <CWM:TaggedValue xmi.id = 'a246' tag = 'SECURITY_DETAILS_NAME'/>
+        <CWM:TaggedValue xmi.id = 'a247' tag = 'SECURITY_DETAIL_NAME'/>
+        <CWM:TaggedValue xmi.id = 'a248' tag = 'SECURITY_DETAIL_TYPE' value = 'All'/>
+        <CWM:TaggedValue xmi.id = 'a249' tag = 'SECURITY_USERNAME'/>
+        <CWM:TaggedValue xmi.id = 'a250' tag = 'SECURITY_PASSWORD'/>
+        <CWM:TaggedValue xmi.id = 'a251' tag = 'SECURITY_PROXY_HOST'/>
+        <CWM:TaggedValue xmi.id = 'a252' tag = 'SECURITY_PROXY_PORT'/>
+        <CWM:TaggedValue xmi.id = 'a253' tag = 'SECURITY_NON_PROXY_HOSTS'/>
+        <CWM:TaggedValue xmi.id = 'a254' tag = 'SECURITY_FILENAME'/>
+        <CWM:TaggedValue xmi.id = 'a255' tag = 'SECURITY_URL' value = 'null?action=null&amp;null=all'/>
+      </CWM:ModelElement.taggedValue>
+    </CWM:Event>
+    <CWM:Parameter xmi.id = 'a256' name = 'en_US'>
+      <CWM:ModelElement.taggedValue>
+        <CWM:TaggedValue xmi.id = 'a257' tag = 'LOCALE_DESCRIPTION' value = 'English (American)'/>
+        <CWM:TaggedValue xmi.id = 'a258' tag = 'LOCALE_ORDER' value = '1'/>
+        <CWM:TaggedValue xmi.id = 'a259' tag = 'LOCALE_IS_DEFAULT' value = 'Y'/>
+      </CWM:ModelElement.taggedValue>
+    </CWM:Parameter>
+    <CWMOLAP:Schema xmi.id = 'a260' name = 'BV_SCENARIO6'/>
+    <CWMOLAP:Schema xmi.id = 'a261' name = 'BV_SCENARIO5'/>
+    <CWMOLAP:Schema xmi.id = 'a262' name = 'BV_SCENARIO4'/>
+    <CWMOLAP:Schema xmi.id = 'a263' name = 'BV_SCENARIO3'/>
+    <CWMOLAP:Schema xmi.id = 'a264' name = 'BV_SCENARIO2'/>
+    <CWMOLAP:Schema xmi.id = 'a265' name = 'BV_SCENARIO1'/>
+    <CWMRDB:Catalog xmi.id = 'a266' name = 'ORCL'>
+      <CWM:ModelElement.taggedValue>
+        <CWM:TaggedValue xmi.id = 'a267' tag = 'DATABASE_SERVER' value = 'localhost'/>
+        <CWM:TaggedValue xmi.id = 'a268' tag = 'DATABASE_TYPE' value = 'ORACLE'/>
+        <CWM:TaggedValue xmi.id = 'a269' tag = 'DATABASE_ACCESS' value = 'Native'/>
+        <CWM:TaggedValue xmi.id = 'a270' tag = 'DATABASE_DATABASE' value = 'XE'/>
+        <CWM:TaggedValue xmi.id = 'a271' tag = 'DATABASE_PORT' value = '1521'/>
+        <CWM:TaggedValue xmi.id = 'a272' tag = 'DATABASE_USERNAME' value = 'matt'/>
+        <CWM:TaggedValue xmi.id = 'a273' tag = 'DATABASE_PASSWORD' value = 'abcd'/>
+        <CWM:TaggedValue xmi.id = 'a274' tag = 'DATABASE_SERVERNAME' value = ''/>
+        <CWM:TaggedValue xmi.id = 'a275' tag = 'DATABASE_DATA_TABLESPACE' value = ''/>
+        <CWM:TaggedValue xmi.id = 'a276' tag = 'DATABASE_INDEX_TABLESPACE' value = ''/>
+        <CWM:TaggedValue xmi.id = 'a277' tag = 'DATABASE_ATTRIBUTE_PREFIX_MSSQL_DOUBLE_DECIMAL_SEPARATOR'
+          value = 'N'/>
+        <CWM:TaggedValue xmi.id = 'a278' tag = 'DATABASE_ATTRIBUTE_PREFIX_EXTRA_OPTION_MYSQL.useCursorFetch'
+          value = 'true'/>
+        <CWM:TaggedValue xmi.id = 'a279' tag = 'DATABASE_ATTRIBUTE_PREFIX_INITIAL_POOL_SIZE'
+          value = '5'/>
+        <CWM:TaggedValue xmi.id = 'a280' tag = 'DATABASE_ATTRIBUTE_PREFIX_MAXIMUM_POOL_SIZE'
+          value = '10'/>
+        <CWM:TaggedValue xmi.id = 'a281' tag = 'DATABASE_ATTRIBUTE_PREFIX_USE_POOLING'
+          value = 'N'/>
+        <CWM:TaggedValue xmi.id = 'a282' tag = 'DATABASE_ATTRIBUTE_PREFIX_IS_CLUSTERED'
+          value = 'N'/>
+        <CWM:TaggedValue xmi.id = 'a283' tag = 'DATABASE_ATTRIBUTE_PREFIX_STREAM_RESULTS'
+          value = 'Y'/>
+        <CWM:TaggedValue xmi.id = 'a284' tag = 'DATABASE_ATTRIBUTE_PREFIX_EXTRA_OPTION_MYSQL.defaultFetchSize'
+          value = '500'/>
+        <CWM:TaggedValue xmi.id = 'a285' tag = 'DATABASE_ATTRIBUTE_PREFIX_FORCE_IDENTIFIERS_TO_UPPERCASE'
+          value = 'N'/>
+        <CWM:TaggedValue xmi.id = 'a286' tag = 'DATABASE_ATTRIBUTE_PREFIX_PORT_NUMBER'
+          value = '1521'/>
+        <CWM:TaggedValue xmi.id = 'a287' tag = 'DATABASE_ATTRIBUTE_PREFIX_FORCE_IDENTIFIERS_TO_LOWERCASE'
+          value = 'N'/>
+        <CWM:TaggedValue xmi.id = 'a288' tag = 'DATABASE_ATTRIBUTE_PREFIX_QUOTE_ALL_FIELDS'
+          value = 'N'/>
+        <CWM:TaggedValue xmi.id = 'a289' tag = 'DATABASE_JDBC_URL' value = 'jdbc:oracle:thin:@localhost:1521:XE'/>
+      </CWM:ModelElement.taggedValue>
+    </CWMRDB:Catalog>
+    <CWMRDB:Table xmi.id = 'a6' name = 'PT_TABLE4 2' isAbstract = 'false' isTemporary = 'false'
+      isSystem = 'false'>
+      <CWM:ModelElement.taggedValue>
+        <CWM:TaggedValue xmi.id = 'a290' tag = 'TABLE_TARGET_DATABASE_NAME' value = 'ORCL'/>
+      </CWM:ModelElement.taggedValue>
+      <CWM:Namespace.ownedElement>
+        <CWMRDB:Column xmi.id = 'a10' name = 'NAME'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a291' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+        <CWMRDB:Column xmi.id = 'a18' name = 'FOREIGNKEY'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a292' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+        <CWMRDB:Column xmi.id = 'a26' name = 'PRIMARYKEY'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a293' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+      </CWM:Namespace.ownedElement>
+    </CWMRDB:Table>
+    <CWMRDB:Table xmi.id = 'a34' name = 'PT_TABLE4' isAbstract = 'false' isTemporary = 'false'
+      isSystem = 'false'>
+      <CWM:ModelElement.taggedValue>
+        <CWM:TaggedValue xmi.id = 'a294' tag = 'TABLE_TARGET_DATABASE_NAME' value = 'ORCL'/>
+      </CWM:ModelElement.taggedValue>
+      <CWM:Namespace.ownedElement>
+        <CWMRDB:Column xmi.id = 'a38' name = 'NAME'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a295' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+        <CWMRDB:Column xmi.id = 'a46' name = 'FOREIGNKEY'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a296' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+        <CWMRDB:Column xmi.id = 'a54' name = 'PRIMARYKEY'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a297' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+      </CWM:Namespace.ownedElement>
+    </CWMRDB:Table>
+    <CWMRDB:Table xmi.id = 'a62' name = 'PT_TABLE3' isAbstract = 'false' isTemporary = 'false'
+      isSystem = 'false'>
+      <CWM:ModelElement.taggedValue>
+        <CWM:TaggedValue xmi.id = 'a298' tag = 'TABLE_TARGET_DATABASE_NAME' value = 'ORCL'/>
+      </CWM:ModelElement.taggedValue>
+      <CWM:Namespace.ownedElement>
+        <CWMRDB:Column xmi.id = 'a66' name = 'FOREIGNKEY'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a299' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+        <CWMRDB:Column xmi.id = 'a74' name = 'PRIMARYKEY'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a300' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+      </CWM:Namespace.ownedElement>
+    </CWMRDB:Table>
+    <CWMRDB:Table xmi.id = 'a82' name = 'PT_TABLE2' isAbstract = 'false' isTemporary = 'false'
+      isSystem = 'false'>
+      <CWM:ModelElement.taggedValue>
+        <CWM:TaggedValue xmi.id = 'a301' tag = 'TABLE_TARGET_DATABASE_NAME' value = 'ORCL'/>
+      </CWM:ModelElement.taggedValue>
+      <CWM:Namespace.ownedElement>
+        <CWMRDB:Column xmi.id = 'a86' name = 'FOREIGNKEY'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a302' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+        <CWMRDB:Column xmi.id = 'a94' name = 'PRIMARYKEY'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a303' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+      </CWM:Namespace.ownedElement>
+    </CWMRDB:Table>
+    <CWMRDB:Table xmi.id = 'a102' name = 'PT_TABLE1' isAbstract = 'false' isTemporary = 'false'
+      isSystem = 'false'>
+      <CWM:ModelElement.taggedValue>
+        <CWM:TaggedValue xmi.id = 'a304' tag = 'TABLE_TARGET_DATABASE_NAME' value = 'ORCL'/>
+      </CWM:ModelElement.taggedValue>
+      <CWM:Namespace.ownedElement>
+        <CWMRDB:Column xmi.id = 'a106' name = 'PC_AGGREGATE'/>
+        <CWMRDB:Column xmi.id = 'a113' name = 'FOREIGNKEY'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a305' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+        <CWMRDB:Column xmi.id = 'a121' name = 'PRIMARYKEY'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a306' tag = 'CONCEPT_PARENT_NAME' value = 'Base'/>
+          </CWM:ModelElement.taggedValue>
+        </CWMRDB:Column>
+      </CWM:Namespace.ownedElement>
+    </CWMRDB:Table>
+    <CWMMDB:Schema xmi.id = 'a129' name = 'BV_SCENARIO6'>
+      <CWM:Namespace.ownedElement>
+        <CWM:KeyRelationship xmi.id = 'a307'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a308' tag = 'RELATIONSHIP_TABLENAME_PARENT' value = 'BT_TABLE1_TABLE1'/>
+            <CWM:TaggedValue xmi.id = 'a309' tag = 'RELATIONSHIP_TABLENAME_CHILD' value = 'BT_TABLE2_TABLE2'/>
+            <CWM:TaggedValue xmi.id = 'a310' tag = 'RELATIONSHIP_FIELDNAME_PARENT' value = 'BC_TABLE1_T1_PK'/>
+            <CWM:TaggedValue xmi.id = 'a311' tag = 'RELATIONSHIP_FIELDNAME_CHILD' value = 'BC_TABLE2_T2_FK'/>
+            <CWM:TaggedValue xmi.id = 'a312' tag = 'RELATIONSHIP_TYPE' value = '0:0'/>
+            <CWM:TaggedValue xmi.id = 'a313' tag = 'RELATIONSHIP_JOIN_ORDER_KEY' value = 'A'/>
+            <CWM:TaggedValue xmi.id = 'a314' tag = 'RELATIONSHIP_DESCRIPTION' value = ''/>
+          </CWM:ModelElement.taggedValue>
+        </CWM:KeyRelationship>
+        <CWM:KeyRelationship xmi.id = 'a315'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a316' tag = 'RELATIONSHIP_TABLENAME_PARENT' value = 'BT_TABLE2_TABLE2'/>
+            <CWM:TaggedValue xmi.id = 'a317' tag = 'RELATIONSHIP_TABLENAME_CHILD' value = 'BT_TABLE3_TABLE3'/>
+            <CWM:TaggedValue xmi.id = 'a318' tag = 'RELATIONSHIP_FIELDNAME_PARENT' value = 'BC_TABLE2_T2_PK'/>
+            <CWM:TaggedValue xmi.id = 'a319' tag = 'RELATIONSHIP_FIELDNAME_CHILD' value = 'BC_TABLE3_T3_FK'/>
+            <CWM:TaggedValue xmi.id = 'a320' tag = 'RELATIONSHIP_TYPE' value = '0:0'/>
+            <CWM:TaggedValue xmi.id = 'a321' tag = 'RELATIONSHIP_JOIN_ORDER_KEY' value = 'B'/>
+            <CWM:TaggedValue xmi.id = 'a322' tag = 'RELATIONSHIP_DESCRIPTION' value = ''/>
+          </CWM:ModelElement.taggedValue>
+        </CWM:KeyRelationship>
+        <CWM:KeyRelationship xmi.id = 'a323'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a324' tag = 'RELATIONSHIP_TABLENAME_PARENT' value = 'BT_TABLE2_TABLE2'/>
+            <CWM:TaggedValue xmi.id = 'a325' tag = 'RELATIONSHIP_TABLENAME_CHILD' value = 'BT_TABLE4_TABLE4'/>
+            <CWM:TaggedValue xmi.id = 'a326' tag = 'RELATIONSHIP_FIELDNAME_PARENT' value = 'BC_TABLE2_T2_FK'/>
+            <CWM:TaggedValue xmi.id = 'a327' tag = 'RELATIONSHIP_FIELDNAME_CHILD' value = 'BC_TABLE4_T4_PK'/>
+            <CWM:TaggedValue xmi.id = 'a328' tag = 'RELATIONSHIP_TYPE' value = 'N:0'/>
+            <CWM:TaggedValue xmi.id = 'a329' tag = 'RELATIONSHIP_JOIN_ORDER_KEY' value = 'C'/>
+            <CWM:TaggedValue xmi.id = 'a330' tag = 'RELATIONSHIP_DESCRIPTION' value = 'Make sure we always take all the values from Table4 when we join to Table2'/>
+          </CWM:ModelElement.taggedValue>
+        </CWM:KeyRelationship>
+        <CWM:Extent xmi.id = 'a143' name = 'BC_TABLE1'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a331' tag = 'BUSINESS_CATEGORY_ROOT' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWM:Namespace.ownedElement>
+            <CWM:Attribute xmi.id = 'a332' name = 'BC_TABLE1_T1_PK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a333' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a334' name = 'BC_TABLE1_T1_FK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a335' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a336' name = 'BC_TABLE1_AGGREGATE'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a337' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+          </CWM:Namespace.ownedElement>
+        </CWM:Extent>
+        <CWM:Extent xmi.id = 'a146' name = 'BC_TABLE2'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a338' tag = 'BUSINESS_CATEGORY_ROOT' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWM:Namespace.ownedElement>
+            <CWM:Attribute xmi.id = 'a339' name = 'BC_TABLE2_T2_PK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a340' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a341' name = 'BC_TABLE2_T2_FK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a342' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+          </CWM:Namespace.ownedElement>
+        </CWM:Extent>
+        <CWM:Extent xmi.id = 'a149' name = 'BC_TABLE3'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a343' tag = 'BUSINESS_CATEGORY_ROOT' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWM:Namespace.ownedElement>
+            <CWM:Attribute xmi.id = 'a344' name = 'BC_TABLE3_T3_PK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a345' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a346' name = 'BC_TABLE3_T3_FK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a347' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+          </CWM:Namespace.ownedElement>
+        </CWM:Extent>
+        <CWM:Extent xmi.id = 'a152' name = 'BC_TABLE4'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a348' tag = 'BUSINESS_CATEGORY_ROOT' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWM:Namespace.ownedElement>
+            <CWM:Attribute xmi.id = 'a349' name = 'BC_TABLE4_T4_PK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a350' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a351' name = 'BC_TABLE4_T4_FK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a352' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a353' name = 'BC_TABLE4_NAME'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a354' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+          </CWM:Namespace.ownedElement>
+        </CWM:Extent>
+      </CWM:Namespace.ownedElement>
+      <CWMMDB:Schema.dimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a355' name = 'BC_TABLE4_T4_PK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a356' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'PRIMARYKEY'/>
+            <CWM:TaggedValue xmi.id = 'a357' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE4_TABLE4'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a133'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a358' name = 'BC_TABLE4_T4_FK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a359' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'FOREIGNKEY'/>
+            <CWM:TaggedValue xmi.id = 'a360' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE4_TABLE4'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a133'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a361' name = 'BC_TABLE4_NAME'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a362' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'NAME'/>
+            <CWM:TaggedValue xmi.id = 'a363' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE4_TABLE4'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a133'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a364' name = 'BC_TABLE3_T3_PK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a365' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'PRIMARYKEY'/>
+            <CWM:TaggedValue xmi.id = 'a366' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE3_TABLE3'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a135'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a367' name = 'BC_TABLE3_T3_FK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a368' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'FOREIGNKEY'/>
+            <CWM:TaggedValue xmi.id = 'a369' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE3_TABLE3'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a135'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a370' name = 'BC_TABLE2_T2_PK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a371' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'PRIMARYKEY'/>
+            <CWM:TaggedValue xmi.id = 'a372' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE2_TABLE2'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a137'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a373' name = 'BC_TABLE2_T2_FK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a374' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'FOREIGNKEY'/>
+            <CWM:TaggedValue xmi.id = 'a375' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE2_TABLE2'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a137'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a376' name = 'BC_TABLE1_T1_PK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a377' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'PRIMARYKEY'/>
+            <CWM:TaggedValue xmi.id = 'a378' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE1_TABLE1'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a139'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a379' name = 'BC_TABLE1_T1_FK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a380' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'FOREIGNKEY'/>
+            <CWM:TaggedValue xmi.id = 'a381' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE1_TABLE1'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a139'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a382' name = 'BC_TABLE1_AGGREGATE'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a383' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'PC_AGGREGATE'/>
+            <CWM:TaggedValue xmi.id = 'a384' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE1_TABLE1'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a139'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+      </CWMMDB:Schema.dimensionedObject>
+      <CWMMDB:Schema.dimension>
+        <CWMMDB:Dimension xmi.id = 'a133' name = 'BT_TABLE4_TABLE4' isAbstract = 'false'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a385' tag = 'BUSINESS_TABLE_PHYSICAL_TABLE_NAME'
+              value = 'PT_TABLE4'/>
+            <CWM:TaggedValue xmi.id = 'a386' tag = 'TAG_POSITION_X' value = '375'/>
+            <CWM:TaggedValue xmi.id = 'a387' tag = 'TAG_POSITION_Y' value = '324'/>
+            <CWM:TaggedValue xmi.id = 'a388' tag = 'TABLE_IS_DRAWN' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:Dimension.dimensionedObject>
+            <CWMMDB:DimensionedObject xmi.idref = 'a355'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a358'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a361'/>
+          </CWMMDB:Dimension.dimensionedObject>
+        </CWMMDB:Dimension>
+        <CWMMDB:Dimension xmi.id = 'a135' name = 'BT_TABLE3_TABLE3' isAbstract = 'false'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a389' tag = 'BUSINESS_TABLE_PHYSICAL_TABLE_NAME'
+              value = 'PT_TABLE3'/>
+            <CWM:TaggedValue xmi.id = 'a390' tag = 'TAG_POSITION_X' value = '567'/>
+            <CWM:TaggedValue xmi.id = 'a391' tag = 'TAG_POSITION_Y' value = '138'/>
+            <CWM:TaggedValue xmi.id = 'a392' tag = 'TABLE_IS_DRAWN' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:Dimension.dimensionedObject>
+            <CWMMDB:DimensionedObject xmi.idref = 'a364'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a367'/>
+          </CWMMDB:Dimension.dimensionedObject>
+        </CWMMDB:Dimension>
+        <CWMMDB:Dimension xmi.id = 'a137' name = 'BT_TABLE2_TABLE2' isAbstract = 'false'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a393' tag = 'BUSINESS_TABLE_PHYSICAL_TABLE_NAME'
+              value = 'PT_TABLE2'/>
+            <CWM:TaggedValue xmi.id = 'a394' tag = 'TAG_POSITION_X' value = '375'/>
+            <CWM:TaggedValue xmi.id = 'a395' tag = 'TAG_POSITION_Y' value = '138'/>
+            <CWM:TaggedValue xmi.id = 'a396' tag = 'TABLE_IS_DRAWN' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:Dimension.dimensionedObject>
+            <CWMMDB:DimensionedObject xmi.idref = 'a370'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a373'/>
+          </CWMMDB:Dimension.dimensionedObject>
+        </CWMMDB:Dimension>
+        <CWMMDB:Dimension xmi.id = 'a139' name = 'BT_TABLE1_TABLE1' isAbstract = 'false'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a397' tag = 'BUSINESS_TABLE_PHYSICAL_TABLE_NAME'
+              value = 'PT_TABLE1'/>
+            <CWM:TaggedValue xmi.id = 'a398' tag = 'TAG_POSITION_X' value = '183'/>
+            <CWM:TaggedValue xmi.id = 'a399' tag = 'TAG_POSITION_Y' value = '138'/>
+            <CWM:TaggedValue xmi.id = 'a400' tag = 'TABLE_IS_DRAWN' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:Dimension.dimensionedObject>
+            <CWMMDB:DimensionedObject xmi.idref = 'a376'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a379'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a382'/>
+          </CWMMDB:Dimension.dimensionedObject>
+        </CWMMDB:Dimension>
+      </CWMMDB:Schema.dimension>
+    </CWMMDB:Schema>
+    <CWMMDB:Schema xmi.id = 'a155' name = 'BV_SCENARIO5'>
+      <CWM:Namespace.ownedElement>
+        <CWM:KeyRelationship xmi.id = 'a401'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a402' tag = 'RELATIONSHIP_TABLENAME_PARENT' value = 'BT_TABLE1_TABLE1'/>
+            <CWM:TaggedValue xmi.id = 'a403' tag = 'RELATIONSHIP_TABLENAME_CHILD' value = 'BT_TABLE3_TABLE3'/>
+            <CWM:TaggedValue xmi.id = 'a404' tag = 'RELATIONSHIP_FIELDNAME_PARENT' value = 'BC_TABLE1_T1_FK'/>
+            <CWM:TaggedValue xmi.id = 'a405' tag = 'RELATIONSHIP_FIELDNAME_CHILD' value = 'BC_TABLE3_T3_PK'/>
+            <CWM:TaggedValue xmi.id = 'a406' tag = 'RELATIONSHIP_TYPE' value = 'N:0'/>
+            <CWM:TaggedValue xmi.id = 'a407' tag = 'RELATIONSHIP_JOIN_ORDER_KEY' value = 'A'/>
+            <CWM:TaggedValue xmi.id = 'a408' tag = 'RELATIONSHIP_DESCRIPTION' value = ''/>
+          </CWM:ModelElement.taggedValue>
+        </CWM:KeyRelationship>
+        <CWM:KeyRelationship xmi.id = 'a409'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a410' tag = 'RELATIONSHIP_TABLENAME_PARENT' value = 'BT_TABLE2_TABLE2'/>
+            <CWM:TaggedValue xmi.id = 'a411' tag = 'RELATIONSHIP_TABLENAME_CHILD' value = 'BT_TABLE1_TABLE1'/>
+            <CWM:TaggedValue xmi.id = 'a412' tag = 'RELATIONSHIP_FIELDNAME_PARENT' value = 'BC_TABLE2_T2_FK'/>
+            <CWM:TaggedValue xmi.id = 'a413' tag = 'RELATIONSHIP_FIELDNAME_CHILD' value = 'BC_TABLE1_T1_PK'/>
+            <CWM:TaggedValue xmi.id = 'a414' tag = 'RELATIONSHIP_TYPE' value = '0:N'/>
+            <CWM:TaggedValue xmi.id = 'a415' tag = 'RELATIONSHIP_JOIN_ORDER_KEY' value = 'B'/>
+            <CWM:TaggedValue xmi.id = 'a416' tag = 'RELATIONSHIP_DESCRIPTION' value = ''/>
+          </CWM:ModelElement.taggedValue>
+        </CWM:KeyRelationship>
+        <CWM:Extent xmi.id = 'a165' name = 'BC_TABLE1'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a417' tag = 'BUSINESS_CATEGORY_ROOT' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWM:Namespace.ownedElement>
+            <CWM:Attribute xmi.id = 'a418' name = 'BC_TABLE1_T1_PK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a419' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a420' name = 'BC_TABLE1_T1_FK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a421' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a422' name = 'BC_TABLE1_AGGREGATE'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a423' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+          </CWM:Namespace.ownedElement>
+        </CWM:Extent>
+        <CWM:Extent xmi.id = 'a168' name = 'BC_TABLE2'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a424' tag = 'BUSINESS_CATEGORY_ROOT' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWM:Namespace.ownedElement>
+            <CWM:Attribute xmi.id = 'a425' name = 'BC_TABLE2_T2_PK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a426' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a427' name = 'BC_TABLE2_T2_FK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a428' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+          </CWM:Namespace.ownedElement>
+        </CWM:Extent>
+        <CWM:Extent xmi.id = 'a171' name = 'BC_TABLE3'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a429' tag = 'BUSINESS_CATEGORY_ROOT' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWM:Namespace.ownedElement>
+            <CWM:Attribute xmi.id = 'a430' name = 'BC_TABLE3_T3_PK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a431' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a432' name = 'BC_TABLE3_T3_FK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a433' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+          </CWM:Namespace.ownedElement>
+        </CWM:Extent>
+      </CWM:Namespace.ownedElement>
+      <CWMMDB:Schema.dimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a434' name = 'BC_TABLE3_T3_PK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a435' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'PRIMARYKEY'/>
+            <CWM:TaggedValue xmi.id = 'a436' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE3_TABLE3'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a159'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a437' name = 'BC_TABLE3_T3_FK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a438' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'FOREIGNKEY'/>
+            <CWM:TaggedValue xmi.id = 'a439' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE3_TABLE3'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a159'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a440' name = 'BC_TABLE2_T2_PK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a441' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'PRIMARYKEY'/>
+            <CWM:TaggedValue xmi.id = 'a442' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE2_TABLE2'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a161'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a443' name = 'BC_TABLE2_T2_FK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a444' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'FOREIGNKEY'/>
+            <CWM:TaggedValue xmi.id = 'a445' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE2_TABLE2'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a161'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a446' name = 'BC_TABLE1_T1_PK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a447' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'PRIMARYKEY'/>
+            <CWM:TaggedValue xmi.id = 'a448' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE1_TABLE1'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a163'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a449' name = 'BC_TABLE1_T1_FK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a450' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'FOREIGNKEY'/>
+            <CWM:TaggedValue xmi.id = 'a451' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE1_TABLE1'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a163'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a452' name = 'BC_TABLE1_AGGREGATE'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a453' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'PC_AGGREGATE'/>
+            <CWM:TaggedValue xmi.id = 'a454' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE1_TABLE1'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a163'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+      </CWMMDB:Schema.dimensionedObject>
+      <CWMMDB:Schema.dimension>
+        <CWMMDB:Dimension xmi.id = 'a159' name = 'BT_TABLE3_TABLE3' isAbstract = 'false'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a455' tag = 'BUSINESS_TABLE_PHYSICAL_TABLE_NAME'
+              value = 'PT_TABLE3'/>
+            <CWM:TaggedValue xmi.id = 'a456' tag = 'TAG_POSITION_X' value = '551'/>
+            <CWM:TaggedValue xmi.id = 'a457' tag = 'TAG_POSITION_Y' value = '153'/>
+            <CWM:TaggedValue xmi.id = 'a458' tag = 'TABLE_IS_DRAWN' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:Dimension.dimensionedObject>
+            <CWMMDB:DimensionedObject xmi.idref = 'a434'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a437'/>
+          </CWMMDB:Dimension.dimensionedObject>
+        </CWMMDB:Dimension>
+        <CWMMDB:Dimension xmi.id = 'a161' name = 'BT_TABLE2_TABLE2' isAbstract = 'false'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a459' tag = 'BUSINESS_TABLE_PHYSICAL_TABLE_NAME'
+              value = 'PT_TABLE2'/>
+            <CWM:TaggedValue xmi.id = 'a460' tag = 'TAG_POSITION_X' value = '107'/>
+            <CWM:TaggedValue xmi.id = 'a461' tag = 'TAG_POSITION_Y' value = '153'/>
+            <CWM:TaggedValue xmi.id = 'a462' tag = 'TABLE_IS_DRAWN' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:Dimension.dimensionedObject>
+            <CWMMDB:DimensionedObject xmi.idref = 'a440'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a443'/>
+          </CWMMDB:Dimension.dimensionedObject>
+        </CWMMDB:Dimension>
+        <CWMMDB:Dimension xmi.id = 'a163' name = 'BT_TABLE1_TABLE1' isAbstract = 'false'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a463' tag = 'BUSINESS_TABLE_PHYSICAL_TABLE_NAME'
+              value = 'PT_TABLE1'/>
+            <CWM:TaggedValue xmi.id = 'a464' tag = 'TAG_POSITION_X' value = '329'/>
+            <CWM:TaggedValue xmi.id = 'a465' tag = 'TAG_POSITION_Y' value = '153'/>
+            <CWM:TaggedValue xmi.id = 'a466' tag = 'TABLE_IS_DRAWN' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:Dimension.dimensionedObject>
+            <CWMMDB:DimensionedObject xmi.idref = 'a446'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a449'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a452'/>
+          </CWMMDB:Dimension.dimensionedObject>
+        </CWMMDB:Dimension>
+      </CWMMDB:Schema.dimension>
+    </CWMMDB:Schema>
+    <CWMMDB:Schema xmi.id = 'a174' name = 'BV_SCENARIO4'>
+      <CWM:Namespace.ownedElement>
+        <CWM:KeyRelationship xmi.id = 'a467'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a468' tag = 'RELATIONSHIP_TABLENAME_PARENT' value = 'BT_TABLE2_TABLE2'/>
+            <CWM:TaggedValue xmi.id = 'a469' tag = 'RELATIONSHIP_TABLENAME_CHILD' value = 'BT_TABLE3_TABLE3'/>
+            <CWM:TaggedValue xmi.id = 'a470' tag = 'RELATIONSHIP_FIELDNAME_PARENT' value = 'BC_TABLE2_T2_PK'/>
+            <CWM:TaggedValue xmi.id = 'a471' tag = 'RELATIONSHIP_FIELDNAME_CHILD' value = 'BC_TABLE3_T3_FK'/>
+            <CWM:TaggedValue xmi.id = 'a472' tag = 'RELATIONSHIP_TYPE' value = '0:N'/>
+            <CWM:TaggedValue xmi.id = 'a473' tag = 'RELATIONSHIP_JOIN_ORDER_KEY' value = 'A'/>
+            <CWM:TaggedValue xmi.id = 'a474' tag = 'RELATIONSHIP_DESCRIPTION' value = ''/>
+          </CWM:ModelElement.taggedValue>
+        </CWM:KeyRelationship>
+        <CWM:KeyRelationship xmi.id = 'a475'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a476' tag = 'RELATIONSHIP_TABLENAME_PARENT' value = 'BT_TABLE1_TABLE1'/>
+            <CWM:TaggedValue xmi.id = 'a477' tag = 'RELATIONSHIP_TABLENAME_CHILD' value = 'BT_TABLE2_TABLE2'/>
+            <CWM:TaggedValue xmi.id = 'a478' tag = 'RELATIONSHIP_FIELDNAME_PARENT' value = 'BC_TABLE1_T1_PK'/>
+            <CWM:TaggedValue xmi.id = 'a479' tag = 'RELATIONSHIP_FIELDNAME_CHILD' value = 'BC_TABLE2_T2_FK'/>
+            <CWM:TaggedValue xmi.id = 'a480' tag = 'RELATIONSHIP_TYPE' value = 'N:0'/>
+            <CWM:TaggedValue xmi.id = 'a481' tag = 'RELATIONSHIP_JOIN_ORDER_KEY' value = 'B'/>
+            <CWM:TaggedValue xmi.id = 'a482' tag = 'RELATIONSHIP_DESCRIPTION' value = ''/>
+          </CWM:ModelElement.taggedValue>
+        </CWM:KeyRelationship>
+        <CWM:Extent xmi.id = 'a184' name = 'BC_TABLE1'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a483' tag = 'BUSINESS_CATEGORY_ROOT' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWM:Namespace.ownedElement>
+            <CWM:Attribute xmi.id = 'a484' name = 'BC_TABLE1_T1_PK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a485' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a486' name = 'BC_TABLE1_T1_FK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a487' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a488' name = 'BC_TABLE1_AGGREGATE'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a489' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+          </CWM:Namespace.ownedElement>
+        </CWM:Extent>
+        <CWM:Extent xmi.id = 'a187' name = 'BC_TABLE2'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a490' tag = 'BUSINESS_CATEGORY_ROOT' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWM:Namespace.ownedElement>
+            <CWM:Attribute xmi.id = 'a491' name = 'BC_TABLE2_T2_PK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a492' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a493' name = 'BC_TABLE2_T2_FK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a494' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+          </CWM:Namespace.ownedElement>
+        </CWM:Extent>
+        <CWM:Extent xmi.id = 'a190' name = 'BC_TABLE3'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a495' tag = 'BUSINESS_CATEGORY_ROOT' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWM:Namespace.ownedElement>
+            <CWM:Attribute xmi.id = 'a496' name = 'BC_TABLE3_T3_PK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a497' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a498' name = 'BC_TABLE3_T3_FK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a499' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+          </CWM:Namespace.ownedElement>
+        </CWM:Extent>
+      </CWM:Namespace.ownedElement>
+      <CWMMDB:Schema.dimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a500' name = 'BC_TABLE3_T3_PK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a501' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'PRIMARYKEY'/>
+            <CWM:TaggedValue xmi.id = 'a502' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE3_TABLE3'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a178'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a503' name = 'BC_TABLE3_T3_FK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a504' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'FOREIGNKEY'/>
+            <CWM:TaggedValue xmi.id = 'a505' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE3_TABLE3'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a178'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a506' name = 'BC_TABLE2_T2_PK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a507' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'PRIMARYKEY'/>
+            <CWM:TaggedValue xmi.id = 'a508' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE2_TABLE2'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a180'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a509' name = 'BC_TABLE2_T2_FK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a510' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'FOREIGNKEY'/>
+            <CWM:TaggedValue xmi.id = 'a511' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE2_TABLE2'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a180'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a512' name = 'BC_TABLE1_T1_PK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a513' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'PRIMARYKEY'/>
+            <CWM:TaggedValue xmi.id = 'a514' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE1_TABLE1'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a182'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a515' name = 'BC_TABLE1_T1_FK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a516' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'FOREIGNKEY'/>
+            <CWM:TaggedValue xmi.id = 'a517' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE1_TABLE1'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a182'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a518' name = 'BC_TABLE1_AGGREGATE'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a519' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'PC_AGGREGATE'/>
+            <CWM:TaggedValue xmi.id = 'a520' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE1_TABLE1'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a182'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+      </CWMMDB:Schema.dimensionedObject>
+      <CWMMDB:Schema.dimension>
+        <CWMMDB:Dimension xmi.id = 'a178' name = 'BT_TABLE3_TABLE3' isAbstract = 'false'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a521' tag = 'BUSINESS_TABLE_PHYSICAL_TABLE_NAME'
+              value = 'PT_TABLE3'/>
+            <CWM:TaggedValue xmi.id = 'a522' tag = 'TAG_POSITION_X' value = '506'/>
+            <CWM:TaggedValue xmi.id = 'a523' tag = 'TAG_POSITION_Y' value = '146'/>
+            <CWM:TaggedValue xmi.id = 'a524' tag = 'TABLE_IS_DRAWN' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:Dimension.dimensionedObject>
+            <CWMMDB:DimensionedObject xmi.idref = 'a500'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a503'/>
+          </CWMMDB:Dimension.dimensionedObject>
+        </CWMMDB:Dimension>
+        <CWMMDB:Dimension xmi.id = 'a180' name = 'BT_TABLE2_TABLE2' isAbstract = 'false'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a525' tag = 'BUSINESS_TABLE_PHYSICAL_TABLE_NAME'
+              value = 'PT_TABLE2'/>
+            <CWM:TaggedValue xmi.id = 'a526' tag = 'TAG_POSITION_X' value = '321'/>
+            <CWM:TaggedValue xmi.id = 'a527' tag = 'TAG_POSITION_Y' value = '146'/>
+            <CWM:TaggedValue xmi.id = 'a528' tag = 'TABLE_IS_DRAWN' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:Dimension.dimensionedObject>
+            <CWMMDB:DimensionedObject xmi.idref = 'a506'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a509'/>
+          </CWMMDB:Dimension.dimensionedObject>
+        </CWMMDB:Dimension>
+        <CWMMDB:Dimension xmi.id = 'a182' name = 'BT_TABLE1_TABLE1' isAbstract = 'false'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a529' tag = 'BUSINESS_TABLE_PHYSICAL_TABLE_NAME'
+              value = 'PT_TABLE1'/>
+            <CWM:TaggedValue xmi.id = 'a530' tag = 'TAG_POSITION_X' value = '136'/>
+            <CWM:TaggedValue xmi.id = 'a531' tag = 'TAG_POSITION_Y' value = '146'/>
+            <CWM:TaggedValue xmi.id = 'a532' tag = 'TABLE_IS_DRAWN' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:Dimension.dimensionedObject>
+            <CWMMDB:DimensionedObject xmi.idref = 'a512'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a515'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a518'/>
+          </CWMMDB:Dimension.dimensionedObject>
+        </CWMMDB:Dimension>
+      </CWMMDB:Schema.dimension>
+    </CWMMDB:Schema>
+    <CWMMDB:Schema xmi.id = 'a193' name = 'BV_SCENARIO3'>
+      <CWM:Namespace.ownedElement>
+        <CWM:KeyRelationship xmi.id = 'a533'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a534' tag = 'RELATIONSHIP_TABLENAME_PARENT' value = 'BT_TABLE1_TABLE1'/>
+            <CWM:TaggedValue xmi.id = 'a535' tag = 'RELATIONSHIP_TABLENAME_CHILD' value = 'BT_TABLE2_TABLE2'/>
+            <CWM:TaggedValue xmi.id = 'a536' tag = 'RELATIONSHIP_FIELDNAME_PARENT' value = 'BC_TABLE1_T1_PK'/>
+            <CWM:TaggedValue xmi.id = 'a537' tag = 'RELATIONSHIP_FIELDNAME_CHILD' value = 'BC_TABLE2_T2_FK'/>
+            <CWM:TaggedValue xmi.id = 'a538' tag = 'RELATIONSHIP_TYPE' value = '0:N'/>
+            <CWM:TaggedValue xmi.id = 'a539' tag = 'RELATIONSHIP_JOIN_ORDER_KEY' value = 'B'/>
+            <CWM:TaggedValue xmi.id = 'a540' tag = 'RELATIONSHIP_DESCRIPTION' value = ''/>
+          </CWM:ModelElement.taggedValue>
+        </CWM:KeyRelationship>
+        <CWM:KeyRelationship xmi.id = 'a541'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a542' tag = 'RELATIONSHIP_TABLENAME_PARENT' value = 'BT_TABLE2_TABLE2'/>
+            <CWM:TaggedValue xmi.id = 'a543' tag = 'RELATIONSHIP_TABLENAME_CHILD' value = 'BT_TABLE3_TABLE3'/>
+            <CWM:TaggedValue xmi.id = 'a544' tag = 'RELATIONSHIP_FIELDNAME_PARENT' value = 'BC_TABLE2_T2_PK'/>
+            <CWM:TaggedValue xmi.id = 'a545' tag = 'RELATIONSHIP_FIELDNAME_CHILD' value = 'BC_TABLE3_T3_FK'/>
+            <CWM:TaggedValue xmi.id = 'a546' tag = 'RELATIONSHIP_TYPE' value = '0:N'/>
+            <CWM:TaggedValue xmi.id = 'a547' tag = 'RELATIONSHIP_JOIN_ORDER_KEY' value = 'A'/>
+            <CWM:TaggedValue xmi.id = 'a548' tag = 'RELATIONSHIP_DESCRIPTION' value = ''/>
+          </CWM:ModelElement.taggedValue>
+        </CWM:KeyRelationship>
+        <CWM:Extent xmi.id = 'a203' name = 'BC_TABLE1'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a549' tag = 'BUSINESS_CATEGORY_ROOT' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWM:Namespace.ownedElement>
+            <CWM:Attribute xmi.id = 'a550' name = 'BC_TABLE1_T1_FK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a551' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a552' name = 'BC_TABLE1_T1_PK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a553' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+          </CWM:Namespace.ownedElement>
+        </CWM:Extent>
+        <CWM:Extent xmi.id = 'a206' name = 'BC_TABLE2'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a554' tag = 'BUSINESS_CATEGORY_ROOT' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWM:Namespace.ownedElement>
+            <CWM:Attribute xmi.id = 'a555' name = 'BC_TABLE2_T2_FK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a556' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a557' name = 'BC_TABLE2_T2_PK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a558' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+          </CWM:Namespace.ownedElement>
+        </CWM:Extent>
+        <CWM:Extent xmi.id = 'a209' name = 'BC_TABLE3'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a559' tag = 'BUSINESS_CATEGORY_ROOT' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWM:Namespace.ownedElement>
+            <CWM:Attribute xmi.id = 'a560' name = 'BC_TABLE3_T3_FK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a561' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a562' name = 'BC_TABLE3_T3_PK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a563' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+          </CWM:Namespace.ownedElement>
+        </CWM:Extent>
+      </CWM:Namespace.ownedElement>
+      <CWMMDB:Schema.dimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a564' name = 'BC_TABLE3_T3_PK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a565' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'PRIMARYKEY'/>
+            <CWM:TaggedValue xmi.id = 'a566' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE3_TABLE3'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a197'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a567' name = 'BC_TABLE3_T3_FK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a568' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'FOREIGNKEY'/>
+            <CWM:TaggedValue xmi.id = 'a569' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE3_TABLE3'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a197'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a570' name = 'BC_TABLE2_T2_PK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a571' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'PRIMARYKEY'/>
+            <CWM:TaggedValue xmi.id = 'a572' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE2_TABLE2'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a199'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a573' name = 'BC_TABLE2_T2_FK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a574' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'FOREIGNKEY'/>
+            <CWM:TaggedValue xmi.id = 'a575' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE2_TABLE2'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a199'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a576' name = 'BC_TABLE1_T1_PK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a577' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'PRIMARYKEY'/>
+            <CWM:TaggedValue xmi.id = 'a578' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE1_TABLE1'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a201'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a579' name = 'BC_TABLE1_T1_FK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a580' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'FOREIGNKEY'/>
+            <CWM:TaggedValue xmi.id = 'a581' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE1_TABLE1'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a201'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+      </CWMMDB:Schema.dimensionedObject>
+      <CWMMDB:Schema.dimension>
+        <CWMMDB:Dimension xmi.id = 'a197' name = 'BT_TABLE3_TABLE3' isAbstract = 'false'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a582' tag = 'BUSINESS_TABLE_PHYSICAL_TABLE_NAME'
+              value = 'PT_TABLE3'/>
+            <CWM:TaggedValue xmi.id = 'a583' tag = 'TAG_POSITION_X' value = '486'/>
+            <CWM:TaggedValue xmi.id = 'a584' tag = 'TAG_POSITION_Y' value = '135'/>
+            <CWM:TaggedValue xmi.id = 'a585' tag = 'TABLE_IS_DRAWN' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:Dimension.dimensionedObject>
+            <CWMMDB:DimensionedObject xmi.idref = 'a564'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a567'/>
+          </CWMMDB:Dimension.dimensionedObject>
+        </CWMMDB:Dimension>
+        <CWMMDB:Dimension xmi.id = 'a199' name = 'BT_TABLE2_TABLE2' isAbstract = 'false'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a586' tag = 'BUSINESS_TABLE_PHYSICAL_TABLE_NAME'
+              value = 'PT_TABLE2'/>
+            <CWM:TaggedValue xmi.id = 'a587' tag = 'TAG_POSITION_X' value = '289'/>
+            <CWM:TaggedValue xmi.id = 'a588' tag = 'TAG_POSITION_Y' value = '135'/>
+            <CWM:TaggedValue xmi.id = 'a589' tag = 'TABLE_IS_DRAWN' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:Dimension.dimensionedObject>
+            <CWMMDB:DimensionedObject xmi.idref = 'a570'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a573'/>
+          </CWMMDB:Dimension.dimensionedObject>
+        </CWMMDB:Dimension>
+        <CWMMDB:Dimension xmi.id = 'a201' name = 'BT_TABLE1_TABLE1' isAbstract = 'false'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a590' tag = 'BUSINESS_TABLE_PHYSICAL_TABLE_NAME'
+              value = 'PT_TABLE1'/>
+            <CWM:TaggedValue xmi.id = 'a591' tag = 'TAG_POSITION_X' value = '92'/>
+            <CWM:TaggedValue xmi.id = 'a592' tag = 'TAG_POSITION_Y' value = '135'/>
+            <CWM:TaggedValue xmi.id = 'a593' tag = 'TABLE_IS_DRAWN' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:Dimension.dimensionedObject>
+            <CWMMDB:DimensionedObject xmi.idref = 'a576'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a579'/>
+          </CWMMDB:Dimension.dimensionedObject>
+        </CWMMDB:Dimension>
+      </CWMMDB:Schema.dimension>
+    </CWMMDB:Schema>
+    <CWMMDB:Schema xmi.id = 'a212' name = 'BV_SCENARIO2'>
+      <CWM:Namespace.ownedElement>
+        <CWM:KeyRelationship xmi.id = 'a594'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a595' tag = 'RELATIONSHIP_TABLENAME_PARENT' value = 'BT_TABLE1_TABLE1'/>
+            <CWM:TaggedValue xmi.id = 'a596' tag = 'RELATIONSHIP_TABLENAME_CHILD' value = 'BT_TABLE2_TABLE2'/>
+            <CWM:TaggedValue xmi.id = 'a597' tag = 'RELATIONSHIP_FIELDNAME_PARENT' value = 'BC_TABLE1_T1_PK'/>
+            <CWM:TaggedValue xmi.id = 'a598' tag = 'RELATIONSHIP_FIELDNAME_CHILD' value = 'BC_TABLE2_T2_FK'/>
+            <CWM:TaggedValue xmi.id = 'a599' tag = 'RELATIONSHIP_TYPE' value = '0:N'/>
+            <CWM:TaggedValue xmi.id = 'a600' tag = 'RELATIONSHIP_JOIN_ORDER_KEY' value = 'B'/>
+            <CWM:TaggedValue xmi.id = 'a601' tag = 'RELATIONSHIP_DESCRIPTION' value = 'Left outer join between Table1 and Table2.&#10;The sort order is set to B, forcing this join to appear later in the query.'/>
+          </CWM:ModelElement.taggedValue>
+        </CWM:KeyRelationship>
+        <CWM:KeyRelationship xmi.id = 'a602'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a603' tag = 'RELATIONSHIP_TABLENAME_PARENT' value = 'BT_TABLE2_TABLE2'/>
+            <CWM:TaggedValue xmi.id = 'a604' tag = 'RELATIONSHIP_TABLENAME_CHILD' value = 'BT_TABLE3_TABLE3'/>
+            <CWM:TaggedValue xmi.id = 'a605' tag = 'RELATIONSHIP_FIELDNAME_PARENT' value = 'BC_TABLE2_T2_PK'/>
+            <CWM:TaggedValue xmi.id = 'a606' tag = 'RELATIONSHIP_FIELDNAME_CHILD' value = 'BC_TABLE3_T3_FK'/>
+            <CWM:TaggedValue xmi.id = 'a607' tag = 'RELATIONSHIP_TYPE' value = '1:N'/>
+            <CWM:TaggedValue xmi.id = 'a608' tag = 'RELATIONSHIP_JOIN_ORDER_KEY' value = 'A'/>
+            <CWM:TaggedValue xmi.id = 'a609' tag = 'RELATIONSHIP_DESCRIPTION' value = 'Full inner join.  This path should be taken first.'/>
+          </CWM:ModelElement.taggedValue>
+        </CWM:KeyRelationship>
+        <CWM:Extent xmi.id = 'a222' name = 'BC_TABLE1'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a610' tag = 'BUSINESS_CATEGORY_ROOT' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWM:Namespace.ownedElement>
+            <CWM:Attribute xmi.id = 'a611' name = 'BC_TABLE1_T1_FK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a612' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a613' name = 'BC_TABLE1_T1_PK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a614' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+          </CWM:Namespace.ownedElement>
+        </CWM:Extent>
+        <CWM:Extent xmi.id = 'a225' name = 'BC_TABLE2'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a615' tag = 'BUSINESS_CATEGORY_ROOT' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWM:Namespace.ownedElement>
+            <CWM:Attribute xmi.id = 'a616' name = 'BC_TABLE2_T2_FK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a617' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a618' name = 'BC_TABLE2_T2_PK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a619' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+          </CWM:Namespace.ownedElement>
+        </CWM:Extent>
+        <CWM:Extent xmi.id = 'a228' name = 'BC_TABLE3'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a620' tag = 'BUSINESS_CATEGORY_ROOT' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWM:Namespace.ownedElement>
+            <CWM:Attribute xmi.id = 'a621' name = 'BC_TABLE3_T3_FK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a622' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a623' name = 'BC_TABLE3_T3_PK'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a624' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+          </CWM:Namespace.ownedElement>
+        </CWM:Extent>
+      </CWM:Namespace.ownedElement>
+      <CWMMDB:Schema.dimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a625' name = 'BC_TABLE3_T3_PK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a626' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'PRIMARYKEY'/>
+            <CWM:TaggedValue xmi.id = 'a627' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE3_TABLE3'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a216'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a628' name = 'BC_TABLE3_T3_FK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a629' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'FOREIGNKEY'/>
+            <CWM:TaggedValue xmi.id = 'a630' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE3_TABLE3'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a216'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a631' name = 'BC_TABLE2_T2_PK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a632' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'PRIMARYKEY'/>
+            <CWM:TaggedValue xmi.id = 'a633' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE2_TABLE2'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a218'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a634' name = 'BC_TABLE2_T2_FK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a635' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'FOREIGNKEY'/>
+            <CWM:TaggedValue xmi.id = 'a636' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE2_TABLE2'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a218'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a637' name = 'BC_TABLE1_T1_PK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a638' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'PRIMARYKEY'/>
+            <CWM:TaggedValue xmi.id = 'a639' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE1_TABLE1'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a220'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a640' name = 'BC_TABLE1_T1_FK'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a641' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'FOREIGNKEY'/>
+            <CWM:TaggedValue xmi.id = 'a642' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE1_TABLE1'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a220'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+      </CWMMDB:Schema.dimensionedObject>
+      <CWMMDB:Schema.dimension>
+        <CWMMDB:Dimension xmi.id = 'a216' name = 'BT_TABLE3_TABLE3' isAbstract = 'false'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a643' tag = 'BUSINESS_TABLE_PHYSICAL_TABLE_NAME'
+              value = 'PT_TABLE3'/>
+            <CWM:TaggedValue xmi.id = 'a644' tag = 'TAG_POSITION_X' value = '518'/>
+            <CWM:TaggedValue xmi.id = 'a645' tag = 'TAG_POSITION_Y' value = '164'/>
+            <CWM:TaggedValue xmi.id = 'a646' tag = 'TABLE_IS_DRAWN' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:Dimension.dimensionedObject>
+            <CWMMDB:DimensionedObject xmi.idref = 'a625'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a628'/>
+          </CWMMDB:Dimension.dimensionedObject>
+        </CWMMDB:Dimension>
+        <CWMMDB:Dimension xmi.id = 'a218' name = 'BT_TABLE2_TABLE2' isAbstract = 'false'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a647' tag = 'BUSINESS_TABLE_PHYSICAL_TABLE_NAME'
+              value = 'PT_TABLE2'/>
+            <CWM:TaggedValue xmi.id = 'a648' tag = 'TAG_POSITION_X' value = '320'/>
+            <CWM:TaggedValue xmi.id = 'a649' tag = 'TAG_POSITION_Y' value = '164'/>
+            <CWM:TaggedValue xmi.id = 'a650' tag = 'TABLE_IS_DRAWN' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:Dimension.dimensionedObject>
+            <CWMMDB:DimensionedObject xmi.idref = 'a631'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a634'/>
+          </CWMMDB:Dimension.dimensionedObject>
+        </CWMMDB:Dimension>
+        <CWMMDB:Dimension xmi.id = 'a220' name = 'BT_TABLE1_TABLE1' isAbstract = 'false'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a651' tag = 'BUSINESS_TABLE_PHYSICAL_TABLE_NAME'
+              value = 'PT_TABLE1'/>
+            <CWM:TaggedValue xmi.id = 'a652' tag = 'TAG_POSITION_X' value = '122'/>
+            <CWM:TaggedValue xmi.id = 'a653' tag = 'TAG_POSITION_Y' value = '164'/>
+            <CWM:TaggedValue xmi.id = 'a654' tag = 'TABLE_IS_DRAWN' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:Dimension.dimensionedObject>
+            <CWMMDB:DimensionedObject xmi.idref = 'a637'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a640'/>
+          </CWMMDB:Dimension.dimensionedObject>
+        </CWMMDB:Dimension>
+      </CWMMDB:Schema.dimension>
+    </CWMMDB:Schema>
+    <CWMMDB:Schema xmi.id = 'a231' name = 'BV_SCENARIO1'>
+      <CWM:Namespace.ownedElement>
+        <CWM:KeyRelationship xmi.id = 'a655'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a656' tag = 'RELATIONSHIP_TABLENAME_PARENT' value = 'BT_TABLE1_TABLE1'/>
+            <CWM:TaggedValue xmi.id = 'a657' tag = 'RELATIONSHIP_TABLENAME_CHILD' value = 'BT_TABLE2_TABLE2'/>
+            <CWM:TaggedValue xmi.id = 'a658' tag = 'RELATIONSHIP_FIELDNAME_PARENT' value = 'BC_TABLE1_PRIMARYKEY'/>
+            <CWM:TaggedValue xmi.id = 'a659' tag = 'RELATIONSHIP_FIELDNAME_CHILD' value = 'BC_TABLE2_FOREIGNKEY'/>
+            <CWM:TaggedValue xmi.id = 'a660' tag = 'RELATIONSHIP_TYPE' value = '0:N'/>
+            <CWM:TaggedValue xmi.id = 'a661' tag = 'RELATIONSHIP_JOIN_ORDER_KEY' value = ''/>
+            <CWM:TaggedValue xmi.id = 'a662' tag = 'RELATIONSHIP_DESCRIPTION' value = ''/>
+          </CWM:ModelElement.taggedValue>
+        </CWM:KeyRelationship>
+        <CWM:Extent xmi.id = 'a239' name = 'BC_TABLE1'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a663' tag = 'BUSINESS_CATEGORY_ROOT' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWM:Namespace.ownedElement>
+            <CWM:Attribute xmi.id = 'a664' name = 'BC_TABLE1_AGGREGATE'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a665' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a666' name = 'BC_TABLE1_PRIMARYKEY'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a667' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a668' name = 'BC_TABLE1_FOREIGNKEY'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a669' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+          </CWM:Namespace.ownedElement>
+        </CWM:Extent>
+        <CWM:Extent xmi.id = 'a242' name = 'BC_TABLE2'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a670' tag = 'BUSINESS_CATEGORY_ROOT' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWM:Namespace.ownedElement>
+            <CWM:Attribute xmi.id = 'a671' name = 'BC_TABLE2_PRIMARYKEY'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a672' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+            <CWM:Attribute xmi.id = 'a673' name = 'BC_TABLE2_FOREIGNKEY'>
+              <CWM:ModelElement.taggedValue>
+                <CWM:TaggedValue xmi.id = 'a674' tag = 'BUSINESS_CATEGORY_TYPE' value = 'Column'/>
+              </CWM:ModelElement.taggedValue>
+            </CWM:Attribute>
+          </CWM:Namespace.ownedElement>
+        </CWM:Extent>
+      </CWM:Namespace.ownedElement>
+      <CWMMDB:Schema.dimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a675' name = 'BC_TABLE2_PRIMARYKEY'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a676' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'PRIMARYKEY'/>
+            <CWM:TaggedValue xmi.id = 'a677' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE2_TABLE2'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a235'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a678' name = 'BC_TABLE2_FOREIGNKEY'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a679' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'FOREIGNKEY'/>
+            <CWM:TaggedValue xmi.id = 'a680' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE2_TABLE2'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a235'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a681' name = 'BC_TABLE1_PRIMARYKEY'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a682' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'PRIMARYKEY'/>
+            <CWM:TaggedValue xmi.id = 'a683' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE1_TABLE1'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a237'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a684' name = 'BC_TABLE1_FOREIGNKEY'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a685' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'FOREIGNKEY'/>
+            <CWM:TaggedValue xmi.id = 'a686' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE1_TABLE1'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a237'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+        <CWMMDB:DimensionedObject xmi.id = 'a687' name = 'BC_TABLE1_AGGREGATE'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a688' tag = 'BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME'
+              value = 'PC_AGGREGATE'/>
+            <CWM:TaggedValue xmi.id = 'a689' tag = 'BUSINESS_COLUMN_BUSINESS_TABLE'
+              value = 'BT_TABLE1_TABLE1'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:DimensionedObject.dimension>
+            <CWMMDB:Dimension xmi.idref = 'a237'/>
+          </CWMMDB:DimensionedObject.dimension>
+        </CWMMDB:DimensionedObject>
+      </CWMMDB:Schema.dimensionedObject>
+      <CWMMDB:Schema.dimension>
+        <CWMMDB:Dimension xmi.id = 'a235' name = 'BT_TABLE2_TABLE2' isAbstract = 'false'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a690' tag = 'BUSINESS_TABLE_PHYSICAL_TABLE_NAME'
+              value = 'PT_TABLE2'/>
+            <CWM:TaggedValue xmi.id = 'a691' tag = 'TAG_POSITION_X' value = '419'/>
+            <CWM:TaggedValue xmi.id = 'a692' tag = 'TAG_POSITION_Y' value = '186'/>
+            <CWM:TaggedValue xmi.id = 'a693' tag = 'TABLE_IS_DRAWN' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:Dimension.dimensionedObject>
+            <CWMMDB:DimensionedObject xmi.idref = 'a675'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a678'/>
+          </CWMMDB:Dimension.dimensionedObject>
+        </CWMMDB:Dimension>
+        <CWMMDB:Dimension xmi.id = 'a237' name = 'BT_TABLE1_TABLE1' isAbstract = 'false'>
+          <CWM:ModelElement.taggedValue>
+            <CWM:TaggedValue xmi.id = 'a694' tag = 'BUSINESS_TABLE_PHYSICAL_TABLE_NAME'
+              value = 'PT_TABLE1'/>
+            <CWM:TaggedValue xmi.id = 'a695' tag = 'TAG_POSITION_X' value = '174'/>
+            <CWM:TaggedValue xmi.id = 'a696' tag = 'TAG_POSITION_Y' value = '184'/>
+            <CWM:TaggedValue xmi.id = 'a697' tag = 'TABLE_IS_DRAWN' value = 'Y'/>
+          </CWM:ModelElement.taggedValue>
+          <CWMMDB:Dimension.dimensionedObject>
+            <CWMMDB:DimensionedObject xmi.idref = 'a681'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a684'/>
+            <CWMMDB:DimensionedObject xmi.idref = 'a687'/>
+          </CWMMDB:Dimension.dimensionedObject>
+        </CWMMDB:Dimension>
+      </CWMMDB:Schema.dimension>
+    </CWMMDB:Schema>
+  </XMI.content>
+</XMI>

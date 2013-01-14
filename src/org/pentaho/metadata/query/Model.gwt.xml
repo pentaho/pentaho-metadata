@@ -1,0 +1,6 @@
+<module>
+    <!--  query model -->
+    <source path="model">
+      <exclude name="**/util/*"/>
+    </source>
+</module>

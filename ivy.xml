@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
+  <info organisation="${ivy.artifact.group}" module="${ivy.artifact.id}" revision="${project.revision}" />
+  <configurations>
+    <conf name="default" />
+    <conf name="source" />
+    <conf name="test" visibility="private" />
+  </configurations>
+  
+    <publications>
+        <artifact name="${ivy.artifact.id}" type="jar" conf="default"/>
+        <artifact name="${ivy.artifact.id}" m:classifier="sources" type="source" ext="jar" conf="source"/>
+    </publications>
+  <dependencies defaultconf="default->default">
+    
+    <!--  external dependencies -->
+    <dependency org="joda-time" name="joda-time" rev="1.6" transitive="false"/>
+    <dependency org="commons-collections" name="commons-collections" rev="3.2" />
+    <dependency org="commons-lang" name="commons-lang" rev="2.2" />
+    <dependency org="commons-logging" name="commons-logging" rev="1.1" >
+      <exclude org="javax.servlet" />
+    </dependency>
+    <dependency org="commons-pool" name="commons-pool" rev="1.2" transitive="false"/>
+    <dependency org="commons-codec" name="commons-codec" rev="1.3" />
+    <dependency org="commons-httpclient" name="commons-httpclient" rev="3.0.1" transitive="false"/>
+    <dependency org="commons-math" name="commons-math" rev="1.1" transitive="false"/>
+    <dependency org="commons-dbcp" name="commons-dbcp" rev="1.2.1" transitive="false"/>
+    <dependency org="commons-net" name="commons-net" rev="1.4.1" />
+    <dependency org="commons-vfs" name="commons-vfs" rev="1.0" />
+    <dependency org="commons-digester" name="commons-digester" rev="1.8" transitive="false" />
+    <dependency org="commons-beanutils" name="commons-beanutils" rev="1.6" transitive="false" />
+    <dependency org="ognl" name="ognl" rev="2.6.9" transitive="false"/>
+    
+    <dependency org="dom4j" name="dom4j" rev="1.6.1">
+      <exclude org="xml-apis" name="xml-apis" />
+    </dependency>
+    <dependency org="simple-jndi" name="simple-jndi" rev="0.11.3" />
+    <!-- dependency org="jfree" name="jcommon" rev="1.0.14" / -->
+    <dependency org="com.thoughtworks.xstream" name="xstream" rev="${dependency.xstream.revision}" />
+    
+    <dependency org="org.apache.axis2" name="axis2-adb" rev="1.4.1" transitive="false"/>
+    <dependency org="org.apache.axis2" name="axis2-kernel" rev="1.4.1" transitive="false"/>
+    
+    <!-- kettle dependencies -->
+    <dependency org="javassist"        name="javassist"    rev="3.4.GA" conf="default->default" transitive="false"/>
+    <dependency org="org.scannotation" name="scannotation" rev="1.0.2"  conf="default->default" transitive="false"/>
+    
+    
+    <!-- external dependencies hosted by pentaho -->
+    <dependency org="jug-lgpl" name="jug-lgpl" rev="2.0.0" />
+    <dependency org="org.netbeans" name="jmi" rev="200507110943" />
+    <dependency org="org.netbeans" name="jmiutils" rev="200507110943" />
+    <dependency org="org.netbeans" name="mdrapi" rev="200507110943" />
+    <dependency org="org.netbeans" name="mof" rev="200507110943" />
+    <dependency org="org.netbeans" name="openide-util" rev="200507110943" />
+    <dependency org="org.netbeans" name="nbmdr" rev="200507110943-custom" />
+
+    <!--  internal dependencies -->
+    <dependency org="pentaho" name="pentaho-connections" rev="${dependency.pentaho-connections.revision}" changing="true" />
+    <dependency org="pentaho-kettle" name="kettle-engine" rev="${dependency.kettle.revision}" changing="true"/>
+    <dependency org="pentaho-kettle" name="kettle-core"   rev="${dependency.kettle.revision}" changing="true"/>
+    <dependency org="pentaho-kettle" name="kettle-db"     rev="${dependency.kettle.revision}" changing="true"/>
+    <dependency org="pentaho" name="pentaho-cwm" rev="1.5.4" />
+    <dependency org="${dependency.libformula.group}" name="libformula" rev="${dependency.reporting-library.revision}" />
+    <dependency org="${dependency.libbase.group}" name="libbase" rev="${dependency.reporting-library.revision}" />
+    <dependency org="pentaho" name="pentaho-publisher" rev="1.6.0" />
+    
+    <!-- test dependencies -->
+    <dependency org="junit" name="junit" rev="4.4" conf="test->default" />
+	<dependency org="org.apache.ws.commons.axiom" name="axiom-api" rev="1.2.7" conf="test->default" transitive="false"/>
+	<dependency org="org.apache.ws.commons.axiom" name="axiom-dom" rev="1.2.7" conf="test->default" transitive="false"/>
+	<dependency org="org.apache.ws.commons.schema" name="XmlSchema" rev="1.4.2" conf="test->default" transitive="false"/>
+	<dependency org="org.apache.geronimo.specs" name="geronimo-stax-api_1.0_spec" conf="test->default" rev="1.0" transitive="false"/>
+	<dependency org="wsdl4j" name="wsdl4j" rev="1.6.2" conf="test->default" transitive="false"/>
+	<dependency org="org.apache.ws.commons.axiom" name="axiom-impl" rev="1.2.7" conf="test->default" transitive="false"/>
+    <dependency org="backport-util-concurrent" name="backport-util-concurrent" conf="test->default" rev="3.1" transitive="false"/>
+    <dependency org="org.apache.ws.commons.neethi" name="neethi" rev="2.0.1" conf="test->default" transitive="false"/>
+	<dependency org="woodstox" name="wstx-asl" rev="3.2.4" conf="test->default" transitive="false"/>
+	<dependency org="hsqldb" name="hsqldb" rev="1.8.0.7"  conf="test->default"/>
+  </dependencies>
+</ivy-module>

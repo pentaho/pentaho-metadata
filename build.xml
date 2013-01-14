@@ -1,0 +1,27 @@
+<!--===========================================================================
+  This is the build file for the Pentaho BI Platform Engine Core project.
+  
+  This build file will use the build-res/subfloor.xml file as the default build
+  process and should only override the tasks that need to differ from
+  the common build file.
+  
+  See build-res/subfloor.xml for more details
+============================================================================-->
+<project name="Metadata Core" basedir="." default="default" 
+	xmlns:ivy="antlib:org.apache.ivy.ant" >
+	
+	<description>
+	  This build file is used to create the Metadata Core project
+		and works with the build-res/subfloor.xml file.
+	</description>
+
+	<!-- Import the build-res/subfloor.xml file which contains all the default tasks -->	
+	<import file="build-res/subfloor.xml"/>
+
+    <!--
+      AS STATED ABOVE, THE ONLY TASKS THAT SHOULD EXIST IN THIS BUILD FILE ARE
+      THE TASKS THAT NEED TO DIFFER FROM THE DEFAULT IMPLEMENTATION OF THE TASKS
+      FOUND IN build-res/subfloor.xml.
+    --> 
+	
+</project>

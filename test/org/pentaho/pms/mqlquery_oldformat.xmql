@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mql>
+	<domain_type>relational</domain_type>
+	<domain_id>Orders</domain_id>
+	<model_id>Orders</model_id>
+	<model_name>Orders</model_name>
+	<selections>
+		<selection>
+			<view>bc_CUSTOMER_W_TER</view>
+			<column>BC_CUSTOMERS_CUSTOMERNAME</column>
+		</selection>
+		<selection>
+			<view>bc_CUSTOMER_W_TER</view>
+			<column>BC_CUSTOMERS_COUNTRY</column>
+		</selection>
+	</selections>
+	<constraints/>
+	<orders>
+		<order>
+			<direction>asc</direction>
+			<view_id>bc_CUSTOMER_W_TER</view_id>
+			<column_id>BC_CUSTOMERS_COUNTRY</column_id>
+		</order>
+	</orders>
+</mql>

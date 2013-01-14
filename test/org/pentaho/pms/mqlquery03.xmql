@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Contains a date constraint, used to test DatabaseMeta functionality. -->
+<mql>
+	<domain_type>relational</domain_type>
+	<domain_id>Orders</domain_id>
+	<model_id>Orders</model_id>
+	<model_name>Orders</model_name>
+	<selections>
+		<selection>
+			<view>bc_ORDERS</view>
+			<column>BC_ORDERS_ORDERNUMBER</column>
+		</selection>
+	</selections>
+	<constraints>
+		<constraint>
+			<operator>AND</operator>
+			<condition>[bc_ORDERS.BC_ORDERS_ORDERDATE] &gt;= DATE(1;1;2007)</condition>
+		</constraint>
+	</constraints>
+	<orders>
+		<order>
+			<direction>asc</direction>
+			<view_id>bc_ORDERS</view_id>
+			<column_id>BC_ORDERS_ORDERNUMBER</column_id>
+		</order>
+	</orders>
+</mql>

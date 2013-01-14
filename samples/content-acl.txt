@@ -1,0 +1,29 @@
+<content>
+  <users>
+     <user>tiffany</user>
+     <user>joe</user>
+     <user>suzy</user>
+     <user>pat</user>
+     <user>admin</user>
+  </users>
+  <roles>
+     <role>ROLE_DEV</role>
+     <role>ROLE_AUTHENTICATED</role>
+     <role>ROLE_IS</role>
+     <role>ROLE_ADMIN</role>
+     <role>ROLE_DEVMGR</role>
+     <role>ROLE_CEO</role>
+     <role>ROLE_CTO</role>
+  </roles>
+  
+  <acls>
+    <acl> <name>Create</name> <mask>4</mask> </acl>
+    <acl> <name>Subscribe</name> <mask>2</mask> </acl>
+    <acl> <name>Update</name> <mask>8</mask> </acl>
+    <acl> <name>Execute</name> <mask>1</mask> </acl>
+    <acl> <name>NONE</name> <mask>0</mask> </acl>
+    <acl> <name>All</name> <mask>31</mask> </acl>
+    <acl> <name>Delete</name> <mask>16</mask> </acl>
+  </acls>
+   
+</content>
