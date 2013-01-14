@@ -65,173 +65,201 @@ public class MondrianModelExporter
         xml.append(Util.CR);
         
         @SuppressWarnings("unchecked")
-        List<OlapDimension> olapDimensions = (List<OlapDimension>)businessModel.getProperty("olap_dimensions"); //$NON-NLS-1$
-        for (int d=0;d<olapDimensions.size();d++)
-        {
-            OlapDimension olapDimension = (OlapDimension) olapDimensions.get(d);
-            
-            xml.append("  <Dimension"); //$NON-NLS-1$
-
-            xml.append(" name=\""); //$NON-NLS-1$
-            XMLHandler.appendReplacedChars(xml, olapDimension.getName());
-            xml.append("\""); //$NON-NLS-1$
-            
-            if (olapDimension.isTimeDimension())
-            {
-                xml.append(" type=\""); //$NON-NLS-1$
-                XMLHandler.appendReplacedChars(xml, "TimeDimension"); //$NON-NLS-1$
-                xml.append("\""); //$NON-NLS-1$
-            }
-            xml.append(">"); //$NON-NLS-1$
-            xml.append(Util.CR);
-            
-            List olapHierarchies = olapDimension.getHierarchies();
-            for (int h=0;h<olapHierarchies.size();h++)
-            {
-                OlapHierarchy olapHierarchy = (OlapHierarchy) olapHierarchies.get(h);
-                xml.append("    <Hierarchy"); //$NON-NLS-1$
-
-                // don't specify the hierarchy name if it's the same as the dimension name
-                if(StringUtils.isNotEmpty(olapHierarchy.getName()) &&
-                    !StringUtils.equals(olapHierarchy.getName(), olapDimension.getName())
-                ){
-                  xml.append(" name=\""); //$NON-NLS-1$
-                  xml.append(olapHierarchy.getName());
+        List<OlapDimension> olapDimensions = (List<OlapDimension>)businessModel.getProperty(LogicalModel.PROPERTY_OLAP_DIMS); //$NON-NLS-1$
+        if (olapDimensions != null) {
+          for (int d=0;d<olapDimensions.size();d++)
+          {
+              OlapDimension olapDimension = (OlapDimension) olapDimensions.get(d);
+              
+              xml.append("  <Dimension"); //$NON-NLS-1$
+  
+              xml.append(" name=\""); //$NON-NLS-1$
+              XMLHandler.appendReplacedChars(xml, olapDimension.getName());
+              xml.append("\""); //$NON-NLS-1$
+              
+              if (olapDimension.isTimeDimension())
+              {
+                  xml.append(" type=\""); //$NON-NLS-1$
+                  XMLHandler.appendReplacedChars(xml, "TimeDimension"); //$NON-NLS-1$
                   xml.append("\""); //$NON-NLS-1$
-                }
-                
-                xml.append(" hasAll=\""); //$NON-NLS-1$
-                xml.append(olapHierarchy.isHavingAll()?"true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
-                xml.append("\""); //$NON-NLS-1$
-                
-                if( olapHierarchy.getPrimaryKey() != null ) {
-                    xml.append(" primaryKey=\""); //$NON-NLS-1$
-                    xml.append(olapHierarchy.getPrimaryKey().getProperty(SqlPhysicalColumn.TARGET_COLUMN));
-                    xml.append("\""); //$NON-NLS-1$
-                }
-                xml.append(">"); //$NON-NLS-1$
-                xml.append(Util.CR);
-
-                if (olapHierarchy.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_TABLE_TYPE) == TargetTableType.INLINE_SQL) {
-                  xml.append("    <View alias=\"FACT\">").append(Util.CR);
-                  xml.append("        <SQL dialect=\"generic\">").append(Util.CR);
-                  xml.append("         <![CDATA["+ olapHierarchy.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_TABLE) + "]]>").append(Util.CR);
-                  xml.append("        </SQL>").append(Util.CR);
-                  xml.append("    </View>").append(Util.CR);
-                } else {
-                  xml.append("      <Table"); //$NON-NLS-1$
-                  xml.append(" name=\""); //$NON-NLS-1$
-                  XMLHandler.appendReplacedChars(xml, (String)olapHierarchy.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_TABLE));
-                  xml.append("\""); //$NON-NLS-1$
-                  if (!StringUtils.isBlank((String)olapHierarchy.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_SCHEMA))) {
-                    xml.append(" schema=\""); //$NON-NLS-1$
-                    XMLHandler.appendReplacedChars(xml, (String)olapHierarchy.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_SCHEMA));
+              }
+              xml.append(">"); //$NON-NLS-1$
+              xml.append(Util.CR);
+              
+              List olapHierarchies = olapDimension.getHierarchies();
+              for (int h=0;h<olapHierarchies.size();h++)
+              {
+                  OlapHierarchy olapHierarchy = (OlapHierarchy) olapHierarchies.get(h);
+                  xml.append("    <Hierarchy"); //$NON-NLS-1$
+  
+                  // don't specify the hierarchy name if it's the same as the dimension name
+                  if(StringUtils.isNotEmpty(olapHierarchy.getName()) &&
+                      !StringUtils.equals(olapHierarchy.getName(), olapDimension.getName())
+                  ){
+                    xml.append(" name=\""); //$NON-NLS-1$
+                    xml.append(olapHierarchy.getName());
                     xml.append("\""); //$NON-NLS-1$
                   }
-                  xml.append("/>"); //$NON-NLS-1$
+                  
+                  xml.append(" hasAll=\""); //$NON-NLS-1$
+                  xml.append(olapHierarchy.isHavingAll()?"true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
+                  xml.append("\""); //$NON-NLS-1$
+                  
+                  if( olapHierarchy.getPrimaryKey() != null ) {
+                      xml.append(" primaryKey=\""); //$NON-NLS-1$
+                      xml.append(olapHierarchy.getPrimaryKey().getProperty(SqlPhysicalColumn.TARGET_COLUMN));
+                      xml.append("\""); //$NON-NLS-1$
+                  }
+                  xml.append(">"); //$NON-NLS-1$
                   xml.append(Util.CR);
-                }
-
-                List hierarchyLevels = olapHierarchy.getHierarchyLevels();
-                for (int hl=0;hl<hierarchyLevels.size();hl++)
-                {
-                    OlapHierarchyLevel olapHierarchyLevel = (OlapHierarchyLevel) hierarchyLevels.get(hl);
-
-                    xml.append("      <Level"); //$NON-NLS-1$
+  
+                  if (olapHierarchy.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_TABLE_TYPE) == TargetTableType.INLINE_SQL) {
+                    xml.append("    <View alias=\"FACT\">").append(Util.CR);
+                    xml.append("        <SQL dialect=\"generic\">").append(Util.CR);
+                    xml.append("         <![CDATA["+ olapHierarchy.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_TABLE) + "]]>").append(Util.CR);
+                    xml.append("        </SQL>").append(Util.CR);
+                    xml.append("    </View>").append(Util.CR);
+                  } else {
+                    xml.append("      <Table"); //$NON-NLS-1$
                     xml.append(" name=\""); //$NON-NLS-1$
-                    XMLHandler.appendReplacedChars(xml, olapHierarchyLevel.getName());
+                    XMLHandler.appendReplacedChars(xml, (String)olapHierarchy.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_TABLE));
                     xml.append("\""); //$NON-NLS-1$
-                    
-                    xml.append(" column=\""); //$NON-NLS-1$
-                    XMLHandler.appendReplacedChars(xml, (String)olapHierarchyLevel.getReferenceColumn().getProperty(SqlPhysicalColumn.TARGET_COLUMN));
-                    xml.append("\""); //$NON-NLS-1$
-
-                    DataType dataTypeLevel = olapHierarchyLevel.getReferenceColumn().getDataType();
-                    String typeDescLevel = null;
-                    switch(dataTypeLevel) {
-                      case STRING:  typeDescLevel = "String"; break; //$NON-NLS-1$
-                      case NUMERIC: typeDescLevel = "Numeric"; break; //$NON-NLS-1$
-                      case BOOLEAN: typeDescLevel = "Boolean"; break; //$NON-NLS-1$
-                      // Date Type caused BISERVER-6670, removing it for now until we can investigate further 
-                      // case DATE:    typeDescLevel = "Date"; break; //$NON-NLS-1$
+                    if (!StringUtils.isBlank((String)olapHierarchy.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_SCHEMA))) {
+                      xml.append(" schema=\""); //$NON-NLS-1$
+                      XMLHandler.appendReplacedChars(xml, (String)olapHierarchy.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_SCHEMA));
+                      xml.append("\""); //$NON-NLS-1$
                     }
-                        
-                    if (typeDescLevel!=null)
-                    {
-                        xml.append(" type=\""); //$NON-NLS-1$
-                        XMLHandler.appendReplacedChars(xml, typeDescLevel);
-                        xml.append("\""); //$NON-NLS-1$
-                    }
-
-                    xml.append(" uniqueMembers=\""); //$NON-NLS-1$
-                    XMLHandler.appendReplacedChars(xml, olapHierarchyLevel.isHavingUniqueMembers()?"true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
-                    xml.append("\""); //$NON-NLS-1$
-                    xml.append(">"); //$NON-NLS-1$
+                    xml.append("/>"); //$NON-NLS-1$
                     xml.append(Util.CR);
+                  }
+  
+                  List hierarchyLevels = olapHierarchy.getHierarchyLevels();
+                  for (int hl=0;hl<hierarchyLevels.size();hl++)
+                  {
+                      OlapHierarchyLevel olapHierarchyLevel = (OlapHierarchyLevel) hierarchyLevels.get(hl);
+  
+                      xml.append("      <Level"); //$NON-NLS-1$
 
-                    if(olapHierarchyLevel.getAnnotations().size() > 0) {
-                      xml.append("        <Annotations>");
-
-                      for(OlapAnnotation annotation : olapHierarchyLevel.getAnnotations()) {
-                        xml.append(Util.CR);
-                        xml.append(annotation.asXml());
-                      }
-                      xml.append(Util.CR);
-                      xml.append("        </Annotations>");
-                      xml.append(Util.CR);
-                    }
-
-                    List businessColumns = olapHierarchyLevel.getLogicalColumns();
-                    for (int i=0;i<businessColumns.size();i++)
-                    {
-                        LogicalColumn businessColumn = (LogicalColumn) businessColumns.get(i);
-                        xml.append("        <Property"); //$NON-NLS-1$
-
-                        xml.append(" name=\""); //$NON-NLS-1$
-
-                        XMLHandler.appendReplacedChars(xml, businessColumn.getName(locale));
-
-                        xml.append("\""); //$NON-NLS-1$
-                        
-                        xml.append(" column=\""); //$NON-NLS-1$
-                        XMLHandler.appendReplacedChars(xml, (String)businessColumn.getProperty(SqlPhysicalColumn.TARGET_COLUMN));
-                        xml.append("\""); //$NON-NLS-1$
-
-                        DataType dataType = businessColumn.getDataType();
-                        String typeDesc = null;
-                        switch(dataType) {
-                        case STRING:  typeDesc = "String"; break; //$NON-NLS-1$
-                        case NUMERIC: typeDesc = "Numeric"; break; //$NON-NLS-1$
-                        case BOOLEAN: typeDesc = "Boolean"; break; //$NON-NLS-1$
-                        case DATE:    typeDesc = "Date"; break; //$NON-NLS-1$
-                        }
-                        
-                        if (typeDesc!=null)
-                        {
-                            xml.append(" type=\""); //$NON-NLS-1$
-                            XMLHandler.appendReplacedChars(xml, typeDesc);
-                            xml.append("\""); //$NON-NLS-1$
-                        }
-
-                        if(businessColumn.getDescription() != null) {
-                          xml.append(" description=\""); //$NON-NLS-1$
-                          XMLHandler.appendReplacedChars(xml, businessColumn.getDescription(locale));
-                          xml.append("\""); //$NON-NLS-1$
-                        }
+                      xml.append(" name=\""); //$NON-NLS-1$
+                      XMLHandler.appendReplacedChars(xml, olapHierarchyLevel.getName());
+                      xml.append("\""); //$NON-NLS-1$
                       
-                        xml.append("/>"); //$NON-NLS-1$
+                      xml.append(" uniqueMembers=\""); //$NON-NLS-1$
+                      XMLHandler.appendReplacedChars(xml, olapHierarchyLevel.isHavingUniqueMembers()?"true":"false"); //$NON-NLS-1$ //$NON-NLS-2$
+                      xml.append("\""); //$NON-NLS-1$
+
+                      LogicalColumn column;
+                      
+                      column = olapHierarchyLevel.getReferenceColumn();
+                      xml.append(" column=\""); //$NON-NLS-1$
+                      XMLHandler.appendReplacedChars(xml, (String)column.getProperty(SqlPhysicalColumn.TARGET_COLUMN));
+                      xml.append("\""); //$NON-NLS-1$
+                      
+                      column = olapHierarchyLevel.getReferenceOrdinalColumn();
+                      if (column != null) {
+                        xml.append(" ordinalColumn=\""); //$NON-NLS-1$
+                        XMLHandler.appendReplacedChars(xml, (String)column.getProperty(SqlPhysicalColumn.TARGET_COLUMN));
+                        xml.append("\""); //$NON-NLS-1$
+                      }
+                      
+                      column = olapHierarchyLevel.getReferenceCaptionColumn();
+                      if (column != null) {
+                        xml.append(" captionColumn=\""); //$NON-NLS-1$
+                        XMLHandler.appendReplacedChars(xml, (String)column.getProperty(SqlPhysicalColumn.TARGET_COLUMN));
+                        xml.append("\""); //$NON-NLS-1$
+                      }
+
+                      String levelType = olapHierarchyLevel.getLevelType();
+                      if (levelType != null && !levelType.equals("")) {
+                        xml.append(" levelType=\""); //$NON-NLS-1$
+                        XMLHandler.appendReplacedChars(xml, levelType);
+                        xml.append("\""); //$NON-NLS-1$
+                      }
+  
+                      DataType dataTypeLevel = olapHierarchyLevel.getReferenceColumn().getDataType();
+                      String typeDescLevel = null;
+                      switch(dataTypeLevel) {
+                        case STRING:  typeDescLevel = "String"; break; //$NON-NLS-1$
+                        case NUMERIC: typeDescLevel = "Numeric"; break; //$NON-NLS-1$
+                        case BOOLEAN: typeDescLevel = "Boolean"; break; //$NON-NLS-1$
+                        // Date Type caused BISERVER-6670, removing it for now until we can investigate further 
+                        // case DATE:    typeDescLevel = "Date"; break; //$NON-NLS-1$
+                      }
+                          
+                      if (typeDescLevel!=null)
+                      {
+                          xml.append(" type=\""); //$NON-NLS-1$
+                          XMLHandler.appendReplacedChars(xml, typeDescLevel);
+                          xml.append("\""); //$NON-NLS-1$
+                      }
+  
+                      xml.append(">"); //$NON-NLS-1$
+                      xml.append(Util.CR);
+  
+                      if(olapHierarchyLevel.getAnnotations().size() > 0) {
+                        xml.append("        <Annotations>");
+  
+                        for(OlapAnnotation annotation : olapHierarchyLevel.getAnnotations()) {
+                          xml.append(Util.CR);
+                          xml.append(annotation.asXml());
+                        }
                         xml.append(Util.CR);
-                    }
-
-                    xml.append("      </Level>").append(Util.CR); //$NON-NLS-1$
-
-                }
-
-                xml.append("    </Hierarchy>").append(Util.CR); //$NON-NLS-1$
-            }
-            
-            xml.append("  </Dimension>").append(Util.CR); //$NON-NLS-1$
-            
+                        xml.append("        </Annotations>");
+                        xml.append(Util.CR);
+                      }
+  
+                      List businessColumns = olapHierarchyLevel.getLogicalColumns();
+                      for (int i=0;i<businessColumns.size();i++)
+                      {
+                          LogicalColumn businessColumn = (LogicalColumn) businessColumns.get(i);
+                          xml.append("        <Property"); //$NON-NLS-1$
+  
+                          xml.append(" name=\""); //$NON-NLS-1$
+  
+                          XMLHandler.appendReplacedChars(xml, businessColumn.getName(locale));
+  
+                          xml.append("\""); //$NON-NLS-1$
+                          
+                          xml.append(" column=\""); //$NON-NLS-1$
+                          XMLHandler.appendReplacedChars(xml, (String)businessColumn.getProperty(SqlPhysicalColumn.TARGET_COLUMN));
+                          xml.append("\""); //$NON-NLS-1$
+  
+                          DataType dataType = businessColumn.getDataType();
+                          String typeDesc = null;
+                          switch(dataType) {
+                          case STRING:  typeDesc = "String"; break; //$NON-NLS-1$
+                          case NUMERIC: typeDesc = "Numeric"; break; //$NON-NLS-1$
+                          case BOOLEAN: typeDesc = "Boolean"; break; //$NON-NLS-1$
+                          case DATE:    typeDesc = "Date"; break; //$NON-NLS-1$
+                          }
+                          
+                          if (typeDesc!=null)
+                          {
+                              xml.append(" type=\""); //$NON-NLS-1$
+                              XMLHandler.appendReplacedChars(xml, typeDesc);
+                              xml.append("\""); //$NON-NLS-1$
+                          }
+  
+                          if(businessColumn.getDescription() != null) {
+                            xml.append(" description=\""); //$NON-NLS-1$
+                            XMLHandler.appendReplacedChars(xml, businessColumn.getDescription(locale));
+                            xml.append("\""); //$NON-NLS-1$
+                          }
+                        
+                          xml.append("/>"); //$NON-NLS-1$
+                          xml.append(Util.CR);
+                      }
+  
+                      xml.append("      </Level>").append(Util.CR); //$NON-NLS-1$
+  
+                  }
+  
+                  xml.append("    </Hierarchy>").append(Util.CR); //$NON-NLS-1$
+              }
+              
+              xml.append("  </Dimension>").append(Util.CR); //$NON-NLS-1$
+              
+          }
         }
         
         // Now do the cubes too...

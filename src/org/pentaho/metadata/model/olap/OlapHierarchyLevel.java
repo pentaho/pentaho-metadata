@@ -26,8 +26,12 @@ public class OlapHierarchyLevel implements Cloneable, Serializable {
   private String name;
   private LogicalColumn referenceColumn; // Also has the logical table
                                          // of-course.
+  private LogicalColumn referenceOrdinalColumn;
+  private LogicalColumn referenceCaptionColumn;
+  
   private List<LogicalColumn> logicalColumns;
   private boolean havingUniqueMembers;
+  private String levelType;
 
   private List<OlapAnnotation> annotations;
 
@@ -73,8 +77,16 @@ public class OlapHierarchyLevel implements Cloneable, Serializable {
     OlapHierarchyLevel hierarchyLevel = new OlapHierarchyLevel(olapHierarchy);
 
     hierarchyLevel.name = name;
-    if (referenceColumn != null)
+    hierarchyLevel.levelType = levelType;
+    if (referenceColumn != null) {
       hierarchyLevel.referenceColumn = (LogicalColumn) referenceColumn.clone();
+    }
+    if (referenceOrdinalColumn != null) {
+      hierarchyLevel.referenceOrdinalColumn = (LogicalColumn) referenceOrdinalColumn.clone();
+    }
+    if (referenceCaptionColumn != null) {
+      hierarchyLevel.referenceCaptionColumn = (LogicalColumn) referenceCaptionColumn.clone();
+    }
     for (int i = 0; i < logicalColumns.size(); i++) {
       LogicalColumn logicalColumn = (LogicalColumn) logicalColumns.get(i);
       hierarchyLevel.logicalColumns.add((LogicalColumn) logicalColumn.clone());
@@ -119,6 +131,21 @@ public class OlapHierarchyLevel implements Cloneable, Serializable {
   }
 
   /**
+   * @return the leveltype
+   */
+  public String getLevelType() {
+    return levelType;
+  }
+
+  /**
+   * @param levelType
+   *          the name to set
+   */
+  public void setLevelType(String levelType) {
+    this.levelType= levelType;
+  }
+
+  /**
    * @return the referenceColumn
    */
   public LogicalColumn getReferenceColumn() {
@@ -131,6 +158,36 @@ public class OlapHierarchyLevel implements Cloneable, Serializable {
    */
   public void setReferenceColumn(LogicalColumn referenceColumn) {
     this.referenceColumn = referenceColumn;
+  }
+
+  /**
+   * @return the referenceOrdinalColumn
+   */
+  public LogicalColumn getReferenceOrdinalColumn() {
+    return referenceOrdinalColumn;
+  }
+
+  /**
+   * @param referenceOrdinalColumn
+   *          the referenceOrdinalColumn to set
+   */
+  public void setReferenceOrdinalColumn(LogicalColumn referenceOrdinalColumn) {
+    this.referenceOrdinalColumn = referenceOrdinalColumn;
+  }
+  
+  /**
+   * @return the referenceCaptionColumn
+   */
+  public LogicalColumn getReferenceCaptionColumn() {
+    return referenceCaptionColumn;
+  }
+
+  /**
+   * @param referenceCaptionColumn
+   *          the referenceCaptionColumn to set
+   */
+  public void setReferenceCaptionColumn(LogicalColumn referenceCaptionColumn) {
+    this.referenceCaptionColumn = referenceCaptionColumn;
   }
 
   public LogicalColumn findLogicalColumn(String locale, String thisName) {
