@@ -23,8 +23,11 @@ import java.util.List;
 import org.pentaho.metadata.model.LogicalTable;
 
 public class OlapDimension implements Cloneable, Serializable {
+  public static final String TYPE_TIME_DIMENSION = "TimeDimension";
+  public static final String TYPE_STANDARD_DIMENSION = "StandardDimension";
+
   private String name;
-  private boolean timeDimension;
+  private String type = TYPE_STANDARD_DIMENSION;
 
   private List<OlapHierarchy> hierarchies;
 
@@ -36,7 +39,7 @@ public class OlapDimension implements Cloneable, Serializable {
     OlapDimension olapDimension = new OlapDimension();
 
     olapDimension.name = name;
-    olapDimension.timeDimension = timeDimension;
+    olapDimension.type = type;
     for (int i = 0; i < hierarchies.size(); i++) {
       OlapHierarchy hierarchy = (OlapHierarchy) hierarchies.get(i);
       olapDimension.hierarchies.add((OlapHierarchy) hierarchy.clone());
@@ -83,7 +86,7 @@ public class OlapDimension implements Cloneable, Serializable {
    * @return the timeDimension
    */
   public boolean isTimeDimension() {
-    return timeDimension;
+    return TYPE_TIME_DIMENSION.equals(type);
   }
 
   /**
@@ -91,7 +94,16 @@ public class OlapDimension implements Cloneable, Serializable {
    *          the timeDimension to set
    */
   public void setTimeDimension(boolean timeDimension) {
-    this.timeDimension = timeDimension;
+    this.type = TYPE_TIME_DIMENSION;
+  }
+  
+
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  public String getType() {
+    return type;
   }
 
   public OlapHierarchy findOlapHierarchy(String thisName) {
