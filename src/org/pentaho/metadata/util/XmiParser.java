@@ -642,7 +642,29 @@ public class XmiParser {
   
                     Element lvlModelElement = doc.createElement("CWM:ModelElement.taggedValue"); //$NON-NLS-1$
                     lvlModelElement.appendChild(createTaggedValue(doc, "HIERARCHY_LEVEL_UNIQUE_MEMBERS", level.isHavingUniqueMembers() ? "Y" : "N", idGen.getNextId())); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                    lvlModelElement.appendChild(createTaggedValue(doc, "HIERARCHY_LEVEL_REFERENCE_COLUMN", level.getReferenceColumn().getId(), idGen.getNextId())); //$NON-NLS-1$
+
+                    LogicalColumn logicalColumn;
+                    String tag;
+                    
+                    logicalColumn = level.getReferenceColumn();
+                    if (logicalColumn != null) {
+                      tag = "HIERARCHY_LEVEL_REFERENCE_COLUMN"; //$NON-NLS-1$
+                      lvlModelElement.appendChild(createTaggedValue(doc, tag, logicalColumn.getId(), idGen.getNextId())); 
+                    }
+                    
+                    logicalColumn = level.getReferenceOrdinalColumn();
+                    if (logicalColumn != null) {
+                      tag = "HIERARCHY_LEVEL_REFERENCE_ORDINAL_COLUMN"; //$NON-NLS-1$
+                      lvlModelElement.appendChild(createTaggedValue(doc, tag, logicalColumn.getId(), idGen.getNextId())); 
+                    }
+
+                    logicalColumn = level.getReferenceCaptionColumn();
+                    if (logicalColumn != null) {
+                      tag = "HIERARCHY_LEVEL_REFERENCE_CAPTION_COLUMN"; //$NON-NLS-1$
+                      lvlModelElement.appendChild(createTaggedValue(doc, tag, logicalColumn.getId(), idGen.getNextId())); 
+                    }
+
+                    lvlModelElement.appendChild(createTaggedValue(doc, "HIERARCHY_LEVEL_TYPE", level.getLevelType(), idGen.getNextId()));
 
                     // add annotations as tagged values
                     if(level.getAnnotations() != null & level.getAnnotations().size() > 0) {
@@ -1586,7 +1608,8 @@ public class XmiParser {
           Element dim = (Element)dimensions.item(i);
           OlapDimension dimensionObj = new OlapDimension();
           dimensionObj.setName(dim.getAttribute("name")); //$NON-NLS-1$
-          dimensionObj.setTimeDimension("true".equals(dim.getAttribute("isTime"))); //$NON-NLS-1$ //$NON-NLS-2$
+          boolean isTimeDimension = "true".equals(dim.getAttribute("isTime")); //$NON-NLS-1$ //$NON-NLS-2$
+          dimensionObj.setTimeDimension(isTimeDimension); 
           dimensionMap.put(dim.getAttribute("xmi.id"), dimensionObj); //$NON-NLS-1$
           Element hierarchies = null;
           Element memberSelections = null;
@@ -1685,10 +1708,26 @@ public class XmiParser {
               OlapHierarchyLevel levelObj = levelMap.get(xmiid);
               Map<String, String> nvp = getKeyValuePairs(level, "CWM:TaggedValue", "tag", "value"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
               levelObj.setHavingUniqueMembers("Y".equals(nvp.get("HIERARCHY_LEVEL_UNIQUE_MEMBERS"))); //$NON-NLS-1$ //$NON-NLS-2$
-              String levelRefCol = nvp.get("HIERARCHY_LEVEL_REFERENCE_COLUMN");
-              
-              levelObj.setReferenceColumn(model.findLogicalColumn(levelRefCol)); //$NON-NLS-1$
-              
+              levelObj.setLevelType(nvp.get("HIERARCHY_LEVEL_TYPE")); //$NON-NLS-1$
+              String levelRefCol, tag;
+
+              tag = "HIERARCHY_LEVEL_REFERENCE_COLUMN"; //$NON-NLS-1$
+              levelRefCol = nvp.get(tag);
+              if (levelRefCol != null) {
+                levelObj.setReferenceColumn(model.findLogicalColumn(levelRefCol)); 
+              }              
+
+              tag = "HIERARCHY_LEVEL_REFERENCE_ORDINAL_COLUMN"; //$NON-NLS-1$
+              levelRefCol = nvp.get(tag);
+              if (levelRefCol != null) {
+                levelObj.setReferenceOrdinalColumn(model.findLogicalColumn(levelRefCol)); 
+              }              
+
+              tag = "HIERARCHY_LEVEL_REFERENCE_CAPTION_COLUMN"; //$NON-NLS-1$
+              levelRefCol = nvp.get(tag);
+              if (levelRefCol != null) {
+                levelObj.setReferenceCaptionColumn(model.findLogicalColumn(levelRefCol)); 
+              }              
               // CWMMDB:DimensionedObject xmi.id = 'a340' name
               List<LogicalColumn> referenceCols = new ArrayList<LogicalColumn>();
               NodeList dimensionedObjs = level.getElementsByTagName("CWMMDB:DimensionedObject"); //$NON-NLS-1$
