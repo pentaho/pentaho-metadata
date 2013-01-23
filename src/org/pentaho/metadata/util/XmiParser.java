@@ -664,8 +664,9 @@ public class XmiParser {
                       lvlModelElement.appendChild(createTaggedValue(doc, tag, logicalColumn.getId(), idGen.getNextId())); 
                     }
 
-                    lvlModelElement.appendChild(createTaggedValue(doc, "HIERARCHY_LEVEL_TYPE", level.getLevelType(), idGen.getNextId()));
-
+                    if (dim.isTimeDimension()) { 
+                      lvlModelElement.appendChild(createTaggedValue(doc, "HIERARCHY_LEVEL_TYPE", level.getLevelType(), idGen.getNextId()));
+                    }
                     // add annotations as tagged values
                     if(level.getAnnotations() != null & level.getAnnotations().size() > 0) {
                       for(OlapAnnotation annotation : level.getAnnotations()) {
