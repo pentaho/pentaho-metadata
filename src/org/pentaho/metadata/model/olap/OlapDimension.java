@@ -94,7 +94,7 @@ public class OlapDimension implements Cloneable, Serializable {
    *          the timeDimension to set
    */
   public void setTimeDimension(boolean timeDimension) {
-    this.type = TYPE_TIME_DIMENSION;
+    this.type = timeDimension ? TYPE_TIME_DIMENSION : TYPE_STANDARD_DIMENSION;
   }
   
 
