@@ -84,7 +84,7 @@ public class MondrianModelExporterTest {
         "         <![CDATA[select * from customer]]>\n" + 
         "        </SQL>\n" + 
         "    </View>\n" + 
-        "      <Level name=\"Lvl1\" column=\"pc1\" type=\"Numeric\" uniqueMembers=\"false\">\n" + 
+        "      <Level name=\"Lvl1\" uniqueMembers=\"false\" column=\"pc1\" type=\"Numeric\">\n" + 
         "      </Level>\n" + 
         "    </Hierarchy>\n" + 
         "  </Dimension>\n" + 
@@ -176,7 +176,7 @@ public class MondrianModelExporterTest {
         "         <![CDATA[select * from customer]]>\n" +
         "        </SQL>\n" +
         "    </View>\n" +
-        "      <Level name=\"Lvl1\" column=\"pc1\" type=\"Numeric\" uniqueMembers=\"false\">\n" +
+        "      <Level name=\"Lvl1\" uniqueMembers=\"false\" column=\"pc1\" type=\"Numeric\">\n" +
         "        <Annotations>\n" +
         "          <Annotation name=\"GeoRole\">city</Annotation>\n" +
         "          <Annotation name=\"RequiredParents\">country,state</Annotation>\n" +
@@ -286,7 +286,7 @@ public class MondrianModelExporterTest {
         "         <![CDATA[select * from customer]]>\n" +
         "        </SQL>\n" +
         "    </View>\n" +
-        "      <Level name=\"Lvl1\" column=\"pc1\" type=\"Numeric\" uniqueMembers=\"false\">\n" +
+        "      <Level name=\"Lvl1\" uniqueMembers=\"false\" column=\"pc1\" type=\"Numeric\">\n" +
         "        <Annotations>\n" +
         "          <Annotation name=\"GeoRole\">city</Annotation>\n" +
         "        </Annotations>\n" +
