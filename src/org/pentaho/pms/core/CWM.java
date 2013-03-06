@@ -46,8 +46,6 @@ import org.netbeans.mdr.NBMDRepositoryImpl;
 import org.netbeans.mdr.persistence.btreeimpl.btreestorage.BtreeFactory;
 import org.pentaho.di.core.logging.LogChannel;
 import org.pentaho.di.core.logging.LogChannelInterface;
-import org.pentaho.di.core.logging.LogMessage;
-import org.pentaho.di.core.logging.LogWriter;
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.core.row.ValueMetaInterface;
 import org.pentaho.pms.core.exception.CWMException;
