@@ -21,22 +21,18 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.LineIterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.pentaho.di.core.exception.KettleFileException;
 import org.pentaho.di.core.vfs.KettleVFS;
-import org.pentaho.di.trans.steps.textfileinput.TextFileInput;
-import org.pentaho.di.trans.steps.textfileinput.TextFileInputMeta;
 import org.pentaho.metadata.messages.Messages;
-import org.pentaho.metadata.query.model.util.QueryXmlHelper;
 import org.pentaho.reporting.libraries.base.util.CSVTokenizer;
 
 public class CsvDataReader {
   
   private static final Log logger = LogFactory.getLog(QueryXmlHelper.class);
-  
-  private static int DEFAULT_ROW_LIMIT = 5;
-  private static String DEFAULT_DELIMETER = ","; //$NON-NLS-1$
-  private static String DEFAULT_ENCLOSURE = "/"; //$NON-NLS-1$
   
   private String fileLocation;
   private boolean headerPresent;
@@ -59,21 +55,24 @@ public class CsvDataReader {
   
   public List<List<String>> loadData() {
     String line = null;
-    int row = 0;
     List<List<String>> dataSample = new ArrayList<List<String>>(rowLimit);
+    List<String> rowData = null;
     InputStreamReader reader = null;
+    CSVTokenizer csvt = null;
+    LineIterator lineIterator = null;
     try {
       InputStream inputStream = KettleVFS.getInputStream(fileLocation);
       reader = new InputStreamReader(inputStream);
+      lineIterator = new LineIterator(reader);
+      int row = 0;
+      int count;
+      while (row < rowLimit && lineIterator.hasNext()) {
+        line = lineIterator.nextLine();
+        ++row;
 
-      //read each line of text file
-      StringBuilder stringBuilder = new StringBuilder(1000);  
-      line = TextFileInput.getLine(null, reader, TextFileInputMeta.FILE_FORMAT_MIXED, stringBuilder);
-      
-      while(line != null && row < rowLimit) {
-        CSVTokenizer csvt = new CSVTokenizer(line, delimiter, enclosure, false);
-        List<String> rowData = new ArrayList<String>();
-        int count = 0;
+        csvt = new CSVTokenizer(line, delimiter, enclosure, false);
+        rowData = new ArrayList<String>();
+        count = 0;
         
         while (csvt.hasMoreTokens()) {
           //get next token and store it in the list
@@ -85,25 +84,17 @@ public class CsvDataReader {
           columnCount = count;
         }
         
-        if (headerPresent && row == 0) {
+        if (headerPresent && row == 1) {
           header = rowData;
         } else {
           dataSample.add(rowData);  
         }
-        line = TextFileInput.getLine(null, reader, TextFileInputMeta.FILE_FORMAT_MIXED, stringBuilder);
-        row++;
       }
-
-    } catch (Exception e) {
+    } catch (KettleFileException e) {
       logger.error(Messages.getString("CsvDataReader.ERROR_0001_Failed"), e); //$NON-NLS-1$
     } finally {
-      
-      //close the file
-      try {
-        if (reader != null) reader.close();
-      } catch (Exception e) {
-        // ignore 
-      }
+      LineIterator.closeQuietly(lineIterator);
+      IOUtils.closeQuietly(reader);
     }
     data = dataSample;
     return dataSample;
