@@ -43,7 +43,7 @@
     <dependency org="org.apache.axis2" name="axis2-kernel" rev="1.4.1" transitive="false"/>
     
     <!-- kettle dependencies -->
-    <dependency org="javassist"        name="javassist"    rev="3.4.GA" conf="default->default" transitive="false"/>
+    <dependency org="javassist"        name="javassist"    rev="3.12.1.GA" conf="default->default" transitive="false"/>
     <dependency org="org.scannotation" name="scannotation" rev="1.0.2"  conf="default->default" transitive="false"/>
     
     
