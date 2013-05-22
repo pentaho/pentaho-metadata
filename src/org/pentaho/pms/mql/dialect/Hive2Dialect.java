@@ -18,11 +18,25 @@ package org.pentaho.pms.mql.dialect;
 
 
 /**
- * Apache Hadoop Hive Implementation of Metadata SQL Dialect
+ * Apache Hadoop Hive Server 2 Implementation of Metadata SQL Dialect
  * 
  */
-public class HiveDialect extends BaseHiveDialect {
+public class Hive2Dialect extends BaseHiveDialect {
 
-  // The base implementation (BaseHiveDialect) is for Hive 1, so this class is just a concrete
-  // instantiation of the abstract base class
+  protected final static String HIVE_DIALECT_TYPE = "HIVE2";
+  
+  protected final static String DRIVER_CLASS_NAME = "org.apache.hive.jdbc.HiveDriver";
+  
+  public Hive2Dialect() {
+    super(HIVE_DIALECT_TYPE); //$NON-NLS-1$
+  }
+  
+  @Override
+  protected String getDriverClassName() {
+    return DRIVER_CLASS_NAME;
+  }
+  
+  protected static String getHiveDialectType() {
+    return HIVE_DIALECT_TYPE;
+  }
 }
