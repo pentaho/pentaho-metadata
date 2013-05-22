@@ -14,15 +14,16 @@
  *
  * Copyright (c) 20011 Pentaho Corporation.  All rights reserved.
  */
-package org.pentaho.pms.mql.dialect;
+package org.pentaho.di.core.database.mock;
 
+import org.pentaho.di.core.database.DatabaseInterface;
+import org.pentaho.di.core.plugins.DatabaseMetaPlugin;
 
 /**
- * Apache Hadoop Hive Implementation of Metadata SQL Dialect
+ * Mock database interface for Impala so we don't have to depend on the Pentaho Big Data Plugin project at all.  It is purely a runtime dependency.
  * 
  */
-public class HiveDialect extends BaseHiveDialect {
-
-  // The base implementation (BaseHiveDialect) is for Hive 1, so this class is just a concrete
-  // instantiation of the abstract base class
+@DatabaseMetaPlugin(type="IMPALA", typeDescription="Impala")
+public class MockImpalaDatabaseMeta extends MockHiveDatabaseMeta implements DatabaseInterface {
+ 
 }

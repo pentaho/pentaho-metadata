@@ -21,7 +21,9 @@ import junit.framework.TestCase;
 import org.pentaho.di.core.Const;
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.di.core.database.mock.MockHive2DatabaseMeta;
 import org.pentaho.di.core.database.mock.MockHiveDatabaseMeta;
+import org.pentaho.di.core.database.mock.MockImpalaDatabaseMeta;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.pms.mql.dialect.SQLDialectInterface;
 import org.pentaho.pms.mql.dialect.SQLQueryModel;
@@ -31,7 +33,12 @@ public class MetadataTestBase extends TestCase {
 
   public static void initKettleEnvironment() throws KettleException {
     // Register the Mock Hive Kettle Database Plugin
-    System.setProperty(Const.KETTLE_PLUGIN_CLASSES, MockHiveDatabaseMeta.class.getName()); //$NON-NLS-1$
+    StringBuffer kettlePluginClasses = new StringBuffer(MockHiveDatabaseMeta.class.getName());
+    kettlePluginClasses.append(",");
+    kettlePluginClasses.append(MockHive2DatabaseMeta.class.getName());
+    kettlePluginClasses.append(",");
+    kettlePluginClasses.append(MockImpalaDatabaseMeta.class.getName());
+    System.setProperty(Const.KETTLE_PLUGIN_CLASSES, kettlePluginClasses.toString()); //$NON-NLS-1$
     KettleEnvironment.init(false);
   }
 
