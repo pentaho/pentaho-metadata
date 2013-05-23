@@ -74,6 +74,14 @@ public class SQLDialectFactory {
     if (HiveDialect.canLoad()) {
       addDialect(new HiveDialect());
     }
+    // Conditionally load the Hive 2 Dialect if it can be loaded
+    if (Hive2Dialect.canLoad()) {
+      addDialect(new Hive2Dialect());
+    }
+    // Conditionally load the Impala Dialect if it can be loaded
+    if (ImpalaDialect.canLoad()) {
+      addDialect(new ImpalaDialect());
+    }
   }
   
   /**
