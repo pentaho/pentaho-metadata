@@ -1077,6 +1077,7 @@ public class SqlGenerator {
         join = formula.generateSQL(locale);
       } catch(PentahoMetadataException e) {
         // backward compatibility, deprecate
+        // FIXME: we need to get rid of this and just throw an exception
         logger.warn(Messages.getErrorString("SqlGenerator.ERROR_0017_FAILED_TO_PARSE_COMPLEX_JOIN", relation.getComplexJoin()), e); //$NON-NLS-1$
         join = relation.getComplexJoin();
       }
