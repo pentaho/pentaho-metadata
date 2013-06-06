@@ -36,6 +36,7 @@ import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.exception.KettleDatabaseException;
 import org.pentaho.di.core.exception.KettleXMLException;
 import org.pentaho.pms.core.CWM;
+import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.cwm.pentaho.meta.behavioral.CwmEvent;
 import org.pentaho.pms.cwm.pentaho.meta.behavioral.CwmParameter;
 import org.pentaho.pms.cwm.pentaho.meta.businessinformation.CwmDescription;
@@ -61,6 +62,8 @@ import org.pentaho.pms.locale.LocaleInterface;
 import org.pentaho.pms.locale.LocaleMeta;
 import org.pentaho.pms.locale.Locales;
 import org.pentaho.pms.messages.Messages;
+import org.pentaho.pms.mql.PMSFormula;
+import org.pentaho.pms.mql.Selection;
 import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
@@ -849,6 +852,23 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface
         {
             CwmKeyRelationship cwmKeyRelationship = cwmKeyRelationships[i];
             RelationshipMeta relationshipMeta = getRelationshipMeta(cwm, cwmKeyRelationship, businessModel);
+            // populate column references if a complex join
+            if (relationshipMeta.isComplex()) {
+              try {
+                List<BusinessColumn> referencedColumns = new ArrayList<BusinessColumn>();
+                PMSFormula formula = relationshipMeta.getComplexJoinFormula(businessModel);
+                formula.parseAndValidate();
+                for (Selection columnSelection : formula.getBusinessColumns())
+                {
+                    referencedColumns.add(columnSelection.getBusinessColumn());
+                }
+                relationshipMeta.setCJReferencedColumns(referencedColumns);
+              } catch (PentahoMetadataException e) {
+                logger.error(
+                    Messages.getErrorString("MQLQueryImpl.ERROR_0017_FAILED_TO_PARSE_COMPLEX_JOIN", 
+                        relationshipMeta.getComplexJoin()), e);
+              }
+            }
             businessModel.addRelationship(relationshipMeta);
         }
         
