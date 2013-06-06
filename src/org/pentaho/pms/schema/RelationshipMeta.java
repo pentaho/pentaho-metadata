@@ -21,6 +21,8 @@ import org.pentaho.di.core.changed.ChangedFlag;
 import org.pentaho.di.core.changed.ChangedFlagInterface;
 import org.pentaho.di.core.xml.XMLHandler;
 import org.pentaho.di.core.xml.XMLInterface;
+import org.pentaho.pms.core.exception.PentahoMetadataException;
+import org.pentaho.pms.mql.PMSFormula;
 import org.pentaho.pms.util.Const;
 import org.w3c.dom.Node;
 
@@ -37,6 +39,8 @@ public class RelationshipMeta extends ChangedFlag implements Cloneable, XMLInter
 	private String complex_join;
 	private String joinOrderKey;
 	private String description;
+	// columns referenced in a complexJoin, only used at design time
+	private List<BusinessColumn> cjReferencedColumns;
 	
 	public final static int TYPE_RELATIONSHIP_UNDEFINED = 0;
 	public final static int TYPE_RELATIONSHIP_1_N       = 1;
@@ -136,7 +140,7 @@ public class RelationshipMeta extends ChangedFlag implements Cloneable, XMLInter
 		retval+="        "+XMLHandler.addTagValue("complex_join", complex_join); //$NON-NLS-1$ //$NON-NLS-2$
 		retval+="        "+XMLHandler.addTagValue("join_order_key", joinOrderKey); //$NON-NLS-1$ //$NON-NLS-2$
 		retval+="        "+XMLHandler.addTagValue("description",  description); //$NON-NLS-1$ //$NON-NLS-2$
-		retval+="        </relationship>"+Const.CR; //$NON-NLS-1$
+		retval+="      </relationship>"+Const.CR; //$NON-NLS-1$
 		
 		return retval;
 	}
@@ -243,6 +247,14 @@ public class RelationshipMeta extends ChangedFlag implements Cloneable, XMLInter
 		return complex_join;
 	}
 	
+	public List<BusinessColumn> getCJReferencedColumns() {
+	  return cjReferencedColumns;
+	}
+
+	public void setCJReferencedColumns(List<BusinessColumn> cjReferencedColumns) {
+	  this.cjReferencedColumns = cjReferencedColumns;
+    }
+
 	public void setComplexJoin(String cj)
 	{
 		complex_join = cj;
@@ -425,5 +437,10 @@ public class RelationshipMeta extends ChangedFlag implements Cloneable, XMLInter
 	 */
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public PMSFormula getComplexJoinFormula(BusinessModel model) throws PentahoMetadataException {
+	  if (!isComplex()) return null;
+	  return new PMSFormula(model, getComplexJoin(), null);
 	}
 }

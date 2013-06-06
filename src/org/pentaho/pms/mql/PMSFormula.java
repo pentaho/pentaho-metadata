@@ -17,10 +17,12 @@
 package org.pentaho.pms.mql;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.database.DatabaseMeta;
@@ -42,6 +44,8 @@ import org.pentaho.reporting.libraries.formula.lvalues.*;
 import org.pentaho.reporting.libraries.formula.operators.InfixOperator;
 import org.pentaho.reporting.libraries.formula.parser.ParseException;
 import org.pentaho.reporting.libraries.formula.typing.coretypes.TextType;
+
+import java.util.Collections;
 
 /**
  * This class has been replaced with org.pentaho.metadata.query.impl.sql.SqlOpenFormula
@@ -85,7 +89,10 @@ public class PMSFormula implements FormulaTraversalInterface {
   
   /** cache of business columns for lookup during SQL generation */
   private Map<String,Selection> businessColumnMap = new HashMap<String,Selection>();
-  
+
+  /** keep track of where columns are referenced in case we need to update them */
+  private Map<String, List<ContextLookup>> businessColumnRefs = new HashMap<String, List<ContextLookup>>();
+
   /** table alias map **/
   private Map<BusinessTable, String> tableAliases;
   
@@ -189,7 +196,10 @@ public class PMSFormula implements FormulaTraversalInterface {
   public PMSFormula(BusinessModel model, String formulaString, Map<BusinessTable, String> tableAliases) throws PentahoMetadataException {
     
     this.model = model;
-    this.formulaString = formulaString;
+    // parse positions are user-friendly and will report tabs as equivalent space increments
+    // that doesn't work for our field update algorithm, so best just replace them
+    // TODO: ideally we would set them back
+    this.formulaString = StringUtils.replace(formulaString, "\t","        ");
     this.tableAliases = tableAliases;
     this.tables = new ArrayList<BusinessTable>();
     
@@ -271,12 +281,13 @@ public class PMSFormula implements FormulaTraversalInterface {
         formulaObject = new Formula(formulaString);
         formulaObject.initialize(formulaContext);
         LValue val = formulaObject.getRootReference();
+        // make 
         validateAndResolveObjectModel(val);
         isValidated = true;
       } catch (ParseException e) {
         logger.error("an exception occurred", e); //$NON-NLS-1$
         // is it possible to provide more detail in this exception to the user?
-        throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0005_FAILED_TO_PARSE_FORMULA", formulaString)); //$NON-NLS-1$
+        throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0005_FAILED_TO_PARSE_FORMULA", formulaString), e); //$NON-NLS-1$
       } catch (EvaluationException e) {
         logger.error("an exception occurred", e); //$NON-NLS-1$
         throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0006_FAILED_TO_EVALUATE_FORMULA", formulaString)); //$NON-NLS-1$
@@ -464,8 +475,10 @@ public class PMSFormula implements FormulaTraversalInterface {
         validateAndResolveObjectModel(t.getOperands()[i]);
       }
     } else if (val instanceof ContextLookup) {
-      ContextLookup l = (ContextLookup)val;
-      addField(l.getName());
+      ContextLookup lookup = (ContextLookup)val;
+      addField(lookup.getName());
+      // no exception, let's add the ref
+      addFieldLookup(lookup);
     } else if (val instanceof StaticValue) {
       // everything is fine
       return;
@@ -483,7 +496,7 @@ public class PMSFormula implements FormulaTraversalInterface {
         if (sqlDialect.isAggregateFunction(f.getFunctionName())) {
           hasAggregateFunction = true;
         }
-        
+
         // validate functions parameters
         if (f.getChildValues() != null && f.getChildValues().length > 0) {
           validateAndResolveObjectModel(f.getChildValues()[0]);
@@ -508,6 +521,105 @@ public class PMSFormula implements FormulaTraversalInterface {
     }
   }
   
+  private void addFieldLookup(ContextLookup field) {
+    List<ContextLookup> refs = businessColumnRefs.get(field.getName());
+    if (refs == null) {
+      refs = new ArrayList<ContextLookup>();
+    }
+    refs.add(field);
+    businessColumnRefs.put(field.getName(), refs);
+  }
+  
+  /**
+   * Get formula updated for column ID changes. Doesn't change formula.<br> 
+   * Formula must have been parsed while old values were valid.<br>
+   * @param changes Full unique identifier replacements (both key and value must be
+   *  in the form <i>tableID</i><b>.</b><i>columnID</i>)
+   * @return updated formula
+   * @throws PentahoMetadataException if {@link #parseAndValidate()} hasn't been successfully called prior to using this. 
+   */
+  public String updateFields(Map<String, String> changes) throws PentahoMetadataException {
+    if (!isValidated) {
+      throw new PentahoMetadataException(Messages.getErrorString("PMSFormula.ERROR_0017_STATE_ERROR_NOT_VALIDATED")); //$NON-NLS-1$
+    }
+    
+    List<ContextLookup> refs = new ArrayList<ContextLookup>();
+    for (String oldName : changes.keySet()) {
+      List<ContextLookup> value = businessColumnRefs.get(oldName);
+      if (value != null) {
+        refs.addAll(value);
+      }
+    }
+    if (refs.isEmpty()) {
+      // no need to butcher it then
+      return formulaString;
+    }
+
+    // order by position so we can rebuild formula in one pass
+    Collections.sort(refs, new Comparator<ContextLookup> () {
+      public int compare(ContextLookup o1, ContextLookup o2)
+      {
+        ParsePosition p1 = o1.getParsePosition(),
+                      p2 = o2.getParsePosition();
+
+        int comp = p1.getStartLine() - p2.getStartLine();
+        if (comp != 0) { 
+          return comp;
+        }
+
+        return p1.getStartColumn() - p2.getStartColumn();
+      }
+    });
+    String[] formulaLines = formulaString.split("\\r?\\n");
+    // parse positions are 1-based index and end refers to position of last character
+    int line = 1, col = 1;
+    StringBuilder sb = new StringBuilder();
+    for (ContextLookup fieldRef : refs) {
+      ParsePosition fieldPos = fieldRef.getParsePosition();
+      ParsePosition preFieldChunk = new ParsePosition(line, col, fieldPos.getStartLine(), fieldPos.getStartColumn() -1); 
+      appendChunk(preFieldChunk, formulaLines, sb);
+      // new field, delegate quoting
+      sb.append(new ContextLookup(changes.get(fieldRef.getName())).toString());
+      // next
+      line = fieldPos.getEndLine();
+      col = fieldPos.getEndColumn()+1;
+      // overflow?
+      if (col > formulaLines[line-1].length()) {
+        line++;
+        col=1;
+      }
+    }
+    if (line <= formulaLines.length) {
+      // print the rest, if any
+      ParsePosition remainder = new ParsePosition(line, col, formulaLines.length, formulaLines[formulaLines.length - 1].length() );
+      appendChunk(remainder, formulaLines, sb);
+    }
+    return sb.toString();
+  }
+
+  private void appendChunk(ParsePosition pos, String[] lines, StringBuilder sb) {
+    // parse positions have 1-based index and end refers to position of last character
+    // while java strings are 0-based and end refers to position after the last character
+    // so we only need to convert lines and startColumn
+    final String newline = System.getProperty("line.separator");
+    String startLine = lines[pos.getStartLine() - 1];
+    if (pos.getStartLine() == pos.getEndLine()) {
+      // it's a one liner
+      sb.append(startLine.substring(pos.getStartColumn() - 1, pos.getEndColumn()));
+      return;
+    }
+    // first line
+    sb.append(startLine.substring(pos.getStartColumn() - 1));
+    sb.append(newline);
+    
+    // lines in the middle, if any
+    for (int i = pos.getStartLine(); i < pos.getEndLine() -1; i++) {
+      sb.append(lines[i]);
+      sb.append(newline);
+    }
+    // last line
+    sb.append(lines[pos.getEndLine() - 1].substring(0, pos.getEndColumn()));
+  }
   /**
    * Determines whether or not child val needs to be wrapped with parens.
    * The determining factor is if both the current object and the parent are sql infix operators
@@ -643,7 +755,7 @@ public class PMSFormula implements FormulaTraversalInterface {
       }
     }
   }
-  
+
   /**
    * wrapper for recursive generateSQL method
    * 
@@ -736,4 +848,7 @@ public class PMSFormula implements FormulaTraversalInterface {
       return businessTable;
   }
 
+  public Formula getFormula() {
+    return formulaObject;
+  }
 }

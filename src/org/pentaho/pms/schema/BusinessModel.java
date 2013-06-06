@@ -18,14 +18,21 @@ package org.pentaho.pms.schema;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 import org.pentaho.di.core.NotePadMeta;
 import org.pentaho.di.core.changed.ChangedFlagInterface;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.gui.Point;
+import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.messages.Messages;
+import org.pentaho.pms.mql.PMSFormula;
 import org.pentaho.pms.schema.concept.ConceptInterface;
 import org.pentaho.pms.schema.concept.ConceptUtilityBase;
 import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
@@ -92,7 +99,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
   /**
    * @return the relationships
    */
-  public List getRelationships() {
+  public List<RelationshipMeta> getRelationships() {
     return relationships;
   }
 
@@ -1078,46 +1085,84 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
     return verify;
   }
 
+  public Collection<RelationshipMeta> getAffectedComplexRelationships(BusinessColumn column) {
+    ArrayList<RelationshipMeta> relations = new ArrayList<RelationshipMeta>();
+    for (RelationshipMeta relation : this.relationships) {
+      if (relation.isComplex() && 
+          relation.getCJReferencedColumns() != null &&
+          relation.getCJReferencedColumns().contains(column))
+      {
+        relations.add(relation);
+      }
+    }
+    return relations;
+  }
+
+  public List<RelationFormulaUpdate> updateComplexRelationships(BusinessTable oldTable, BusinessTable newTable) {
+
+    Map<String, String> changes = new HashMap<String, String>();
+    Set<RelationshipMeta> relations = new HashSet<RelationshipMeta>();
+    for (BusinessColumn column : oldTable.getBusinessColumns()) {
+      // changing columns
+      BusinessColumn newColumn = new BusinessColumn(column.getId(), column.getPhysicalColumn(), newTable);
+      changes.put(column.toString(), newColumn.toString());
+      relations.addAll(getAffectedComplexRelationships(column));
+    }
+    return updateComplexRelationships(changes, relations);
+  }
+
+  public List<RelationFormulaUpdate> updateComplexRelationships(BusinessColumn oldColumn, BusinessColumn newColumn) {
+    List<RelationFormulaUpdate> updates = new ArrayList<RelationFormulaUpdate>();
+    Map<String, String> changes = new HashMap<String, String>();
+    changes.put(oldColumn.toString(), newColumn.toString());
+    Collection<RelationshipMeta> relations = getAffectedComplexRelationships(oldColumn);
+    return updateComplexRelationships(changes, relations);
+  }
+  
+  private List<RelationFormulaUpdate> updateComplexRelationships(Map<String, String> changes, Collection<RelationshipMeta> relations) {
+    List<RelationFormulaUpdate> updates = new ArrayList<RelationFormulaUpdate>();
+    for (RelationshipMeta relation : relations) {
+      
+      String formulaBefore = relation.getComplexJoin();
+      try {
+        PMSFormula formula = relation.getComplexJoinFormula(this);
+        formula.parseAndValidate();
+        relation.setComplexJoin(formula.updateFields(changes));
+        updates.add(new RelationFormulaUpdate(relation, formulaBefore, null));
+      } catch (PentahoMetadataException e) {
+        updates.add(new RelationFormulaUpdate(relation, formulaBefore, e));
+      }
+    }
+    return updates;
+  }
+  
+  public static class RelationFormulaUpdate {
+    RelationshipMeta relationship;
+    String formulaBefore;
+    List<Exception> errors;
+    
+    public RelationshipMeta getRelationship() {
+      return relationship;
+    }
+
+    public String getFormulaBefore() {
+      return formulaBefore;
+    }
+
+    public List<Exception> getErrors() {
+      return errors;
+    }
+
+    public RelationFormulaUpdate(RelationshipMeta rel, String before, PentahoMetadataException error) {
+      relationship = rel;
+      formulaBefore = before;
+      errors = new ArrayList<Exception> ();
+      if (error != null) {
+        errors.add(error);
+      }
+    }
+    
+  }
+
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
