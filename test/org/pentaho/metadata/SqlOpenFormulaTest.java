@@ -489,13 +489,16 @@ public class SqlOpenFormulaTest {
     
     handleFormula(getOrdersModel(), "Oracle", //$NON-NLS-1$
         "TRUE()" //$NON-NLS-1$
-        ,"1" //$NON-NLS-1$
+        ,"1=1" //$NON-NLS-1$
       );
     handleFormula(getOrdersModel(), "Oracle", //$NON-NLS-1$
         "FALSE()" //$NON-NLS-1$
-        ,"0" //$NON-NLS-1$
+        ,"1=0" //$NON-NLS-1$
       );
-
+      handleFormula(getOrdersModel(), "Oracle", //$NON-NLS-1$
+              "AND(TRUE();OR(FALSE();TRUE()))" //$NON-NLS-1$
+              ,"1=1 AND (1=0 OR 1=1)" //$NON-NLS-1$
+      );
     handleFormula(getOrdersModel(), "Hypersonic", //$NON-NLS-1$ 
         "TRUE()" //$NON-NLS-1$
         ,"TRUE" //$NON-NLS-1$
@@ -507,14 +510,17 @@ public class SqlOpenFormulaTest {
 
     handleFormula(getOrdersModel(), "DB2", //$NON-NLS-1$ 
         "TRUE()" //$NON-NLS-1$
-        ,"1" //$NON-NLS-1$
+        ,"1=1" //$NON-NLS-1$
       );
     handleFormula(getOrdersModel(), "DB2", //$NON-NLS-1$ 
         "FALSE()" //$NON-NLS-1$
-        ,"0" //$NON-NLS-1$
+        ,"1=0" //$NON-NLS-1$
       );
-
-    handleFormula(getOrdersModel(), "MSSQL", //$NON-NLS-1$ 
+    handleFormula(getOrdersModel(), "DB2", //$NON-NLS-1$
+              "AND(TRUE();OR(FALSE();TRUE()))" //$NON-NLS-1$
+              ,"1=1 AND (1=0 OR 1=1)" //$NON-NLS-1$
+      );
+    handleFormula(getOrdersModel(), "MSSQL", //$NON-NLS-1$
         "TRUE()" //$NON-NLS-1$
         ,"(1=1)" //$NON-NLS-1$
       );
