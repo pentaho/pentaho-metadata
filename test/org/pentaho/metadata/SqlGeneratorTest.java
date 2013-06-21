@@ -776,7 +776,7 @@ public class SqlGeneratorTest {
           "      AND \n" + 
           "        (\n" + 
           "          (\n" + 
-          "             1\n" + 
+          "             1=1\n" +
           "          )\n" + 
           "      AND (\n" + 
           "              bt1.pc1  > 1.2\n" + 
@@ -806,7 +806,7 @@ public class SqlGeneratorTest {
           "      AND \n" + 
           "        (\n" + 
           "          (\n" + 
-          "             0\n" + 
+          "             1=0\n" +
           "          )\n" + 
           "      AND (\n" + 
           "              bt1.pc1  > 2.1\n" + 
