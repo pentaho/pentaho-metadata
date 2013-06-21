@@ -267,11 +267,11 @@ public class MQLQueryTest extends TestCase {
     
     handleFormula(ordersModel, "Oracle", //$NON-NLS-1$
         "TRUE()" //$NON-NLS-1$
-        ,"1" //$NON-NLS-1$
+        ,"1=1" //$NON-NLS-1$
       );
     handleFormula(ordersModel, "Oracle", //$NON-NLS-1$
         "FALSE()" //$NON-NLS-1$
-        ,"0" //$NON-NLS-1$
+        ,"1=0" //$NON-NLS-1$
       );
 
     handleFormula(ordersModel, "Hypersonic", //$NON-NLS-1$ 
@@ -285,11 +285,11 @@ public class MQLQueryTest extends TestCase {
 
     handleFormula(ordersModel, "DB2", //$NON-NLS-1$ 
         "TRUE()" //$NON-NLS-1$
-        ,"1" //$NON-NLS-1$
+        ,"1=1" //$NON-NLS-1$
       );
     handleFormula(ordersModel, "DB2", //$NON-NLS-1$ 
         "FALSE()" //$NON-NLS-1$
-        ,"0" //$NON-NLS-1$
+        ,"1=0" //$NON-NLS-1$
       );
 
     handleFormula(ordersModel, "MSSQL", //$NON-NLS-1$ 

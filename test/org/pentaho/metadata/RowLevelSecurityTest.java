@@ -82,7 +82,7 @@ public class RowLevelSecurityTest {
         "          pt1 bt1\n" + 
         "WHERE \n" + 
         "        (\n" + 
-        "          0\n" + 
+        "          1=0\n" +
         "        )\n",
         mquery.getQuery()
     ); //$NON-NLS-1$
