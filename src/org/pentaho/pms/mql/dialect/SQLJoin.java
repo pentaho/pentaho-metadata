@@ -128,14 +128,19 @@ import org.pentaho.pms.util.Const;
 			// Case: No join order / no join order
 			//
 			if (Const.isEmpty(getJoinOrderKey()) && Const.isEmpty(other.getJoinOrderKey())) {
-				
+
+                if (getJoinType() == other.getJoinType()) {
+                    // no order key and same join type
+                    return 0;
+                }
+
 				// Case: inner join : goes below
 				//
 				if (getJoinType()==INNER_JOIN) {
 					return -1;
 				}
 				// CASE: no inner join / inner join : goes to the top
-				else if (getJoinType()==INNER_JOIN) {
+				else if (other.getJoinType()==INNER_JOIN) {
 					return 1;
 				}
 				else {
@@ -150,7 +155,7 @@ import org.pentaho.pms.util.Const;
 				// Case: ? / inner join : goes to the top
 				//
 				if (getJoinType()!=INNER_JOIN) {
-					return 1; 
+					return 1;
 				}
 				else {
 					// CASE: ? / no inner join : nothing to work with:
