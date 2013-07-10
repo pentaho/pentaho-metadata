@@ -503,10 +503,11 @@ public class SqlGenerator {
                                     parameters, genAsPreparedStatement, databaseMeta, locale);
 
       generateSelect(query, model, databaseMeta, selections, disableDistinct, limit, group, locale, tableAliases, columnsMap, parameters, genAsPreparedStatement);
-      generateFromAndWhere(query, usedBusinessTables, model, path, conditions, tableAliases, constraintFormulaMap, parameters, genAsPreparedStatement, databaseMeta, locale);
+      
       if (group) {
         generateGroupBy(query, model, selections, tableAliases, parameters, genAsPreparedStatement, databaseMeta, locale);
       }
+      generateFromAndWhere(query, usedBusinessTables, model, path, conditions, tableAliases, constraintFormulaMap, parameters, genAsPreparedStatement, databaseMeta, locale);
       generateOrderBy(query, model, orderBy, databaseMeta, locale, tableAliases, columnsMap, parameters, genAsPreparedStatement);
       
       if (securityConstraint != null) {
