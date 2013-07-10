@@ -58,6 +58,7 @@ import org.pentaho.pms.mql.dialect.SQLDialectFactory;
 import org.pentaho.pms.mql.dialect.SQLDialectInterface;
 import org.pentaho.pms.mql.dialect.SQLQueryModel;
 import org.pentaho.pms.mql.dialect.SQLQueryModel.OrderType;
+import org.pentaho.pms.mql.dialect.SQLQueryModel.SQLSelection;
 
 /**
  * This class contains the SQL generation algorithm.
@@ -237,6 +238,7 @@ public class SqlGenerator {
           first = false;
         } else {
           query.addHavingFormula(formula.generateSQL(locale), condition.getCombinationType().toString());
+          generateAdditionalGroupBy(query, formula, condition, locale);
         }
       }
     }
@@ -375,7 +377,43 @@ public class SqlGenerator {
         query.getConstraints(), query.getOrders(), databaseMeta, 
         locale, parameters, genAsPreparedStatement, query.getDisableDistinct(), query.getLimit(), securityConstraint);
   }
-  
+  /**
+   * Used to add a table.column to the Group By clause when a having formula is in filter only
+   * @param query
+   * @param formula
+   * @param condition
+   * @param locale
+   */
+  protected void generateAdditionalGroupBy(SQLQueryModel query, SqlOpenFormula formula, Constraint condition,
+      String locale) 
+  {
+    List<Selection> cols = formula.getSelections();
+    for (Selection selection : cols) 
+    {
+      LogicalTable businessTable = selection.getLogicalColumn().getLogicalTable();
+      if (businessTable != null && selection.getLogicalColumn() != null
+          && selection.getLogicalColumn().getPhysicalColumn() != null) {
+        String table1 = businessTable.getId() + "." + selection.getLogicalColumn().getPhysicalColumn().getName(locale);
+        if (selection.hasAggregate() == false && groupByHasTable(query.getGroupBys(), table1) == false) 
+        {
+          query.addGroupBy(table1, null);
+        }
+      }
+    }
+  }
+
+  private boolean groupByHasTable(List<SQLSelection> groupBys, String table1) 
+  {
+    for (SQLSelection sqlselection : groupBys) 
+    {
+      String formula1 = sqlselection.getFormula();
+      if (table1.equalsIgnoreCase(formula1)) 
+      {
+        return true;
+      }
+    }
+    return false;
+  }
   /**
    * returns the generated SQL and additional metadata
    * 
@@ -465,10 +503,11 @@ public class SqlGenerator {
                                     parameters, genAsPreparedStatement, databaseMeta, locale);
 
       generateSelect(query, model, databaseMeta, selections, disableDistinct, limit, group, locale, tableAliases, columnsMap, parameters, genAsPreparedStatement);
-      generateFromAndWhere(query, usedBusinessTables, model, path, conditions, tableAliases, constraintFormulaMap, parameters, genAsPreparedStatement, databaseMeta, locale);
+      
       if (group) {
         generateGroupBy(query, model, selections, tableAliases, parameters, genAsPreparedStatement, databaseMeta, locale);
       }
+      generateFromAndWhere(query, usedBusinessTables, model, path, conditions, tableAliases, constraintFormulaMap, parameters, genAsPreparedStatement, databaseMeta, locale);
       generateOrderBy(query, model, orderBy, databaseMeta, locale, tableAliases, columnsMap, parameters, genAsPreparedStatement);
       
       if (securityConstraint != null) {
