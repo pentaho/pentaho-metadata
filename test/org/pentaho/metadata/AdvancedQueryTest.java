@@ -824,7 +824,7 @@ public class AdvancedQueryTest {
     
     MappedQuery query = new AdvancedSqlGenerator().generateSql(myTest, "en_US", null, databaseMeta);
     TestHelper.assertEqualsIgnoreWhitespaces( 
-        "SELECT DISTINCT bt1.pc1 AS COL0 ,bt2.pc2 AS COL1 ,bt3.pc3 AS COL2 FROM pt1 bt1 LEFT OUTER JOIN ( pt2 bt2 JOIN pt3 bt3 ON ( bt2.pc2 = bt3.pc3 ) ) ON ( bt1.pc1 = bt2.pc2 )",
+        "SELECT DISTINCT bt1.pc1 AS COL0,bt2.pc2 AS COL1,bt3.pc3 AS COL2 FROM pt3 bt3 JOIN(pt1 bt1 LEFT OUTER JOIN pt2 bt2 ON(bt1.pc1 = bt2.pc2))ON(bt2.pc2 = bt3.pc3)",
         query.getQuery()    
     ); //$NON-NLS-1$
   }
@@ -917,7 +917,7 @@ public class AdvancedQueryTest {
     
     MappedQuery query = new AdvancedSqlGenerator().generateSql(myTest, "en_US", null, databaseMeta);
     TestHelper.assertEqualsIgnoreWhitespaces( 
-        "SELECT DISTINCT bt1.k AS COL0 ,bt2.k AS COL1 ,bt3.k AS COL2 ,bt4.k AS COL3 FROM t1 bt1 JOIN ( t2 bt2 LEFT OUTER JOIN ( t3 bt3 JOIN t4 bt4 ON ( bt3.k = bt4.k ) ) ON ( bt2.k = bt3.k ) ) ON ( bt1.k = bt2.k )",
+        "SELECT DISTINCT bt1.k AS COL0,bt2.k AS COL1,bt3.k AS COL2,bt4.k AS COL3 FROM t1 bt1 JOIN(t4 bt4 JOIN(t2 bt2 LEFT OUTER JOIN t3 bt3 ON(bt2.k = bt3.k))ON(bt3.k = bt4.k))ON(bt1.k = bt2.k)",
         query.getQuery()    
     ); //$NON-NLS-1$
   }

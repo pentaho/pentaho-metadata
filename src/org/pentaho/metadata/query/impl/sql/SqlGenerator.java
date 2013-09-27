@@ -71,8 +71,13 @@ public class SqlGenerator {
   
   private static final Log logger = LogFactory.getLog(SqlGenerator.class);
   public boolean preferClassicShortestPath = false;
-  
+
   /**
+   * Boolean property that can be defined on the model which indicates
+   * whether to use the legacy implementation of SQLJoin.compareTo().
+   */
+  private static final String LEGACY_JOIN_ORDER = "legacy_join_order";
+    /**
    * This private class is used to sort the business tables in terms of the number of neighbours they have. We use
    * this information to find the table best suited to provide the missing link between selected tables while doing
    * SQL generation.
@@ -205,8 +210,11 @@ public class SqlGenerator {
                   (String)relation.getToTable().getProperty(SqlPhysicalTable.TARGET_SCHEMA), 
                   (String)relation.getToTable().getProperty(SqlPhysicalTable.TARGET_TABLE));
         String rightTableAlias = tableAliases.get(relation.getToTable());
-        
-        query.addJoin(leftTableName, leftTableAlias, rightTableName, rightTableAlias, joinType, joinFormula, joinOrderKey);
+
+
+        boolean legacyJoin = Boolean.TRUE.equals(model.getProperty(LEGACY_JOIN_ORDER));
+        query.addJoin(leftTableName, leftTableAlias, rightTableName, rightTableAlias, joinType, joinFormula, joinOrderKey,
+                legacyJoin);
         // query.addWhereFormula(joinFormula, "AND"); //$NON-NLS-1$
       }
     }

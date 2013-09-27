@@ -240,10 +240,9 @@ public class OuterJoinSQLQueryTest extends MetadataTestBase {
     
     String sql = dialect.generateSelectStatement(query);
     assertEqualsIgnoreWhitespacesAndCase(
-    	"SELECT DISTINCT T1.PK AS T1_PK ,T2.PK AS T2_PK ,T3.PK AS T3_PK " +   // $NON-NLS-1$ 
-    	"FROM T1 LEFT OUTER JOIN ( T2 JOIN T3 ON ( T2.PK = T3.FK ) ) ON ( T1.PK = T2.FK ) " +   // $NON-NLS-1$ 
-    	"ORDER BY T3_PK DESC",   // $NON-NLS-1$ 
-    	sql);
+            "SELECT DISTINCT T1.PK AS T1_PK,T2.PK AS T2_PK,T3.PK AS T3_PK FROM " +
+            "T3 JOIN(T1 LEFT OUTER JOIN T2 ON(T1.PK = T2.FK))ON(T2.PK = T3.FK)ORDER BY T3_PK DESC",
+    	    sql);
   }  
   
   /**

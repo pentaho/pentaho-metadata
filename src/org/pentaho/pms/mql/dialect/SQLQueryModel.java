@@ -460,12 +460,34 @@ public class SQLQueryModel {
      * @param formula the join condition (formula)
      * @param joinOrderKey the join order key
      */
-    public void addJoin(String leftTablename, String leftTableAlias, String rightTablename, String rightTableAlias, JoinType joinType, String formula, String joinOrderKey) {
+    public void addJoin(String leftTablename, String leftTableAlias, String rightTablename,
+                        String rightTableAlias, JoinType joinType, String formula, String joinOrderKey
+                       ) {
       SQLWhereFormula sqlWhereFormula = new SQLWhereFormula(formula, null, false);
-      SQLJoin join = new SQLJoin(leftTablename, leftTableAlias, rightTablename, rightTableAlias, sqlWhereFormula, joinType, joinOrderKey);
+      SQLJoin join = new SQLJoin(leftTablename, leftTableAlias, rightTablename,
+              rightTableAlias, sqlWhereFormula, joinType, joinOrderKey);
       joins.add(join);
     }
-    
+
+    /**
+     * Add a join between 2 tables, specifying the join formula as well as the join type.
+     * @param leftTablename the name of the left table in the join
+     * @param rightTablename the name of the right table in the join
+     * @param joinType the join type (inner, left outer, right outer, full outer)
+     * @param formula the join condition (formula)
+     * @param joinOrderKey the join order key
+     * @param legacyJoinOrder specifies whether to use the old, non-deterministic sort
+     *                        ordering for joins with no join order key
+     */
+    public void addJoin(String leftTablename, String leftTableAlias, String rightTablename,
+                        String rightTableAlias, JoinType joinType, String formula, String joinOrderKey,
+                        boolean legacyJoinOrder) {
+        SQLWhereFormula sqlWhereFormula = new SQLWhereFormula(formula, null, false);
+        SQLJoin join = new SQLJoin(leftTablename, leftTableAlias, rightTablename,
+                rightTableAlias, sqlWhereFormula, joinType, joinOrderKey, legacyJoinOrder);
+        joins.add(join);
+    }
+
     /**
      * Verifies all joins to see if there is one that is an outer join (left outer, right outer or full outer join type)
      * @return true if there is at least one join in the query model that is not an inner join. False if this is not the case.

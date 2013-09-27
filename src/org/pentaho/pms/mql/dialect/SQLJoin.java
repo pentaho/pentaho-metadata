@@ -16,12 +16,14 @@
  */
 package org.pentaho.pms.mql.dialect;
 
-import static org.pentaho.pms.mql.dialect.JoinType.INNER_JOIN;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.pentaho.pms.mql.dialect.SQLQueryModel.SQLWhereFormula;
 import org.pentaho.pms.util.Const;
 
-    /**
+import static org.pentaho.pms.mql.dialect.JoinType.INNER_JOIN;
+
+/**
      * This class defines the join paths between the tables
      *
      */
@@ -33,8 +35,11 @@ import org.pentaho.pms.util.Const;
     	private SQLWhereFormula sqlWhereFormula;
     	private JoinType joinType;
     	private String joinOrderKey;
-    	
-		/**
+        private boolean legacyJoinOrder = false;
+
+        private static final Log logger = LogFactory.getLog(SQLJoin.class);
+
+        /**
 		 * @param leftTablename the name of the left join table
 		 * @param leftTableAlias the alias of the left join table
 		 * @param rightTablename the name of the right join table
@@ -52,6 +57,13 @@ import org.pentaho.pms.util.Const;
 			this.joinType = joinType;
 			this.joinOrderKey = joinOrderKey;
 		}
+
+        public SQLJoin(String leftTablename, String leftTableAlias, String rightTablename, String rightTableAlias,
+                       SQLWhereFormula sqlWhereFormula, JoinType joinType, String joinOrderKey,
+                       boolean legacyJoinOrder) {
+            this(leftTablename, leftTableAlias, rightTablename, rightTableAlias, sqlWhereFormula, joinType, joinOrderKey);
+            this.legacyJoinOrder = legacyJoinOrder;
+        }
 
 		/**
 		 * @return the leftTablename
@@ -124,18 +136,26 @@ import org.pentaho.pms.util.Const;
 		}
 		
 		public int compareTo(SQLJoin other) {
-			
 			// Case: No join order / no join order
 			//
 			if (Const.isEmpty(getJoinOrderKey()) && Const.isEmpty(other.getJoinOrderKey())) {
-				
+                if (legacyJoinOrder) {
+                    return legacyCompare();
+                }
+
+
+                if (getJoinType() == other.getJoinType()) {
+                    // no order key and same join type
+                    return 0;
+                }
+
 				// Case: inner join : goes below
 				//
 				if (getJoinType()==INNER_JOIN) {
 					return -1;
 				}
 				// CASE: no inner join / inner join : goes to the top
-				else if (getJoinType()==INNER_JOIN) {
+				else if (other.getJoinType()==INNER_JOIN) {
 					return 1;
 				}
 				else {
@@ -150,7 +170,7 @@ import org.pentaho.pms.util.Const;
 				// Case: ? / inner join : goes to the top
 				//
 				if (getJoinType()!=INNER_JOIN) {
-					return 1; 
+					return 1;
 				}
 				else {
 					// CASE: ? / no inner join : nothing to work with:
@@ -177,7 +197,26 @@ import org.pentaho.pms.util.Const;
 			}
 		}
 
-		/**
+        /**
+         * This method contains the legacy, broken compare logic that
+         * was used in cases where no join order key was in play.
+         * Keeping around in case anyone has unexpected results and
+         * needs to revert to the legacy join logic.
+         * Note that use of this comparison method can result in
+         * non-deterministic results given that it violates the compareTo()
+         * contract, allowing (x.compareTo(y) == -1 && y.compareTo(x) == -1).
+         */
+        private int legacyCompare() {
+            logger.debug("Using legacy SQLJoin compare.");
+            if (getJoinType()==INNER_JOIN) {
+                return -1;
+            } else {
+                // CASE: no inner join / no inner join : nothing to work with:
+                return 0;
+            }
+        }
+
+        /**
 		 * @return the leftTableAlias
 		 */
 		public String getLeftTableAlias() {
