@@ -4,7 +4,7 @@ Pentaho Metadata Release Notes for: 1.6.0
 This is the GA (General Availabilty) build of the Pentaho Metadata.
 
 For installation instructions and info for getting started:
-http://wiki.pentaho.org/display/studio/02.+Pentaho+Metadata+Editor+Getting+Started+Guide
+http://wiki.pentaho.com/display/ServerDoc2x/Pentaho+Metadata+Editor
 
 For a complete change log including previous releases:
 http://jira.pentaho.org/browse/PDS?report=com.atlassian.jira.plugin.system.project:changelog-panel
