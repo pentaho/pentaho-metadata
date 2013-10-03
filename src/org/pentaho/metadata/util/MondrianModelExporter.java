@@ -122,11 +122,13 @@ public class MondrianModelExporter
                   } else {
                     xml.append("      <Table"); //$NON-NLS-1$
                     xml.append(" name=\""); //$NON-NLS-1$
-                    XMLHandler.appendReplacedChars(xml, (String)olapHierarchy.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_TABLE));
+                    XMLHandler.appendReplacedChars(xml,
+                        cleanseDbName((String)olapHierarchy.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_TABLE)));
                     xml.append("\""); //$NON-NLS-1$
                     if (!StringUtils.isBlank((String)olapHierarchy.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_SCHEMA))) {
                       xml.append(" schema=\""); //$NON-NLS-1$
-                      XMLHandler.appendReplacedChars(xml, (String)olapHierarchy.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_SCHEMA));
+                      XMLHandler.appendReplacedChars(xml,
+                          cleanseDbName((String)olapHierarchy.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_SCHEMA)));
                       xml.append("\""); //$NON-NLS-1$
                     }
                     xml.append("/>"); //$NON-NLS-1$
@@ -287,11 +289,13 @@ public class MondrianModelExporter
               } else {
                 xml.append("    <Table"); //$NON-NLS-1$
                 xml.append(" name=\""); //$NON-NLS-1$
-                XMLHandler.appendReplacedChars(xml, (String)olapCube.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_TABLE));
+                XMLHandler.appendReplacedChars(xml,
+                    cleanseDbName((String)olapCube.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_TABLE)));
                 xml.append("\""); //$NON-NLS-1$
                 if (!StringUtils.isBlank((String)olapCube.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_SCHEMA))) {
                   xml.append(" schema=\""); //$NON-NLS-1$
-                  XMLHandler.appendReplacedChars(xml, (String)olapCube.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_SCHEMA));
+                  XMLHandler.appendReplacedChars(xml,
+                      cleanseDbName((String)olapCube.getLogicalTable().getProperty(SqlPhysicalTable.TARGET_SCHEMA)));
                   xml.append("\""); //$NON-NLS-1$
                 }
                 xml.append("/>").append(Util.CR); //$NON-NLS-1$
@@ -400,6 +404,14 @@ public class MondrianModelExporter
         xml.append("</Schema>"); //$NON-NLS-1$
 
         return xml.toString();
+    }
+
+    /**
+     * Strip leading and trailing quote characters
+     * from the db name.
+     */
+    private String cleanseDbName(String name) {
+        return name.replaceAll("^[`'\"]|[`'\"]$", "");
     }
 
     /**
