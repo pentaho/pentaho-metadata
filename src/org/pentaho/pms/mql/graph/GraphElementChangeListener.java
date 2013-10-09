@@ -19,5 +19,5 @@
 package org.pentaho.pms.mql.graph;
 
 public interface GraphElementChangeListener {
-	public void graphElementChanged(GraphElement element);
+  public void graphElementChanged( GraphElement element );
 }

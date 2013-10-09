@@ -23,7 +23,8 @@ package org.pentaho.metadata.repository;
  */
 public class DomainAlreadyExistsException extends Exception {
   private static final long serialVersionUID = -8381261699174809443L;
-  public DomainAlreadyExistsException(String str) {
-    super(str);
+
+  public DomainAlreadyExistsException( String str ) {
+    super( str );
   }
 }

@@ -16,55 +16,55 @@
  * 
  * Created Jan, 2011
  * @author jdixon
-*/
+ */
 package org.pentaho.metadata.model.thin;
 
 import java.io.Serializable;
 import java.util.Map;
 
 /**
- * Concrete, lightweight, serializable object that holds the envelope information
- * of an {@see IModel} object
+ * Concrete, lightweight, serializable object that holds the envelope information of an {@see IModel} object
+ * 
  * @author jamesdixon
- *
+ * 
  */
 public class ModelInfo implements Serializable {
 
-	public static final String ID_SEPERATOR = "~";
-	
+  public static final String ID_SEPERATOR = "~";
+
   private static final long serialVersionUID = -8341925508348437605L;
 
   protected String groupId;
-  
+
   protected String modelId;
 
   protected String name;
-  
+
   protected String description;
-  
+
   protected Provider provider;
 
-  private Map<String,String> capabilities;
-  
-  public Map<String,String> getCapabilities() {
-	return capabilities;
+  private Map<String, String> capabilities;
+
+  public Map<String, String> getCapabilities() {
+    return capabilities;
   }
 
-  public void setCapabilities(Map<String,String> capabilities) {
-	this.capabilities = capabilities;
+  public void setCapabilities( Map<String, String> capabilities ) {
+    this.capabilities = capabilities;
   }
 
-  
   public String getModelId() {
-	return modelId;
+    return modelId;
   }
 
-  public void setModelId(String modelId) {
-	this.modelId = modelId;
+  public void setModelId( String modelId ) {
+    this.modelId = modelId;
   }
 
-/**
+  /**
    * Returns the id of the group of the model
+   * 
    * @return
    */
   public String getGroupId() {
@@ -73,33 +73,36 @@ public class ModelInfo implements Serializable {
 
   /**
    * Sets the domain id of the model
+   * 
    * @param domainId
    */
-  public void setGroupId(String groupId) {
+  public void setGroupId( String groupId ) {
     this.groupId = groupId;
   }
 
   public Provider getProvider() {
-	return provider;
-}
+    return provider;
+  }
 
-public void setProvider(Provider provider) {
-	this.provider = provider;
-}
+  public void setProvider( Provider provider ) {
+    this.provider = provider;
+  }
 
-/**
+  /**
    * Returns the id of the model
+   * 
    * @return
    */
   public String getId() {
-	  if( provider == null ) {
-		  return "unknownprovider"+ID_SEPERATOR+groupId+ID_SEPERATOR+modelId;
-	  }
-    return provider.getId()+ID_SEPERATOR+groupId+ID_SEPERATOR+modelId;
+    if ( provider == null ) {
+      return "unknownprovider" + ID_SEPERATOR + groupId + ID_SEPERATOR + modelId;
+    }
+    return provider.getId() + ID_SEPERATOR + groupId + ID_SEPERATOR + modelId;
   }
 
   /**
    * Returns the name of the model for the current locale
+   * 
    * @return
    */
   public String getName() {
@@ -108,14 +111,16 @@ public void setProvider(Provider provider) {
 
   /**
    * Sets the name of the model for the current locale
+   * 
    * @param name
    */
-  public void setName(String name) {
+  public void setName( String name ) {
     this.name = name;
   }
 
   /**
    * Returns the description of the model for the current locale
+   * 
    * @return
    */
   public String getDescription() {
@@ -124,10 +129,11 @@ public void setProvider(Provider provider) {
 
   /**
    * Sets the description of the model
+   * 
    * @param description
    */
-  public void setDescription(String description) {
+  public void setDescription( String description ) {
     this.description = description;
   }
-  
+
 }

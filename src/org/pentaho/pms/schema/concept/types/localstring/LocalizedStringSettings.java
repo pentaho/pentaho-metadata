@@ -27,96 +27,83 @@ import org.apache.commons.lang.builder.ToStringStyle;
 /**
  * @deprecated as of metadata 3.0. please see org.pentaho.metadata.model.concept.types.LocalizedString
  */
-public class LocalizedStringSettings implements Cloneable
-{
-    public static final LocalizedStringSettings EMPTY = new LocalizedStringSettings();
+public class LocalizedStringSettings implements Cloneable {
+  public static final LocalizedStringSettings EMPTY = new LocalizedStringSettings();
 
-    private Map<String,String> localeStringMap;
+  private Map<String, String> localeStringMap;
 
-    /**
-     * @param localeStringMap
+  /**
+   * @param localeStringMap
+   */
+  public LocalizedStringSettings() {
+    localeStringMap = new Hashtable<String, String>( 5 );
+  }
+
+  public Object clone() throws CloneNotSupportedException {
+    LocalizedStringSettings settings = new LocalizedStringSettings();
+    settings.localeStringMap.putAll( localeStringMap );
+    /*
+     * String locales[] = getLocales(); for (int i=0;i<locales.length;i++) { settings.setLocaleString(locales[i],
+     * getString(locales[i])); }
      */
-    public LocalizedStringSettings()
-    {
-        localeStringMap=new Hashtable<String,String>(5);
-    }
+    return settings;
+  }
 
-    public Object clone() throws CloneNotSupportedException
-    {
-        LocalizedStringSettings settings = new LocalizedStringSettings();
-        settings.localeStringMap.putAll(localeStringMap);
-        /* String locales[] = getLocales();
-        for (int i=0;i<locales.length;i++)
-        {
-            settings.setLocaleString(locales[i], getString(locales[i]));
-        }
-        */
-        return settings;
-    }
+  /**
+   * @param localeStringMap
+   */
+  public LocalizedStringSettings( Map<String, String> localeStringMap ) {
+    this.localeStringMap = localeStringMap;
+  }
 
-    /**
-     * @param localeStringMap
-     */
-    public LocalizedStringSettings(Map<String,String> localeStringMap)
-    {
-        this.localeStringMap = localeStringMap;
+  public boolean equals( Object obj ) {
+    if ( obj instanceof LocalizedStringSettings == false ) {
+      return false;
     }
+    if ( this == obj ) {
+      return true;
+    }
+    LocalizedStringSettings rhs = (LocalizedStringSettings) obj;
+    return new EqualsBuilder().append( localeStringMap, rhs.localeStringMap ).isEquals();
+  }
 
-    public boolean equals(Object obj) {
-      if (obj instanceof LocalizedStringSettings == false) {
-        return false;
-      }
-      if (this == obj) {
-        return true;
-      }
-      LocalizedStringSettings rhs = (LocalizedStringSettings) obj;
-      return new EqualsBuilder().append(localeStringMap, rhs.localeStringMap).isEquals();
-    }
+  public int hashCode() {
+    return new HashCodeBuilder( 19, 163 ).append( localeStringMap ).toHashCode();
+  }
 
-    public int hashCode() {
-      return new HashCodeBuilder(19, 163).append(localeStringMap).toHashCode();
-    }
+  public String toString() {
+    return new ToStringBuilder( this, ToStringStyle.SHORT_PREFIX_STYLE ).append( localeStringMap ).toString();
+  }
 
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).
-          append(localeStringMap).
-          toString();
-    }
+  /**
+   * @return the localeStringMap
+   */
+  public Map getLocaleStringMap() {
+    return localeStringMap;
+  }
 
-    /**
-     * @return the localeStringMap
-     */
-    public Map getLocaleStringMap()
-    {
-        return localeStringMap;
-    }
+  /**
+   * @param localeStringMap
+   *          the localeStringMap to set
+   */
+  public void setLocaleStringMap( Map<String, String> localeStringMap ) {
+    this.localeStringMap = localeStringMap;
+  }
 
-    /**
-     * @param localeStringMap the localeStringMap to set
-     */
-    public void setLocaleStringMap(Map<String,String> localeStringMap)
-    {
-        this.localeStringMap = localeStringMap;
-    }
+  public String getString( String locale ) {
+    return (String) localeStringMap.get( locale );
+  }
 
-    public String getString(String locale)
-    {
-        return (String) localeStringMap.get(locale);
-    }
+  public void setLocaleString( String locale, String string ) {
+    localeStringMap.put( locale, string );
+  }
 
-    public void setLocaleString(String locale, String string)
-    {
-        localeStringMap.put(locale, string);
-    }
+  public String[] getLocales() {
+    return (String[]) localeStringMap.keySet().toArray( new String[localeStringMap.keySet().size()] );
+  }
 
-    public String[] getLocales()
-    {
-        return (String[]) localeStringMap.keySet().toArray(new String[localeStringMap.keySet().size()]);
-    }
-
-    public void clear()
-    {
-        localeStringMap.clear();
-    }
+  public void clear() {
+    localeStringMap.clear();
+  }
 
 }

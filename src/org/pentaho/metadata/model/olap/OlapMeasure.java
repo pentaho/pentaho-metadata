@@ -16,9 +16,9 @@
  */
 package org.pentaho.metadata.model.olap;
 
-import org.pentaho.metadata.model.LogicalColumn;
-
 import java.io.Serializable;
+
+import org.pentaho.metadata.model.LogicalColumn;
 
 public class OlapMeasure implements Cloneable, Serializable {
   private String name;
@@ -31,7 +31,7 @@ public class OlapMeasure implements Cloneable, Serializable {
    * @param name
    * @param logicalColumn
    */
-  public OlapMeasure(String name, LogicalColumn logicalColumn) {
+  public OlapMeasure( String name, LogicalColumn logicalColumn ) {
     this();
     this.name = name;
     this.logicalColumn = logicalColumn;
@@ -39,7 +39,7 @@ public class OlapMeasure implements Cloneable, Serializable {
 
   public Object clone() {
     // shallow copy of logical column is desired
-    return new OlapMeasure(name, logicalColumn);
+    return new OlapMeasure( name, logicalColumn );
   }
 
   /**
@@ -53,7 +53,7 @@ public class OlapMeasure implements Cloneable, Serializable {
    * @param logicalColumn
    *          the logicalColumn to set
    */
-  public void setLogicalColumn(LogicalColumn logicalColumn) {
+  public void setLogicalColumn( LogicalColumn logicalColumn ) {
     this.logicalColumn = logicalColumn;
   }
 
@@ -68,7 +68,7 @@ public class OlapMeasure implements Cloneable, Serializable {
    * @param name
    *          the name to set
    */
-  public void setName(String name) {
+  public void setName( String name ) {
     this.name = name;
   }
 

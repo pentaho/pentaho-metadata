@@ -34,144 +34,139 @@ import org.pentaho.pms.util.Settings;
 import org.pentaho.pms.util.UniqueArrayList;
 import org.pentaho.pms.util.UniqueList;
 
-@SuppressWarnings("deprecation")
-public class PhysicalTableImporter
-{
-	public static PhysicalTable importTableDefinition(Database database, String schemaName, String tableName,
-			String locale) throws KettleException
-	{
-		UniqueList<PhysicalColumn> fields = new UniqueArrayList<PhysicalColumn>();
+@SuppressWarnings( "deprecation" )
+public class PhysicalTableImporter {
+  public static PhysicalTable importTableDefinition( Database database, String schemaName, String tableName,
+      String locale ) throws KettleException {
+    UniqueList<PhysicalColumn> fields = new UniqueArrayList<PhysicalColumn>();
 
-		String id = tableName;
-		String tablename = tableName;
+    String id = tableName;
+    String tablename = tableName;
 
-		// Remove
-		id = Const.toID(tableName);
+    // Remove
+    id = Const.toID( tableName );
 
-		// Set the id to a certain standard...
-		id = Settings.getPhysicalTableIDPrefix() + id;
-		if (Settings.isAnIdUppercase())
-			id = id.toUpperCase();
+    // Set the id to a certain standard...
+    id = Settings.getPhysicalTableIDPrefix() + id;
+    if ( Settings.isAnIdUppercase() ) {
+      id = id.toUpperCase();
+    }
 
-		PhysicalTable physicalTable = new PhysicalTable(id, schemaName, tableName,
-				database.getDatabaseMeta(), fields);
+    PhysicalTable physicalTable = new PhysicalTable( id, schemaName, tableName, database.getDatabaseMeta(), fields );
 
-		// Also set a localized description...
-		String niceName = beautifyName(tablename);
-		physicalTable.getConcept().setName(locale, niceName);
+    // Also set a localized description...
+    String niceName = beautifyName( tablename );
+    physicalTable.getConcept().setName( locale, niceName );
 
-		DatabaseMeta dbMeta = database.getDatabaseMeta();
-		String schemaTableCombination = dbMeta.getSchemaTableCombination(dbMeta.quoteField(schemaName),
-				dbMeta.quoteField(tableName));
+    DatabaseMeta dbMeta = database.getDatabaseMeta();
+    String schemaTableCombination =
+        dbMeta.getSchemaTableCombination( dbMeta.quoteField( schemaName ), dbMeta.quoteField( tableName ) );
 
-		RowMetaInterface row = database.getTableFields(schemaTableCombination);
+    RowMetaInterface row = database.getTableFields( schemaTableCombination );
 
-		if (row != null && row.size() > 0)
-		{
-			for (int i = 0; i < row.size(); i++)
-			{
-				ValueMetaInterface v = row.getValueMeta(i);
-				PhysicalColumn physicalColumn = importPhysicalColumnDefinition(v, physicalTable, locale);
-				try
-				{
-					fields.add(physicalColumn);
+    if ( row != null && row.size() > 0 ) {
+      for ( int i = 0; i < row.size(); i++ ) {
+        ValueMetaInterface v = row.getValueMeta( i );
+        PhysicalColumn physicalColumn = importPhysicalColumnDefinition( v, physicalTable, locale );
+        try {
+          fields.add( physicalColumn );
 
-				} catch (ObjectAlreadyExistsException e)
-				{
-				    // Don't add this column
-					// TODO: show error dialog.
-				}
+        } catch ( ObjectAlreadyExistsException e ) {
+          // Don't add this column
+          // TODO: show error dialog.
+        }
 
-			}
-		}
-		String upper = tablename.toUpperCase();
+      }
+    }
+    String upper = tablename.toUpperCase();
 
-		if (upper.startsWith("D_") || upper.startsWith("DIM") || upper.endsWith("DIM"))physicalTable.setTableType(TableTypeSettings.DIMENSION); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (upper.startsWith("F_") || upper.startsWith("FACT") || upper.endsWith("FACT"))physicalTable.setTableType(TableTypeSettings.FACT); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    if ( upper.startsWith( "D_" ) || upper.startsWith( "DIM" ) || upper.endsWith( "DIM" ) ) {
+      physicalTable.setTableType( TableTypeSettings.DIMENSION ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    }
+    if ( upper.startsWith( "F_" ) || upper.startsWith( "FACT" ) || upper.endsWith( "FACT" ) ) {
+      physicalTable.setTableType( TableTypeSettings.FACT ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    }
 
-		return physicalTable;
-	}
-
-	public static final String beautifyName(String name)
-	{
-    return StringUtils.capitalize(name.replaceAll("[\"`']", "").replace("_", " ")); //$NON-NLS-1$  //$NON-NLS-2$
+    return physicalTable;
   }
 
-	private static PhysicalColumn importPhysicalColumnDefinition(ValueMetaInterface v,
-			PhysicalTable physicalTable, String locale)
-	{
-		// The id
-		//
-		String id = Settings.getPhysicalColumnIDPrefix() + v.getName();
-		if (Settings.isAnIdUppercase())
-			id = id.toUpperCase();
+  public static final String beautifyName( String name ) {
+    return StringUtils.capitalize( name.replaceAll( "[\"`']", "" ).replace( "_", " " ) ); //$NON-NLS-1$  //$NON-NLS-2$
+  }
 
-		// The name of the column in the database
-		//
-		String dbname = v.getName();
+  private static PhysicalColumn importPhysicalColumnDefinition( ValueMetaInterface v, PhysicalTable physicalTable,
+      String locale ) {
+    // The id
+    //
+    String id = Settings.getPhysicalColumnIDPrefix() + v.getName();
+    if ( Settings.isAnIdUppercase() ) {
+      id = id.toUpperCase();
+    }
 
-		// The field type?
-		//
-		FieldTypeSettings fieldType = FieldTypeSettings.guessFieldType(v.getName());
+    // The name of the column in the database
+    //
+    String dbname = v.getName();
 
-		// Create a physical column.
-		//
-		PhysicalColumn physicalColumn = new PhysicalColumn(v.getName(), dbname, fieldType,
-				AggregationSettings.NONE, physicalTable);
+    // The field type?
+    //
+    FieldTypeSettings fieldType = FieldTypeSettings.guessFieldType( v.getName() );
 
-		// Set the localized name...
-		//
-		String niceName = beautifyName(v.getName());
-		physicalColumn.setName(locale, niceName);
+    // Create a physical column.
+    //
+    PhysicalColumn physicalColumn =
+        new PhysicalColumn( v.getName(), dbname, fieldType, AggregationSettings.NONE, physicalTable );
 
-		// Set the parent concept to the base concept...
-		// physicalColumn.getConcept().setParentInterface(schemaMeta.findConcept(Settings.getConceptNameBase()));
+    // Set the localized name...
+    //
+    String niceName = beautifyName( v.getName() );
+    physicalColumn.setName( locale, niceName );
 
-		// The data type...
-		DataTypeSettings dataTypeSettings = getDataTypeSettings(v);
-		physicalColumn.setDataType(dataTypeSettings);
+    // Set the parent concept to the base concept...
+    // physicalColumn.getConcept().setParentInterface(schemaMeta.findConcept(Settings.getConceptNameBase()));
 
-		return physicalColumn;
-	}
+    // The data type...
+    DataTypeSettings dataTypeSettings = getDataTypeSettings( v );
+    physicalColumn.setDataType( dataTypeSettings );
 
-	private static DataTypeSettings getDataTypeSettings(ValueMetaInterface v)
-	{
-		DataTypeSettings dataTypeSettings = new DataTypeSettings(DataTypeSettings.DATA_TYPE_STRING);
-		switch (v.getType())
-		{
-		case ValueMetaInterface.TYPE_BIGNUMBER:
-		case ValueMetaInterface.TYPE_INTEGER:
-		case ValueMetaInterface.TYPE_NUMBER:
-			dataTypeSettings.setType(DataTypeSettings.DATA_TYPE_NUMERIC);
-			break;
+    return physicalColumn;
+  }
 
-		case ValueMetaInterface.TYPE_BINARY:
-			dataTypeSettings.setType(DataTypeSettings.DATA_TYPE_BINARY);
-			break;
+  private static DataTypeSettings getDataTypeSettings( ValueMetaInterface v ) {
+    DataTypeSettings dataTypeSettings = new DataTypeSettings( DataTypeSettings.DATA_TYPE_STRING );
+    switch ( v.getType() ) {
+      case ValueMetaInterface.TYPE_BIGNUMBER:
+      case ValueMetaInterface.TYPE_INTEGER:
+      case ValueMetaInterface.TYPE_NUMBER:
+        dataTypeSettings.setType( DataTypeSettings.DATA_TYPE_NUMERIC );
+        break;
 
-		case ValueMetaInterface.TYPE_BOOLEAN:
-			dataTypeSettings.setType(DataTypeSettings.DATA_TYPE_BOOLEAN);
-			break;
+      case ValueMetaInterface.TYPE_BINARY:
+        dataTypeSettings.setType( DataTypeSettings.DATA_TYPE_BINARY );
+        break;
 
-		case ValueMetaInterface.TYPE_DATE:
-			dataTypeSettings.setType(DataTypeSettings.DATA_TYPE_DATE);
-			break;
+      case ValueMetaInterface.TYPE_BOOLEAN:
+        dataTypeSettings.setType( DataTypeSettings.DATA_TYPE_BOOLEAN );
+        break;
 
-		case ValueMetaInterface.TYPE_STRING:
-			dataTypeSettings.setType(DataTypeSettings.DATA_TYPE_STRING);
-			break;
+      case ValueMetaInterface.TYPE_DATE:
+        dataTypeSettings.setType( DataTypeSettings.DATA_TYPE_DATE );
+        break;
 
-		case ValueMetaInterface.TYPE_NONE:
-			dataTypeSettings.setType(DataTypeSettings.DATA_TYPE_UNKNOWN);
-			break;
+      case ValueMetaInterface.TYPE_STRING:
+        dataTypeSettings.setType( DataTypeSettings.DATA_TYPE_STRING );
+        break;
 
-		default:
-			break;
-		}
-		dataTypeSettings.setLength(v.getLength());
-		dataTypeSettings.setPrecision(v.getPrecision());
+      case ValueMetaInterface.TYPE_NONE:
+        dataTypeSettings.setType( DataTypeSettings.DATA_TYPE_UNKNOWN );
+        break;
 
-		return dataTypeSettings;
-	}
+      default:
+        break;
+    }
+    dataTypeSettings.setLength( v.getLength() );
+    dataTypeSettings.setPrecision( v.getPrecision() );
+
+    return dataTypeSettings;
+  }
 
 }

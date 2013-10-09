@@ -21,14 +21,15 @@ package org.pentaho.metadata.datatable;
 
 /**
  * A helper object that provides constants for the @see DataTable, @see Column, and @see Row objects
+ * 
  * @author jamesdixon
- *
+ * 
  */
 public class Types {
 
-	public static final String TYPE_STRING = "string";
-	public static final String TYPE_NUMERIC = "number";
-	public static final String TYPE_DATE = "date";
-	public static final String TYPE_BOOLEAN = "boolean";
-	
+  public static final String TYPE_STRING = "string";
+  public static final String TYPE_NUMERIC = "number";
+  public static final String TYPE_DATE = "date";
+  public static final String TYPE_BOOLEAN = "boolean";
+
 }

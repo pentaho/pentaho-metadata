@@ -3,11 +3,8 @@ package org.pentaho.metadata.model.olap;
 import java.io.Serializable;
 
 /**
- * Created by IntelliJ IDEA.
- * User: rfellows
- * Date: 9/23/11
- * Time: 3:03 PM
- * To change this template use File | Settings | File Templates.
+ * Created by IntelliJ IDEA. User: rfellows Date: 9/23/11 Time: 3:03 PM To change this template use File | Settings |
+ * File Templates.
  */
 public class OlapAnnotation implements Serializable {
   private String name;
@@ -16,7 +13,7 @@ public class OlapAnnotation implements Serializable {
   public OlapAnnotation() {
   }
 
-  public OlapAnnotation(String name, String value) {
+  public OlapAnnotation( String name, String value ) {
     this.name = name;
     this.value = value;
   }
@@ -25,7 +22,7 @@ public class OlapAnnotation implements Serializable {
     return name;
   }
 
-  public void setName(String name) {
+  public void setName( String name ) {
     this.name = name;
   }
 
@@ -33,12 +30,12 @@ public class OlapAnnotation implements Serializable {
     return value;
   }
 
-  public void setValue(String value) {
+  public void setValue( String value ) {
     this.value = value;
   }
 
   public String asXml() {
-    if(name != null & value != null) {
+    if ( name != null & value != null ) {
       return "          <Annotation name=\"" + name + "\">" + value + "</Annotation>";
     }
     return "";

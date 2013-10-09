@@ -19,7 +19,5 @@
 package org.pentaho.pms.mql.graph;
 
 public enum GraphElementRequirement {
-	UNKNOWN,
-	REQUIRED,
-	NOT_REQUIRED
+  UNKNOWN, REQUIRED, NOT_REQUIRED
 }

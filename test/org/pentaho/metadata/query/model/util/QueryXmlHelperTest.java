@@ -53,126 +53,126 @@ public class QueryXmlHelperTest {
     helper = new QueryXmlHelper();
     Domain domain = TestHelper.getBasicDomain();
     LogicalModel model = TestHelper.buildDefaultModel();
-    domain.addLogicalModel(model);
-    model.setId("MODEL1");
-    query = new Query(domain, model);
+    domain.addLogicalModel( model );
+    model.setId( "MODEL1" );
+    query = new Query( domain, model );
     documentBuilderFactory = DocumentBuilderFactory.newInstance();
     db = documentBuilderFactory.newDocumentBuilder();
     doc = db.newDocument();
     metadataDomainRepository = new InMemoryMetadataDomainRepository();
-    metadataDomainRepository.storeDomain(domain, true);
+    metadataDomainRepository.storeDomain( domain, true );
   }
 
   @Test
   public void testAddParameterFromXmlNode() throws Exception {
-    Element paramElement = doc.createElement("parameter"); //$NON-NLS-1$
-    paramElement.setAttribute("name", "param1"); //$NON-NLS-1$
-    paramElement.setAttribute("type", "STRING"); //$NON-NLS-1$
-    paramElement.setAttribute("defaultValue", "a|b"); //$NON-NLS-1$ //$NON-NLS-2$
+    Element paramElement = doc.createElement( "parameter" ); //$NON-NLS-1$
+    paramElement.setAttribute( "name", "param1" ); //$NON-NLS-1$
+    paramElement.setAttribute( "type", "STRING" ); //$NON-NLS-1$
+    paramElement.setAttribute( "defaultValue", "a|b" ); //$NON-NLS-1$ //$NON-NLS-2$
 
-    helper.addParameterFromXmlNode(query, paramElement);
-    assertEquals(2, ((Object[])query.getParameters().get(0).getDefaultValue()).length);
+    helper.addParameterFromXmlNode( query, paramElement );
+    assertEquals( 2, ( (Object[]) query.getParameters().get( 0 ).getDefaultValue() ).length );
   }
 
   @Test
   public void testParseMutivaluedDefault_String() throws Exception {
-    Object values = helper.parseDefaultValue("a|b|c|d|e", DataType.STRING);
-    assertTrue(values instanceof String[]);
-    String[] stringValues = (String[])values;
-    assertEquals(5, stringValues.length);
-    assertEquals("a", stringValues[0]);
-    assertEquals("b", stringValues[1]);
-    assertEquals("c", stringValues[2]);
-    assertEquals("d", stringValues[3]);
-    assertEquals("e", stringValues[4]);
+    Object values = helper.parseDefaultValue( "a|b|c|d|e", DataType.STRING );
+    assertTrue( values instanceof String[] );
+    String[] stringValues = (String[]) values;
+    assertEquals( 5, stringValues.length );
+    assertEquals( "a", stringValues[0] );
+    assertEquals( "b", stringValues[1] );
+    assertEquals( "c", stringValues[2] );
+    assertEquals( "d", stringValues[3] );
+    assertEquals( "e", stringValues[4] );
 
-    values = helper.parseDefaultValue("a", DataType.STRING);
-    assertTrue(values instanceof String);
-    assertEquals("a", values);
+    values = helper.parseDefaultValue( "a", DataType.STRING );
+    assertTrue( values instanceof String );
+    assertEquals( "a", values );
 
     // try "a|b"|"c|d"
-    values = helper.parseDefaultValue("\"a|b\"|\"c|d\"", DataType.STRING);
-    assertTrue(values instanceof String[]);
-    stringValues = (String[])values;
-    assertEquals(2, stringValues.length);
-    assertEquals("a|b", stringValues[0]);
-    assertEquals("c|d", stringValues[1]);
+    values = helper.parseDefaultValue( "\"a|b\"|\"c|d\"", DataType.STRING );
+    assertTrue( values instanceof String[] );
+    stringValues = (String[]) values;
+    assertEquals( 2, stringValues.length );
+    assertEquals( "a|b", stringValues[0] );
+    assertEquals( "c|d", stringValues[1] );
   }
 
   @Test
   public void testParseMultivaluedDefault_Numeric() throws Exception {
-    Object values = helper.parseDefaultValue("1|2|3|4|5", DataType.NUMERIC);
-    assertTrue(values instanceof Double[]);
-    Double[] numericValues = (Double[])values;
-    assertEquals(5, numericValues.length);
-    assertEquals(1D, numericValues[0]);
-    assertEquals(2D, numericValues[1]);
-    assertEquals(3D, numericValues[2]);
-    assertEquals(4D, numericValues[3]);
-    assertEquals(5D, numericValues[4]);
+    Object values = helper.parseDefaultValue( "1|2|3|4|5", DataType.NUMERIC );
+    assertTrue( values instanceof Double[] );
+    Double[] numericValues = (Double[]) values;
+    assertEquals( 5, numericValues.length );
+    assertEquals( 1D, numericValues[0] );
+    assertEquals( 2D, numericValues[1] );
+    assertEquals( 3D, numericValues[2] );
+    assertEquals( 4D, numericValues[3] );
+    assertEquals( 5D, numericValues[4] );
   }
 
   @Test
   public void testParseMultivaluedDefault_Boolean() throws Exception {
-    Object values = helper.parseDefaultValue("true|false", DataType.BOOLEAN);
-    assertTrue(values instanceof Boolean[]);
-    Boolean[] boolValues = (Boolean[])values;
-    assertEquals(2, boolValues.length);
-    assertTrue(boolValues[0]);
-    assertFalse(boolValues[1]);
+    Object values = helper.parseDefaultValue( "true|false", DataType.BOOLEAN );
+    assertTrue( values instanceof Boolean[] );
+    Boolean[] boolValues = (Boolean[]) values;
+    assertEquals( 2, boolValues.length );
+    assertTrue( boolValues[0] );
+    assertFalse( boolValues[1] );
   }
-  
+
   @Test
   public void testLimit() throws Exception {
     final int LIMIT = 10;
 
     String xml;
     String limitString;
-    
+
     // to xml, no limit
-    xml = helper.toXML(query);
-    limitString = getLimitFromXML(xml);
-    assertTrue(Integer.parseInt(limitString) < 0);
-    
+    xml = helper.toXML( query );
+    limitString = getLimitFromXML( xml );
+    assertTrue( Integer.parseInt( limitString ) < 0 );
+
     // from xml, no limit
-    query = helper.fromXML(metadataDomainRepository, xml);
-    assertTrue(query.getLimit() < 0);
-    
+    query = helper.fromXML( metadataDomainRepository, xml );
+    assertTrue( query.getLimit() < 0 );
+
     // to xml, limit
-    query.setLimit(LIMIT);
-    xml = helper.toXML(query);
-    limitString = getLimitFromXML(xml);
-    assertEquals(String.valueOf(LIMIT), limitString);
-    
+    query.setLimit( LIMIT );
+    xml = helper.toXML( query );
+    limitString = getLimitFromXML( xml );
+    assertEquals( String.valueOf( LIMIT ), limitString );
+
     // from xml, limit
-    query = helper.fromXML(metadataDomainRepository, xml);
-    assertEquals(LIMIT, query.getLimit());
-    
+    query = helper.fromXML( metadataDomainRepository, xml );
+    assertEquals( LIMIT, query.getLimit() );
+
     // legacy (no limit element in xml)
-    xml = helper.toXML(query);
-    xml = xml.replaceAll("<limit>\\s*\\w*\\s*</limit>", "");
-    query = helper.fromXML(metadataDomainRepository, xml);
-    assertTrue(query.getLimit() < 0);
-    
+    xml = helper.toXML( query );
+    xml = xml.replaceAll( "<limit>\\s*\\w*\\s*</limit>", "" );
+    query = helper.fromXML( metadataDomainRepository, xml );
+    assertTrue( query.getLimit() < 0 );
+
     // invalid limit in xml
-    query.setLimit(123);
-    xml = helper.toXML(query);
-    xml = xml.replaceAll("<limit>\\s*123\\s*</limit>", "<limit>abc</limit>");
-    
+    query.setLimit( 123 );
+    xml = helper.toXML( query );
+    xml = xml.replaceAll( "<limit>\\s*123\\s*</limit>", "<limit>abc</limit>" );
+
     try {
-      query = helper.fromXML(metadataDomainRepository, xml);
+      query = helper.fromXML( metadataDomainRepository, xml );
       fail();
-    } catch (PentahoMetadataException e) {
+    } catch ( PentahoMetadataException e ) {
       // expected
     }
   }
-  
-  private String getLimitFromXML(String xml) throws Exception {
-    Document doc = db.parse(new InputSource(new java.io.StringReader(xml)));
-    if (doc.getElementsByTagName("options").getLength() > 0) {
-      Element optionsElement = ((Element) doc.getElementsByTagName("options").item(0));
-      if (optionsElement.getElementsByTagName("limit").getLength() > 0) {
-        return optionsElement.getElementsByTagName("limit").item(0).getFirstChild().getNodeValue();
+
+  private String getLimitFromXML( String xml ) throws Exception {
+    Document doc = db.parse( new InputSource( new java.io.StringReader( xml ) ) );
+    if ( doc.getElementsByTagName( "options" ).getLength() > 0 ) {
+      Element optionsElement = ( (Element) doc.getElementsByTagName( "options" ).item( 0 ) );
+      if ( optionsElement.getElementsByTagName( "limit" ).getLength() > 0 ) {
+        return optionsElement.getElementsByTagName( "limit" ).item( 0 ).getFirstChild().getNodeValue();
       }
     }
     return null;

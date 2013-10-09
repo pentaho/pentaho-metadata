@@ -25,41 +25,41 @@ import org.pentaho.metadata.model.concept.types.LocalizedString;
 
 /**
  * The inline etl physical table simply holds pointers to the physical columns.
- *  
+ * 
  * @author Will Gorman (wgorman@pentaho.com)
- *
+ * 
  */
 public class InlineEtlPhysicalTable extends Concept implements IPhysicalTable {
 
   private static final long serialVersionUID = 587552752354101051L;
-  
+
   private InlineEtlPhysicalModel parent;
-  
+
   private List<IPhysicalColumn> physicalColumns = new ArrayList<IPhysicalColumn>();
 
   public InlineEtlPhysicalTable() {
     super();
     // physical table has the following default properties:
-    setName(new LocalizedString());
-    setDescription(new LocalizedString());
+    setName( new LocalizedString() );
+    setDescription( new LocalizedString() );
   }
-  
+
   @Override
   public IConcept getParent() {
     return parent;
   }
-  
+
   @Override
   public List<IConcept> getChildren() {
     List<IConcept> children = new ArrayList<IConcept>();
-    children.addAll(physicalColumns);
+    children.addAll( physicalColumns );
     return children;
   }
 
-  public InlineEtlPhysicalTable(InlineEtlPhysicalModel parent) {
+  public InlineEtlPhysicalTable( InlineEtlPhysicalModel parent ) {
     this.parent = parent;
   }
-  
+
   public List<IPhysicalColumn> getPhysicalColumns() {
     return physicalColumns;
   }

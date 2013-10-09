@@ -41,9 +41,9 @@ import org.pentaho.pms.util.Const;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-@SuppressWarnings("deprecation")
+@SuppressWarnings( "deprecation" )
 public class SecurityService extends ChangedFlag implements Cloneable {
-    
+
   public static final int SERVICE_TYPE_ALL = 0;
 
   public static final int SERVICE_TYPE_USERS = 1;
@@ -52,9 +52,10 @@ public class SecurityService extends ChangedFlag implements Cloneable {
 
   public static final String[] serviceTypeCodes = new String[] { "all", "users", "roles" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
 
-  public static final String[] serviceTypeDescriptions = new String[] { Messages.getString("SecurityService.USER_ALL"), //$NON-NLS-1$
-      Messages.getString("SecurityService.USER_USERS"), //$NON-NLS-1$
-      Messages.getString("SecurityService.USER_ROLES") }; //$NON-NLS-1$
+  public static final String[] serviceTypeDescriptions = new String[] {
+    Messages.getString( "SecurityService.USER_ALL" ), //$NON-NLS-1$
+    Messages.getString( "SecurityService.USER_USERS" ), //$NON-NLS-1$
+    Messages.getString( "SecurityService.USER_ROLES" ) }; //$NON-NLS-1$
 
   public static final String ACTION = "action"; //$NON-NLS-1$
 
@@ -81,22 +82,24 @@ public class SecurityService extends ChangedFlag implements Cloneable {
   private String nonProxyHosts;
 
   private String filename;
-  
-  LogChannelInterface log = new LogChannel(toString());
 
-  public SecurityService() {}
+  LogChannelInterface log = new LogChannel( toString() );
+
+  public SecurityService() {
+  }
 
   public Object clone() {
     try {
       return super.clone();
-    } catch (Exception e) {
+    } catch ( Exception e ) {
       return null;
     }
   }
 
   public String toString() {
-    if (hasService())
+    if ( hasService() ) {
       return serviceName;
+    }
     return "SecurityService"; //$NON-NLS-1$
   }
 
@@ -108,9 +111,10 @@ public class SecurityService extends ChangedFlag implements Cloneable {
   }
 
   /**
-   * @param detailNameParameter the detailNameParameter to set
+   * @param detailNameParameter
+   *          the detailNameParameter to set
    */
-  public void setDetailNameParameter(String detailServiceName) {
+  public void setDetailNameParameter( String detailServiceName ) {
     this.detailNameParameter = detailServiceName;
   }
 
@@ -122,9 +126,10 @@ public class SecurityService extends ChangedFlag implements Cloneable {
   }
 
   /**
-   * @param detailServiceType the detailServiceType to set
+   * @param detailServiceType
+   *          the detailServiceType to set
    */
-  public void setDetailServiceType(int detailServiceType) {
+  public void setDetailServiceType( int detailServiceType ) {
     this.detailServiceType = detailServiceType;
   }
 
@@ -136,9 +141,10 @@ public class SecurityService extends ChangedFlag implements Cloneable {
   }
 
   /**
-   * @param serviceName the serviceName to set
+   * @param serviceName
+   *          the serviceName to set
    */
-  public void setServiceName(String name) {
+  public void setServiceName( String name ) {
     this.serviceName = name;
   }
 
@@ -150,9 +156,10 @@ public class SecurityService extends ChangedFlag implements Cloneable {
   }
 
   /**
-   * @param password the password to set
+   * @param password
+   *          the password to set
    */
-  public void setPassword(String password) {
+  public void setPassword( String password ) {
     this.password = password;
   }
 
@@ -164,9 +171,10 @@ public class SecurityService extends ChangedFlag implements Cloneable {
   }
 
   /**
-   * @param serviceURL the serviceURL to set
+   * @param serviceURL
+   *          the serviceURL to set
    */
-  public void setServiceURL(String serviceURL) {
+  public void setServiceURL( String serviceURL ) {
     this.serviceURL = serviceURL;
   }
 
@@ -178,9 +186,10 @@ public class SecurityService extends ChangedFlag implements Cloneable {
   }
 
   /**
-   * @param username the username to set
+   * @param username
+   *          the username to set
    */
-  public void setUsername(String username) {
+  public void setUsername( String username ) {
     this.username = username;
   }
 
@@ -200,9 +209,10 @@ public class SecurityService extends ChangedFlag implements Cloneable {
   }
 
   /**
-   * @param nonProxyHosts the nonProxyHosts to set
+   * @param nonProxyHosts
+   *          the nonProxyHosts to set
    */
-  public void setNonProxyHosts(String nonProxyHosts) {
+  public void setNonProxyHosts( String nonProxyHosts ) {
     this.nonProxyHosts = nonProxyHosts;
   }
 
@@ -214,9 +224,10 @@ public class SecurityService extends ChangedFlag implements Cloneable {
   }
 
   /**
-   * @param proxyHostname the proxyHostname to set
+   * @param proxyHostname
+   *          the proxyHostname to set
    */
-  public void setProxyHostname(String proxyHostname) {
+  public void setProxyHostname( String proxyHostname ) {
     this.proxyHostname = proxyHostname;
   }
 
@@ -228,210 +239,220 @@ public class SecurityService extends ChangedFlag implements Cloneable {
   }
 
   /**
-   * @param proxyPort the proxyPort to set
+   * @param proxyPort
+   *          the proxyPort to set
    */
-  public void setProxyPort(String proxyPort) {
+  public void setProxyPort( String proxyPort ) {
     this.proxyPort = proxyPort;
   }
 
-  public static final int getServiceType(String description) {
-    for (int i = 0; i < serviceTypeDescriptions.length; i++) {
-      if (serviceTypeDescriptions[i].equalsIgnoreCase(description))
+  public static final int getServiceType( String description ) {
+    for ( int i = 0; i < serviceTypeDescriptions.length; i++ ) {
+      if ( serviceTypeDescriptions[i].equalsIgnoreCase( description ) ) {
         return i;
+      }
     }
-    for (int i = 0; i < serviceTypeCodes.length; i++) {
-      if (serviceTypeCodes[i].equalsIgnoreCase(description))
+    for ( int i = 0; i < serviceTypeCodes.length; i++ ) {
+      if ( serviceTypeCodes[i].equalsIgnoreCase( description ) ) {
         return i;
+      }
     }
     return SERVICE_TYPE_ALL;
   }
 
-  public Node getContent(String url) throws Exception {
-    if (hasService()) {
-      return getContentFromServer(url);
-    } else if (hasFile()) {
+  public Node getContent( String url ) throws Exception {
+    if ( hasService() ) {
+      return getContentFromServer( url );
+    } else if ( hasFile() ) {
       return getContentFromFile();
     }
-    throw new Exception(Messages.getString("SecurityService.ERROR_0001_UNABLE_TO_GET_SECURITY_REFERENCE")); //$NON-NLS-1$
+    throw new Exception( Messages.getString( "SecurityService.ERROR_0001_UNABLE_TO_GET_SECURITY_REFERENCE" ) ); //$NON-NLS-1$
   }
 
   /**
-   * Contact the server and get back the content as XML 
+   * Contact the server and get back the content as XML
+   * 
    * @return the requested security reference information
-   * @throws Exception in case something goes awry 
+   * @throws Exception
+   *           in case something goes awry
    */
-  public Node getContentFromServer(String urlToUse) throws PentahoMetadataException  {
-    
+  public Node getContentFromServer( String urlToUse ) throws PentahoMetadataException {
+
     String result = null;
     int status = -1;
 
     URL tempURL;
     try {
-    
+
       // verify the URL is syntactically correct; we will use these pieces later in this method
-      tempURL = new URL(urlToUse);
-    
-    } catch (MalformedURLException e) {
-    
-      String msg = Messages.getString("SecurityService.ERROR_0002_INVALID_URL", urlToUse, e.getMessage()); //$NON-NLS-1$
-      log.logError(msg, e);
-      throw new PentahoMetadataException(msg, e); 
-    
+      tempURL = new URL( urlToUse );
+
+    } catch ( MalformedURLException e ) {
+
+      String msg = Messages.getString( "SecurityService.ERROR_0002_INVALID_URL", urlToUse, e.getMessage() ); //$NON-NLS-1$
+      log.logError( msg, e );
+      throw new PentahoMetadataException( msg, e );
+
     }
 
     HttpClient client = new HttpClient();
-    log.logDebug(Messages.getString("SecurityService.INFO_CONNECTING_TO_URL", urlToUse)); //$NON-NLS-1$
+    log.logDebug( Messages.getString( "SecurityService.INFO_CONNECTING_TO_URL", urlToUse ) ); //$NON-NLS-1$
 
-    // Assume we are using a proxy if proxyHostName is set? 
+    // Assume we are using a proxy if proxyHostName is set?
     // TODO: Mod ui to include check for enable or disable proxy; rather than rely on proxyhostname (post v1)
-    if ((proxyHostname != null) && (proxyHostname.trim().length() > 0)) {
+    if ( ( proxyHostname != null ) && ( proxyHostname.trim().length() > 0 ) ) {
 
-      int port = (proxyPort == null) || (proxyPort.trim().length() == 0) ? 
-          client.getHostConfiguration().getPort(): Integer.parseInt(proxyPort);
+      int port =
+          ( proxyPort == null ) || ( proxyPort.trim().length() == 0 ) ? client.getHostConfiguration().getPort()
+              : Integer.parseInt( proxyPort );
 
-      //TODO: Where to set nonProxyHosts?
+      // TODO: Where to set nonProxyHosts?
 
-      client.getHostConfiguration().setProxy(proxyHostname, port);
+      client.getHostConfiguration().setProxy( proxyHostname, port );
 
-      //TODO: Credentials for proxy will be added if demand shows for it (post v1)
-      //          if (username != null && username.length() > 0) {
-      //            client.getState().setProxyCredentials(AuthScope.ANY, 
-      //                new UsernamePasswordCredentials(username, password != null ? password : new String()));
-      //          }
+      // TODO: Credentials for proxy will be added if demand shows for it (post v1)
+      // if (username != null && username.length() > 0) {
+      // client.getState().setProxyCredentials(AuthScope.ANY,
+      // new UsernamePasswordCredentials(username, password != null ? password : new String()));
+      // }
 
     }
 
     // If server userid/password was supplied, use basic authentication to
     // authenticate with the server.
-    if ((username != null) && (username.length() > 0) && (password != null) && (password.length() > 0)) {
+    if ( ( username != null ) && ( username.length() > 0 ) && ( password != null ) && ( password.length() > 0 ) ) {
 
-      Credentials creds = new UsernamePasswordCredentials(username, password);
-      client.getState().setCredentials(new AuthScope(tempURL.getHost(), tempURL.getPort()), creds);
-      client.getParams().setAuthenticationPreemptive(true);
+      Credentials creds = new UsernamePasswordCredentials( username, password );
+      client.getState().setCredentials( new AuthScope( tempURL.getHost(), tempURL.getPort() ), creds );
+      client.getParams().setAuthenticationPreemptive( true );
 
     }
 
     // Get a stream for the specified URL
-    GetMethod getMethod = new GetMethod(urlToUse);
+    GetMethod getMethod = new GetMethod( urlToUse );
     try {
 
-      status = client.executeMethod(getMethod);
-    
-      if (status == HttpStatus.SC_OK) {
+      status = client.executeMethod( getMethod );
 
-        log.logDetailed(Messages.getString("SecurityService.INFO_START_READING_WEBSERVER_REPLY")); //$NON-NLS-1$
+      if ( status == HttpStatus.SC_OK ) {
+
+        log.logDetailed( Messages.getString( "SecurityService.INFO_START_READING_WEBSERVER_REPLY" ) ); //$NON-NLS-1$
         result = getMethod.getResponseBodyAsString();
-        
-        log.logBasic(Messages.getString("SecurityService.INFO_FINISHED_READING_RESPONSE", Integer.toString(result.length()))); //$NON-NLS-1$ 
 
-      } else if (status == HttpStatus.SC_UNAUTHORIZED) {
+        log.logBasic( Messages.getString(
+            "SecurityService.INFO_FINISHED_READING_RESPONSE", Integer.toString( result.length() ) ) ); //$NON-NLS-1$ 
 
-        String msg = Messages.getString("SecurityService.ERROR_0009_UNAUTHORIZED_ACCESS_TO_URL", urlToUse); //$NON-NLS-1$
-        log.logError(msg); 
-        throw new PentahoMetadataException(msg);
-      
+      } else if ( status == HttpStatus.SC_UNAUTHORIZED ) {
+
+        String msg = Messages.getString( "SecurityService.ERROR_0009_UNAUTHORIZED_ACCESS_TO_URL", urlToUse ); //$NON-NLS-1$
+        log.logError( msg );
+        throw new PentahoMetadataException( msg );
+
       }
 
-    } catch (HttpException e) {
-    
-      String msg = Messages.getString("SecurityService.ERROR_0003_CANT_SAVE_IO_ERROR", e.getMessage()); //$NON-NLS-1$
-      log.logError(msg); 
-      log.logError(Const.getStackTracker(e));
-      throw new PentahoMetadataException(msg, e); 
-    
-    } catch (IOException e) {
-      
-      String msg = Messages.getString("SecurityService.ERROR_0004_ERROR_RETRIEVING_FILE_FROM_HTTP", e.getMessage()); //$NON-NLS-1$
-//      log.logError(toString(), msg); 
-//      log.logError(toString(), Const.getStackTracker(e));
-      throw new PentahoMetadataException(msg, e); 
-    
+    } catch ( HttpException e ) {
+
+      String msg = Messages.getString( "SecurityService.ERROR_0003_CANT_SAVE_IO_ERROR", e.getMessage() ); //$NON-NLS-1$
+      log.logError( msg );
+      log.logError( Const.getStackTracker( e ) );
+      throw new PentahoMetadataException( msg, e );
+
+    } catch ( IOException e ) {
+
+      String msg = Messages.getString( "SecurityService.ERROR_0004_ERROR_RETRIEVING_FILE_FROM_HTTP", e.getMessage() ); //$NON-NLS-1$
+      // log.logError(toString(), msg);
+      // log.logError(toString(), Const.getStackTracker(e));
+      throw new PentahoMetadataException( msg, e );
+
     }
 
-
-    if (result != null){
+    if ( result != null ) {
 
       // Get the result back...
       Document doc;
       try {
-        
-        doc = XMLHandler.loadXMLString(result);
-      
-      } catch (KettleXMLException e) {
 
-        String msg = Messages.getString("SecurityService.ERROR_0008_ERROR_PARSING_XML", e.getMessage()); //$NON-NLS-1$
-        log.logError(msg); 
-        log.logError(Const.getStackTracker(e));
-        throw new PentahoMetadataException(msg, e); 
-        
+        doc = XMLHandler.loadXMLString( result );
+
+      } catch ( KettleXMLException e ) {
+
+        String msg = Messages.getString( "SecurityService.ERROR_0008_ERROR_PARSING_XML", e.getMessage() ); //$NON-NLS-1$
+        log.logError( msg );
+        log.logError( Const.getStackTracker( e ) );
+        throw new PentahoMetadataException( msg, e );
+
       }
-      
-      if(serviceURL.endsWith("ServiceAction")) {
-          Node envelope = XMLHandler.getSubNode(doc, "SOAP-ENV:Envelope"); //$NON-NLS-1$
-          if (envelope != null) {
-            Node body = XMLHandler.getSubNode(envelope, "SOAP-ENV:Body"); //$NON-NLS-1$
-            if (body != null) {
-              Node response = XMLHandler.getSubNode(body, "ExecuteActivityResponse"); //$NON-NLS-1$
-              if (response != null) {
-                Node content = XMLHandler.getSubNode(response, "content"); //$NON-NLS-1$
-                return content;
-              }
+
+      if ( serviceURL.endsWith( "ServiceAction" ) ) {
+        Node envelope = XMLHandler.getSubNode( doc, "SOAP-ENV:Envelope" ); //$NON-NLS-1$
+        if ( envelope != null ) {
+          Node body = XMLHandler.getSubNode( envelope, "SOAP-ENV:Body" ); //$NON-NLS-1$
+          if ( body != null ) {
+            Node response = XMLHandler.getSubNode( body, "ExecuteActivityResponse" ); //$NON-NLS-1$
+            if ( response != null ) {
+              Node content = XMLHandler.getSubNode( response, "content" ); //$NON-NLS-1$
+              return content;
             }
           }
+        }
       } else {
-    	  return doc.getFirstChild();
+        return doc.getFirstChild();
       }
     }
     return null;
 
   }
 
-
   /**
-   * Read the specified security file and get back the content as XML 
+   * Read the specified security file and get back the content as XML
+   * 
    * @return the requested security reference information
-   * @throws Exception in case something goes awry 
+   * @throws Exception
+   *           in case something goes awry
    */
   public Node getContentFromFile() throws Exception {
     try {
-      Document doc = XMLHandler.loadXMLFile(filename);
-      return XMLHandler.getSubNode(doc, "content"); //$NON-NLS-1$
-    } catch (KettleXMLException e) {
-      throw new Exception(Messages.getString("SecurityService.ERROR_0007_UNABLE_TO_GET_SECURITY_CONTENT", filename), e); //$NON-NLS-1$ 
+      Document doc = XMLHandler.loadXMLFile( filename );
+      return XMLHandler.getSubNode( doc, "content" ); //$NON-NLS-1$
+    } catch ( KettleXMLException e ) {
+      throw new Exception(
+          Messages.getString( "SecurityService.ERROR_0007_UNABLE_TO_GET_SECURITY_CONTENT", filename ), e ); //$NON-NLS-1$ 
     }
   }
 
   public String getContentAsXMLString() throws Exception {
-    Node content = getContent(getURL(null));
-    if (content == null)
+    Node content = getContent( getURL( null ) );
+    if ( content == null ) {
       return null;
+    }
     return content.getChildNodes().toString();
   }
 
-  
   public String getURL() {
-	return getURL(getServiceTypeCode());  
+    return getURL( getServiceTypeCode() );
   }
-  
-  public String getURL(String serviceTypeCode) {
+
+  public String getURL( String serviceTypeCode ) {
     StringBuffer url = new StringBuffer();
-    url.append(serviceURL);
-    if(serviceURL != null && serviceURL.endsWith("ServiceAction")) {
-    	url.append("?").append(ACTION).append("=").append(serviceName); //$NON-NLS-1$ //$NON-NLS-2$
-        url.append("&").append(detailNameParameter).append("=").append(getServiceTypeCode()); //$NON-NLS-1$ //$NON-NLS-2$
-    } else if(serviceTypeCode != null) {
-    	if(!serviceURL.endsWith("/")) url.append("/");
-    	url.append(serviceTypeCode);
+    url.append( serviceURL );
+    if ( serviceURL != null && serviceURL.endsWith( "ServiceAction" ) ) {
+      url.append( "?" ).append( ACTION ).append( "=" ).append( serviceName ); //$NON-NLS-1$ //$NON-NLS-2$
+      url.append( "&" ).append( detailNameParameter ).append( "=" ).append( getServiceTypeCode() ); //$NON-NLS-1$ //$NON-NLS-2$
+    } else if ( serviceTypeCode != null ) {
+      if ( !serviceURL.endsWith( "/" ) ) {
+        url.append( "/" );
+      }
+      url.append( serviceTypeCode );
     }
     return url.toString();
   }
 
   public boolean hasService() {
-    return !Const.isEmpty(serviceURL) && !Const.isEmpty(serviceName) && !Const.isEmpty(detailNameParameter);
+    return !Const.isEmpty( serviceURL ) && !Const.isEmpty( serviceName ) && !Const.isEmpty( detailNameParameter );
   }
 
   public boolean hasFile() {
-    return !Const.isEmpty(filename);
+    return !Const.isEmpty( filename );
   }
 
   /**
@@ -442,71 +463,74 @@ public class SecurityService extends ChangedFlag implements Cloneable {
   }
 
   /**
-   * @param filename the filename to set
+   * @param filename
+   *          the filename to set
    */
-  public void setFilename(String filename) {
+  public void setFilename( String filename ) {
     this.filename = filename;
   }
 
   public List<String> getUsers() {
     List<String> users = new ArrayList<String>();
-    if (hasService() || hasFile()) {
+    if ( hasService() || hasFile() ) {
       try {
-    	  
-    	if(getDetailServiceType() == SecurityService.SERVICE_TYPE_USERS || getDetailServiceType() == SERVICE_TYPE_ALL) {  
-	    	String url = getURL(serviceTypeCodes[SERVICE_TYPE_USERS]);  
-	        Node contentNode = getContent(url);
-	        String usersNode = "users";
-	        if(serviceURL.endsWith("ServiceAction")) {
-	        	contentNode = XMLHandler.getSubNode(contentNode, usersNode); //$NON-NLS-1$
-	        	usersNode = "user";
-	        } 
-	
-	        // Load the users
-	        int nrUsers = XMLHandler.countNodes(contentNode, usersNode); //$NON-NLS-1$
-	        for (int i = 0; i < nrUsers; i++) {
-	          Node userNode = XMLHandler.getSubNodeByNr(contentNode, usersNode, i); //$NON-NLS-1$
-	          String username = XMLHandler.getNodeValue(userNode);
-	          if (username != null)
-	            users.add(username);
-	        }
-    	}
-      } catch (PentahoMetadataException ex) {
-        log.logError(Messages.getString("SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML"), ex); //$NON-NLS-1$
-      } catch (Exception e) {
-        log.logError(Messages.getString("SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML"), e); //$NON-NLS-1$
+
+        if ( getDetailServiceType() == SecurityService.SERVICE_TYPE_USERS || getDetailServiceType() == SERVICE_TYPE_ALL ) {
+          String url = getURL( serviceTypeCodes[SERVICE_TYPE_USERS] );
+          Node contentNode = getContent( url );
+          String usersNode = "users";
+          if ( serviceURL.endsWith( "ServiceAction" ) ) {
+            contentNode = XMLHandler.getSubNode( contentNode, usersNode ); //$NON-NLS-1$
+            usersNode = "user";
+          }
+
+          // Load the users
+          int nrUsers = XMLHandler.countNodes( contentNode, usersNode ); //$NON-NLS-1$
+          for ( int i = 0; i < nrUsers; i++ ) {
+            Node userNode = XMLHandler.getSubNodeByNr( contentNode, usersNode, i ); //$NON-NLS-1$
+            String username = XMLHandler.getNodeValue( userNode );
+            if ( username != null ) {
+              users.add( username );
+            }
+          }
+        }
+      } catch ( PentahoMetadataException ex ) {
+        log.logError( Messages.getString( "SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML" ), ex ); //$NON-NLS-1$
+      } catch ( Exception e ) {
+        log.logError( Messages.getString( "SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML" ), e ); //$NON-NLS-1$
       }
     }
     return users;
   }
-  
+
   public List<String> getRoles() {
     List<String> roles = new ArrayList<String>();
-    if (hasService() || hasFile()) {
+    if ( hasService() || hasFile() ) {
       try {
-    	  
-    	if(getDetailServiceType() == SecurityService.SERVICE_TYPE_ROLES || getDetailServiceType() == SERVICE_TYPE_ALL) {  
-	    	String url = getURL(serviceTypeCodes[SERVICE_TYPE_ROLES]); 
-	        Node contentNode = getContent(url);
-	        String rolesNode = "roles";
-	        if(serviceURL.endsWith("ServiceAction")) {
-	        	contentNode = XMLHandler.getSubNode(contentNode, rolesNode); //$NON-NLS-1$
-	        	rolesNode = "role";
-	        } 
-	
-	        // Load the roles
-	        int nrRoles = XMLHandler.countNodes(contentNode, rolesNode); //$NON-NLS-1$
-	        for (int i=0;i<nrRoles;i++)
-	        {
-	            Node roleNode = XMLHandler.getSubNodeByNr(contentNode, rolesNode, i); //$NON-NLS-1$
-	            String rolename = XMLHandler.getNodeValue(roleNode);
-	            if (rolename!=null) roles.add(rolename);
-	        }
-    	  }
-      } catch (PentahoMetadataException ex) {
-        log.logError(Messages.getString("SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML"), ex); //$NON-NLS-1$
-      } catch (Exception e) {
-        log.logError(Messages.getString("SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML"), e); //$NON-NLS-1$
+
+        if ( getDetailServiceType() == SecurityService.SERVICE_TYPE_ROLES || getDetailServiceType() == SERVICE_TYPE_ALL ) {
+          String url = getURL( serviceTypeCodes[SERVICE_TYPE_ROLES] );
+          Node contentNode = getContent( url );
+          String rolesNode = "roles";
+          if ( serviceURL.endsWith( "ServiceAction" ) ) {
+            contentNode = XMLHandler.getSubNode( contentNode, rolesNode ); //$NON-NLS-1$
+            rolesNode = "role";
+          }
+
+          // Load the roles
+          int nrRoles = XMLHandler.countNodes( contentNode, rolesNode ); //$NON-NLS-1$
+          for ( int i = 0; i < nrRoles; i++ ) {
+            Node roleNode = XMLHandler.getSubNodeByNr( contentNode, rolesNode, i ); //$NON-NLS-1$
+            String rolename = XMLHandler.getNodeValue( roleNode );
+            if ( rolename != null ) {
+              roles.add( rolename );
+            }
+          }
+        }
+      } catch ( PentahoMetadataException ex ) {
+        log.logError( Messages.getString( "SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML" ), ex ); //$NON-NLS-1$
+      } catch ( Exception e ) {
+        log.logError( Messages.getString( "SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML" ), e ); //$NON-NLS-1$
       }
     }
     return roles;
@@ -514,24 +538,25 @@ public class SecurityService extends ChangedFlag implements Cloneable {
 
   public List<SecurityACL> getAcls() {
     List<SecurityACL> acls = new ArrayList<SecurityACL>();
-    if (hasService() || hasFile()) {
+    if ( hasService() || hasFile() ) {
       try {
-        Node contentNode = getContent(getURL(null));
+        Node contentNode = getContent( getURL( null ) );
 
         // Load the ACLs
-        Node aclsNode = XMLHandler.getSubNode(contentNode, "acls"); //$NON-NLS-1$
-        int nrAcls = XMLHandler.countNodes(aclsNode, "acl"); //$NON-NLS-1$
-        for (int i=0;i<nrAcls;i++)
-        {
-            Node aclNode = XMLHandler.getSubNodeByNr(aclsNode, "acl", i); //$NON-NLS-1$
-            SecurityACL acl = new SecurityACL(aclNode);
-            acls.add(acl);
+        Node aclsNode = XMLHandler.getSubNode( contentNode, "acls" ); //$NON-NLS-1$
+        int nrAcls = XMLHandler.countNodes( aclsNode, "acl" ); //$NON-NLS-1$
+        for ( int i = 0; i < nrAcls; i++ ) {
+          Node aclNode = XMLHandler.getSubNodeByNr( aclsNode, "acl", i ); //$NON-NLS-1$
+          SecurityACL acl = new SecurityACL( aclNode );
+          acls.add( acl );
         }
-        Collections.sort(acls); // sort by acl mask, from low to high
-      } catch (PentahoMetadataException ex) {
-        log.logError(Messages.getString("SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML"), ex.getLocalizedMessage()); //$NON-NLS-1$
-      } catch (Exception e) {
-        log.logError(Messages.getString("SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML"), e.getLocalizedMessage()); //$NON-NLS-1$
+        Collections.sort( acls ); // sort by acl mask, from low to high
+      } catch ( PentahoMetadataException ex ) {
+        log.logError(
+            Messages.getString( "SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML" ), ex.getLocalizedMessage() ); //$NON-NLS-1$
+      } catch ( Exception e ) {
+        log.logError(
+            Messages.getString( "SecurityReference.ERROR_0001_CANT_CREATE_REFERENCE_FROM_XML" ), e.getLocalizedMessage() ); //$NON-NLS-1$
       }
     }
     return acls;

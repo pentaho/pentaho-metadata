@@ -22,56 +22,60 @@ import java.util.Iterator;
 import java.util.PriorityQueue;
 
 public class GraphElementQueue extends PriorityQueue<GraphElement> {
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	public boolean offer(GraphElement e) {
-		if (e.isQueued()) return false;
+  public boolean offer( GraphElement e ) {
+    if ( e.isQueued() ) {
+      return false;
+    }
 
-		if (super.offer(e)) {
-			e.setQueued(true);
-			return true;
-		}
-		
-		return false;
-	}
-	
-	@Override
-	public boolean remove(Object o) {
-		GraphElement e = (GraphElement) o;
-		
-		if (super.remove(e)) {
-			e.setQueued(false);
-			return true;
-		}
-		
-		return false;
-	}
-	
-	@Override
-	public Iterator<GraphElement> iterator() {
-		return new Iter(super.iterator());
-	}
-	
-	private final static class Iter implements Iterator<GraphElement> {
-		private Iterator<GraphElement> parentIter;
-		private GraphElement last;
-		
-		public Iter(Iterator<GraphElement> parentIter) {
-			this.parentIter = parentIter;
-		}
-		
-		public boolean hasNext() {
-			return parentIter.hasNext();
-		}
+    if ( super.offer( e ) ) {
+      e.setQueued( true );
+      return true;
+    }
 
-		public GraphElement next() {
-			last = parentIter.next();
-			return last;
-		}
+    return false;
+  }
 
-		public void remove() {
-			parentIter.remove();
-			if (last!=null) last.setQueued(false);
-		}
-	}
+  @Override
+  public boolean remove( Object o ) {
+    GraphElement e = (GraphElement) o;
+
+    if ( super.remove( e ) ) {
+      e.setQueued( false );
+      return true;
+    }
+
+    return false;
+  }
+
+  @Override
+  public Iterator<GraphElement> iterator() {
+    return new Iter( super.iterator() );
+  }
+
+  private static final class Iter implements Iterator<GraphElement> {
+    private Iterator<GraphElement> parentIter;
+    private GraphElement last;
+
+    public Iter( Iterator<GraphElement> parentIter ) {
+      this.parentIter = parentIter;
+    }
+
+    public boolean hasNext() {
+      return parentIter.hasNext();
+    }
+
+    public GraphElement next() {
+      last = parentIter.next();
+      return last;
+    }
+
+    public void remove() {
+      parentIter.remove();
+      if ( last != null ) {
+        last.setQueued( false );
+      }
+    }
+  }
 }

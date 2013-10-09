@@ -16,21 +16,21 @@
  * 
  * Created Jan, 2011
  * @author jdixon
-*/
+ */
 package org.pentaho.metadata.model.thin;
-
 
 /**
  * Concrete, lightweight, serializable implementation of an {@see IColumn} object
+ * 
  * @author jamesdixon
- *
+ * 
  */
 public class Column {
 
   private static final long serialVersionUID = 3751750093446278893L;
   private String id, name, description;
   private String type;
-  private String aggTypes[];
+  private String[] aggTypes;
   private String defaultAggType;
   private String selectedAggType;
   private String fieldType;
@@ -38,12 +38,12 @@ public class Column {
   private String getHorizontalAlignment;
   private String formatMask;
   private boolean hiddenForUser;
-  
+
   public String getHorizontalAlignment() {
     return getHorizontalAlignment;
   }
 
-  public void setHorizontalAlignment(String getHorizontalAlignment) {
+  public void setHorizontalAlignment( String getHorizontalAlignment ) {
     this.getHorizontalAlignment = getHorizontalAlignment;
   }
 
@@ -51,7 +51,7 @@ public class Column {
     return formatMask;
   }
 
-  public void setFormatMask(String formatMask) {
+  public void setFormatMask( String formatMask ) {
     this.formatMask = formatMask;
   }
 
@@ -59,7 +59,7 @@ public class Column {
     return category;
   }
 
-  public void setCategory(String category) {
+  public void setCategory( String category ) {
     this.category = category;
   }
 
@@ -67,31 +67,31 @@ public class Column {
     return fieldType;
   }
 
-  public void setFieldType(String fieldType) {
+  public void setFieldType( String fieldType ) {
     this.fieldType = fieldType;
   }
-  
+
   public String getId() {
     return this.id;
   }
 
   public String getName() {
-    return this.name;   
+    return this.name;
   }
 
   public String getType() {
     return this.type;
   }
 
-  public void setId(String id) {
+  public void setId( String id ) {
     this.id = id;
   }
 
-  public void setName(String name) {
+  public void setName( String name ) {
     this.name = name;
   }
 
-  public void setType(String type) {
+  public void setType( String type ) {
     this.type = type;
   }
 
@@ -103,23 +103,23 @@ public class Column {
     return aggTypes;
   }
 
-  public void setAggTypes(String aggTypes[]) {
+  public void setAggTypes( String[] aggTypes ) {
     this.aggTypes = aggTypes;
   }
 
-  public void setDefaultAggType(String defaultAggType) {
+  public void setDefaultAggType( String defaultAggType ) {
     this.defaultAggType = defaultAggType;
   }
 
-  public void setSelectedAggType(String aggType){
+  public void setSelectedAggType( String aggType ) {
     this.selectedAggType = aggType;
   }
-  
-  public String getSelectedAggType(){
+
+  public String getSelectedAggType() {
     return this.selectedAggType;
   }
 
-  public void setDescription(String description) {
+  public void setDescription( String description ) {
     this.description = description;
   }
 
@@ -127,19 +127,19 @@ public class Column {
     return description;
   }
 
-  public void setHiddenForUser(boolean hiddenForUser){
+  public void setHiddenForUser( boolean hiddenForUser ) {
     this.hiddenForUser = hiddenForUser;
   }
-  
+
   public boolean isHiddenForUser() {
     return hiddenForUser;
   }
-  
+
   public String getGetHorizontalAlignment() {
-	return getHorizontalAlignment;
+    return getHorizontalAlignment;
   }
 
-  public void setGetHorizontalAlignment(String getHorizontalAlignment) {
-	this.getHorizontalAlignment = getHorizontalAlignment;
+  public void setGetHorizontalAlignment( String getHorizontalAlignment ) {
+    this.getHorizontalAlignment = getHorizontalAlignment;
   }
 }

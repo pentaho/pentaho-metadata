@@ -17,13 +17,11 @@
 package org.pentaho.metadata.model.concept.types;
 
 /**
- * enum defining the various column types.  This replaces
- * the earlier version metadata property isExact().
+ * enum defining the various column types. This replaces the earlier version metadata property isExact().
  * 
  * @author Will Gorman (wgorman@pentaho.com)
- *
+ * 
  */
 public enum TargetColumnType {
-  COLUMN_NAME(),
-  OPEN_FORMULA(); 
+  COLUMN_NAME(), OPEN_FORMULA();
 }

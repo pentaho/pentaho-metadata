@@ -23,55 +23,48 @@ import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 /**
  * @deprecated as of metadata 3.0.
  */
-public class ConceptPropertyString extends ConceptPropertyBase implements ConceptPropertyInterface, Cloneable
-{
-    private String value;
-    private static final String EMPTY_STRING = "";
+public class ConceptPropertyString extends ConceptPropertyBase implements ConceptPropertyInterface, Cloneable {
+  private String value;
+  private static final String EMPTY_STRING = "";
 
-    public ConceptPropertyString(String name, String value) {
-      this(name, value, false);
-    }
+  public ConceptPropertyString( String name, String value ) {
+    this( name, value, false );
+  }
 
-    public ConceptPropertyString(String name, String value, boolean required) {
-      super(name, required);
-      setValue(value);
-    }
+  public ConceptPropertyString( String name, String value, boolean required ) {
+    super( name, required );
+    setValue( value );
+  }
 
-    public String toString()
-    {
-        return value;
-    }
+  public String toString() {
+    return value;
+  }
 
-    public Object clone() throws CloneNotSupportedException
-    {
-        return super.clone();
-    }
+  public Object clone() throws CloneNotSupportedException {
+    return super.clone();
+  }
 
-    public ConceptPropertyType getType()
-    {
-        return ConceptPropertyType.STRING;
-    }
+  public ConceptPropertyType getType() {
+    return ConceptPropertyType.STRING;
+  }
 
-    public Object getValue()
-    {
-        return value;
-    }
+  public Object getValue() {
+    return value;
+  }
 
-    public void setValue(Object value) {
-      if (null != value) {
-        this.value = (String) value;
-      } else {
-        this.value = EMPTY_STRING;
-      }
+  public void setValue( Object value ) {
+    if ( null != value ) {
+      this.value = (String) value;
+    } else {
+      this.value = EMPTY_STRING;
     }
+  }
 
-    public boolean equals(Object obj)
-    {
-        return value.equals(obj);
-    }
+  public boolean equals( Object obj ) {
+    return value.equals( obj );
+  }
 
-    public int hashCode()
-    {
-        return value.hashCode();
-    }
+  public int hashCode() {
+    return value.hashCode();
+  }
 }

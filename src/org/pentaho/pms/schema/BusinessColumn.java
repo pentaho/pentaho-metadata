@@ -31,188 +31,174 @@ import org.pentaho.pms.util.Settings;
 import org.pentaho.pms.util.UniqueList;
 
 /**
- * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.model.LogicalColumn
+ * @deprecated as of metadata 3.0. Please use org.pentaho.metadata.model.LogicalColumn
  */
-public class BusinessColumn extends ConceptUtilityBase implements ChangedFlagInterface, ConceptUtilityInterface, Cloneable
-{
-  
-    private static final Log logger = LogFactory.getLog(BusinessColumn.class);
-  
-    private PhysicalColumn physicalColumn;
-    private boolean enabled;
-    
-    /** The parent business table to figure out the relationships later on! */
-    private BusinessTable businessTable;
+public class BusinessColumn extends ConceptUtilityBase implements ChangedFlagInterface, ConceptUtilityInterface,
+    Cloneable {
 
-    public BusinessColumn()
-    {
-        super();
-        enabled=true; // enabled by default.
-    }
-    
-    public BusinessColumn(String id, PhysicalColumn physicalColumn, BusinessTable businessTable)
-    {
-        super(id);
-        enabled=true; // enabled by default.
-        setBusinessTable(businessTable);
-        setPhysicalColumn(physicalColumn);
-    }
+  private static final Log logger = LogFactory.getLog( BusinessColumn.class );
 
-    public BusinessColumn(String id)
-    {
-        super(id);
-        enabled=true; // enabled by default.
-    }
+  private PhysicalColumn physicalColumn;
+  private boolean enabled;
 
-    /**
-     * @return the description of the model element 
-     */
-    public String getModelElementDescription()
-    {
-        return Messages.getString("BusinessColumn.USER_DESCRIPTION"); //$NON-NLS-1$
-    }
+  /** The parent business table to figure out the relationships later on! */
+  private BusinessTable businessTable;
 
-    
-    public Object clone()
-    {
-        try
-        {
-            BusinessColumn businessColumn = (BusinessColumn) super.clone();
+  public BusinessColumn() {
+    super();
+    enabled = true; // enabled by default.
+  }
 
-            businessColumn.setConcept((ConceptInterface) getConcept().clone()); // deep copy
-            businessColumn.setPhysicalColumn(physicalColumn); // shallow copy
-            
-            return businessColumn;
-        }
-        catch(CloneNotSupportedException e)
-        {
-            return null;
-        }
-    }
-    
-    /**
-     * 
-     * @param columns List of columns to compare new column id against
-     * @return a new businessColumn, duplicate of this, with only the id changed to be unique in it's list
-     */
-    public BusinessColumn cloneUnique (String locale, UniqueList columns){
-      
-      BusinessColumn businessColumn  = (BusinessColumn)clone(); 
-      
-      String newId = proposeId(locale, businessTable, physicalColumn, columns); 
+  public BusinessColumn( String id, PhysicalColumn physicalColumn, BusinessTable businessTable ) {
+    super( id );
+    enabled = true; // enabled by default.
+    setBusinessTable( businessTable );
+    setPhysicalColumn( physicalColumn );
+  }
 
-      try {
-        businessColumn.setId(newId);
-      } catch (ObjectAlreadyExistsException e) {
-        logger.error(Messages.getErrorString("BusinessColumn.ERROR_0005_UNEXPECTED_ID_EXISTS", newId), e); //$NON-NLS-1$
-        return null;
-      }
-      
+  public BusinessColumn( String id ) {
+    super( id );
+    enabled = true; // enabled by default.
+  }
+
+  /**
+   * @return the description of the model element
+   */
+  public String getModelElementDescription() {
+    return Messages.getString( "BusinessColumn.USER_DESCRIPTION" ); //$NON-NLS-1$
+  }
+
+  public Object clone() {
+    try {
+      BusinessColumn businessColumn = (BusinessColumn) super.clone();
+
+      businessColumn.setConcept( (ConceptInterface) getConcept().clone() ); // deep copy
+      businessColumn.setPhysicalColumn( physicalColumn ); // shallow copy
+
       return businessColumn;
-      
+    } catch ( CloneNotSupportedException e ) {
+      return null;
     }
-    
-    public static final String proposeId(String locale, BusinessTable businessTable, PhysicalColumn physicalColumn)
-    {
-        String baseID = Const.toID( businessTable.getDisplayName(locale) );
-        String namePart = Const.toID( Const.NVL(physicalColumn.getName(locale), physicalColumn.getFormula() ) );
-        String id = Settings.getBusinessColumnIDPrefix() + baseID+"_" + namePart; //$NON-NLS-1$
-        if (Settings.isAnIdUppercase()) id = id.toUpperCase();
-        return id;
+  }
+
+  /**
+   * 
+   * @param columns
+   *          List of columns to compare new column id against
+   * @return a new businessColumn, duplicate of this, with only the id changed to be unique in it's list
+   */
+  public BusinessColumn cloneUnique( String locale, UniqueList columns ) {
+
+    BusinessColumn businessColumn = (BusinessColumn) clone();
+
+    String newId = proposeId( locale, businessTable, physicalColumn, columns );
+
+    try {
+      businessColumn.setId( newId );
+    } catch ( ObjectAlreadyExistsException e ) {
+      logger.error( Messages.getErrorString( "BusinessColumn.ERROR_0005_UNEXPECTED_ID_EXISTS", newId ), e ); //$NON-NLS-1$
+      return null;
     }
 
-    public static final String proposeId(String locale, BusinessTable businessTable, PhysicalColumn physicalColumn, UniqueList columns)
-    {
-      boolean gotNew = false;
-      boolean found = false;
-      String id = proposeId(locale, businessTable, physicalColumn);
-      int catNr = 1;
-      String newId = id;
-      
-      
-      while (!gotNew) {
-        
-        for (Iterator iter = columns.iterator(); iter.hasNext();) {
-          ConceptUtilityBase element = (ConceptUtilityBase) iter.next();
-          if (element.getId().equalsIgnoreCase(newId)){
-            found = true;
-            break;
-          }
-        }
-        if (found){
-          catNr++;
-          newId = id + "_" + catNr; //$NON-NLS-1$
-          found = false;
-        }else{
-          gotNew = true;
+    return businessColumn;
+
+  }
+
+  public static final String proposeId( String locale, BusinessTable businessTable, PhysicalColumn physicalColumn ) {
+    String baseID = Const.toID( businessTable.getDisplayName( locale ) );
+    String namePart = Const.toID( Const.NVL( physicalColumn.getName( locale ), physicalColumn.getFormula() ) );
+    String id = Settings.getBusinessColumnIDPrefix() + baseID + "_" + namePart; //$NON-NLS-1$
+    if ( Settings.isAnIdUppercase() ) {
+      id = id.toUpperCase();
+    }
+    return id;
+  }
+
+  public static final String proposeId( String locale, BusinessTable businessTable, PhysicalColumn physicalColumn,
+      UniqueList columns ) {
+    boolean gotNew = false;
+    boolean found = false;
+    String id = proposeId( locale, businessTable, physicalColumn );
+    int catNr = 1;
+    String newId = id;
+
+    while ( !gotNew ) {
+
+      for ( Iterator iter = columns.iterator(); iter.hasNext(); ) {
+        ConceptUtilityBase element = (ConceptUtilityBase) iter.next();
+        if ( element.getId().equalsIgnoreCase( newId ) ) {
+          found = true;
+          break;
         }
       }
-      
-      if (Settings.isAnIdUppercase())
-        newId = newId.toUpperCase();
-      
-      return newId;
+      if ( found ) {
+        catNr++;
+        newId = id + "_" + catNr; //$NON-NLS-1$
+        found = false;
+      } else {
+        gotNew = true;
+      }
     }
 
-    public String toString()
-    {
-        return businessTable.getId()+"."+getId(); //$NON-NLS-1$
+    if ( Settings.isAnIdUppercase() ) {
+      newId = newId.toUpperCase();
     }
 
-    /**
-     * @return the enabled
-     */
-    public boolean isEnabled()
-    {
-        return enabled;
-    }
+    return newId;
+  }
 
-    /**
-     * @param enabled the enabled to set
-     */
-    public void setEnabled(boolean enabled)
-    {
-        this.enabled = enabled;
-    }
+  public String toString() {
+    return businessTable.getId() + "." + getId(); //$NON-NLS-1$
+  }
 
-    /**
-     * @return the phyiscalColumn
-     */
-    public PhysicalColumn getPhysicalColumn()
-    {
-        return physicalColumn;
-    }
+  /**
+   * @return the enabled
+   */
+  public boolean isEnabled() {
+    return enabled;
+  }
 
-    /**
-     * @param physicalColumn the phyiscalColumn to set
-     */
-    public void setPhysicalColumn(PhysicalColumn physicalColumn)
-    {
-        this.physicalColumn = physicalColumn;
-        if (physicalColumn!=null)
-        {
-            getConcept().setInheritedInterface(physicalColumn.getConcept());
-        }
-        else
-        {
-            getConcept().setInheritedInterface(null);
-        }
-    }
+  /**
+   * @param enabled
+   *          the enabled to set
+   */
+  public void setEnabled( boolean enabled ) {
+    this.enabled = enabled;
+  }
 
-    /**
-     * @return the businessTable
-     */
-    public BusinessTable getBusinessTable()
-    {
-        return businessTable;
-    }
+  /**
+   * @return the phyiscalColumn
+   */
+  public PhysicalColumn getPhysicalColumn() {
+    return physicalColumn;
+  }
 
-    /**
-     * @param businessTable the businessTable to set
-     */
-    public void setBusinessTable(BusinessTable businessTable)
-    {
-        this.businessTable = businessTable;
+  /**
+   * @param physicalColumn
+   *          the phyiscalColumn to set
+   */
+  public void setPhysicalColumn( PhysicalColumn physicalColumn ) {
+    this.physicalColumn = physicalColumn;
+    if ( physicalColumn != null ) {
+      getConcept().setInheritedInterface( physicalColumn.getConcept() );
+    } else {
+      getConcept().setInheritedInterface( null );
     }
-    
+  }
+
+  /**
+   * @return the businessTable
+   */
+  public BusinessTable getBusinessTable() {
+    return businessTable;
+  }
+
+  /**
+   * @param businessTable
+   *          the businessTable to set
+   */
+  public void setBusinessTable( BusinessTable businessTable ) {
+    this.businessTable = businessTable;
+  }
+
 }

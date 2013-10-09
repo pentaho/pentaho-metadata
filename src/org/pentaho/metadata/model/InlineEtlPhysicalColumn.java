@@ -19,11 +19,10 @@ package org.pentaho.metadata.model;
 import org.pentaho.metadata.model.concept.IConcept;
 
 /**
- * The Inline Etl column inherits from the abstract physical column, and also
- * defines a column number to get data from.
+ * The Inline Etl column inherits from the abstract physical column, and also defines a column number to get data from.
  * 
  * @author Will Gorman (wgorman@pentaho.com)
- *
+ * 
  */
 public class InlineEtlPhysicalColumn extends AbstractPhysicalColumn {
 
@@ -31,32 +30,32 @@ public class InlineEtlPhysicalColumn extends AbstractPhysicalColumn {
 
   public static final String COLUMN_NUMBER = "column_number"; //$NON-NLS-1$
   public static final String FIELD_NAME = "field_name"; //$NON-NLS-1$
-  
+
   private InlineEtlPhysicalTable table;
 
   public InlineEtlPhysicalColumn() {
     super();
   }
-  
+
   @Override
   public IConcept getParent() {
     return table;
   }
-  
-  public void setTable(InlineEtlPhysicalTable table) {
+
+  public void setTable( InlineEtlPhysicalTable table ) {
     this.table = table;
   }
-  
+
   public InlineEtlPhysicalTable getPhysicalTable() {
     return table;
   }
-  
+
   public String getFieldName() {
-    return (String)getProperty(FIELD_NAME);
+    return (String) getProperty( FIELD_NAME );
   }
-  
-  public void setFieldName(String fieldName) {
-    setProperty(FIELD_NAME, fieldName);
+
+  public void setFieldName( String fieldName ) {
+    setProperty( FIELD_NAME, fieldName );
   }
 
 }

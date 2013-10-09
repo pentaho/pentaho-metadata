@@ -15,78 +15,66 @@
  * Copyright (c) 2006 - 2009 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.pms.schema;
-import java.util.ArrayList;
 
+import java.util.ArrayList;
 
 /**
  * @deprecated as of metadata 3.0.
  */
-public class SelectionGroup
-{
-	private String         name; 
-	private SelectionGroup parent;
-	private String         description;
-	private ArrayList      selectionGroups;
-	private ArrayList      selectionFields;
-	
-	public SelectionGroup(String name, SelectionGroup parent)
-	{
-		clear();
-		
-		this.name  = name;
-		this.parent = parent;		
-	}
+public class SelectionGroup {
+  private String name;
+  private SelectionGroup parent;
+  private String description;
+  private ArrayList selectionGroups;
+  private ArrayList selectionFields;
 
-	public SelectionGroup(String name)
-	{
-		this(name, null);
-	}
-	
-	public void clear()
-	{
-		name = ""; //$NON-NLS-1$
-		parent = null;
-		selectionGroups = new ArrayList();
-		selectionFields = new ArrayList();
-	}
-	
-	public void setName(String name)
-	{
-		this.name = name;
-	}
+  public SelectionGroup( String name, SelectionGroup parent ) {
+    clear();
 
-	public String getName()
-	{
-		return name;
-	}
-	
-	public String getDescription()
-	{
-		return description;
-	}
+    this.name = name;
+    this.parent = parent;
+  }
 
-	public void setDescription(String desc)
-	{
-		this.description = desc;
-	}
-	
-	public void setParent(SelectionGroup parent)
-	{
-		this.parent = parent;
-	}
-	
-	public SelectionGroup getParent()
-	{
-		return parent;
-	}
+  public SelectionGroup( String name ) {
+    this( name, null );
+  }
 
-    public ArrayList getSelectionFields()
-    {
-        return selectionFields;
-    }
-    
-    public ArrayList getSelectionGroups()
-    {
-        return selectionGroups;
-    }
+  public void clear() {
+    name = ""; //$NON-NLS-1$
+    parent = null;
+    selectionGroups = new ArrayList();
+    selectionFields = new ArrayList();
+  }
+
+  public void setName( String name ) {
+    this.name = name;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription( String desc ) {
+    this.description = desc;
+  }
+
+  public void setParent( SelectionGroup parent ) {
+    this.parent = parent;
+  }
+
+  public SelectionGroup getParent() {
+    return parent;
+  }
+
+  public ArrayList getSelectionFields() {
+    return selectionFields;
+  }
+
+  public ArrayList getSelectionGroups() {
+    return selectionGroups;
+  }
 }

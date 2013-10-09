@@ -18,32 +18,32 @@ package org.pentaho.pms.mql.dialect;
 
 /**
  * MS Access implementation of Metadata SQL Dialect
- *  
+ * 
  * @author Will Gorman (wgorman@pentaho.org)
- *
+ * 
  */
 public class MSAccessDialect extends DefaultSQLDialect {
 
   private static final String TOP_KEYWORD = "TOP"; //$NON-NLS-1$
-  
+
   /**
    * constructor
    */
   public MSAccessDialect() {
-    super("MSACCESS"); //$NON-NLS-1$
+    super( "MSACCESS" ); //$NON-NLS-1$
   }
 
   /**
    * return MS Access formatsted date, #MM/DD/YYYY#
    * 
-   * @param year 
+   * @param year
    * @param month
    * @param day
    * 
    * @return date string
    */
-  public String getDateSQL(int year, int month, int day) {
-    return "#" + displayAsTwoOrMoreDigits(month) + "/" + displayAsTwoOrMoreDigits(day) + "/" + year + "#"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+  public String getDateSQL( int year, int month, int day ) {
+    return "#" + displayAsTwoOrMoreDigits( month ) + "/" + displayAsTwoOrMoreDigits( day ) + "/" + year + "#"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
   }
 
   /**
@@ -60,10 +60,8 @@ public class MSAccessDialect extends DefaultSQLDialect {
   }
 
   @Override
-  protected void generateSelectPredicate(SQLQueryModel query, StringBuilder sql) {
-    generateTopAfterDistinct(query, sql, TOP_KEYWORD);
+  protected void generateSelectPredicate( SQLQueryModel query, StringBuilder sql ) {
+    generateTopAfterDistinct( query, sql, TOP_KEYWORD );
   }
-
-
 
 }

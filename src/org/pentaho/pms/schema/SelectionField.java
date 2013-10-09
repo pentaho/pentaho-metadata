@@ -21,51 +21,42 @@ package org.pentaho.pms.schema;
  * 
  * @deprecated as of metadata 3.0.
  */
-public class SelectionField
-{
-	private String name; 
-	private PhysicalColumn field;
-	private SelectionGroup group;
-	
-	public SelectionField(String name, PhysicalColumn field, SelectionGroup group)
-	{
-		this.name = name;
-		this.field = field;
-		this.group = group;
-	}
+public class SelectionField {
+  private String name;
+  private PhysicalColumn field;
+  private SelectionGroup group;
 
-	public SelectionField(String name, PhysicalColumn field)
-	{
-		this(name, field, null);
-	}
-	
-	public void setName(String name)
-	{
-		this.name = name;
-	}
-	
-	public String getName()
-	{
-		return name;
-	}
-	
-	public void setField(PhysicalColumn field)
-	{
-		this.field = field;
-	}
-	
-	public PhysicalColumn getField()
-	{
-		return field;
-	}
-	
-	public void setGroup(SelectionGroup group)
-	{
-		this.group = group;
-	}
-	
-	public SelectionGroup getGroup()
-	{
-		return group;
-	}
+  public SelectionField( String name, PhysicalColumn field, SelectionGroup group ) {
+    this.name = name;
+    this.field = field;
+    this.group = group;
+  }
+
+  public SelectionField( String name, PhysicalColumn field ) {
+    this( name, field, null );
+  }
+
+  public void setName( String name ) {
+    this.name = name;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setField( PhysicalColumn field ) {
+    this.field = field;
+  }
+
+  public PhysicalColumn getField() {
+    return field;
+  }
+
+  public void setGroup( SelectionGroup group ) {
+    this.group = group;
+  }
+
+  public SelectionGroup getGroup() {
+    return group;
+  }
 }

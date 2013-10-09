@@ -16,7 +16,6 @@
  */
 package org.pentaho.pms.mql.dialect;
 
-
 /**
  * Apache Hadoop Hive Implementation of Metadata SQL Dialect
  * 

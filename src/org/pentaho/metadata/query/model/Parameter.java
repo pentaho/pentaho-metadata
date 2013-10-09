@@ -24,32 +24,30 @@ import org.pentaho.metadata.model.concept.types.DataType;
  * This defines a parameter within a logical query model.
  * 
  * @author Will Gorman (wgorman@pentaho.com)
- *
+ * 
  */
 public class Parameter implements Serializable {
 
-  
-  
   private static final long serialVersionUID = -1562891705335709848L;
 
   private String name;
   private DataType type;
   private Object defaultValue;
-  
-  public Parameter(String name, DataType type, Object defaultValue) {
+
+  public Parameter( String name, DataType type, Object defaultValue ) {
     this.name = name;
     this.type = type;
     this.defaultValue = defaultValue;
   }
-  
+
   public String getName() {
     return name;
   }
-  
+
   public DataType getType() {
     return type;
   }
-  
+
   public Object getDefaultValue() {
     return defaultValue;
   }

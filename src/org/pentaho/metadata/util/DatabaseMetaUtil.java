@@ -20,32 +20,32 @@ import org.pentaho.di.core.database.DatabaseInterface;
 import org.pentaho.di.core.database.DatabaseMeta;
 
 /**
- * This utility class handles DatabaseMeta related tasks needed by metadata layer users,
- * used today in the BI Platform metadata query component.
+ * This utility class handles DatabaseMeta related tasks needed by metadata layer users, used today in the BI Platform
+ * metadata query component.
  */
 public class DatabaseMetaUtil {
-  
-  public static DatabaseInterface getDatabaseInterface(String productName) {
-    
-    if (productName == null) {
+
+  public static DatabaseInterface getDatabaseInterface( String productName ) {
+
+    if ( productName == null ) {
       return null;
     }
-  
+
     productName = productName.toLowerCase();
-  
+
     // special case to map hsql to hypersonic
-    if (productName.indexOf("hsql") >= 0) { //$NON-NLS-1$
+    if ( productName.indexOf( "hsql" ) >= 0 ) { //$NON-NLS-1$
       productName = "hypersonic"; //$NON-NLS-1$
     }
-  
+
     // look through all available database dialects for a match
-    for (int i = 0; i < DatabaseMeta.getDatabaseInterfaces().length; i++) {
+    for ( int i = 0; i < DatabaseMeta.getDatabaseInterfaces().length; i++ ) {
       String typeDesc = DatabaseMeta.getDatabaseInterfaces()[i].getPluginId().toLowerCase();
-      if (productName.indexOf(typeDesc) >= 0) {
+      if ( productName.indexOf( typeDesc ) >= 0 ) {
         return DatabaseMeta.getDatabaseInterfaces()[i];
       }
     }
-    
+
     return null;
   }
 }

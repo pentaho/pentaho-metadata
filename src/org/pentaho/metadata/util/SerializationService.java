@@ -16,11 +16,8 @@
  */
 package org.pentaho.metadata.util;
 
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 
 import org.pentaho.metadata.model.Domain;
 
@@ -29,41 +26,41 @@ import com.thoughtworks.xstream.io.StreamException;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 public class SerializationService {
-  
-  public String serializeDomain(Domain domain) {
-    
-    XStream xstream = new XStream(new DomDriver());  //$NON-NLS-1$
-    return xstream.toXML(domain);
+
+  public String serializeDomain( Domain domain ) {
+
+    XStream xstream = new XStream( new DomDriver() ); //$NON-NLS-1$
+    return xstream.toXML( domain );
   }
-  
-  public void serializeDomain(Domain domain, OutputStream out) {
-    XStream xstream = new XStream(new DomDriver());  //$NON-NLS-1$
-    xstream.toXML(domain, out);
+
+  public void serializeDomain( Domain domain, OutputStream out ) {
+    XStream xstream = new XStream( new DomDriver() ); //$NON-NLS-1$
+    xstream.toXML( domain, out );
   }
-  
-  public Domain deserializeDomain(String xml) {
-    
-    try{
-      XStream xstream = new XStream(new DomDriver());  //$NON-NLS-1$
-      return (Domain)xstream.fromXML(xml);
-    } catch(StreamException e){
+
+  public Domain deserializeDomain( String xml ) {
+
+    try {
+      XStream xstream = new XStream( new DomDriver() ); //$NON-NLS-1$
+      return (Domain) xstream.fromXML( xml );
+    } catch ( StreamException e ) {
       // try to load ASCII. This addresses sample domains being mixed with customer created ones in
       // a different encoding.
-      XStream xstream = new XStream(new DomDriver("ISO-8859-1")); //$NON-NLS-1$
-      return (Domain)xstream.fromXML(xml);
+      XStream xstream = new XStream( new DomDriver( "ISO-8859-1" ) ); //$NON-NLS-1$
+      return (Domain) xstream.fromXML( xml );
     }
   }
-  
-  public Domain deserializeDomain(InputStream stream) {
-    
-    try{
-      XStream xstream = new XStream(new DomDriver());  //$NON-NLS-1$
-      return (Domain)xstream.fromXML(stream);
-    } catch(StreamException e){
+
+  public Domain deserializeDomain( InputStream stream ) {
+
+    try {
+      XStream xstream = new XStream( new DomDriver() ); //$NON-NLS-1$
+      return (Domain) xstream.fromXML( stream );
+    } catch ( StreamException e ) {
       // try to load ASCII. This addresses sample domains being mixed with customer created ones in
       // a different encoding.
-      XStream xstream = new XStream(new DomDriver("ISO-8859-1")); 
-      return (Domain)xstream.fromXML(stream);
+      XStream xstream = new XStream( new DomDriver( "ISO-8859-1" ) );
+      return (Domain) xstream.fromXML( stream );
     }
   }
 

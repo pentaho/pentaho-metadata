@@ -21,34 +21,37 @@ package org.pentaho.metadata.datatable;
 
 /**
  * An object that stores the @see Cell objects for a row in a @see DataTable
+ * 
  * @author jamesdixon
- *
+ * 
  */
 public class Row {
 
-	private Cell c[];
+  private Cell[] c;
 
-	public Row() {
-	}
-	
-	public Row( Cell cells[] ) {
-		c = cells;
-	}
+  public Row() {
+  }
 
-	/**
-	 * Returns the @see cell objects for this row
-	 * @return
-	 */
-	public Cell[] getc() {
-		return c;
-	}
+  public Row( Cell[] cells ) {
+    c = cells;
+  }
 
-	/**
-	 * Sets the cells for this row
-	 * @param c
-	 */
-	public void setc(Cell[] c) {
-		this.c = c;
-	}
+  /**
+   * Returns the @see cell objects for this row
+   * 
+   * @return
+   */
+  public Cell[] getc() {
+    return c;
+  }
+
+  /**
+   * Sets the cells for this row
+   * 
+   * @param c
+   */
+  public void setc( Cell[] c ) {
+    this.c = c;
+  }
 
 }

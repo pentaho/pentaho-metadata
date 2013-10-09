@@ -28,7 +28,7 @@ public class OlapHierarchyLevel implements Cloneable, Serializable {
                                          // of-course.
   private LogicalColumn referenceOrdinalColumn;
   private LogicalColumn referenceCaptionColumn;
-  
+
   private List<LogicalColumn> logicalColumns;
   private boolean havingUniqueMembers;
   private String levelType;
@@ -37,11 +37,11 @@ public class OlapHierarchyLevel implements Cloneable, Serializable {
 
   private OlapHierarchy olapHierarchy;
 
-  public OlapHierarchyLevel(){
-    
+  public OlapHierarchyLevel() {
+
   }
 
-  public OlapHierarchyLevel(OlapHierarchy olapHierarchy) {
+  public OlapHierarchyLevel( OlapHierarchy olapHierarchy ) {
     super();
     this.olapHierarchy = olapHierarchy;
     logicalColumns = new ArrayList<LogicalColumn>();
@@ -53,51 +53,50 @@ public class OlapHierarchyLevel implements Cloneable, Serializable {
    * @param referenceColumn
    * @param logicalColumns
    */
-  public OlapHierarchyLevel(OlapHierarchy olapHierarchy, String name, LogicalColumn referenceColumn,
-      List<LogicalColumn> logicalColumns) {
-    this(olapHierarchy);
+  public OlapHierarchyLevel( OlapHierarchy olapHierarchy, String name, LogicalColumn referenceColumn,
+      List<LogicalColumn> logicalColumns ) {
+    this( olapHierarchy );
     this.name = name;
     this.referenceColumn = referenceColumn;
     this.logicalColumns = logicalColumns;
     this.annotations = new ArrayList<OlapAnnotation>();
   }
 
-  public OlapHierarchyLevel(OlapHierarchy olapHierarchy, String name, LogicalColumn referenceColumn,
-      List<LogicalColumn> logicalColumns, List<OlapAnnotation> annotations) {
-    this(olapHierarchy);
+  public OlapHierarchyLevel( OlapHierarchy olapHierarchy, String name, LogicalColumn referenceColumn,
+      List<LogicalColumn> logicalColumns, List<OlapAnnotation> annotations ) {
+    this( olapHierarchy );
     this.name = name;
     this.referenceColumn = referenceColumn;
     this.logicalColumns = logicalColumns;
     this.annotations = annotations;
   }
 
-
   public Object clone() {
     // weak link again to the parent
-    OlapHierarchyLevel hierarchyLevel = new OlapHierarchyLevel(olapHierarchy);
+    OlapHierarchyLevel hierarchyLevel = new OlapHierarchyLevel( olapHierarchy );
 
     hierarchyLevel.name = name;
     hierarchyLevel.levelType = levelType;
-    if (referenceColumn != null) {
+    if ( referenceColumn != null ) {
       hierarchyLevel.referenceColumn = (LogicalColumn) referenceColumn.clone();
     }
-    if (referenceOrdinalColumn != null) {
+    if ( referenceOrdinalColumn != null ) {
       hierarchyLevel.referenceOrdinalColumn = (LogicalColumn) referenceOrdinalColumn.clone();
     }
-    if (referenceCaptionColumn != null) {
+    if ( referenceCaptionColumn != null ) {
       hierarchyLevel.referenceCaptionColumn = (LogicalColumn) referenceCaptionColumn.clone();
     }
-    for (int i = 0; i < logicalColumns.size(); i++) {
-      LogicalColumn logicalColumn = (LogicalColumn) logicalColumns.get(i);
-      hierarchyLevel.logicalColumns.add((LogicalColumn) logicalColumn.clone());
+    for ( int i = 0; i < logicalColumns.size(); i++ ) {
+      LogicalColumn logicalColumn = (LogicalColumn) logicalColumns.get( i );
+      hierarchyLevel.logicalColumns.add( (LogicalColumn) logicalColumn.clone() );
     }
     hierarchyLevel.havingUniqueMembers = havingUniqueMembers;
 
     return hierarchyLevel;
   }
 
-  public boolean equals(Object obj) {
-    return name.equals(((OlapHierarchyLevel) obj).getName());
+  public boolean equals( Object obj ) {
+    return name.equals( ( (OlapHierarchyLevel) obj ).getName() );
   }
 
   /**
@@ -111,7 +110,7 @@ public class OlapHierarchyLevel implements Cloneable, Serializable {
    * @param logicalColumns
    *          the logicalColumns to set
    */
-  public void setLogicalColumns(List<LogicalColumn> logicalColumns) {
+  public void setLogicalColumns( List<LogicalColumn> logicalColumns ) {
     this.logicalColumns = logicalColumns;
   }
 
@@ -126,7 +125,7 @@ public class OlapHierarchyLevel implements Cloneable, Serializable {
    * @param name
    *          the name to set
    */
-  public void setName(String name) {
+  public void setName( String name ) {
     this.name = name;
   }
 
@@ -141,8 +140,8 @@ public class OlapHierarchyLevel implements Cloneable, Serializable {
    * @param levelType
    *          the name to set
    */
-  public void setLevelType(String levelType) {
-    this.levelType= levelType;
+  public void setLevelType( String levelType ) {
+    this.levelType = levelType;
   }
 
   /**
@@ -156,7 +155,7 @@ public class OlapHierarchyLevel implements Cloneable, Serializable {
    * @param referenceColumn
    *          the referenceColumn to set
    */
-  public void setReferenceColumn(LogicalColumn referenceColumn) {
+  public void setReferenceColumn( LogicalColumn referenceColumn ) {
     this.referenceColumn = referenceColumn;
   }
 
@@ -171,10 +170,10 @@ public class OlapHierarchyLevel implements Cloneable, Serializable {
    * @param referenceOrdinalColumn
    *          the referenceOrdinalColumn to set
    */
-  public void setReferenceOrdinalColumn(LogicalColumn referenceOrdinalColumn) {
+  public void setReferenceOrdinalColumn( LogicalColumn referenceOrdinalColumn ) {
     this.referenceOrdinalColumn = referenceOrdinalColumn;
   }
-  
+
   /**
    * @return the referenceCaptionColumn
    */
@@ -186,18 +185,20 @@ public class OlapHierarchyLevel implements Cloneable, Serializable {
    * @param referenceCaptionColumn
    *          the referenceCaptionColumn to set
    */
-  public void setReferenceCaptionColumn(LogicalColumn referenceCaptionColumn) {
+  public void setReferenceCaptionColumn( LogicalColumn referenceCaptionColumn ) {
     this.referenceCaptionColumn = referenceCaptionColumn;
   }
 
-  public LogicalColumn findLogicalColumn(String locale, String thisName) {
-    if (referenceColumn != null && referenceColumn.getName(locale).equalsIgnoreCase(thisName))
+  public LogicalColumn findLogicalColumn( String locale, String thisName ) {
+    if ( referenceColumn != null && referenceColumn.getName( locale ).equalsIgnoreCase( thisName ) ) {
       return referenceColumn;
+    }
 
-    for (int i = 0; i < logicalColumns.size(); i++) {
-      LogicalColumn column = (LogicalColumn) logicalColumns.get(i);
-      if (column.getName(locale).equalsIgnoreCase(thisName))
+    for ( int i = 0; i < logicalColumns.size(); i++ ) {
+      LogicalColumn column = (LogicalColumn) logicalColumns.get( i );
+      if ( column.getName( locale ).equalsIgnoreCase( thisName ) ) {
         return column;
+      }
     }
     return null;
   }
@@ -213,7 +214,7 @@ public class OlapHierarchyLevel implements Cloneable, Serializable {
    * @param olapHierarchy
    *          the olapHierarchy to set
    */
-  public void setOlapHierarchy(OlapHierarchy olapHierarchy) {
+  public void setOlapHierarchy( OlapHierarchy olapHierarchy ) {
     this.olapHierarchy = olapHierarchy;
   }
 
@@ -228,18 +229,18 @@ public class OlapHierarchyLevel implements Cloneable, Serializable {
    * @param havingUniqueMembers
    *          the havingUniqueMembers to set
    */
-  public void setHavingUniqueMembers(boolean havingUniqueMembers) {
+  public void setHavingUniqueMembers( boolean havingUniqueMembers ) {
     this.havingUniqueMembers = havingUniqueMembers;
   }
 
   public List<OlapAnnotation> getAnnotations() {
-    if(annotations == null) {
+    if ( annotations == null ) {
       annotations = new ArrayList<OlapAnnotation>();
     }
     return annotations;
   }
 
-  public void setAnnotations(List<OlapAnnotation> annotations) {
+  public void setAnnotations( List<OlapAnnotation> annotations ) {
     this.annotations = annotations;
   }
 }

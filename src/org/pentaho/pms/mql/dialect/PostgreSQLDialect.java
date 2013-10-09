@@ -21,41 +21,44 @@ import org.pentaho.reporting.libraries.formula.lvalues.FormulaFunction;
 
 /**
  * PostgreSQL Implementation of Metadata SQL Dialect
- *  
+ * 
  * @author Will Gorman (wgorman@pentaho.org)
- *
+ * 
  */
 public class PostgreSQLDialect extends DefaultSQLDialect {
-  
+
   public PostgreSQLDialect() {
-    super("POSTGRESQL"); //$NON-NLS-1$
-    
-    // oracle specific date functions 
-    supportedFunctions.put("NOW", new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_FUNCTION, "now", 0) { //$NON-NLS-1$ //$NON-NLS-2$
-      public void generateFunctionSQL(FormulaTraversalInterface formula, StringBuffer sb, String locale, FormulaFunction f) throws PentahoMetadataException {
-        sb.append(sql);
-      }
-    });
+    super( "POSTGRESQL" ); //$NON-NLS-1$
+
+    // oracle specific date functions
+    supportedFunctions.put(
+        "NOW", new DefaultSQLFunctionGenerator( SQLFunctionGeneratorInterface.PARAM_FUNCTION, "now", 0 ) { //$NON-NLS-1$ //$NON-NLS-2$
+          public void generateFunctionSQL( FormulaTraversalInterface formula, StringBuffer sb, String locale,
+              FormulaFunction f ) throws PentahoMetadataException {
+            sb.append( sql );
+          }
+        } );
   }
-  
+
   /**
    * return PostgreSQL formatted date, date 'YYYY-MM-DD'
    * 
-   * @param year 
+   * @param year
    * @param month
    * @param day
    * 
    * @return date string
    */
-  public String getDateSQL(int year, int month, int day) {
+  public String getDateSQL( int year, int month, int day ) {
     return "date " + //$NON-NLS-1$
-       quoteStringLiteral(year + "-" + displayAsTwoOrMoreDigits(month) + "-" + displayAsTwoOrMoreDigits(day)); //$NON-NLS-1$ //$NON-NLS-2$
+        quoteStringLiteral( year + "-" + displayAsTwoOrMoreDigits( month ) + "-" + displayAsTwoOrMoreDigits( day ) ); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
-  public String getDateSQL(int year, int month, int day, int hour, int minute, int second, int milli) {
-    return "timestamp " +
-        quoteStringLiteral(year + "-" + displayAsTwoOrMoreDigits(month) + "-" + displayAsTwoOrMoreDigits(day) +  //$NON-NLS-1$ //$NON-NLS-2$
-        " " + displayAsTwoOrMoreDigits(hour) + ":" + displayAsTwoOrMoreDigits(minute) + ":" + displayAsTwoOrMoreDigits(second) + "." + milli);  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+  public String getDateSQL( int year, int month, int day, int hour, int minute, int second, int milli ) {
+    return "timestamp "
+        + quoteStringLiteral( year + "-" + displayAsTwoOrMoreDigits( month ) + "-" + displayAsTwoOrMoreDigits( day ) + //$NON-NLS-1$ //$NON-NLS-2$
+            " " + displayAsTwoOrMoreDigits( hour )
+            + ":" + displayAsTwoOrMoreDigits( minute ) + ":" + displayAsTwoOrMoreDigits( second ) + "." + milli ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
   }
 
   /**
@@ -66,25 +69,25 @@ public class PostgreSQLDialect extends DefaultSQLDialect {
   public int getMaxTableNameLength() {
     return 63;
   }
-  
+
   @Override
   protected String getStringConcatOperator() {
     return "||"; //$NON-NLS-1$
   }
-  
+
   // PostgreSQL the N'xxxx' notation for Unicode strings.
   public boolean supportsNLSLiteral() {
     return true;
   }
 
   @Override
-  protected void generatePostOrderBy(SQLQueryModel query, StringBuilder sql) {
-    generateLimit(query, sql); 
+  protected void generatePostOrderBy( SQLQueryModel query, StringBuilder sql ) {
+    generateLimit( query, sql );
   }
 
   @Override
-  protected void generateSelectPredicate(SQLQueryModel query, StringBuilder sql) {
-    generateDistinct(query, sql);
+  protected void generateSelectPredicate( SQLQueryModel query, StringBuilder sql ) {
+    generateDistinct( query, sql );
   }
 
 }

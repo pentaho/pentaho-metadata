@@ -19,12 +19,11 @@ package org.pentaho.metadata.model;
 import org.pentaho.metadata.model.concept.IConcept;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
 
-
 /**
  * this is the SQL implementation of physical column.
  * 
  * @author Will Gorman (wgorman@pentaho.com)
- *
+ * 
  */
 public class SqlPhysicalColumn extends AbstractPhysicalColumn {
 
@@ -37,10 +36,10 @@ public class SqlPhysicalColumn extends AbstractPhysicalColumn {
 
   public SqlPhysicalColumn() {
     super();
-    setTargetColumnType(TargetColumnType.COLUMN_NAME);
+    setTargetColumnType( TargetColumnType.COLUMN_NAME );
   }
-  
-  public SqlPhysicalColumn(SqlPhysicalTable table) {
+
+  public SqlPhysicalColumn( SqlPhysicalTable table ) {
     this();
     this.table = table;
   }
@@ -49,25 +48,25 @@ public class SqlPhysicalColumn extends AbstractPhysicalColumn {
   public IConcept getParent() {
     return table;
   }
-  
+
   public String getTargetColumn() {
-    return (String)getProperty(TARGET_COLUMN);
+    return (String) getProperty( TARGET_COLUMN );
   }
 
-  public void setTargetColumn(String targetTable) {
-    setProperty(TARGET_COLUMN, targetTable);
+  public void setTargetColumn( String targetTable ) {
+    setProperty( TARGET_COLUMN, targetTable );
   }
-  
+
   public TargetColumnType getTargetColumnType() {
-    return (TargetColumnType)getProperty(TARGET_COLUMN_TYPE);
+    return (TargetColumnType) getProperty( TARGET_COLUMN_TYPE );
   }
-  
-  public void setTargetColumnType(TargetColumnType targetTableType) {
-    setProperty(TARGET_COLUMN_TYPE, targetTableType);
+
+  public void setTargetColumnType( TargetColumnType targetTableType ) {
+    setProperty( TARGET_COLUMN_TYPE, targetTableType );
   }
 
   public IPhysicalTable getPhysicalTable() {
     return table;
   }
-  
+
 }

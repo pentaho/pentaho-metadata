@@ -20,57 +20,63 @@ import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.reporting.libraries.formula.lvalues.FormulaFunction;
 
 /**
- * DB2 Pentaho Metadata Dialect Class  
+ * DB2 Pentaho Metadata Dialect Class
  * 
  * @author Will Gorman (wgorman@pentaho.org)
  */
 public class DB2Dialect extends DefaultSQLDialect {
-  
-  public DB2Dialect() {
-    super("DB2"); //$NON-NLS-1$
-    
-    // db2 specific date functions 
-    supportedFunctions.put("NOW", new DefaultSQLFunctionGenerator(DefaultSQLFunctionGenerator.PARAM_FUNCTION, "( CURRENT DATE )", 0) { //$NON-NLS-1$ //$NON-NLS-2$
-      public void generateFunctionSQL(FormulaTraversalInterface formula, StringBuffer sb, String locale, FormulaFunction f) throws PentahoMetadataException {
-        sb.append(sql);
-      }
-    });
-    
-    // db2 specific boolean data type
-    
-    supportedFunctions.put("TRUE", new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_FUNCTION, "TRUE()", 0) { //$NON-NLS-1$ //$NON-NLS-2$
-      public void generateFunctionSQL(FormulaTraversalInterface formula, StringBuffer sb, String locale, FormulaFunction f) throws PentahoMetadataException {
-        sb.append("1=1");
-      }
-    });
 
-    supportedFunctions.put("FALSE", new DefaultSQLFunctionGenerator(SQLFunctionGeneratorInterface.PARAM_FUNCTION, "FALSE()", 0) { //$NON-NLS-1$ //$NON-NLS-2$
-      public void generateFunctionSQL(FormulaTraversalInterface formula, StringBuffer sb, String locale, FormulaFunction f) throws PentahoMetadataException {
-        sb.append("1=0");
-      }
-    });
+  public DB2Dialect() {
+    super( "DB2" ); //$NON-NLS-1$
+
+    // db2 specific date functions
+    supportedFunctions.put(
+        "NOW", new DefaultSQLFunctionGenerator( DefaultSQLFunctionGenerator.PARAM_FUNCTION, "( CURRENT DATE )", 0 ) { //$NON-NLS-1$ //$NON-NLS-2$
+          public void generateFunctionSQL( FormulaTraversalInterface formula, StringBuffer sb, String locale,
+              FormulaFunction f ) throws PentahoMetadataException {
+            sb.append( sql );
+          }
+        } );
+
+    // db2 specific boolean data type
+
+    supportedFunctions.put(
+        "TRUE", new DefaultSQLFunctionGenerator( SQLFunctionGeneratorInterface.PARAM_FUNCTION, "TRUE()", 0 ) { //$NON-NLS-1$ //$NON-NLS-2$
+          public void generateFunctionSQL( FormulaTraversalInterface formula, StringBuffer sb, String locale,
+              FormulaFunction f ) throws PentahoMetadataException {
+            sb.append( "1=1" );
+          }
+        } );
+
+    supportedFunctions.put(
+        "FALSE", new DefaultSQLFunctionGenerator( SQLFunctionGeneratorInterface.PARAM_FUNCTION, "FALSE()", 0 ) { //$NON-NLS-1$ //$NON-NLS-2$
+          public void generateFunctionSQL( FormulaTraversalInterface formula, StringBuffer sb, String locale,
+              FormulaFunction f ) throws PentahoMetadataException {
+            sb.append( "1=0" );
+          }
+        } );
   }
 
   /**
    * return DB2 formatted date, DATE('YYYY-MM-DD')
    * 
-   * @param year 
+   * @param year
    * @param month
    * @param day
    * 
    * @return date string
    */
-  public String getDateSQL(int year, int month, int day) {
+  public String getDateSQL( int year, int month, int day ) {
     return "DATE(" + //$NON-NLS-1$
-        quoteStringLiteral(year + "-" + displayAsTwoOrMoreDigits(month) + "-" + displayAsTwoOrMoreDigits(day)) + //$NON-NLS-1$ //$NON-NLS-2$
+        quoteStringLiteral( year + "-" + displayAsTwoOrMoreDigits( month ) + "-" + displayAsTwoOrMoreDigits( day ) ) + //$NON-NLS-1$ //$NON-NLS-2$
         ")"; //$NON-NLS-1$
   }
 
-  public String getDateSQL(int year, int month, int day, int hour, int minute, int second, int milli) {
-    return "TIMESTAMP(" +
-        quoteStringLiteral(""+ year + displayAsTwoOrMoreDigits(month) + displayAsTwoOrMoreDigits(day)  //$NON-NLS-1$
-        + displayAsTwoOrMoreDigits(hour) + displayAsTwoOrMoreDigits(minute) + displayAsTwoOrMoreDigits(second))  //$NON-NLS-1$
-        +")";
+  public String getDateSQL( int year, int month, int day, int hour, int minute, int second, int milli ) {
+    return "TIMESTAMP("
+        + quoteStringLiteral( "" + year + displayAsTwoOrMoreDigits( month ) + displayAsTwoOrMoreDigits( day ) //$NON-NLS-1$
+            + displayAsTwoOrMoreDigits( hour ) + displayAsTwoOrMoreDigits( minute ) + displayAsTwoOrMoreDigits( second ) ) //$NON-NLS-1$
+        + ")";
   }
 
   /**
@@ -81,24 +87,24 @@ public class DB2Dialect extends DefaultSQLDialect {
   public int getMaxTableNameLength() {
     return 30;
   }
-  
+
   @Override
   protected String getStringConcatOperator() {
     return "||"; //$NON-NLS-1$
   }
 
   @Override
-  protected void generatePostOrderBy(SQLQueryModel query, StringBuilder sql) {
-    if (query.getLimit() >= 0) {
-      sql.append(" FETCH FIRST "); //$NON-NLS-1$
-      sql.append(query.getLimit());
-      sql.append(" ROWS ONLY "); //$NON-NLS-1$
+  protected void generatePostOrderBy( SQLQueryModel query, StringBuilder sql ) {
+    if ( query.getLimit() >= 0 ) {
+      sql.append( " FETCH FIRST " ); //$NON-NLS-1$
+      sql.append( query.getLimit() );
+      sql.append( " ROWS ONLY " ); //$NON-NLS-1$
     }
   }
-  
+
   @Override
-  protected void generateSelectPredicate(SQLQueryModel query, StringBuilder sql) {
-    generateDistinct(query, sql);
+  protected void generateSelectPredicate( SQLQueryModel query, StringBuilder sql ) {
+    generateDistinct( query, sql );
   }
-  
+
 }

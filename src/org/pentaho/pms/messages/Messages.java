@@ -26,65 +26,66 @@ import java.util.ResourceBundle;
 import org.pentaho.pms.messages.util.LocaleHelper;
 
 /**
- * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.messages.Messages
+ * @deprecated as of metadata 3.0. Please use org.pentaho.metadata.messages.Messages
  */
 public class Messages {
-    private static final String BUNDLE_NAME = "org.pentaho.pms.locale.messages";//$NON-NLS-1$
+  private static final String BUNDLE_NAME = "org.pentaho.pms.locale.messages";//$NON-NLS-1$
 
-    private static final Map<Locale,ResourceBundle> locales = Collections.synchronizedMap(new HashMap<Locale,ResourceBundle>());
+  private static final Map<Locale, ResourceBundle> locales = Collections
+      .synchronizedMap( new HashMap<Locale, ResourceBundle>() );
 
-    protected static Map<Locale,ResourceBundle> getLocales() {
-        return locales;
+  protected static Map<Locale, ResourceBundle> getLocales() {
+    return locales;
+  }
+
+  private static ResourceBundle getBundle() {
+    Locale locale = LocaleHelper.getLocale();
+    ResourceBundle bundle = (ResourceBundle) locales.get( locale );
+    if ( bundle == null ) {
+      bundle = ResourceBundle.getBundle( BUNDLE_NAME, locale );
+      locales.put( locale, bundle );
     }
+    return bundle;
+  }
 
-    private static ResourceBundle getBundle() {
-        Locale locale = LocaleHelper.getLocale();
-        ResourceBundle bundle = (ResourceBundle) locales.get(locale);
-        if (bundle == null) {
-            bundle = ResourceBundle.getBundle(BUNDLE_NAME, locale);
-            locales.put(locale, bundle);
-        }
-        return bundle;
+  public static String getString( String key ) {
+    try {
+      return getBundle().getString( key );
+    } catch ( MissingResourceException e ) {
+      return '!' + key + '!';
     }
+  }
 
-    public static String getString(String key) {
-        try {
-            return getBundle().getString(key);
-        } catch (MissingResourceException e) {
-            return '!' + key + '!';
-        }
-    }
+  public static String getString( String key, String param1 ) {
+    return MessageUtil.getString( getBundle(), key, param1 );
+  }
 
-    public static String getString(String key, String param1) {
-        return MessageUtil.getString(getBundle(), key, param1);
-    }
+  public static String getString( String key, String param1, String param2 ) {
+    return MessageUtil.getString( getBundle(), key, param1, param2 );
+  }
 
-    public static String getString(String key, String param1, String param2) {
-        return MessageUtil.getString(getBundle(), key, param1, param2);
-    }
+  public static String getString( String key, String param1, String param2, String param3 ) {
+    return MessageUtil.getString( getBundle(), key, param1, param2, param3 );
+  }
 
-    public static String getString(String key, String param1, String param2, String param3) {
-        return MessageUtil.getString(getBundle(), key, param1, param2, param3);
-    }
+  public static String getString( String key, String param1, String param2, String param3, String param4 ) {
+    return MessageUtil.getString( getBundle(), key, param1, param2, param3, param4 );
+  }
 
-    public static String getString(String key, String param1, String param2, String param3, String param4) {
-        return MessageUtil.getString(getBundle(), key, param1, param2, param3, param4);
-    }
+  public static String getErrorString( String key ) {
+    return MessageUtil.formatErrorMessage( key, getString( key ) );
+  }
 
-    public static String getErrorString(String key) {
-        return MessageUtil.formatErrorMessage(key, getString(key));
-    }
+  public static String getErrorString( String key, String param1 ) {
+    return MessageUtil.getErrorString( getBundle(), key, param1 );
+  }
 
-    public static String getErrorString(String key, String param1) {
-        return MessageUtil.getErrorString(getBundle(), key, param1);
-    }
+  public static String getErrorString( String key, String param1, String param2 ) {
+    return MessageUtil.getErrorString( getBundle(), key, param1, param2 );
+  }
 
-    public static String getErrorString(String key, String param1, String param2) {
-        return MessageUtil.getErrorString(getBundle(), key, param1, param2);
-    }
-
-    public static String getErrorString(String key, String param1, String param2, String param3) {
-        return MessageUtil.getErrorString(getBundle(), key, param1, param2, param3);
-    }
+  public static String getErrorString( String key, String param1, String param2, String param3 ) {
+    return MessageUtil.getErrorString( getBundle(), key, param1, param2, param3 );
+  }
 
 }

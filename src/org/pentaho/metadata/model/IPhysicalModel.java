@@ -24,13 +24,13 @@ import org.pentaho.metadata.model.concept.IConcept;
  * This interface defines the API for all physical models.
  * 
  * @author Will Gorman (wgorman@pentaho.com)
- *
+ * 
  */
 public interface IPhysicalModel extends IConcept {
   public List<? extends IPhysicalTable> getPhysicalTables();
-  
+
   public String getQueryExecName();
-  
+
   public String getDefaultQueryClassname();
-  
+
 }
