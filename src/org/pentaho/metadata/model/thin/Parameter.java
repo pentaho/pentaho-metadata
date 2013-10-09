@@ -16,69 +16,70 @@
  * 
  * Created Jan, 2011
  * @author jdixon
-*/
+ */
 package org.pentaho.metadata.model.thin;
 
 import java.io.Serializable;
 
 /**
  * Concrete, lightweight, serializable object that holds information about parameters
+ * 
  * @author jamesdixon
- *
+ * 
  */
 public class Parameter implements Serializable {
-  
+
   private static final long serialVersionUID = -3581457277760183764L;
   private String elementId;
   private String name;
   private String type;
-  private String defaultValue[];
-  private String value[];
-  
+  private String[] defaultValue;
+  private String[] value;
+
   public Parameter() {
   }
-  
+
   public String getType() {
     return type;
   }
-  
+
   public String[] getDefaultValue() {
     return defaultValue;
   }
 
-  public void setType(String type) {
+  public void setType( String type ) {
     this.type = type;
   }
 
-  public void setDefaultValue(String defaultValue[]) {
+  public void setDefaultValue( String[] defaultValue ) {
     this.defaultValue = defaultValue;
   }
 
   public String getElementId() {
-	return elementId;
+    return elementId;
   }
 
-  public void setElementId(String elementId) {
-	this.elementId = elementId;
+  public void setElementId( String elementId ) {
+    this.elementId = elementId;
   }
 
-public String getName() {
+  public String getName() {
     return name;
   }
 
-  public void setName(String name) {
+  public void setName( String name ) {
     this.name = name;
   }
 
   public String[] getValue() {
-    if( value != null ) {
+    if ( value != null ) {
       return value;
     } else {
       return defaultValue;
     }
   }
 
-  public void setValue(String value[]) {
+  public void setValue( String[] value ) {
     this.value = value;
   }
 

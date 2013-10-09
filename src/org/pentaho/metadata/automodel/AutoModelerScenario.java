@@ -60,8 +60,8 @@ public class AutoModelerScenario {
 
     // end of A: Create the database meta object
     //
-    DatabaseMeta databaseMeta = new DatabaseMeta(databaseName, databaseType, "JDBC", hostname, databaseName, port,
-        username, password);
+    DatabaseMeta databaseMeta =
+        new DatabaseMeta( databaseName, databaseType, "JDBC", hostname, databaseName, port, username, password );
 
     // ////////////////////////////////////////////////////////////
     //
@@ -70,9 +70,9 @@ public class AutoModelerScenario {
     //
     // B1: look in the database...
     //
-    DatabaseMetaInformation dmi = new DatabaseMetaInformation(databaseMeta);
-    dmi.getData(new LoggingObject("Auto Modeler"), null); // reads the metadata from the database, optional
-                       // progress monitor (TODO: roll our own progress monitor)
+    DatabaseMetaInformation dmi = new DatabaseMetaInformation( databaseMeta );
+    dmi.getData( new LoggingObject( "Auto Modeler" ), null ); // reads the metadata from the database, optional
+    // progress monitor (TODO: roll our own progress monitor)
 
     // B2: optionally allow the user to select a schema
     //
@@ -88,14 +88,15 @@ public class AutoModelerScenario {
 
     // B4 : the user selects a set of tables
     //
-    SchemaTable[] schemaTables = new SchemaTable[] { new SchemaTable("dwh", "d_customer"),
-        new SchemaTable("dwh", "d_product"), new SchemaTable("dwh", "d_date"), new SchemaTable("dwh", "f_orderlines"), };
+    SchemaTable[] schemaTables =
+        new SchemaTable[] { new SchemaTable( "dwh", "d_customer" ), new SchemaTable( "dwh", "d_product" ),
+          new SchemaTable( "dwh", "d_date" ), new SchemaTable( "dwh", "f_orderlines" ), };
 
     // ////////////////////////////////////////////////////////////
     //
     // C) we create the modeler object and generate the schema
     //
-    AutoModeler modeler = new AutoModeler("en_US", "Orders", databaseMeta, schemaTables);
+    AutoModeler modeler = new AutoModeler( "en_US", "Orders", databaseMeta, schemaTables );
     Domain domain = modeler.generateDomain(); // throws exception
 
     // ////////////////////////////////////////////////////////////
@@ -104,37 +105,37 @@ public class AutoModelerScenario {
     // and columns as well as the business tables and columns.
     // Let's ask the user for the join definitions
     //
-    LogicalModel model = domain.getLogicalModels().get(0);
+    LogicalModel model = domain.getLogicalModels().get( 0 );
 
-    for (int i = 0; i < model.getLogicalTables().size(); i++) {
-      LogicalTable leftTable = model.getLogicalTables().get(i);
+    for ( int i = 0; i < model.getLogicalTables().size(); i++ ) {
+      LogicalTable leftTable = model.getLogicalTables().get( i );
 
       // Present this table to the user and ask for a selection of a second
       // table...
       // The list is assembled like this:
       //
       List<LogicalTable> tables = new ArrayList<LogicalTable>();
-      for (int t = 0; t < model.getLogicalTables().size(); t++) {
-        LogicalTable table = model.getLogicalTables().get(t);
-        if (leftTable != table) {
-          tables.add(table);
+      for ( int t = 0; t < model.getLogicalTables().size(); t++ ) {
+        LogicalTable table = model.getLogicalTables().get( t );
+        if ( leftTable != table ) {
+          tables.add( table );
         }
       }
 
       // Ask the user to make the selection (or SKIP the table!!)
       //
-      LogicalTable rightTable = (LogicalTable) tables.get(0); // for example
+      LogicalTable rightTable = (LogicalTable) tables.get( 0 ); // for example
 
       // Then list the columns and ask the user to pick 2 columns
       //
-      LogicalColumn leftColumn = leftTable.getLogicalColumns().get(0); // for
-                                                                       // example
-      LogicalColumn rightColumn = rightTable.getLogicalColumns().get(0); // for
+      LogicalColumn leftColumn = leftTable.getLogicalColumns().get( 0 ); // for
                                                                          // example
+      LogicalColumn rightColumn = rightTable.getLogicalColumns().get( 0 ); // for
+                                                                           // example
 
       // We can add the join to the list...
       //
-      model.addLogicalRelationship(new LogicalRelationship(model, leftTable, rightTable, leftColumn, rightColumn));
+      model.addLogicalRelationship( new LogicalRelationship( model, leftTable, rightTable, leftColumn, rightColumn ) );
     }
 
     // ////////////////////////////////////////////////////////////

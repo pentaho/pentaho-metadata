@@ -37,13 +37,13 @@ public class OlapHierarchy implements Cloneable, Serializable {
   // http://mondrian.pentaho.org/documentation/schema.php#The_all_member
   // TODO: add allLevelName property
   // http://mondrian.pentaho.org/documentation/schema.php#The_all_member
-  // 
+  //
 
-  public OlapHierarchy(){
-    
+  public OlapHierarchy() {
+
   }
 
-  public OlapHierarchy(OlapDimension olapDimension) {
+  public OlapHierarchy( OlapDimension olapDimension ) {
     super();
     this.olapDimension = olapDimension;
     hierarchyLevels = new ArrayList<OlapHierarchyLevel>();
@@ -54,33 +54,35 @@ public class OlapHierarchy implements Cloneable, Serializable {
    * @param name
    * @param hierarchyLevels
    */
-  public OlapHierarchy(OlapDimension olapDimension, String name, List<OlapHierarchyLevel> hierarchyLevels) {
-    this(olapDimension);
+  public OlapHierarchy( OlapDimension olapDimension, String name, List<OlapHierarchyLevel> hierarchyLevels ) {
+    this( olapDimension );
     this.name = name;
     this.hierarchyLevels = hierarchyLevels;
   }
 
   public Object clone() {
-    OlapHierarchy hierarchy = new OlapHierarchy(olapDimension); // weak
-                                                                // reference, no
-                                                                // hard copy
+    OlapHierarchy hierarchy = new OlapHierarchy( olapDimension ); // weak
+                                                                  // reference, no
+                                                                  // hard copy
 
     hierarchy.name = name;
-    if (logicalTable != null)
+    if ( logicalTable != null ) {
       hierarchy.logicalTable = (LogicalTable) logicalTable.clone();
-    if (primaryKey != null)
+    }
+    if ( primaryKey != null ) {
       hierarchy.primaryKey = (LogicalColumn) primaryKey.clone();
-    for (int i = 0; i < hierarchyLevels.size(); i++) {
-      OlapHierarchyLevel hierarchyLevel = (OlapHierarchyLevel) hierarchyLevels.get(i);
-      hierarchy.hierarchyLevels.add((OlapHierarchyLevel) hierarchyLevel.clone());
+    }
+    for ( int i = 0; i < hierarchyLevels.size(); i++ ) {
+      OlapHierarchyLevel hierarchyLevel = (OlapHierarchyLevel) hierarchyLevels.get( i );
+      hierarchy.hierarchyLevels.add( (OlapHierarchyLevel) hierarchyLevel.clone() );
     }
     hierarchy.havingAll = havingAll;
 
     return hierarchy;
   }
 
-  public boolean equals(Object obj) {
-    return name.equals(((OlapHierarchy) obj).getName());
+  public boolean equals( Object obj ) {
+    return name.equals( ( (OlapHierarchy) obj ).getName() );
   }
 
   /**
@@ -94,7 +96,7 @@ public class OlapHierarchy implements Cloneable, Serializable {
    * @param hierarchyLevels
    *          the hierarchyLevels to set
    */
-  public void setHierarchyLevels(List<OlapHierarchyLevel> hierarchyLevels) {
+  public void setHierarchyLevels( List<OlapHierarchyLevel> hierarchyLevels ) {
     this.hierarchyLevels = hierarchyLevels;
   }
 
@@ -109,7 +111,7 @@ public class OlapHierarchy implements Cloneable, Serializable {
    * @param name
    *          the name to set
    */
-  public void setName(String name) {
+  public void setName( String name ) {
     this.name = name;
   }
 
@@ -124,7 +126,7 @@ public class OlapHierarchy implements Cloneable, Serializable {
    * @param havingAll
    *          the havingAll to set
    */
-  public void setHavingAll(boolean havingAll) {
+  public void setHavingAll( boolean havingAll ) {
     this.havingAll = havingAll;
   }
 
@@ -139,15 +141,16 @@ public class OlapHierarchy implements Cloneable, Serializable {
    * @param primaryKey
    *          the primaryKey to set
    */
-  public void setPrimaryKey(LogicalColumn primaryKey) {
+  public void setPrimaryKey( LogicalColumn primaryKey ) {
     this.primaryKey = primaryKey;
   }
 
-  public OlapHierarchyLevel findOlapHierarchyLevel(String thisName) {
-    for (int i = 0; i < hierarchyLevels.size(); i++) {
-      OlapHierarchyLevel level = (OlapHierarchyLevel) hierarchyLevels.get(i);
-      if (level.getName().equalsIgnoreCase(thisName))
+  public OlapHierarchyLevel findOlapHierarchyLevel( String thisName ) {
+    for ( int i = 0; i < hierarchyLevels.size(); i++ ) {
+      OlapHierarchyLevel level = (OlapHierarchyLevel) hierarchyLevels.get( i );
+      if ( level.getName().equalsIgnoreCase( thisName ) ) {
         return level;
+      }
     }
     return null;
   }
@@ -163,7 +166,7 @@ public class OlapHierarchy implements Cloneable, Serializable {
    * @param olapDimension
    *          the olapDimension to set
    */
-  public void setOlapDimension(OlapDimension olapDimension) {
+  public void setOlapDimension( OlapDimension olapDimension ) {
     this.olapDimension = olapDimension;
   }
 
@@ -178,28 +181,29 @@ public class OlapHierarchy implements Cloneable, Serializable {
    * @param logicalTable
    *          the logicalTable to set
    */
-  public void setLogicalTable(LogicalTable logicalTable) {
+  public void setLogicalTable( LogicalTable logicalTable ) {
     this.logicalTable = logicalTable;
   }
 
-  public List<String> getUnusedColumnNames(String locale) {
-    List<String> names = logicalTable.getColumnNames(locale);
+  public List<String> getUnusedColumnNames( String locale ) {
+    List<String> names = logicalTable.getColumnNames( locale );
 
-    for (int i = names.size() - 1; i >= 0; i--) {
-      String columnName = (String) names.get(i);
-      if (findLogicalColumn(locale, columnName) != null)
-        names.remove(i);
+    for ( int i = names.size() - 1; i >= 0; i-- ) {
+      String columnName = (String) names.get( i );
+      if ( findLogicalColumn( locale, columnName ) != null ) {
+        names.remove( i );
+      }
     }
 
     return names;
   }
 
-  public LogicalColumn findLogicalColumn(String locale, String columnName) {
+  public LogicalColumn findLogicalColumn( String locale, String columnName ) {
     // Look in the levels
-    for (int i = 0; i < hierarchyLevels.size(); i++) {
-      OlapHierarchyLevel level = (OlapHierarchyLevel) hierarchyLevels.get(i);
-      LogicalColumn logicalColumn = level.findLogicalColumn(locale, columnName);
-      if (logicalColumn != null) {
+    for ( int i = 0; i < hierarchyLevels.size(); i++ ) {
+      OlapHierarchyLevel level = (OlapHierarchyLevel) hierarchyLevels.get( i );
+      LogicalColumn logicalColumn = level.findLogicalColumn( locale, columnName );
+      if ( logicalColumn != null ) {
         return logicalColumn;
       }
     }

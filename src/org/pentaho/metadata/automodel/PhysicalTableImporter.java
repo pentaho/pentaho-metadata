@@ -35,60 +35,64 @@ import org.pentaho.metadata.model.concept.types.TableType;
 import org.pentaho.metadata.util.Util;
 
 public class PhysicalTableImporter {
-  public static SqlPhysicalTable importTableDefinition(Database database, String schemaName, String tableName,
-      String locale) throws KettleException {
+  public static SqlPhysicalTable importTableDefinition( Database database, String schemaName, String tableName,
+      String locale ) throws KettleException {
     List<IPhysicalColumn> fields = null;
 
     String id = tableName;
     String tablename = tableName;
 
     // Remove
-    id = Util.toId(tableName);
+    id = Util.toId( tableName );
 
     // Set the id to a certain standard...
     id = Util.getPhysicalTableIdPrefix() + id;
     id = id.toUpperCase();
 
     SqlPhysicalTable physicalTable = new SqlPhysicalTable();
-    physicalTable.setId(id);
-    physicalTable.setTargetSchema(schemaName);
+    physicalTable.setId( id );
+    physicalTable.setTargetSchema( schemaName );
     fields = physicalTable.getPhysicalColumns();
-    physicalTable.setTargetTable(tableName);
+    physicalTable.setTargetTable( tableName );
 
     // id, schemaName, tableName,
     // database.getDatabaseMeta(), fields);
 
     // Also set a localized description...
-    String niceName = beautifyName(tablename);
-    physicalTable.setName(new LocalizedString(locale, niceName));
+    String niceName = beautifyName( tablename );
+    physicalTable.setName( new LocalizedString( locale, niceName ) );
 
     DatabaseMeta dbMeta = database.getDatabaseMeta();
-    String schemaTableCombination = dbMeta.getSchemaTableCombination(dbMeta.quoteField(schemaName), dbMeta
-        .quoteField(tableName));
+    String schemaTableCombination =
+        dbMeta.getSchemaTableCombination( dbMeta.quoteField( schemaName ), dbMeta.quoteField( tableName ) );
 
-    RowMetaInterface row = database.getTableFields(schemaTableCombination);
+    RowMetaInterface row = database.getTableFields( schemaTableCombination );
 
-    if (row != null && row.size() > 0) {
-      for (int i = 0; i < row.size(); i++) {
-        ValueMetaInterface v = row.getValueMeta(i);
-        IPhysicalColumn physicalColumn = importPhysicalColumnDefinition(v, physicalTable, locale);
-        fields.add(physicalColumn);
+    if ( row != null && row.size() > 0 ) {
+      for ( int i = 0; i < row.size(); i++ ) {
+        ValueMetaInterface v = row.getValueMeta( i );
+        IPhysicalColumn physicalColumn = importPhysicalColumnDefinition( v, physicalTable, locale );
+        fields.add( physicalColumn );
       }
     }
     String upper = tablename.toUpperCase();
 
-    if (upper.startsWith("D_") || upper.startsWith("DIM") || upper.endsWith("DIM"))physicalTable.setTableType(TableType.DIMENSION); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    if (upper.startsWith("F_") || upper.startsWith("FACT") || upper.endsWith("FACT"))physicalTable.setTableType(TableType.FACT); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    if ( upper.startsWith( "D_" ) || upper.startsWith( "DIM" ) || upper.endsWith( "DIM" ) ) {
+      physicalTable.setTableType( TableType.DIMENSION ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    }
+    if ( upper.startsWith( "F_" ) || upper.startsWith( "FACT" ) || upper.endsWith( "FACT" ) ) {
+      physicalTable.setTableType( TableType.FACT ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    }
 
     return physicalTable;
   }
 
-  public static final String beautifyName(String name) {
-    return StringUtils.capitalize(name.replaceAll("[\"`']", "").replace("_", " ")); //$NON-NLS-1$  //$NON-NLS-2$
+  public static final String beautifyName( String name ) {
+    return StringUtils.capitalize( name.replaceAll( "[\"`']", "" ).replace( "_", " " ) ); //$NON-NLS-1$  //$NON-NLS-2$
   }
 
-  private static IPhysicalColumn importPhysicalColumnDefinition(ValueMetaInterface v, SqlPhysicalTable physicalTable,
-      String locale) {
+  private static IPhysicalColumn importPhysicalColumnDefinition( ValueMetaInterface v, SqlPhysicalTable physicalTable,
+      String locale ) {
     // The id
     //
     String id = Util.getPhysicalColumnIdPrefix() + v.getName();
@@ -100,49 +104,49 @@ public class PhysicalTableImporter {
 
     // The field type?
     //
-    FieldType fieldType = FieldType.guessFieldType(v.getName());
+    FieldType fieldType = FieldType.guessFieldType( v.getName() );
 
     // Create a physical column.
     //
-    SqlPhysicalColumn physicalColumn = new SqlPhysicalColumn(physicalTable);
-    physicalColumn.setId(v.getName());
-    physicalColumn.setTargetColumn(dbname);
-    physicalColumn.setFieldType(fieldType);
-    physicalColumn.setAggregationType(AggregationType.NONE);
+    SqlPhysicalColumn physicalColumn = new SqlPhysicalColumn( physicalTable );
+    physicalColumn.setId( v.getName() );
+    physicalColumn.setTargetColumn( dbname );
+    physicalColumn.setFieldType( fieldType );
+    physicalColumn.setAggregationType( AggregationType.NONE );
 
     // Set the localized name...
     //
-    String niceName = beautifyName(v.getName());
-    physicalColumn.setName(new LocalizedString(locale, niceName));
+    String niceName = beautifyName( v.getName() );
+    physicalColumn.setName( new LocalizedString( locale, niceName ) );
 
     // Set the parent concept to the base concept...
     // physicalColumn.getConcept().setParentInterface(schemaMeta.findConcept(
     // Settings.getConceptNameBase()));
 
     // The data type...
-    DataType dataType = getDataType(v);
-    physicalColumn.setDataType(dataType);
+    DataType dataType = getDataType( v );
+    physicalColumn.setDataType( dataType );
 
     return physicalColumn;
   }
 
-  private static DataType getDataType(ValueMetaInterface v) {
-    switch (v.getType()) {
-    case ValueMetaInterface.TYPE_BIGNUMBER:
-    case ValueMetaInterface.TYPE_INTEGER:
-    case ValueMetaInterface.TYPE_NUMBER:
-      return DataType.NUMERIC;
-    case ValueMetaInterface.TYPE_BINARY:
-      return DataType.BINARY;
-    case ValueMetaInterface.TYPE_BOOLEAN:
-      return DataType.BOOLEAN;
-    case ValueMetaInterface.TYPE_DATE:
-      return DataType.DATE;
-    case ValueMetaInterface.TYPE_STRING:
-      return DataType.STRING;
-    case ValueMetaInterface.TYPE_NONE:
-    default:
-      return DataType.UNKNOWN;
+  private static DataType getDataType( ValueMetaInterface v ) {
+    switch ( v.getType() ) {
+      case ValueMetaInterface.TYPE_BIGNUMBER:
+      case ValueMetaInterface.TYPE_INTEGER:
+      case ValueMetaInterface.TYPE_NUMBER:
+        return DataType.NUMERIC;
+      case ValueMetaInterface.TYPE_BINARY:
+        return DataType.BINARY;
+      case ValueMetaInterface.TYPE_BOOLEAN:
+        return DataType.BOOLEAN;
+      case ValueMetaInterface.TYPE_DATE:
+        return DataType.DATE;
+      case ValueMetaInterface.TYPE_STRING:
+        return DataType.STRING;
+      case ValueMetaInterface.TYPE_NONE:
+      default:
+        return DataType.UNKNOWN;
     }
     // the enum data type no longer supports length and precision
     // dataTypeSettings.setLength(v.getLength());

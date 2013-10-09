@@ -23,59 +23,64 @@ import java.math.BigDecimal;
 
 /**
  * Defines a cell in a @see DataTable
+ * 
  * @author jamesdixon
- *
+ * 
  */
 public class Cell {
 
-	private String f;
-	
-	private BigDecimal v;
+  private String f;
 
-	public Cell() {
-	}
+  private BigDecimal v;
 
-	public Cell(BigDecimal value) {
-		this.v = value;
-	}
-	
-	public Cell(BigDecimal value, String formatted) {
-		this.v = value;
-		this.f = formatted;
-	}
-	
-	/**
-	 * Returns the string value of this cell. Can be the formatted value of a numeric column, a string value, 
-	 * a formatted date value etc.
-	 * @return
-	 */
-	public String getf() {
-		return f;
-	}
+  public Cell() {
+  }
 
-	/**
-	 * Sets the string value of this cell
-	 * @param f
-	 */
-	public void setf(String f) {
-		this.f = f;
-	}
+  public Cell( BigDecimal value ) {
+    this.v = value;
+  }
 
-	/**
-	 * Returns the numeric value, if any. Can be null.
-	 * @return
-	 */
-	
-	public BigDecimal getv() {
-		return v;
-	}
+  public Cell( BigDecimal value, String formatted ) {
+    this.v = value;
+    this.f = formatted;
+  }
 
-	/**
-	 * Sets the numeric value of the cell
-	 * @param v
-	 */
-	public void setv(BigDecimal v) {
-		this.v = v;
-	}
-	
+  /**
+   * Returns the string value of this cell. Can be the formatted value of a numeric column, a string value, a formatted
+   * date value etc.
+   * 
+   * @return
+   */
+  public String getf() {
+    return f;
+  }
+
+  /**
+   * Sets the string value of this cell
+   * 
+   * @param f
+   */
+  public void setf( String f ) {
+    this.f = f;
+  }
+
+  /**
+   * Returns the numeric value, if any. Can be null.
+   * 
+   * @return
+   */
+
+  public BigDecimal getv() {
+    return v;
+  }
+
+  /**
+   * Sets the numeric value of the cell
+   * 
+   * @param v
+   */
+  public void setv( BigDecimal v ) {
+    this.v = v;
+  }
+
 }

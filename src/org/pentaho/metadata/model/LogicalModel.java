@@ -25,8 +25,7 @@ import org.pentaho.metadata.model.concept.security.RowLevelSecurity;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 
 /**
- * The logical model contains logical tables and categories, and the name and description
- * are presented to end users.
+ * The logical model contains logical tables and categories, and the name and description are presented to end users.
  * 
  * @author Will Gorman (wgorman@pentaho.com)
  * 
@@ -34,11 +33,11 @@ import org.pentaho.metadata.model.concept.types.LocalizedString;
 public class LogicalModel extends Concept {
 
   private static final long serialVersionUID = 4063396040423259880L;
-  
+
   public static final String ROW_LEVEL_SECURITY = "row_level_security"; //$NON-NLS-1$
-  
+
   public static final String PROPERTY_OLAP_DIMS = "olap_dimensions"; //$NON-NLS-1$
-  
+
   public static final String PROPERTY_OLAP_CUBES = "olap_cubes"; //$NON-NLS-1$
 
   public static final String PROPERTY_TARGET_TABLE_STAGED = "target_table_staged"; //$NON-NLS-1$
@@ -53,23 +52,23 @@ public class LogicalModel extends Concept {
   public LogicalModel() {
     super();
     // logical model has the following default properties:
-    setName(new LocalizedString());
-    setDescription(new LocalizedString());
+    setName( new LocalizedString() );
+    setDescription( new LocalizedString() );
   }
 
   @Override
   public List<String> getUniqueId() {
     List<String> uid = new ArrayList<String>();
-    uid.add(CLASS_ID.concat(UID_TYPE_SEPARATOR) + getId());
+    uid.add( CLASS_ID.concat( UID_TYPE_SEPARATOR ) + getId() );
     return uid;
   }
-  
+
   @Override
   public IConcept getParent() {
     return domain;
   }
 
-  public void setDomain(Domain domain) {
+  public void setDomain( Domain domain ) {
     this.domain = domain;
   }
 
@@ -80,13 +79,13 @@ public class LogicalModel extends Concept {
   @Override
   public List<IConcept> getChildren() {
     ArrayList<IConcept> children = new ArrayList<IConcept>();
-    children.addAll(logicalTables);
-    children.addAll(logicalRelationships);
-    children.addAll(categories);
+    children.addAll( logicalTables );
+    children.addAll( logicalRelationships );
+    children.addAll( categories );
     return children;
   }
 
-  public void setPhysicalModel(IPhysicalModel physicalModel) {
+  public void setPhysicalModel( IPhysicalModel physicalModel ) {
     this.physicalModel = physicalModel;
   }
 
@@ -97,38 +96,38 @@ public class LogicalModel extends Concept {
   public List<LogicalTable> getLogicalTables() {
     return logicalTables;
   }
-  
-  public void addLogicalTable(LogicalTable table) {
-    logicalTables.add(table);
+
+  public void addLogicalTable( LogicalTable table ) {
+    logicalTables.add( table );
   }
-  
+
   public List<LogicalRelationship> getLogicalRelationships() {
     return logicalRelationships;
   }
-  
-  public void addLogicalRelationship(LogicalRelationship rel) {
-    logicalRelationships.add(rel);
+
+  public void addLogicalRelationship( LogicalRelationship rel ) {
+    logicalRelationships.add( rel );
   }
 
   public List<Category> getCategories() {
     return categories;
   }
-  
-  public void addCategory(Category category) {
-    categories.add(category);
-  }
-  
-  public RowLevelSecurity getRowLevelSecurity() {
-    return (RowLevelSecurity)getProperty(ROW_LEVEL_SECURITY);
+
+  public void addCategory( Category category ) {
+    categories.add( category );
   }
 
-  public void setRowLevelSecurity(RowLevelSecurity rls) {
-    setProperty(ROW_LEVEL_SECURITY, rls);
+  public RowLevelSecurity getRowLevelSecurity() {
+    return (RowLevelSecurity) getProperty( ROW_LEVEL_SECURITY );
   }
-  
-  public Category findCategory(String categoryId) {
-    for (Category category : getCategories()) {
-      if (categoryId.equals(category.getId())) {
+
+  public void setRowLevelSecurity( RowLevelSecurity rls ) {
+    setProperty( ROW_LEVEL_SECURITY, rls );
+  }
+
+  public Category findCategory( String categoryId ) {
+    for ( Category category : getCategories() ) {
+      if ( categoryId.equals( category.getId() ) ) {
         return category;
       }
     }
@@ -138,81 +137,84 @@ public class LogicalModel extends Concept {
   /**
    * finds a logical table within the model.
    * 
-   * @param tableId the table to find
+   * @param tableId
+   *          the table to find
    * @return a logical table object.
    */
-  public LogicalTable findLogicalTable(String tableId) {
-    for (LogicalTable table : getLogicalTables()) {
-      if (tableId.equals(table.getId())) {
+  public LogicalTable findLogicalTable( String tableId ) {
+    for ( LogicalTable table : getLogicalTables() ) {
+      if ( tableId.equals( table.getId() ) ) {
         return table;
       }
     }
     return null;
   }
-  
+
   /**
    * finds a logical column within the model.
    * 
-   * @param columnId the column to find
+   * @param columnId
+   *          the column to find
    * @return a logical column object.
    */
-  public LogicalColumn findLogicalColumn(String columnId) {
-    for (LogicalTable table : getLogicalTables()) {
-      for (LogicalColumn column : table.getLogicalColumns()) {
-        if (columnId.equals(column.getId())) {
+  public LogicalColumn findLogicalColumn( String columnId ) {
+    for ( LogicalTable table : getLogicalTables() ) {
+      for ( LogicalColumn column : table.getLogicalColumns() ) {
+        if ( columnId.equals( column.getId() ) ) {
           return column;
         }
       }
     }
     return null;
   }
-  
+
   /**
    * finds a logical column within the model.
    * 
-   * @param columnId the column to find
+   * @param columnId
+   *          the column to find
    * @return a logical column object.
    */
-  public LogicalColumn findLogicalColumnInCategories(String columnId) {
-    for (Category cat : getCategories()) {
-      for (LogicalColumn column : cat.getLogicalColumns()) {
-        if (columnId.equals(column.getId())) {
+  public LogicalColumn findLogicalColumnInCategories( String columnId ) {
+    for ( Category cat : getCategories() ) {
+      for ( LogicalColumn column : cat.getLogicalColumns() ) {
+        if ( columnId.equals( column.getId() ) ) {
           return column;
         }
       }
     }
     return null;
   }
-  
-  public LogicalRelationship findRelationshipUsing(LogicalTable one, LogicalTable two) {
-    for (LogicalRelationship relationship : getLogicalRelationships()) {
-      if (relationship.isUsingTable(one) && relationship.isUsingTable(two)) {
+
+  public LogicalRelationship findRelationshipUsing( LogicalTable one, LogicalTable two ) {
+    for ( LogicalRelationship relationship : getLogicalRelationships() ) {
+      if ( relationship.isUsingTable( one ) && relationship.isUsingTable( two ) ) {
         return relationship;
       }
     }
     return null;
   }
-  
+
   @Override
   public Object clone() {
     LogicalModel clone = new LogicalModel();
     // configure concept properties
-    clone(clone);
+    clone( clone );
 
     // shallow references
     clone.logicalRelationships = logicalRelationships;
     clone.physicalModel = physicalModel;
-    
+
     // actual clones
     clone.logicalTables = new ArrayList<LogicalTable>();
-    for (LogicalTable table : logicalTables) {
-      clone.addLogicalTable((LogicalTable)table.clone());
+    for ( LogicalTable table : logicalTables ) {
+      clone.addLogicalTable( (LogicalTable) table.clone() );
     }
     clone.categories = new ArrayList<Category>();
-    for (Category category : categories) {
-      clone.addCategory((Category)category.clone());
+    for ( Category category : categories ) {
+      clone.addCategory( (Category) category.clone() );
     }
     return clone;
   }
-  
+
 }

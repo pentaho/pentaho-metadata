@@ -20,23 +20,19 @@ public class PentahoMetadataException extends Exception {
 
   private static final long serialVersionUID = 1291055530614616329L;
 
-  public PentahoMetadataException()
-  {
-      super();
+  public PentahoMetadataException() {
+    super();
   }
 
-  public PentahoMetadataException(String arg0, Throwable arg1)
-  {
-      super(arg0, arg1);
+  public PentahoMetadataException( String arg0, Throwable arg1 ) {
+    super( arg0, arg1 );
   }
 
-  public PentahoMetadataException(String arg0)
-  {
-      super(arg0);
+  public PentahoMetadataException( String arg0 ) {
+    super( arg0 );
   }
 
-  public PentahoMetadataException(Throwable arg0)
-  {
-      super(arg0);
+  public PentahoMetadataException( Throwable arg0 ) {
+    super( arg0 );
   }
 }

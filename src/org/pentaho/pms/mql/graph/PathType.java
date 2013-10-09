@@ -19,9 +19,5 @@
 package org.pentaho.pms.mql.graph;
 
 public enum PathType {
-	ANY_RELEVANT,
-	FIRST_SHORT,
-	SHORTEST,
-	LOWEST_SCORE,
-	ALL
+  ANY_RELEVANT, FIRST_SHORT, SHORTEST, LOWEST_SCORE, ALL
 }

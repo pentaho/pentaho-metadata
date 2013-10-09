@@ -21,38 +21,39 @@ package org.pentaho.metadata.model.thin;
 
 /**
  * Concrete, lightweight, serializable object that holds information about a model provider
+ * 
  * @author jamesdixon
- *
+ * 
  */
 public class Provider {
 
-	private String id;
-	
-	private String name;
+  private String id;
 
-	public Provider() {
-		
-	}
-	
-	public Provider( String id, String name ) {
-		this.id = id;
-		this.name = name;
-	}
-	
-	public String getId() {
-		return id;
-	}
+  private String name;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+  public Provider() {
 
-	public String getName() {
-		return name;
-	}
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
-	
+  public Provider( String id, String name ) {
+    this.id = id;
+    this.name = name;
+  }
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId( String id ) {
+    this.id = id;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName( String name ) {
+    this.name = name;
+  }
+
 }

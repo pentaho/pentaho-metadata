@@ -4,12 +4,12 @@ import org.pentaho.pms.MetadataTestBase;
 
 public class IngresDialectTest extends MetadataTestBase {
   public void testLimitSQL() {
-    assertSelect("SELECT FIRST 10 DISTINCT t.id FROM TABLE t WHERE ( ( t.id is null ) ) ORDER BY t.id ASC",
-        new IngresDialect(), createLimitedQuery());
+    assertSelect( "SELECT FIRST 10 DISTINCT t.id FROM TABLE t WHERE ( ( t.id is null ) ) ORDER BY t.id ASC",
+        new IngresDialect(), createLimitedQuery() );
   }
 
   public void testNoLimitSQL() {
-    assertSelect("SELECT DISTINCT t.id FROM TABLE t WHERE ( ( t.id is null ) ) ORDER BY t.id ASC", new IngresDialect(),
-        createUnlimitedQuery());
+    assertSelect( "SELECT DISTINCT t.id FROM TABLE t WHERE ( ( t.id is null ) ) ORDER BY t.id ASC",
+        new IngresDialect(), createUnlimitedQuery() );
   }
 }

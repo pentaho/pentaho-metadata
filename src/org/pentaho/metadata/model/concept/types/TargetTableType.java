@@ -17,12 +17,11 @@
 package org.pentaho.metadata.model.concept.types;
 
 /**
- * This enum defines the type of physical table. 
+ * This enum defines the type of physical table.
  * 
  * @author Will Gorman (wgorman@pentaho.com)
- *
+ * 
  */
 public enum TargetTableType {
-  TABLE(),
-  INLINE_SQL();
+  TABLE(), INLINE_SQL();
 }

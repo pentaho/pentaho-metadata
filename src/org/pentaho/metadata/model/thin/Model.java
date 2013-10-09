@@ -16,16 +16,16 @@
  * 
  * Created Jan, 2011
  * @author jdixon
-*/
+ */
 package org.pentaho.metadata.model.thin;
 
 import java.util.HashMap;
 
-
 /**
  * Concrete, lightweight, serializable implementation of an {@see IModel} object
+ * 
  * @author jamesdixon
- *
+ * 
  */
 public class Model extends ModelInfo {
 
@@ -35,16 +35,17 @@ public class Model extends ModelInfo {
   public static final String CAPABILITY_IS_ACROSS_CUSTOM = "across-axis-customizable"; // default is true
   public static final String CAPABILITY_HAS_DOWN_AXIS = "down-axis"; // default is false
   public static final String CAPABILITY_IS_DOWN_CUSTOM = "down-axis-customizable"; // default is false
-  public static final String CAPABILITY_HAS_FILTERS = "filter-axis";  // default is true
+  public static final String CAPABILITY_HAS_FILTERS = "filter-axis"; // default is true
   public static final String CAPABILITY_IS_FILTER_CUSTOM = "filter-axis-customizable"; // default is true
   public static final String CAPABILITY_CAN_SORT = "sortable"; // default is true
-  
+
   private Element[] elements = new Element[0];
 
   private HashMap capabilities = new HashMap();
-  
-/**
+
+  /**
    * Returns an array of categories for the model
+   * 
    * @return
    */
   public Element[] getElements() {
@@ -53,9 +54,10 @@ public class Model extends ModelInfo {
 
   /**
    * Sets the categories for the model
+   * 
    * @param categories
    */
-  public void setElements(Element[] elements) {
+  public void setElements( Element[] elements ) {
     this.elements = elements;
   }
 
@@ -63,9 +65,9 @@ public class Model extends ModelInfo {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((elements == null) ? 0 : elements.hashCode());
-    result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-    result = prime * result + ((name == null) ? 0 : name.hashCode());
+    result = prime * result + ( ( elements == null ) ? 0 : elements.hashCode() );
+    result = prime * result + ( ( getId() == null ) ? 0 : getId().hashCode() );
+    result = prime * result + ( ( name == null ) ? 0 : name.hashCode() );
     return result;
   }
 
@@ -73,44 +75,42 @@ public class Model extends ModelInfo {
    * Determines whether two models are equal to each other
    */
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj) {
+  public boolean equals( Object obj ) {
+    if ( this == obj ) {
       return true;
     }
-    if (obj == null) {
+    if ( obj == null ) {
       return false;
     }
-//    if (!getClass().getName().equals(obj.getClass().getName())) {
-    if (!(obj instanceof Model)) {
+    // if (!getClass().getName().equals(obj.getClass().getName())) {
+    if ( !( obj instanceof Model ) ) {
       return false;
     }
     Model other = (Model) obj;
-    if (elements == null) {
-      if (other.elements != null) {
+    if ( elements == null ) {
+      if ( other.elements != null ) {
         return false;
       }
-    }
-    else if (elements.length != other.elements.length) {
+    } else if ( elements.length != other.elements.length ) {
       return false;
-    }
-    else {
-      int idx=0;
-      for( Element element : elements ) {
-        if(!element.getId().equals(other.elements[idx].getId())) {
+    } else {
+      int idx = 0;
+      for ( Element element : elements ) {
+        if ( !element.getId().equals( other.elements[idx].getId() ) ) {
           return false;
         }
         idx++;
       }
     }
     String id = getId();
-    if (!id.equals(other.getId())) {
+    if ( !id.equals( other.getId() ) ) {
       return false;
     }
-    if (name == null) {
-      if (other.name != null) {
+    if ( name == null ) {
+      if ( other.name != null ) {
         return false;
       }
-    } else if (!name.equals(other.name)) {
+    } else if ( !name.equals( other.name ) ) {
       return false;
     }
     return true;

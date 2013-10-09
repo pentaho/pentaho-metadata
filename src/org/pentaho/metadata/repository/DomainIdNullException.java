@@ -23,7 +23,8 @@ package org.pentaho.metadata.repository;
  */
 public class DomainIdNullException extends Exception {
   private static final long serialVersionUID = -8381261699174809443L;
-  public DomainIdNullException(String str) {
-    super(str);
+
+  public DomainIdNullException( String str ) {
+    super( str );
   }
 }

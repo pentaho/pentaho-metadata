@@ -40,16 +40,16 @@ public class OlapDimension implements Cloneable, Serializable {
 
     olapDimension.name = name;
     olapDimension.type = type;
-    for (int i = 0; i < hierarchies.size(); i++) {
-      OlapHierarchy hierarchy = (OlapHierarchy) hierarchies.get(i);
-      olapDimension.hierarchies.add((OlapHierarchy) hierarchy.clone());
+    for ( int i = 0; i < hierarchies.size(); i++ ) {
+      OlapHierarchy hierarchy = (OlapHierarchy) hierarchies.get( i );
+      olapDimension.hierarchies.add( (OlapHierarchy) hierarchy.clone() );
     }
 
     return olapDimension;
   }
 
-  public boolean equals(Object obj) {
-    return name.equals(((OlapDimension) obj).getName());
+  public boolean equals( Object obj ) {
+    return name.equals( ( (OlapDimension) obj ).getName() );
   }
 
   /**
@@ -63,7 +63,7 @@ public class OlapDimension implements Cloneable, Serializable {
    * @param hierarchies
    *          the hierarchies to set
    */
-  public void setHierarchies(List<OlapHierarchy> hierarchies) {
+  public void setHierarchies( List<OlapHierarchy> hierarchies ) {
     this.hierarchies = hierarchies;
   }
 
@@ -78,7 +78,7 @@ public class OlapDimension implements Cloneable, Serializable {
    * @param name
    *          the name to set
    */
-  public void setName(String name) {
+  public void setName( String name ) {
     this.name = name;
   }
 
@@ -86,19 +86,18 @@ public class OlapDimension implements Cloneable, Serializable {
    * @return the timeDimension
    */
   public boolean isTimeDimension() {
-    return TYPE_TIME_DIMENSION.equals(type);
+    return TYPE_TIME_DIMENSION.equals( type );
   }
 
   /**
    * @param timeDimension
    *          the timeDimension to set
    */
-  public void setTimeDimension(boolean timeDimension) {
+  public void setTimeDimension( boolean timeDimension ) {
     this.type = timeDimension ? TYPE_TIME_DIMENSION : TYPE_STANDARD_DIMENSION;
   }
-  
 
-  public void setType(String type) {
+  public void setType( String type ) {
     this.type = type;
   }
 
@@ -106,11 +105,12 @@ public class OlapDimension implements Cloneable, Serializable {
     return type;
   }
 
-  public OlapHierarchy findOlapHierarchy(String thisName) {
-    for (int i = 0; i < hierarchies.size(); i++) {
-      OlapHierarchy hierarchy = (OlapHierarchy) hierarchies.get(i);
-      if (hierarchy.getName().equalsIgnoreCase(thisName))
+  public OlapHierarchy findOlapHierarchy( String thisName ) {
+    for ( int i = 0; i < hierarchies.size(); i++ ) {
+      OlapHierarchy hierarchy = (OlapHierarchy) hierarchies.get( i );
+      if ( hierarchy.getName().equalsIgnoreCase( thisName ) ) {
         return hierarchy;
+      }
     }
     return null;
   }
@@ -119,10 +119,11 @@ public class OlapDimension implements Cloneable, Serializable {
    * @return the businessTable
    */
   public LogicalTable findLogicalTable() {
-    for (int i = 0; i < hierarchies.size(); i++) {
-      OlapHierarchy hierarchy = (OlapHierarchy) hierarchies.get(i);
-      if (hierarchy.getLogicalTable() != null)
+    for ( int i = 0; i < hierarchies.size(); i++ ) {
+      OlapHierarchy hierarchy = (OlapHierarchy) hierarchies.get( i );
+      if ( hierarchy.getLogicalTable() != null ) {
         return hierarchy.getLogicalTable();
+      }
     }
     return null;
   }

@@ -18,24 +18,24 @@ package org.pentaho.pms.mql.dialect;
 
 /**
  * This is the default implementation of the SQL Operator Generator Interface
- *  
+ * 
  * @author Will Gorman (wgorman@pentaho.org)
- *
+ * 
  */
 public class DefaultSQLOperatorGenerator implements SQLOperatorGeneratorInterface {
-  
+
   /** sql to return to sql generator */
   private String sql;
-  
+
   /**
    * constructor
    * 
    * @param sql
    */
-  public DefaultSQLOperatorGenerator(String sql) {
+  public DefaultSQLOperatorGenerator( String sql ) {
     this.sql = sql;
   }
-  
+
   /**
    * return the sql specified in the constructor
    * 

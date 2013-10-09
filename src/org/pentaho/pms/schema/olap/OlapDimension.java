@@ -22,125 +22,115 @@ import java.util.List;
 import org.pentaho.di.core.changed.ChangedFlag;
 import org.pentaho.pms.schema.BusinessTable;
 
-@SuppressWarnings("deprecation")
-public class OlapDimension extends ChangedFlag implements Cloneable
-{
-    private String name;
-    private boolean timeDimension;
-    
-    private List<OlapHierarchy> hierarchies;
-    
-    public OlapDimension()
-    {
-        hierarchies = new ArrayList<OlapHierarchy>();
-    }
-    
-    public Object clone()
-    {
-        OlapDimension olapDimension = new OlapDimension();
-        
-        olapDimension.name = name;
-        olapDimension.timeDimension = timeDimension;
-        for (int i=0;i<hierarchies.size();i++)
-        {
-            OlapHierarchy hierarchy = (OlapHierarchy) hierarchies.get(i);
-            olapDimension.hierarchies.add((OlapHierarchy)hierarchy.clone());
-        }
-        
-        return olapDimension;
-    }
-    
-    public boolean equals(Object obj)
-    {
-        return name.equals(((OlapDimension)obj).getName());
+@SuppressWarnings( "deprecation" )
+public class OlapDimension extends ChangedFlag implements Cloneable {
+  private String name;
+  private boolean timeDimension;
+
+  private List<OlapHierarchy> hierarchies;
+
+  public OlapDimension() {
+    hierarchies = new ArrayList<OlapHierarchy>();
+  }
+
+  public Object clone() {
+    OlapDimension olapDimension = new OlapDimension();
+
+    olapDimension.name = name;
+    olapDimension.timeDimension = timeDimension;
+    for ( int i = 0; i < hierarchies.size(); i++ ) {
+      OlapHierarchy hierarchy = (OlapHierarchy) hierarchies.get( i );
+      olapDimension.hierarchies.add( (OlapHierarchy) hierarchy.clone() );
     }
 
-    /**
-     * @return the hierarchies
-     */
-    public List<OlapHierarchy> getHierarchies()
-    {
-        return hierarchies;
-    }
+    return olapDimension;
+  }
 
-    /**
-     * @param hierarchies the hierarchies to set
-     */
-    public void setHierarchies(List<OlapHierarchy> hierarchies)
-    {
-        this.hierarchies = hierarchies;
-    }
+  public boolean equals( Object obj ) {
+    return name.equals( ( (OlapDimension) obj ).getName() );
+  }
 
-    /**
-     * @return the name
-     */
-    public String getName()
-    {
-        return name;
-    }
+  /**
+   * @return the hierarchies
+   */
+  public List<OlapHierarchy> getHierarchies() {
+    return hierarchies;
+  }
 
-    /**
-     * @param name the name to set
-     */
-    public void setName(String name)
-    {
-        this.name = name;
-    }
+  /**
+   * @param hierarchies
+   *          the hierarchies to set
+   */
+  public void setHierarchies( List<OlapHierarchy> hierarchies ) {
+    this.hierarchies = hierarchies;
+  }
 
-    /**
-     * @return the timeDimension
-     */
-    public boolean isTimeDimension()
-    {
-        return timeDimension;
-    }
+  /**
+   * @return the name
+   */
+  public String getName() {
+    return name;
+  }
 
-    /**
-     * @param timeDimension the timeDimension to set
-     */
-    public void setTimeDimension(boolean timeDimension)
-    {
-        this.timeDimension = timeDimension;
-    }
+  /**
+   * @param name
+   *          the name to set
+   */
+  public void setName( String name ) {
+    this.name = name;
+  }
 
-    public OlapHierarchy findOlapHierarchy(String thisName)
-    {
-        for (int i=0;i<hierarchies.size();i++)
-        {
-            OlapHierarchy hierarchy = (OlapHierarchy) hierarchies.get(i);
-            if (hierarchy.getName().equalsIgnoreCase(thisName)) return hierarchy;
-        }
-        return null;
-    }
+  /**
+   * @return the timeDimension
+   */
+  public boolean isTimeDimension() {
+    return timeDimension;
+  }
 
-    /**
-     * @return the businessTable
-     */
-    public BusinessTable findBusinessTable()
-    {
-        for (int i=0;i<hierarchies.size();i++)
-        {
-            OlapHierarchy hierarchy = (OlapHierarchy) hierarchies.get(i);
-            if (hierarchy.getBusinessTable()!=null) return hierarchy.getBusinessTable();
-        }
-        return null;
+  /**
+   * @param timeDimension
+   *          the timeDimension to set
+   */
+  public void setTimeDimension( boolean timeDimension ) {
+    this.timeDimension = timeDimension;
+  }
+
+  public OlapHierarchy findOlapHierarchy( String thisName ) {
+    for ( int i = 0; i < hierarchies.size(); i++ ) {
+      OlapHierarchy hierarchy = (OlapHierarchy) hierarchies.get( i );
+      if ( hierarchy.getName().equalsIgnoreCase( thisName ) ) {
+        return hierarchy;
+      }
     }
-    
-    public boolean hasChanged()
-    {
-        for (int i=0;i<hierarchies.size();i++)
-        {
-            if (((OlapHierarchy)hierarchies.get(i)).hasChanged()) return true;
-        }
-        return super.hasChanged();
+    return null;
+  }
+
+  /**
+   * @return the businessTable
+   */
+  public BusinessTable findBusinessTable() {
+    for ( int i = 0; i < hierarchies.size(); i++ ) {
+      OlapHierarchy hierarchy = (OlapHierarchy) hierarchies.get( i );
+      if ( hierarchy.getBusinessTable() != null ) {
+        return hierarchy.getBusinessTable();
+      }
     }
-    
-    public void clearChanged()
-    {
-        for (int i=0;i<hierarchies.size();i++)
-        {
-            ((OlapHierarchy)hierarchies.get(i)).clearChanged();
-        }
-        setChanged(false);
+    return null;
+  }
+
+  public boolean hasChanged() {
+    for ( int i = 0; i < hierarchies.size(); i++ ) {
+      if ( ( (OlapHierarchy) hierarchies.get( i ) ).hasChanged() ) {
+        return true;
+      }
     }
+    return super.hasChanged();
+  }
+
+  public void clearChanged() {
+    for ( int i = 0; i < hierarchies.size(); i++ ) {
+      ( (OlapHierarchy) hierarchies.get( i ) ).clearChanged();
+    }
+    setChanged( false );
+  }
 }

@@ -19,18 +19,19 @@
 package org.pentaho.pms.mql.graph;
 
 public class ConsistencyException extends Exception {
-	private static final long serialVersionUID = 1L;
-	
-	private GraphElement element;
-	
-	public ConsistencyException() {
-		
-	}
-	public ConsistencyException(GraphElement element) {
-		this.element = element;
-	}
-	
-	public GraphElement getElement() {
-		return element;
-	}
+  private static final long serialVersionUID = 1L;
+
+  private GraphElement element;
+
+  public ConsistencyException() {
+
+  }
+
+  public ConsistencyException( GraphElement element ) {
+    this.element = element;
+  }
+
+  public GraphElement getElement() {
+    return element;
+  }
 }

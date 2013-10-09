@@ -23,13 +23,14 @@ import java.util.Set;
 
 /**
  * Contains a mapping between a SecurityOwner (named user or role) and the rights (integer : masks with ACLs)
+ * 
  * @author Matt
- *
+ * 
  */
 public class Security implements Serializable {
 
   private static final long serialVersionUID = 456798829969333527L;
-  
+
   private Map<SecurityOwner, Integer> ownerAclMap;
 
   public Security() {
@@ -39,33 +40,38 @@ public class Security implements Serializable {
   /**
    * @param ownerAclMap
    */
-  public Security(Map<SecurityOwner, Integer> ownerAclMap) {
+  public Security( Map<SecurityOwner, Integer> ownerAclMap ) {
     super();
     this.ownerAclMap = ownerAclMap;
   }
 
   /**
-   * @param owner the owner to store the rights for
-   * @param rights the ACLs to store
+   * @param owner
+   *          the owner to store the rights for
+   * @param rights
+   *          the ACLs to store
    */
-  public void putOwnerRights(SecurityOwner owner, int rights) {
-    ownerAclMap.put(owner, rights);
+  public void putOwnerRights( SecurityOwner owner, int rights ) {
+    ownerAclMap.put( owner, rights );
   }
 
   /**
-   * @param owner the owner to get the rights for
+   * @param owner
+   *          the owner to get the rights for
    * @return the ACLs
    */
-  public int getOwnerRights(SecurityOwner owner) {
-    return ((Integer) ownerAclMap.get(owner)).intValue();
+  public int getOwnerRights( SecurityOwner owner ) {
+    return ( (Integer) ownerAclMap.get( owner ) ).intValue();
   }
 
   /**
    * Remove the rights out of the map for the given user
-   * @param owner the owner to remove the rights for.
+   * 
+   * @param owner
+   *          the owner to remove the rights for.
    */
-  public void removeOwnerRights(SecurityOwner owner) {
-    ownerAclMap.remove(owner);
+  public void removeOwnerRights( SecurityOwner owner ) {
+    ownerAclMap.remove( owner );
   }
 
   /**
@@ -83,16 +89,16 @@ public class Security implements Serializable {
   }
 
   /**
-   * @param ownerAclMap the ownerAclMap to set
+   * @param ownerAclMap
+   *          the ownerAclMap to set
    */
-  public void setOwnerAclMap(Map<SecurityOwner, Integer> ownerAclMap) {
+  public void setOwnerAclMap( Map<SecurityOwner, Integer> ownerAclMap ) {
     this.ownerAclMap = ownerAclMap;
   }
 
   @Override
-  public boolean equals(Object object) {
-    Security s = (Security)object;
-    return  
-    getOwnerAclMap().equals(s.getOwnerAclMap());     
+  public boolean equals( Object object ) {
+    Security s = (Security) object;
+    return getOwnerAclMap().equals( s.getOwnerAclMap() );
   }
 }

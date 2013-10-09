@@ -21,14 +21,12 @@ import java.util.List;
 
 import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.IConcept;
-import org.pentaho.metadata.model.LogicalModel;
 
 /**
- * The logical table contains logical columns, and inherits properties
- * from a physical table implementation.
+ * The logical table contains logical columns, and inherits properties from a physical table implementation.
  * 
  * @author Will Gorman (wgorman@pentaho.com)
- *
+ * 
  */
 public class LogicalTable extends Concept {
 
@@ -42,12 +40,12 @@ public class LogicalTable extends Concept {
   public LogicalTable() {
     super();
   }
-  
-  public LogicalTable(LogicalModel logicalModel, IPhysicalTable physicalTable) { 
+
+  public LogicalTable( LogicalModel logicalModel, IPhysicalTable physicalTable ) {
     this.logicalModel = logicalModel;
     this.physicalTable = physicalTable;
   }
-  
+
   @Override
   public IConcept getParent() {
     return logicalModel;
@@ -56,18 +54,18 @@ public class LogicalTable extends Concept {
   @Override
   public List<IConcept> getChildren() {
     List<IConcept> children = new ArrayList<IConcept>();
-    children.addAll(logicalColumns);
+    children.addAll( logicalColumns );
     return children;
   }
 
   @Override
   public List<String> getUniqueId() {
-    List<String> uid = new ArrayList<String>(logicalModel.getUniqueId());
-    uid.add(CLASS_ID.concat(UID_TYPE_SEPARATOR) + getId());
+    List<String> uid = new ArrayList<String>( logicalModel.getUniqueId() );
+    uid.add( CLASS_ID.concat( UID_TYPE_SEPARATOR ) + getId() );
     return uid;
   }
-  
-  public void setLogicalModel(LogicalModel logicalModel) {
+
+  public void setLogicalModel( LogicalModel logicalModel ) {
     this.logicalModel = logicalModel;
   }
 
@@ -78,11 +76,11 @@ public class LogicalTable extends Concept {
   public IPhysicalTable getPhysicalTable() {
     return physicalTable;
   }
-  
-  public void setPhysicalTable(IPhysicalTable physicalTable) {
+
+  public void setPhysicalTable( IPhysicalTable physicalTable ) {
     this.physicalTable = physicalTable;
   }
-  
+
   public List<LogicalColumn> getLogicalColumns() {
     return logicalColumns;
   }
@@ -90,61 +88,61 @@ public class LogicalTable extends Concept {
   /**
    * @return the display names of all the business columns
    */
-  public List<String> getColumnNames(String locale) {
+  public List<String> getColumnNames( String locale ) {
     List<String> list = new ArrayList<String>();
-    for (LogicalColumn column : logicalColumns) {
-      list.add(column.getName(locale));
+    for ( LogicalColumn column : logicalColumns ) {
+      list.add( column.getName( locale ) );
     }
 
     return list;
   }
-  
-  public void setLogicalColumns(List<LogicalColumn> columns) {
+
+  public void setLogicalColumns( List<LogicalColumn> columns ) {
     this.logicalColumns = columns;
   }
-  
-  public void addLogicalColumn(LogicalColumn column) {
-    logicalColumns.add(column);
+
+  public void addLogicalColumn( LogicalColumn column ) {
+    logicalColumns.add( column );
   }
-  
+
   @Override
   public IConcept getInheritedConcept() {
     return physicalTable;
   }
-  
+
   @Override
   public IConcept getSecurityParentConcept() {
     return getLogicalModel();
   }
-  
-  public LogicalColumn findLogicalColumn(String id) {
-    for (LogicalColumn col : logicalColumns) {
-      if (id.equals(col.getId())) {
+
+  public LogicalColumn findLogicalColumn( String id ) {
+    for ( LogicalColumn col : logicalColumns ) {
+      if ( id.equals( col.getId() ) ) {
         return col;
       }
     }
     return null;
   }
-  
-  public boolean equals(Object obj) {
-    LogicalTable other = (LogicalTable)obj;
-    return other.getId().equals(getId());
+
+  public boolean equals( Object obj ) {
+    LogicalTable other = (LogicalTable) obj;
+    return other.getId().equals( getId() );
   }
-  
+
   @Override
   public Object clone() {
-     LogicalTable clone = new LogicalTable();
-     // shallow copy
-     clone(clone);
-     clone.setLogicalModel(logicalModel);
-     clone.physicalTable = physicalTable;
-     
-     // deep copy
-     clone.setLogicalColumns(new ArrayList<LogicalColumn>());
-     for (LogicalColumn col : logicalColumns) {
-       clone.addLogicalColumn(col);
-     }
-     return clone;
+    LogicalTable clone = new LogicalTable();
+    // shallow copy
+    clone( clone );
+    clone.setLogicalModel( logicalModel );
+    clone.physicalTable = physicalTable;
+
+    // deep copy
+    clone.setLogicalColumns( new ArrayList<LogicalColumn>() );
+    for ( LogicalColumn col : logicalColumns ) {
+      clone.addLogicalColumn( col );
+    }
+    return clone;
   }
 
 }

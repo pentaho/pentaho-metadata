@@ -24,11 +24,11 @@ import org.pentaho.metadata.model.concept.IConcept;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 
 /**
- * The category class contains links to logical columns, which are part of 
- * the logical model.  This can be considered the view of the logical model.
+ * The category class contains links to logical columns, which are part of the logical model. This can be considered the
+ * view of the logical model.
  * 
  * @author Will Gorman (wgorman@pentaho.com)
- *
+ * 
  */
 public class Category extends Concept {
 
@@ -41,27 +41,27 @@ public class Category extends Concept {
   public Category() {
     super();
     // category has the following default properties
-    setName(new LocalizedString());
-    setDescription(new LocalizedString());
+    setName( new LocalizedString() );
+    setDescription( new LocalizedString() );
   }
-  
-  public Category(LogicalModel logicalModel) {
+
+  public Category( LogicalModel logicalModel ) {
     this.logicalModel = logicalModel;
   }
-  
+
   @Override
   public IConcept getParent() {
     return logicalModel;
   }
-  
+
   @Override
   public List<String> getUniqueId() {
-    List<String> uid = new ArrayList<String>(logicalModel.getUniqueId());
-    uid.add(CLASS_ID.concat(UID_TYPE_SEPARATOR) + getId());
+    List<String> uid = new ArrayList<String>( logicalModel.getUniqueId() );
+    uid.add( CLASS_ID.concat( UID_TYPE_SEPARATOR ) + getId() );
     return uid;
   }
-  
-  public void setLogicalModel(LogicalModel logicalModel) {
+
+  public void setLogicalModel( LogicalModel logicalModel ) {
     this.logicalModel = logicalModel;
   }
 
@@ -76,7 +76,7 @@ public class Category extends Concept {
   public IConcept getSecurityParentConcept() {
     return getLogicalModel();
   }
-  
+
   /**
    * the list of logical columns in this category
    * 
@@ -86,41 +86,42 @@ public class Category extends Concept {
     return logicalColumns;
   }
 
-  public void setLogicalColumns(List<LogicalColumn> columns) {
+  public void setLogicalColumns( List<LogicalColumn> columns ) {
     this.logicalColumns = columns;
   }
-  
-  public void addLogicalColumn(LogicalColumn column) {
-    logicalColumns.add(column);
+
+  public void addLogicalColumn( LogicalColumn column ) {
+    logicalColumns.add( column );
   }
-  
+
   /**
    * searches the category for a specific column id.
    * 
-   * @param columnId column to search for
+   * @param columnId
+   *          column to search for
    * 
    * @return logical column object if found
    */
-  public LogicalColumn findLogicalColumn(String columnId) {
-    for (LogicalColumn col : getLogicalColumns()) {
-      if (columnId.equals(col.getId())) {
+  public LogicalColumn findLogicalColumn( String columnId ) {
+    for ( LogicalColumn col : getLogicalColumns() ) {
+      if ( columnId.equals( col.getId() ) ) {
         return col;
       }
     }
     return null;
   }
-  
+
   @Override
   public Object clone() {
     Category clone = new Category();
     // shallow copies
-    clone(clone);
-    clone.setLogicalModel(logicalModel);
-    
+    clone( clone );
+    clone.setLogicalModel( logicalModel );
+
     // deep copies
-    clone.setLogicalColumns(new ArrayList<LogicalColumn>());
-    for (LogicalColumn col : getLogicalColumns()) {
-      clone.addLogicalColumn(col);
+    clone.setLogicalColumns( new ArrayList<LogicalColumn>() );
+    for ( LogicalColumn col : getLogicalColumns() ) {
+      clone.addLogicalColumn( col );
     }
     return clone;
   }

@@ -21,11 +21,11 @@ import java.io.Serializable;
 public class Font implements Serializable, Cloneable {
 
   private static final long serialVersionUID = -5460335956689436764L;
-  
+
   private static final String SEPARATOR = "-"; //$NON-NLS-1$
   private static final String BOLD = "bold"; //$NON-NLS-1$
   private static final String ITALIC = "italic"; //$NON-NLS-1$
-  
+
   private String name;
   private int height;
   private boolean bold;
@@ -40,7 +40,7 @@ public class Font implements Serializable, Cloneable {
    * @param bold
    * @param italic
    */
-  public Font(String name, int height, boolean bold, boolean italic) {
+  public Font( String name, int height, boolean bold, boolean italic ) {
     this.name = name;
     this.height = height;
     this.bold = bold;
@@ -48,7 +48,7 @@ public class Font implements Serializable, Cloneable {
   }
 
   public String toString() {
-    return name + SEPARATOR + height + (bold ? SEPARATOR + BOLD : "") + (italic ? SEPARATOR + ITALIC : ""); //$NON-NLS-1$ //$NON-NLS-2$
+    return name + SEPARATOR + height + ( bold ? SEPARATOR + BOLD : "" ) + ( italic ? SEPARATOR + ITALIC : "" ); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
   /**
@@ -59,9 +59,10 @@ public class Font implements Serializable, Cloneable {
   }
 
   /**
-   * @param bold the bold to set
+   * @param bold
+   *          the bold to set
    */
-  public void setBold(boolean bold) {
+  public void setBold( boolean bold ) {
     this.bold = bold;
   }
 
@@ -73,9 +74,10 @@ public class Font implements Serializable, Cloneable {
   }
 
   /**
-   * @param italic the italic to set
+   * @param italic
+   *          the italic to set
    */
-  public void setItalic(boolean italic) {
+  public void setItalic( boolean italic ) {
     this.italic = italic;
   }
 
@@ -87,9 +89,10 @@ public class Font implements Serializable, Cloneable {
   }
 
   /**
-   * @param name the name to set
+   * @param name
+   *          the name to set
    */
-  public void setName(String name) {
+  public void setName( String name ) {
     this.name = name;
   }
 
@@ -101,19 +104,18 @@ public class Font implements Serializable, Cloneable {
   }
 
   /**
-   * @param size the size to set
+   * @param size
+   *          the size to set
    */
-  public void setHeight(int size) {
+  public void setHeight( int size ) {
     this.height = size;
   }
-  
+
   @Override
-  public boolean equals(Object object) {
-    Font f = (Font)object;
-    return getHeight() == f.getHeight() && 
-    ((getName() == null && f.getName() == null) ||
-     (getName() != null && getName().equals(f.getName()))) &&
-     isItalic() == f.isItalic() &&
-     isBold() == f.isBold();
+  public boolean equals( Object object ) {
+    Font f = (Font) object;
+    return getHeight() == f.getHeight()
+        && ( ( getName() == null && f.getName() == null ) || ( getName() != null && getName().equals( f.getName() ) ) )
+        && isItalic() == f.isItalic() && isBold() == f.isBold();
   }
 }

@@ -23,16 +23,15 @@ import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.IConcept;
 
 /**
- * Acts as a parent for all physical models to be used for common attributes shared
- * by all implementations. 
+ * Acts as a parent for all physical models to be used for common attributes shared by all implementations.
  * 
  * @author Will Gorman (wgorman@pentaho.com)
- *
+ * 
  */
 public abstract class AbstractPhysicalModel extends Concept implements IPhysicalModel {
 
   private static final long serialVersionUID = -3317176543443308764L;
-  
+
   private Domain domain;
   private static final String CLASS_ID = "IPhysicalModel";
 
@@ -40,20 +39,20 @@ public abstract class AbstractPhysicalModel extends Concept implements IPhysical
   public IConcept getParent() {
     return domain;
   }
-  
-  public void setDomain(Domain domain) {
+
+  public void setDomain( Domain domain ) {
     this.domain = domain;
   }
-  
+
   public Domain getDomain() {
     return domain;
   }
-  
+
   @Override
   public List<String> getUniqueId() {
     List<String> uid = new ArrayList<String>();
-    uid.add(CLASS_ID.concat(UID_TYPE_SEPARATOR) + getId());
+    uid.add( CLASS_ID.concat( UID_TYPE_SEPARATOR ) + getId() );
     return uid;
   }
-  
+
 }

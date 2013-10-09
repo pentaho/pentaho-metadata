@@ -19,5 +19,5 @@
 package org.pentaho.metadata.query.impl.sql.graph;
 
 public interface GraphElementChangeListener {
-	public void graphElementChanged(GraphElement element);
+  public void graphElementChanged( GraphElement element );
 }

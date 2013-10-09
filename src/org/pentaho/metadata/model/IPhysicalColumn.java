@@ -27,20 +27,29 @@ import org.pentaho.metadata.model.concept.types.FieldType;
  * This interface defines the API for all physical columns.
  * 
  * @author Will Gorman (wgorman@pentaho.com)
- *
+ * 
  */
 public interface IPhysicalColumn extends IConcept {
   public static final String FIELDTYPE_PROPERTY = "fieldtype"; //$NON-NLS-1$
   public static final String DATATYPE_PROPERTY = "datatype"; //$NON-NLS-1$
   public static final String AGGREGATIONTYPE_PROPERTY = "aggregation"; //$NON-NLS-1$
   public static final String AGGREGATIONLIST_PROPERTY = "aggregation_list"; //$NON-NLS-1$
+
   public DataType getDataType();
-  public void setDataType(DataType dataType);
+
+  public void setDataType( DataType dataType );
+
   public FieldType getFieldType();
-  public void setFieldType(FieldType fieldType);
+
+  public void setFieldType( FieldType fieldType );
+
   public AggregationType getAggregationType();
-  public void setAggregationType(AggregationType aggType);
+
+  public void setAggregationType( AggregationType aggType );
+
   public List<AggregationType> getAggregationList();
-  public void setAggregationList(List<AggregationType> aggList);
+
+  public void setAggregationList( List<AggregationType> aggList );
+
   public IPhysicalTable getPhysicalTable();
 }

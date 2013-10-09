@@ -47,8 +47,7 @@ import org.pentaho.pms.core.exception.PentahoMetadataException;
  * <p>
  * This information should be enough to get a minimal model going.
  * <p>
- * The model WILL NOT CONTAIN RELATIONSHIPS / JOINS!! Those need to be added
- * later.
+ * The model WILL NOT CONTAIN RELATIONSHIPS / JOINS!! Those need to be added later.
  * 
  * @author matt
  * 
@@ -65,7 +64,7 @@ public class AutoModeler {
    * @param databaseMeta
    * @param tableNames
    */
-  public AutoModeler(String locale, String modelName, DatabaseMeta databaseMeta, SchemaTable[] tableNames) {
+  public AutoModeler( String locale, String modelName, DatabaseMeta databaseMeta, SchemaTable[] tableNames ) {
     this.locale = locale;
     this.modelName = modelName;
     this.databaseMeta = databaseMeta;
@@ -74,57 +73,58 @@ public class AutoModeler {
 
   public Domain generateDomain() throws PentahoMetadataException {
     Domain domain = new Domain();
-    domain.setId(modelName);
-    
+    domain.setId( modelName );
+
     List<LocaleType> locales = new ArrayList<LocaleType>();
-    locales.add(new LocaleType("en_US", "English (US)")); //$NON-NLS-1$ //$NON-NLS-2$
-    domain.setLocales(locales);
-    
+    locales.add( new LocaleType( "en_US", "English (US)" ) ); //$NON-NLS-1$ //$NON-NLS-2$
+    domain.setLocales( locales );
+
     SqlPhysicalModel physicalModel = new SqlPhysicalModel();
-    physicalModel.setId(databaseMeta.getName());
-    physicalModel.setDatasource(ThinModelConverter.convertFromLegacy(databaseMeta));
-    
-    Database database = new Database(databaseMeta);
+    physicalModel.setId( databaseMeta.getName() );
+    physicalModel.setDatasource( ThinModelConverter.convertFromLegacy( databaseMeta ) );
+
+    Database database = new Database( databaseMeta );
 
     try {
       // Add the database connection to the empty schema...
       //
-      domain.addPhysicalModel(physicalModel);
+      domain.addPhysicalModel( physicalModel );
 
       // Also add a model with the same name as the model name...
       //
-      String bmID = Util.getLogicalModelIdPrefix() + "_" + modelName.replaceAll(" ", "_").toUpperCase(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      String bmID = Util.getLogicalModelIdPrefix() + "_" + modelName.replaceAll( " ", "_" ).toUpperCase(); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       LogicalModel logicalModel = new LogicalModel();
-      logicalModel.setId(bmID);
-      domain.addLogicalModel(logicalModel);
+      logicalModel.setId( bmID );
+      domain.addLogicalModel( logicalModel );
 
       // Connect to the database...
       //
       database.connect();
 
       // clear the cache
-      DBCache.getInstance().clear(databaseMeta.getName());
+      DBCache.getInstance().clear( databaseMeta.getName() );
 
-      for (int i = 0; i < tableNames.length; i++) {
+      for ( int i = 0; i < tableNames.length; i++ ) {
         SchemaTable schemaTable = tableNames[i];
 
         // Import the specified tables and turn them into PhysicalTable
         // objects...
         //
-        SqlPhysicalTable physicalTable = PhysicalTableImporter.importTableDefinition(database, schemaTable
-            .getSchemaName(), schemaTable.getTableName(), locale);
-        physicalModel.addPhysicalTable(physicalTable);
+        SqlPhysicalTable physicalTable =
+            PhysicalTableImporter.importTableDefinition( database, schemaTable.getSchemaName(), schemaTable
+                .getTableName(), locale );
+        physicalModel.addPhysicalTable( physicalTable );
 
         // At the same time, we will create a business table and add that to the
         // business model...
         //
-        LogicalTable businessTable = createBusinessTable(physicalTable, locale);
-        logicalModel.addLogicalTable(businessTable);
+        LogicalTable businessTable = createBusinessTable( physicalTable, locale );
+        logicalModel.addLogicalTable( businessTable );
       }
-    } catch (Exception e) {
+    } catch ( Exception e ) {
       // For the unexpected stuff, just throw the exception upstairs.
       //
-      throw new PentahoMetadataException(e);
+      throw new PentahoMetadataException( e );
     } finally {
       // Make sure to close the connection
       //
@@ -134,42 +134,43 @@ public class AutoModeler {
     return domain;
   }
 
-  private LogicalColumn findBusinessColumn(LogicalTable logicalTable, String columnName) {
-    for (LogicalColumn logicalColumn : logicalTable.getLogicalColumns()) {
-      if (columnName.equals(((SqlPhysicalColumn)logicalColumn.getPhysicalColumn()).getTargetColumn())) {
+  private LogicalColumn findBusinessColumn( LogicalTable logicalTable, String columnName ) {
+    for ( LogicalColumn logicalColumn : logicalTable.getLogicalColumns() ) {
+      if ( columnName.equals( ( (SqlPhysicalColumn) logicalColumn.getPhysicalColumn() ).getTargetColumn() ) ) {
         return logicalColumn;
       }
     }
     return null;
   }
 
-  private LogicalTable createBusinessTable(SqlPhysicalTable physicalTable, String locale) {
+  private LogicalTable createBusinessTable( SqlPhysicalTable physicalTable, String locale ) {
 
     // Create a business table with a new ID and localized name
     //
-    LogicalTable businessTable = new LogicalTable(null, physicalTable);
+    LogicalTable businessTable = new LogicalTable( null, physicalTable );
 
     // Try to set the name of the business table to something nice (beautify)
     //
-    String tableName = PhysicalTableImporter.beautifyName(physicalTable.getTargetTable());
-    businessTable.setName(new LocalizedString(locale, tableName));
+    String tableName = PhysicalTableImporter.beautifyName( physicalTable.getTargetTable() );
+    businessTable.setName( new LocalizedString( locale, tableName ) );
 
-    businessTable.setId(Util.proposeSqlBasedLogicalTableId(locale, businessTable, physicalTable));
+    businessTable.setId( Util.proposeSqlBasedLogicalTableId( locale, businessTable, physicalTable ) );
 
     // Add columns to this by copying the physical columns to the business
     // columns...
     //
-    for (IPhysicalColumn physicalColumn : physicalTable.getPhysicalColumns()) {
+    for ( IPhysicalColumn physicalColumn : physicalTable.getPhysicalColumns() ) {
 
       LogicalColumn businessColumn = new LogicalColumn();
-      businessColumn.setPhysicalColumn(physicalColumn);
-      businessColumn.setLogicalTable(businessTable);
+      businessColumn.setPhysicalColumn( physicalColumn );
+      businessColumn.setLogicalTable( businessTable );
 
       // We're done, add the business column.
       //
       // Propose a new ID
-      businessColumn.setId(Util.proposeSqlBasedLogicalColumnId(locale, businessTable, (SqlPhysicalColumn)physicalColumn));
-      businessTable.addLogicalColumn(businessColumn);
+      businessColumn.setId( Util.proposeSqlBasedLogicalColumnId( locale, businessTable,
+          (SqlPhysicalColumn) physicalColumn ) );
+      businessTable.addLogicalColumn( businessColumn );
     }
 
     return businessTable;
@@ -186,7 +187,7 @@ public class AutoModeler {
    * @param databaseMeta
    *          the databaseMeta to set
    */
-  public void setDatabaseMeta(DatabaseMeta databaseMeta) {
+  public void setDatabaseMeta( DatabaseMeta databaseMeta ) {
     this.databaseMeta = databaseMeta;
   }
 
@@ -201,7 +202,7 @@ public class AutoModeler {
    * @param tableNames
    *          the tableNames to set
    */
-  public void setTableNames(SchemaTable[] tableNames) {
+  public void setTableNames( SchemaTable[] tableNames ) {
     this.tableNames = tableNames;
   }
 
@@ -216,7 +217,7 @@ public class AutoModeler {
    * @param modelName
    *          the modelName to set
    */
-  public void setModelName(String modelName) {
+  public void setModelName( String modelName ) {
     this.modelName = modelName;
   }
 
@@ -231,7 +232,7 @@ public class AutoModeler {
    * @param locale
    *          the locale to set
    */
-  public void setLocale(String locale) {
+  public void setLocale( String locale ) {
     this.locale = locale;
   }
 }

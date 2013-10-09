@@ -17,16 +17,16 @@
 package org.pentaho.metadata.model.concept.types;
 
 public enum TableType {
-  OTHER("TableType.USER_OTHER_DESC"), //$NON-NLS-1$
-  DIMENSION("TableType.USER_DIMENSION_DESC"), //$NON-NLS-1$
-  FACT("TableType.USER_FACT_DESC"); //$NON-NLS-1$
-  
+  OTHER( "TableType.USER_OTHER_DESC" ), //$NON-NLS-1$
+  DIMENSION( "TableType.USER_DIMENSION_DESC" ), //$NON-NLS-1$
+  FACT( "TableType.USER_FACT_DESC" ); //$NON-NLS-1$
+
   private String description;
-  
-  TableType(String description) {
+
+  TableType( String description ) {
     this.description = description;
   }
-  
+
   public String getDescription() {
     return description;
   }

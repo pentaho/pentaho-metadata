@@ -32,23 +32,23 @@ public class SQLModelGeneratorException extends Exception {
   /**
    * @param message
    */
-  public SQLModelGeneratorException(String message) {
-    super(message);
+  public SQLModelGeneratorException( String message ) {
+    super( message );
   }
 
   /**
    * @param message
    * @param reas
    */
-  public SQLModelGeneratorException(String message, Throwable reas) {
-    super(message, reas);
+  public SQLModelGeneratorException( String message, Throwable reas ) {
+    super( message, reas );
   }
 
   /**
    * @param reas
    */
-  public SQLModelGeneratorException(Throwable reas) {
-    super(reas);
+  public SQLModelGeneratorException( Throwable reas ) {
+    super( reas );
   }
 
 }

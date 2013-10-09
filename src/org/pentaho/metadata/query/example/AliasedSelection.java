@@ -26,7 +26,7 @@ import org.pentaho.pms.core.exception.PentahoMetadataException;
  * This is an example of extending the metadata query model.
  * 
  * @author Will Gorman (wgorman@penthao.com)
- *
+ * 
  */
 public class AliasedSelection extends Selection {
 
@@ -34,48 +34,48 @@ public class AliasedSelection extends Selection {
 
   protected String alias;
   protected String formula;
-  
+
   public String toString() {
-    return "[bc=" + getLogicalColumn() + "; alias="+ alias + "; formula="+formula+ "]";
+    return "[bc=" + getLogicalColumn() + "; alias=" + alias + "; formula=" + formula + "]";
   }
-  
-  public AliasedSelection(Category category, LogicalColumn column, AggregationType agg, String alias) {
-    super(category, column, agg);
+
+  public AliasedSelection( Category category, LogicalColumn column, AggregationType agg, String alias ) {
+    super( category, column, agg );
     this.alias = alias;
   }
-  
-  public AliasedSelection(String formula) throws PentahoMetadataException {
-    super(null, null, null);
+
+  public AliasedSelection( String formula ) throws PentahoMetadataException {
+    super( null, null, null );
     this.formula = formula;
   }
 
   public String getAlias() {
     return alias;
   }
-  
+
   public String getFormula() {
     return formula;
   }
-  
+
   public boolean hasFormula() {
     return formula != null;
   }
-  
+
   @Override
   public int hashCode() {
-    if (getLogicalColumn() != null) {
+    if ( getLogicalColumn() != null ) {
       return getLogicalColumn().getId().hashCode();
     } else {
       return formula.hashCode();
     }
   }
-  
-  public boolean equals(Object selection) {
-    AliasedSelection sel = (AliasedSelection)selection;
-    if (hasFormula() && sel.hasFormula()) {
-      return formula.equals(sel.getFormula());
-    } else if (!hasFormula() && !sel.hasFormula()){
-      return super.equals(selection);
+
+  public boolean equals( Object selection ) {
+    AliasedSelection sel = (AliasedSelection) selection;
+    if ( hasFormula() && sel.hasFormula() ) {
+      return formula.equals( sel.getFormula() );
+    } else if ( !hasFormula() && !sel.hasFormula() ) {
+      return super.equals( selection );
     } else {
       return false;
     }

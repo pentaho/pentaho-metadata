@@ -18,62 +18,56 @@ package org.pentaho.pms.schema.olap;
 
 import org.pentaho.pms.schema.BusinessColumn;
 
-@SuppressWarnings("deprecation")
-public class OlapMeasure implements Cloneable
-{
-    private String name;
-    private BusinessColumn businessColumn;
-    
-    public OlapMeasure()
-    {
-    }
-    
-    /**
-     * @param name
-     * @param businessColumn
-     */
-    public OlapMeasure(String name, BusinessColumn businessColumn)
-    {
-        this();
-        this.name = name;
-        this.businessColumn = businessColumn;
-    }
+@SuppressWarnings( "deprecation" )
+public class OlapMeasure implements Cloneable {
+  private String name;
+  private BusinessColumn businessColumn;
 
-    public Object clone()
-    {
-        return new OlapMeasure(name, businessColumn); // shallow copy of business column is desired
-    }
-    
-    /**
-     * @return the businessColumn
-     */
-    public BusinessColumn getBusinessColumn()
-    {
-        return businessColumn;
-    }
+  public OlapMeasure() {
+  }
 
-    /**
-     * @param businessColumn the businessColumn to set
-     */
-    public void setBusinessColumn(BusinessColumn businessColumn)
-    {
-        this.businessColumn = businessColumn;
-    }
+  /**
+   * @param name
+   * @param businessColumn
+   */
+  public OlapMeasure( String name, BusinessColumn businessColumn ) {
+    this();
+    this.name = name;
+    this.businessColumn = businessColumn;
+  }
 
-    /**
-     * @return the name
-     */
-    public String getName()
-    {
-        return name;
-    }
+  public Object clone() {
+    return new OlapMeasure( name, businessColumn ); // shallow copy of business column is desired
+  }
 
-    /**
-     * @param name the name to set
-     */
-    public void setName(String name)
-    {
-        this.name = name;
-    }
+  /**
+   * @return the businessColumn
+   */
+  public BusinessColumn getBusinessColumn() {
+    return businessColumn;
+  }
+
+  /**
+   * @param businessColumn
+   *          the businessColumn to set
+   */
+  public void setBusinessColumn( BusinessColumn businessColumn ) {
+    this.businessColumn = businessColumn;
+  }
+
+  /**
+   * @return the name
+   */
+  public String getName() {
+    return name;
+  }
+
+  /**
+   * @param name
+   *          the name to set
+   */
+  public void setName( String name ) {
+    this.name = name;
+  }
 
 }

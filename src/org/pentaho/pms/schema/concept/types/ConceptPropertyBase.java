@@ -20,54 +20,51 @@ import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 
 /**
  * Base class for all concept properties.
- *
+ * 
  * @author Matt
- @deprecated as of metadata 3.0.
+ * @deprecated as of metadata 3.0.
  */
-public abstract class ConceptPropertyBase implements ConceptPropertyInterface, Cloneable
-{
-    private String id;
-    private boolean required;
+public abstract class ConceptPropertyBase implements ConceptPropertyInterface, Cloneable {
+  private String id;
+  private boolean required;
 
-    /**
-     * @param id
-     */
-    public ConceptPropertyBase(String id)
-    {
-      this(id, false);
-    }
+  /**
+   * @param id
+   */
+  public ConceptPropertyBase( String id ) {
+    this( id, false );
+  }
 
-    public ConceptPropertyBase(String id, boolean required) {
-      super();
-      this.id = id;
-      this.required = required;
-    }
+  public ConceptPropertyBase( String id, boolean required ) {
+    super();
+    this.id = id;
+    this.required = required;
+  }
 
-    /**
-     * @return the id
-     */
-    public String getId()
-    {
-        return id;
-    }
+  /**
+   * @return the id
+   */
+  public String getId() {
+    return id;
+  }
 
-    /**
-     * @param id the id to set
-     */
-    public void setId(String id)
-    {
-        this.id = id;
-    }
+  /**
+   * @param id
+   *          the id to set
+   */
+  public void setId( String id ) {
+    this.id = id;
+  }
 
-    public boolean isRequired() {
-      return required;
-    }
+  public boolean isRequired() {
+    return required;
+  }
 
-    public void setRequired(final boolean required) {
-      this.required = required;
-    }
+  public void setRequired( final boolean required ) {
+    this.required = required;
+  }
 
-    public Object clone() throws CloneNotSupportedException {
-      return super.clone();
-    }
+  public Object clone() throws CloneNotSupportedException {
+    return super.clone();
+  }
 }

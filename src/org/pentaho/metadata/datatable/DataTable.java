@@ -20,56 +20,61 @@
 package org.pentaho.metadata.datatable;
 
 /**
- * A serializable data table. The JSON serialization of this class is compatible with the javascript
- * objects expected by the Data Access client API and the Visualization API.
+ * A serializable data table. The JSON serialization of this class is compatible with the javascript objects expected by
+ * the Data Access client API and the Visualization API.
+ * 
  * @author jamesdixon
- *
+ * 
  */
 public class DataTable {
 
-	private Column cols[];
-	
-	private Row rows[];
+  private Column[] cols;
 
-	public DataTable() {
-		
-	}
-	
-	public DataTable( Row rows[], Column cols[] ) {
-		this.rows = rows;
-		this.cols = cols;
-	}
-	
-	/**
-	 * Returns an array of @see Column metadata
-	 * @return
-	 */
-	public Column[] getCols() {
-		return cols;
-	}
+  private Row[] rows;
 
-	/**
-	 * Sets the column metadata
-	 * @param cols
-	 */
-	public void setCols(Column[] cols) {
-		this.cols = cols;
-	}
+  public DataTable() {
 
-	/**
-	 * Returns the @see Row objects for this table
-	 * @return
-	 */
-	public Row[] getRows() {
-		return rows;
-	}
+  }
 
-	/**
-	 * Sets the rows for this table
-	 * @param rows
-	 */
-	public void setRows(Row[] rows) {
-		this.rows = rows;
-	}
-	
+  public DataTable( Row[] rows, Column[] cols ) {
+    this.rows = rows;
+    this.cols = cols;
+  }
+
+  /**
+   * Returns an array of @see Column metadata
+   * 
+   * @return
+   */
+  public Column[] getCols() {
+    return cols;
+  }
+
+  /**
+   * Sets the column metadata
+   * 
+   * @param cols
+   */
+  public void setCols( Column[] cols ) {
+    this.cols = cols;
+  }
+
+  /**
+   * Returns the @see Row objects for this table
+   * 
+   * @return
+   */
+  public Row[] getRows() {
+    return rows;
+  }
+
+  /**
+   * Sets the rows for this table
+   * 
+   * @param rows
+   */
+  public void setRows( Row[] rows ) {
+    this.rows = rows;
+  }
+
 }

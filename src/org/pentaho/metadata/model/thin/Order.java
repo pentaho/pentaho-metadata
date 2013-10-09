@@ -18,40 +18,41 @@ package org.pentaho.metadata.model.thin;
 
 /**
  * Concrete, lightweight, serializable object that holds information about sorting
+ * 
  * @author jamesdixon
- *
+ * 
  */
 public class Order {
 
   private static final long serialVersionUID = 4824503466813354111L;
 
   private String elementId;
-  
+
   private String parentId;
 
   private String orderType;
 
   public String getElementId() {
-	    return this.elementId;    
-	  }
+    return this.elementId;
+  }
 
-  public void setElementId(String elementId) {
-	    this.elementId = elementId;  
-	  }
-  
+  public void setElementId( String elementId ) {
+    this.elementId = elementId;
+  }
+
   public String getOrderType() {
     return orderType;
   }
 
-  public void setOrderType(String orderType) {
+  public void setOrderType( String orderType ) {
     this.orderType = orderType;
   }
 
   public String getParentId() {
-	return parentId;
+    return parentId;
   }
 
-	public void setParentId(String parentId) {
-		this.parentId = parentId;
-	}
+  public void setParentId( String parentId ) {
+    this.parentId = parentId;
+  }
 }
