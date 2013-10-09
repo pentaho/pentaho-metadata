@@ -21,26 +21,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class is temporary until we have a thin DatabaseMeta implementation.  The thin 
- * implementation will not be available until Kettle 4.0, so this class will need to 
- * survive for a while.
+ * This class is temporary until we have a thin DatabaseMeta implementation. The thin implementation will not be
+ * available until Kettle 4.0, so this class will need to survive for a while.
  * 
  * @author Will Gorman (wgorman@pentaho.com)
- *
+ * 
  */
 public class SqlDataSource implements Serializable {
 
   private static final long serialVersionUID = -911638128486994514L;
 
   public enum DataSourceType {
-    NATIVE,
-    ODBC,
-    OCI,
-    PLUGIN,
-    JNDI,
-    CUSTOM
+    NATIVE, ODBC, OCI, PLUGIN, JNDI, CUSTOM
   }
-  
+
   private DataSourceType type = DataSourceType.JNDI;
   private String databaseName;
   private String username;
@@ -49,52 +43,67 @@ public class SqlDataSource implements Serializable {
   private String port;
   private String dialectType;
   private Map<String, String> attributes = new HashMap<String, String>();
-  
-  public void setType(DataSourceType type) {
+
+  public void setType( DataSourceType type ) {
     this.type = type;
   }
+
   public DataSourceType getType() {
     return type;
   }
-  public void setDatabaseName(String databaseName) {
+
+  public void setDatabaseName( String databaseName ) {
     this.databaseName = databaseName;
   }
+
   public String getDatabaseName() {
     return databaseName;
   }
-  public void setUsername(String username) {
+
+  public void setUsername( String username ) {
     this.username = username;
   }
+
   public String getUsername() {
     return username;
   }
-  public void setPassword(String password) {
+
+  public void setPassword( String password ) {
     this.password = password;
   }
+
   public String getPassword() {
     return password;
   }
-  public void setDialectType(String dialectType) {
+
+  public void setDialectType( String dialectType ) {
     this.dialectType = dialectType;
   }
+
   public String getDialectType() {
     return dialectType;
   }
-  public void setHostname(String hostname) {
+
+  public void setHostname( String hostname ) {
     this.hostname = hostname;
   }
+
   public String getHostname() {
     return hostname;
   }
-  public void setPort(String port) {
+
+  public void setPort( String port ) {
     this.port = port;
   }
+
   public String getPort() {
     return port;
   }
-  public void setAttributes(Map<String, String> attributes) {
+
+  public void setAttributes( Map<String, String> attributes ) {
     this.attributes = attributes;
   }
+
   public Map<String, String> getAttributes() {
     return attributes;
   }

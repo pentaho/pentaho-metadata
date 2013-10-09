@@ -24,41 +24,41 @@ import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.SchemaMeta;
 
 /**
- * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.query.model.Query
+ * @deprecated as of metadata 3.0. Please use org.pentaho.metadata.query.model.Query
  */
 public interface MQLQuery {
 
   public MappedQuery getQuery() throws PentahoMetadataException;
-  
+
   public DatabaseMeta getDatabaseMeta();
 
   public SchemaMeta getSchemaMeta();
 
-  public void setSchemaMeta(SchemaMeta schemaMeta);
-  
+  public void setSchemaMeta( SchemaMeta schemaMeta );
+
   public BusinessModel getModel();
 
-  public void setModel(BusinessModel model);
-  
+  public void setModel( BusinessModel model );
+
   public boolean getDisableDistinct();
- 
-  public void setDisableDistinct(boolean value);
-  
+
+  public void setDisableDistinct( boolean value );
+
   public int getLimit();
-  
-  public void setLimit(int limit);
-  
+
+  public void setLimit( int limit );
+
   public List<Selection> getSelections();
-  
-  public void setSelections(List<Selection> list);
- 
+
+  public void setSelections( List<Selection> list );
+
   public List<WhereCondition> getConstraints();
-  
-  public void setConstraints(List<WhereCondition> list);
-  
+
+  public void setConstraints( List<WhereCondition> list );
+
   public List<OrderBy> getOrder();
-  
-  public void setOrder(List<OrderBy> list);
+
+  public void setOrder( List<OrderBy> list );
 
   public String getXML();
 

@@ -22,20 +22,20 @@ import java.util.List;
 import org.pentaho.metadata.model.concept.IConcept;
 
 /**
- * This is the SQL implementation of the physical model.  For now 
- * it contains a string reference to it's data source (JNDI or Pentaho).
+ * This is the SQL implementation of the physical model. For now it contains a string reference to it's data source
+ * (JNDI or Pentaho).
  * 
  * @author Will Gorman (wgorman@pentaho.com)
- *
+ * 
  */
 public class SqlPhysicalModel extends AbstractPhysicalModel {
-  
+
   private static final long serialVersionUID = 8834210720816769790L;
-  
-  // this property should be replaced with a thin 
+
+  // this property should be replaced with a thin
   // representation of database meta, which is required
   // for full backward compatibility.
-  
+
   /** returns a pentaho or JNDI datasource **/
   private SqlDataSource datasource;
 
@@ -49,10 +49,10 @@ public class SqlPhysicalModel extends AbstractPhysicalModel {
   @Override
   public List<IConcept> getChildren() {
     List<IConcept> children = new ArrayList<IConcept>();
-    children.addAll(physicalTables);
+    children.addAll( physicalTables );
     return children;
   }
-  
+
   public String getQueryExecName() {
     return "metadataqueryexec-SQL";
   }
@@ -60,22 +60,21 @@ public class SqlPhysicalModel extends AbstractPhysicalModel {
   public String getDefaultQueryClassname() {
     return "org.pentaho.platform.plugin.services.connections.metadata.sql.SqlMetadataQueryExec";
   }
-  
-  public void setDatasource(SqlDataSource datasource) {
+
+  public void setDatasource( SqlDataSource datasource ) {
     this.datasource = datasource;
   }
 
   public SqlDataSource getDatasource() {
     return datasource;
   }
-  
+
   public List<SqlPhysicalTable> getPhysicalTables() {
     return physicalTables;
   }
-  
-  public void addPhysicalTable(SqlPhysicalTable table) {
-    physicalTables.add(table);
+
+  public void addPhysicalTable( SqlPhysicalTable table ) {
+    physicalTables.add( table );
   }
-  
 
 }

@@ -20,10 +20,11 @@ import org.pentaho.di.core.database.DatabaseInterface;
 import org.pentaho.di.core.plugins.DatabaseMetaPlugin;
 
 /**
- * Mock database interface for Impala so we don't have to depend on the Pentaho Big Data Plugin project at all.  It is purely a runtime dependency.
+ * Mock database interface for Impala so we don't have to depend on the Pentaho Big Data Plugin project at all. It is
+ * purely a runtime dependency.
  * 
  */
-@DatabaseMetaPlugin(type="IMPALA", typeDescription="Impala")
+@DatabaseMetaPlugin( type = "IMPALA", typeDescription = "Impala" )
 public class MockImpalaDatabaseMeta extends MockHiveDatabaseMeta implements DatabaseInterface {
- 
+
 }

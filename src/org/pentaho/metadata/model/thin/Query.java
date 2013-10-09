@@ -20,8 +20,9 @@ import java.util.Map;
 
 /**
  * Defines a query model in terms of metadata.
+ * 
  * @author jamesdixon
- *
+ * 
  */
 public class Query {
 
@@ -32,22 +33,22 @@ public class Query {
   private Condition[] conditions = new Condition[0];
 
   private Order[] orders = new Order[0];
-  
+
   private Parameter[] parameters = new Parameter[0];
 
   private String sourceId;
 
   private Boolean disableDistinct;
-  
+
   /**
    * Keys are parameter names; values are defaults for those parameters.
    */
   private Map<String, String> defaultParameterMap;
-  
+
   public Query() {
     super();
   }
-  
+
   public Element[] getElements() {
     return elements;
   }
@@ -64,31 +65,31 @@ public class Query {
     return orders;
   }
 
-  public void setElements(Element[] elements) {
+  public void setElements( Element[] elements ) {
 
     this.elements = elements;
   }
 
-  public void setConditions(Condition[] conditions) {
+  public void setConditions( Condition[] conditions ) {
 
     this.conditions = conditions;
   }
 
-  public void setOrders(Order[] orders) {
+  public void setOrders( Order[] orders ) {
 
     this.orders = orders;
   }
 
-  public void setSourceId(String sourceId) {
+  public void setSourceId( String sourceId ) {
 
     this.sourceId = sourceId;
   }
 
-  public Map<String, String> getDefaultParameterMap() {  
+  public Map<String, String> getDefaultParameterMap() {
     return defaultParameterMap;
   }
 
-  public void setDefaultParameterMap(Map<String, String> defaultParameterMap) {
+  public void setDefaultParameterMap( Map<String, String> defaultParameterMap ) {
     this.defaultParameterMap = defaultParameterMap;
   }
 
@@ -96,7 +97,7 @@ public class Query {
     return disableDistinct;
   }
 
-  public void setDisableDistinct(Boolean disableDistinct) {
+  public void setDisableDistinct( Boolean disableDistinct ) {
     this.disableDistinct = disableDistinct;
   }
 
@@ -104,8 +105,8 @@ public class Query {
     return parameters;
   }
 
-  public void setParameters(Parameter[] parameters) {
+  public void setParameters( Parameter[] parameters ) {
     this.parameters = parameters;
   }
-  
+
 }

@@ -29,7 +29,7 @@ public class OlapDimensionUsage implements Cloneable, Serializable {
    * @param name
    * @param olapDimension
    */
-  public OlapDimensionUsage(String name, OlapDimension olapDimension) {
+  public OlapDimensionUsage( String name, OlapDimension olapDimension ) {
     super();
     this.name = name;
     this.olapDimension = olapDimension;
@@ -43,8 +43,8 @@ public class OlapDimensionUsage implements Cloneable, Serializable {
     return usage;
   }
 
-  public boolean equals(Object obj) {
-    return name.equals(((OlapDimensionUsage) obj).name);
+  public boolean equals( Object obj ) {
+    return name.equals( ( (OlapDimensionUsage) obj ).name );
   }
 
   public int hashCode() {
@@ -62,7 +62,7 @@ public class OlapDimensionUsage implements Cloneable, Serializable {
    * @param name
    *          the name to set
    */
-  public void setName(String name) {
+  public void setName( String name ) {
     this.name = name;
   }
 
@@ -77,7 +77,7 @@ public class OlapDimensionUsage implements Cloneable, Serializable {
    * @param olapDimension
    *          the olapDimension to set
    */
-  public void setOlapDimension(OlapDimension olapDimension) {
+  public void setOlapDimension( OlapDimension olapDimension ) {
     this.olapDimension = olapDimension;
   }
 

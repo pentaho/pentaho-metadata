@@ -22,78 +22,77 @@ import java.util.List;
 import org.pentaho.metadata.model.concept.IConcept;
 
 /**
- * The Inline ETL Physical model is designed to handle CSV files and uses
- * inline ETL (Kettle Transformations) to execute query models.
+ * The Inline ETL Physical model is designed to handle CSV files and uses inline ETL (Kettle Transformations) to execute
+ * query models.
  * 
  * @author Will Gorman (wgorman@pentaho.com)
- *
+ * 
  */
 public class InlineEtlPhysicalModel extends AbstractPhysicalModel {
 
   private static final long serialVersionUID = 998991922256017536L;
-  
+
   public static final String FILE_LOCATION = "file_location"; //$NON-NLS-1$
   public static final String HEADER_PRESENT = "header_present"; //$NON-NLS-1$
   public static final String ENCLOSURE = "enclosure"; //$NON-NLS-1$
   public static final String DELIMITER = "delimiter"; //$NON-NLS-1$
-  
+
   // this contains a list of the physical tables
   private List<InlineEtlPhysicalTable> physicalTables = new ArrayList<InlineEtlPhysicalTable>();
 
   public InlineEtlPhysicalModel() {
     super();
   }
-  
+
   @Override
   public List<IConcept> getChildren() {
     List<IConcept> children = new ArrayList<IConcept>();
-    children.addAll(physicalTables);
+    children.addAll( physicalTables );
     return children;
   }
 
   public String getQueryExecName() {
     return "metadataqueryexec-ETL";
   }
-  
+
   public String getDefaultQueryClassname() {
     return "org.pentaho.metadata.query.impl.ietl.InlineEtlQueryExecutor";
   }
-  
+
   public String getFileLocation() {
-    return (String)getProperty(FILE_LOCATION);
+    return (String) getProperty( FILE_LOCATION );
   }
-  
-  public void setFileLocation(String fileLocation) {
-    setProperty(FILE_LOCATION, fileLocation);
+
+  public void setFileLocation( String fileLocation ) {
+    setProperty( FILE_LOCATION, fileLocation );
   }
-  
-  public void setHeaderPresent(Boolean headerPresent) {
-    setProperty(HEADER_PRESENT, headerPresent);
+
+  public void setHeaderPresent( Boolean headerPresent ) {
+    setProperty( HEADER_PRESENT, headerPresent );
   }
-  
+
   public Boolean getHeaderPresent() {
-    return (Boolean)getProperty(HEADER_PRESENT);
+    return (Boolean) getProperty( HEADER_PRESENT );
   }
 
   public String getEnclosure() {
-    return (String)getProperty(ENCLOSURE);
+    return (String) getProperty( ENCLOSURE );
   }
-  
-  public void setEnclosure(String enclosure) {
-    setProperty(ENCLOSURE, enclosure);
+
+  public void setEnclosure( String enclosure ) {
+    setProperty( ENCLOSURE, enclosure );
   }
 
   public String getDelimiter() {
-    return (String)getProperty(DELIMITER);
+    return (String) getProperty( DELIMITER );
   }
 
-  public void setDelimiter(String delimiter) {
-    setProperty(DELIMITER, delimiter);
+  public void setDelimiter( String delimiter ) {
+    setProperty( DELIMITER, delimiter );
   }
-  
-  
+
   public List<InlineEtlPhysicalTable> getPhysicalTables() {
     return physicalTables;
   }
-  
+
 }

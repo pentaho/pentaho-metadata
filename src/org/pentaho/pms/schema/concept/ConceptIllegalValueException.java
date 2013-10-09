@@ -19,41 +19,36 @@ package org.pentaho.pms.schema.concept;
 /**
  * @deprecated as of metadata 3.0.
  */
-public class ConceptIllegalValueException extends Exception
-{
-    private static final long serialVersionUID = 4397770344129366440L;
+public class ConceptIllegalValueException extends Exception {
+  private static final long serialVersionUID = 4397770344129366440L;
 
-    /**
+  /**
      * 
      */
-    public ConceptIllegalValueException()
-    {
-        super();
-    }
+  public ConceptIllegalValueException() {
+    super();
+  }
 
-    /**
-     * @param arg0
-     * @param arg1
-     */
-    public ConceptIllegalValueException(String arg0, Throwable arg1)
-    {
-        super(arg0, arg1);
-    }
+  /**
+   * @param arg0
+   * @param arg1
+   */
+  public ConceptIllegalValueException( String arg0, Throwable arg1 ) {
+    super( arg0, arg1 );
+  }
 
-    /**
-     * @param arg0
-     */
-    public ConceptIllegalValueException(String arg0)
-    {
-        super(arg0);
-    }
+  /**
+   * @param arg0
+   */
+  public ConceptIllegalValueException( String arg0 ) {
+    super( arg0 );
+  }
 
-    /**
-     * @param arg0
-     */
-    public ConceptIllegalValueException(Throwable arg0)
-    {
-        super(arg0);
-    }
+  /**
+   * @param arg0
+   */
+  public ConceptIllegalValueException( Throwable arg0 ) {
+    super( arg0 );
+  }
 
 }

@@ -18,7 +18,6 @@ package org.pentaho.metadata.model.concept.security;
 
 import java.io.Serializable;
 
-
 /**
  * A security owner is a combination of a user or role type and the name of that user or role.
  * 
@@ -31,11 +30,11 @@ public class SecurityOwner implements Serializable, Cloneable, Comparable {
   private static final long serialVersionUID = 6657148420948786542L;
 
   public static enum OwnerType {
-    USER("SecurityOwner.USER_USER"), ROLE("SecurityOwner.USER_ROLE");  //$NON-NLS-1$  //$NON-NLS-2$
+    USER( "SecurityOwner.USER_USER" ), ROLE( "SecurityOwner.USER_ROLE" ); //$NON-NLS-1$  //$NON-NLS-2$
 
     String description;
 
-    OwnerType(String description) {
+    OwnerType( String description ) {
       this.description = description;
     }
 
@@ -47,14 +46,17 @@ public class SecurityOwner implements Serializable, Cloneable, Comparable {
   private OwnerType ownerType;
   private String ownerName;
 
-  public SecurityOwner() {}
-  
+  public SecurityOwner() {
+  }
+
   /**
-   * @param ownerType the type of ACL owner : user or role
-   * @param ownerName the name or the user or role
+   * @param ownerType
+   *          the type of ACL owner : user or role
+   * @param ownerName
+   *          the name or the user or role
    * @param rights
    */
-  public SecurityOwner(OwnerType ownerType, String ownerName) {
+  public SecurityOwner( OwnerType ownerType, String ownerName ) {
     this.ownerType = ownerType;
     this.ownerName = ownerName;
   }
@@ -67,9 +69,10 @@ public class SecurityOwner implements Serializable, Cloneable, Comparable {
   }
 
   /**
-   * @param ownerType the type of owner to set: user or role
+   * @param ownerType
+   *          the type of owner to set: user or role
    */
-  public void setOwnerType(OwnerType ownerType) {
+  public void setOwnerType( OwnerType ownerType ) {
     this.ownerType = ownerType;
   }
 
@@ -81,30 +84,29 @@ public class SecurityOwner implements Serializable, Cloneable, Comparable {
   }
 
   /**
-   * @param ownerName the name or the user or role
+   * @param ownerName
+   *          the name or the user or role
    */
-  public void setOwnerName(String ownerName) {
+  public void setOwnerName( String ownerName ) {
     this.ownerName = ownerName;
-  }
-  
-  @Override
-  public boolean equals(Object object) {
-    if (!(object instanceof SecurityOwner)) {
-      return false;
-    }
-    SecurityOwner s = (SecurityOwner)object;
-    return  
-      getOwnerType().equals(s.getOwnerType()) &&
-      getOwnerName().equals(s.getOwnerName());
-  }
-  
-  @Override
-  public String toString() {
-    return "{class=SecurityOwner, ownerType=" + getOwnerType() + ", ownerName=" + getOwnerName() +"}"; 
   }
 
   @Override
-  public int compareTo(Object object) {
-    return toString().compareTo(object.toString());
+  public boolean equals( Object object ) {
+    if ( !( object instanceof SecurityOwner ) ) {
+      return false;
+    }
+    SecurityOwner s = (SecurityOwner) object;
+    return getOwnerType().equals( s.getOwnerType() ) && getOwnerName().equals( s.getOwnerName() );
+  }
+
+  @Override
+  public String toString() {
+    return "{class=SecurityOwner, ownerType=" + getOwnerType() + ", ownerName=" + getOwnerName() + "}";
+  }
+
+  @Override
+  public int compareTo( Object object ) {
+    return toString().compareTo( object.toString() );
   }
 }

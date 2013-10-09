@@ -31,7 +31,7 @@ public class RowLevelSecurity implements Serializable {
 
   private static final long serialVersionUID = 8053164409342554552L;
   private static final String EMPTY_STRING = ""; //$NON-NLS-1$
-  
+
   public static enum Type {
     NONE, GLOBAL, ROLEBASED
   }
@@ -48,21 +48,21 @@ public class RowLevelSecurity implements Serializable {
    */
   private Map<SecurityOwner, String> roleBasedConstraintMap = new HashMap<SecurityOwner, String>();
 
-  public RowLevelSecurity(String globalConstraint) {
-    this(Type.GLOBAL, globalConstraint, null);
+  public RowLevelSecurity( String globalConstraint ) {
+    this( Type.GLOBAL, globalConstraint, null );
   }
 
-  public RowLevelSecurity(Map<SecurityOwner, String> roleBasedConstraintMap) {
-    this(Type.ROLEBASED, null, roleBasedConstraintMap);
+  public RowLevelSecurity( Map<SecurityOwner, String> roleBasedConstraintMap ) {
+    this( Type.ROLEBASED, null, roleBasedConstraintMap );
   }
 
   public RowLevelSecurity() {
-    this(Type.NONE, null, null);
+    this( Type.NONE, null, null );
   }
 
-  public RowLevelSecurity(Type type, String globalConstraint, Map<SecurityOwner, String> roleBasedConstraintMap) {
-    setGlobalConstraint(globalConstraint);
-    setRoleBasedConstraintMap(roleBasedConstraintMap);
+  public RowLevelSecurity( Type type, String globalConstraint, Map<SecurityOwner, String> roleBasedConstraintMap ) {
+    setGlobalConstraint( globalConstraint );
+    setRoleBasedConstraintMap( roleBasedConstraintMap );
     this.type = type;
   }
 
@@ -70,7 +70,7 @@ public class RowLevelSecurity implements Serializable {
     return type;
   }
 
-  public void setType(Type type) {
+  public void setType( Type type ) {
     this.type = type;
   }
 
@@ -78,8 +78,8 @@ public class RowLevelSecurity implements Serializable {
     return globalConstraint;
   }
 
-  public void setGlobalConstraint(String globalConstraint) {
-    if (globalConstraint != null) {
+  public void setGlobalConstraint( String globalConstraint ) {
+    if ( globalConstraint != null ) {
       this.globalConstraint = globalConstraint;
     } else {
       this.globalConstraint = EMPTY_STRING;
@@ -90,8 +90,8 @@ public class RowLevelSecurity implements Serializable {
     return roleBasedConstraintMap;
   }
 
-  public void setRoleBasedConstraintMap(Map<SecurityOwner, String> roleBasedConstraintMap) {
-    if (roleBasedConstraintMap != null) {
+  public void setRoleBasedConstraintMap( Map<SecurityOwner, String> roleBasedConstraintMap ) {
+    if ( roleBasedConstraintMap != null ) {
       this.roleBasedConstraintMap = roleBasedConstraintMap;
     } else {
       this.roleBasedConstraintMap = new HashMap<SecurityOwner, String>();
@@ -99,12 +99,10 @@ public class RowLevelSecurity implements Serializable {
   }
 
   @Override
-  public boolean equals(Object object) {
-    RowLevelSecurity r = (RowLevelSecurity)object;
-    return  
-    getType() == r.getType() &&
-    getGlobalConstraint().equals(r.getGlobalConstraint()) &&
-    getRoleBasedConstraintMap().equals(r.getRoleBasedConstraintMap());    
+  public boolean equals( Object object ) {
+    RowLevelSecurity r = (RowLevelSecurity) object;
+    return getType() == r.getType() && getGlobalConstraint().equals( r.getGlobalConstraint() )
+        && getRoleBasedConstraintMap().equals( r.getRoleBasedConstraintMap() );
   }
 
 }

@@ -21,20 +21,18 @@ import org.pentaho.reporting.libraries.formula.DefaultFormulaContext;
 import org.pentaho.reporting.libraries.formula.typing.Type;
 
 /**
- * This is a singleton class that manages PMSFormula's context.
- * the PMSFormula uses this class to validate operators and
- * functions, and it also uses this class to convert Formula
- * terms to SQL.
+ * This is a singleton class that manages PMSFormula's context. the PMSFormula uses this class to validate operators and
+ * functions, and it also uses this class to convert Formula terms to SQL.
  * 
  * @author Will Gorman (wgorman@pentaho.org)
  * 
- * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.query.model.impl.sql.SqlOpenFormulaContext
+ * @deprecated as of metadata 3.0. Please use org.pentaho.metadata.query.model.impl.sql.SqlOpenFormulaContext
  */
 public class PMSFormulaContext extends DefaultFormulaContext {
-  
+
   /** singleton instance, one per classloader */
   private static PMSFormulaContext singleton = new PMSFormulaContext();
-  
+
   /**
    * static, thread safe singleton retrieval
    * 
@@ -45,20 +43,18 @@ public class PMSFormulaContext extends DefaultFormulaContext {
   }
 
   /**
-   * PMSFormulaContext and PMSFormula do not use libFormula in the traditional
-   * manner of executing a formula.  Instead they generate the necessary SQL to be 
-   * executed from an RDBMS.  
+   * PMSFormulaContext and PMSFormula do not use libFormula in the traditional manner of executing a formula. Instead
+   * they generate the necessary SQL to be executed from an RDBMS.
    */
-  public Object resolveReference(Object name) {
-    throw new UnsupportedOperationException(Messages.getErrorString("PMSFormulaContext.ERROR_0001_INVALID_USE")); //$NON-NLS-1$
+  public Object resolveReference( Object name ) {
+    throw new UnsupportedOperationException( Messages.getErrorString( "PMSFormulaContext.ERROR_0001_INVALID_USE" ) ); //$NON-NLS-1$
   }
 
   /**
-   * PMSFormulaContext and PMSFormula do not use libFormula in the traditional
-   * manner of executing a formula.  Instead they generate the necessary SQL to be 
-   * executed from an RDBMS.  
+   * PMSFormulaContext and PMSFormula do not use libFormula in the traditional manner of executing a formula. Instead
+   * they generate the necessary SQL to be executed from an RDBMS.
    */
-  public Type resolveReferenceType(Object name) {
-    throw new UnsupportedOperationException(Messages.getErrorString("PMSFormulaContext.ERROR_0001_INVALID_USE")); //$NON-NLS-1$
+  public Type resolveReferenceType( Object name ) {
+    throw new UnsupportedOperationException( Messages.getErrorString( "PMSFormulaContext.ERROR_0001_INVALID_USE" ) ); //$NON-NLS-1$
   }
 }

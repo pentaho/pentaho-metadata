@@ -22,7 +22,7 @@ import java.io.Serializable;
  * The LocaleType contains metadata information about a locale.
  * 
  * @author Will Gorman (wgorman@pentaho.com)
- *
+ * 
  */
 public class LocaleType implements Serializable {
 
@@ -30,19 +30,19 @@ public class LocaleType implements Serializable {
 
   private String code;
   private String description;
-  
+
   public LocaleType() {
   }
-  
-  public LocaleType(String code, String description) {
+
+  public LocaleType( String code, String description ) {
     this.code = code;
     this.description = description;
   }
-  
-  public void setCode(String code) {
+
+  public void setCode( String code ) {
     this.code = code;
   }
-  
+
   /**
    * the locale code
    * 
@@ -52,7 +52,7 @@ public class LocaleType implements Serializable {
     return code;
   }
 
-  public void setDescription(String description) {
+  public void setDescription( String description ) {
     this.description = description;
   }
 
@@ -64,14 +64,12 @@ public class LocaleType implements Serializable {
   public String getDescription() {
     return description;
   }
-  
+
   @Override
-  public boolean equals(Object object) {
-    LocaleType l = (LocaleType)object;
-    return  
-    ((getDescription() == null && l.getDescription() == null) ||
-     (getDescription() != null && getDescription().equals(l.getDescription()))) &&
-    ((getCode() == null && l.getCode() == null) ||
-         (getCode() != null && getCode().equals(l.getCode())));
+  public boolean equals( Object object ) {
+    LocaleType l = (LocaleType) object;
+    return ( ( getDescription() == null && l.getDescription() == null ) || ( getDescription() != null && getDescription()
+        .equals( l.getDescription() ) ) )
+        && ( ( getCode() == null && l.getCode() == null ) || ( getCode() != null && getCode().equals( l.getCode() ) ) );
   }
 }

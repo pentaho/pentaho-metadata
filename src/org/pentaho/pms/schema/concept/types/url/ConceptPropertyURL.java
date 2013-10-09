@@ -30,70 +30,58 @@ import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 /**
  * @deprecated as of metadata 3.0.
  */
-public class ConceptPropertyURL extends ConceptPropertyBase implements ConceptPropertyInterface, Cloneable
-{
-    private URL value;
+public class ConceptPropertyURL extends ConceptPropertyBase implements ConceptPropertyInterface, Cloneable {
+  private URL value;
 
-    public ConceptPropertyURL(String name, URL value)
-    {
-        this(name, value, false);
-    }
+  public ConceptPropertyURL( String name, URL value ) {
+    this( name, value, false );
+  }
 
-    public ConceptPropertyURL(String name, URL value, boolean required)
-    {
-        super(name, required);
-        this.value = value;
-    }
+  public ConceptPropertyURL( String name, URL value, boolean required ) {
+    super( name, required );
+    this.value = value;
+  }
 
-    public Object clone() throws CloneNotSupportedException
-    {
-      ConceptPropertyURL rtn = (ConceptPropertyURL) super.clone();
-      if (value != null) {
-        try {
-          rtn.value = new URL(value.toString());
-        } catch (MalformedURLException ignored) {}
+  public Object clone() throws CloneNotSupportedException {
+    ConceptPropertyURL rtn = (ConceptPropertyURL) super.clone();
+    if ( value != null ) {
+      try {
+        rtn.value = new URL( value.toString() );
+      } catch ( MalformedURLException ignored ) {
       }
-      return rtn;
     }
+    return rtn;
+  }
 
-    public ConceptPropertyType getType()
-    {
-        return ConceptPropertyType.URL;
+  public ConceptPropertyType getType() {
+    return ConceptPropertyType.URL;
+  }
+
+  public Object getValue() {
+    return value;
+  }
+
+  public void setValue( Object value ) {
+    this.value = (URL) value;
+  }
+
+  public boolean equals( Object obj ) {
+    if ( obj instanceof ConceptPropertyURL == false ) {
+      return false;
     }
-
-    public Object getValue()
-    {
-        return value;
+    if ( this == obj ) {
+      return true;
     }
+    ConceptPropertyURL rhs = (ConceptPropertyURL) obj;
+    return new EqualsBuilder().append( value, rhs.value ).isEquals();
+  }
 
-    public void setValue(Object value)
-    {
-        this.value = (URL) value;
-    }
+  public int hashCode() {
+    return new HashCodeBuilder( 79, 223 ).append( value ).toHashCode();
+  }
 
-
-    public boolean equals(Object obj)
-    {
-      if (obj instanceof ConceptPropertyURL == false) {
-        return false;
-      }
-      if (this == obj) {
-        return true;
-      }
-      ConceptPropertyURL rhs = (ConceptPropertyURL) obj;
-      return new EqualsBuilder().append(value, rhs.value).isEquals();
-    }
-
-    public int hashCode()
-    {
-      return new HashCodeBuilder(79, 223).append(value).toHashCode();
-    }
-
-    public String toString()
-    {
-      return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).
-        append(value).
-        toString();
+  public String toString() {
+    return new ToStringBuilder( this, ToStringStyle.SHORT_PREFIX_STYLE ).append( value ).toString();
   }
 
 }

@@ -25,11 +25,10 @@ import org.pentaho.metadata.model.concept.types.FieldType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 
 /**
- * this class implements the some of the shared functionality required by all
- * physical columns.
- *  
+ * this class implements the some of the shared functionality required by all physical columns.
+ * 
  * @author Will Gorman (wgorman@pentaho.com)
- *
+ * 
  */
 public abstract class AbstractPhysicalColumn extends Concept implements IPhysicalColumn {
 
@@ -37,41 +36,41 @@ public abstract class AbstractPhysicalColumn extends Concept implements IPhysica
 
   public AbstractPhysicalColumn() {
     // physical column has the following default properties:
-    setName(new LocalizedString());
-    setDescription(new LocalizedString());
+    setName( new LocalizedString() );
+    setDescription( new LocalizedString() );
   }
-  
+
   public DataType getDataType() {
-    return (DataType)getProperty(IPhysicalColumn.DATATYPE_PROPERTY);
+    return (DataType) getProperty( IPhysicalColumn.DATATYPE_PROPERTY );
   }
 
-  public void setDataType(DataType dataType) {
-    setProperty(IPhysicalColumn.DATATYPE_PROPERTY, dataType);
+  public void setDataType( DataType dataType ) {
+    setProperty( IPhysicalColumn.DATATYPE_PROPERTY, dataType );
   }
-  
+
   public FieldType getFieldType() {
-    return (FieldType)getProperty(IPhysicalColumn.FIELDTYPE_PROPERTY);
+    return (FieldType) getProperty( IPhysicalColumn.FIELDTYPE_PROPERTY );
   }
-  
-  public void setFieldType(FieldType fieldType) {
-    setProperty(IPhysicalColumn.FIELDTYPE_PROPERTY, fieldType);
+
+  public void setFieldType( FieldType fieldType ) {
+    setProperty( IPhysicalColumn.FIELDTYPE_PROPERTY, fieldType );
   }
-  
+
   public AggregationType getAggregationType() {
-    return (AggregationType)getProperty(IPhysicalColumn.AGGREGATIONTYPE_PROPERTY);
+    return (AggregationType) getProperty( IPhysicalColumn.AGGREGATIONTYPE_PROPERTY );
   }
 
-  public void setAggregationType(AggregationType aggType) {
-    setProperty(IPhysicalColumn.AGGREGATIONTYPE_PROPERTY, aggType);
+  public void setAggregationType( AggregationType aggType ) {
+    setProperty( IPhysicalColumn.AGGREGATIONTYPE_PROPERTY, aggType );
   }
-  
-  @SuppressWarnings("unchecked")
+
+  @SuppressWarnings( "unchecked" )
   public List<AggregationType> getAggregationList() {
-    return (List<AggregationType>)getProperty(IPhysicalColumn.AGGREGATIONLIST_PROPERTY);
+    return (List<AggregationType>) getProperty( IPhysicalColumn.AGGREGATIONLIST_PROPERTY );
   }
 
-  public void setAggregationList(List<AggregationType> aggList) {
-    setProperty(IPhysicalColumn.AGGREGATIONLIST_PROPERTY, aggList);
+  public void setAggregationList( List<AggregationType> aggList ) {
+    setProperty( IPhysicalColumn.AGGREGATIONLIST_PROPERTY, aggList );
   }
 
 }

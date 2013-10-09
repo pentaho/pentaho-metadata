@@ -40,24 +40,25 @@ public class OlapCube implements Cloneable, Serializable {
     OlapCube olapCube = new OlapCube();
 
     olapCube.name = name;
-    for (int i = 0; i < olapDimensionUsages.size(); i++) {
-      OlapDimensionUsage usage = (OlapDimensionUsage) olapDimensionUsages.get(i);
-      olapCube.olapDimensionUsages.add((OlapDimensionUsage) usage.clone());
+    for ( int i = 0; i < olapDimensionUsages.size(); i++ ) {
+      OlapDimensionUsage usage = (OlapDimensionUsage) olapDimensionUsages.get( i );
+      olapCube.olapDimensionUsages.add( (OlapDimensionUsage) usage.clone() );
     }
 
-    for (int i = 0; i < olapMeasures.size(); i++) {
-      OlapMeasure measure = (OlapMeasure) olapMeasures.get(i);
-      olapCube.olapMeasures.add((OlapMeasure) measure.clone());
+    for ( int i = 0; i < olapMeasures.size(); i++ ) {
+      OlapMeasure measure = (OlapMeasure) olapMeasures.get( i );
+      olapCube.olapMeasures.add( (OlapMeasure) measure.clone() );
     }
 
-    if (logicalTable != null)
+    if ( logicalTable != null ) {
       olapCube.logicalTable = logicalTable; // no cloning here please!
+    }
 
     return olapCube;
   }
 
-  public boolean equals(Object obj) {
-    return name.equals(((OlapCube) obj).getName());
+  public boolean equals( Object obj ) {
+    return name.equals( ( (OlapCube) obj ).getName() );
   }
 
   /**
@@ -71,7 +72,7 @@ public class OlapCube implements Cloneable, Serializable {
    * @param name
    *          the name to set
    */
-  public void setName(String name) {
+  public void setName( String name ) {
     this.name = name;
   }
 
@@ -86,7 +87,7 @@ public class OlapCube implements Cloneable, Serializable {
    * @param logicalTable
    *          the businessTable to set
    */
-  public void setLogicalTable(LogicalTable logicalTable) {
+  public void setLogicalTable( LogicalTable logicalTable ) {
     this.logicalTable = logicalTable;
   }
 
@@ -101,7 +102,7 @@ public class OlapCube implements Cloneable, Serializable {
    * @param olapDimensionUsages
    *          the olapDimensionUsages to set
    */
-  public void setOlapDimensionUsages(List<OlapDimensionUsage> olapDimensionUsages) {
+  public void setOlapDimensionUsages( List<OlapDimensionUsage> olapDimensionUsages ) {
     this.olapDimensionUsages = olapDimensionUsages;
   }
 
@@ -116,36 +117,38 @@ public class OlapCube implements Cloneable, Serializable {
    * @param olapMeasures
    *          the olapMeasures to set
    */
-  public void setOlapMeasures(List<OlapMeasure> olapMeasures) {
+  public void setOlapMeasures( List<OlapMeasure> olapMeasures ) {
     this.olapMeasures = olapMeasures;
   }
 
-  public OlapMeasure findOlapMeasure(String measureName) {
-    for (int i = 0; i < olapMeasures.size(); i++) {
-      OlapMeasure olapMeasure = (OlapMeasure) olapMeasures.get(i);
-      if (olapMeasure.getName().equals(measureName))
+  public OlapMeasure findOlapMeasure( String measureName ) {
+    for ( int i = 0; i < olapMeasures.size(); i++ ) {
+      OlapMeasure olapMeasure = (OlapMeasure) olapMeasures.get( i );
+      if ( olapMeasure.getName().equals( measureName ) ) {
         return olapMeasure;
+      }
     }
     return null;
   }
 
   /**
    * TODO: This should use IDs vs Names
+   * 
    * @param locale
    * @return
    */
-  public String[] getUnusedColumnNames(String locale) {
-    List<String> names = logicalTable.getColumnNames(locale);
-    for (int i = names.size() - 1; i >= 0; i--) {
-      String columnName = (String) names.get(i);
-      for (int m = 0; m < olapMeasures.size(); m++) {
-        OlapMeasure measure = (OlapMeasure) olapMeasures.get(m);
-        if (measure.getLogicalColumn().getName(locale).equals(columnName)) {
-          names.remove(i);
+  public String[] getUnusedColumnNames( String locale ) {
+    List<String> names = logicalTable.getColumnNames( locale );
+    for ( int i = names.size() - 1; i >= 0; i-- ) {
+      String columnName = (String) names.get( i );
+      for ( int m = 0; m < olapMeasures.size(); m++ ) {
+        OlapMeasure measure = (OlapMeasure) olapMeasures.get( m );
+        if ( measure.getLogicalColumn().getName( locale ).equals( columnName ) ) {
+          names.remove( i );
         }
       }
     }
 
-    return (String[]) names.toArray(new String[names.size()]);
+    return (String[]) names.toArray( new String[names.size()] );
   }
 }

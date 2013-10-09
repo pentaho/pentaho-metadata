@@ -23,17 +23,18 @@ import org.pentaho.di.core.plugins.DatabaseMetaPlugin;
 import org.pentaho.di.core.row.ValueMetaInterface;
 
 /**
- * Mock database interface for Hive so we don't have to depend on the Pentaho Big Data Plugin project at all.  It is purely a runtime dependency.
+ * Mock database interface for Hive so we don't have to depend on the Pentaho Big Data Plugin project at all. It is
+ * purely a runtime dependency.
  * 
  * @author Jordan Ganoff (jganoff@pentaho.com)
- *
+ * 
  */
-@DatabaseMetaPlugin(type="HIVE", typeDescription="Hadoop Hive")
+@DatabaseMetaPlugin( type = "HIVE", typeDescription = "Hadoop Hive" )
 public class MockHiveDatabaseMeta extends BaseDatabaseMeta implements DatabaseInterface {
 
   @Override
-  public String getFieldDefinition(ValueMetaInterface v, String tk, String pk, boolean use_autoinc,
-      boolean add_fieldname, boolean add_cr) {
+  public String getFieldDefinition( ValueMetaInterface v, String tk, String pk, boolean use_autoinc,
+      boolean add_fieldname, boolean add_cr ) {
     return null;
   }
 
@@ -43,19 +44,19 @@ public class MockHiveDatabaseMeta extends BaseDatabaseMeta implements DatabaseIn
   }
 
   @Override
-  public String getURL(String hostname, String port, String databaseName) throws KettleDatabaseException {
+  public String getURL( String hostname, String port, String databaseName ) throws KettleDatabaseException {
     return null;
   }
 
   @Override
-  public String getAddColumnStatement(String tablename, ValueMetaInterface v, String tk, boolean use_autoinc,
-      String pk, boolean semicolon) {
+  public String getAddColumnStatement( String tablename, ValueMetaInterface v, String tk, boolean use_autoinc,
+      String pk, boolean semicolon ) {
     return null;
   }
 
   @Override
-  public String getModifyColumnStatement(String tablename, ValueMetaInterface v, String tk, boolean use_autoinc,
-      String pk, boolean semicolon) {
+  public String getModifyColumnStatement( String tablename, ValueMetaInterface v, String tk, boolean use_autoinc,
+      String pk, boolean semicolon ) {
     return null;
   }
 

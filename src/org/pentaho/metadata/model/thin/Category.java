@@ -16,15 +16,16 @@
  * 
  * Created Jan, 2011
  * @author jdixon
-*/
+ */
 package org.pentaho.metadata.model.thin;
 
 import java.io.Serializable;
 
 /**
  * Concrete, lightweight, serializable implementation of an {@see ICategory} object
+ * 
  * @author jamesdixon
- *
+ * 
  */
 public class Category implements Serializable {
 
@@ -48,17 +49,19 @@ public class Category implements Serializable {
 
   /**
    * Returns the id of the category
+   * 
    * @param id
    */
-  public void setId(String id) {
+  public void setId( String id ) {
     this.id = id;
   }
 
   /**
    * Sets the name of the category
+   * 
    * @param name
    */
-  public void setName(String name) {
+  public void setName( String name ) {
     this.name = name;
   }
 
@@ -71,20 +74,19 @@ public class Category implements Serializable {
 
   /**
    * Sets the array of {@see IColumn}s for this category
- * @param columns
+   * 
+   * @param columns
    */
-  public void setColumns(Column columns[]) {
+  public void setColumns( Column[] columns ) {
     this.columns = columns;
   }
 
-  public void setDescription(String description) {
+  public void setDescription( String description ) {
     this.description = description;
   }
 
   public String getDescription() {
     return description;
   }
-  
-  
 
 }

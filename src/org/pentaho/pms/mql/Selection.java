@@ -24,22 +24,22 @@ import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
  * 
  * @author Will Gorman (wgorman@pentaho.org)
  * 
- * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.query.model.Selection
+ * @deprecated as of metadata 3.0. Please use org.pentaho.metadata.query.model.Selection
  */
 public class Selection {
- 
+
   protected BusinessColumn businessColumn;
   protected AggregationSettings aggregationType;
 
-  public Selection(BusinessColumn businessColumn) {
+  public Selection( BusinessColumn businessColumn ) {
     this.businessColumn = businessColumn;
   }
-  
-  public Selection(BusinessColumn businessColumn, AggregationSettings aggregationType) {
+
+  public Selection( BusinessColumn businessColumn, AggregationSettings aggregationType ) {
     this.businessColumn = businessColumn;
     this.aggregationType = aggregationType;
   }
- 
+
   /**
    * get the selected business column
    * 
@@ -48,18 +48,18 @@ public class Selection {
   public BusinessColumn getBusinessColumn() {
     return businessColumn;
   }
-  
+
   public AggregationSettings getAggregationType() {
     return aggregationType;
   }
-  
+
   public boolean hasAggregate() {
     // this selection is an aggregate if the business column is an aggregate and the agg type is not null
-    return !getActiveAggregationType().equals(AggregationSettings.NONE);
+    return !getActiveAggregationType().equals( AggregationSettings.NONE );
   }
-  
+
   public AggregationSettings getActiveAggregationType() {
-    if (getAggregationType() == null) {
+    if ( getAggregationType() == null ) {
       return businessColumn.getAggregationType();
     } else {
       return getAggregationType();

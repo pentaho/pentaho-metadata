@@ -23,12 +23,12 @@ public class CwmSchemaFactoryException extends RuntimeException {
   public CwmSchemaFactoryException() {
     super();
   }
-  
-  public CwmSchemaFactoryException(String msg) {
-    super(msg);
+
+  public CwmSchemaFactoryException( String msg ) {
+    super( msg );
   }
-  
-  public CwmSchemaFactoryException(String msg, Throwable th) {
-    super(msg, th);
+
+  public CwmSchemaFactoryException( String msg, Throwable th ) {
+    super( msg, th );
   }
 }

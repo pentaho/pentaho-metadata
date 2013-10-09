@@ -22,83 +22,85 @@ import java.util.List;
 import org.pentaho.pms.schema.BusinessTable;
 
 /**
- * This is the result of a PMSFormula validation: database specific SQL and a set of used Business Tables (required for query generation in joins, etc)
+ * This is the result of a PMSFormula validation: database specific SQL and a set of used Business Tables (required for
+ * query generation in joins, etc)
  * 
  * @author Matt Casters (mcasters@pentaho.org)
  * 
- * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.query.impl.sql.SqlAndTables
+ * @deprecated as of metadata 3.0. Please use org.pentaho.metadata.query.impl.sql.SqlAndTables
  */
 public class SQLAndTables {
-	private String sql;
+  private String sql;
 
-	private List<BusinessTable> usedTables;
-	
-	private List<Selection> usedColumns;
+  private List<BusinessTable> usedTables;
 
-	/**
-	 * @param sql
-	 * @param usedTables
-	 */
-	public SQLAndTables(String sql, List<BusinessTable> usedTables, List<Selection> usedColumns) {
-		this.sql = sql;
-		this.usedTables = usedTables;
-		this.usedColumns = usedColumns;
-	}
-	
-	/**
-	 * @param sql
-	 * @param usedTable
-	 */
-	public SQLAndTables(String sql, BusinessTable usedTable, Selection usedColumn) {
-		this.sql = sql;
-		this.usedTables = new ArrayList<BusinessTable>();
-		this.usedTables.add(usedTable);
-		this.usedColumns = new ArrayList<Selection>();
-		this.usedColumns.add(usedColumn);
-	}
+  private List<Selection> usedColumns;
 
-	/**
-	 * @return the sql
-	 */
-	public String getSql() {
-		return sql;
-	}
+  /**
+   * @param sql
+   * @param usedTables
+   */
+  public SQLAndTables( String sql, List<BusinessTable> usedTables, List<Selection> usedColumns ) {
+    this.sql = sql;
+    this.usedTables = usedTables;
+    this.usedColumns = usedColumns;
+  }
 
-	/**
-	 * @param sql
-	 *            the sql to set
-	 */
-	public void setSql(String sql) {
-		this.sql = sql;
-	}
+  /**
+   * @param sql
+   * @param usedTable
+   */
+  public SQLAndTables( String sql, BusinessTable usedTable, Selection usedColumn ) {
+    this.sql = sql;
+    this.usedTables = new ArrayList<BusinessTable>();
+    this.usedTables.add( usedTable );
+    this.usedColumns = new ArrayList<Selection>();
+    this.usedColumns.add( usedColumn );
+  }
 
-	/**
-	 * @return the usedTables
-	 */
-	public List<BusinessTable> getUsedTables() {
-		return usedTables;
-	}
+  /**
+   * @return the sql
+   */
+  public String getSql() {
+    return sql;
+  }
 
-	/**
-	 * @param usedTables
-	 *            the usedTables to set
-	 */
-	public void setUsedTables(List<BusinessTable> usedTables) {
-		this.usedTables = usedTables;
-	}
+  /**
+   * @param sql
+   *          the sql to set
+   */
+  public void setSql( String sql ) {
+    this.sql = sql;
+  }
 
-	/**
-	 * @return the usedColumns
-	 */
-	public List<Selection> getUsedColumns() {
-		return usedColumns;
-	}
+  /**
+   * @return the usedTables
+   */
+  public List<BusinessTable> getUsedTables() {
+    return usedTables;
+  }
 
-	/**
-	 * @param usedColumns the usedColumns to set
-	 */
-	public void setUsedColumns(List<Selection> usedColumns) {
-		this.usedColumns = usedColumns;
-	}
+  /**
+   * @param usedTables
+   *          the usedTables to set
+   */
+  public void setUsedTables( List<BusinessTable> usedTables ) {
+    this.usedTables = usedTables;
+  }
+
+  /**
+   * @return the usedColumns
+   */
+  public List<Selection> getUsedColumns() {
+    return usedColumns;
+  }
+
+  /**
+   * @param usedColumns
+   *          the usedColumns to set
+   */
+  public void setUsedColumns( List<Selection> usedColumns ) {
+    this.usedColumns = usedColumns;
+  }
 
 }

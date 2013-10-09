@@ -19,7 +19,5 @@
 package org.pentaho.metadata.query.impl.sql.graph;
 
 public enum GraphElementRequirement {
-	UNKNOWN,
-	REQUIRED,
-	NOT_REQUIRED
+  UNKNOWN, REQUIRED, NOT_REQUIRED
 }

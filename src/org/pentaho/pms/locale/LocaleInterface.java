@@ -18,19 +18,22 @@ package org.pentaho.pms.locale;
 
 import org.pentaho.di.core.changed.ChangedFlagInterface;
 
-public interface LocaleInterface extends ChangedFlagInterface,Comparable<LocaleInterface>
-{
-    public void setCode(String code);
-    public String getCode();
+public interface LocaleInterface extends ChangedFlagInterface, Comparable<LocaleInterface> {
+  public void setCode( String code );
 
-    public void setDescription(String description);
-    public String getDescription();
-    
-    public void setOrder(int order);
-    public int getOrder();
-    
-    public void setActive(boolean active);
-    public boolean isActive();
-    
-    public void clearChanged();
+  public String getCode();
+
+  public void setDescription( String description );
+
+  public String getDescription();
+
+  public void setOrder( int order );
+
+  public int getOrder();
+
+  public void setActive( boolean active );
+
+  public boolean isActive();
+
+  public void clearChanged();
 }

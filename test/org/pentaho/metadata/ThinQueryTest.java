@@ -19,7 +19,6 @@ package org.pentaho.metadata;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalColumn;
@@ -37,104 +36,92 @@ import org.pentaho.metadata.util.ThinModelConverter;
 import org.pentaho.pms.MetadataTestBase;
 import org.pentaho.pms.mql.MQLQueryImpl;
 
-@SuppressWarnings("deprecation")
+@SuppressWarnings( "deprecation" )
 public class ThinQueryTest {
-  
+
   @BeforeClass
   public static void initKettle() throws Exception {
     MetadataTestBase.initKettleEnvironment();
   }
-  
+
   @Test
   public void testQueryXmlSerialization() {
     Domain domain = TestHelper.getBasicDomain();
-    LogicalModel model = domain.findLogicalModel("MODEL");
-    Query query = new Query(domain, model);
-    
-    Category category = model.findCategory("CATEGORY");
-    LogicalColumn column = category.findLogicalColumn("LC_CUSTOMERNAME");
-    
-    query.getParameters().add(new Parameter("test", DataType.STRING, "val"));
-    
-    query.getSelections().add(new Selection(category, column, null));
-    
-    query.getConstraints().add(new Constraint(CombinationType.AND, "[CATEGORY.LC_CUSTOMERNAME] = \"bob\""));
+    LogicalModel model = domain.findLogicalModel( "MODEL" );
+    Query query = new Query( domain, model );
 
-    query.getOrders().add(new Order(new Selection(category, column, null), Order.Type.ASC));
-    
+    Category category = model.findCategory( "CATEGORY" );
+    LogicalColumn column = category.findLogicalColumn( "LC_CUSTOMERNAME" );
+
+    query.getParameters().add( new Parameter( "test", DataType.STRING, "val" ) );
+
+    query.getSelections().add( new Selection( category, column, null ) );
+
+    query.getConstraints().add( new Constraint( CombinationType.AND, "[CATEGORY.LC_CUSTOMERNAME] = \"bob\"" ) );
+
+    query.getOrders().add( new Order( new Selection( category, column, null ), Order.Type.ASC ) );
+
     QueryXmlHelper helper = new QueryXmlHelper();
-    String xml = helper.toXML(query);
-    
+    String xml = helper.toXML( query );
+
     InMemoryMetadataDomainRepository repo = new InMemoryMetadataDomainRepository();
     try {
-      repo.storeDomain(domain, true);
-    } catch (Exception e) {
+      repo.storeDomain( domain, true );
+    } catch ( Exception e ) {
       e.printStackTrace();
       Assert.fail();
     }
     Query newQuery = null;
     try {
-      newQuery = helper.fromXML(repo, xml);
-    } catch (Exception e) {
+      newQuery = helper.fromXML( repo, xml );
+    } catch ( Exception e ) {
       e.printStackTrace();
       Assert.fail();
     }
-    // verify that when we serialize and deserialize, the xml stays the same. 
-    Assert.assertEquals(xml, helper.toXML(newQuery));
+    // verify that when we serialize and deserialize, the xml stays the same.
+    Assert.assertEquals( xml, helper.toXML( newQuery ) );
   }
-  
+
   @Test
   public void testQueryConversion() throws Exception {
     Domain domain = TestHelper.getBasicDomain();
-    LogicalModel model = domain.findLogicalModel("MODEL");
-    Query query = new Query(domain, model);
-    
-    Category category = model.findCategory("CATEGORY");
-    LogicalColumn column = category.findLogicalColumn("LC_CUSTOMERNAME");
-    query.getSelections().add(new Selection(category, column, null));
-    
-    query.getConstraints().add(new Constraint(CombinationType.AND, "[CATEGORY.LC_CUSTOMERNAME] = \"bob\""));
+    LogicalModel model = domain.findLogicalModel( "MODEL" );
+    Query query = new Query( domain, model );
 
-    query.getOrders().add(new Order(new Selection(category, column, null), Order.Type.ASC));
+    Category category = model.findCategory( "CATEGORY" );
+    LogicalColumn column = category.findLogicalColumn( "LC_CUSTOMERNAME" );
+    query.getSelections().add( new Selection( category, column, null ) );
+
+    query.getConstraints().add( new Constraint( CombinationType.AND, "[CATEGORY.LC_CUSTOMERNAME] = \"bob\"" ) );
+
+    query.getOrders().add( new Order( new Selection( category, column, null ), Order.Type.ASC ) );
 
     MQLQueryImpl impl = null;
     try {
-      impl = ThinModelConverter.convertToLegacy(query, null);
-    } catch (Exception e) {
+      impl = ThinModelConverter.convertToLegacy( query, null );
+    } catch ( Exception e ) {
       e.printStackTrace();
       Assert.fail();
     }
-    Assert.assertNotNull(impl);
-    TestHelper.assertEqualsIgnoreWhitespaces(
-        "SELECT DISTINCT \n" + 
-        "          LT.customername AS COL0\n" + 
-        "FROM \n" + 
-        "          (select * from customers) LT\n" + 
-        "WHERE \n" + 
-        "        (\n" + 
-        "          (\n" + 
-        "              LT.customername  = 'bob'\n" + 
-        "          )\n" + 
-        "        )\n" + 
-        "ORDER BY \n" + 
-        "          COL0\n",
-        impl.getQuery().getQuery()
-    );
-    
-    query.setLimit(10);
-    impl = ThinModelConverter.convertToLegacy(query, null);
-    Assert.assertEquals(10, impl.getLimit());
+    Assert.assertNotNull( impl );
+    TestHelper.assertEqualsIgnoreWhitespaces( "SELECT DISTINCT \n" + "          LT.customername AS COL0\n" + "FROM \n"
+        + "          (select * from customers) LT\n" + "WHERE \n" + "        (\n" + "          (\n"
+        + "              LT.customername  = 'bob'\n" + "          )\n" + "        )\n" + "ORDER BY \n"
+        + "          COL0\n", impl.getQuery().getQuery() );
+
+    query.setLimit( 10 );
+    impl = ThinModelConverter.convertToLegacy( query, null );
+    Assert.assertEquals( 10, impl.getLimit() );
   }
-  
-  
-  public static void printOutJava(String sql) {
-    String lines[] = sql.split("\n");
-    for (int i = 0; i < lines.length; i++) {
-      System.out.print("        \"" +lines[i]);
-      if (i == lines.length - 1) {
-        System.out.println("\\n\"");
+
+  public static void printOutJava( String sql ) {
+    String[] lines = sql.split( "\n" );
+    for ( int i = 0; i < lines.length; i++ ) {
+      System.out.print( "        \"" + lines[i] );
+      if ( i == lines.length - 1 ) {
+        System.out.println( "\\n\"" );
       } else {
-        System.out.println("\\n\" + ");
+        System.out.println( "\\n\" + " );
       }
     }
   }

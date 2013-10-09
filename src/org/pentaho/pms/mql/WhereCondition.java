@@ -27,7 +27,7 @@ import org.pentaho.pms.schema.concept.ConceptUtilityInterface;
 import org.pentaho.pms.util.Const;
 
 /**
- * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.query.model.Constraint
+ * @deprecated as of metadata 3.0. Please use org.pentaho.metadata.query.model.Constraint
  */
 public class WhereCondition extends ConceptUtilityBase implements ConceptUtilityInterface {
 
@@ -47,15 +47,14 @@ public class WhereCondition extends ConceptUtilityBase implements ConceptUtility
   private PMSFormula formula = null;
 
   /**
-   * this method makes it possible to override the PMSFormula object with a
-   * subclass
+   * this method makes it possible to override the PMSFormula object with a subclass
    * 
    * @param formula
    * @param operator
    * @param condition
    * @throws PentahoMetadataException
    */
-  public WhereCondition(PMSFormula formula, String operator, String condition) throws PentahoMetadataException {
+  public WhereCondition( PMSFormula formula, String operator, String condition ) throws PentahoMetadataException {
     this.operator = operator;
     this.condition = condition;
     this.formula = formula;
@@ -63,25 +62,23 @@ public class WhereCondition extends ConceptUtilityBase implements ConceptUtility
   }
 
   /**
-   * The WhereCondition now is based on LibFormula, so only a conditional
-   * string is necessary
+   * The WhereCondition now is based on LibFormula, so only a conditional string is necessary
    */
-  public WhereCondition(BusinessModel model, DatabaseMeta databaseMeta, String operator, String condition)
-      throws PentahoMetadataException {
+  public WhereCondition( BusinessModel model, DatabaseMeta databaseMeta, String operator, String condition )
+    throws PentahoMetadataException {
     this.operator = operator;
     this.condition = condition;
-    this.formula = new PMSFormula(model, databaseMeta, condition, null);
+    this.formula = new PMSFormula( model, databaseMeta, condition, null );
     formula.parseAndValidate();
   }
 
   /**
-   * The WhereCondition now is based on LibFormula, so only a conditional
-   * string is necessary
+   * The WhereCondition now is based on LibFormula, so only a conditional string is necessary
    */
-  public WhereCondition(BusinessModel model, String operator, String condition) throws PentahoMetadataException {
+  public WhereCondition( BusinessModel model, String operator, String condition ) throws PentahoMetadataException {
     this.operator = operator;
     this.condition = condition;
-    this.formula = new PMSFormula(model, condition, null);
+    this.formula = new PMSFormula( model, condition, null );
     formula.parseAndValidate();
   }
 
@@ -93,10 +90,10 @@ public class WhereCondition extends ConceptUtilityBase implements ConceptUtility
   public String getOperator() {
     return operator;
   }
-  
+
   /**
    * return the formula for this object
-   *
+   * 
    * @return formula object
    */
   public PMSFormula getPMSFormula() {
@@ -122,16 +119,15 @@ public class WhereCondition extends ConceptUtilityBase implements ConceptUtility
   }
 
   /**
-   * Traverse the field list and see if any of the fields are aggregate
-   * fields. we cache hasAgg for future calls
+   * Traverse the field list and see if any of the fields are aggregate fields. we cache hasAgg for future calls
    * 
    * @return true if aggregate
    */
   public boolean hasAggregate() {
-    if (hasAgg == null) {
+    if ( hasAgg == null ) {
       hasAgg = Boolean.FALSE;
-      for (Selection col : formula.getBusinessColumns()) {
-        if (col.hasAggregate()) {
+      for ( Selection col : formula.getBusinessColumns() ) {
+        if ( col.hasAggregate() ) {
           hasAgg = Boolean.TRUE;
           return hasAgg.booleanValue();
         }
@@ -144,28 +140,28 @@ public class WhereCondition extends ConceptUtilityBase implements ConceptUtility
    * @return the description of the model element
    */
   public String getModelElementDescription() {
-    return Messages.getString("WhereCondition.USER_DESCRIPTION"); //$NON-NLS-1$
+    return Messages.getString( "WhereCondition.USER_DESCRIPTION" ); //$NON-NLS-1$
   }
 
   /**
    * generate the SQL condition
    * 
    * @param locale
-   *            locale for generating sql
+   *          locale for generating sql
    * @param useOperator
-   *            appends operator if true
+   *          appends operator if true
    * @return where clause
    */
-  public String getWhereClause(String locale, boolean useOperator) throws PentahoMetadataException {
+  public String getWhereClause( String locale, boolean useOperator ) throws PentahoMetadataException {
     String retval = ""; //$NON-NLS-1$
-    if (condition != null) {
-      if (Const.isEmpty(operator) || !useOperator) {
-        retval += Const.rightPad(" ", 9) + " "; //$NON-NLS-1$ //$NON-NLS-2$
+    if ( condition != null ) {
+      if ( Const.isEmpty( operator ) || !useOperator ) {
+        retval += Const.rightPad( " ", 9 ) + " "; //$NON-NLS-1$ //$NON-NLS-2$
       } else {
-        retval += Const.rightPad(operator, 9) + " "; //$NON-NLS-1$
+        retval += Const.rightPad( operator, 9 ) + " "; //$NON-NLS-1$
       }
 
-      retval += " ( " + formula.generateSQL(locale) + " ) "; //$NON-NLS-1$ //$NON-NLS-2$
+      retval += " ( " + formula.generateSQL( locale ) + " ) "; //$NON-NLS-1$ //$NON-NLS-2$
     }
     return retval;
   }

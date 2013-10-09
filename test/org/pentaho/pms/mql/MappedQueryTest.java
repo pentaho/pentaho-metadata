@@ -45,40 +45,38 @@ public class MappedQueryTest extends TestCase {
 
   private static final Map<String, String> SAMPLE1_MAP = new HashMap<String, String>();
   static {
-    SAMPLE1_MAP.put("COL0", "BC_OFFICES_TERRITORY");
-    SAMPLE1_MAP.put("COL1", "BC_OFFICES_POSTALCODE");
-    SAMPLE1_MAP.put("COL2", "BC_OFFICES_COUNTRY");
-    SAMPLE1_MAP.put("COL3", "BC_OFFICES_STATE");
-    SAMPLE1_MAP.put("COL4", "BC_OFFICES_ADDRESSLINE2");
-    SAMPLE1_MAP.put("COL5", "BC_OFFICES_ADDRESSLINE1");
-    SAMPLE1_MAP.put("COL6", "BC_OFFICES_PHONE");
-    SAMPLE1_MAP.put("COL7", "BC_OFFICES_CITY");
-    SAMPLE1_MAP.put("COL8", "BC_OFFICES_OFFICECODE");
-    SAMPLE1_MAP.put("COL9", "BC_EMPLOYEES_JOBTITLE");
-    SAMPLE1_MAP.put("COL10", "BC_EMPLOYEES_REPORTSTO");
-    SAMPLE1_MAP.put("COL11", "BC_EMPLOYEES_EMAIL");
-    SAMPLE1_MAP.put("COL12", "BC_EMPLOYEES_EXTENSION");
-    SAMPLE1_MAP.put("COL13", "BC_EMPLOYEES_FIRSTNAME");
-    SAMPLE1_MAP.put("COL14", "BC_EMPLOYEES_LASTNAME");
-    SAMPLE1_MAP.put("COL15", "BC_EMPLOYEES_EMPLOYEENUMBER");
+    SAMPLE1_MAP.put( "COL0", "BC_OFFICES_TERRITORY" );
+    SAMPLE1_MAP.put( "COL1", "BC_OFFICES_POSTALCODE" );
+    SAMPLE1_MAP.put( "COL2", "BC_OFFICES_COUNTRY" );
+    SAMPLE1_MAP.put( "COL3", "BC_OFFICES_STATE" );
+    SAMPLE1_MAP.put( "COL4", "BC_OFFICES_ADDRESSLINE2" );
+    SAMPLE1_MAP.put( "COL5", "BC_OFFICES_ADDRESSLINE1" );
+    SAMPLE1_MAP.put( "COL6", "BC_OFFICES_PHONE" );
+    SAMPLE1_MAP.put( "COL7", "BC_OFFICES_CITY" );
+    SAMPLE1_MAP.put( "COL8", "BC_OFFICES_OFFICECODE" );
+    SAMPLE1_MAP.put( "COL9", "BC_EMPLOYEES_JOBTITLE" );
+    SAMPLE1_MAP.put( "COL10", "BC_EMPLOYEES_REPORTSTO" );
+    SAMPLE1_MAP.put( "COL11", "BC_EMPLOYEES_EMAIL" );
+    SAMPLE1_MAP.put( "COL12", "BC_EMPLOYEES_EXTENSION" );
+    SAMPLE1_MAP.put( "COL13", "BC_EMPLOYEES_FIRSTNAME" );
+    SAMPLE1_MAP.put( "COL14", "BC_EMPLOYEES_LASTNAME" );
+    SAMPLE1_MAP.put( "COL15", "BC_EMPLOYEES_EMPLOYEENUMBER" );
   }
 
   /**
-   * This test will make sure that the creation of the display query will not 
-   * accidentally screw up the validity of the query.
-   * <br/>
-   * BISERVER-2881 was caused by a string replace of COL1 accidentally replacing
-   * COL10, COL11, COL12 (etc).
+   * This test will make sure that the creation of the display query will not accidentally screw up the validity of the
+   * query. <br/>
+   * BISERVER-2881 was caused by a string replace of COL1 accidentally replacing COL10, COL11, COL12 (etc).
    */
-  @SuppressWarnings("deprecation")
+  @SuppressWarnings( "deprecation" )
   public void testGetDisplayQuery() {
     // Get the display query based on the SAMPLE1 set of parameters
-    final MappedQuery mappedQuery = new MappedQuery(SAMPLE1_SQL, SAMPLE1_MAP, null);
+    final MappedQuery mappedQuery = new MappedQuery( SAMPLE1_SQL, SAMPLE1_MAP, null );
     final String result = mappedQuery.getDisplayQuery();
 
     // Each item in the map should be found once (and only once) in the resulting query
-    for (String columnName : SAMPLE1_MAP.values()) {
-      assertEquals("Error translating ["+columnName+"]", 1, StringUtils.countMatches(result, columnName));
+    for ( String columnName : SAMPLE1_MAP.values() ) {
+      assertEquals( "Error translating [" + columnName + "]", 1, StringUtils.countMatches( result, columnName ) );
     }
   }
 }

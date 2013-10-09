@@ -30,48 +30,48 @@ import org.pentaho.reporting.libraries.formula.typing.TypeRegistry;
 import org.pentaho.reporting.libraries.formula.typing.coretypes.LogicalType;
 
 /**
- * This function is similar to the LIKE function in SQL, and is needed
- * for the inline ETL implementation of Pentaho Metadata.
+ * This function is similar to the LIKE function in SQL, and is needed for the inline ETL implementation of Pentaho
+ * Metadata.
  * 
  * @author Will Gorman (wgorman@pentaho.com)
- *
+ * 
  */
 public class LikeFunction implements Function {
   private static final long serialVersionUID = 5834421661720115093L;
-  
-  private static final TypeValuePair RETURN_FALSE = new TypeValuePair(LogicalType.TYPE, Boolean.FALSE);
-  private static final TypeValuePair RETURN_TRUE = new TypeValuePair(LogicalType.TYPE, Boolean.TRUE);
 
-  public LikeFunction(){
+  private static final TypeValuePair RETURN_FALSE = new TypeValuePair( LogicalType.TYPE, Boolean.FALSE );
+  private static final TypeValuePair RETURN_TRUE = new TypeValuePair( LogicalType.TYPE, Boolean.TRUE );
+
+  public LikeFunction() {
   }
 
-  public TypeValuePair evaluate(final FormulaContext context, final ParameterCallback parameters) throws EvaluationException {
+  public TypeValuePair evaluate( final FormulaContext context, final ParameterCallback parameters )
+    throws EvaluationException {
     final int parameterCount = parameters.getParameterCount();
-    if (parameterCount != 2) {
-      throw new EvaluationException(LibFormulaErrorValue.ERROR_ARGUMENTS_VALUE);
+    if ( parameterCount != 2 ) {
+      throw new EvaluationException( LibFormulaErrorValue.ERROR_ARGUMENTS_VALUE );
     }
     final TypeRegistry typeRegistry = context.getTypeRegistry();
 
-    final Type textType1 = parameters.getType(0);
-    final Object textValue1 = parameters.getValue(0);
-    final Type textType2 = parameters.getType(1);
-    final Object textValue2 = parameters.getValue(1);
+    final Type textType1 = parameters.getType( 0 );
+    final Object textValue1 = parameters.getValue( 0 );
+    final Type textType2 = parameters.getType( 1 );
+    final Object textValue2 = parameters.getValue( 1 );
 
-    final String text = typeRegistry.convertToText(textType1, textValue1);
-    
-    String regex = typeRegistry.convertToText(textType2, textValue2);
+    final String text = typeRegistry.convertToText( textType1, textValue1 );
+
+    String regex = typeRegistry.convertToText( textType2, textValue2 );
 
     // replace any * or % with .*
-    regex = regex.replaceAll("\\*", ".*").replaceAll("%", ".*");
-    
-    Pattern p = Pattern.compile(regex);
-    Matcher m = p.matcher(text);
-    
+    regex = regex.replaceAll( "\\*", ".*" ).replaceAll( "%", ".*" );
+
+    Pattern p = Pattern.compile( regex );
+    Matcher m = p.matcher( text );
+
     return m.find() ? RETURN_TRUE : RETURN_FALSE;
   }
 
-  public String getCanonicalName()
-  {
+  public String getCanonicalName() {
     return "LIKE";
   }
 

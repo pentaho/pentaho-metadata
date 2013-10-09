@@ -42,14 +42,14 @@ import org.pentaho.pms.util.UniqueArrayList;
 import org.pentaho.pms.util.UniqueList;
 
 /**
- * @deprecated as of metadata 3.0.  Please use org.pentaho.metadata.model.Domain
+ * @deprecated as of metadata 3.0. Please use org.pentaho.metadata.model.Domain
  */
 public class SchemaMeta {
   private String name;
 
   public String domainName;
 
-  public UniqueList<DatabaseMeta>  databases;
+  public UniqueList<DatabaseMeta> databases;
 
   private UniqueList<PhysicalTable> tables;
 
@@ -86,22 +86,21 @@ public class SchemaMeta {
     clearChanged();
   }
 
- 
   public void addDefaults() {
 
-    Concept baseConcept = new Concept(Settings.getConceptNameBase());
-    baseConcept.addProperty(new ConceptPropertyFont(DefaultPropertyID.FONT.getId(), new FontSettings(
-        "Arial", 10, false, false))); //$NON-NLS-1$
-    baseConcept.addProperty(new ConceptPropertyAlignment(DefaultPropertyID.ALIGNMENT.getId(), AlignmentSettings.LEFT));
-    baseConcept.addProperty(new ConceptPropertyColor(DefaultPropertyID.COLOR_FG.getId(), ColorSettings.BLACK));
-//    baseConcept.addProperty(new ConceptPropertyColor(DefaultPropertyID.COLOR_BG.getId(), ColorSettings.WHITE));
-
+    Concept baseConcept = new Concept( Settings.getConceptNameBase() );
+    baseConcept.addProperty( new ConceptPropertyFont( DefaultPropertyID.FONT.getId(), new FontSettings(
+        "Arial", 10, false, false ) ) ); //$NON-NLS-1$
+    baseConcept
+        .addProperty( new ConceptPropertyAlignment( DefaultPropertyID.ALIGNMENT.getId(), AlignmentSettings.LEFT ) );
+    baseConcept.addProperty( new ConceptPropertyColor( DefaultPropertyID.COLOR_FG.getId(), ColorSettings.BLACK ) );
+    // baseConcept.addProperty(new ConceptPropertyColor(DefaultPropertyID.COLOR_BG.getId(), ColorSettings.WHITE));
 
     try {
-      addConcept(baseConcept);
-    } catch (ObjectAlreadyExistsException e) {
+      addConcept( baseConcept );
+    } catch ( ObjectAlreadyExistsException e ) {
       // Can't really happen, but hey, throw a runtime for good measure.
-      throw new RuntimeException(e);
+      throw new RuntimeException( e );
     }
   }
 
@@ -109,90 +108,93 @@ public class SchemaMeta {
     return name;
   }
 
-  public void setName(String n) {
+  public void setName( String n ) {
     name = n;
   }
 
-  public void addDatabase(DatabaseMeta databaseMeta) throws ObjectAlreadyExistsException {
-    databases.add(databaseMeta);
+  public void addDatabase( DatabaseMeta databaseMeta ) throws ObjectAlreadyExistsException {
+    databases.add( databaseMeta );
     changedDatabases = true;
   }
 
-  public void addTable(PhysicalTable ti) throws ObjectAlreadyExistsException {
-    tables.add(ti);
+  public void addTable( PhysicalTable ti ) throws ObjectAlreadyExistsException {
+    tables.add( ti );
     changedTables = true;
   }
 
-  public void addModel(BusinessModel businessModel) throws ObjectAlreadyExistsException {
-    businessModels.add(businessModel);
+  public void addModel( BusinessModel businessModel ) throws ObjectAlreadyExistsException {
+    businessModels.add( businessModel );
     changedBusinessModels = true;
   }
 
-  public void addDatabase(int p, DatabaseMeta databaseMeta) throws ObjectAlreadyExistsException {
-    databases.add(p, databaseMeta);
+  public void addDatabase( int p, DatabaseMeta databaseMeta ) throws ObjectAlreadyExistsException {
+    databases.add( p, databaseMeta );
     changedDatabases = true;
   }
 
-  public void addTable(int p, PhysicalTable ti) throws ObjectAlreadyExistsException {
-    tables.add(p, ti);
+  public void addTable( int p, PhysicalTable ti ) throws ObjectAlreadyExistsException {
+    tables.add( p, ti );
     changedTables = true;
   }
 
-  public void addModel(int p, BusinessModel businessModel) throws ObjectAlreadyExistsException {
-    businessModels.add(p, businessModel);
+  public void addModel( int p, BusinessModel businessModel ) throws ObjectAlreadyExistsException {
+    businessModels.add( p, businessModel );
     changedBusinessModels = true;
   }
 
   public void setChanged() {
-    setChanged(true);
+    setChanged( true );
   }
 
-  public void setChanged(boolean ch) {
+  public void setChanged( boolean ch ) {
     changed = ch;
   }
 
-  public DatabaseMeta getDatabase(int i) {
-    return (DatabaseMeta) databases.get(i);
+  public DatabaseMeta getDatabase( int i ) {
+    return (DatabaseMeta) databases.get( i );
   }
 
-  public PhysicalTable getTable(int i) {
-    return (PhysicalTable) tables.get(i);
+  public PhysicalTable getTable( int i ) {
+    return (PhysicalTable) tables.get( i );
   }
 
-  public BusinessModel getModel(int i) {
-    return (BusinessModel) businessModels.get(i);
+  public BusinessModel getModel( int i ) {
+    return (BusinessModel) businessModels.get( i );
   }
 
-  public void removeDatabaseMeta(DatabaseMeta databaseMeta) {
-    int i = databases.indexOf(databaseMeta);
-    removeDatabaseMeta(i);
+  public void removeDatabaseMeta( DatabaseMeta databaseMeta ) {
+    int i = databases.indexOf( databaseMeta );
+    removeDatabaseMeta( i );
   }
 
-  public void removeDatabaseMeta(int i) {
-    if (i < 0 || i >= databases.size())
+  public void removeDatabaseMeta( int i ) {
+    if ( i < 0 || i >= databases.size() ) {
       return;
-    databases.remove(i);
+    }
+    databases.remove( i );
     changedDatabases = true;
   }
 
-  public void removeTable(int i) {
-    if (i < 0 || i >= tables.size())
+  public void removeTable( int i ) {
+    if ( i < 0 || i >= tables.size() ) {
       return;
+    }
 
-    tables.remove(i);
+    tables.remove( i );
     changedTables = true;
   }
 
-  public void removeBusinessModel(BusinessModel businessModel) {
-    int i = businessModels.indexOf(businessModel);
-    removeBusinessModel(i);
+  public void removeBusinessModel( BusinessModel businessModel ) {
+    int i = businessModels.indexOf( businessModel );
+    removeBusinessModel( i );
   }
 
-  public void removeBusinessModel(int i) {
-    if (i < 0 || i >= businessModels.size())
+  public void removeBusinessModel( int i ) {
+    if ( i < 0 || i >= businessModels.size() ) {
       return;
+    }
 
-    businessModels.remove(i);
+    businessModels.remove( i );
     changedBusinessModels = true;
   }
 
@@ -209,68 +211,82 @@ public class SchemaMeta {
   }
 
   public boolean haveDatabasesChanged() {
-    if (changedDatabases)
+    if ( changedDatabases ) {
       return true;
+    }
 
-    for (int i = 0; i < nrDatabases(); i++) {
-      DatabaseMeta ci = getDatabase(i);
-      if (ci.hasChanged())
+    for ( int i = 0; i < nrDatabases(); i++ ) {
+      DatabaseMeta ci = getDatabase( i );
+      if ( ci.hasChanged() ) {
         return true;
+      }
     }
     return false;
   }
 
   public boolean haveTablesChanged() {
-    if (changedTables)
+    if ( changedTables ) {
       return true;
+    }
 
-    for (int i = 0; i < nrTables(); i++) {
-      PhysicalTable ti = getTable(i);
-      if (ti.hasChanged())
+    for ( int i = 0; i < nrTables(); i++ ) {
+      PhysicalTable ti = getTable( i );
+      if ( ti.hasChanged() ) {
         return true;
-      for (int ix = 0; ix < ti.nrPhysicalColumns(); ix++) {
-        PhysicalColumn tc = ti.getPhysicalColumn(ix);
-        if (tc.hasChanged())
+      }
+      for ( int ix = 0; ix < ti.nrPhysicalColumns(); ix++ ) {
+        PhysicalColumn tc = ti.getPhysicalColumn( ix );
+        if ( tc.hasChanged() ) {
           return true;
+        }
       }
     }
     return false;
   }
 
   public boolean haveBusinessModelsChanged() {
-    for (int i = 0; i < nrBusinessModels(); i++) {
-      BusinessModel businessModel = getModel(i);
-      if (businessModel.hasChanged())
+    for ( int i = 0; i < nrBusinessModels(); i++ ) {
+      BusinessModel businessModel = getModel( i );
+      if ( businessModel.hasChanged() ) {
         return true;
+      }
     }
     return changedBusinessModels;
   }
 
   public boolean haveConceptsChanged() {
-    if (changedConcepts)
+    if ( changedConcepts ) {
       return true;
+    }
 
-    for (int i = 0; i < nrConcepts(); i++) {
-      ConceptInterface concept = getConcept(i);
-      if (concept.hasChanged())
+    for ( int i = 0; i < nrConcepts(); i++ ) {
+      ConceptInterface concept = getConcept( i );
+      if ( concept.hasChanged() ) {
         return true;
+      }
     }
     return false;
   }
 
   public boolean hasChanged() {
-    if (haveDatabasesChanged())
+    if ( haveDatabasesChanged() ) {
       return true;
-    if (haveTablesChanged())
+    }
+    if ( haveTablesChanged() ) {
       return true;
-    if (haveBusinessModelsChanged())
+    }
+    if ( haveBusinessModelsChanged() ) {
       return true;
-    if (haveConceptsChanged())
+    }
+    if ( haveConceptsChanged() ) {
       return true;
-    if (locales.hasChanged())
+    }
+    if ( locales.hasChanged() ) {
       return true;
-    if (securityReference.getSecurityService().hasChanged())
+    }
+    if ( securityReference.getSecurityService().hasChanged() ) {
       return true;
+    }
 
     return changed;
   }
@@ -282,23 +298,27 @@ public class SchemaMeta {
     changedBusinessModels = false;
     changedConcepts = false;
 
-    for (int i = 0; i < nrDatabases(); i++)
-      getDatabase(i).setChanged(false);
-    for (int i = 0; i < nrTables(); i++)
-      getTable(i).clearChanged();
-    for (int i = 0; i < nrBusinessModels(); i++)
-      getModel(i).clearChanged();
-    for (int i = 0; i < nrConcepts(); i++)
-      getConcept(i).clearChanged();
+    for ( int i = 0; i < nrDatabases(); i++ ) {
+      getDatabase( i ).setChanged( false );
+    }
+    for ( int i = 0; i < nrTables(); i++ ) {
+      getTable( i ).clearChanged();
+    }
+    for ( int i = 0; i < nrBusinessModels(); i++ ) {
+      getModel( i ).clearChanged();
+    }
+    for ( int i = 0; i < nrConcepts(); i++ ) {
+      getConcept( i ).clearChanged();
+    }
     locales.clearChanged();
-    securityReference.getSecurityService().setChanged(false);
+    securityReference.getSecurityService().setChanged( false );
   }
 
-  public DatabaseMeta findDatabase(String dbName) {
+  public DatabaseMeta findDatabase( String dbName ) {
     int i;
-    for (i = 0; i < nrDatabases(); i++) {
-      DatabaseMeta ci = getDatabase(i);
-      if (ci.getName().equalsIgnoreCase(dbName)) {
+    for ( i = 0; i < nrDatabases(); i++ ) {
+      DatabaseMeta ci = getDatabase( i );
+      if ( ci.getName().equalsIgnoreCase( dbName ) ) {
         return ci;
       }
     }
@@ -307,29 +327,35 @@ public class SchemaMeta {
 
   /**
    * Search for a physical table on ID
-   * @param id the id to look out for
+   * 
+   * @param id
+   *          the id to look out for
    * @return the physical table or null if nothing was found
    */
-  public PhysicalTable findPhysicalTable(String id) {
-    return findPhysicalTable(id, (PhysicalTable) null);
+  public PhysicalTable findPhysicalTable( String id ) {
+    return findPhysicalTable( id, (PhysicalTable) null );
   }
 
   /**
    * Search for a physical table, excluding a certain given one.
-   * @param id the id
-   * @param exclude the table to exclude from the search
+   * 
+   * @param id
+   *          the id
+   * @param exclude
+   *          the table to exclude from the search
    * @return the physical table or null if nothing was found.
    */
-  public PhysicalTable findPhysicalTable(String id, PhysicalTable exclude) {
+  public PhysicalTable findPhysicalTable( String id, PhysicalTable exclude ) {
     int i;
     int excl = -1;
-    if (exclude != null)
-      excl = indexOfTable(exclude);
+    if ( exclude != null ) {
+      excl = indexOfTable( exclude );
+    }
 
-    // This is slow!		
-    for (i = 0; i < nrTables(); i++) {
-      PhysicalTable ti = getTable(i);
-      if (i != excl && ti.getId().equalsIgnoreCase(id)) {
+    // This is slow!
+    for ( i = 0; i < nrTables(); i++ ) {
+      PhysicalTable ti = getTable( i );
+      if ( i != excl && ti.getId().equalsIgnoreCase( id ) ) {
         return ti;
       }
     }
@@ -337,37 +363,40 @@ public class SchemaMeta {
   }
 
   /**
-   * Find a physical table name in a certain locale.  If nothing was found, search the table on ID.
-   * @param locale the locale to search in
-   * @param nameToFind the name to look for
+   * Find a physical table name in a certain locale. If nothing was found, search the table on ID.
+   * 
+   * @param locale
+   *          the locale to search in
+   * @param nameToFind
+   *          the name to look for
    * @return the physical table or null if nothing was found.
    */
-  public PhysicalTable findPhysicalTable(String locale, String nameToFind) {
-    for (int i = 0; i < nrTables(); i++) {
-      PhysicalTable physicalTable = getTable(i);
-      if (nameToFind.equalsIgnoreCase(physicalTable.getConcept().getName(locale))) {
+  public PhysicalTable findPhysicalTable( String locale, String nameToFind ) {
+    for ( int i = 0; i < nrTables(); i++ ) {
+      PhysicalTable physicalTable = getTable( i );
+      if ( nameToFind.equalsIgnoreCase( physicalTable.getConcept().getName( locale ) ) ) {
         return physicalTable;
       }
     }
-    return findPhysicalTable(nameToFind);
+    return findPhysicalTable( nameToFind );
   }
 
-  public int indexOfDatabase(DatabaseMeta ci) {
-    return databases.indexOf(ci);
+  public int indexOfDatabase( DatabaseMeta ci ) {
+    return databases.indexOf( ci );
   }
 
-  public int indexOfTable(PhysicalTable ti) {
-    return tables.indexOf(ti);
+  public int indexOfTable( PhysicalTable ti ) {
+    return tables.indexOf( ti );
   }
 
-  public int indexOfBusinessModel(BusinessModel model) {
-    return businessModels.indexOf(model);
+  public int indexOfBusinessModel( BusinessModel model ) {
+    return businessModels.indexOf( model );
   }
 
-  public BusinessModel findModel(String id) {
-    for (int i = 0; i < nrBusinessModels(); i++) {
-      BusinessModel businessModel = getModel(i);
-      if (businessModel.getId().equals(id)) {
+  public BusinessModel findModel( String id ) {
+    for ( int i = 0; i < nrBusinessModels(); i++ ) {
+      BusinessModel businessModel = getModel( i );
+      if ( businessModel.getId().equals( id ) ) {
         return businessModel;
       }
     }
@@ -376,16 +405,19 @@ public class SchemaMeta {
 
   /**
    * Search a business model based on the localized name or if that is not found, the ID
-   * @param nameToFind The name (or ID) to search for
-   * @param locale The locale in which we want to search
-   * @return The business model or null if nothing could be found. 
+   * 
+   * @param nameToFind
+   *          The name (or ID) to search for
+   * @param locale
+   *          The locale in which we want to search
+   * @return The business model or null if nothing could be found.
    */
-  public BusinessModel findModel(String locale, String nameToFind) {
-    for (int i = 0; i < nrBusinessModels(); i++) {
-      BusinessModel businessModel = getModel(i);
+  public BusinessModel findModel( String locale, String nameToFind ) {
+    for ( int i = 0; i < nrBusinessModels(); i++ ) {
+      BusinessModel businessModel = getModel( i );
 
-      String locName = businessModel.getConcept().getName(locale);
-      if ((locName != null && locName.equals(nameToFind)) || businessModel.getId().equals(nameToFind)) {
+      String locName = businessModel.getConcept().getName( locale );
+      if ( ( locName != null && locName.equals( nameToFind ) ) || businessModel.getId().equals( nameToFind ) ) {
         return businessModel;
       }
     }
@@ -393,15 +425,18 @@ public class SchemaMeta {
   }
 
   /**
-   * Search for a physical column in a table 
-   * @param tableId the id of the table
-   * @param columnId the id of the column
+   * Search for a physical column in a table
+   * 
+   * @param tableId
+   *          the id of the table
+   * @param columnId
+   *          the id of the column
    * @return the physical column or null if nothing could be found
    */
-  public PhysicalColumn findPhysicalColumn(String tableId, String columnId) {
-    PhysicalTable ti = findPhysicalTable(tableId);
-    if (ti != null) {
-      return ti.findPhysicalColumn(columnId);
+  public PhysicalColumn findPhysicalColumn( String tableId, String columnId ) {
+    PhysicalTable ti = findPhysicalTable( tableId );
+    if ( ti != null ) {
+      return ti.findPhysicalColumn( columnId );
     }
     return null;
   }
@@ -418,15 +453,15 @@ public class SchemaMeta {
     return tables;
   }
 
-  public PhysicalTable[] getTablesOnDatabase(DatabaseMeta databaseMeta) {
+  public PhysicalTable[] getTablesOnDatabase( DatabaseMeta databaseMeta ) {
     List<PhysicalTable> allTables = new ArrayList<PhysicalTable>();
-    for (int i = 0; i < nrTables(); i++) {
-      PhysicalTable table = getTable(i);
-      if ((table.getDatabaseMeta() != null) && (table.getDatabaseMeta().equals(databaseMeta))){
-        allTables.add(table);
+    for ( int i = 0; i < nrTables(); i++ ) {
+      PhysicalTable table = getTable( i );
+      if ( ( table.getDatabaseMeta() != null ) && ( table.getDatabaseMeta().equals( databaseMeta ) ) ) {
+        allTables.add( table );
       }
     }
-    return (PhysicalTable[]) allTables.toArray(new PhysicalTable[allTables.size()]);
+    return (PhysicalTable[]) allTables.toArray( new PhysicalTable[allTables.size()] );
   }
 
   /**
@@ -437,9 +472,10 @@ public class SchemaMeta {
   }
 
   /**
-   * @param activeModel the activeModel to set
+   * @param activeModel
+   *          the activeModel to set
    */
-  public void setActiveModel(BusinessModel activeModel) {
+  public void setActiveModel( BusinessModel activeModel ) {
     this.activeModel = activeModel;
   }
 
@@ -449,16 +485,16 @@ public class SchemaMeta {
 
   public String[] getBusinessModelIDs() {
     String[] ids = new String[businessModels.size()];
-    for (int i = 0; i < businessModels.size(); i++) {
-      ids[i] = ((BusinessModel) businessModels.get(i)).getId();
+    for ( int i = 0; i < businessModels.size(); i++ ) {
+      ids[i] = ( (BusinessModel) businessModels.get( i ) ).getId();
     }
     return ids;
   }
 
-  public String[] getBusinessModelNames(String locale) {
+  public String[] getBusinessModelNames( String locale ) {
     String[] names = new String[businessModels.size()];
-    for (int i = 0; i < businessModels.size(); i++) {
-      names[i] = ((BusinessModel) businessModels.get(i)).getDisplayName(locale);
+    for ( int i = 0; i < businessModels.size(); i++ ) {
+      names[i] = ( (BusinessModel) businessModels.get( i ) ).getDisplayName( locale );
     }
     return names;
   }
@@ -474,74 +510,82 @@ public class SchemaMeta {
     return concepts.size();
   }
 
-  public ConceptInterface getConcept(int i) {
-    return (ConceptInterface) concepts.get(i);
+  public ConceptInterface getConcept( int i ) {
+    return (ConceptInterface) concepts.get( i );
   }
 
-  public void removeConcept(int i) {
-    concepts.remove(i);
+  public void removeConcept( int i ) {
+    concepts.remove( i );
     changedConcepts = true;
   }
 
-  public void addConcept(ConceptInterface concept) throws ObjectAlreadyExistsException {
-    concepts.add(concept);
+  public void addConcept( ConceptInterface concept ) throws ObjectAlreadyExistsException {
+    concepts.add( concept );
     changedConcepts = true;
   }
 
-  public void addConcept(int index, ConceptInterface concept) throws ObjectAlreadyExistsException {
-    concepts.add(index, concept);
+  public void addConcept( int index, ConceptInterface concept ) throws ObjectAlreadyExistsException {
+    concepts.add( index, concept );
     changedConcepts = true;
   }
 
-  public int indexOfConcept(ConceptInterface concept) {
-    return concepts.indexOf(concept);
+  public int indexOfConcept( ConceptInterface concept ) {
+    return concepts.indexOf( concept );
   }
 
-  public void setConcept(int idx, ConceptInterface concept) throws ObjectAlreadyExistsException {
-    concepts.set(idx, concept);
+  public void setConcept( int idx, ConceptInterface concept ) throws ObjectAlreadyExistsException {
+    concepts.set( idx, concept );
     changedConcepts = true;
   }
 
   /**
    * Find a concept using the path from root over parents to concept
-   * @param path the path from root --> ... --> gp --> parent --> concept
+   * 
+   * @param path
+   *          the path from root --> ... --> gp --> parent --> concept
    * @return the concept if one could be found or null if nothing was found.
    */
-  public ConceptInterface findConcept(String path[]) {
-    for (int i = 0; i < nrConcepts(); i++) {
-      ConceptInterface concept = getConcept(i);
-      if (concept.matches(path))
+  public ConceptInterface findConcept( String[] path ) {
+    for ( int i = 0; i < nrConcepts(); i++ ) {
+      ConceptInterface concept = getConcept( i );
+      if ( concept.matches( path ) ) {
         return concept;
+      }
     }
     return null;
   }
 
   /**
    * Search for all the locale that are used in the schema
+   * 
    * @return all the locale that are used in the schema
    */
   public String[] getUsedLocale() {
-    Map<String,String> allLocales = new Hashtable<String,String>();
-    for (int i = 0; i < nrBusinessModels(); i++) {
-      String[] usedLocale = getModel(i).getConcept().getUsedLocale();
-      for (int j = 0; j < usedLocale.length; j++)
-        allLocales.put(usedLocale[i], ""); //$NON-NLS-1$
+    Map<String, String> allLocales = new Hashtable<String, String>();
+    for ( int i = 0; i < nrBusinessModels(); i++ ) {
+      String[] usedLocale = getModel( i ).getConcept().getUsedLocale();
+      for ( int j = 0; j < usedLocale.length; j++ ) {
+        allLocales.put( usedLocale[i], "" ); //$NON-NLS-1$
+      }
     }
 
     Set<String> keySet = allLocales.keySet();
-    return (String[]) keySet.toArray(new String[keySet.size()]);
+    return (String[]) keySet.toArray( new String[keySet.size()] );
   }
 
   /**
    * Search for a concept with a certain name
-   * @param conceptName the name of the concept to look for
+   * 
+   * @param conceptName
+   *          the name of the concept to look for
    * @return the concept or null if nothing could be found
    */
-  public ConceptInterface findConcept(String conceptName) {
-    for (int i = 0; i < nrConcepts(); i++) {
-      ConceptInterface concept = getConcept(i);
-      if (concept.getName().equals(conceptName))
+  public ConceptInterface findConcept( String conceptName ) {
+    for ( int i = 0; i < nrConcepts(); i++ ) {
+      ConceptInterface concept = getConcept( i );
+      if ( concept.getName().equals( conceptName ) ) {
         return concept;
+      }
     }
     return null;
   }
@@ -550,19 +594,21 @@ public class SchemaMeta {
     return requiredProperties;
   }
 
-  public void setDefaultProperties(RequiredProperties requiredProperties) {
+  public void setDefaultProperties( RequiredProperties requiredProperties ) {
     this.requiredProperties = requiredProperties;
   }
 
   /**
-   * @param locale the locale to present the names in.
+   * @param locale
+   *          the locale to present the names in.
    * @return an array of the defined physical table names
    * 
    */
-  public String[] getTableNames(String locale) {
-    String names[] = new String[nrTables()];
-    for (int i = 0; i < nrTables(); i++)
-      names[i] = getTable(i).getDisplayName(locale);
+  public String[] getTableNames( String locale ) {
+    String[] names = new String[nrTables()];
+    for ( int i = 0; i < nrTables(); i++ ) {
+      names[i] = getTable( i ).getDisplayName( locale );
+    }
     return names;
   }
 
@@ -570,8 +616,8 @@ public class SchemaMeta {
     return locales.getActiveLocale();
   }
 
-  public void setActiveLocale(String selectedLocale) {
-    locales.setActiveLocale(selectedLocale);
+  public void setActiveLocale( String selectedLocale ) {
+    locales.setActiveLocale( selectedLocale );
   }
 
   /**
@@ -582,9 +628,10 @@ public class SchemaMeta {
   }
 
   /**
-   * @param locales the locales to set
+   * @param locales
+   *          the locales to set
    */
-  public void setLocales(Locales locales) {
+  public void setLocales( Locales locales ) {
     this.locales = locales;
   }
 
@@ -596,9 +643,10 @@ public class SchemaMeta {
   }
 
   /**
-   * @param domainName the domainName to set
+   * @param domainName
+   *          the domainName to set
    */
-  public void setDomainName(String domainName) {
+  public void setDomainName( String domainName ) {
     this.domainName = domainName;
   }
 
@@ -610,9 +658,10 @@ public class SchemaMeta {
   }
 
   /**
-   * @param securityReference the securityReference to set
+   * @param securityReference
+   *          the securityReference to set
    */
-  public void setSecurityReference(SecurityReference securityReference) {
+  public void setSecurityReference( SecurityReference securityReference ) {
     this.securityReference = securityReference;
   }
 
@@ -623,25 +672,26 @@ public class SchemaMeta {
     List<ConceptUtilityInterface> list = new ArrayList<ConceptUtilityInterface>();
 
     // The physical tables
-    for (int i = 0; i < nrTables(); i++)
-      list.add(getTable(i));
+    for ( int i = 0; i < nrTables(); i++ ) {
+      list.add( getTable( i ) );
+    }
 
     // The business businessModels
-    for (int v = 0; v < nrBusinessModels(); v++) {
-      BusinessModel businessModel = getModel(v);
-      list.add(businessModel);
+    for ( int v = 0; v < nrBusinessModels(); v++ ) {
+      BusinessModel businessModel = getModel( v );
+      list.add( businessModel );
       // Business tables
-      for (int t = 0; t < businessModel.nrBusinessTables(); t++) {
-        BusinessTable table = businessModel.getBusinessTable(t);
-        list.add(table);
-        for (int c = 0; c < table.nrBusinessColumns(); c++) {
-          BusinessColumn column = table.getBusinessColumn(c);
-          list.add(column);
+      for ( int t = 0; t < businessModel.nrBusinessTables(); t++ ) {
+        BusinessTable table = businessModel.getBusinessTable( t );
+        list.add( table );
+        for ( int c = 0; c < table.nrBusinessColumns(); c++ ) {
+          BusinessColumn column = table.getBusinessColumn( c );
+          list.add( column );
         }
       }
       // Business categories: todo: make it recursive too.
-      for (int c = 0; c < businessModel.getRootCategory().nrBusinessCategories(); c++) {
-        list.add(businessModel.getRootCategory().getBusinessCategory(c));
+      for ( int c = 0; c < businessModel.getRootCategory().nrBusinessCategories(); c++ ) {
+        list.add( businessModel.getRootCategory().getBusinessCategory( c ) );
       }
     }
 
@@ -650,9 +700,10 @@ public class SchemaMeta {
 
   public String[] getConceptNames() {
     String[] conceptNames = new String[nrConcepts()];
-    for (int i = 0; i < conceptNames.length; i++)
-      conceptNames[i] = getConcept(i).getName();
-    Const.sortStrings(conceptNames);
+    for ( int i = 0; i < conceptNames.length; i++ ) {
+      conceptNames[i] = getConcept( i ).getName();
+    }
+    Const.sortStrings( conceptNames );
     return conceptNames;
   }
 

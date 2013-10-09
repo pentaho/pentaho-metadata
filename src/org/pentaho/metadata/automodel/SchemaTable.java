@@ -25,29 +25,32 @@ public class SchemaTable {
    * @param schemaName
    * @param tableName
    */
-  public SchemaTable(String schemaName, String tableName) {
+  public SchemaTable( String schemaName, String tableName ) {
     this.schemaName = schemaName;
     this.tableName = tableName;
   }
 
-  public boolean equals(Object obj) {
-    if (!(obj instanceof SchemaTable))
+  public boolean equals( Object obj ) {
+    if ( !( obj instanceof SchemaTable ) ) {
       return false;
-    if (obj == null)
+    }
+    if ( obj == null ) {
       return false;
-    if (obj == this)
+    }
+    if ( obj == this ) {
       return true;
+    }
 
     SchemaTable schemaTable = (SchemaTable) obj;
-    if (schemaTable.schemaName == null) {
-      return schemaTable.getTableName().equals(tableName);
+    if ( schemaTable.schemaName == null ) {
+      return schemaTable.getTableName().equals( tableName );
     } else {
-      return schemaTable.getSchemaName().equals(schemaName) && schemaTable.getTableName().equals(tableName);
+      return schemaTable.getSchemaName().equals( schemaName ) && schemaTable.getTableName().equals( tableName );
     }
   }
 
   public int hashCode() {
-    if (schemaName == null) {
+    if ( schemaName == null ) {
       return tableName.hashCode();
     } else {
       return schemaName.hashCode() ^ tableName.hashCode();
@@ -55,7 +58,7 @@ public class SchemaTable {
   }
 
   public String toString() {
-    if (schemaName == null) {
+    if ( schemaName == null ) {
       return tableName;
     } else {
       return schemaName + "." + tableName; //$NON-NLS-1$
@@ -73,7 +76,7 @@ public class SchemaTable {
    * @param schemaName
    *          the schemaName to set
    */
-  public void setSchemaName(String schemaName) {
+  public void setSchemaName( String schemaName ) {
     this.schemaName = schemaName;
   }
 
@@ -88,7 +91,7 @@ public class SchemaTable {
    * @param tableName
    *          the tableName to set
    */
-  public void setTableName(String tableName) {
+  public void setTableName( String tableName ) {
     this.tableName = tableName;
   }
 

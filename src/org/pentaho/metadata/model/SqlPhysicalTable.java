@@ -26,13 +26,12 @@ import org.pentaho.metadata.model.concept.types.TableType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
 
 /**
- * This is the SQL implementation of a physical table.  It acts as either
- * a table in the database or a SQL statement.
+ * This is the SQL implementation of a physical table. It acts as either a table in the database or a SQL statement.
  * 
  * @author Will Gorman (wgorman@pentaho.com)
- *
+ * 
  */
-public class SqlPhysicalTable extends Concept implements IPhysicalTable{
+public class SqlPhysicalTable extends Concept implements IPhysicalTable {
 
   private static final long serialVersionUID = -2590635019353532334L;
 
@@ -40,30 +39,30 @@ public class SqlPhysicalTable extends Concept implements IPhysicalTable{
   public static final String TARGET_TABLE = "target_table"; //$NON-NLS-1$
   public static final String TARGET_TABLE_TYPE = "target_table_type"; //$NON-NLS-1$
   public static final String RELATIVE_SIZE = "relative_size"; //$NON-NLS-1$
-  
+
   SqlPhysicalModel model;
   List<IPhysicalColumn> physicalColumns = new ArrayList<IPhysicalColumn>();
 
   public SqlPhysicalTable() {
     super();
-    setTargetTableType(TargetTableType.TABLE);
+    setTargetTableType( TargetTableType.TABLE );
     // physical table has the following default properties:
-    setName(new LocalizedString());
-    setDescription(new LocalizedString());
+    setName( new LocalizedString() );
+    setDescription( new LocalizedString() );
   }
-  
-  public SqlPhysicalTable(SqlPhysicalModel model) {
+
+  public SqlPhysicalTable( SqlPhysicalModel model ) {
     this();
     this.model = model;
   }
-  
+
   @Override
   public List<IConcept> getChildren() {
     List<IConcept> children = new ArrayList<IConcept>();
-    children.addAll(physicalColumns);
+    children.addAll( physicalColumns );
     return children;
   }
-  
+
   @Override
   public IConcept getParent() {
     return model;
@@ -72,52 +71,52 @@ public class SqlPhysicalTable extends Concept implements IPhysicalTable{
   public IPhysicalModel getPhysicalModel() {
     return model;
   }
-  
+
   public List<IPhysicalColumn> getPhysicalColumns() {
     return physicalColumns;
   }
-  
-  public void addPhysicalColumn(IPhysicalColumn column) {
-    physicalColumns.add(column);
-  }
-  
-  public String getTargetSchema() {
-    return (String)getProperty(TARGET_SCHEMA);
-  }
-  
-  public void setTargetSchema(String targetSchema) {
-    setProperty(TARGET_SCHEMA, targetSchema);
-  }
-  
-  public String getTargetTable() {
-    return (String)getProperty(TARGET_TABLE);
+
+  public void addPhysicalColumn( IPhysicalColumn column ) {
+    physicalColumns.add( column );
   }
 
-  public void setTargetTable(String targetTable) {
-    setProperty(TARGET_TABLE, targetTable);
+  public String getTargetSchema() {
+    return (String) getProperty( TARGET_SCHEMA );
   }
-  
+
+  public void setTargetSchema( String targetSchema ) {
+    setProperty( TARGET_SCHEMA, targetSchema );
+  }
+
+  public String getTargetTable() {
+    return (String) getProperty( TARGET_TABLE );
+  }
+
+  public void setTargetTable( String targetTable ) {
+    setProperty( TARGET_TABLE, targetTable );
+  }
+
   public TargetTableType getTargetTableType() {
-    return (TargetTableType)getProperty(TARGET_TABLE_TYPE);
+    return (TargetTableType) getProperty( TARGET_TABLE_TYPE );
   }
-  
-  public void setTargetTableType(TargetTableType targetTableType) {
-    setProperty(TARGET_TABLE_TYPE, targetTableType);
+
+  public void setTargetTableType( TargetTableType targetTableType ) {
+    setProperty( TARGET_TABLE_TYPE, targetTableType );
   }
-  
+
   public TableType getTableType() {
-    return (TableType)getProperty(TABLETYPE_PROPERTY);
+    return (TableType) getProperty( TABLETYPE_PROPERTY );
   }
-  
-  public void setTableType(TableType tableType) {
-    setProperty(TABLETYPE_PROPERTY, tableType);
+
+  public void setTableType( TableType tableType ) {
+    setProperty( TABLETYPE_PROPERTY, tableType );
   }
-  
+
   public Integer getRelativeSize() {
-    return (Integer)getProperty(RELATIVE_SIZE);
+    return (Integer) getProperty( RELATIVE_SIZE );
   }
-  
-  public void setRelativeSize(Integer relativeSize) {
-    setProperty(RELATIVE_SIZE, relativeSize);
+
+  public void setRelativeSize( Integer relativeSize ) {
+    setProperty( RELATIVE_SIZE, relativeSize );
   }
 }

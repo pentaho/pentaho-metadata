@@ -18,12 +18,12 @@ package org.pentaho.pms.mql.dialect;
 
 /**
  * This method manages the generation of the SQL for a specific function.
- *  
+ * 
  * @author Will Gorman (wgorman@pentaho.org)
- *
+ * 
  */
 public interface SQLOperatorGeneratorInterface {
-  
+
   /**
    * return the sql for this operator
    * 
