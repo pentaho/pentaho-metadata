@@ -226,12 +226,12 @@ public class SqlGenerator {
             databaseMeta.getQuotedSchemaTableCombination( (String) relation.getFromTable().getProperty(
                 SqlPhysicalTable.TARGET_SCHEMA ), (String) relation.getFromTable().getProperty(
                 SqlPhysicalTable.TARGET_TABLE ) );
-        String leftTableAlias = tableAliases.get( relation.getFromTable() );
+        String leftTableAlias = databaseMeta.quoteField( tableAliases.get( relation.getFromTable() ) );
         String rightTableName =
             databaseMeta.getQuotedSchemaTableCombination( (String) relation.getToTable().getProperty(
                 SqlPhysicalTable.TARGET_SCHEMA ), (String) relation.getToTable().getProperty(
                 SqlPhysicalTable.TARGET_TABLE ) );
-        String rightTableAlias = tableAliases.get( relation.getToTable() );
+        String rightTableAlias = databaseMeta.quoteField( tableAliases.get( relation.getToTable() ) );
 
         boolean legacyJoin = Boolean.TRUE.equals( model.getProperty( LEGACY_JOIN_ORDER ) );
         query.addJoin( leftTableName, leftTableAlias, rightTableName, rightTableAlias, joinType, joinFormula,

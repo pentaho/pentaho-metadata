@@ -208,11 +208,11 @@ public class SQLGenerator {
         String leftTableName =
             databaseMeta.getQuotedSchemaTableCombination( relation.getTableFrom().getTargetSchema(), relation
                 .getTableFrom().getTargetTable() );
-        String leftTableAlias = relation.getTableFrom().getId();
+        String leftTableAlias = databaseMeta.quoteField( relation.getTableFrom().getId() );
         String rightTableName =
             databaseMeta.getQuotedSchemaTableCombination( relation.getTableTo().getTargetSchema(), relation
                 .getTableTo().getTargetTable() );
-        String rightTableAlias = relation.getTableTo().getId();
+        String rightTableAlias = databaseMeta.quoteField( relation.getTableTo().getId() );
 
         query.addJoin( leftTableName, leftTableAlias, rightTableName, rightTableAlias, joinType, joinFormula,
             joinOrderKey );
