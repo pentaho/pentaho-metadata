@@ -16,8 +16,10 @@
  */
 package org.pentaho.metadata.query.model.util;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeSet;
 
 import org.pentaho.commons.connection.memory.MemoryMetaData;
@@ -56,6 +58,7 @@ public class QueryModelMetaData extends MemoryMetaData {
     Object key;
 
     if ( columnsMap != null ) {
+      Map<String, String> upperColumnMap = null;
       TreeSet<String> existingHeaders = new TreeSet<String>();
       newHeaders = new Object[columnHeaders.length][];
       String newHeader = null;
@@ -70,6 +73,12 @@ public class QueryModelMetaData extends MemoryMetaData {
               newHeader = (String) columnsMap.get( key.toString() );
             }
             if ( newHeader == null ) {
+              if ( upperColumnMap == null ) {
+                upperColumnMap = upperCaseKeys( columnsMap );
+              }
+              newHeader = upperColumnMap.get( key.toString().toUpperCase() );
+            }
+            if ( newHeader == null ) {
               throw new RuntimeException( Messages.getErrorString(
                   "QueryModelMetaData.ERROR_0001_MetadataColumnNotFound", key.toString() ) ); //$NON-NLS-1$
             }
@@ -82,6 +91,22 @@ public class QueryModelMetaData extends MemoryMetaData {
 
       this.columnHeaders = newHeaders;
     }
+  }
+  
+  private Map<String, String> upperCaseKeys( Map<?, ?> source ) {
+    Map<String, String> result = new HashMap<String, String>( source.size() );
+    for ( Entry<?, ?> entry : source.entrySet() ) {
+      String key = null;
+      if ( entry.getKey() != null ) {
+        key = String.valueOf( entry.getKey() ).toUpperCase();
+      }
+      String value = null;
+      if ( entry.getValue() != null ) {
+        value = String.valueOf( entry.getValue() );
+      }
+      result.put( key, value );
+    }
+    return result;
   }
 
   private String getUniqueHeader( String header, TreeSet<String> existingHeaders ) {
