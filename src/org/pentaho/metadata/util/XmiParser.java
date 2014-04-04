@@ -1114,7 +1114,14 @@ public class XmiParser {
       sqlPhysicalModel.setId( name );
       Map<String, String> kvp = getKeyValuePairs( datasource, "CWM:TaggedValue", "tag", "value" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-      sqlDataSource.setType( DataSourceType.values()[DatabaseMeta.getAccessType( kvp.get( "DATABASE_ACCESS" ) )] ); //$NON-NLS-1$
+
+      String database_access_type = kvp.get( "DATABASE_ACCESS" );
+      if( database_access_type.equals( ", " ) ) {
+        logger.warn( Messages.getErrorString( "XmiParser.ERROR_0011_UNSUPPORTED_DOMAIN", database_access_type ) );
+        database_access_type = "JNDI";
+      }
+
+      sqlDataSource.setType( DataSourceType.values()[DatabaseMeta.getAccessType( database_access_type )] ); //$NON-NLS-1$
       sqlDataSource.setDatabaseName( kvp.get( "DATABASE_DATABASE" ) ); //$NON-NLS-1$
       sqlDataSource.setHostname( kvp.get( "DATABASE_SERVER" ) ); //$NON-NLS-1$
       sqlDataSource.setPort( kvp.get( "DATABASE_PORT" ) ); //$NON-NLS-1$
