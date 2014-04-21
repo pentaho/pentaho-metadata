@@ -7,7 +7,7 @@
     <trans_version/>
     <trans_type>Normal</trans_type>
     <trans_status>0</trans_status>
-    <directory>&#x2f;</directory>
+    <directory>&#47;</directory>
     <parameters>
     </parameters>
     <log>
@@ -17,7 +17,7 @@
 <size_limit_lines/>
 <interval/>
 <timeout_days/>
-<field><id>ID_BATCH</id><enabled>Y</enabled><name>ID_BATCH</name></field><field><id>CHANNEL_ID</id><enabled>N</enabled><name>CHANNEL_ID</name></field><field><id>TRANSNAME</id><enabled>Y</enabled><name>TRANSNAME</name></field><field><id>STATUS</id><enabled>Y</enabled><name>STATUS</name></field><field><id>LINES_READ</id><enabled>Y</enabled><name>LINES_READ</name><subject/></field><field><id>LINES_WRITTEN</id><enabled>Y</enabled><name>LINES_WRITTEN</name><subject/></field><field><id>LINES_UPDATED</id><enabled>Y</enabled><name>LINES_UPDATED</name><subject/></field><field><id>LINES_INPUT</id><enabled>Y</enabled><name>LINES_INPUT</name><subject/></field><field><id>LINES_OUTPUT</id><enabled>Y</enabled><name>LINES_OUTPUT</name><subject/></field><field><id>LINES_REJECTED</id><enabled>N</enabled><name>LINES_REJECTED</name><subject/></field><field><id>ERRORS</id><enabled>Y</enabled><name>ERRORS</name></field><field><id>STARTDATE</id><enabled>Y</enabled><name>STARTDATE</name></field><field><id>ENDDATE</id><enabled>Y</enabled><name>ENDDATE</name></field><field><id>LOGDATE</id><enabled>Y</enabled><name>LOGDATE</name></field><field><id>DEPDATE</id><enabled>Y</enabled><name>DEPDATE</name></field><field><id>REPLAYDATE</id><enabled>Y</enabled><name>REPLAYDATE</name></field><field><id>LOG_FIELD</id><enabled>N</enabled><name>LOG_FIELD</name></field><field><id>EXECUTING_SERVER</id><enabled>N</enabled><name>EXECUTING_SERVER</name></field><field><id>EXECUTING_USER</id><enabled>N</enabled><name>EXECUTING_USER</name></field><field><id>CLIENT</id><enabled>N</enabled><name>CLIENT</name></field></trans-log-table>
+<field><id>ID_BATCH</id><enabled>Y</enabled><name>ID_BATCH</name></field><field><id>CHANNEL_ID</id><enabled>N</enabled><name>CHANNEL_ID</name></field><field><id>TRANSNAME</id><enabled>Y</enabled><name>TRANSNAME</name></field><field><id>STATUS</id><enabled>Y</enabled><name>STATUS</name></field><field><id>LINES_READ</id><enabled>Y</enabled><name>LINES_READ</name><subject/></field><field><id>LINES_WRITTEN</id><enabled>Y</enabled><name>LINES_WRITTEN</name><subject/></field><field><id>LINES_UPDATED</id><enabled>Y</enabled><name>LINES_UPDATED</name><subject/></field><field><id>LINES_INPUT</id><enabled>Y</enabled><name>LINES_INPUT</name><subject/></field><field><id>LINES_OUTPUT</id><enabled>Y</enabled><name>LINES_OUTPUT</name><subject/></field><field><id>LINES_REJECTED</id><enabled>N</enabled><name>LINES_REJECTED</name><subject/></field><field><id>ERRORS</id><enabled>Y</enabled><name>ERRORS</name></field><field><id>STARTDATE</id><enabled>Y</enabled><name>STARTDATE</name></field><field><id>ENDDATE</id><enabled>Y</enabled><name>ENDDATE</name></field><field><id>LOGDATE</id><enabled>Y</enabled><name>LOGDATE</name></field><field><id>DEPDATE</id><enabled>Y</enabled><name>DEPDATE</name></field><field><id>REPLAYDATE</id><enabled>Y</enabled><name>REPLAYDATE</name></field><field><id>LOG_FIELD</id><enabled>N</enabled><name>LOG_FIELD</name></field></trans-log-table>
 <perf-log-table><connection/>
 <schema/>
 <table/>
@@ -34,11 +34,6 @@
 <table/>
 <timeout_days/>
 <field><id>ID_BATCH</id><enabled>Y</enabled><name>ID_BATCH</name></field><field><id>CHANNEL_ID</id><enabled>Y</enabled><name>CHANNEL_ID</name></field><field><id>LOG_DATE</id><enabled>Y</enabled><name>LOG_DATE</name></field><field><id>TRANSNAME</id><enabled>Y</enabled><name>TRANSNAME</name></field><field><id>STEPNAME</id><enabled>Y</enabled><name>STEPNAME</name></field><field><id>STEP_COPY</id><enabled>Y</enabled><name>STEP_COPY</name></field><field><id>LINES_READ</id><enabled>Y</enabled><name>LINES_READ</name></field><field><id>LINES_WRITTEN</id><enabled>Y</enabled><name>LINES_WRITTEN</name></field><field><id>LINES_UPDATED</id><enabled>Y</enabled><name>LINES_UPDATED</name></field><field><id>LINES_INPUT</id><enabled>Y</enabled><name>LINES_INPUT</name></field><field><id>LINES_OUTPUT</id><enabled>Y</enabled><name>LINES_OUTPUT</name></field><field><id>LINES_REJECTED</id><enabled>Y</enabled><name>LINES_REJECTED</name></field><field><id>ERRORS</id><enabled>Y</enabled><name>ERRORS</name></field><field><id>LOG_FIELD</id><enabled>N</enabled><name>LOG_FIELD</name></field></step-log-table>
-<metrics-log-table><connection/>
-<schema/>
-<table/>
-<timeout_days/>
-<field><id>ID_BATCH</id><enabled>Y</enabled><name>ID_BATCH</name></field><field><id>CHANNEL_ID</id><enabled>Y</enabled><name>CHANNEL_ID</name></field><field><id>LOG_DATE</id><enabled>Y</enabled><name>LOG_DATE</name></field><field><id>METRICS_DATE</id><enabled>Y</enabled><name>METRICS_DATE</name></field><field><id>METRICS_CODE</id><enabled>Y</enabled><name>METRICS_CODE</name></field><field><id>METRICS_DESCRIPTION</id><enabled>Y</enabled><name>METRICS_DESCRIPTION</name></field><field><id>METRICS_SUBJECT</id><enabled>Y</enabled><name>METRICS_SUBJECT</name></field><field><id>METRICS_TYPE</id><enabled>Y</enabled><name>METRICS_TYPE</name></field><field><id>METRICS_VALUE</id><enabled>Y</enabled><name>METRICS_VALUE</name></field></metrics-log-table>
     </log>
     <maxdate>
       <connection/>
@@ -57,70 +52,20 @@
     <shared_objects_file/>
     <capture_step_performance>N</capture_step_performance>
     <step_performance_capturing_delay>1000</step_performance_capturing_delay>
-    <step_performance_capturing_size_limit/>
     <dependencies>
     </dependencies>
     <partitionschemas>
     </partitionschemas>
     <slaveservers>
-         <slaveserver><name>carte</name><hostname>127.0.0.1</hostname><port>9999</port><webAppName/><username>cluster</username><password>Encrypted 2be98afc86aa7f2e4cb1aa265cd86aac8</password><proxy_hostname/><proxy_port/><non_proxy_hosts/><master>Y</master></slaveserver>
+         <slaveserver><name>carte</name><hostname>127.0.0.1</hostname><port>9999</port><username>cluster</username><password>Encrypted 2be98afc86aa7f2e4cb1aa265cd86aac8</password><proxy_hostname/><proxy_port/><non_proxy_hosts/><master>Y</master></slaveserver>
     </slaveservers>
     <clusterschemas>
     </clusterschemas>
-  <created_user/>
-  <created_date>2014&#x2f;04&#x2f;18 17&#x3a;35&#x3a;43.874</created_date>
   <modified_user>admin</modified_user>
-  <modified_date>2009&#x2f;04&#x2f;13 15&#x3a;21&#x3a;35.745</modified_date>
+  <modified_date>2009&#47;04&#47;13 15:21:35.745</modified_date>
   </info>
   <notepads>
   </notepads>
-  <connection>
-    <name>AgileBI</name>
-    <server>localhost</server>
-    <type>MONETDB</type>
-    <access>Native</access>
-    <database>pentaho-instaview</database>
-    <port>50006</port>
-    <username>monetdb</username>
-    <password>Encrypted 2be98afc86aa7f2e4cb14a17edb86abd8</password>
-    <servername/>
-    <data_tablespace/>
-    <index_tablespace/>
-    <read_only>true</read_only>
-    <attributes>
-      <attribute><code>EXTRA_OPTION_INFOBRIGHT.characterEncoding</code><attribute>UTF-8</attribute></attribute>
-      <attribute><code>EXTRA_OPTION_MYSQL.defaultFetchSize</code><attribute>500</attribute></attribute>
-      <attribute><code>EXTRA_OPTION_MYSQL.useCursorFetch</code><attribute>true</attribute></attribute>
-      <attribute><code>PORT_NUMBER</code><attribute>50006</attribute></attribute>
-      <attribute><code>SUPPORTS_BOOLEAN_DATA_TYPE</code><attribute>Y</attribute></attribute>
-      <attribute><code>SUPPORTS_TIMESTAMP_DATA_TYPE</code><attribute>Y</attribute></attribute>
-    </attributes>
-  </connection>
-  <connection>
-    <name>endeavour</name>
-    <server>localhost</server>
-    <type>MYSQL</type>
-    <access>Native</access>
-    <database>endeavour</database>
-    <port>3306</port>
-    <username>root</username>
-    <password>Encrypted 2be98afc86aa7f2e4cb1da771d09bbbdb</password>
-    <servername/>
-    <data_tablespace/>
-    <index_tablespace/>
-    <attributes>
-      <attribute><code>EXTRA_OPTION_MYSQL.defaultFetchSize</code><attribute>500</attribute></attribute>
-      <attribute><code>EXTRA_OPTION_MYSQL.useCursorFetch</code><attribute>true</attribute></attribute>
-      <attribute><code>FORCE_IDENTIFIERS_TO_LOWERCASE</code><attribute>N</attribute></attribute>
-      <attribute><code>FORCE_IDENTIFIERS_TO_UPPERCASE</code><attribute>N</attribute></attribute>
-      <attribute><code>IS_CLUSTERED</code><attribute>N</attribute></attribute>
-      <attribute><code>PORT_NUMBER</code><attribute>3306</attribute></attribute>
-      <attribute><code>QUOTE_ALL_FIELDS</code><attribute>N</attribute></attribute>
-      <attribute><code>STREAM_RESULTS</code><attribute>Y</attribute></attribute>
-      <attribute><code>SUPPORTS_BOOLEAN_DATA_TYPE</code><attribute>N</attribute></attribute>
-      <attribute><code>USE_POOLING</code><attribute>N</attribute></attribute>
-    </attributes>
-  </connection>
   <connection>
     <name>Foodmart</name>
     <server>localhost</server>
@@ -146,39 +91,28 @@
     </attributes>
   </connection>
   <order>
-  <hop> <from>CSV file input</from><to>Select values</to><enabled>Y</enabled> </hop>
-  <hop> <from>Select values 2</from><to>Unique rows</to><enabled>Y</enabled> </hop>
-  <hop> <from>Sort rows</from><to>Select values 2</to><enabled>Y</enabled> </hop>
-  <hop> <from>Select values</from><to>Formula</to><enabled>Y</enabled> </hop>
-  <hop> <from>Group by</from><to>Formula 2</to><enabled>Y</enabled> </hop>
-  <hop> <from>Group Sort rows</from><to>Group by</to><enabled>Y</enabled> </hop>
-  <hop> <from>Formula</from><to>Filter rows</to><enabled>Y</enabled> </hop>
-  <hop> <from>Filter rows</from><to>Group Sort rows</to><enabled>Y</enabled> </hop>
-  <hop> <from>Formula 2</from><to>Sort rows</to><enabled>Y</enabled> </hop>
-  </order>
+  <hop> <from>CSV file input</from><to>Select values</to><enabled>Y</enabled> </hop>  <hop> <from>Select values 2</from><to>Unique rows</to><enabled>Y</enabled> </hop>  <hop> <from>Sort rows</from><to>Select values 2</to><enabled>Y</enabled> </hop>  <hop> <from>Select values</from><to>Formula</to><enabled>Y</enabled> </hop>  <hop> <from>Formula 2</from><to>Filter rows 2</to><enabled>Y</enabled> </hop>  <hop> <from>Group by</from><to>Formula 2</to><enabled>Y</enabled> </hop>  <hop> <from>Filter rows 2</from><to>Sort rows</to><enabled>Y</enabled> </hop>  <hop> <from>Group Sort rows</from><to>Group by</to><enabled>Y</enabled> </hop>  <hop> <from>Formula</from><to>Filter rows</to><enabled>Y</enabled> </hop>  <hop> <from>Filter rows</from><to>Group Sort rows</to><enabled>Y</enabled> </hop>  </order>
   <step>
     <name>CSV file input</name>
     <type>CsvInput</type>
     <description/>
     <distribute>Y</distribute>
-    <custom_distribution/>
     <copies>1</copies>
          <partitioning>
            <method>none</method>
            <schema_name/>
            </partitioning>
-    <filename>&#x2f;home&#x2f;gorman&#x2f;example_output.csv</filename>
+    <filename>&#47;home&#47;gorman&#47;example_output.csv</filename>
     <filename_field/>
     <rownum_field/>
     <include_filename>N</include_filename>
     <separator>,</separator>
-    <enclosure>&#x22;</enclosure>
+    <enclosure>&quot;</enclosure>
     <header>Y</header>
     <buffer_size>50000</buffer_size>
     <lazy_conversion>Y</lazy_conversion>
     <add_filename_result>N</add_filename_result>
     <parallel>N</parallel>
-    <newline_possible>Y</newline_possible>
     <encoding/>
     <fields>
       <field>
@@ -235,49 +169,10 @@
     </step>
 
   <step>
-    <name>Dummy 1</name>
-    <type>Dummy</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>367</xloc>
-      <yloc>167</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>Dummy 2</name>
-    <type>Dummy</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>758</xloc>
-      <yloc>170</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
     <name>Filter rows</name>
     <type>FilterRows</type>
     <description/>
     <distribute>Y</distribute>
-    <custom_distribution/>
     <copies>1</copies>
          <partitioning>
            <method>none</method>
@@ -289,7 +184,7 @@
 <condition>
  <negated>N</negated>
  <leftvalue/>
- <function>&#x3d;</function>
+ <function>=</function>
  <rightvalue/>
  </condition>
     </compare>
@@ -302,11 +197,38 @@
     </step>
 
   <step>
+    <name>Filter rows 2</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+<send_true_to>Sort rows</send_true_to>
+<send_false_to>Sort rows</send_false_to>
+    <compare>
+<condition>
+ <negated>N</negated>
+ <leftvalue>F_1</leftvalue>
+ <function>=</function>
+ <rightvalue/>
+ <value><name>constant</name><type>Boolean</type><text>Y</text><length>-1</length><precision>-1</precision><isnull>N</isnull><mask/></value> </condition>
+    </compare>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>644</xloc>
+      <yloc>85</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
     <name>Formula</name>
     <type>Formula</type>
     <description/>
     <distribute>Y</distribute>
-    <custom_distribution/>
     <copies>1</copies>
          <partitioning>
            <method>none</method>
@@ -325,7 +247,6 @@
     <type>Formula</type>
     <description/>
     <distribute>Y</distribute>
-    <custom_distribution/>
     <copies>1</copies>
          <partitioning>
            <method>none</method>
@@ -333,8 +254,8 @@
            </partitioning>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>599</xloc>
-      <yloc>87</yloc>
+      <xloc>522</xloc>
+      <yloc>85</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -344,13 +265,12 @@
     <type>SortRows</type>
     <description/>
     <distribute>Y</distribute>
-    <custom_distribution/>
     <copies>1</copies>
          <partitioning>
            <method>none</method>
            <schema_name/>
            </partitioning>
-      <directory>&#x25;&#x25;java.io.tmpdir&#x25;&#x25;</directory>
+      <directory>%%java.io.tmpdir%%</directory>
       <prefix>out</prefix>
       <sort_size/>
       <free_memory>25</free_memory>
@@ -362,7 +282,6 @@
         <name>Data4</name>
         <ascending>Y</ascending>
         <case_sensitive>N</case_sensitive>
-        <presorted>N</presorted>
       </field>
     </fields>
      <cluster_schema/>
@@ -378,7 +297,6 @@
     <type>GroupBy</type>
     <description/>
     <distribute>Y</distribute>
-    <custom_distribution/>
     <copies>1</copies>
          <partitioning>
            <method>none</method>
@@ -387,7 +305,7 @@
       <all_rows>N</all_rows>
       <ignore_aggregate>N</ignore_aggregate>
       <field_ignore/>
-      <directory>&#x25;&#x25;java.io.tmpdir&#x25;&#x25;</directory>
+      <directory>%%java.io.tmpdir%%</directory>
       <prefix>grp</prefix>
       <add_linenr>N</add_linenr>
       <linenr_fieldname/>
@@ -418,7 +336,6 @@
     <type>SelectValues</type>
     <description/>
     <distribute>Y</distribute>
-    <custom_distribution/>
     <copies>1</copies>
          <partitioning>
            <method>none</method>
@@ -446,7 +363,6 @@
     <type>SelectValues</type>
     <description/>
     <distribute>Y</distribute>
-    <custom_distribution/>
     <copies>1</copies>
          <partitioning>
            <method>none</method>
@@ -474,13 +390,12 @@
     <type>SortRows</type>
     <description/>
     <distribute>Y</distribute>
-    <custom_distribution/>
     <copies>1</copies>
          <partitioning>
            <method>none</method>
            <schema_name/>
            </partitioning>
-      <directory>&#x25;&#x25;java.io.tmpdir&#x25;&#x25;</directory>
+      <directory>%%java.io.tmpdir%%</directory>
       <prefix>out</prefix>
       <sort_size/>
       <free_memory>25</free_memory>
@@ -492,13 +407,11 @@
         <name>Data4</name>
         <ascending>Y</ascending>
         <case_sensitive>N</case_sensitive>
-        <presorted>N</presorted>
       </field>
       <field>
         <name>Data1</name>
         <ascending>Y</ascending>
         <case_sensitive>N</case_sensitive>
-        <presorted>N</presorted>
       </field>
     </fields>
      <cluster_schema/>
@@ -514,7 +427,6 @@
     <type>Unique</type>
     <description/>
     <distribute>Y</distribute>
-    <custom_distribution/>
     <copies>1</copies>
          <partitioning>
            <method>none</method>
@@ -532,10 +444,45 @@
       </GUI>
     </step>
 
+  <step>
+    <name>Dummy 1</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>367</xloc>
+      <yloc>167</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>Dummy 2</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>758</xloc>
+      <yloc>170</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
   <step_error_handling>
   </step_error_handling>
    <slave-step-copy-partition-distribution>
 </slave-step-copy-partition-distribution>
    <slave_transformation>N</slave_transformation>
-
 </transformation>
