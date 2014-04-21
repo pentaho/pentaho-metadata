@@ -305,9 +305,13 @@ public class InlineEtlQueryExecutor extends BaseMetadataQueryExec {
     }
 
     String fileAddress = getTransformLocation() + "inlinecsv.ktr"; //$NON-NLS-1$
-    if ( groupBys > 0 ) {
+    if ( groupBys > 0 && query.getConstraints().size() == 0) {
       fileAddress = getTransformLocation() + "inlinecsv_groupby.ktr"; //$NON-NLS-1$
     }
+    if ( groupBys > 0 && query.getConstraints().size() > 0) {
+      fileAddress = getTransformLocation() + "inlinecsv_groupby_and_constraints.ktr"; //$NON-NLS-1$
+    }
+    
     TransMeta transMeta = new TransMeta( fileAddress, null, true );
     transMeta.setFilename( fileAddress );
 
