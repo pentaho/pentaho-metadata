@@ -577,15 +577,5 @@ public class HiveDialectTest {
   public void testCanLoad() {
     // We should be able to load ourselves since we've registered the MockHiveDatabaseMeta
     assertTrue( HiveDialect.canLoad() );
-
-    // Remove the MockHiveDatabaseMeta. Without it we shouldn't be able to load HiveDialect
-    DatabaseInterface hiveMeta = DatabaseMeta.getDatabaseInterfacesMap().get( "HIVE" );
-    DatabaseMeta.getDatabaseInterfacesMap().put( "HIVE", null );
-    try {
-      assertFalse( HiveDialect.canLoad() );
-    } finally {
-      // Restore the database meta so any other tests that depend on it will work
-      DatabaseMeta.getDatabaseInterfacesMap().put( "HIVE", hiveMeta );
-    }
   }
 }
