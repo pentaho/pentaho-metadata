@@ -139,6 +139,7 @@ public class ThinModelConverter {
     databaseMeta.setDBPort( datasource.getPort() );
     databaseMeta.setUsername( datasource.getUsername() );
     databaseMeta.setPassword( datasource.getPassword() );
+    databaseMeta.setServername( datasource.getServername() );
 
     // And now load the attributes...
     for ( String key : datasource.getAttributes().keySet() ) {
@@ -554,6 +555,7 @@ public class ThinModelConverter {
     dataSource.setPort( database.environmentSubstitute( database.getDatabasePortNumberString() ) );
     dataSource.setUsername( database.environmentSubstitute( database.getUsername() ) );
     dataSource.setPassword( database.environmentSubstitute( database.getPassword() ) );
+    dataSource.setServername( database.environmentSubstitute( database.getServername() ) );
 
     if ( database.getAccessType() == DatabaseMeta.TYPE_ACCESS_JNDI ) {
       dataSource.setType( DataSourceType.values()[database.getAccessType()] );
