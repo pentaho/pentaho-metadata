@@ -42,6 +42,7 @@ public class SqlDataSource implements Serializable {
   private String hostname;
   private String port;
   private String dialectType;
+  private String servername; //Stores Informix Server name for one
   private Map<String, String> attributes = new HashMap<String, String>();
 
   public void setType( DataSourceType type ) {
@@ -107,4 +108,13 @@ public class SqlDataSource implements Serializable {
   public Map<String, String> getAttributes() {
     return attributes;
   }
+
+  public String getServername() {
+    return servername;
+  }
+
+  public void setServername( String serverName ) {
+    this.servername = serverName;
+  }
+  
 }

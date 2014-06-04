@@ -37,6 +37,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.database.DatabaseMeta;
@@ -288,7 +289,11 @@ public class XmiParser {
               "DATABASE_USERNAME", datasource.getUsername(), idGen.getNextId() ) ); //$NON-NLS-1$
           modelElement.appendChild( createTaggedValue( doc,
               "DATABASE_PASSWORD", datasource.getPassword(), idGen.getNextId() ) ); //$NON-NLS-1$
-
+          if ( !StringUtils.isEmpty( datasource.getServername() ) ) {
+            modelElement.appendChild( createTaggedValue( doc,
+                "DATABASE_SERVER_INSTANCE", datasource.getServername(), idGen.getNextId() ) ); //$NON-NLS-1$
+          }
+          
           for ( String attribute : datasource.getAttributes().keySet() ) {
             modelElement.appendChild( createTaggedValue( doc, CWM.TAG_DATABASE_ATTRIBUTE_PREFIX + attribute, datasource
                 .getAttributes().get( attribute ), idGen.getNextId() ) );
@@ -1128,6 +1133,7 @@ public class XmiParser {
       sqlDataSource.setUsername( kvp.get( "DATABASE_USERNAME" ) ); //$NON-NLS-1$
       sqlDataSource.setPassword( kvp.get( "DATABASE_PASSWORD" ) ); //$NON-NLS-1$
       sqlDataSource.setDialectType( kvp.get( "DATABASE_TYPE" ) ); //$NON-NLS-1$
+      sqlDataSource.setServername( kvp.get( "DATABASE_SERVER_INSTANCE" ) ); //$NON-NLS-1$
 
       // And now load the attributes...
       for ( String tag : kvp.keySet() ) {
