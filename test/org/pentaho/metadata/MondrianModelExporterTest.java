@@ -311,4 +311,23 @@ public class MondrianModelExporterTest {
     return businessModel;
   }
 
+  @Test
+  public void testDegenerateViewGenDate() throws Exception {
+    LogicalModel businessModel = getTestModel( TargetTableType.INLINE_SQL, "select * from customer", "" );
+    businessModel.getLogicalTables().get( 0 ).getLogicalColumns().get( 0 ).setDataType( DataType.DATE );
+    MondrianModelExporter exporter = new MondrianModelExporter( businessModel, "en_US" );
+    String data = exporter.createMondrianModelXML();
+
+    TestHelper.assertEqualsIgnoreWhitespaces( "<Schema name=\"model\">\n" + "  <Dimension name=\"Dim1\">\n"
+        + "    <Hierarchy name=\"Hier1\" hasAll=\"false\">\n" + "    <View alias=\"FACT\">\n"
+        + "        <SQL dialect=\"generic\">\n" + "         <![CDATA[select * from customer]]>\n" + "        </SQL>\n"
+        + "    </View>\n" + "      <Level name=\"Lvl1\" uniqueMembers=\"false\" column=\"pc1\" type=\"Date\">\n"
+        + "      </Level>\n" + "    </Hierarchy>\n" + "  </Dimension>\n" + "  <Cube name=\"Cube1\">\n"
+        + "    <View alias=\"FACT\">\n" + "        <SQL dialect=\"generic\">\n"
+        + "         <![CDATA[select * from customer]]>\n" + "        </SQL>\n" + "    </View>\n"
+        + "    <DimensionUsage name=\"Dim1\" source=\"Dim1\" foreignKey=\"pc2\"/>\n"
+        + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" formatString=\"Standard\"/>\n" + "  </Cube>\n"
+        + "</Schema>", data );
+  }
+
 }
