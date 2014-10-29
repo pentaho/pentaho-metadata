@@ -113,7 +113,8 @@ public class MondrianModelExporter {
           xml.append( ">" ); //$NON-NLS-1$
           xml.append( Util.CR );
 
-          if ( olapHierarchy.getLogicalTable().getProperty( SqlPhysicalTable.TARGET_TABLE_TYPE ) == TargetTableType.INLINE_SQL ) {
+          if ( olapHierarchy.getLogicalTable().getProperty( SqlPhysicalTable.TARGET_TABLE_TYPE )
+              == TargetTableType.INLINE_SQL ) {
             xml.append( "    <View alias=\"FACT\">" ).append( Util.CR );
             xml.append( "        <SQL dialect=\"generic\">" ).append( Util.CR );
             xml.append(
@@ -192,8 +193,9 @@ public class MondrianModelExporter {
               case BOOLEAN:
                 typeDescLevel = "Boolean"; //$NON-NLS-1$
                 break;
-            // Date Type caused BISERVER-6670, removing it for now until we can investigate further
-            // case DATE:    typeDescLevel = "Date"; break; //$NON-NLS-1$
+              case DATE:
+                typeDescLevel = "Date"; //$NON-NLS-1$
+                break;
             }
 
             if ( typeDescLevel != null ) {
@@ -293,7 +295,8 @@ public class MondrianModelExporter {
         xml.append( "\"" ); //$NON-NLS-1$
         xml.append( ">" ).append( Util.CR ); //$NON-NLS-1$
 
-        if ( olapCube.getLogicalTable().getProperty( SqlPhysicalTable.TARGET_TABLE_TYPE ) == TargetTableType.INLINE_SQL ) {
+        if ( olapCube.getLogicalTable().getProperty( SqlPhysicalTable.TARGET_TABLE_TYPE )
+            == TargetTableType.INLINE_SQL ) {
           xml.append( "    <View alias=\"FACT\">" ).append( Util.CR );
           xml.append( "        <SQL dialect=\"generic\">" ).append( Util.CR );
           xml.append(
@@ -307,7 +310,8 @@ public class MondrianModelExporter {
           XMLHandler.appendReplacedChars( xml, cleanseDbName( (String) olapCube.getLogicalTable().getProperty(
               SqlPhysicalTable.TARGET_TABLE ) ) );
           xml.append( "\"" ); //$NON-NLS-1$
-          if ( !StringUtils.isBlank( (String) olapCube.getLogicalTable().getProperty( SqlPhysicalTable.TARGET_SCHEMA ) ) ) {
+          if ( !StringUtils.isBlank( (String) olapCube.getLogicalTable()
+              .getProperty( SqlPhysicalTable.TARGET_SCHEMA ) ) ) {
             xml.append( " schema=\"" ); //$NON-NLS-1$
             XMLHandler.appendReplacedChars( xml, cleanseDbName( (String) olapCube.getLogicalTable().getProperty(
                 SqlPhysicalTable.TARGET_SCHEMA ) ) );
@@ -337,24 +341,24 @@ public class MondrianModelExporter {
           LogicalTable cubeTable = olapCube.getLogicalTable();
           LogicalRelationship relationshipMeta = businessModel.findRelationshipUsing( dimTable, cubeTable );
 
-          if ( dimTable.equals( cubeTable ) && relationshipMeta == null ) {
-            // this is ok
-          } else if ( relationshipMeta != null ) {
-            LogicalColumn keyColumn;
-            if ( relationshipMeta.getFromTable().equals( dimTable ) ) {
-              keyColumn = relationshipMeta.getToColumn();
-            } else {
-              keyColumn = relationshipMeta.getFromColumn();
-            }
+          if ( !dimTable.equals( cubeTable ) || relationshipMeta != null ) {
+            if ( relationshipMeta != null ) {
+              LogicalColumn keyColumn;
+              if ( relationshipMeta.getFromTable().equals( dimTable ) ) {
+                keyColumn = relationshipMeta.getToColumn();
+              } else {
+                keyColumn = relationshipMeta.getFromColumn();
+              }
 
-            xml.append( " foreignKey=\"" ); //$NON-NLS-1$
-            XMLHandler.appendReplacedChars( xml, (String) keyColumn.getProperty( SqlPhysicalColumn.TARGET_COLUMN ) );
-            xml.append( "\"" ); //$NON-NLS-1$
-          } else {
-            throw new Exception(
-                Messages
-                    .getString(
-                        "MondrianModelExporter.ERROR_0001_ERROR_NO_RELATIONSHIP", dimTable.getName( locale ), cubeTable.toString() ) ); //$NON-NLS-1$
+              xml.append( " foreignKey=\"" ); //$NON-NLS-1$
+              XMLHandler.appendReplacedChars( xml, (String) keyColumn.getProperty( SqlPhysicalColumn.TARGET_COLUMN ) );
+              xml.append( "\"" ); //$NON-NLS-1$
+            } else {
+              throw new Exception(
+                  Messages
+                      .getString(
+                          "MondrianModelExporter.ERROR_0001_ERROR_NO_RELATIONSHIP", dimTable.getName( locale ), cubeTable.toString() ) ); //$NON-NLS-1$
+            }
           }
           xml.append( "/>" ).append( Util.CR ); //$NON-NLS-1$
         }
