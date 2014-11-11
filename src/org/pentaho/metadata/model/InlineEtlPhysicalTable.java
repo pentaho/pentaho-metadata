@@ -33,8 +33,6 @@ public class InlineEtlPhysicalTable extends Concept implements IPhysicalTable {
 
   private static final long serialVersionUID = 587552752354101051L;
 
-  private InlineEtlPhysicalModel parent;
-
   private List<IPhysicalColumn> physicalColumns = new ArrayList<IPhysicalColumn>();
 
   public InlineEtlPhysicalTable() {
@@ -45,11 +43,6 @@ public class InlineEtlPhysicalTable extends Concept implements IPhysicalTable {
   }
 
   @Override
-  public IConcept getParent() {
-    return parent;
-  }
-
-  @Override
   public List<IConcept> getChildren() {
     List<IConcept> children = new ArrayList<IConcept>();
     children.addAll( physicalColumns );
@@ -57,7 +50,7 @@ public class InlineEtlPhysicalTable extends Concept implements IPhysicalTable {
   }
 
   public InlineEtlPhysicalTable( InlineEtlPhysicalModel parent ) {
-    this.parent = parent;
+    setParent( parent );
   }
 
   public List<IPhysicalColumn> getPhysicalColumns() {
@@ -65,7 +58,7 @@ public class InlineEtlPhysicalTable extends Concept implements IPhysicalTable {
   }
 
   public IPhysicalModel getPhysicalModel() {
-    return parent;
+    return ( IPhysicalModel )getParent();
   }
 
 }

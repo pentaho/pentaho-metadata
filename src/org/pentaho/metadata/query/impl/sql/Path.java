@@ -24,6 +24,7 @@ import java.util.TreeSet;
 import org.pentaho.metadata.model.LogicalRelationship;
 import org.pentaho.metadata.model.LogicalTable;
 import org.pentaho.metadata.model.SqlPhysicalTable;
+import org.pentaho.metadata.model.concept.Property;
 
 /*
  * Created on 30-jan-04
@@ -67,14 +68,20 @@ public class Path {
     for ( int i = 0; i < size(); i++ ) {
       LogicalRelationship rel = getRelationship( i );
       LogicalTable from = rel.getFromTable();
-      relSize = (Number) from.getProperty( SqlPhysicalTable.RELATIVE_SIZE );
+      Property property = from.getProperty( SqlPhysicalTable.RELATIVE_SIZE );
+      if ( property != null ) {
+        relSize = (Number) property.getValue();
+      }
       if ( ( relSize != null ) && ( relSize.intValue() > 0 ) ) {
         score += relSize.intValue();
       }
     }
     if ( size() > 0 ) {
       LogicalTable to = getLastRelationship().getToTable();
-      relSize = (Number) to.getProperty( SqlPhysicalTable.RELATIVE_SIZE );
+      Property property = to.getProperty( SqlPhysicalTable.RELATIVE_SIZE );
+      if ( property != null ) {
+        relSize = (Number) property.getValue();
+      }
       if ( ( relSize != null ) && ( relSize.intValue() > 0 ) ) {
         score += relSize.intValue();
       }

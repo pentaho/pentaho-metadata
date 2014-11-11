@@ -16,6 +16,7 @@
  */
 package org.pentaho.pms.schema.concept.types.string;
 
+import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
@@ -33,7 +34,7 @@ public class ConceptPropertyString extends ConceptPropertyBase implements Concep
 
   public ConceptPropertyString( String name, String value, boolean required ) {
     super( name, required );
-    setValue( value );
+    setValue( new Property<String>( value ) );
   }
 
   public String toString() {
@@ -47,14 +48,14 @@ public class ConceptPropertyString extends ConceptPropertyBase implements Concep
   public ConceptPropertyType getType() {
     return ConceptPropertyType.STRING;
   }
-
-  public Object getValue() {
-    return value;
+  
+  public Property getValue() {
+    return new Property<String>( value );
   }
-
-  public void setValue( Object value ) {
-    if ( null != value ) {
-      this.value = (String) value;
+  
+  public void setValue( Property value ) {
+    if ( null != value && null != value.getValue()) {
+      this.value = (String) value.getValue();
     } else {
       this.value = EMPTY_STRING;
     }

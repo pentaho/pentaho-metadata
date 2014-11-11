@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +45,7 @@ import org.pentaho.metadata.model.SqlPhysicalColumn;
 import org.pentaho.metadata.model.SqlPhysicalModel;
 import org.pentaho.metadata.model.SqlPhysicalTable;
 import org.pentaho.metadata.model.concept.IConcept;
+import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.model.concept.security.RowLevelSecurity;
 import org.pentaho.metadata.model.concept.security.Security;
 import org.pentaho.metadata.model.concept.security.SecurityOwner;
@@ -102,6 +104,7 @@ import org.pentaho.pms.schema.concept.types.tabletype.ConceptPropertyTableType;
 import org.pentaho.pms.schema.concept.types.tabletype.TableTypeSettings;
 import org.pentaho.pms.schema.concept.types.url.ConceptPropertyURL;
 import org.pentaho.pms.util.ObjectAlreadyExistsException;
+import org.pentaho.pms.util.UniqueList;
 
 /**
  * This class converts to and from the original metadata model (org.pentaho.pms.schema) to the new model
@@ -301,7 +304,7 @@ public class ThinModelConverter {
     legacy.setId( concept.getId() );
 
     for ( String propertyName : concept.getChildProperties().keySet() ) {
-      Object property = concept.getChildProperty( propertyName );
+      Property property = concept.getChildProperty( propertyName );
       ConceptPropertyInterface prop = convertPropertyToLegacy( propertyName, property );
       if ( prop != null ) {
         legacy.getConcept().addProperty( prop );
@@ -309,66 +312,66 @@ public class ThinModelConverter {
     }
   }
 
-  public static ConceptPropertyInterface convertPropertyToLegacy( String propertyName, Object property ) {
+  public static ConceptPropertyInterface convertPropertyToLegacy( String propertyName, Property property ) {
 
-    if ( property instanceof String ) {
+    if ( property.getValue() instanceof String ) {
       if ( propertyName.equals( SqlPhysicalColumn.TARGET_COLUMN ) ) {
         propertyName = "formula"; //$NON-NLS-1$
       }
-      ConceptPropertyString string = new ConceptPropertyString( propertyName, (String) property );
+      ConceptPropertyString string = new ConceptPropertyString( propertyName, (String) property.getValue() );
       return string;
-    } else if ( property instanceof LocalizedString ) {
-      LocalizedString str = (LocalizedString) property;
+    } else if ( property.getValue() instanceof LocalizedString ) {
+      LocalizedString str = (LocalizedString) property.getValue();
       LocalizedStringSettings value = new LocalizedStringSettings( str.getLocaleStringMap() );
       ConceptPropertyLocalizedString string = new ConceptPropertyLocalizedString( propertyName, value );
       return string;
-    } else if ( property instanceof DataType ) {
-      DataType dt = (DataType) property;
+    } else if ( property.getValue() instanceof DataType ) {
+      DataType dt = (DataType) property.getValue();
       DataTypeSettings datatypeSettings = DataTypeSettings.types[dt.ordinal()];
       ConceptPropertyDataType cpdt = new ConceptPropertyDataType( propertyName, datatypeSettings );
       return cpdt;
-    } else if ( property instanceof List ) {
+    } else if ( property.getValue() instanceof List ) {
       // TODO: List<AggregationType>
 
-    } else if ( property instanceof AggregationType ) {
-      AggregationSettings aggSettings = convertToLegacy( (AggregationType) property );
+    } else if ( property.getValue() instanceof AggregationType ) {
+      AggregationSettings aggSettings = convertToLegacy( (AggregationType) property.getValue() );
       ConceptPropertyAggregation agg = new ConceptPropertyAggregation( propertyName, aggSettings );
       return agg;
-    } else if ( property instanceof TargetTableType ) {
+    } else if ( property.getValue() instanceof TargetTableType ) {
       // this property is not relevant in the old model
       return null;
-    } else if ( property instanceof TargetColumnType ) {
-      TargetColumnType colType = (TargetColumnType) property;
+    } else if ( property.getValue() instanceof TargetColumnType ) {
+      TargetColumnType colType = (TargetColumnType) property.getValue();
       if ( propertyName.equals( SqlPhysicalColumn.TARGET_COLUMN_TYPE ) ) {
         propertyName = "exact"; //$NON-NLS-1$
       }
       ConceptPropertyBoolean bool = new ConceptPropertyBoolean( propertyName, colType == TargetColumnType.OPEN_FORMULA );
       return bool;
-    } else if ( property instanceof Font ) {
-      Font font = (Font) property;
+    } else if ( property.getValue() instanceof Font ) {
+      Font font = (Font) property.getValue();
       FontSettings value = new FontSettings( font.getName(), font.getHeight(), font.isBold(), font.isItalic() );
       ConceptPropertyFont fontprop = new ConceptPropertyFont( propertyName, value );
       return fontprop;
-    } else if ( property instanceof TableType ) {
-      TableType tt = (TableType) property;
+    } else if ( property.getValue() instanceof TableType ) {
+      TableType tt = (TableType) property.getValue();
       ConceptPropertyTableType tbltype =
           new ConceptPropertyTableType( propertyName, TableTypeSettings.types[tt.ordinal()] );
       return tbltype;
-    } else if ( property instanceof List ) {
+    } else if ( property.getValue() instanceof List ) {
       // aggregation lists here
-      List list = (List) property;
+      List list = (List) property.getValue();
       if ( propertyName.equals( "aggregation_list" ) ) { //$NON-NLS-1$
         List<AggregationSettings> listaggs = new ArrayList<AggregationSettings>();
         ConceptPropertyAggregationList agglist = new ConceptPropertyAggregationList( propertyName, listaggs );
-        for ( Object obj : list ) {
-          AggregationType aggType = (AggregationType) obj;
+        for( int i = 0; i < list.size(); i ++ ) {
+          AggregationType aggType = (AggregationType) list.get( i );
           listaggs.add( AggregationSettings.types[aggType.ordinal()] );
         }
         return agglist;
       }
     }
 
-    logger.error( "unsupported property: " + property ); //$NON-NLS-1$
+    logger.error( "unsupported property: " + property.getValue() ); //$NON-NLS-1$
     return null;
   }
 
@@ -431,7 +434,7 @@ public class ThinModelConverter {
     for ( String propertyName : legacy.getConcept().getChildPropertyIDs() ) { // concept.getChildProperties().keySet())
                                                                               // {
       ConceptPropertyInterface property = legacy.getConcept().getChildProperty( propertyName );
-      Object prop = convertPropertyFromLegacy( propertyName, property );
+      Property prop = convertPropertyFromLegacy( propertyName, property );
       String newPropertyName = convertPropertyNameFromLegacy( propertyName );
       if ( prop != null ) {
         concept.setProperty( newPropertyName, prop );
@@ -450,43 +453,47 @@ public class ThinModelConverter {
   }
 
   @SuppressWarnings( "unchecked" )
-  private static Object convertPropertyFromLegacy( String propertyName, ConceptPropertyInterface property ) {
+  private static Property<?> convertPropertyFromLegacy( String propertyName, ConceptPropertyInterface property ) {
 
     if ( property instanceof ConceptPropertyString ) {
-      return (String) property.getValue();
+      return new Property<String> ( (String) property.getValue().getValue() );
     } else if ( property instanceof ConceptPropertyLocalizedString ) {
-      LocalizedStringSettings settings = (LocalizedStringSettings) property.getValue();
-      return new LocalizedString( settings.getLocaleStringMap() );
+      LocalizedStringSettings settings = (LocalizedStringSettings) property.getValue().getValue();
+      return new Property<LocalizedString> ( new LocalizedString( settings.getLocaleStringMap() ) );
     } else if ( property instanceof ConceptPropertyDataType ) {
-      DataTypeSettings settings = (DataTypeSettings) property.getValue();
+      DataTypeSettings settings = null;
+      Property prop = property.getValue();
+      if ( prop != null ) {
+        settings = (DataTypeSettings) prop.getValue();
+      }
       if ( settings == null ) {
         return null;
       }
-      return DataType.values()[settings.getType()];
+      return new Property<DataType> ( DataType.values()[settings.getType()] );
     } else if ( property instanceof ConceptPropertyAggregationList ) {
-      List<AggregationSettings> orig = (List<AggregationSettings>) property.getValue();
+      List<AggregationSettings> orig = (List<AggregationSettings>) property.getValue().getValue();
       List<AggregationType> list = new ArrayList<AggregationType>();
       for ( AggregationSettings setting : orig ) {
         list.add( AggregationType.values()[setting.getType()] );
       }
-      return list;
+      return new Property<List<AggregationType>>( list );
     } else if ( property instanceof ConceptPropertyAggregation ) {
-      AggregationSettings aggSettings = (AggregationSettings) property.getValue();
-      return AggregationType.values()[aggSettings.getType()];
+      AggregationSettings aggSettings = (AggregationSettings) property.getValue().getValue();
+      return new Property<AggregationType>( AggregationType.values()[aggSettings.getType()] );
     } else if ( property instanceof ConceptPropertyBoolean ) {
-      Boolean boolVal = (Boolean) property.getValue();
+      Boolean boolVal = (Boolean) property.getValue().getValue();
       if ( propertyName.equals( "exact" ) ) { //$NON-NLS-1$
         if ( boolVal ) {
-          return TargetColumnType.OPEN_FORMULA;
+          return new Property<TargetColumnType>( TargetColumnType.OPEN_FORMULA );
         } else {
-          return TargetColumnType.COLUMN_NAME;
+          return new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME );
         }
       } else {
-        return boolVal;
+        return new Property<Boolean>( boolVal );
       }
     } else if ( property instanceof ConceptPropertySecurity ) {
       org.pentaho.pms.schema.security.Security security =
-          (org.pentaho.pms.schema.security.Security) property.getValue();
+          (org.pentaho.pms.schema.security.Security) property.getValue().getValue();
       Map<SecurityOwner, Integer> map = new HashMap<SecurityOwner, Integer>();
       for ( org.pentaho.pms.schema.security.SecurityOwner owner : security.getOwners() ) {
         SecurityOwner ownerObj =
@@ -494,10 +501,10 @@ public class ThinModelConverter {
         Integer val = security.getOwnerRights( owner );
         map.put( ownerObj, val );
       }
-      return new Security( map );
+      return new Property<Security>( new Security( map ) );
     } else if ( property instanceof ConceptPropertyRowLevelSecurity ) {
       org.pentaho.pms.schema.security.RowLevelSecurity security =
-          (org.pentaho.pms.schema.security.RowLevelSecurity) property.getValue();
+          (org.pentaho.pms.schema.security.RowLevelSecurity) property.getValue().getValue();
       RowLevelSecurity securityObj = new RowLevelSecurity();
       securityObj.setType( RowLevelSecurity.Type.values()[security.getType().ordinal()] );
       securityObj.setGlobalConstraint( security.getGlobalConstraint() );
@@ -509,34 +516,34 @@ public class ThinModelConverter {
         map.put( ownerObj, security.getRoleBasedConstraintMap().get( owner ) );
       }
       securityObj.setRoleBasedConstraintMap( map );
-      return securityObj;
+      return new Property<RowLevelSecurity>( securityObj );
     } else if ( property instanceof ConceptPropertyAlignment ) {
-      AlignmentSettings alignment = (AlignmentSettings) property.getValue();
-      return Alignment.values()[alignment.getType()];
+      AlignmentSettings alignment = (AlignmentSettings) property.getValue().getValue();
+      return new Property<Alignment>( Alignment.values()[alignment.getType()] );
     } else if ( property instanceof ConceptPropertyColor ) {
-      ColorSettings color = (ColorSettings) property.getValue();
-      return new Color( color.getRed(), color.getGreen(), color.getBlue() );
+      ColorSettings color = (ColorSettings) property.getValue().getValue();
+      return new Property<Color>( new Color( color.getRed(), color.getGreen(), color.getBlue() ) );
     } else if ( property instanceof ConceptPropertyColumnWidth ) {
       org.pentaho.pms.schema.concept.types.columnwidth.ColumnWidth colWidth =
-          (org.pentaho.pms.schema.concept.types.columnwidth.ColumnWidth) property.getValue();
-      return new org.pentaho.metadata.model.concept.types.ColumnWidth( WidthType.values()[colWidth.getType()], colWidth
-          .getWidth().doubleValue() );
+          (org.pentaho.pms.schema.concept.types.columnwidth.ColumnWidth) property.getValue().getValue();
+      return new Property<org.pentaho.metadata.model.concept.types.ColumnWidth> (new org.pentaho.metadata.model.concept.types.ColumnWidth( WidthType.values()[colWidth.getType()], colWidth
+          .getWidth().doubleValue() ) );
     } else if ( property instanceof ConceptPropertyDate ) {
       return property.getValue();
     } else if ( property instanceof ConceptPropertyURL ) {
       return property.getValue();
     } else if ( property instanceof ConceptPropertyFieldType ) {
-      FieldTypeSettings fieldType = (FieldTypeSettings) property.getValue();
-      return FieldType.values()[fieldType.getType()];
+      FieldTypeSettings fieldType = (FieldTypeSettings) property.getValue().getValue();
+      return new Property<FieldType>( FieldType.values()[fieldType.getType()] );
     } else if ( property instanceof ConceptPropertyTableType ) {
-      TableTypeSettings tableType = (TableTypeSettings) property.getValue();
-      return TableType.values()[tableType.getType()];
+      TableTypeSettings tableType = (TableTypeSettings) property.getValue().getValue();
+      return new Property<TableType>( TableType.values()[tableType.getType()] );
     } else if ( property instanceof ConceptPropertyFont ) {
-      FontSettings font = (FontSettings) property.getValue();
-      return new Font( font.getName(), font.getHeight(), font.isBold(), font.isItalic() );
+      FontSettings font = (FontSettings) property.getValue().getValue();
+      return new Property<Font>( new Font( font.getName(), font.getHeight(), font.isBold(), font.isItalic() ) );
     } else if ( property instanceof ConceptPropertyNumber ) {
-      if ( property.getValue() != null ) {
-        return ( (BigDecimal) property.getValue() ).doubleValue();
+      if ( property.getValue() != null && property.getValue().getValue() != null ) {
+        return new Property<Double>( ( (BigDecimal) property.getValue().getValue() ).doubleValue() );
       } else {
         return null;
       }
@@ -565,7 +572,9 @@ public class ThinModelConverter {
 
     // And now load the attributes...
     if ( database.getAttributes() != null ) {
-      for ( Object key : database.getAttributes().keySet() ) {
+      Iterator keys= database.getAttributes().keySet().iterator();
+      while( keys.hasNext() ) {
+        String key = (String) keys.next();
         dataSource.getAttributes().put( (String) key,
             database.environmentSubstitute( (String) database.getAttributes().get( key ) ) );
       }
@@ -643,8 +652,9 @@ public class ThinModelConverter {
       LogicalModel logicalModel = new LogicalModel();
       convertConceptFromLegacy( model, logicalModel );
 
-      for ( Object biztable : model.getBusinessTables() ) {
-        BusinessTable businessTable = (BusinessTable) biztable;
+      UniqueList<BusinessTable> bizTables = model.getBusinessTables();
+      for( int i = 0; i < bizTables.size(); i ++ ) {
+        BusinessTable businessTable = bizTables.get( i );
         LogicalTable logicalTable = new LogicalTable();
         IPhysicalTable physicalTable = domain.findPhysicalTable( businessTable.getPhysicalTable().getId() );
         if ( physicalTable != null && logicalModel.getPhysicalModel() == null ) {
@@ -654,11 +664,11 @@ public class ThinModelConverter {
         logicalTable.setLogicalModel( logicalModel );
 
         if ( businessTable.getLocation() != null ) {
-          logicalTable.setProperty( "__LEGACY_TAG_POSITION_X", "" + businessTable.getLocation().x );
-          logicalTable.setProperty( "__LEGACY_TAG_POSITION_Y", "" + businessTable.getLocation().y );
+          logicalTable.setProperty( "__LEGACY_TAG_POSITION_X", new Property<String>( "" + businessTable.getLocation().x ) );
+          logicalTable.setProperty( "__LEGACY_TAG_POSITION_Y", new Property<String>( "" + businessTable.getLocation().y ) );
         }
 
-        logicalTable.setProperty( "__LEGACY_TABLE_IS_DRAWN", "" + businessTable.isDrawn() );
+        logicalTable.setProperty( "__LEGACY_TABLE_IS_DRAWN", new Property<String>( "" + businessTable.isDrawn() ) );
 
         convertConceptFromLegacy( businessTable, logicalTable );
 
@@ -747,11 +757,11 @@ public class ThinModelConverter {
         Category category = new Category( logicalModel );
         convertConceptFromLegacy( bizCategory, category );
 
-        for ( Object bizColumn : bizCategory.getBusinessColumns() ) {
-          BusinessColumn businessColumn = (BusinessColumn) bizColumn;
+        UniqueList<BusinessColumn> bizColumns = bizCategory.getBusinessColumns();
+        for( int i = 0; i < bizColumns.size(); i ++ ) {
+          BusinessColumn businessColumn = bizColumns.get( i );
           category.getLogicalColumns().add( logicalModel.findLogicalColumn( businessColumn.getId() ) );
         }
-
         logicalModel.getCategories().add( category );
       }
       domain.addLogicalModel( logicalModel );

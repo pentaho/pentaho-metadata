@@ -16,6 +16,7 @@
  */
 package org.pentaho.pms.schema.concept.types.security;
 
+import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
@@ -49,7 +50,7 @@ public class ConceptPropertySecurity extends ConceptPropertyBase implements Conc
 
   public Object clone() throws CloneNotSupportedException {
     ConceptPropertySecurity clone = (ConceptPropertySecurity) super.clone();
-    clone.setValue( value.clone() );
+    clone.setValue( new Property<Security>( (Security) value.clone() ) );
     return clone;
   }
 
@@ -57,12 +58,12 @@ public class ConceptPropertySecurity extends ConceptPropertyBase implements Conc
     return ConceptPropertyType.SECURITY;
   }
 
-  public Object getValue() {
-    return value;
+  public Property getValue() {
+    return new Property<Security>( value );
   }
 
-  public void setValue( Object value ) {
-    this.value = (Security) value;
+  public void setValue( Property value ) {
+    this.value = value != null ? (Security) value.getValue() : null;
   }
 
   public boolean equals( Object obj ) {

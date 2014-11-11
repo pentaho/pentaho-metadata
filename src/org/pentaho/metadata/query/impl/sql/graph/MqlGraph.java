@@ -483,7 +483,7 @@ public class MqlGraph implements GraphElementChangeListener {
       case LOWEST_SCORE:
         for ( Node n : nodes ) {
           if ( n.isRequired() ) {
-            Integer relSize = (Integer) n.getTable().getProperty( SqlPhysicalTable.RELATIVE_SIZE );
+            Integer relSize = (Integer) n.getTable().getProperty( SqlPhysicalTable.RELATIVE_SIZE ).getValue();
             // If relative size is not null, use it, otherwise, increment by just 1
             rating += ( relSize != null ) ? ( relSize + 1 ) : 1;
           }

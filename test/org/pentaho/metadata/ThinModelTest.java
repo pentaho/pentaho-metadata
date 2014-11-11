@@ -36,6 +36,7 @@ import org.pentaho.metadata.model.SqlPhysicalModel;
 import org.pentaho.metadata.model.SqlPhysicalTable;
 import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.IConcept;
+import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.model.concept.security.Security;
 import org.pentaho.metadata.model.concept.security.SecurityOwner;
 import org.pentaho.metadata.model.concept.security.SecurityOwner.OwnerType;
@@ -395,12 +396,12 @@ public class ThinModelTest {
 
     Assert.assertEquals( column.getDataType(), DataType.STRING );
     Assert.assertEquals( "select * from customers", column.getLogicalTable()
-        .getProperty( SqlPhysicalTable.TARGET_TABLE ) );
+        .getProperty( SqlPhysicalTable.TARGET_TABLE ).getValue() );
     Assert.assertEquals( "select * from customers", column.getPhysicalColumn().getPhysicalTable().getProperty(
-        SqlPhysicalTable.TARGET_TABLE ) );
-    Assert.assertEquals( "customername", column.getPhysicalColumn().getProperty( SqlPhysicalColumn.TARGET_COLUMN ) );
+        SqlPhysicalTable.TARGET_TABLE ).getValue() );
+    Assert.assertEquals( "customername", column.getPhysicalColumn().getProperty( SqlPhysicalColumn.TARGET_COLUMN ).getValue() );
     Assert.assertEquals( TargetColumnType.COLUMN_NAME, column.getPhysicalColumn().getProperty(
-        SqlPhysicalColumn.TARGET_COLUMN_TYPE ) );
+        SqlPhysicalColumn.TARGET_COLUMN_TYPE ).getValue() );
   }
 
   @Test
@@ -427,7 +428,11 @@ public class ThinModelTest {
     SecurityOwner currentOwner = null;
 
     public boolean hasAccess( int accessType, IConcept aclHolder ) {
-      Security s = (Security) aclHolder.getProperty( Concept.SECURITY_PROPERTY );
+      Security s = null;
+      Property property = aclHolder.getProperty( Concept.SECURITY_PROPERTY );
+      if ( property != null ) {
+        s = (Security) property.getValue();
+      }
       if ( s == null ) {
         return false;
       }
@@ -456,7 +461,7 @@ public class ThinModelTest {
     globalSecurity.putOwnerRights( joe, 1 );
     globalSecurity.putOwnerRights( suzy, 1 );
 
-    model.setProperty( Concept.SECURITY_PROPERTY, globalSecurity );
+    model.setProperty( Concept.SECURITY_PROPERTY, new Property<Security> ( globalSecurity ) );
 
     Security security = new Security();
     security.putOwnerRights( joe, 1 );
@@ -465,7 +470,7 @@ public class ThinModelTest {
     LogicalColumn column = table.getLogicalColumns().get( 0 );
     Category category = model.getCategories().get( 0 );
 
-    column.setProperty( Concept.SECURITY_PROPERTY, security );
+    column.setProperty( Concept.SECURITY_PROPERTY, new Property<Security> (  security ) );
 
     repo.currentOwner = joe;
 
@@ -493,7 +498,7 @@ public class ThinModelTest {
 
     // add security to the table
 
-    table.setProperty( Concept.SECURITY_PROPERTY, security );
+    table.setProperty( Concept.SECURITY_PROPERTY, new Property<Security> ( security ) );
 
     repo.currentOwner = joe;
 
@@ -514,7 +519,7 @@ public class ThinModelTest {
     table.removeChildProperty( Concept.SECURITY_PROPERTY );
 
     // add securiry to the category
-    category.setProperty( Concept.SECURITY_PROPERTY, security );
+    category.setProperty( Concept.SECURITY_PROPERTY, new Property<Security> ( security ) );
 
     repo.currentOwner = joe;
 
@@ -532,7 +537,7 @@ public class ThinModelTest {
 
     // add security to model
 
-    model.setProperty( Concept.SECURITY_PROPERTY, security );
+    model.setProperty( Concept.SECURITY_PROPERTY, new Property<Security> ( security ) );
 
     repo.currentOwner = joe;
 

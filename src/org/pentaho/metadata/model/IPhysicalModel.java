@@ -16,7 +16,6 @@
  */
 package org.pentaho.metadata.model;
 
-import java.io.Serializable;
 import java.util.List;
 
 import org.pentaho.metadata.model.concept.IConcept;
@@ -27,7 +26,7 @@ import org.pentaho.metadata.model.concept.IConcept;
  * @author Will Gorman (wgorman@pentaho.com)
  * 
  */
-public interface IPhysicalModel extends IConcept, Serializable {
+public interface IPhysicalModel extends IConcept {
   public List<? extends IPhysicalTable> getPhysicalTables();
 
   public String getQueryExecName();

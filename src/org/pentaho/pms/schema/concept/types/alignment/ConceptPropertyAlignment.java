@@ -16,6 +16,7 @@
  */
 package org.pentaho.pms.schema.concept.types.alignment;
 
+import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
@@ -62,12 +63,12 @@ public class ConceptPropertyAlignment extends ConceptPropertyBase implements Clo
     return ConceptPropertyType.ALIGNMENT;
   }
 
-  public Object getValue() {
-    return value;
+  public Property getValue() {
+    return new Property<AlignmentSettings>( value );
   }
 
-  public void setValue( Object value ) {
-    this.value = (AlignmentSettings) value;
+  public void setValue( Property value ) {
+    this.value = value != null ? (AlignmentSettings) value.getValue() : null;
   }
 
   public boolean equals( Object obj ) {

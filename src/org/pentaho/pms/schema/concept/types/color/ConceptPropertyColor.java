@@ -16,6 +16,7 @@
  */
 package org.pentaho.pms.schema.concept.types.color;
 
+import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
@@ -52,13 +53,13 @@ public class ConceptPropertyColor extends ConceptPropertyBase implements Cloneab
   public ConceptPropertyType getType() {
     return ConceptPropertyType.COLOR;
   }
-
-  public Object getValue() {
-    return value;
+  
+  public Property getValue() {
+    return new Property<ColorSettings>( value );
   }
 
-  public void setValue( Object value ) {
-    this.value = (ColorSettings) value;
+  public void setValue( Property value ) {
+    this.value = value != null ? (ColorSettings) value.getValue() : null;
   }
 
   public boolean equals( Object obj ) {

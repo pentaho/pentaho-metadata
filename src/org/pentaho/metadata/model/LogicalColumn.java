@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.IConcept;
+import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.FieldType;
@@ -35,21 +36,8 @@ public class LogicalColumn extends Concept {
 
   private static final long serialVersionUID = -5818193472199662859L;
 
-  private LogicalTable logicalTable;
-  private IPhysicalColumn physicalColumn;
-
   public LogicalColumn() {
     super();
-  }
-
-  @Override
-  public IConcept getParent() {
-    return logicalTable;
-  }
-
-  @Override
-  public IConcept getInheritedConcept() {
-    return physicalColumn;
   }
 
   @Override
@@ -58,59 +46,75 @@ public class LogicalColumn extends Concept {
   }
 
   public IPhysicalColumn getPhysicalColumn() {
-    return physicalColumn;
+    return ( IPhysicalColumn ) getInheritedConcept();
   }
 
   public void setPhysicalColumn( IPhysicalColumn physicalColumn ) {
-    this.physicalColumn = physicalColumn;
+    setInheritedConcept( physicalColumn );
   }
 
   public DataType getDataType() {
-    return (DataType) getProperty( IPhysicalColumn.DATATYPE_PROPERTY );
+    Property property = getProperty( IPhysicalColumn.DATATYPE_PROPERTY );
+    if( property != null ) {
+      return (DataType) property.getValue();
+    }
+    return null;
   }
 
   public void setDataType( DataType dataType ) {
-    setProperty( IPhysicalColumn.DATATYPE_PROPERTY, dataType );
+    setProperty( IPhysicalColumn.DATATYPE_PROPERTY, new Property<DataType>( dataType ) );
   }
 
   public AggregationType getAggregationType() {
-    return (AggregationType) getProperty( IPhysicalColumn.AGGREGATIONTYPE_PROPERTY );
+    Property property = getProperty( IPhysicalColumn.AGGREGATIONTYPE_PROPERTY );
+    if( property != null ) {
+      return (AggregationType) property.getValue();
+    }
+    return null;
   }
 
   public void setAggregationType( AggregationType aggType ) {
-    setProperty( IPhysicalColumn.AGGREGATIONTYPE_PROPERTY, aggType );
+    setProperty( IPhysicalColumn.AGGREGATIONTYPE_PROPERTY, new Property<AggregationType>( aggType ) );
   }
 
   @SuppressWarnings( "unchecked" )
   public List<AggregationType> getAggregationList() {
-    return (List<AggregationType>) getProperty( IPhysicalColumn.AGGREGATIONLIST_PROPERTY );
+    Property property = getProperty( IPhysicalColumn.AGGREGATIONLIST_PROPERTY );
+    if( property != null ) {
+      return (List<AggregationType>) property.getValue();
+    }
+    return null;
   }
 
   public void setAggregationList( List<AggregationType> aggList ) {
-    setProperty( IPhysicalColumn.AGGREGATIONLIST_PROPERTY, aggList );
+    setProperty( IPhysicalColumn.AGGREGATIONLIST_PROPERTY, new Property<List<AggregationType>>( aggList ) );
   }
 
   public void setLogicalTable( LogicalTable logicalTable ) {
-    this.logicalTable = logicalTable;
+    setParent( logicalTable );
   }
 
   public LogicalTable getLogicalTable() {
-    return logicalTable;
+    return ( LogicalTable ) getParent();
   }
 
   public FieldType getFieldType() {
-    return (FieldType) getProperty( IPhysicalColumn.FIELDTYPE_PROPERTY );
+    Property property = getProperty( IPhysicalColumn.FIELDTYPE_PROPERTY );
+    if( property != null ) {
+      return (FieldType) property.getValue();
+    }
+    return null;
   }
 
   public void setFieldType( FieldType fieldType ) {
-    setProperty( IPhysicalColumn.FIELDTYPE_PROPERTY, fieldType );
+    setProperty( IPhysicalColumn.FIELDTYPE_PROPERTY, new Property<FieldType>( fieldType ) );
   }
 
   public Object clone() {
     LogicalColumn clone = new LogicalColumn();
     clone.setId( getId() );
-    clone.logicalTable = logicalTable;
-    clone.physicalColumn = physicalColumn;
+    clone.setParent( getParent() );
+    clone.setInheritedConcept( getInheritedConcept() );
     clone.setParentConcept( getParentConcept() );
 
     // copy over properties
