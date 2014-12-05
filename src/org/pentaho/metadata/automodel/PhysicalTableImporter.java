@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.pentaho.di.core.database.Database;
 import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.di.core.exception.KettleDatabaseException;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.core.row.ValueMetaInterface;
@@ -35,38 +36,47 @@ import org.pentaho.metadata.model.concept.types.TableType;
 import org.pentaho.metadata.util.Util;
 
 public class PhysicalTableImporter {
+
+  public static interface RowMetaStrategy {
+    RowMetaInterface rowMeta( Database database, String schemaName, String tableName ) throws KettleDatabaseException;
+  }
+
+  public static final RowMetaStrategy defaultRowMetaStrategy = new RowMetaStrategy() {
+      @Override public RowMetaInterface rowMeta(
+          final Database database, final String schemaName, final String tableName )
+          throws KettleDatabaseException {
+
+        DatabaseMeta dbMeta = database.getDatabaseMeta();
+        String schemaTableCombination =
+            dbMeta.getSchemaTableCombination( dbMeta.quoteField( schemaName ), dbMeta.quoteField( tableName ) );
+        return database.getTableFields( schemaTableCombination );
+      }
+  };
+
+  public static SqlPhysicalTable importTableDefinition(
+      Database database, String schemaName, String tableName, String locale ) throws KettleException {
+    return importTableDefinition( database, schemaName, tableName, locale, defaultRowMetaStrategy );
+  }
+
   public static SqlPhysicalTable importTableDefinition( Database database, String schemaName, String tableName,
-      String locale ) throws KettleException {
-    List<IPhysicalColumn> fields = null;
+      String locale, RowMetaStrategy rowMetaStrategy ) throws KettleException {
 
-    String id = tableName;
-    String tablename = tableName;
-
-    // Remove
-    id = Util.toId( tableName );
-
-    // Set the id to a certain standard...
-    id = Util.getPhysicalTableIdPrefix() + id;
-    id = id.toUpperCase();
+    String id = ( Util.getPhysicalTableIdPrefix() + Util.toId( tableName ) ).toUpperCase();
 
     SqlPhysicalTable physicalTable = new SqlPhysicalTable();
     physicalTable.setId( id );
     physicalTable.setTargetSchema( schemaName );
-    fields = physicalTable.getPhysicalColumns();
+    List<IPhysicalColumn> fields = physicalTable.getPhysicalColumns();
     physicalTable.setTargetTable( tableName );
 
     // id, schemaName, tableName,
     // database.getDatabaseMeta(), fields);
 
     // Also set a localized description...
-    String niceName = beautifyName( tablename );
+    String niceName = beautifyName( tableName );
     physicalTable.setName( new LocalizedString( locale, niceName ) );
 
-    DatabaseMeta dbMeta = database.getDatabaseMeta();
-    String schemaTableCombination =
-        dbMeta.getSchemaTableCombination( dbMeta.quoteField( schemaName ), dbMeta.quoteField( tableName ) );
-
-    RowMetaInterface row = database.getTableFields( schemaTableCombination );
+    RowMetaInterface row = rowMetaStrategy.rowMeta( database, schemaName, tableName );
 
     if ( row != null && row.size() > 0 ) {
       for ( int i = 0; i < row.size(); i++ ) {
@@ -75,7 +85,7 @@ public class PhysicalTableImporter {
         fields.add( physicalColumn );
       }
     }
-    String upper = tablename.toUpperCase();
+    String upper = tableName.toUpperCase();
 
     if ( upper.startsWith( "D_" ) || upper.startsWith( "DIM" ) || upper.endsWith( "DIM" ) ) {
       physicalTable.setTableType( TableType.DIMENSION ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
