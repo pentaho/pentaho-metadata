@@ -60,7 +60,7 @@ import org.pentaho.pms.mql.dialect.SQLQueryModel;
 import org.pentaho.pms.mql.dialect.SQLQueryModel.OrderType;
 
 /**
- * This class contains the SQL generation algorithm. The primary entrance method into this class is generateSql()
+ * This class contains the SQL generation algorithm. The primary entrance method into this class is generateSql().
  * 
  * @author Will Gorman (wgorman@pentaho.org)
  * 
@@ -100,22 +100,31 @@ public class SqlGenerator {
    * determines the SQL column aliases. It also calls getBusinessColumnSQL() which renders each individual business
    * column in three different ways. Either as an MQL Formula, an aggregate function, or as a standard SQL column.
    * 
-   * @param sql
-   *          sql string buffer
+   * @param query
+   *          SQL model of the data. It will be updated during method execution.
    * @param model
-   *          business model
+   *          Business model.
    * @param databaseMeta
-   *          database metadata
+   *          Database metadata.
    * @param selections
-   *          sql selections
+   *          SQL selections.
    * @param disableDistinct
-   *          if true, disable distinct rendering
+   *          If true, disables distinct rendering.
+   * @param limit 
+   *          Maximum number of the rows to be returned.
    * @param group
-   *          if true, disable distinct rendering
+   *          If true, disables distinct rendering.
    * @param locale
-   *          locale string
+   *          Locale string.
+   * @param tableAliases
+   *          Aliases of the tables to be used during query generation.
    * @param columnsMap
-   *          map of column aliases to populate
+   *          Map of column aliases to populate.
+   * @param parameters
+   *          Parameters to be used during query generation.
+   * @param genAsPreparedStatement
+   *          Tells the method generate query as prepared statement.
+   *  
    */
   protected void generateSelect( SQLQueryModel query, LogicalModel model, DatabaseMeta databaseMeta,
       List<Selection> selections, boolean disableDistinct, int limit, boolean group, String locale,
@@ -124,7 +133,7 @@ public class SqlGenerator {
     query.setDistinct( !disableDistinct && !group );
     query.setLimit( limit );
     for ( int i = 0; i < selections.size(); i++ ) {
-      // in some database implementations, the "as" name has a finite length;
+      // In some database implementations, the "as" name has a finite length;
       // for instance, oracle cannot handle a name longer than 30 characters.
       // So, we map a short name here to the longer id, and replace the id
       // later in the resultset metadata.
@@ -149,19 +158,27 @@ public class SqlGenerator {
    * and adds them to the where or having clauses.
    * 
    * @param query
-   *          sql query model
+   *          SQL query model.
    * @param usedBusinessTables
-   *          used business tables in query
+   *          Used business tables in query.
    * @param model
-   *          the current business model
+   *          The current business model.
    * @param path
-   *          the join path
+   *          The JOIN path.
    * @param conditions
-   *          the where conditions
+   *          The WHERE conditions.
+   * @param tableAliases
+   *          Aliases of the tables to be used during query generation.
+   * @param constraintFormulaMap
+   *          Map of the formulas used in the query.
+   * @param parameters
+   *          Parameters to be used during query generation.
+   * @param genAsPreparedStatement
+   *          Tells the method generate query as prepared statement.
    * @param databaseMeta
-   *          database metadata
+   *          Database metadata.
    * @param locale
-   *          locale string
+   *          Locale string.
    */
   protected void generateFromAndWhere( SQLQueryModel query, List<LogicalTable> usedBusinessTables, LogicalModel model,
       Path path, List<Constraint> conditions, Map<LogicalTable, String> tableAliases,
@@ -185,7 +202,7 @@ public class SqlGenerator {
       // delayConditionOnOuterJoin = null;
       // }
 
-      // this code allows subselects to drive the physical model.
+      // This code allows subselects to drive the physical model.
       // TODO: make this key off a metadata flag vs. the
       // beginning of the table name.
 
@@ -246,10 +263,10 @@ public class SqlGenerator {
       for ( Constraint condition : conditions ) {
         SqlOpenFormula formula = constraintFormulaMap.get( condition );
 
-        // configure formula to use table aliases
+        // Configure formula to use table aliases.
         formula.setTableAliases( tableAliases );
 
-        // The ones with aggregates in it are for the HAVING clause
+        // The ones with aggregates in it are for the HAVING clause.
         if ( !formula.hasAggregate() ) {
 
           String sqlFormula = formula.generateSQL( locale );
@@ -267,20 +284,26 @@ public class SqlGenerator {
    * this method adds the group by statements to the query model
    * 
    * @param query
-   *          sql query model
+   *          SQL query model.
    * @param model
-   *          business model
+   *          Business model.
    * @param selections
-   *          list of selections
+   *          List of selections.
+   * @param tableAliases
+   *          Aliases of the tables to be used during query generation.
+   * @param parameters
+   *          Parameters to be used during query generation.
+   * @param genAsPreparedStatement
+   *          Tells the method generate query as prepared statement.
    * @param databaseMeta
-   *          database info
+   *          Database info.
    * @param locale
-   *          locale string
+   *          Locale string.
    */
   protected void generateGroupBy( SQLQueryModel query, LogicalModel model, List<Selection> selections,
       Map<LogicalTable, String> tableAliases, Map<String, Object> parameters, boolean genAsPreparedStatement,
       DatabaseMeta databaseMeta, String locale ) {
-    // can be moved to selection loop
+    // Can be moved to selection loop.
     for ( Selection selection : selections ) {
       // Check if the column has any nested aggregation in there like a calculated column : SUM(a)/SUM(b) with no
       // aggregation set.
@@ -298,15 +321,23 @@ public class SqlGenerator {
    * this method adds the order by statements to the query model
    * 
    * @param query
-   *          sql query model
+   *          SQL query model.
    * @param model
-   *          business model
+   *          The business model.
    * @param orderBy
-   *          list of order bys
+   *          List of order bys.
    * @param databaseMeta
-   *          database info
+   *          Database Info.
    * @param locale
-   *          locale string
+   *          Locale String.
+   * @param tableAliases
+   *          Aliases of the tables to be used during query generation.
+   * @param columnsMap
+   *          The column map is a unique mapping of Column alias to the column ID.
+   * @param parameters
+   *          Parameters to be used during query generation.
+   * @param genAsPreparedStatement
+   *          Tells the method generate query as prepared statement.
    */
   protected void generateOrderBy( SQLQueryModel query, LogicalModel model, List<Order> orderBy,
       DatabaseMeta databaseMeta, String locale, Map<LogicalTable, String> tableAliases, Map<String, String> columnsMap,
@@ -349,16 +380,16 @@ public class SqlGenerator {
   }
 
   /**
-   * this method generates a unique alias name, limited to a specific length
+   * This method generates a unique alias name, limited to a specific length
    * 
    * @param alias
-   *          The name of the original alias to use
+   *          The name of the original alias to use.
    * @param maxLength
-   *          the maximum length the alias can be
+   *          The maximum length the alias can be.
    * @param existingAliases
-   *          existing aliases
+   *          Existing aliases.
    * 
-   * @return
+   * @return generated alias of the specified maximum length
    */
   protected String generateUniqueAlias( String alias, int maxLength, Collection<String> existingAliases ) {
     if ( alias.length() <= maxLength ) {
@@ -381,12 +412,42 @@ public class SqlGenerator {
     return aliasWithId;
   }
 
+  /**
+   * Generates SQl for the specified query, locale and metadata.
+   * @param query
+   *        The query to generate SQL for.
+   * @param locale
+   *        Locale to be used during query generation.
+   * @param repo
+   *        Metadata repository.
+   * @param databaseMeta.
+   *        Database metadata.
+   * @return Returns generated query model.
+   * @throws PentahoMetadataException
+   */
   public MappedQuery
     generateSql( Query query, String locale, IMetadataDomainRepository repo, DatabaseMeta databaseMeta )
       throws PentahoMetadataException {
     return generateSql( query, locale, repo, databaseMeta, null, false );
   }
 
+  /**
+   * Generates SQl for the specified query, locale and metadata.
+   * @param query
+   *        The query to generate SQL for.
+   * @param locale
+   *        The locale to be used during query generation.
+   * @param repo
+   *        Metadata repository.
+   * @param databaseMeta
+   *        Database metadata.
+   * @param parameters
+   *        Parameters to be used during query generation.
+   * @param genAsPreparedStatement
+   *        Forces the method generate query as prepared statement.
+   * @return Generated query model.
+   * @throws PentahoMetadataException
+   */
   public MappedQuery generateSql( Query query, String locale, IMetadataDomainRepository repo,
       DatabaseMeta databaseMeta, Map<String, Object> parameters, boolean genAsPreparedStatement )
     throws PentahoMetadataException {
@@ -416,24 +477,32 @@ public class SqlGenerator {
   }
 
   /**
-   * returns the generated SQL and additional metadata
+   * Returns the generated SQL and additional metadata
    * 
+   * @param model
+   *          The business model.
    * @param selections
-   *          The selected business columns
+   *          The selected business columns.
    * @param conditions
-   *          the conditions to apply (null = no conditions)
+   *          The conditions to apply (null = no conditions).
    * @param orderBy
-   *          the ordering (null = no order by clause)
+   *          The ordering (null = no order by clause).
    * @param databaseMeta
-   *          the meta info which determines the SQL generated.
+   *          The meta info which determines the SQL generated.
    * @param locale
-   *          the locale
+   *          The locale.
+   * @param parameters
+   *        Parameters to be used during query generation.
+   * @param genAsPreparedStatement
+   *        Forces the method generate query as prepared statement.
    * @param disableDistinct
-   *          if true, disables default behavior of using DISTINCT when there are no groupings.
+   *          If true, disables default behavior of using DISTINCT when there are no groupings.
+   * @param limit
+   *          Maximum number of rows to be returned during query execution.
    * @param securityConstraint
-   *          if provided, applies a global security constraint to the query
+   *          If provided, applies a global security constraint to the query.
    * 
-   * @return a SQL query based on a column selection, conditions and a locale
+   * @return Returns a SQL query based on a column selection, conditions and a locale.
    */
   protected MappedQuery getSQL( LogicalModel model, List<Selection> selections, List<Constraint> conditions,
       List<Order> orderBy, DatabaseMeta databaseMeta, String locale, Map<String, Object> parameters,
@@ -568,6 +637,13 @@ public class SqlGenerator {
    * Before SQL has been generated, allow extenders the ability to override the query model
    * 
    * @param query
+   *          query model
+   * @param selections
+   *          The selected business columns.
+   * @param tableAliases
+   *          Aliases of the tables to be used during query generation.
+   * @param databaseMeta
+   *          The meta info which determines the SQL generated.
    */
   protected void preprocessQueryModel( SQLQueryModel query, List<Selection> selections,
       Map<LogicalTable, String> tableAliases, DatabaseMeta databaseMeta ) {
@@ -577,14 +653,40 @@ public class SqlGenerator {
    * After SQL has been generated, allow extenders the ability to override the sql output
    * 
    * @param sql
-   *          generated sql
+   *          Generated sql
    * 
-   * @return processed sql
+   * @return Returns processed sql
    */
   protected String processGeneratedSql( String sql ) {
     return sql;
   }
 
+  /**
+   * Creates the list of all the tables being involved in the query.
+   * 
+   * @param model
+   *          The business model.
+   * @param selections
+   *          The selected business columns.
+   * @param conditions
+   *          The conditions to apply (null = no conditions).
+   * @param orderBy
+   *          The ordering (null = no order by clause).
+   * @param constraintFormulaMap
+   *          Map of constraints applied to the query.
+   * @param parameters
+   *          Parameters to be used during query generation.
+   * @param genAsPreparedStatement
+   *          Forces the method generate query as prepared statement.
+   * @param databaseMeta
+   *          The meta info which determines the SQL generated.
+   * @param locale
+   *          The locale.
+   * @param securityConstraint
+   *          If provided, applies a global security constraint to the query.
+   
+   * @return the list of tables involved in the query
+   */
   protected List<LogicalTable> getTablesInvolved( LogicalModel model, List<Selection> selections,
       List<Constraint> conditions, List<Order> orderBy, Map<Constraint, SqlOpenFormula> constraintFormulaMap,
       Map<String, Object> parameters, boolean genAsPreparedStatement, DatabaseMeta databaseMeta, String locale,
@@ -650,6 +752,30 @@ public class SqlGenerator {
     return new ArrayList<LogicalTable>( treeSet );
   }
 
+  /**
+   * See if the business column specified has a fact in it.<br>
+   * We verify the formula specified in the column to see if it contains calculations with any aggregated column.<br>
+   * We even do this nested down through the used business columns in the formula.<br>
+   * 
+   * @param model
+   *          The business model.
+   * @param selections
+   *          The selected business columns.
+   * @param conditions
+   *          The conditions to apply (null = no conditions).
+   * @param constraintFormulaMap
+   *          Map of constraints applied to the query.
+   * @param parameters
+   *          Parameters to be used during query generation.
+   * @param genAsPreparedStatement
+   *          Forces the method generate query as prepared statement.
+   * @param databaseMeta
+   *          The meta info which determines the SQL generated.
+   * @param locale
+   *          The locale.
+   
+   * @return Returns true if a business column has aggregation in its formula or is an aggregation itself.
+   */
   protected boolean hasFactsInIt( LogicalModel model, List<Selection> selections, List<Constraint> conditions,
       Map<Constraint, SqlOpenFormula> constraintFormulaMap, Map<String, Object> parameters,
       boolean genAsPreparedStatement, DatabaseMeta databaseMeta, String locale ) {
@@ -689,13 +815,17 @@ public class SqlGenerator {
    * We even do this nested down through the used business columns in the formula.<br>
    * 
    * @param model
-   *          the business model to reference
+   *          The business model to reference.
    * @param businessColumn
-   *          the column to verify for facts
+   *          The column to verify for facts.
+   * @param parameters
+   *          Parameters to be used during query generation.
+   * @param genAsPreparedStatement
+   *          Forces the method generate query as prepared statement.
    * @param databaseMeta
-   *          the database to reference
+   *          The database to reference.
    * @param locale
-   *          the locale to use
+   *          The locale to use.
    * @return true if the business column uses any aggregation in the formula or is aggregated itself.
    */
   protected boolean hasFactsInIt( LogicalModel model, Selection businessColumn, Map<String, Object> parameters,
@@ -750,10 +880,10 @@ public class SqlGenerator {
    * Join.
    * 
    * @param model
-   *          the business model
+   *          The business model.
    * @param tables
-   *          include tables
-   * @return shortest path
+   *          Include tables.
+   * @return Returns the shortest path.
    */
   protected Path getShortestPathBetweenOrig( LogicalModel model, List<LogicalTable> tables ) {
     // We have the business tables.
@@ -838,10 +968,10 @@ public class SqlGenerator {
    * Join.
    * 
    * @param model
-   *          the business model
+   *          The business model.
    * @param tables
-   *          include tables
-   * @return shortest path
+   *          Include tables.
+   * @return Returns the shortest path.
    */
   @SuppressWarnings( "unchecked" )
   public Path getShortestPathBetween( LogicalModel model, List<LogicalTable> tables ) {
@@ -921,6 +1051,14 @@ public class SqlGenerator {
     return p;
   }
 
+  /**
+   * Builds the list of the non selected tables.
+   * @param model
+   *          The business model.
+   * @param selectedTables
+   *          list of the selected tables
+   * @return list, containing non selected tables.
+   */
   protected List<LogicalTable> getNonSelectedTables( LogicalModel model, List<LogicalTable> selectedTables ) {
     List<BusinessTableNeighbours> extra = new ArrayList<BusinessTableNeighbours>( model.getLogicalTables().size() );
     List<LogicalTable> unused = new ArrayList<LogicalTable>();
@@ -984,11 +1122,11 @@ public class SqlGenerator {
 
   /**
    * @param businessTable
-   *          the table to calculate the number of neighbours for
+   *          The table to calculate the number of neighbours for.
    * @param selectedTables
-   *          the list of selected business tables
+   *          The list of selected business tables.
    * @return The number of neighbours in a list of selected tables using the relationships defined in this business
-   *         model
+   *         Model.
    */
   private static int
     getNrNeighbours( LogicalModel model, LogicalTable businessTable, List<LogicalTable> selectedTables ) {
@@ -1030,6 +1168,24 @@ public class SqlGenerator {
     return null;
   }
 
+  /**
+   * Generates sql for the specified business column.
+   * @param businessModel
+   *          The business model to reference.
+   * @param column
+   *          The column to build SQL for.
+   * @param tableAliases
+   *          Aliases of the tables to be used during query generation.
+   * @param parameters
+   *          Parameters to be used during query generation.
+   * @param genAsPreparedStatement
+   *          Forces the method generate query as prepared statement.
+   * @param databaseMeta
+   *          The database to reference.
+   * @param locale
+   *          The locale to use.
+   * @return Returns sql for specified business column.
+   */
   public static SqlAndTables getBusinessColumnSQL( LogicalModel businessModel, Selection column,
       Map<LogicalTable, String> tableAliases, Map<String, Object> parameters, boolean genAsPreparedStatement,
       DatabaseMeta databaseMeta, String locale ) {
@@ -1101,6 +1257,16 @@ public class SqlGenerator {
         trimmed.startsWith( databaseMeta.getFunctionSum() + "(" ); //$NON-NLS-1$
   }
 
+  /**
+   * Builds function expression for specified column.
+   * @param column
+   *          the column to build expression for
+   * @param tableColumn
+   *          column name in the table
+   * @param databaseMeta
+   *          database metadata
+   * @return  function expression for the current column.
+   */
   public static String getFunctionExpression( Selection column, String tableColumn, DatabaseMeta databaseMeta ) {
     String expression = getFunction( column, databaseMeta );
 
@@ -1143,6 +1309,28 @@ public class SqlGenerator {
     return fn;
   }
 
+  /**
+   * Generates joins of the specified relation.
+   * 
+   * @param businessModel
+   *          The business model to reference.
+   * @param relation
+   *          Relation describing the join.
+   * @param column
+   *          The column to build SQL for.
+   * @param tableAliases
+   *          Aliases of the tables to be used during query generation.
+   * @param parameters
+   *          Parameters to be used during query generation.
+   * @param genAsPreparedStatement
+   *          Forces the method generate query as prepared statement.
+   * @param databaseMeta
+   *          The database to reference.
+   * @param locale
+   *          The locale to use.
+   * @return  string Query of the join created for specified relations.
+   * @throws PentahoMetadataException
+   */
   protected String getJoin( LogicalModel businessModel, LogicalRelationship relation,
       Map<LogicalTable, String> tableAliases, Map<String, Object> parameters, boolean genAsPreparedStatement,
       DatabaseMeta databaseMeta, String locale ) throws PentahoMetadataException {
