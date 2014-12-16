@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.IConcept;
+import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.model.concept.types.LocaleType;
 
 /**
@@ -124,7 +125,7 @@ public class Domain extends Concept {
   }
 
   public void setLocales( List<LocaleType> locales ) {
-    setProperty( LOCALES_PROPERTY, locales );
+    setProperty( LOCALES_PROPERTY, new Property<List<LocaleType>>(locales) );
   }
 
   /**
@@ -134,7 +135,11 @@ public class Domain extends Concept {
    */
   @SuppressWarnings( "unchecked" )
   public List<LocaleType> getLocales() {
-    return (List<LocaleType>) getProperty( LOCALES_PROPERTY );
+    Property property = getProperty( LOCALES_PROPERTY );
+    if( property != null ) {
+      return (List<LocaleType>) property.getValue();
+    }
+    return null;
   }
 
   /**

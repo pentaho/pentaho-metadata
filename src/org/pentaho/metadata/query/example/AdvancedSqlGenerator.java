@@ -30,6 +30,7 @@ import org.pentaho.metadata.model.LogicalRelationship;
 import org.pentaho.metadata.model.LogicalTable;
 import org.pentaho.metadata.model.SqlPhysicalColumn;
 import org.pentaho.metadata.model.SqlPhysicalTable;
+import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.model.concept.types.RelationshipType;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
 import org.pentaho.metadata.query.impl.sql.MappedQuery;
@@ -80,9 +81,10 @@ public class AdvancedSqlGenerator extends SqlGenerator {
     }
   }
 
+  @SuppressWarnings( "deprecation" )
   @Override
   protected MappedQuery getSQL( LogicalModel model, List<Selection> selections, List<Constraint> constraints,
-      List<Order> orderbys, DatabaseMeta databaseMeta, String locale, Map<String, Object> parameters,
+      List<Order> orderbys, DatabaseMeta databaseMeta, String locale, Map<String, Property> parameters,
       boolean genAsPreparedStatement, boolean disableDistinct, int limit, Constraint securityConstraint )
     throws PentahoMetadataException {
 
@@ -168,10 +170,6 @@ public class AdvancedSqlGenerator extends SqlGenerator {
       allTables.add( new AliasedPathLogicalTable( DEFAULT_ALIAS, defaultTables.get( 0 ) ) );
     }
 
-    if ( defaultPath == null ) {
-      throw new PentahoMetadataException( Messages.getErrorString( "SqlGenerator.ERROR_0002_FAILED_TO_FIND_PATH" ) ); //$NON-NLS-1$
-    }
-
     for ( int i = 0; i < defaultPath.size(); i++ ) {
       allRelationships.add( new AliasedLogicalRelationship( DEFAULT_ALIAS, DEFAULT_ALIAS, defaultPath
           .getRelationship( i ) ) );
@@ -255,10 +253,12 @@ public class AdvancedSqlGenerator extends SqlGenerator {
       String schemaName = null;
       if ( tbl.getLogicalTable().getProperty( SqlPhysicalTable.TARGET_SCHEMA ) != null ) {
         schemaName =
-            databaseMeta.quoteField( (String) tbl.getLogicalTable().getProperty( SqlPhysicalTable.TARGET_SCHEMA ) );
+            databaseMeta.quoteField( (String) tbl.getLogicalTable().getProperty( SqlPhysicalTable.TARGET_SCHEMA ).getValue() );
       }
+      
+      Property targetTable = tbl.getLogicalTable().getProperty( SqlPhysicalTable.TARGET_TABLE );
       String tableName =
-          databaseMeta.quoteField( (String) tbl.getLogicalTable().getProperty( SqlPhysicalTable.TARGET_TABLE ) );
+          databaseMeta.quoteField( targetTable != null ? (String) tbl.getLogicalTable().getProperty( SqlPhysicalTable.TARGET_TABLE ).getValue() : null );
       sqlquery.addTable( databaseMeta.getSchemaTableCombination( schemaName, tableName ), databaseMeta
           .quoteField( alias ) );
 
@@ -291,11 +291,17 @@ public class AdvancedSqlGenerator extends SqlGenerator {
           break;
       }
 
-      String leftSchema = (String) aliasedRelation.relation.getFromTable().getProperty( SqlPhysicalTable.TARGET_SCHEMA );
-      String leftTable = (String) aliasedRelation.relation.getFromTable().getProperty( SqlPhysicalTable.TARGET_TABLE );
+      String leftSchema = aliasedRelation.relation.getFromTable().getProperty( SqlPhysicalTable.TARGET_SCHEMA ) != null ? 
+          (String) aliasedRelation.relation.getFromTable().getProperty( SqlPhysicalTable.TARGET_SCHEMA ).getValue() : null;
+          
+      String leftTable = aliasedRelation.relation.getFromTable().getProperty( SqlPhysicalTable.TARGET_TABLE ) != null ? 
+          (String) aliasedRelation.relation.getFromTable().getProperty( SqlPhysicalTable.TARGET_TABLE ).getValue() : null;
 
-      String rightSchema = (String) aliasedRelation.relation.getToTable().getProperty( SqlPhysicalTable.TARGET_SCHEMA );
-      String rightTable = (String) aliasedRelation.relation.getToTable().getProperty( SqlPhysicalTable.TARGET_TABLE );
+      String rightSchema = aliasedRelation.relation.getToTable().getProperty( SqlPhysicalTable.TARGET_SCHEMA ) != null ? 
+          (String) aliasedRelation.relation.getToTable().getProperty( SqlPhysicalTable.TARGET_SCHEMA ).getValue() : null;
+          
+      String rightTable = aliasedRelation.relation.getToTable().getProperty( SqlPhysicalTable.TARGET_TABLE ) != null ? 
+          (String) aliasedRelation.relation.getToTable().getProperty( SqlPhysicalTable.TARGET_TABLE ).getValue() : null;
 
       String leftTableName = databaseMeta.getQuotedSchemaTableCombination( leftSchema, leftTable );
       String rightTableName = databaseMeta.getQuotedSchemaTableCombination( rightSchema, rightTable );
@@ -521,8 +527,9 @@ public class AdvancedSqlGenerator extends SqlGenerator {
   // we don't want the pentaho MQL solution to ever come across aliases, etc.
   public static SQLAndAliasedTables getSelectionSQL( LogicalModel LogicalModel, AliasedSelection selection,
       DatabaseMeta databaseMeta, String locale ) {
-    String columnStr = (String) selection.getLogicalColumn().getProperty( SqlPhysicalColumn.TARGET_COLUMN );
-    if ( selection.getLogicalColumn().getProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE ) == TargetColumnType.OPEN_FORMULA ) {
+    String columnStr = (String) selection.getLogicalColumn().getProperty( SqlPhysicalColumn.TARGET_COLUMN ).getValue();
+    Property targetColumn = selection.getLogicalColumn().getProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE );
+    if ( targetColumn != null && targetColumn.getValue() == TargetColumnType.OPEN_FORMULA ) {
       // convert to sql using libformula subsystem
       try {
         // we'll need to pass in some context to PMSFormula so it can resolve aliases if necessary
@@ -604,7 +611,7 @@ public class AdvancedSqlGenerator extends SqlGenerator {
       join += "."; //$NON-NLS-1$
       join +=
           databaseMeta.quoteField( (String) relation.relation.getFromColumn().getProperty(
-              SqlPhysicalColumn.TARGET_COLUMN ) );
+              SqlPhysicalColumn.TARGET_COLUMN ).getValue() );
 
       // Equals
       join += " = "; //$NON-NLS-1$
@@ -614,7 +621,7 @@ public class AdvancedSqlGenerator extends SqlGenerator {
       join += "."; //$NON-NLS-1$
       join +=
           databaseMeta.quoteField( (String) relation.relation.getToColumn().getProperty(
-              SqlPhysicalColumn.TARGET_COLUMN ) );
+              SqlPhysicalColumn.TARGET_COLUMN ).getValue() );
     }
 
     return join;

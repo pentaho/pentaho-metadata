@@ -19,6 +19,7 @@ package org.pentaho.metadata.model;
 import java.util.Map;
 
 import org.pentaho.commons.connection.IPentahoResultSet;
+import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.query.model.Parameter;
 import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.repository.IMetadataDomainRepository;
@@ -102,7 +103,7 @@ public interface IMetadataQueryExec {
    * @param name
    * @param value
    */
-  public void setParameter( Parameter param, Object value );
+  public void setParameter( Parameter param, Property value );
 
   /**
    * Sets the inputs map. These are inputs to the query execution that are not parameters for the query, e.g. settings
@@ -111,6 +112,6 @@ public interface IMetadataQueryExec {
    * @param name
    * @param value
    */
-  public void setInputs( Map<String, Object> inputs );
+  public void setInputs( Map<String, Property> inputs );
 
 }

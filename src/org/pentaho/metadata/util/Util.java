@@ -25,6 +25,7 @@ import org.pentaho.metadata.model.SqlPhysicalColumn;
 import org.pentaho.metadata.model.SqlPhysicalTable;
 import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.IConcept;
+import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.pms.util.Settings;
 
 public class Util {
@@ -177,7 +178,12 @@ public class Util {
   }
 
   public static final String proposeSqlBasedCategoryId( String locale, LogicalTable table, Category category ) {
-    String baseID = ( table != null ) ? Util.toId( (String) table.getProperty( SqlPhysicalTable.TARGET_TABLE ) ) : ""; //$NON-NLS-1$
+    Property tableProperty = table.getProperty( SqlPhysicalTable.TARGET_TABLE );
+    String tableValue = "";
+    if ( tableProperty != null ) {
+      tableValue = (String) tableProperty.getValue();
+    }
+    String baseID = ( table != null ) ? Util.toId( tableValue ) : ""; //$NON-NLS-1$
     String namePart =
         ( ( category != null ) && ( category.getName( locale ) != null ) )
             ? "_" + Util.toId( category.getName( locale ) ) : ""; //$NON-NLS-1$ //$NON-NLS-2$

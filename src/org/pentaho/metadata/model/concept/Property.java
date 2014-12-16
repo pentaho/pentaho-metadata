@@ -14,43 +14,37 @@
  *
  * Copyright (c) 2009 Pentaho Corporation..  All rights reserved.
  */
-package org.pentaho.metadata.query.model;
+
+package org.pentaho.metadata.model.concept;
 
 import java.io.Serializable;
 
-import org.pentaho.metadata.model.concept.Property;
-import org.pentaho.metadata.model.concept.types.DataType;
-
 /**
- * This defines a parameter within a logical query model.
  * 
- * @author Will Gorman (wgorman@pentaho.com)
+ * This class was introduced as part of the thin model cleanup. Gwt's compilation does not work well when
+ * making references to Object so instead the Property class which makes use of generics was created and
+ * all instances in the thin model were replaced.
  * 
+ * @author Ezequiel Cuellar (ecuellar@pentaho.com)
  */
-public class Parameter implements Serializable {
+public class Property<T> implements Serializable {
+  
+  private static final long serialVersionUID = -9212834283678090814L;
 
-  private static final long serialVersionUID = -1562891705335709848L;
-
-  private String name;
-  private DataType type;
-  private Property defaultValue;
-
-  public Parameter( String name, DataType type, Property defaultValue ) {
-    this.name = name;
-    this.type = type;
-    this.defaultValue = defaultValue;
+  private T value;
+  
+  public Property() {
+  }
+  
+  public Property(T t) {
+    this.value = t;
   }
 
-  public String getName() {
-    return name;
+  public void setValue( T t ) {
+    this.value = t;
   }
 
-  public DataType getType() {
-    return type;
+  public T getValue() {
+    return value;
   }
-
-  public Property getDefaultValue() {
-    return defaultValue;
-  }
-
 }

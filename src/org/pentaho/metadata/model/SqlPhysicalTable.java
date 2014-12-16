@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.IConcept;
+import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.model.concept.types.TableType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
@@ -31,7 +32,7 @@ import org.pentaho.metadata.model.concept.types.TargetTableType;
  * @author Will Gorman (wgorman@pentaho.com)
  * 
  */
-public class SqlPhysicalTable extends Concept implements IPhysicalTable {
+public class SqlPhysicalTable extends Concept implements IPhysicalTable  {
 
   private static final long serialVersionUID = -2590635019353532334L;
 
@@ -40,7 +41,6 @@ public class SqlPhysicalTable extends Concept implements IPhysicalTable {
   public static final String TARGET_TABLE_TYPE = "target_table_type"; //$NON-NLS-1$
   public static final String RELATIVE_SIZE = "relative_size"; //$NON-NLS-1$
 
-  SqlPhysicalModel model;
   List<IPhysicalColumn> physicalColumns = new ArrayList<IPhysicalColumn>();
 
   public SqlPhysicalTable() {
@@ -53,7 +53,7 @@ public class SqlPhysicalTable extends Concept implements IPhysicalTable {
 
   public SqlPhysicalTable( SqlPhysicalModel model ) {
     this();
-    this.model = model;
+    setParent( model );
   }
 
   @Override
@@ -63,13 +63,8 @@ public class SqlPhysicalTable extends Concept implements IPhysicalTable {
     return children;
   }
 
-  @Override
-  public IConcept getParent() {
-    return model;
-  }
-
   public IPhysicalModel getPhysicalModel() {
-    return model;
+    return ( IPhysicalModel ) getParent();
   }
 
   public List<IPhysicalColumn> getPhysicalColumns() {
@@ -81,42 +76,62 @@ public class SqlPhysicalTable extends Concept implements IPhysicalTable {
   }
 
   public String getTargetSchema() {
-    return (String) getProperty( TARGET_SCHEMA );
+    Property property = getProperty( TARGET_SCHEMA );
+    if( property != null ) {
+      return (String) property.getValue();
+    }
+    return null;
   }
 
   public void setTargetSchema( String targetSchema ) {
-    setProperty( TARGET_SCHEMA, targetSchema );
+    setProperty( TARGET_SCHEMA, new Property<String>( targetSchema ) );
   }
 
   public String getTargetTable() {
-    return (String) getProperty( TARGET_TABLE );
+    Property property = getProperty( TARGET_TABLE );
+    if( property != null ) {
+      return (String) property.getValue();
+    }
+    return null;
   }
 
   public void setTargetTable( String targetTable ) {
-    setProperty( TARGET_TABLE, targetTable );
+    setProperty( TARGET_TABLE, new Property<String>( targetTable ) );
   }
 
   public TargetTableType getTargetTableType() {
-    return (TargetTableType) getProperty( TARGET_TABLE_TYPE );
+    Property property = getProperty( TARGET_TABLE_TYPE );
+    if( property != null ) {
+      return (TargetTableType) property.getValue();
+    }
+    return null;
   }
 
   public void setTargetTableType( TargetTableType targetTableType ) {
-    setProperty( TARGET_TABLE_TYPE, targetTableType );
+    setProperty( TARGET_TABLE_TYPE, new Property<TargetTableType>( targetTableType ) );
   }
 
   public TableType getTableType() {
-    return (TableType) getProperty( TABLETYPE_PROPERTY );
+    Property property = getProperty( TABLETYPE_PROPERTY );
+    if( property != null ) {
+      return (TableType) property.getValue();
+    }
+    return null;
   }
 
   public void setTableType( TableType tableType ) {
-    setProperty( TABLETYPE_PROPERTY, tableType );
+    setProperty( TABLETYPE_PROPERTY, new Property<TableType>( tableType ) );
   }
 
   public Integer getRelativeSize() {
-    return (Integer) getProperty( RELATIVE_SIZE );
+    Property property = getProperty( RELATIVE_SIZE );
+    if( property != null ) {
+      return (Integer) property.getValue();
+    }
+    return null;
   }
 
   public void setRelativeSize( Integer relativeSize ) {
-    setProperty( RELATIVE_SIZE, relativeSize );
+    setProperty( RELATIVE_SIZE, new Property<Integer>( relativeSize ) );
   }
 }

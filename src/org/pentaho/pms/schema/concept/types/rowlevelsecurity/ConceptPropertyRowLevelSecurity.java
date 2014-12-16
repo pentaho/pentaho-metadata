@@ -19,6 +19,7 @@ package org.pentaho.pms.schema.concept.types.rowlevelsecurity;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 import org.pentaho.pms.schema.security.RowLevelSecurity;
@@ -47,17 +48,17 @@ public class ConceptPropertyRowLevelSecurity extends ConceptPropertyBase impleme
     return ConceptPropertyType.ROW_LEVEL_SECURITY;
   }
 
-  public Object getValue() {
-    return value;
+  public Property getValue() {
+    return new Property<RowLevelSecurity>( value );
   }
 
-  public void setValue( Object value ) {
-    this.value = (RowLevelSecurity) value;
+  public void setValue( Property value ) {
+    this.value = value != null ? (RowLevelSecurity) value.getValue() : null;
   }
 
   public Object clone() throws CloneNotSupportedException {
     ConceptPropertyRowLevelSecurity clone = (ConceptPropertyRowLevelSecurity) super.clone();
-    clone.setValue( value.clone() );
+    clone.setValue( new Property<RowLevelSecurity>( (RowLevelSecurity) value.clone() ) );
     return clone;
   }
 

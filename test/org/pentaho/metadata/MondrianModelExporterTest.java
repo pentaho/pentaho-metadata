@@ -9,6 +9,7 @@ import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.LogicalTable;
 import org.pentaho.metadata.model.SqlPhysicalColumn;
 import org.pentaho.metadata.model.SqlPhysicalTable;
+import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
@@ -127,16 +128,16 @@ public class MondrianModelExporterTest {
     List<LogicalColumn> logicalColumns = new ArrayList<LogicalColumn>();
     level.setReferenceColumn( logicalTable.getLogicalColumns().get( 0 ) );
     level.setLogicalColumns( new ArrayList<LogicalColumn>() );
-    logicalTable.setProperty( SqlPhysicalTable.TARGET_TABLE, "select * from customer" );
+    logicalTable.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "select * from customer" ) );
     LogicalColumn m = logicalTable.getLogicalColumns().get( 0 );
     m.setAggregationType( AggregationType.SUM );
     measure.setLogicalColumn( m );
     businessModel.getLogicalTables().get( 0 ).setProperty( SqlPhysicalTable.TARGET_TABLE_TYPE,
-        TargetTableType.INLINE_SQL );
+        new Property<TargetTableType>( TargetTableType.INLINE_SQL ) );
     cube.setLogicalTable( businessModel.getLogicalTables().get( 0 ) );
 
-    businessModel.setProperty( "olap_dimensions", dimensions );
-    businessModel.setProperty( "olap_cubes", cubes );
+    businessModel.setProperty( "olap_dimensions", new Property<List<OlapDimension>>( dimensions ) );
+    businessModel.setProperty( "olap_cubes", new Property<List<OlapCube>>( cubes ) );
 
     businessModel.setName( new LocalizedString( "en_US", "model" ) );
     MondrianModelExporter exporter = new MondrianModelExporter( businessModel, "en_US" );
@@ -175,11 +176,11 @@ public class MondrianModelExporterTest {
     List<LogicalColumn> cols = new ArrayList<LogicalColumn>();
     LogicalColumn lcLat = new LogicalColumn();
     lcLat.setName( new LocalizedString( "en_US", "latitude" ) );
-    lcLat.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "Latitude" );
+    lcLat.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "Latitude" ) );
     lcLat.setDataType( DataType.NUMERIC );
     LogicalColumn lcLon = new LogicalColumn();
     lcLon.setName( new LocalizedString( "en_US", "longitude" ) );
-    lcLon.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "Longitude" );
+    lcLon.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "Longitude" ) );
     lcLon.setDataType( DataType.NUMERIC );
 
     cols.add( lcLat );
@@ -221,16 +222,16 @@ public class MondrianModelExporterTest {
     List<LogicalColumn> logicalColumns = new ArrayList<LogicalColumn>();
     level.setReferenceColumn( logicalTable.getLogicalColumns().get( 0 ) );
     // level.setLogicalColumns(new ArrayList<LogicalColumn>());
-    logicalTable.setProperty( SqlPhysicalTable.TARGET_TABLE, "select * from customer" );
+    logicalTable.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "select * from customer" ) );
     LogicalColumn m = logicalTable.getLogicalColumns().get( 0 );
     m.setAggregationType( AggregationType.SUM );
     measure.setLogicalColumn( m );
     businessModel.getLogicalTables().get( 0 ).setProperty( SqlPhysicalTable.TARGET_TABLE_TYPE,
-        TargetTableType.INLINE_SQL );
+        new Property<TargetTableType>( TargetTableType.INLINE_SQL ) );
     cube.setLogicalTable( businessModel.getLogicalTables().get( 0 ) );
 
-    businessModel.setProperty( "olap_dimensions", dimensions );
-    businessModel.setProperty( "olap_cubes", cubes );
+    businessModel.setProperty( "olap_dimensions", new Property<List<OlapDimension>>( dimensions ) );
+    businessModel.setProperty( "olap_cubes", new Property<List<OlapCube>>( cubes ) );
 
     businessModel.setName( new LocalizedString( "en_US", "model" ) );
     MondrianModelExporter exporter = new MondrianModelExporter( businessModel, "en_US" );
@@ -295,17 +296,17 @@ public class MondrianModelExporterTest {
     List<LogicalColumn> logicalColumns = new ArrayList<LogicalColumn>();
     level.setReferenceColumn( logicalTable.getLogicalColumns().get( 0 ) );
     level.setLogicalColumns( new ArrayList<LogicalColumn>() );
-    logicalTable.setProperty( SqlPhysicalTable.TARGET_TABLE, targetTable );
-    logicalTable.setProperty( SqlPhysicalTable.TARGET_SCHEMA, targetSchema );
+    logicalTable.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( targetTable ) );
+    logicalTable.setProperty( SqlPhysicalTable.TARGET_SCHEMA, new Property<String>( targetSchema ) );
 
     LogicalColumn m = logicalTable.getLogicalColumns().get( 0 );
     m.setAggregationType( AggregationType.SUM );
     measure.setLogicalColumn( m );
-    businessModel.getLogicalTables().get( 0 ).setProperty( SqlPhysicalTable.TARGET_TABLE_TYPE, tableType );
+    businessModel.getLogicalTables().get( 0 ).setProperty( SqlPhysicalTable.TARGET_TABLE_TYPE, new Property<TargetTableType>( tableType ) );
     cube.setLogicalTable( businessModel.getLogicalTables().get( 0 ) );
 
-    businessModel.setProperty( "olap_dimensions", dimensions );
-    businessModel.setProperty( "olap_cubes", cubes );
+    businessModel.setProperty( "olap_dimensions", new Property<List<OlapDimension>>( dimensions ) );
+    businessModel.setProperty( "olap_cubes", new Property<List<OlapCube>>( cubes ) );
 
     businessModel.setName( new LocalizedString( "en_US", "model" ) );
     return businessModel;

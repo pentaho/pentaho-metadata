@@ -16,7 +16,14 @@
  */
 package org.pentaho.metadata.model;
 
-import org.pentaho.metadata.model.concept.IConcept;
+import java.util.List;
+
+import org.pentaho.metadata.model.concept.Concept;
+import org.pentaho.metadata.model.concept.Property;
+import org.pentaho.metadata.model.concept.types.AggregationType;
+import org.pentaho.metadata.model.concept.types.DataType;
+import org.pentaho.metadata.model.concept.types.FieldType;
+import org.pentaho.metadata.model.concept.types.LocalizedString;
 
 /**
  * The Inline Etl column inherits from the abstract physical column, and also defines a column number to get data from.
@@ -24,38 +31,87 @@ import org.pentaho.metadata.model.concept.IConcept;
  * @author Will Gorman (wgorman@pentaho.com)
  * 
  */
-public class InlineEtlPhysicalColumn extends AbstractPhysicalColumn {
+public class InlineEtlPhysicalColumn extends Concept implements IPhysicalColumn  {
 
   private static final long serialVersionUID = 2960505010295811572L;
 
   public static final String COLUMN_NUMBER = "column_number"; //$NON-NLS-1$
   public static final String FIELD_NAME = "field_name"; //$NON-NLS-1$
 
-  private InlineEtlPhysicalTable table;
-
   public InlineEtlPhysicalColumn() {
     super();
+    // physical column has the following default properties:
+    setName( new LocalizedString() );
+    setDescription( new LocalizedString() );
   }
 
-  @Override
-  public IConcept getParent() {
-    return table;
+  public DataType getDataType() {
+    Property property = getProperty( IPhysicalColumn.DATATYPE_PROPERTY );
+    if( property != null ) {
+      return (DataType) property.getValue();
+    }
+    return null;
   }
 
+  public void setDataType( DataType dataType ) {
+    setProperty( IPhysicalColumn.DATATYPE_PROPERTY, new Property<DataType>( dataType ) );
+  }
+
+  public FieldType getFieldType() {
+    Property property = getProperty( IPhysicalColumn.FIELDTYPE_PROPERTY );
+    if( property != null ) {
+      return (FieldType) property.getValue();
+    }    
+    return null;
+  }
+
+  public void setFieldType( FieldType fieldType ) {
+    setProperty( IPhysicalColumn.FIELDTYPE_PROPERTY, new Property<FieldType>( fieldType ) );
+  }
+
+  public AggregationType getAggregationType() {
+    Property property = getProperty( IPhysicalColumn.AGGREGATIONTYPE_PROPERTY );
+    if( property != null ) {
+      return (AggregationType) property.getValue();
+    }    
+    return null;
+  }
+
+  public void setAggregationType( AggregationType aggType ) {
+    setProperty( IPhysicalColumn.AGGREGATIONTYPE_PROPERTY, new Property<AggregationType>( aggType ) );
+  }
+
+  @SuppressWarnings( "unchecked" )
+  public List<AggregationType> getAggregationList() {
+    Property property = getProperty( IPhysicalColumn.AGGREGATIONLIST_PROPERTY );
+    if( property != null ) {
+      return (List<AggregationType>) property.getValue();
+    }    
+    return null;
+  }
+
+  public void setAggregationList( List<AggregationType> aggList ) {
+    setProperty( IPhysicalColumn.AGGREGATIONLIST_PROPERTY, new Property<List<AggregationType>>( aggList ) );
+  }
+  
   public void setTable( InlineEtlPhysicalTable table ) {
-    this.table = table;
+    setParent( table );
   }
 
   public InlineEtlPhysicalTable getPhysicalTable() {
-    return table;
+    return ( InlineEtlPhysicalTable )getParent();
   }
 
   public String getFieldName() {
-    return (String) getProperty( FIELD_NAME );
+    Property property = getProperty( FIELD_NAME );
+    if( property != null ) {
+      return (String) property.getValue();
+    }
+    return null;
   }
 
   public void setFieldName( String fieldName ) {
-    setProperty( FIELD_NAME, fieldName );
+    setProperty( FIELD_NAME, new Property<String>(fieldName) );
   }
 
 }

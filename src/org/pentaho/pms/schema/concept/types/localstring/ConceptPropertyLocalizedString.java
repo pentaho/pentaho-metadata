@@ -18,6 +18,7 @@ package org.pentaho.pms.schema.concept.types.localstring;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
@@ -57,12 +58,12 @@ public class ConceptPropertyLocalizedString extends ConceptPropertyBase implemen
     return ConceptPropertyType.LOCALIZED_STRING;
   }
 
-  public Object getValue() {
-    return value;
+  public Property getValue() {
+    return new Property<LocalizedStringSettings>( value );
   }
 
-  public void setValue( Object value ) {
-    this.value = (LocalizedStringSettings) value;
+  public void setValue( Property value ) {
+    this.value = value != null ? (LocalizedStringSettings) value.getValue() : null;
   }
 
   public boolean equals( Object obj ) {

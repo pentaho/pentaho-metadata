@@ -18,6 +18,7 @@ package org.pentaho.pms.schema.concept.types.font;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
@@ -54,13 +55,13 @@ public class ConceptPropertyFont extends ConceptPropertyBase implements Cloneabl
   public ConceptPropertyType getType() {
     return ConceptPropertyType.FONT;
   }
-
-  public Object getValue() {
-    return value;
+  
+  public Property getValue() {
+    return new Property<FontSettings>( value );
   }
 
-  public void setValue( Object value ) {
-    this.value = (FontSettings) value;
+  public void setValue( Property value ) {
+    this.value = value != null ? (FontSettings) value.getValue() : null;
   }
 
   public boolean equals( Object obj ) {

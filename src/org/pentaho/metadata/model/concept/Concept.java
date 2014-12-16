@@ -16,7 +16,6 @@
  */
 package org.pentaho.metadata.model.concept;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,10 +31,17 @@ import org.pentaho.metadata.model.concept.types.LocalizedString;
  * @author Will Gorman (wgorman@pentaho.com)
  * 
  */
-public class Concept implements IConcept, Serializable, Cloneable, Comparable {
+public class Concept implements IConcept {
 
   public Concept() {
     super();
+    
+    /*
+     * Do not remove... BogoPojo kind of fix. This was 
+     * required to make sure the Property gets serialized
+     * by gwt rpc. Need to research more...
+     * */
+    property.setValue( "" );
   }
 
   private static final long serialVersionUID = -6912836203678095834L;
@@ -44,13 +50,30 @@ public class Concept implements IConcept, Serializable, Cloneable, Comparable {
   public static String DESCRIPTION_PROPERTY = "description"; //$NON-NLS-1$
   public static String SECURITY_PROPERTY = "security"; //$NON-NLS-1$
 
-  Map<String, Object> properties = new HashMap<String, Object>();
+  Map<String, Property> properties = new HashMap<String, Property>();
   String id;
+  IConcept parent;
   IConcept parentConcept;
+  IConcept inheritedConcept;
+  IConcept physicalConcept;
   List<IConcept> children = null;
+  
+  /*
+   * Do not remove... BogoPojo kind of fix. This was 
+   * required to make sure the Property gets serialized
+   * by gwt rpc. Need to research more...
+   * */
+  Property<String> property = new Property<String>();
 
+  public void setParent( IConcept parent ) {
+    this.parent = parent;
+  }
+  
   public IConcept getParent() {
-    return parentConcept;
+    if ( parent == null ) {
+      return parentConcept;
+    }
+    return parent;
   }
 
   public List<String> getUniqueId() {
@@ -81,15 +104,15 @@ public class Concept implements IConcept, Serializable, Cloneable, Comparable {
     return null;
   }
 
-  public Map<String, Object> getChildProperties() {
+  public Map<String, Property> getChildProperties() {
     return properties;
   }
 
-  public void setChildProperties( Map<String, Object> properties ) {
+  public void setChildProperties( Map<String, Property> properties ) {
     this.properties = properties;
   }
 
-  public Object getChildProperty( String name ) {
+  public Property getChildProperty( String name ) {
     return properties.get( name );
   }
 
@@ -101,8 +124,12 @@ public class Concept implements IConcept, Serializable, Cloneable, Comparable {
     this.id = id;
   }
 
+  public void setInheritedConcept( IConcept inheritedConcept ) {
+    this.inheritedConcept = inheritedConcept;
+  }
+  
   public IConcept getInheritedConcept() {
-    return null;
+    return inheritedConcept;
   }
 
   public IConcept getParentConcept() {
@@ -112,13 +139,21 @@ public class Concept implements IConcept, Serializable, Cloneable, Comparable {
   public void setParentConcept( IConcept parentConcept ) {
     this.parentConcept = parentConcept;
   }
+  
+  public IConcept getPhysicalConcept() {
+    return physicalConcept;
+  }
+
+  public void setPhysicalConcept( IConcept physicalConcept ) {
+    this.physicalConcept = physicalConcept;
+  }  
 
   public IConcept getSecurityParentConcept() {
     return null;
   }
 
-  public Map<String, Object> getProperties() {
-    Map<String, Object> all = new HashMap<String, Object>();
+  public Map<String, Property> getProperties() {
+    Map<String, Property> all = new HashMap<String, Property>();
 
     // Properties inherited from the "logical relationship":
     // BusinessColumn inherits from Physical Column, B.Table from Ph.Table
@@ -137,7 +172,7 @@ public class Concept implements IConcept, Serializable, Cloneable, Comparable {
     // Business table inherits from Business model, business column from business table
     if ( getSecurityParentConcept() != null ) {
       // Only take over the security information, nothing else
-      Object securityProperty = (Object) getSecurityParentConcept().getProperty( SECURITY_PROPERTY );
+      Property securityProperty = ( Property ) getSecurityParentConcept().getProperty( SECURITY_PROPERTY );
       if ( securityProperty != null ) {
         all.put( SECURITY_PROPERTY, securityProperty );
       }
@@ -149,11 +184,11 @@ public class Concept implements IConcept, Serializable, Cloneable, Comparable {
     return all;
   }
 
-  public Object getProperty( String name ) {
+  public Property getProperty( String name ) {
     return getProperties().get( name );
   }
 
-  public void setProperty( String name, Object property ) {
+  public void setProperty( String name, Property property ) {
     properties.put( name, property );
   }
 
@@ -162,7 +197,11 @@ public class Concept implements IConcept, Serializable, Cloneable, Comparable {
   }
 
   public LocalizedString getName() {
-    return (LocalizedString) getProperty( NAME_PROPERTY );
+    Property property = getProperty( NAME_PROPERTY );
+    if( property != null ) {
+      return ( LocalizedString ) property.getValue();
+    }
+    return null;
   }
 
   public String getName( String locale ) {
@@ -178,7 +217,7 @@ public class Concept implements IConcept, Serializable, Cloneable, Comparable {
   }
 
   public void setName( LocalizedString name ) {
-    setProperty( NAME_PROPERTY, name );
+    setProperty( NAME_PROPERTY, new Property<LocalizedString>( name ) );
   }
 
   public String getDescription( String locale ) {
@@ -194,11 +233,15 @@ public class Concept implements IConcept, Serializable, Cloneable, Comparable {
   }
 
   public LocalizedString getDescription() {
-    return (LocalizedString) getProperty( DESCRIPTION_PROPERTY );
+    Property property = getProperty( DESCRIPTION_PROPERTY );
+    if( property != null ) {
+      return ( LocalizedString ) property.getValue();
+    }
+    return null;
   }
 
   public void setDescription( LocalizedString description ) {
-    setProperty( DESCRIPTION_PROPERTY, description );
+    setProperty( DESCRIPTION_PROPERTY, new Property<LocalizedString>( description ) );
   }
 
   public int compareTo( Object o ) {

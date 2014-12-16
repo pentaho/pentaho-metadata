@@ -56,7 +56,7 @@ public class TstConcept {
 
     ConceptPropertyInterface lookupLength = stringConcept.getProperty( "field.data.length" ); //$NON-NLS-1$
     if ( lookupLength != null ) {
-      BigDecimal length = (BigDecimal) lookupLength.getValue();
+      BigDecimal length = (BigDecimal) lookupLength.getValue().getValue();
     }
   }
 }

@@ -29,6 +29,7 @@ import java.util.TreeSet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.mql.dialect.JoinType;
@@ -384,7 +385,11 @@ public class SQLGenerator {
     ConceptInterface concept = model.getConcept();
     ConceptPropertyInterface delayOuterJoin = concept.getProperty( "delay_outer_join_conditions" );
     if ( ( delayOuterJoin != null ) && ( delayOuterJoin.getType().equals( ConceptPropertyType.BOOLEAN ) ) ) {
-      Boolean value = (Boolean) delayOuterJoin.getValue();
+      Boolean value = false; 
+      Property property = delayOuterJoin.getValue();
+      if ( property != null ) {
+        value = (Boolean) property.getValue();
+      }
       query.setDelayOuterJoinConditions( value.booleanValue() );
     }
 
@@ -706,7 +711,6 @@ public class SQLGenerator {
    *          include tables
    * @return shortest path
    */
-  @SuppressWarnings( "unchecked" )
   public Path getShortestPathBetween( BusinessModel model, List<BusinessTable> tables ) {
     logger.debug( "Enter getShortestPathBetween() - new" );
 
@@ -741,9 +745,12 @@ public class SQLGenerator {
     // Using this for quick POC
     ConceptInterface concept = model.getConcept();
     ConceptPropertyInterface pathMethod = concept.getProperty( "path_build_method" );
-    String pathMethodString;
+    String pathMethodString = "";
     if ( ( pathMethod != null ) && ( pathMethod.getType().equals( ConceptPropertyType.STRING ) ) ) {
-      pathMethodString = (String) pathMethod.getValue();
+      Property property = pathMethod.getValue();
+      if ( property != null ) {
+        pathMethodString = (String) property.getValue();
+      }
     } else {
       if ( preferClassicShortestPath ) {
         pathMethodString = "CLASSIC";

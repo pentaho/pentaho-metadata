@@ -16,6 +16,7 @@
  */
 package org.pentaho.metadata.model.concept;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +42,7 @@ import org.pentaho.metadata.model.concept.types.LocalizedString;
  * @author Will Gorman (wgorman@pentaho.com)
  * 
  */
-public interface IConcept extends Cloneable {
+public interface IConcept extends Comparable, Cloneable, Serializable  {
 
   /**
    * This is used to denote the separator between the UID's type and id.
@@ -102,14 +103,14 @@ public interface IConcept extends Cloneable {
    * 
    * @return concept property
    */
-  public Object getProperty( String name );
+  public Property getProperty( String name );
 
   /**
    * sets the property
    * 
    * @param property
    */
-  public void setProperty( String name, Object property );
+  public void setProperty( String name, Property property );
 
   /**
    * removes the property
@@ -124,21 +125,21 @@ public interface IConcept extends Cloneable {
    * @param name
    * @return
    */
-  public Object getChildProperty( String name );
+  public Property getChildProperty( String name );
 
   /**
    * this is an unmodifiable map of properties
    * 
    * @return property
    */
-  public Map<String, Object> getProperties();
+  public Map<String, Property> getProperties();
 
   /**
    * this is an unmodifiable map of the current concept properties
    * 
    * @return property
    */
-  public Map<String, Object> getChildProperties();
+  public Map<String, Property> getChildProperties();
 
   /**
    * returns the inherited concept
@@ -147,6 +148,13 @@ public interface IConcept extends Cloneable {
    */
   public IConcept getInheritedConcept();
 
+  /**
+   * set the inherited concept
+   * 
+   */
+  public void setInheritedConcept( IConcept concept );
+  
+  
   /**
    * returns all child concept objects defined by the structure of the model.
    * 
@@ -172,6 +180,14 @@ public interface IConcept extends Cloneable {
   public IConcept getParent();
 
   /**
+   * Set the concepts parent represented in the model. This is different then the inheritance parent and is a
+   * structural relationship.
+   * 
+   * @return parent model object
+   */  
+  public void setParent( IConcept concept );
+  
+  /**
    * returns the inherited concept
    * 
    * @return inherited concept
@@ -193,6 +209,10 @@ public interface IConcept extends Cloneable {
    */
   public IConcept getSecurityParentConcept();
 
+  public IConcept getPhysicalConcept();
+
+  public void setPhysicalConcept( IConcept physicalConcept );
+  
   /**
    * returns a clone of the concept.
    * 

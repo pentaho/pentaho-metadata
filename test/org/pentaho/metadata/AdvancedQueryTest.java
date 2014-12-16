@@ -28,6 +28,7 @@ import org.pentaho.metadata.model.LogicalRelationship;
 import org.pentaho.metadata.model.LogicalTable;
 import org.pentaho.metadata.model.SqlPhysicalColumn;
 import org.pentaho.metadata.model.SqlPhysicalTable;
+import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.RelationshipType;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
@@ -95,18 +96,18 @@ public class AdvancedQueryTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" );
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt1" );
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt1" ) );
 
     LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" );
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" );
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc1" ) );
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
     mainCat.addLogicalColumn( bc1 );
 
     LogicalColumn bcs1 = new LogicalColumn();
     bcs1.setId( "bcs1" );
-    bcs1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" );
+    bcs1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc1" ) );
     bcs1.setAggregationType( AggregationType.SUM );
     bcs1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bcs1 );
@@ -114,30 +115,30 @@ public class AdvancedQueryTest {
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" );
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" );
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt2" ) );
 
     LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" );
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" );
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc2" ) );
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
     mainCat.addLogicalColumn( bc2 );
 
     final LogicalColumn bce2 = new LogicalColumn();
     bce2.setId( "bce2" ); //$NON-NLS-1$
-    bce2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.OPEN_FORMULA );
-    bce2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "[bt2.bc2] * 2" ); //$NON-NLS-1$
+    bce2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.OPEN_FORMULA ) );
+    bce2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "[bt2.bc2] * 2" ) ); //$NON-NLS-1$
     bce2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bce2 );
     mainCat.addLogicalColumn( bce2 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "bt3" );
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt3" );
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt3" ) );
 
     LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" );
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc3" );
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc3" ) );
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
     mainCat.addLogicalColumn( bc3 );
@@ -388,22 +389,22 @@ public class AdvancedQueryTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "t1" ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "t1" ) ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "k" ) ); //$NON-NLS-1$
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
     model.getLogicalTables().add( bt1 );
     mainCat.addLogicalColumn( bc1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "t2" ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "t2" ) ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "k" ) ); //$NON-NLS-1$
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
     model.getLogicalTables().add( bt2 );
@@ -447,21 +448,21 @@ public class AdvancedQueryTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt1" ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt1" ) ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc1" ) ); //$NON-NLS-1$
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
     mainCat.addLogicalColumn( bc1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt2" ) ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc2" ) ); //$NON-NLS-1$
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
     mainCat.addLogicalColumn( bc2 );
@@ -500,21 +501,21 @@ public class AdvancedQueryTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt1" ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt1" ) ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc1" ) ); //$NON-NLS-1$
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
     mainCat.addLogicalColumn( bc1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt2" ) ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc2" ) ); //$NON-NLS-1$
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
     mainCat.addLogicalColumn( bc2 );
@@ -554,21 +555,21 @@ public class AdvancedQueryTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt1" ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt1" ) ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc1" ) ); //$NON-NLS-1$
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
     mainCat.addLogicalColumn( bc1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt2" ) ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc2" ) ); //$NON-NLS-1$
     bc2.setAggregationType( AggregationType.SUM );
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
@@ -608,21 +609,21 @@ public class AdvancedQueryTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt1" ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt1" ) ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc1" ) ); //$NON-NLS-1$
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
     mainCat.addLogicalColumn( bc1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt2" ) ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc2" ) ); //$NON-NLS-1$
     bc2.setAggregationType( AggregationType.SUM );
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
@@ -663,31 +664,31 @@ public class AdvancedQueryTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt1" ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt1" ) ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc1" ) ); //$NON-NLS-1$
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 )  );
     mainCat.addLogicalColumn( bc1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt2" ) ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc2" ) ); //$NON-NLS-1$
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
     mainCat.addLogicalColumn( bc2 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "bt3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt3" ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt3" ) ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc3" ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc3" ) ); //$NON-NLS-1$
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
     mainCat.addLogicalColumn( bc3 );
@@ -736,41 +737,41 @@ public class AdvancedQueryTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "t1" ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "t1" ) ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "k" ) ); //$NON-NLS-1$
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
     mainCat.addLogicalColumn( bc1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "t2" ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "t2" ) ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "k" ) ); //$NON-NLS-1$
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
     mainCat.addLogicalColumn( bc2 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "bt3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "t3" ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "t3" ) ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "k" ) ); //$NON-NLS-1$
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
     mainCat.addLogicalColumn( bc3 );
 
     final LogicalTable bt4 = new LogicalTable();
     bt4.setId( "bt4" ); //$NON-NLS-1$
-    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, "t4" ); //$NON-NLS-1$
+    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "t4" ) ); //$NON-NLS-1$
     final LogicalColumn bc4 = new LogicalColumn();
     bc4.setId( "bc4" ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "k" ) ); //$NON-NLS-1$
     bc4.setLogicalTable( bt4 );
     bt4.addLogicalColumn( bc4 );
     mainCat.addLogicalColumn( bc4 );
@@ -829,31 +830,31 @@ public class AdvancedQueryTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "t1" ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "t1" ) ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "k" ) ); //$NON-NLS-1$
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
     mainCat.addLogicalColumn( bc1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "t2" ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "t2" ) ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "k" ) ); //$NON-NLS-1$
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
     mainCat.addLogicalColumn( bc2 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "bt3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "t3" ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "t3" ) ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "k" ) ); //$NON-NLS-1$
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
     mainCat.addLogicalColumn( bc3 );
@@ -902,31 +903,31 @@ public class AdvancedQueryTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "t1" ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "t1" ) ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "k" ) ); //$NON-NLS-1$
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
     mainCat.addLogicalColumn( bc1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "t2" ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "t2" ) ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "k" ) ); //$NON-NLS-1$
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
     mainCat.addLogicalColumn( bc2 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "bt3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "t3" ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "t3" ) ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "k" ) ); //$NON-NLS-1$
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
     mainCat.addLogicalColumn( bc3 );
@@ -975,31 +976,31 @@ public class AdvancedQueryTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "t1" ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "t1" ) ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "k" ) ); //$NON-NLS-1$
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
     mainCat.addLogicalColumn( bc1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "t2" ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "t2" ) ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "k" ) ); //$NON-NLS-1$
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
     mainCat.addLogicalColumn( bc2 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "bt3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "t3" ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "t3" ) ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "k" ) ); //$NON-NLS-1$
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
     mainCat.addLogicalColumn( bc3 );
@@ -1050,31 +1051,31 @@ public class AdvancedQueryTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "t1" ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "t1" ) ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "k" ) ); //$NON-NLS-1$
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
     mainCat.addLogicalColumn( bc1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "t2" ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "t2" ) ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "k" ) ); //$NON-NLS-1$
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
     mainCat.addLogicalColumn( bc2 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "bt3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "t3" ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "t3" ) ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "k" ) ); //$NON-NLS-1$
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
     mainCat.addLogicalColumn( bc3 );
@@ -1127,41 +1128,41 @@ public class AdvancedQueryTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "t1" ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "t1" ) ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "k" ) ); //$NON-NLS-1$
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 )) ;
     mainCat.addLogicalColumn( bc1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "t2" ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "t2" ) ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "k" ) ); //$NON-NLS-1$
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
     mainCat.addLogicalColumn( bc2 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "bt3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "t3" ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "t3" ) ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "k" ) ); //$NON-NLS-1$
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
     mainCat.addLogicalColumn( bc3 );
 
     final LogicalTable bt4 = new LogicalTable();
     bt4.setId( "bt4" ); //$NON-NLS-1$
-    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, "t4" ); //$NON-NLS-1$
+    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "t4" ) ); //$NON-NLS-1$
     final LogicalColumn bc4 = new LogicalColumn();
     bc4.setId( "bc4" ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "k" ) ); //$NON-NLS-1$
     bc4.setLogicalTable( bt4 );
     bt4.addLogicalColumn( bc4 );
     mainCat.addLogicalColumn( bc4 );
@@ -1221,7 +1222,7 @@ public class AdvancedQueryTest {
     bt1.setId( "bt1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc1" ) ); //$NON-NLS-1$
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
 
@@ -1229,7 +1230,7 @@ public class AdvancedQueryTest {
     bt2.setId( "bt2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc2" ) ); //$NON-NLS-1$
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
 
