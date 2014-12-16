@@ -47,4 +47,12 @@ public class Property<T> implements Serializable {
   public T getValue() {
     return value;
   }
+
+  public String toString() {
+    if ( value != null ) {
+      return value.toString();
+    }
+    return null;
+  }
+
 }
