@@ -21,7 +21,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.pentaho.di.core.database.Database;
 import org.pentaho.di.core.database.DatabaseMeta;
-import org.pentaho.di.core.exception.KettleDatabaseException;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.core.row.ValueMetaInterface;
@@ -37,29 +36,30 @@ import org.pentaho.metadata.util.Util;
 
 public class PhysicalTableImporter {
 
-  public static interface RowMetaStrategy {
-    RowMetaInterface rowMeta( Database database, String schemaName, String tableName ) throws KettleDatabaseException;
+  public static interface ImportStrategy {
+    boolean shouldInclude( ValueMetaInterface valueMeta );
+    String displayName( ValueMetaInterface valueMeta );
   }
 
-  public static final RowMetaStrategy defaultRowMetaStrategy = new RowMetaStrategy() {
-      @Override public RowMetaInterface rowMeta(
-          final Database database, final String schemaName, final String tableName )
-          throws KettleDatabaseException {
+  public static final ImportStrategy defaultImportStrategy = new ImportStrategy() {
+    @Override
+    public boolean shouldInclude( final ValueMetaInterface valueMeta ) {
+      return true;
+    }
 
-        DatabaseMeta dbMeta = database.getDatabaseMeta();
-        String schemaTableCombination =
-            dbMeta.getSchemaTableCombination( dbMeta.quoteField( schemaName ), dbMeta.quoteField( tableName ) );
-        return database.getTableFields( schemaTableCombination );
-      }
+    @Override
+    public String displayName( final ValueMetaInterface valueMeta ) {
+      return valueMeta.getName();
+    }
   };
 
   public static SqlPhysicalTable importTableDefinition(
       Database database, String schemaName, String tableName, String locale ) throws KettleException {
-    return importTableDefinition( database, schemaName, tableName, locale, defaultRowMetaStrategy );
+    return importTableDefinition( database, schemaName, tableName, locale, defaultImportStrategy );
   }
 
   public static SqlPhysicalTable importTableDefinition( Database database, String schemaName, String tableName,
-      String locale, RowMetaStrategy rowMetaStrategy ) throws KettleException {
+      String locale, ImportStrategy importStrategy ) throws KettleException {
 
     String id = ( Util.getPhysicalTableIdPrefix() + Util.toId( tableName ) ).toUpperCase();
 
@@ -76,13 +76,18 @@ public class PhysicalTableImporter {
     String niceName = beautifyName( tableName );
     physicalTable.setName( new LocalizedString( locale, niceName ) );
 
-    RowMetaInterface row = rowMetaStrategy.rowMeta( database, schemaName, tableName );
+    DatabaseMeta dbMeta = database.getDatabaseMeta();
+    String schemaTableCombination =
+        dbMeta.getSchemaTableCombination( dbMeta.quoteField( schemaName ), dbMeta.quoteField( tableName ) );
+    RowMetaInterface row = database.getTableFields( schemaTableCombination );
 
     if ( row != null && row.size() > 0 ) {
       for ( int i = 0; i < row.size(); i++ ) {
         ValueMetaInterface v = row.getValueMeta( i );
-        IPhysicalColumn physicalColumn = importPhysicalColumnDefinition( v, physicalTable, locale );
-        fields.add( physicalColumn );
+        if ( importStrategy.shouldInclude( v ) ) {
+          IPhysicalColumn physicalColumn = importPhysicalColumnDefinition( v, physicalTable, locale, importStrategy );
+          fields.add( physicalColumn );
+        }
       }
     }
     String upper = tableName.toUpperCase();
@@ -102,7 +107,8 @@ public class PhysicalTableImporter {
   }
 
   private static IPhysicalColumn importPhysicalColumnDefinition( ValueMetaInterface v, SqlPhysicalTable physicalTable,
-      String locale ) {
+                                                                 String locale,
+                                                                 final ImportStrategy importStrategy ) {
     // The id
     //
     String id = Util.getPhysicalColumnIdPrefix() + v.getName();
@@ -126,7 +132,7 @@ public class PhysicalTableImporter {
 
     // Set the localized name...
     //
-    String niceName = beautifyName( v.getName() );
+    String niceName = beautifyName( importStrategy.displayName( v ) );
     physicalColumn.setName( new LocalizedString( locale, niceName ) );
 
     // Set the parent concept to the base concept...

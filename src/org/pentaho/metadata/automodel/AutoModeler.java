@@ -22,7 +22,7 @@ import java.util.List;
 import org.pentaho.di.core.DBCache;
 import org.pentaho.di.core.database.Database;
 import org.pentaho.di.core.database.DatabaseMeta;
-import org.pentaho.metadata.automodel.PhysicalTableImporter.RowMetaStrategy;
+import org.pentaho.metadata.automodel.PhysicalTableImporter.ImportStrategy;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.IPhysicalColumn;
 import org.pentaho.metadata.model.LogicalColumn;
@@ -37,7 +37,7 @@ import org.pentaho.metadata.util.ThinModelConverter;
 import org.pentaho.metadata.util.Util;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 
-import static org.pentaho.metadata.automodel.PhysicalTableImporter.defaultRowMetaStrategy;
+import static org.pentaho.metadata.automodel.PhysicalTableImporter.defaultImportStrategy;
 
 /**
  * This class will help in the automatic generation of a metadata model.<br>
@@ -75,10 +75,10 @@ public class AutoModeler {
   }
 
   public Domain generateDomain() throws PentahoMetadataException {
-    return generateDomain( defaultRowMetaStrategy );
+    return generateDomain( defaultImportStrategy );
   }
 
-  public Domain generateDomain( final RowMetaStrategy rowMetaStrategy ) throws PentahoMetadataException {
+  public Domain generateDomain( final ImportStrategy importStrategy ) throws PentahoMetadataException {
     Domain domain = new Domain();
     domain.setId( modelName );
 
@@ -119,7 +119,7 @@ public class AutoModeler {
         //
         SqlPhysicalTable physicalTable =
             PhysicalTableImporter.importTableDefinition( database, schemaTable.getSchemaName(), schemaTable
-            .getTableName(), locale, rowMetaStrategy );
+            .getTableName(), locale, importStrategy );
         physicalModel.addPhysicalTable( physicalTable );
 
         // At the same time, we will create a business table and add that to the
