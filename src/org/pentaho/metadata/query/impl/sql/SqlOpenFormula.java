@@ -30,7 +30,6 @@ import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.LogicalTable;
 import org.pentaho.metadata.model.SqlPhysicalColumn;
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
@@ -108,7 +107,7 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
 
   private boolean hasAggregateFunction = false;
 
-  private Map<String, Property> parameters;
+  private Map<String, Object> parameters;
 
   /** the string to parse */
   private String formulaString;
@@ -126,7 +125,7 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
    *           throws an exception if we're missing anything important
    */
   public SqlOpenFormula( LogicalModel model, DatabaseMeta databaseMeta, String formulaString,
-      Map<LogicalTable, String> tableAliases, Map<String, Property> parameters, boolean genAsPreparedStatement )
+      Map<LogicalTable, String> tableAliases, Map<String, Object> parameters, boolean genAsPreparedStatement )
     throws PentahoMetadataException {
 
     this.model = model;
@@ -171,7 +170,7 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
    *           throws an exception if we're missing anything important
    */
   public SqlOpenFormula( LogicalModel model, LogicalTable table, DatabaseMeta databaseMeta, String formulaString,
-      Map<LogicalTable, String> tableAliases, Map<String, Property> parameters, boolean genAsPreparedStatement )
+      Map<LogicalTable, String> tableAliases, Map<String, Object> parameters, boolean genAsPreparedStatement )
     throws PentahoMetadataException {
 
     this.model = model;
@@ -318,8 +317,8 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
             // break;
             // }
 
-            if ( ( column.getProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE ).getValue() == TargetColumnType.COLUMN_NAME )
-                && fieldName.equals( (String) column.getProperty( SqlPhysicalColumn.TARGET_COLUMN ).getValue() ) ) {
+            if ( ( column.getProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE ) == TargetColumnType.COLUMN_NAME )
+                && fieldName.equals( column.getProperty( SqlPhysicalColumn.TARGET_COLUMN ) ) ) {
               // we've found it, but we don't do anything due to aggregation issues later
               return;
             }
@@ -544,11 +543,7 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
       if ( fieldName.startsWith( PARAM ) ) {
         String paramName = fieldName.substring( 6 );
         if ( parameters.containsKey( paramName ) ) {
-          Object param = null;
-          Property paramProperty = parameters.get( paramName );
-          if( paramProperty != null ) {
-            param = paramProperty.getValue();
-          }
+          Object param = parameters.get( paramName );
           if ( param instanceof Object[] && ( (Object[]) param ).length > 1 ) {
             return true;
           } else {
@@ -666,8 +661,7 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
   public Object getParameterValue( ContextLookup param ) throws PentahoMetadataException {
     if ( param.getName().startsWith( PARAM ) ) {
       String paramName = param.getName().substring( 6 );
-      return parameters.get( paramName ) != null ? 
-          parameters.get( paramName ).getValue() : null;
+      return parameters.get( paramName );
     } else {
       throw new PentahoMetadataException( Messages.getErrorString(
           "SqlOpenFormula.ERROR_0022_INVALID_PARAM_REFERENCE", param.getName() ) ); //$NON-NLS-1$
@@ -687,8 +681,7 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
           // prepared statement sql query.
           sb.append( "___PARAM[" + paramName + "]___" ); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
-          Object paramValue = parameters.get( paramName ) != null ? 
-              parameters.get( paramName ).getValue() : null;
+          Object paramValue = parameters.get( paramName );
           if ( paramValue instanceof Boolean ) {
             // need to get and then render either true or false function.
             if ( ( (Boolean) paramValue ).booleanValue() ) {
@@ -854,7 +847,7 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
       // Search by physical column name / formula...
       //
       for ( LogicalColumn col : table.getLogicalColumns() ) {
-        if ( contextName.equals( (String) col.getProperty( SqlPhysicalColumn.TARGET_COLUMN ).getValue() ) ) {
+        if ( contextName.equals( col.getProperty( SqlPhysicalColumn.TARGET_COLUMN ) ) ) {
           c = col;
           break;
         }

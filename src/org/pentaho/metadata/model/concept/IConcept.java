@@ -103,14 +103,14 @@ public interface IConcept extends Comparable, Cloneable, Serializable  {
    * 
    * @return concept property
    */
-  public Property getProperty( String name );
+  public Object getProperty( String name );
 
   /**
    * sets the property
    * 
    * @param property
    */
-  public void setProperty( String name, Property property );
+  public void setProperty( String name, Object property );
 
   /**
    * removes the property
@@ -125,21 +125,21 @@ public interface IConcept extends Comparable, Cloneable, Serializable  {
    * @param name
    * @return
    */
-  public Property getChildProperty( String name );
+  public Object getChildProperty( String name );
 
   /**
    * this is an unmodifiable map of properties
    * 
    * @return property
    */
-  public Map<String, Property> getProperties();
+  public Map<String, Object> getProperties();
 
   /**
    * this is an unmodifiable map of the current concept properties
    * 
    * @return property
    */
-  public Map<String, Property> getChildProperties();
+  public Map<String, Object> getChildProperties();
 
   /**
    * returns the inherited concept

@@ -26,7 +26,6 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.metadata.messages.Messages;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.concept.IConcept;
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 
@@ -41,15 +40,13 @@ public class LocalizationUtil {
 
   protected void exportLocalizedPropertiesRecursively( Properties props, IConcept parent, String locale ) {
     for ( String propName : parent.getChildProperties().keySet() ) {
-      if ( parent.getChildProperty( propName ).getValue() instanceof LocalizedString ) {
+      if ( parent.getChildProperty( propName ) instanceof LocalizedString ) {
         // externalize string
         String key = stringizeTokens( parent.getUniqueId() ) + ".[" + escapeKey( propName ) + "]";
-        LocalizedString lstr = null;
-        Property propertyName = parent.getChildProperty( propName );
-        String value = "";
-        if ( propertyName != null ) {
-          lstr = (LocalizedString) propertyName.getValue();
-          value = lstr.getLocalizedString( locale ) != null ? lstr.getLocalizedString( locale ) : "";
+        LocalizedString lstr = (LocalizedString) parent.getChildProperty( propName );
+        String value = lstr.getLocalizedString( locale );
+        if ( value == null ) {
+          value = "";
         }
         props.setProperty( key, value );
       }
@@ -227,11 +224,7 @@ public class LocalizationUtil {
         String property = tokens.remove( tokens.size() - 1 );
         IConcept concept = domain.getChildByUniqueId( tokens );
         if ( concept != null ) {
-          LocalizedString localizedString = null;
-          Property prop = concept.getProperty( property );
-          if ( prop != null ) {
-            localizedString = (LocalizedString) prop.getValue();
-          }
+          LocalizedString localizedString = (LocalizedString) concept.getProperty( property );
           if ( localizedString != null ) {
             localizedString.setString( locale, props.getProperty( k ) );
           }

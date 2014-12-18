@@ -71,12 +71,12 @@ public class QueryXmlHelperTest {
     paramElement.setAttribute( "defaultValue", "a|b" ); //$NON-NLS-1$ //$NON-NLS-2$
 
     helper.addParameterFromXmlNode( query, paramElement );
-    assertEquals( 2, ( (Object[]) query.getParameters().get( 0 ).getDefaultValue().getValue() ).length );
+    assertEquals( 2, ( (Object[]) query.getParameters().get( 0 ).getDefaultValue() ).length );
   }
 
   @Test
   public void testParseMutivaluedDefault_String() throws Exception {
-    Object values = helper.parseDefaultValue( "a|b|c|d|e", DataType.STRING ).getValue();
+    Object values = helper.parseDefaultValue( "a|b|c|d|e", DataType.STRING );
     assertTrue( values instanceof String[] );
     String[] stringValues = (String[]) values;
     assertEquals( 5, stringValues.length );
@@ -86,12 +86,12 @@ public class QueryXmlHelperTest {
     assertEquals( "d", stringValues[3] );
     assertEquals( "e", stringValues[4] );
 
-    values = helper.parseDefaultValue( "a", DataType.STRING ).getValue();
+    values = helper.parseDefaultValue( "a", DataType.STRING );
     assertTrue( values instanceof String );
     assertEquals( "a", values );
 
     // try "a|b"|"c|d"
-    values = helper.parseDefaultValue( "\"a|b\"|\"c|d\"", DataType.STRING ).getValue();
+    values = helper.parseDefaultValue( "\"a|b\"|\"c|d\"", DataType.STRING );
     assertTrue( values instanceof String[] );
     stringValues = (String[]) values;
     assertEquals( 2, stringValues.length );
@@ -101,7 +101,7 @@ public class QueryXmlHelperTest {
 
   @Test
   public void testParseMultivaluedDefault_Numeric() throws Exception {
-    Object values = helper.parseDefaultValue( "1|2|3|4|5", DataType.NUMERIC ).getValue();
+    Object values = helper.parseDefaultValue( "1|2|3|4|5", DataType.NUMERIC );
     assertTrue( values instanceof Double[] );
     Double[] numericValues = (Double[]) values;
     assertEquals( 5, numericValues.length );
@@ -114,7 +114,7 @@ public class QueryXmlHelperTest {
 
   @Test
   public void testParseMultivaluedDefault_Boolean() throws Exception {
-    Object values = helper.parseDefaultValue( "true|false", DataType.BOOLEAN ).getValue();
+    Object values = helper.parseDefaultValue( "true|false", DataType.BOOLEAN );
     assertTrue( values instanceof Boolean[] );
     Boolean[] boolValues = (Boolean[]) values;
     assertEquals( 2, boolValues.length );

@@ -59,7 +59,6 @@ import org.pentaho.metadata.model.SqlPhysicalModel;
 import org.pentaho.metadata.model.SqlPhysicalTable;
 import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.IConcept;
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.model.concept.security.RowLevelSecurity;
 import org.pentaho.metadata.model.concept.security.SecurityOwner;
 import org.pentaho.metadata.model.concept.types.AggregationType;
@@ -229,7 +228,7 @@ public class XmiParser {
           }
           String shortkey = key.substring( "LEGACY_EVENT_".length() ); //$NON-NLS-1$
           eventModelElement.appendChild( createTaggedValue( doc, shortkey, (String) domain.getChildProperties().get(
-              key ).getValue(), idGen.getNextId() ) );
+              key ), idGen.getNextId() ) );
         }
       }
       // only add cwm:event if one or more keys exist
@@ -457,15 +456,15 @@ public class XmiParser {
           Element modelElement = doc.createElement( "CWM:ModelElement.taggedValue" ); //$NON-NLS-1$
           if ( table.getProperty( "__LEGACY_TABLE_IS_DRAWN" ) != null ) { //$NON-NLS-1$
             modelElement.appendChild( createTaggedValue( doc,
-                "TABLE_IS_DRAWN", (String) table.getProperty( "__LEGACY_TABLE_IS_DRAWN" ).getValue(), idGen.getNextId() ) ); //$NON-NLS-1$ //$NON-NLS-2$
+                "TABLE_IS_DRAWN", (String) table.getProperty( "__LEGACY_TABLE_IS_DRAWN" ), idGen.getNextId() ) ); //$NON-NLS-1$ //$NON-NLS-2$
           }
           if ( table.getProperty( "__LEGACY_TAG_POSITION_Y" ) != null ) { //$NON-NLS-1$
             modelElement.appendChild( createTaggedValue( doc,
-                "TAG_POSITION_Y", (String) table.getProperty( "__LEGACY_TAG_POSITION_Y" ).getValue(), idGen.getNextId() ) ); //$NON-NLS-1$ //$NON-NLS-2$
+                "TAG_POSITION_Y", (String) table.getProperty( "__LEGACY_TAG_POSITION_Y" ), idGen.getNextId() ) ); //$NON-NLS-1$ //$NON-NLS-2$
           }
           if ( table.getProperty( "__LEGACY_TAG_POSITION_X" ) != null ) { //$NON-NLS-1$
             modelElement.appendChild( createTaggedValue( doc,
-                "TAG_POSITION_X", (String) table.getProperty( "__LEGACY_TAG_POSITION_X" ).getValue(), idGen.getNextId() ) ); //$NON-NLS-1$ //$NON-NLS-2$
+                "TAG_POSITION_X", (String) table.getProperty( "__LEGACY_TAG_POSITION_X" ), idGen.getNextId() ) ); //$NON-NLS-1$ //$NON-NLS-2$
           }
           if ( table.getParentConcept() != null ) {
             modelElement.appendChild( createTaggedValue( doc,
@@ -537,18 +536,8 @@ public class XmiParser {
   @SuppressWarnings( "unchecked" )
   protected void generateOlapXmi( Domain domain, Document doc, IdGen idGen, Element xmiContent ) {
     for ( LogicalModel model : domain.getLogicalModels() ) {
-      List<OlapDimension> dims = null;
-      Property dimsProperty = model.getProperty( "olap_dimensions" ); //$NON-NLS-1$
-      if ( dimsProperty != null ) {
-        dims = (List<OlapDimension>) dimsProperty.getValue();
-      }
-      
-      List<OlapCube> cubes = null;
-      Property cubesProperty = model.getProperty( "olap_cubes" ); //$NON-NLS-1$
-      if ( cubesProperty != null ) {
-        cubes = (List<OlapCube>) cubesProperty.getValue();
-      }
-      
+      List<OlapDimension> dims = (List<OlapDimension>) model.getProperty( "olap_dimensions" ); //$NON-NLS-1$
+      List<OlapCube> cubes = (List<OlapCube>) model.getProperty( "olap_cubes" ); //$NON-NLS-1$
       Map<OlapDimension, String> dimMap = new HashMap<OlapDimension, String>();
       Map<OlapDimensionUsage, String> dimUsageIdMap = new HashMap<OlapDimensionUsage, String>();
       Map<OlapDimension, List<OlapDimensionUsage>> dimUsageMap = new HashMap<OlapDimension, List<OlapDimensionUsage>>();
@@ -799,48 +788,48 @@ public class XmiParser {
       String body = null;
       String type = null;
 
-      Property val = concept.getChildProperty( key );
+      Object val = concept.getChildProperty( key );
       /*
        * <CWM:Description body="POSTALCODE" name="formula" type="String" xmi.id="a927"> <CWM:Description.modelElement>
        * <CWMRDB:Column xmi.idref="a922"/> </CWM:Description.modelElement> </CWM:Description>
        */
-      if ( val.getValue() instanceof String ) {
+      if ( val instanceof String ) {
         if ( key.equals( SqlPhysicalColumn.TARGET_COLUMN ) ) {
           key = "formula"; //$NON-NLS-1$
         }
-        String str = (String) val.getValue();
+        String str = (String) val;
         body = str;
         type = "String"; //$NON-NLS-1$
-      } else if ( val.getValue() instanceof Boolean ) {
-        Boolean bool = (Boolean) val.getValue();
+      } else if ( val instanceof Boolean ) {
+        Boolean bool = (Boolean) val;
         type = "Boolean"; //$NON-NLS-1$
         body = bool.booleanValue() ? "Y" : "N"; //$NON-NLS-1$ //$NON-NLS-2$
-      } else if ( val.getValue() instanceof Color ) {
-        Color c = (Color) val.getValue();
+      } else if ( val instanceof Color ) {
+        Color c = (Color) val;
         ColorSettings cs = new ColorSettings( c.getRed(), c.getGreen(), c.getBlue() );
         body = cs.toString();
         type = "Color"; //$NON-NLS-1$
-      } else if ( val.getValue() instanceof URL ) {
-        body = val.getValue().toString();
+      } else if ( val instanceof URL ) {
+        body = val.toString();
         type = "URL"; //$NON-NLS-1$
-      } else if ( val.getValue() instanceof org.pentaho.metadata.model.concept.types.ColumnWidth ) {
+      } else if ( val instanceof org.pentaho.metadata.model.concept.types.ColumnWidth ) {
         org.pentaho.metadata.model.concept.types.ColumnWidth ncw =
-            (org.pentaho.metadata.model.concept.types.ColumnWidth) val.getValue();
+            (org.pentaho.metadata.model.concept.types.ColumnWidth) val;
         type = "ColumnWidth"; //$NON-NLS-1$
         ColumnWidth cw = new ColumnWidth( ncw.getType().ordinal(), ncw.getWidth() );
         body = cw.toString();
-      } else if ( val.getValue() instanceof Double ) {
+      } else if ( val instanceof Double ) {
         type = "Number"; //$NON-NLS-1$
-        BigDecimal bd = new BigDecimal( (Double) val.getValue() );
+        BigDecimal bd = new BigDecimal( (Double) val );
         body = bd.toString();
-      } else if ( val.getValue() instanceof Alignment ) {
-        Alignment alignment = (Alignment) val.getValue();
+      } else if ( val instanceof Alignment ) {
+        Alignment alignment = (Alignment) val;
         AlignmentSettings as = AlignmentSettings.types[alignment.ordinal()];
         body = as.toString();
         type = "Alignment"; //$NON-NLS-1$
-      } else if ( val.getValue() instanceof org.pentaho.metadata.model.concept.security.Security ) {
+      } else if ( val instanceof org.pentaho.metadata.model.concept.security.Security ) {
         org.pentaho.metadata.model.concept.security.Security security =
-            (org.pentaho.metadata.model.concept.security.Security) val.getValue();
+            (org.pentaho.metadata.model.concept.security.Security) val;
         Map<org.pentaho.pms.schema.security.SecurityOwner, Integer> map =
             new HashMap<org.pentaho.pms.schema.security.SecurityOwner, Integer>();
         for ( SecurityOwner owner : security.getOwners() ) {
@@ -851,8 +840,8 @@ public class XmiParser {
         Security legacySecurity = new Security( map );
         body = legacySecurity.toXML();
         type = "Security"; //$NON-NLS-1$
-      } else if ( val.getValue() instanceof RowLevelSecurity ) {
-        RowLevelSecurity nrls = (RowLevelSecurity) val.getValue();
+      } else if ( val instanceof RowLevelSecurity ) {
+        RowLevelSecurity nrls = (RowLevelSecurity) val;
         org.pentaho.pms.schema.security.RowLevelSecurity rls = new org.pentaho.pms.schema.security.RowLevelSecurity();
         rls.setType( Type.values()[nrls.getType().ordinal()] );
         rls.setGlobalConstraint( nrls.getGlobalConstraint() );
@@ -867,48 +856,48 @@ public class XmiParser {
 
         body = rls.toXML();
         type = "RowLevelSecurity"; //$NON-NLS-1$
-      } else if ( val.getValue() instanceof Font ) {
+      } else if ( val instanceof Font ) {
         ConceptPropertyFont font = (ConceptPropertyFont) ThinModelConverter.convertPropertyToLegacy( "font", val ); //$NON-NLS-1$
-        body = ( (FontSettings) font.getValue().getValue() ).toString();
+        body = ( (FontSettings) font.getValue() ).toString();
         type = "Font"; //$NON-NLS-1$
-      } else if ( val.getValue() instanceof TargetTableType ) {
-        TargetTableType ttt = (TargetTableType) val.getValue();
+      } else if ( val instanceof TargetTableType ) {
+        TargetTableType ttt = (TargetTableType) val;
         if ( ttt == TargetTableType.TABLE ) {
           // do nothing
         } else {
           type = "TargetTableType"; //$NON-NLS-1$
           body = ttt.toString();
         }
-      } else if ( val.getValue() instanceof TableType ) {
-        TableType tt = (TableType) val.getValue();
+      } else if ( val instanceof TableType ) {
+        TableType tt = (TableType) val;
         body = TableTypeSettings.getTypeDescriptions()[tt.ordinal()];
         type = "TableType"; //$NON-NLS-1$
-      } else if ( val.getValue() instanceof LocalizedString ) {
+      } else if ( val instanceof LocalizedString ) {
         // need to add description for each locale
-        LocalizedString lstr = (LocalizedString) val.getValue();
+        LocalizedString lstr = (LocalizedString) val;
         for ( String locale : lstr.getLocales() ) {
           createDescription( doc, lstr.getLocalizedString( locale ), key,
               "LocString", locale, idGen, parentTag, idstr, allDescriptions ); //$NON-NLS-1$
         }
-      } else if ( val.getValue() instanceof TargetColumnType ) {
-        TargetColumnType tct = (TargetColumnType) val.getValue();
+      } else if ( val instanceof TargetColumnType ) {
+        TargetColumnType tct = (TargetColumnType) val;
         body = tct == TargetColumnType.OPEN_FORMULA ? "Y" : "N"; //$NON-NLS-1$ //$NON-NLS-2$
         key = "exact"; //$NON-NLS-1$
         type = "Boolean"; //$NON-NLS-1$
-      } else if ( val.getValue() instanceof FieldType ) {
-        FieldType ft = (FieldType) val.getValue();
+      } else if ( val instanceof FieldType ) {
+        FieldType ft = (FieldType) val;
         // concept.setProperty(name, FieldType.values()[FieldTypeSettings.getType(body).getType()]);
         body = FieldTypeSettings.getTypeDescriptions()[ft.ordinal()];
         type = "FieldType"; //$NON-NLS-1$
-      } else if ( val.getValue() instanceof DataType ) {
-        body = DataTypeSettings.types[( (DataType) val.getValue() ).ordinal()].getCode();
+      } else if ( val instanceof DataType ) {
+        body = DataTypeSettings.types[( (DataType) val ).ordinal()].getCode();
         type = "DataType"; //$NON-NLS-1$
-      } else if ( val.getValue() instanceof AggregationType ) {
-        AggregationType at = (AggregationType) val.getValue();
+      } else if ( val instanceof AggregationType ) {
+        AggregationType at = (AggregationType) val;
         body = AggregationSettings.types[at.ordinal()].getCode();
         type = "Aggregation"; //$NON-NLS-1$
-      } else if ( val.getValue() instanceof List ) {
-        List objs = (List) val.getValue();
+      } else if ( val instanceof List ) {
+        List objs = (List) val;
         if ( objs.size() == 0 && "aggregation_list".equals( key ) ) {
           // assume this is an agg list
           ConceptPropertyAggregationList list =
@@ -935,7 +924,11 @@ public class XmiParser {
           }
         }
       } else {
-        logger.error( Messages.getErrorString( "XmiParser.ERROR_0005_UNSUPPORTED_CONCEPT_PROPERTY", val.getValue().getClass() ) ); //$NON-NLS-1$
+        if ( val == null ) {
+          logger.error( Messages.getErrorString( "XmiParser.ERROR_0005_UNSUPPORTED_CONCEPT_PROPERTY", "null" ) ); //$NON-NLS-1$ //$NON-NLS-2$
+        } else {
+          logger.error( Messages.getErrorString( "XmiParser.ERROR_0005_UNSUPPORTED_CONCEPT_PROPERTY", val.getClass() ) ); //$NON-NLS-1$
+        }
       }
       if ( type != null ) {
         createDescription( doc, body, key, type, null, idGen, parentTag, idstr, allDescriptions );
@@ -1047,7 +1040,7 @@ public class XmiParser {
     for ( Element event : events ) {
       Map<String, String> kvp = getKeyValuePairs( event, "CWM:TaggedValue", "tag", "value" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       for ( String key : kvp.keySet() ) {
-        domain.setProperty( "LEGACY_EVENT_" + key, new Property<String>( kvp.get( key ) ) ); //$NON-NLS-1$
+        domain.setProperty( "LEGACY_EVENT_" + key, kvp.get( key ) ); //$NON-NLS-1$
       }
     }
     populateLocales( domain, parameters );
@@ -1063,7 +1056,7 @@ public class XmiParser {
       String xmiId = concept.getAttribute( "xmi.id" ); //$NON-NLS-1$
       String parentName = getKeyValue( concept, "CWM:TaggedValue", "tag", "value", "CONCEPT_PARENT_NAME" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
       if ( parentName != null ) {
-        c.setProperty( "__TMP_CONCEPT_PARENT_NAME", new Property<String>( parentName ) ); //$NON-NLS-1$
+        c.setProperty( "__TMP_CONCEPT_PARENT_NAME", parentName ); //$NON-NLS-1$
       }
       xmiConceptMap.put( xmiId, c );
       domain.addConcept( c );
@@ -1071,11 +1064,7 @@ public class XmiParser {
 
     // second pass to bind parents to children
     for ( Concept concept : domain.getConcepts() ) {
-      String parentName = null;
-      Property property = concept.getChildProperty( "__TMP_CONCEPT_PARENT_NAME" );
-      if ( property != null ) {
-        parentName = (String) property.getValue(); //$NON-NLS-1$
-      }
+      String parentName = (String) concept.getChildProperty( "__TMP_CONCEPT_PARENT_NAME" ); //$NON-NLS-1$
       if ( parentName != null ) {
         concept.removeChildProperty( "__TMP_CONCEPT_PARENT_NAME" ); //$NON-NLS-1$
         Concept conceptParent = domain.findConcept( parentName );
@@ -1263,13 +1252,13 @@ public class XmiParser {
           table.setLogicalModel( logicalModel );
           // store legacy values
           if ( nvp.containsKey( "TABLE_IS_DRAWN" ) ) { //$NON-NLS-1$
-            table.setProperty( "__LEGACY_TABLE_IS_DRAWN", new Property<String>( nvp.get( "TABLE_IS_DRAWN" ) ) ); //$NON-NLS-1$ //$NON-NLS-2$
+            table.setProperty( "__LEGACY_TABLE_IS_DRAWN", nvp.get( "TABLE_IS_DRAWN" ) ); //$NON-NLS-1$ //$NON-NLS-2$
           }
           if ( nvp.containsKey( "TAG_POSITION_Y" ) ) { //$NON-NLS-1$
-            table.setProperty( "__LEGACY_TAG_POSITION_Y", new Property<String>( nvp.get( "TAG_POSITION_Y" ) ) ); //$NON-NLS-1$ //$NON-NLS-2$
+            table.setProperty( "__LEGACY_TAG_POSITION_Y", nvp.get( "TAG_POSITION_Y" ) ); //$NON-NLS-1$ //$NON-NLS-2$
           }
           if ( nvp.containsKey( "TAG_POSITION_X" ) ) { //$NON-NLS-1$
-            table.setProperty( "__LEGACY_TAG_POSITION_X", new Property<String>( nvp.get( "TAG_POSITION_X" ) ) ); //$NON-NLS-1$ //$NON-NLS-2$
+            table.setProperty( "__LEGACY_TAG_POSITION_X", nvp.get( "TAG_POSITION_X" ) ); //$NON-NLS-1$ //$NON-NLS-2$
           }
           xmiConceptMap.put( biztable.getAttribute( "xmi.id" ), table ); //$NON-NLS-1$
           logicalModel.addLogicalTable( table );
@@ -1486,24 +1475,24 @@ public class XmiParser {
             if ( name.equals( "formula" ) ) { //$NON-NLS-1$
               name = SqlPhysicalColumn.TARGET_COLUMN;
             }
-            concept.setProperty( name, new Property<String>( body ) );
+            concept.setProperty( name, body );
           } else if ( propType.equals( "Boolean" ) ) { //$NON-NLS-1$
             if ( name.equals( "exact" ) ) { //$NON-NLS-1$
-              concept.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>(
-                  "Y".equals( body ) ? TargetColumnType.OPEN_FORMULA : TargetColumnType.COLUMN_NAME ) ); //$NON-NLS-1$
+              concept.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE,
+                  "Y".equals( body ) ? TargetColumnType.OPEN_FORMULA : TargetColumnType.COLUMN_NAME ); //$NON-NLS-1$
             } else {
               // <CWM:Description body="N" name="exact" type="Boolean" xmi.id="a92">
-              concept.setProperty( name, new Property<Boolean>( new Boolean( "Y".equals( body ) ) ) ); //$NON-NLS-1$
+              concept.setProperty( name, new Boolean( "Y".equals( body ) ) ); //$NON-NLS-1$
             }
           } else if ( propType.equals( "FieldType" ) ) { //$NON-NLS-1$
             // <CWM:Description body="Dimension" name="fieldtype" type="FieldType" xmi.id="a97">
-            concept.setProperty( name, new Property<FieldType>( FieldType.values()[FieldTypeSettings.getType( body ).getType()] ) );
+            concept.setProperty( name, FieldType.values()[FieldTypeSettings.getType( body ).getType()] );
           } else if ( propType.equals( "TableType" ) ) { //$NON-NLS-1$
-            concept.setProperty( name, new Property<TableType> ( TableType.values()[TableTypeSettings.getType( body ).getType()] ) );
+            concept.setProperty( name, TableType.values()[TableTypeSettings.getType( body ).getType()] );
           } else if ( propType.equals( "DataType" ) ) { //$NON-NLS-1$
             // <CWM:Description body="String,50,-1" name="datatype" type="DataType" xmi.id="a100">
             DataTypeSettings setting = DataTypeSettings.fromString( body );
-            concept.setProperty( name, new Property<DataType>( DataType.valueOf( setting.getCode().toUpperCase() ) ) );
+            concept.setProperty( name, DataType.valueOf( setting.getCode().toUpperCase() ) );
           } else if ( propType.equals( "Security" ) ) { //$NON-NLS-1$
             // <CWM:Description
             // body="&lt;security&gt;&#10;  &lt;owner-rights&gt;&#10;  &lt;owner&gt;&lt;type&gt;user&lt;/type&gt;&lt;name&gt;suzy&lt;/name&gt;&lt;/owner&gt; &lt;rights&gt;31&lt;/rights&gt;&#10;  &lt;/owner-rights&gt;&#10;  &lt;owner-rights&gt;&#10;  &lt;owner&gt;&lt;type&gt;role&lt;/type&gt;&lt;name&gt;Admin&lt;/name&gt;&lt;/owner&gt; &lt;rights&gt;31&lt;/rights&gt;&#10;  &lt;/owner-rights&gt;&#10;&lt;/security&gt;&#10;"
@@ -1516,7 +1505,7 @@ public class XmiParser {
               Integer val = security.getOwnerRights( owner );
               map.put( ownerObj, val );
             }
-            concept.setProperty( name, new Property<org.pentaho.metadata.model.concept.security.Security>( new org.pentaho.metadata.model.concept.security.Security( map ) ) );
+            concept.setProperty( name, new org.pentaho.metadata.model.concept.security.Security( map ) );
           } else if ( propType.equals( "RowLevelSecurity" ) ) { //$NON-NLS-1$
             org.pentaho.pms.schema.security.RowLevelSecurity security =
                 org.pentaho.pms.schema.security.RowLevelSecurity.fromXML( body );
@@ -1532,11 +1521,11 @@ public class XmiParser {
               map.put( ownerObj, security.getRoleBasedConstraintMap().get( owner ) );
             }
             securityObj.setRoleBasedConstraintMap( map );
-            concept.setProperty( name, new Property<RowLevelSecurity>( securityObj ) );
+            concept.setProperty( name, securityObj );
           } else if ( propType.equals( "Aggregation" ) ) { //$NON-NLS-1$
             // <CWM:Description body="none" name="aggregation" type="Aggregation" xmi.id="a104">
 
-            concept.setProperty( name, new Property<AggregationType>( AggregationType.values()[AggregationSettings.getType( body ).getType()] ) );
+            concept.setProperty( name, AggregationType.values()[AggregationSettings.getType( body ).getType()] );
           } else if ( propType.equals( "AggregationList" ) ) { //$NON-NLS-1$
             List<AggregationSettings> settings = ConceptPropertyAggregationList.fromXML( body );
             List<AggregationType> aggTypes = new ArrayList<AggregationType>();
@@ -1545,33 +1534,33 @@ public class XmiParser {
                 aggTypes.add( AggregationType.values()[setting.getType()] );
               }
             }
-            concept.setProperty( name, new Property<List<AggregationType>>( aggTypes ) );
+            concept.setProperty( name, aggTypes );
           } else if ( propType.equals( "Font" ) ) { //$NON-NLS-1$
             FontSettings font = FontSettings.fromString( body );
-            concept.setProperty( name, new Property<Font>( new Font( font.getName(), font.getHeight(), font.isBold(), font.isItalic() ) ) );
+            concept.setProperty( name, new Font( font.getName(), font.getHeight(), font.isBold(), font.isItalic() ) );
           } else if ( propType.equals( "Color" ) ) { //$NON-NLS-1$
             ColorSettings color = ColorSettings.fromString( body );
-            concept.setProperty( name, new Property<Color>( new Color( color.getRed(), color.getGreen(), color.getBlue() ) ) );
+            concept.setProperty( name, new Color( color.getRed(), color.getGreen(), color.getBlue() ) );
             // TODO: } else if (propType.equals("AggregationList")) {
             // TODO: ALL Others: URL, Number, etc
           } else if ( propType.equals( "Alignment" ) ) { //$NON-NLS-1$
             AlignmentSettings alignment = AlignmentSettings.fromString( body );
-            concept.setProperty( name, new Property<Alignment>( Alignment.values()[alignment.getType()] ) );
+            concept.setProperty( name, Alignment.values()[alignment.getType()] );
           } else if ( propType.equals( "Number" ) ) { //$NON-NLS-1$
             BigDecimal bd = new BigDecimal( body );
-            concept.setProperty( name, new Property<Double>( bd.doubleValue() ) );
+            concept.setProperty( name, bd.doubleValue() );
           } else if ( propType.equals( "ColumnWidth" ) ) { //$NON-NLS-1$
             ColumnWidth cw = ColumnWidth.fromString( body );
             WidthType cwt = WidthType.values()[cw.getType()];
             org.pentaho.metadata.model.concept.types.ColumnWidth ncw =
                 new org.pentaho.metadata.model.concept.types.ColumnWidth( cwt, cw.getWidth().doubleValue() );
-            concept.setProperty( name, new Property<org.pentaho.metadata.model.concept.types.ColumnWidth>( ncw ) );
+            concept.setProperty( name, ncw );
           } else if ( propType.equals( "URL" ) ) { //$NON-NLS-1$
             // NOTE: URL is not compatible with GWT at this time
             URL url = new URL( body );
-            concept.setProperty( name, new Property<URL>( url ) );
+            concept.setProperty( name, url );
           } else if ( propType.equals( "TargetTableType" ) ) {
-            concept.setProperty( name, new Property<TargetTableType>( TargetTableType.valueOf( body ) ) );
+            concept.setProperty( name, TargetTableType.valueOf( body ) );
           } else {
             logger.error( Messages.getErrorString(
                 "XmiParser.ERROR_0008_FAILED_TO_CONVERT_PROPERTY", propType, concept.getId() ) ); //$NON-NLS-1$
@@ -1700,7 +1689,7 @@ public class XmiParser {
             dimensionObjs.add( dimensionObj );
           }
 
-          model.setProperty( "olap_dimensions", new Property<List<OlapDimension>>( dimensionObjs ) ); //$NON-NLS-1$
+          model.setProperty( "olap_dimensions", dimensionObjs ); //$NON-NLS-1$
 
           if ( memberSelections != null ) {
             NodeList levels = memberSelections.getElementsByTagName( "CWMOLAP:Level" ); //$NON-NLS-1$
@@ -1810,7 +1799,7 @@ public class XmiParser {
           cubesList.add( cubeObj );
         }
 
-        model.setProperty( "olap_cubes", new Property<List<OlapCube>>( cubesList ) ); //$NON-NLS-1$
+        model.setProperty( "olap_cubes", cubesList ); //$NON-NLS-1$
       }
 
       /*
@@ -1874,15 +1863,13 @@ public class XmiParser {
     /*
      * <CWM:Description body="Oficinas" language="es" name="name" type="LocString" xmi.id="a14">
      */
-    LocalizedString str = null;
-    Property property = concept.getChildProperty( name );
-    if( property != null ) {
-      str = ( LocalizedString ) property.getValue();
-    } else {
-      str = new LocalizedString();
-      concept.setProperty( name, new Property<LocalizedString>( str ) );
-    }
+
     String lang = description.getAttribute( "language" ); //$NON-NLS-1$
+    LocalizedString str = (LocalizedString) concept.getChildProperty( name );
+    if ( str == null ) {
+      str = new LocalizedString();
+      concept.setProperty( name, str );
+    }
     str.setString( lang, body );
   }
 

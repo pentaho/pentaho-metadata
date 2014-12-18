@@ -18,7 +18,6 @@ package org.pentaho.metadata.query.model;
 
 import java.io.Serializable;
 
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.model.concept.types.DataType;
 
 /**
@@ -33,9 +32,9 @@ public class Parameter implements Serializable {
 
   private String name;
   private DataType type;
-  private Property defaultValue;
+  private Object defaultValue;
 
-  public Parameter( String name, DataType type, Property defaultValue ) {
+  public Parameter( String name, DataType type, Object defaultValue ) {
     this.name = name;
     this.type = type;
     this.defaultValue = defaultValue;
@@ -49,7 +48,7 @@ public class Parameter implements Serializable {
     return type;
   }
 
-  public Property getDefaultValue() {
+  public Object getDefaultValue() {
     return defaultValue;
   }
 

@@ -20,7 +20,6 @@ import java.math.BigDecimal;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
@@ -74,12 +73,12 @@ public class ConceptPropertyNumber extends ConceptPropertyBase implements Clonea
     return ConceptPropertyType.NUMBER;
   }
 
-  public Property getValue() {
-    return new Property<BigDecimal>( value );
+  public Object getValue() {
+    return value;
   }
 
-  public void setValue( Property value ) {
-    this.value = value != null ? (BigDecimal) value.getValue() : null;
+  public void setValue( Object value ) {
+    this.value = (BigDecimal) value;
   }
 
   public boolean equals( Object obj ) {

@@ -36,7 +36,6 @@ import org.pentaho.metadata.model.LogicalRelationship;
 import org.pentaho.metadata.model.LogicalTable;
 import org.pentaho.metadata.model.SqlPhysicalColumn;
 import org.pentaho.metadata.model.SqlPhysicalTable;
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.RelationshipType;
@@ -117,7 +116,7 @@ public class SqlGeneratorTest {
 
     @Override
     public String getJoin( LogicalModel LogicalModel, LogicalRelationship relation,
-        Map<LogicalTable, String> tableAliases, Map<String, Property> parameters, boolean genAsPreparedStatement,
+        Map<LogicalTable, String> tableAliases, Map<String, Object> parameters, boolean genAsPreparedStatement,
         DatabaseMeta databaseMeta, String locale ) throws PentahoMetadataException {
       return super.getJoin( LogicalModel, relation, tableAliases, parameters, genAsPreparedStatement, databaseMeta,
           locale );
@@ -426,8 +425,8 @@ public class SqlGeneratorTest {
     bt1.setId( "bt1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc1" ) ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
 
@@ -435,8 +434,8 @@ public class SqlGeneratorTest {
     bt2.setId( "bt2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc2" ) ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
 
@@ -481,7 +480,7 @@ public class SqlGeneratorTest {
 
       LogicalModel model = TestHelper.buildDefaultModel();
       LogicalColumn bc1 = model.findLogicalColumn( "bc1" );
-      bc1.setProperty( IPhysicalColumn.AGGREGATIONTYPE_PROPERTY, new Property<AggregationType>( AggregationType.SUM ) );
+      bc1.setProperty( IPhysicalColumn.AGGREGATIONTYPE_PROPERTY, AggregationType.SUM );
       LogicalColumn bc2 = model.findLogicalColumn( "bc2" );
       LogicalColumn bce2 = model.findLogicalColumn( "bce2" );
       DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
@@ -547,7 +546,7 @@ public class SqlGeneratorTest {
 
       QueryModelMetaData emd = (QueryModelMetaData) mquery.generateMetadata( mmd );
 
-      Assert.assertEquals( "pc1", emd.getAttribute( 0, 0, SqlPhysicalColumn.TARGET_COLUMN ).getValue().toString() ); //$NON-NLS-1$  //$NON-NLS-2$
+      Assert.assertEquals( "pc1", emd.getAttribute( 0, 0, SqlPhysicalColumn.TARGET_COLUMN ).toString() ); //$NON-NLS-1$  //$NON-NLS-2$
 
     } catch ( Exception e ) {
       e.printStackTrace();
@@ -561,7 +560,7 @@ public class SqlGeneratorTest {
 
       LogicalModel model = TestHelper.buildDefaultModel();
       LogicalColumn bc1 = model.findLogicalColumn( "bc1" );
-      bc1.setProperty( IPhysicalColumn.AGGREGATIONTYPE_PROPERTY, new Property<AggregationType>( AggregationType.SUM ) );
+      bc1.setProperty( IPhysicalColumn.AGGREGATIONTYPE_PROPERTY, AggregationType.SUM );
       LogicalColumn bc2 = model.findLogicalColumn( "bc2" );
       LogicalColumn bce2 = model.findLogicalColumn( "bce2" );
       DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
@@ -692,9 +691,9 @@ public class SqlGeneratorTest {
       DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
       Query query = new Query( null, model );
 
-      query.getParameters().add( new Parameter( "test1", DataType.BOOLEAN, new Property<Boolean>( true ) ) );
-      query.getParameters().add( new Parameter( "test2", DataType.NUMERIC, new Property<Double>( 1.2 ) ) );
-      query.getParameters().add( new Parameter( "test3", DataType.STRING, new Property<String>( "value" ) ) );
+      query.getParameters().add( new Parameter( "test1", DataType.BOOLEAN, true ) );
+      query.getParameters().add( new Parameter( "test2", DataType.NUMERIC, 1.2 ) );
+      query.getParameters().add( new Parameter( "test3", DataType.STRING, "value" ) );
 
       query.getSelections().add( new Selection( null, bc1, null ) );
       query.getSelections().add( new Selection( null, bc2, null ) );
@@ -714,10 +713,10 @@ public class SqlGeneratorTest {
           + "          )\n" + "      AND (\n" + "             'value' =  bt2.pc2 \n" + "          )\n" + "        )\n",
           mquery.getQuery() );
 
-      Map<String, Property> parameters = new HashMap<String, Property>();
-      parameters.put( "test1", new Property<Boolean>( false ) );
-      parameters.put( "test2", new Property<Double>( 2.1 ) );
-      parameters.put( "test3", new Property<String>( "eulav" ) );
+      Map<String, Object> parameters = new HashMap<String, Object>();
+      parameters.put( "test1", false );
+      parameters.put( "test2", 2.1 );
+      parameters.put( "test3", "eulav" );
 
       mquery = generator.generateSql( query, "en_US", null, databaseMeta, parameters, false );
       TestHelper.assertEqualsIgnoreWhitespaces( "SELECT DISTINCT \n" + "          bt1.pc1 AS COL0\n"
@@ -759,8 +758,8 @@ public class SqlGeneratorTest {
       DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
       Query query = new Query( null, model );
 
-      query.getParameters().add( new Parameter( "test1", DataType.NUMERIC, new Property<Double[]>( new Double[] { 1.2, 1.3 } ) ) );
-      query.getParameters().add( new Parameter( "test2", DataType.STRING, new Property<String[]>( new String[] { "value", "value2" } ) ) );
+      query.getParameters().add( new Parameter( "test1", DataType.NUMERIC, new Double[] { 1.2, 1.3 } ) );
+      query.getParameters().add( new Parameter( "test2", DataType.STRING, new String[] { "value", "value2" } ) );
 
       query.getSelections().add( new Selection( null, bc1, null ) );
       query.getSelections().add( new Selection( null, bc2, null ) );
@@ -777,9 +776,9 @@ public class SqlGeneratorTest {
           + "              bt1.pc1  IN ( 1.2 , 1.3 ) \n" + "          )\n" + "      AND (\n"
           + "              bt2.pc2  IN ( 'value' , 'value2' ) \n" + "          )\n" + "        )\n", mquery.getQuery() );
 
-      Map<String, Property> parameters = new HashMap<String, Property>();
-      parameters.put( "test1", new Property<String>( "value1" ) );
-      parameters.put( "test2", new Property<Double>( 2.1 ) );
+      Map<String, Object> parameters = new HashMap<String, Object>();
+      parameters.put( "test1", "value1" );
+      parameters.put( "test2", 2.1 );
 
       mquery = generator.generateSql( query, "en_US", null, databaseMeta, parameters, false );
       TestHelper.assertEqualsIgnoreWhitespaces( "SELECT DISTINCT \n" + "          bt1.pc1 AS COL0\n"
@@ -801,9 +800,9 @@ public class SqlGeneratorTest {
       Assert.assertEquals( "test1", mquery.getParamList().get( 0 ) );
       Assert.assertEquals( "test2", mquery.getParamList().get( 1 ) );
 
-      parameters = new HashMap<String, Property>();
-      parameters.put( "test1", new Property<String[]>( new String[] { "value1", "value2" } ) );
-      parameters.put( "test2", new Property<Double[]>( new Double[] { 2.1, 2.2, 2.3 } ) );
+      parameters = new HashMap<String, Object>();
+      parameters.put( "test1", new String[] { "value1", "value2" } );
+      parameters.put( "test2", new Double[] { 2.1, 2.2, 2.3 } );
 
       mquery = generator.generateSql( query, "en_US", null, databaseMeta, parameters, true );
       TestHelper.assertEqualsIgnoreWhitespaces( "SELECT DISTINCT \n" + "          bt1.pc1 AS COL0\n"
@@ -817,9 +816,9 @@ public class SqlGeneratorTest {
       Assert.assertEquals( "test2", mquery.getParamList().get( 1 ) );
 
       // test that a single-value array translates into an '=' operation, not an IN
-      parameters = new HashMap<String, Property>();
-      parameters.put( "test1", new Property<String[]>( new String[] { "value1" } ) );
-      parameters.put( "test2", new Property<Double[]>( new Double[] { 2.1, 2.2, 2.3 } ) );
+      parameters = new HashMap<String, Object>();
+      parameters.put( "test1", new String[] { "value1" } );
+      parameters.put( "test2", new Double[] { 2.1, 2.2, 2.3 } );
 
       mquery = generator.generateSql( query, "en_US", null, databaseMeta, parameters, true );
       TestHelper.assertEqualsIgnoreWhitespaces( "SELECT DISTINCT \n" + "          bt1.pc1 AS COL0\n"
@@ -872,9 +871,9 @@ public class SqlGeneratorTest {
     DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
     Query query = new Query( null, model );
 
-    query.getParameters().add( new Parameter( "test1", DataType.NUMERIC, new Property<Double[]>( new Double[] { 1.2, 1.3 } ) ) );
-    query.getParameters().add( new Parameter( "test2", DataType.STRING, new Property<String[]>( new String[] { "value", "value2" } ) ) ); //$NON-NLS-1$ //$NON-NLS-2$
-    query.getParameters().add( new Parameter( "test3", DataType.STRING, new Property<String>( "single" ) ) ); //$NON-NLS-1$
+    query.getParameters().add( new Parameter( "test1", DataType.NUMERIC, new Double[] { 1.2, 1.3 } ) );
+    query.getParameters().add( new Parameter( "test2", DataType.STRING, new String[] { "value", "value2" } ) ); //$NON-NLS-1$ //$NON-NLS-2$
+    query.getParameters().add( new Parameter( "test3", DataType.STRING, "single" ) ); //$NON-NLS-1$
 
     query.getSelections().add( new Selection( null, bc1, null ) );
     query.getSelections().add( new Selection( null, bc2, null ) );
@@ -973,7 +972,7 @@ public class SqlGeneratorTest {
 
       QueryModelMetaData emd = (QueryModelMetaData) query.generateMetadata( mmd );
 
-      Assert.assertEquals( "pc1", emd.getAttribute( 0, 0, SqlPhysicalColumn.TARGET_COLUMN ).getValue().toString() ); //$NON-NLS-1$  //$NON-NLS-2$
+      Assert.assertEquals( "pc1", emd.getAttribute( 0, 0, SqlPhysicalColumn.TARGET_COLUMN ).toString() ); //$NON-NLS-1$  //$NON-NLS-2$
 
       // select none aggregate
 
@@ -1044,59 +1043,59 @@ public class SqlGeneratorTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc1" ) ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc2" ) ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
 
-    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "bt3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt3" ) ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt3" ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc3" ) ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc3" ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
-    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt4 = new LogicalTable();
     bt4.setId( "bt4" ); //$NON-NLS-1$
-    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt4" ) ); //$NON-NLS-1$
+    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt4" ); //$NON-NLS-1$
     final LogicalColumn bc4 = new LogicalColumn();
     bc4.setId( "bc4" ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc4" ) ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc4" ); //$NON-NLS-1$
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc4.setLogicalTable( bt4 );
     bt4.addLogicalColumn( bc4 );
-    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt5 = new LogicalTable();
     bt5.setId( "bt5" ); //$NON-NLS-1$
-    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt5" ) ); //$NON-NLS-1$
+    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt5" ); //$NON-NLS-1$
     final LogicalColumn bc5 = new LogicalColumn();
     bc5.setId( "bc5" ); //$NON-NLS-1$
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc5" ) ); //$NON-NLS-1$
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc5" ); //$NON-NLS-1$
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc5.setLogicalTable( bt5 );
     bt5.addLogicalColumn( bc5 );
-    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
     final LogicalRelationship rl1 = new LogicalRelationship();
 
     rl1.setFromTable( bt1 );
@@ -1167,59 +1166,59 @@ public class SqlGeneratorTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc1" ) ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc2" ) ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
 
-    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "bt3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt3" ) ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt3" ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc3" ) ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc3" ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
-    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt4 = new LogicalTable();
     bt4.setId( "bt4" ); //$NON-NLS-1$
-    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt4" ) ); //$NON-NLS-1$
+    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt4" ); //$NON-NLS-1$
     final LogicalColumn bc4 = new LogicalColumn();
     bc4.setId( "bc4" ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc4" ) ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc4" ); //$NON-NLS-1$
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc4.setLogicalTable( bt4 );
     bt4.addLogicalColumn( bc4 );
-    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt5 = new LogicalTable();
     bt5.setId( "bt5" ); //$NON-NLS-1$
-    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt5" ) ); //$NON-NLS-1$
+    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt5" ); //$NON-NLS-1$
     final LogicalColumn bc5 = new LogicalColumn();
     bc5.setId( "bc5" ); //$NON-NLS-1$
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc5" ) ); //$NON-NLS-1$
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc5" ); //$NON-NLS-1$
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc5.setLogicalTable( bt5 );
     bt5.addLogicalColumn( bc5 );
-    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
     final LogicalRelationship rl1 = new LogicalRelationship();
 
     rl1.setFromTable( bt1 );
@@ -1285,62 +1284,62 @@ public class SqlGeneratorTest {
   public void testClassicGetShortestPathBetween() throws Exception {
 
     final LogicalModel model = new LogicalModel();
-    model.setProperty( "path_build_method", new Property<String>( "CLASSIC" ) );
+    model.setProperty( "path_build_method", "CLASSIC" );
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc1" ) ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc2" ) ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
 
-    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "bt3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt3" ) ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt3" ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc3" ) ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc3" ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
-    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt4 = new LogicalTable();
     bt4.setId( "bt4" ); //$NON-NLS-1$
-    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt4" ) ); //$NON-NLS-1$
+    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt4" ); //$NON-NLS-1$
     final LogicalColumn bc4 = new LogicalColumn();
     bc4.setId( "bc4" ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc4" ) ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc4" ); //$NON-NLS-1$
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc4.setLogicalTable( bt4 );
     bt4.addLogicalColumn( bc4 );
-    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt5 = new LogicalTable();
     bt5.setId( "bt5" ); //$NON-NLS-1$
-    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt5" ) ); //$NON-NLS-1$
+    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt5" ); //$NON-NLS-1$
     final LogicalColumn bc5 = new LogicalColumn();
     bc5.setId( "bc5" ); //$NON-NLS-1$
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc5" ) ); //$NON-NLS-1$
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc5" ); //$NON-NLS-1$
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc5.setLogicalTable( bt5 );
     bt5.addLogicalColumn( bc5 );
-    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
     final LogicalRelationship rl1 = new LogicalRelationship();
 
     rl1.setFromTable( bt1 );
@@ -1403,62 +1402,62 @@ public class SqlGeneratorTest {
   public void testClassicGetShortestPathBetweenNoPathPossible() throws Exception {
 
     final LogicalModel model = new LogicalModel();
-    model.setProperty( "path_build_method", new Property<String>( "CLASSIC" ) );
+    model.setProperty( "path_build_method", "CLASSIC" );
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc1" ) ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc2" ) ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
 
-    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "bt3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt3" ) ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt3" ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc3" ) ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc3" ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
-    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt4 = new LogicalTable();
     bt4.setId( "bt4" ); //$NON-NLS-1$
-    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt4" ) ); //$NON-NLS-1$
+    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt4" ); //$NON-NLS-1$
     final LogicalColumn bc4 = new LogicalColumn();
     bc4.setId( "bc4" ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc4" ) ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc4" ); //$NON-NLS-1$
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc4.setLogicalTable( bt4 );
     bt4.addLogicalColumn( bc4 );
-    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt5 = new LogicalTable();
     bt5.setId( "bt5" ); //$NON-NLS-1$
-    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt5" ) ); //$NON-NLS-1$
+    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt5" ); //$NON-NLS-1$
     final LogicalColumn bc5 = new LogicalColumn();
     bc5.setId( "bc5" ); //$NON-NLS-1$
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc5" ) ); //$NON-NLS-1$
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc5" ); //$NON-NLS-1$
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc5.setLogicalTable( bt5 );
     bt5.addLogicalColumn( bc5 );
-    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
     final LogicalRelationship rl1 = new LogicalRelationship();
 
     rl1.setFromTable( bt1 );
@@ -1507,62 +1506,62 @@ public class SqlGeneratorTest {
   public void testNewAlgorithmGetShortestPathBetweenNoPathPossible() throws Exception {
 
     final LogicalModel model = new LogicalModel();
-    model.setProperty( "path_build_method", new Property<String>( "SHORTEST" ) );
+    model.setProperty( "path_build_method", "SHORTEST" );
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc1" ) ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc2" ) ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
 
-    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "bt3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt3" ) ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt3" ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc3" ) ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc3" ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
-    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt4 = new LogicalTable();
     bt4.setId( "bt4" ); //$NON-NLS-1$
-    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt4" ) ); //$NON-NLS-1$
+    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt4" ); //$NON-NLS-1$
     final LogicalColumn bc4 = new LogicalColumn();
     bc4.setId( "bc4" ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc4" ) ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc4" ); //$NON-NLS-1$
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc4.setLogicalTable( bt4 );
     bt4.addLogicalColumn( bc4 );
-    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt5 = new LogicalTable();
     bt5.setId( "bt5" ); //$NON-NLS-1$
-    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt5" ) ); //$NON-NLS-1$
+    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt5" ); //$NON-NLS-1$
     final LogicalColumn bc5 = new LogicalColumn();
     bc5.setId( "bc5" ); //$NON-NLS-1$
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc5" ) ); //$NON-NLS-1$
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc5" ); //$NON-NLS-1$
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc5.setLogicalTable( bt5 );
     bt5.addLogicalColumn( bc5 );
-    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
     final LogicalRelationship rl1 = new LogicalRelationship();
 
     rl1.setFromTable( bt1 );
@@ -1616,62 +1615,62 @@ public class SqlGeneratorTest {
     // relationship [4-5] because you can't get from table 1 trough to
     // table 4.
     final LogicalModel model = new LogicalModel();
-    model.setProperty( "path_build_method", new Property<String>( "ANY_RELEVANT" ) );
+    model.setProperty( "path_build_method", "ANY_RELEVANT" );
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc1" ) ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc2" ) ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
 
-    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "bt3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt3" ) ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt3" ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc3" ) ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc3" ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
-    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt4 = new LogicalTable();
     bt4.setId( "bt4" ); //$NON-NLS-1$
-    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt4" ) ); //$NON-NLS-1$
+    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt4" ); //$NON-NLS-1$
     final LogicalColumn bc4 = new LogicalColumn();
     bc4.setId( "bc4" ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc4" ) ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc4" ); //$NON-NLS-1$
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc4.setLogicalTable( bt4 );
     bt4.addLogicalColumn( bc4 );
-    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt5 = new LogicalTable();
     bt5.setId( "bt5" ); //$NON-NLS-1$
-    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt5" ) ); //$NON-NLS-1$
+    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt5" ); //$NON-NLS-1$
     final LogicalColumn bc5 = new LogicalColumn();
     bc5.setId( "bc5" ); //$NON-NLS-1$
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc5" ) ); //$NON-NLS-1$
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc5" ); //$NON-NLS-1$
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc5.setLogicalTable( bt5 );
     bt5.addLogicalColumn( bc5 );
-    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalRelationship rl1 = new LogicalRelationship();
 
@@ -1743,62 +1742,62 @@ public class SqlGeneratorTest {
     // based on hops.
 
     final LogicalModel model = new LogicalModel();
-    model.setProperty( "path_build_method", new Property<String> ( "FIRST_SHORT") );
+    model.setProperty( "path_build_method", "FIRST_SHORT" );
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc1" ) ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc2" ) ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
 
-    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "bt3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt3" ) ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt3" ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc3" ) ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc3" ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
-    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 100 ) );
+    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 100 );
 
     final LogicalTable bt4 = new LogicalTable();
     bt4.setId( "bt4" ); //$NON-NLS-1$
-    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt4" ) ); //$NON-NLS-1$
+    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt4" ); //$NON-NLS-1$
     final LogicalColumn bc4 = new LogicalColumn();
     bc4.setId( "bc4" ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc4" ) ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc4" ); //$NON-NLS-1$
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc4.setLogicalTable( bt4 );
     bt4.addLogicalColumn( bc4 );
-    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt5 = new LogicalTable();
     bt5.setId( "bt5" ); //$NON-NLS-1$
-    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt5" ) ); //$NON-NLS-1$
+    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt5" ); //$NON-NLS-1$
     final LogicalColumn bc5 = new LogicalColumn();
     bc5.setId( "bc5" ); //$NON-NLS-1$
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc5" ) ); //$NON-NLS-1$
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc5" ); //$NON-NLS-1$
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc5.setLogicalTable( bt5 );
     bt5.addLogicalColumn( bc5 );
-    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
     final LogicalRelationship rl1 = new LogicalRelationship();
 
     rl1.setFromTable( bt1 );
@@ -1858,61 +1857,61 @@ public class SqlGeneratorTest {
     // Note - the relative size of table 2 is huge (100) compared with the others.
     // so - path should favor [1->3, 3->5] and avoid joins through table 2.
     final LogicalModel model = new LogicalModel();
-    model.setProperty( "path_build_method", new Property<String>( "LOWEST_SCORE" ) );
+    model.setProperty( "path_build_method", "LOWEST_SCORE" );
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc1" ) ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc2" ) ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
-    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 100 ) );
+    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 100 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "bt3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt3" ) ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt3" ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc3" ) ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc3" ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
-    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt4 = new LogicalTable();
     bt4.setId( "bt4" ); //$NON-NLS-1$
-    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt4" ) ); //$NON-NLS-1$
+    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt4" ); //$NON-NLS-1$
     final LogicalColumn bc4 = new LogicalColumn();
     bc4.setId( "bc4" ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc4" ) ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc4" ); //$NON-NLS-1$
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc4.setLogicalTable( bt4 );
     bt4.addLogicalColumn( bc4 );
-    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt5 = new LogicalTable();
     bt5.setId( "bt5" ); //$NON-NLS-1$
-    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt5" ) ); //$NON-NLS-1$
+    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt5" ); //$NON-NLS-1$
     final LogicalColumn bc5 = new LogicalColumn();
     bc5.setId( "bc5" ); //$NON-NLS-1$
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc5" ) ); //$NON-NLS-1$
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc5" ); //$NON-NLS-1$
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc5.setLogicalTable( bt5 );
     bt5.addLogicalColumn( bc5 );
-    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalRelationship rl1 = new LogicalRelationship();
 
@@ -2046,31 +2045,31 @@ public class SqlGeneratorTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc1" ) ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
     mainCat.addLogicalColumn( bc1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc2" ) ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
     mainCat.addLogicalColumn( bc2 );
 
     final LogicalColumn bce2 = new LogicalColumn();
     bce2.setId( "bce2" ); //$NON-NLS-1$
-    bce2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.OPEN_FORMULA ) );
-    bce2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "[cat_01.bc2] * [cat_01.bc1]" ) ); //$NON-NLS-1$
+    bce2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.OPEN_FORMULA );
+    bce2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "[cat_01.bc2] * [cat_01.bc1]" ); //$NON-NLS-1$
     bce2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bce2 );
     mainCat.addLogicalColumn( bce2 );
@@ -2109,23 +2108,23 @@ public class SqlGeneratorTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc1" ) ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
     mainCat.addLogicalColumn( bc1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc2" ) ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
     mainCat.addLogicalColumn( bc2 );
@@ -2166,23 +2165,23 @@ public class SqlGeneratorTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc1" ) ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
     mainCat.addLogicalColumn( bc1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc2" ) ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
     mainCat.addLogicalColumn( bc2 );
@@ -2222,23 +2221,23 @@ public class SqlGeneratorTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc1" ) ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
     mainCat.addLogicalColumn( bc1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc2" ) ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc2.setAggregationType( AggregationType.SUM );
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
@@ -2279,23 +2278,23 @@ public class SqlGeneratorTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc1" ) ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
     mainCat.addLogicalColumn( bc1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc2" ) ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc2.setAggregationType( AggregationType.SUM );
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
@@ -2336,24 +2335,24 @@ public class SqlGeneratorTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc1" ) ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
     mainCat.addLogicalColumn( bc1 );
     model.getLogicalTables().add( bt1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc2" ) ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
     mainCat.addLogicalColumn( bc2 );
@@ -2396,24 +2395,24 @@ public class SqlGeneratorTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc1" ) ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
     mainCat.addLogicalColumn( bc1 );
     model.getLogicalTables().add( bt1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc2" ) ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
     mainCat.addLogicalColumn( bc2 );
@@ -2457,34 +2456,34 @@ public class SqlGeneratorTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc1" ) ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
     mainCat.addLogicalColumn( bc1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc2" ) ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
     mainCat.addLogicalColumn( bc2 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "bt3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt3" ) ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt3" ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc3" ) ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc3" ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
     mainCat.addLogicalColumn( bc3 );
@@ -2534,45 +2533,45 @@ public class SqlGeneratorTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "t1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "t1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "k" ) ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
     mainCat.addLogicalColumn( bc1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "t2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "t2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "k" ) ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
     mainCat.addLogicalColumn( bc2 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "bt3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "t3" ) ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "t3" ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "k" ) ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
     mainCat.addLogicalColumn( bc3 );
 
     final LogicalTable bt4 = new LogicalTable();
     bt4.setId( "bt4" ); //$NON-NLS-1$
-    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "t4" ) ); //$NON-NLS-1$
+    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, "t4" ); //$NON-NLS-1$
     final LogicalColumn bc4 = new LogicalColumn();
     bc4.setId( "bc4" ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "k" ) ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc4.setLogicalTable( bt4 );
     bt4.addLogicalColumn( bc4 );
     mainCat.addLogicalColumn( bc4 );
@@ -2632,31 +2631,31 @@ public class SqlGeneratorTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "t1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "t1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "k" ) ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
     mainCat.addLogicalColumn( bc1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "t2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "t2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "k" ) ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
     mainCat.addLogicalColumn( bc2 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "bt3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "t3" ) ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "t3" ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "k" ) ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
     mainCat.addLogicalColumn( bc3 );
@@ -2706,31 +2705,31 @@ public class SqlGeneratorTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "t1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "t1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "k" ) ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
     mainCat.addLogicalColumn( bc1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "t2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "t2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "k" ) ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
     mainCat.addLogicalColumn( bc2 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "bt3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "t3" ) ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "t3" ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "k" ) ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
     mainCat.addLogicalColumn( bc3 );
@@ -2780,31 +2779,31 @@ public class SqlGeneratorTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "t1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "t1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "k" ) ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
     mainCat.addLogicalColumn( bc1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "t2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "t2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "k" ) ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
     mainCat.addLogicalColumn( bc2 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "bt3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "t3" ) ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "t3" ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "k" ) ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
     mainCat.addLogicalColumn( bc3 );
@@ -2856,31 +2855,31 @@ public class SqlGeneratorTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "t1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "t1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "k" ) ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
     mainCat.addLogicalColumn( bc1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "t2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "t2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "k" ) ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
     mainCat.addLogicalColumn( bc2 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "bt3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "t3" ) ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "t3" ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "k" ) ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
     mainCat.addLogicalColumn( bc3 );
@@ -2934,41 +2933,41 @@ public class SqlGeneratorTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "t1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "t1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "k" ) ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
     mainCat.addLogicalColumn( bc1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "t2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "t2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "k" ) ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
     mainCat.addLogicalColumn( bc2 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "bt3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "t3" ) ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "t3" ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "k" ) ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
     mainCat.addLogicalColumn( bc3 );
 
     final LogicalTable bt4 = new LogicalTable();
     bt4.setId( "bt4" ); //$NON-NLS-1$
-    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "t4" ) ); //$NON-NLS-1$
+    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, "t4" ); //$NON-NLS-1$
     final LogicalColumn bc4 = new LogicalColumn();
     bc4.setId( "bc4" ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "k" ) ); //$NON-NLS-1$
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "k" ); //$NON-NLS-1$
     bc4.setLogicalTable( bt4 );
     bt4.addLogicalColumn( bc4 );
     mainCat.addLogicalColumn( bc4 );
@@ -3041,71 +3040,71 @@ public class SqlGeneratorTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "metadata_business_table_very_long_name_1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc1" ) ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "metadata_business_table_very_long_name_2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc2" ) ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
 
-    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "metadata_business_table_very_long_name_3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt3" ) ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt3" ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc3" ) ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc3" ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
-    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt4 = new LogicalTable();
     bt4.setId( "metadata_business_table_very_long_name_4" ); //$NON-NLS-1$
-    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt4" ) ); //$NON-NLS-1$
+    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt4" ); //$NON-NLS-1$
     final LogicalColumn bc4 = new LogicalColumn();
     bc4.setId( "bc4" ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc4" ) ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc4" ); //$NON-NLS-1$
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc4.setLogicalTable( bt4 );
     bt4.addLogicalColumn( bc4 );
-    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt5 = new LogicalTable();
     bt5.setId( "metadata_business_table_very_long_name_5" ); //$NON-NLS-1$
-    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt5" ) ); //$NON-NLS-1$
+    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt5" ); //$NON-NLS-1$
     final LogicalColumn bc5 = new LogicalColumn();
     bc5.setId( "bc5" ); //$NON-NLS-1$
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc5" ) );
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc5" );
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc5.setLogicalTable( bt5 );
     bt5.addLogicalColumn( bc5 );
-    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalColumn bc6 = new LogicalColumn();
     bc6.setId( "bc6" ); //$NON-NLS-1$
-    // bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc5" )); //$NON-NLS-1$
-    bc6.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.OPEN_FORMULA ) );
-    bc6.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "SUM([pc5]*2)" ) );
+    // bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc5"); //$NON-NLS-1$
+    bc6.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.OPEN_FORMULA );
+    bc6.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "SUM([pc5]*2)" );
     bc6.setAggregationType( AggregationType.SUM );
 
     // bc6.setAggregationList(list);
     bc6.setLogicalTable( bt5 );
     bt5.addLogicalColumn( bc6 );
-    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalRelationship rl1 = new LogicalRelationship();
 
@@ -3207,71 +3206,71 @@ public class SqlGeneratorTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "metadata_business_table_very_long_name_1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc1" ) ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "metadata_business_table_very_long_name_2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc2" ) ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
 
-    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "metadata_business_table_very_long_name_3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt3" ) ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt3" ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc3" ) ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc3" ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
-    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt4 = new LogicalTable();
     bt4.setId( "metadata_business_table_very_long_name_4" ); //$NON-NLS-1$
-    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt4" ) ); //$NON-NLS-1$
+    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt4" ); //$NON-NLS-1$
     final LogicalColumn bc4 = new LogicalColumn();
     bc4.setId( "bc4" ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc4" ) ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc4" ); //$NON-NLS-1$
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc4.setLogicalTable( bt4 );
     bt4.addLogicalColumn( bc4 );
-    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt5 = new LogicalTable();
     bt5.setId( "metadata_business_table_very_long_name_5" ); //$NON-NLS-1$
-    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt5" ) ); //$NON-NLS-1$
+    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt5" ); //$NON-NLS-1$
     final LogicalColumn bc5 = new LogicalColumn();
     bc5.setId( "bc5" ); //$NON-NLS-1$
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc5" ) );
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc5" );
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc5.setLogicalTable( bt5 );
     bt5.addLogicalColumn( bc5 );
-    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalColumn bc6 = new LogicalColumn();
     bc6.setId( "bc6" ); //$NON-NLS-1$
-    // bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc5" )); //$NON-NLS-1$
-    bc6.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType> ( TargetColumnType.OPEN_FORMULA ) );
-    bc6.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "SUM([pc5]*2)" ) );
+    // bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc5"); //$NON-NLS-1$
+    bc6.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.OPEN_FORMULA );
+    bc6.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "SUM([pc5]*2)" );
     bc6.setAggregationType( AggregationType.SUM );
 
     // bc6.setAggregationList(list);
     bc6.setLogicalTable( bt5 );
     bt5.addLogicalColumn( bc6 );
-    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalRelationship rl1 = new LogicalRelationship();
 
@@ -3368,71 +3367,71 @@ public class SqlGeneratorTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "metadata_business_table_very_long_name_1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc1" ) ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "metadata_business_table_very_long_name_2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc2" ) ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
 
-    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "metadata_business_table_very_long_name_3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt3" ) ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt3" ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc3" ) ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc3" ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
-    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt4 = new LogicalTable();
     bt4.setId( "metadata_business_table_very_long_name_4" ); //$NON-NLS-1$
-    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt4" ) ); //$NON-NLS-1$
+    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt4" ); //$NON-NLS-1$
     final LogicalColumn bc4 = new LogicalColumn();
     bc4.setId( "bc4" ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc4" ) ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc4" ); //$NON-NLS-1$
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc4.setLogicalTable( bt4 );
     bt4.addLogicalColumn( bc4 );
-    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt5 = new LogicalTable();
     bt5.setId( "metadata_business_table_very_long_name_5" ); //$NON-NLS-1$
-    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt5" ) ); //$NON-NLS-1$
+    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt5" ); //$NON-NLS-1$
     final LogicalColumn bc5 = new LogicalColumn();
     bc5.setId( "bc5" ); //$NON-NLS-1$
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc5" ) );
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc5" );
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc5.setLogicalTable( bt5 );
     bt5.addLogicalColumn( bc5 );
-    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalColumn bc6 = new LogicalColumn();
     bc6.setId( "bc6" ); //$NON-NLS-1$
-    // bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc5" )); //$NON-NLS-1$
-    bc6.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType> ( TargetColumnType.OPEN_FORMULA ) );
-    bc6.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "SUM([pc5]*2)" ) );
+    // bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc5"); //$NON-NLS-1$
+    bc6.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.OPEN_FORMULA );
+    bc6.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "SUM([pc5]*2)" );
     bc6.setAggregationType( AggregationType.SUM );
 
     // bc6.setAggregationList(list);
     bc6.setLogicalTable( bt5 );
     bt5.addLogicalColumn( bc6 );
-    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalRelationship rl1 = new LogicalRelationship();
 
@@ -3519,71 +3518,71 @@ public class SqlGeneratorTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "metadata_business_table_very_long_name_1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc1" ) ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "metadata_business_table_very_long_name_2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc2" ) ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
 
-    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "metadata_business_table_very_long_name_3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt3" ) ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt3" ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc3" ) ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc3" ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
-    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt4 = new LogicalTable();
     bt4.setId( "metadata_business_table_very_long_name_4" ); //$NON-NLS-1$
-    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt4" ) ); //$NON-NLS-1$
+    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt4" ); //$NON-NLS-1$
     final LogicalColumn bc4 = new LogicalColumn();
     bc4.setId( "bc4" ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc4" ) ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc4" ); //$NON-NLS-1$
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc4.setLogicalTable( bt4 );
     bt4.addLogicalColumn( bc4 );
-    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt5 = new LogicalTable();
     bt5.setId( "metadata_business_table_very_long_name_5" ); //$NON-NLS-1$
-    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt5" ) ); //$NON-NLS-1$
+    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt5" ); //$NON-NLS-1$
     final LogicalColumn bc5 = new LogicalColumn();
     bc5.setId( "bc5" ); //$NON-NLS-1$
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc5" ) );
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc5" );
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc5.setLogicalTable( bt5 );
     bt5.addLogicalColumn( bc5 );
-    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalColumn bc6 = new LogicalColumn();
     bc6.setId( "bc6" ); //$NON-NLS-1$
-    // bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc5" )); //$NON-NLS-1$
-    bc6.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType> ( TargetColumnType.OPEN_FORMULA ) );
-    bc6.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "[pc5]*2" ) );
+    // bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc5"); //$NON-NLS-1$
+    bc6.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.OPEN_FORMULA );
+    bc6.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "[pc5]*2" );
     bc6.setAggregationType( AggregationType.SUM );
 
     // bc6.setAggregationList(list);
     bc6.setLogicalTable( bt5 );
     bt5.addLogicalColumn( bc6 );
-    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalRelationship rl1 = new LogicalRelationship();
 
@@ -3685,71 +3684,71 @@ public class SqlGeneratorTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "metadata_business_table_very_long_name_1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc1" ) ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "metadata_business_table_very_long_name_2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc2" ) ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
 
-    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "metadata_business_table_very_long_name_3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt3" ) ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt3" ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc3" ) ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc3" ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
-    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt4 = new LogicalTable();
     bt4.setId( "metadata_business_table_very_long_name_4" ); //$NON-NLS-1$
-    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt4" ) ); //$NON-NLS-1$
+    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt4" ); //$NON-NLS-1$
     final LogicalColumn bc4 = new LogicalColumn();
     bc4.setId( "bc4" ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc4" ) ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc4" ); //$NON-NLS-1$
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc4.setLogicalTable( bt4 );
     bt4.addLogicalColumn( bc4 );
-    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt5 = new LogicalTable();
     bt5.setId( "metadata_business_table_very_long_name_5" ); //$NON-NLS-1$
-    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt5" ) ); //$NON-NLS-1$
+    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt5" ); //$NON-NLS-1$
     final LogicalColumn bc5 = new LogicalColumn();
     bc5.setId( "bc5" ); //$NON-NLS-1$
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc5" ) );
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc5" );
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc5.setLogicalTable( bt5 );
     bt5.addLogicalColumn( bc5 );
-    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalColumn bc6 = new LogicalColumn();
     bc6.setId( "bc6" ); //$NON-NLS-1$
-    // bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc5" )); //$NON-NLS-1$
-    bc6.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType> ( TargetColumnType.OPEN_FORMULA ) );
-    bc6.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "[pc5]*2" ) );
+    // bc5.setProperty(SqlPhysicalColumn.TARGET_COLUMN, "pc5"); //$NON-NLS-1$
+    bc6.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.OPEN_FORMULA );
+    bc6.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "[pc5]*2" );
     bc6.setAggregationType( AggregationType.SUM );
 
     // bc6.setAggregationList(list);
     bc6.setLogicalTable( bt5 );
     bt5.addLogicalColumn( bc6 );
-    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalRelationship rl1 = new LogicalRelationship();
 
@@ -3846,60 +3845,60 @@ public class SqlGeneratorTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE_TYPE, new Property<TargetTableType>( TargetTableType.INLINE_SQL ) );
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "select * from mytable" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE_TYPE, TargetTableType.INLINE_SQL );
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "select * from mytable" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc1" ) ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc2" ) ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
 
-    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "bt3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt3" ) ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt3" ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc3" ) ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc3" ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
-    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt4 = new LogicalTable();
     bt4.setId( "bt4" ); //$NON-NLS-1$
-    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt4" ) ); //$NON-NLS-1$
+    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt4" ); //$NON-NLS-1$
     final LogicalColumn bc4 = new LogicalColumn();
     bc4.setId( "bc4" ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc4" ) ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc4" ); //$NON-NLS-1$
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc4.setLogicalTable( bt4 );
     bt4.addLogicalColumn( bc4 );
-    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt5 = new LogicalTable();
     bt5.setId( "bt5" ); //$NON-NLS-1$
-    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt5" ) ); //$NON-NLS-1$
+    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt5" ); //$NON-NLS-1$
     final LogicalColumn bc5 = new LogicalColumn();
     bc5.setId( "bc5" ); //$NON-NLS-1$
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc5" ) ); //$NON-NLS-1$
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc5" ); //$NON-NLS-1$
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc5.setLogicalTable( bt5 );
     bt5.addLogicalColumn( bc5 );
-    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
     final LogicalRelationship rl1 = new LogicalRelationship();
 
     rl1.setFromTable( bt1 );
@@ -3970,60 +3969,60 @@ public class SqlGeneratorTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE_TYPE, new Property<TargetTableType>( TargetTableType.INLINE_SQL ) );
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "select * from mytable" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE_TYPE, TargetTableType.INLINE_SQL );
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "select * from mytable" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc1" ) ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc2" ) ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
 
-    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "bt3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt3" ) ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt3" ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc3" ) ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc3" ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
-    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt4 = new LogicalTable();
     bt4.setId( "bt4" ); //$NON-NLS-1$
-    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt4" ) ); //$NON-NLS-1$
+    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt4" ); //$NON-NLS-1$
     final LogicalColumn bc4 = new LogicalColumn();
     bc4.setId( "bc4" ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc4" ) ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc4" ); //$NON-NLS-1$
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc4.setLogicalTable( bt4 );
     bt4.addLogicalColumn( bc4 );
-    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt5 = new LogicalTable();
     bt5.setId( "bt5" ); //$NON-NLS-1$
-    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt5" ) ); //$NON-NLS-1$
+    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt5" ); //$NON-NLS-1$
     final LogicalColumn bc5 = new LogicalColumn();
     bc5.setId( "bc5" ); //$NON-NLS-1$
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc5" ) ); //$NON-NLS-1$
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc5" ); //$NON-NLS-1$
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc5.setLogicalTable( bt5 );
     bt5.addLogicalColumn( bc5 );
-    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
     final LogicalRelationship rl1 = new LogicalRelationship();
 
     rl1.setFromTable( bt1 );
@@ -4096,7 +4095,7 @@ public class SqlGeneratorTest {
       DatabaseMeta databaseMeta = new DatabaseMeta( "", "HYPERSONIC", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
       Query query = new Query( null, model );
 
-      query.getParameters().add( new Parameter( "test3", DataType.STRING, new Property<String>( "value" ) ) );
+      query.getParameters().add( new Parameter( "test3", DataType.STRING, "value" ) );
 
       query.getSelections().add( new Selection( null, bc1, null ) );
       query.getSelections().add( new Selection( null, bc2, null ) );
@@ -4138,59 +4137,59 @@ public class SqlGeneratorTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc1" ) ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc2" ) ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc2.setLogicalTable( bt2 );
     // bt2.addLogicalColumn(bc2);
 
-    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt2.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt3 = new LogicalTable();
     bt3.setId( "bt3" ); //$NON-NLS-1$
-    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt3" ) ); //$NON-NLS-1$
+    bt3.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt3" ); //$NON-NLS-1$
     final LogicalColumn bc3 = new LogicalColumn();
     bc3.setId( "bc3" ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc3" ) ); //$NON-NLS-1$
-    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc3" ); //$NON-NLS-1$
+    bc3.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc3.setLogicalTable( bt3 );
     bt3.addLogicalColumn( bc3 );
-    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt3.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt4 = new LogicalTable();
     bt4.setId( "bt4" ); //$NON-NLS-1$
-    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt4" ) ); //$NON-NLS-1$
+    bt4.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt4" ); //$NON-NLS-1$
     final LogicalColumn bc4 = new LogicalColumn();
     bc4.setId( "bc4" ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc4" ) ); //$NON-NLS-1$
-    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc4" ); //$NON-NLS-1$
+    bc4.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc4.setLogicalTable( bt4 );
     bt4.addLogicalColumn( bc4 );
-    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt4.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
 
     final LogicalTable bt5 = new LogicalTable();
     bt5.setId( "bt5" ); //$NON-NLS-1$
-    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt5" ) ); //$NON-NLS-1$
+    bt5.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt5" ); //$NON-NLS-1$
     final LogicalColumn bc5 = new LogicalColumn();
     bc5.setId( "bc5" ); //$NON-NLS-1$
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc5" ) ); //$NON-NLS-1$
-    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.COLUMN_NAME ) );
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc5" ); //$NON-NLS-1$
+    bc5.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc5.setLogicalTable( bt5 );
     bt5.addLogicalColumn( bc5 );
-    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt5.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
     final LogicalRelationship rl1 = new LogicalRelationship();
 
     rl1.setFromTable( bt1 );
@@ -4401,25 +4400,25 @@ public class SqlGeneratorTest {
         .getQuery() );
 
     // Now, do the same query, but with "LOWEST_SCORE"
-    model.setProperty( "path_build_method", new Property<String>( "LOWEST_SCORE" ) );
+    model.setProperty( "path_build_method", "LOWEST_SCORE" );
     // Set relative sizes to favor the bt03->bt06->bt05 relationship...
-    bt01.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 58 ) );
-    bt02.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 177 ) );
-    bt03.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 11 ) );
-    bt04.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 43 ) );
-    bt05.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 7 ) );
-    bt06.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 17 ) );
-    bt07.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 91 ) );
-    bt08.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 113 ) );
-    bt09.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 57 ) );
-    bt10.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 35 ) );
-    bt11.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 65 ) );
-    bt12.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 25 ) );
-    bt13.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 99 ) );
-    bt14.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 97 ) );
-    bt15.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 96 ) );
-    bt16.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 95 ) );
-    bt17.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 94 ) );
+    bt01.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 58 );
+    bt02.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 177 );
+    bt03.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 11 );
+    bt04.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 43 );
+    bt05.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 7 );
+    bt06.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 17 );
+    bt07.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 91 );
+    bt08.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 113 );
+    bt09.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 57 );
+    bt10.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 35 );
+    bt11.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 65 );
+    bt12.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 25 );
+    bt13.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 99 );
+    bt14.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 97 );
+    bt15.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 96 );
+    bt16.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 95 );
+    bt17.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 94 );
 
     Query test2 = new Query( null, model ); //$NON-NLS-1$
     SqlGenerator generator2 = new SqlGenerator();

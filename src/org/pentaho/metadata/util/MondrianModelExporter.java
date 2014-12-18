@@ -27,7 +27,6 @@ import org.pentaho.metadata.model.LogicalRelationship;
 import org.pentaho.metadata.model.LogicalTable;
 import org.pentaho.metadata.model.SqlPhysicalColumn;
 import org.pentaho.metadata.model.SqlPhysicalTable;
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
@@ -68,12 +67,9 @@ public class MondrianModelExporter {
     xml.append( "\">" ); //$NON-NLS-1$
     xml.append( Util.CR );
 
-    List olapDimensions = null;
-    Property olapDimProperty = businessModel.getProperty( LogicalModel.PROPERTY_OLAP_DIMS );
-    if ( olapDimProperty != null ) {
-      olapDimensions = (List) olapDimProperty.getValue();
-    }
-    
+    @SuppressWarnings( "unchecked" )
+    List<OlapDimension> olapDimensions =
+        (List<OlapDimension>) businessModel.getProperty( LogicalModel.PROPERTY_OLAP_DIMS ); //$NON-NLS-1$
     if ( olapDimensions != null ) {
       for ( int d = 0; d < olapDimensions.size(); d++ ) {
         OlapDimension olapDimension = (OlapDimension) olapDimensions.get( d );
@@ -111,18 +107,18 @@ public class MondrianModelExporter {
 
           if ( olapHierarchy.getPrimaryKey() != null ) {
             xml.append( " primaryKey=\"" ); //$NON-NLS-1$
-            xml.append( olapHierarchy.getPrimaryKey().getProperty( SqlPhysicalColumn.TARGET_COLUMN ).getValue() );
+            xml.append( olapHierarchy.getPrimaryKey().getProperty( SqlPhysicalColumn.TARGET_COLUMN ) );
             xml.append( "\"" ); //$NON-NLS-1$
           }
           xml.append( ">" ); //$NON-NLS-1$
           xml.append( Util.CR );
 
-          if ( olapHierarchy.getLogicalTable().getProperty( SqlPhysicalTable.TARGET_TABLE_TYPE ).getValue()
+          if ( olapHierarchy.getLogicalTable().getProperty( SqlPhysicalTable.TARGET_TABLE_TYPE )
               == TargetTableType.INLINE_SQL ) {
             xml.append( "    <View alias=\"FACT\">" ).append( Util.CR );
             xml.append( "        <SQL dialect=\"generic\">" ).append( Util.CR );
             xml.append(
-                "         <![CDATA[" + olapHierarchy.getLogicalTable().getProperty( SqlPhysicalTable.TARGET_TABLE ).getValue()
+                "         <![CDATA[" + olapHierarchy.getLogicalTable().getProperty( SqlPhysicalTable.TARGET_TABLE )
                     + "]]>" ).append( Util.CR );
             xml.append( "        </SQL>" ).append( Util.CR );
             xml.append( "    </View>" ).append( Util.CR );
@@ -130,13 +126,13 @@ public class MondrianModelExporter {
             xml.append( "      <Table" ); //$NON-NLS-1$
             xml.append( " name=\"" ); //$NON-NLS-1$
             XMLHandler.appendReplacedChars( xml, cleanseDbName( (String) olapHierarchy.getLogicalTable().getProperty(
-                SqlPhysicalTable.TARGET_TABLE ).getValue() ) );
+                SqlPhysicalTable.TARGET_TABLE ) ) );
             xml.append( "\"" ); //$NON-NLS-1$
             if ( !StringUtils.isBlank( (String) olapHierarchy.getLogicalTable().getProperty(
-                SqlPhysicalTable.TARGET_SCHEMA ).getValue() ) ) {
+                SqlPhysicalTable.TARGET_SCHEMA ) ) ) {
               xml.append( " schema=\"" ); //$NON-NLS-1$
               XMLHandler.appendReplacedChars( xml, cleanseDbName( (String) olapHierarchy.getLogicalTable().getProperty(
-                  SqlPhysicalTable.TARGET_SCHEMA ).getValue() ) );
+                  SqlPhysicalTable.TARGET_SCHEMA ) ) );
               xml.append( "\"" ); //$NON-NLS-1$
             }
             xml.append( "/>" ); //$NON-NLS-1$
@@ -161,20 +157,20 @@ public class MondrianModelExporter {
 
             column = olapHierarchyLevel.getReferenceColumn();
             xml.append( " column=\"" ); //$NON-NLS-1$
-            XMLHandler.appendReplacedChars( xml, (String) column.getProperty( SqlPhysicalColumn.TARGET_COLUMN ).getValue() );
+            XMLHandler.appendReplacedChars( xml, (String) column.getProperty( SqlPhysicalColumn.TARGET_COLUMN ) );
             xml.append( "\"" ); //$NON-NLS-1$
 
             column = olapHierarchyLevel.getReferenceOrdinalColumn();
             if ( column != null ) {
               xml.append( " ordinalColumn=\"" ); //$NON-NLS-1$
-              XMLHandler.appendReplacedChars( xml, (String) column.getProperty( SqlPhysicalColumn.TARGET_COLUMN ).getValue() );
+              XMLHandler.appendReplacedChars( xml, (String) column.getProperty( SqlPhysicalColumn.TARGET_COLUMN ) );
               xml.append( "\"" ); //$NON-NLS-1$
             }
 
             column = olapHierarchyLevel.getReferenceCaptionColumn();
             if ( column != null ) {
               xml.append( " captionColumn=\"" ); //$NON-NLS-1$
-              XMLHandler.appendReplacedChars( xml, (String) column.getProperty( SqlPhysicalColumn.TARGET_COLUMN ).getValue() );
+              XMLHandler.appendReplacedChars( xml, (String) column.getProperty( SqlPhysicalColumn.TARGET_COLUMN ) );
               xml.append( "\"" ); //$NON-NLS-1$
             }
 
@@ -236,7 +232,7 @@ public class MondrianModelExporter {
 
               xml.append( " column=\"" ); //$NON-NLS-1$
               XMLHandler.appendReplacedChars( xml, (String) businessColumn
-                  .getProperty( SqlPhysicalColumn.TARGET_COLUMN ).getValue() );
+                  .getProperty( SqlPhysicalColumn.TARGET_COLUMN ) );
               xml.append( "\"" ); //$NON-NLS-1$
 
               DataType dataType = businessColumn.getDataType();
@@ -285,11 +281,9 @@ public class MondrianModelExporter {
     }
 
     // Now do the cubes too...
-    List olapCubes = null;
-    Property olapProperty = businessModel.getProperty( "olap_cubes" ); //$NON-NLS-1$
-    if ( olapProperty != null ) {
-      olapCubes = (List) olapProperty.getValue();
-    }
+
+    @SuppressWarnings( "unchecked" )
+    List<OlapCube> olapCubes = (List<OlapCube>) businessModel.getProperty( "olap_cubes" ); //$NON-NLS-1$
     if ( olapCubes != null ) {
       for ( int c = 0; c < olapCubes.size(); c++ ) {
         OlapCube olapCube = (OlapCube) olapCubes.get( c );
@@ -301,12 +295,12 @@ public class MondrianModelExporter {
         xml.append( "\"" ); //$NON-NLS-1$
         xml.append( ">" ).append( Util.CR ); //$NON-NLS-1$
 
-        if ( olapCube.getLogicalTable().getProperty( SqlPhysicalTable.TARGET_TABLE_TYPE ).getValue()
+        if ( olapCube.getLogicalTable().getProperty( SqlPhysicalTable.TARGET_TABLE_TYPE )
             == TargetTableType.INLINE_SQL ) {
           xml.append( "    <View alias=\"FACT\">" ).append( Util.CR );
           xml.append( "        <SQL dialect=\"generic\">" ).append( Util.CR );
           xml.append(
-              "         <![CDATA[" + olapCube.getLogicalTable().getProperty( SqlPhysicalTable.TARGET_TABLE ).getValue() + "]]>" )
+              "         <![CDATA[" + olapCube.getLogicalTable().getProperty( SqlPhysicalTable.TARGET_TABLE ) + "]]>" )
               .append( Util.CR );
           xml.append( "        </SQL>" ).append( Util.CR );
           xml.append( "    </View>" ).append( Util.CR );
@@ -314,13 +308,13 @@ public class MondrianModelExporter {
           xml.append( "    <Table" ); //$NON-NLS-1$
           xml.append( " name=\"" ); //$NON-NLS-1$
           XMLHandler.appendReplacedChars( xml, cleanseDbName( (String) olapCube.getLogicalTable().getProperty(
-              SqlPhysicalTable.TARGET_TABLE ).getValue() ) );
+              SqlPhysicalTable.TARGET_TABLE ) ) );
           xml.append( "\"" ); //$NON-NLS-1$
           if ( !StringUtils.isBlank( (String) olapCube.getLogicalTable()
-              .getProperty( SqlPhysicalTable.TARGET_SCHEMA ).getValue() ) ) {
+              .getProperty( SqlPhysicalTable.TARGET_SCHEMA ) ) ) {
             xml.append( " schema=\"" ); //$NON-NLS-1$
             XMLHandler.appendReplacedChars( xml, cleanseDbName( (String) olapCube.getLogicalTable().getProperty(
-                SqlPhysicalTable.TARGET_SCHEMA ).getValue() ) );
+                SqlPhysicalTable.TARGET_SCHEMA ) ) );
             xml.append( "\"" ); //$NON-NLS-1$
           }
           xml.append( "/>" ).append( Util.CR ); //$NON-NLS-1$
@@ -357,7 +351,7 @@ public class MondrianModelExporter {
               }
 
               xml.append( " foreignKey=\"" ); //$NON-NLS-1$
-              XMLHandler.appendReplacedChars( xml, (String) keyColumn.getProperty( SqlPhysicalColumn.TARGET_COLUMN ).getValue() );
+              XMLHandler.appendReplacedChars( xml, (String) keyColumn.getProperty( SqlPhysicalColumn.TARGET_COLUMN ) );
               xml.append( "\"" ); //$NON-NLS-1$
             } else {
               throw new Exception(
@@ -383,7 +377,7 @@ public class MondrianModelExporter {
           xml.append( "\"" ); //$NON-NLS-1$
 
           xml.append( " column=\"" ); //$NON-NLS-1$
-          XMLHandler.appendReplacedChars( xml, (String) businessColumn.getProperty( SqlPhysicalColumn.TARGET_COLUMN ).getValue() );
+          XMLHandler.appendReplacedChars( xml, (String) businessColumn.getProperty( SqlPhysicalColumn.TARGET_COLUMN ) );
           xml.append( "\"" ); //$NON-NLS-1$
 
           AggregationType aggregationType = businessColumn.getAggregationType();
@@ -418,12 +412,7 @@ public class MondrianModelExporter {
             xml.append( "\"" ); //$NON-NLS-1$
           }
 
-          String formatString = null;
-          Property formatProperty = businessColumn.getProperty( "mask" );
-          if ( formatProperty != null ) {
-            formatString = (String) formatProperty.getValue();
-          }
-          
+          String formatString = (String) businessColumn.getProperty( "mask" ); //$NON-NLS-1$
           if ( StringUtils.isEmpty( formatString ) ) {
             formatString = "Standard"; //$NON-NLS-1$
           }

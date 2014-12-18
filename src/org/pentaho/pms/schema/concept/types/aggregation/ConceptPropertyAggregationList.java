@@ -22,7 +22,6 @@ import java.util.List;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.pentaho.di.core.xml.XMLHandler;
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
@@ -46,7 +45,7 @@ public class ConceptPropertyAggregationList extends ConceptPropertyBase implemen
 
   public ConceptPropertyAggregationList( String name, List<AggregationSettings> value, boolean required ) {
     super( name, required );
-    setValue( new Property<List<AggregationSettings>>( value ) );
+    setValue( value );
   }
 
   public String toString() {
@@ -67,8 +66,8 @@ public class ConceptPropertyAggregationList extends ConceptPropertyBase implemen
     return ConceptPropertyType.AGGREGATION_LIST;
   }
 
-  public Property getValue() {
-    return new Property<List<AggregationSettings>>( value );
+  public Object getValue() {
+    return value;
   }
 
   public String toXML() {
@@ -111,9 +110,9 @@ public class ConceptPropertyAggregationList extends ConceptPropertyBase implemen
   }
 
   @SuppressWarnings( "unchecked" )
-  public void setValue( Property value ) {
-    if ( value != null && value.getValue() != null) {
-      this.value = (List<AggregationSettings>) value.getValue();
+  public void setValue( Object value ) {
+    if ( value != null ) {
+      this.value = (List<AggregationSettings>) value;
     } else {
       this.value = new ArrayList<AggregationSettings>();
     }

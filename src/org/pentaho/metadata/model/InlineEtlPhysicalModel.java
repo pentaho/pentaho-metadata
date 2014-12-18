@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.IConcept;
-import org.pentaho.metadata.model.concept.Property;
 
 /**
  * The Inline ETL Physical model is designed to handle CSV files and uses inline ETL (Kettle Transformations) to execute
@@ -30,7 +29,7 @@ import org.pentaho.metadata.model.concept.Property;
  * @author Will Gorman (wgorman@pentaho.com)
  * 
  */
-public class InlineEtlPhysicalModel extends Concept implements IPhysicalModel  {
+public class InlineEtlPhysicalModel extends Concept implements IPhysicalModel {
 
   private static final long serialVersionUID = 998991922256017536L;
 
@@ -79,51 +78,35 @@ public class InlineEtlPhysicalModel extends Concept implements IPhysicalModel  {
   }
 
   public String getFileLocation() {
-    Property property = getProperty( FILE_LOCATION );
-    if( property != null ) {
-      return (String) property.getValue();
-    }
-    return null;
+    return (String) getProperty( FILE_LOCATION );
   }
 
   public void setFileLocation( String fileLocation ) {
-    setProperty( FILE_LOCATION, new Property<String>( fileLocation) );
+    setProperty( FILE_LOCATION, fileLocation );
   }
 
   public void setHeaderPresent( Boolean headerPresent ) {
-    setProperty( HEADER_PRESENT, new Property<Boolean>( headerPresent ) );
+    setProperty( HEADER_PRESENT, headerPresent );
   }
 
   public Boolean getHeaderPresent() {
-    Property property = getProperty( HEADER_PRESENT );
-    if( property != null ) {
-      return (Boolean) property.getValue();
-    }
-    return null;
+    return (Boolean) getProperty( HEADER_PRESENT );
   }
 
   public String getEnclosure() {
-    Property property = getProperty( ENCLOSURE );
-    if( property != null ) {
-      return (String) property.getValue();
-    }
-    return null;
+    return (String) getProperty( ENCLOSURE );
   }
 
   public void setEnclosure( String enclosure ) {
-    setProperty( ENCLOSURE, new Property<String>( enclosure ) );
+    setProperty( ENCLOSURE, enclosure );
   }
 
   public String getDelimiter() {
-    Property property = getProperty( DELIMITER );
-    if( property != null ) {
-      return (String) property.getValue();
-    }
-    return null;
+    return (String) getProperty( DELIMITER );
   }
 
   public void setDelimiter( String delimiter ) {
-    setProperty( DELIMITER, new Property<String>( delimiter ) );
+    setProperty( DELIMITER, delimiter );
   }
 
   public List<InlineEtlPhysicalTable> getPhysicalTables() {

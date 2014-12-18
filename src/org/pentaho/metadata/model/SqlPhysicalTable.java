@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.IConcept;
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.model.concept.types.TableType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
@@ -32,7 +31,7 @@ import org.pentaho.metadata.model.concept.types.TargetTableType;
  * @author Will Gorman (wgorman@pentaho.com)
  * 
  */
-public class SqlPhysicalTable extends Concept implements IPhysicalTable  {
+public class SqlPhysicalTable extends Concept implements IPhysicalTable {
 
   private static final long serialVersionUID = -2590635019353532334L;
 
@@ -76,62 +75,42 @@ public class SqlPhysicalTable extends Concept implements IPhysicalTable  {
   }
 
   public String getTargetSchema() {
-    Property property = getProperty( TARGET_SCHEMA );
-    if( property != null ) {
-      return (String) property.getValue();
-    }
-    return null;
+    return (String) getProperty( TARGET_SCHEMA );
   }
 
   public void setTargetSchema( String targetSchema ) {
-    setProperty( TARGET_SCHEMA, new Property<String>( targetSchema ) );
+    setProperty( TARGET_SCHEMA, targetSchema );
   }
 
   public String getTargetTable() {
-    Property property = getProperty( TARGET_TABLE );
-    if( property != null ) {
-      return (String) property.getValue();
-    }
-    return null;
+    return (String) getProperty( TARGET_TABLE );
   }
 
   public void setTargetTable( String targetTable ) {
-    setProperty( TARGET_TABLE, new Property<String>( targetTable ) );
+    setProperty( TARGET_TABLE, targetTable );
   }
 
   public TargetTableType getTargetTableType() {
-    Property property = getProperty( TARGET_TABLE_TYPE );
-    if( property != null ) {
-      return (TargetTableType) property.getValue();
-    }
-    return null;
+    return (TargetTableType) getProperty( TARGET_TABLE_TYPE );
   }
 
   public void setTargetTableType( TargetTableType targetTableType ) {
-    setProperty( TARGET_TABLE_TYPE, new Property<TargetTableType>( targetTableType ) );
+    setProperty( TARGET_TABLE_TYPE, targetTableType );
   }
 
   public TableType getTableType() {
-    Property property = getProperty( TABLETYPE_PROPERTY );
-    if( property != null ) {
-      return (TableType) property.getValue();
-    }
-    return null;
+    return (TableType) getProperty( TABLETYPE_PROPERTY );
   }
 
   public void setTableType( TableType tableType ) {
-    setProperty( TABLETYPE_PROPERTY, new Property<TableType>( tableType ) );
+    setProperty( TABLETYPE_PROPERTY, tableType );
   }
 
   public Integer getRelativeSize() {
-    Property property = getProperty( RELATIVE_SIZE );
-    if( property != null ) {
-      return (Integer) property.getValue();
-    }
-    return null;
+    return (Integer) getProperty( RELATIVE_SIZE );
   }
 
   public void setRelativeSize( Integer relativeSize ) {
-    setProperty( RELATIVE_SIZE, new Property<Integer>( relativeSize ) );
+    setProperty( RELATIVE_SIZE, relativeSize );
   }
 }

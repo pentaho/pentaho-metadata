@@ -26,7 +26,6 @@ import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.LogicalTable;
 import org.pentaho.metadata.model.SqlPhysicalColumn;
 import org.pentaho.metadata.model.SqlPhysicalTable;
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.FieldType;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
@@ -61,16 +60,16 @@ public class AggregationScenariosTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "t1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "t1" ); //$NON-NLS-1$
 
     // dimension column d1
     //
     final LogicalColumn d1 = new LogicalColumn();
     d1.setId( "d1" ); //$NON-NLS-1$
-    d1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "d" ) ); //$NON-NLS-1$
+    d1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "d" ); //$NON-NLS-1$
     d1.setLogicalTable( bt1 );
     d1.setAggregationType( AggregationType.NONE );
-    d1.setProperty( IPhysicalColumn.FIELDTYPE_PROPERTY, new Property<FieldType>( FieldType.DIMENSION ) );
+    d1.setProperty( IPhysicalColumn.FIELDTYPE_PROPERTY, FieldType.DIMENSION );
 
     bt1.addLogicalColumn( d1 );
     mainCat.addLogicalColumn( d1 );
@@ -79,10 +78,10 @@ public class AggregationScenariosTest {
     //
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "a" ) ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "a" ); //$NON-NLS-1$
     bc1.setLogicalTable( bt1 );
     bc1.setAggregationType( AggregationType.SUM );
-    bc1.setProperty( IPhysicalColumn.FIELDTYPE_PROPERTY, new Property<FieldType>( FieldType.FACT ) );
+    bc1.setProperty( IPhysicalColumn.FIELDTYPE_PROPERTY, FieldType.FACT );
 
     bt1.addLogicalColumn( bc1 );
     mainCat.addLogicalColumn( bc1 );
@@ -91,10 +90,10 @@ public class AggregationScenariosTest {
     //
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "b" ) ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "b" ); //$NON-NLS-1$
     bc2.setLogicalTable( bt1 );
     bc2.setAggregationType( AggregationType.SUM );
-    bc2.setProperty( IPhysicalColumn.FIELDTYPE_PROPERTY, new Property<FieldType>( FieldType.FACT ) );
+    bc2.setProperty( IPhysicalColumn.FIELDTYPE_PROPERTY, FieldType.FACT );
 
     bt1.addLogicalColumn( bc2 );
     mainCat.addLogicalColumn( bc2 );
@@ -103,11 +102,11 @@ public class AggregationScenariosTest {
     //
     final LogicalColumn ratio = new LogicalColumn();
     ratio.setId( "ratio" ); //$NON-NLS-1$
-    ratio.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "[bt1.bc1] / [bt1.bc2]" ) ); //$NON-NLS-1$
+    ratio.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "[bt1.bc1] / [bt1.bc2]" ); //$NON-NLS-1$
     ratio.setLogicalTable( bt1 );
     ratio.setAggregationType( AggregationType.NONE );
-    ratio.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.OPEN_FORMULA ) );
-    ratio.setProperty( IPhysicalColumn.FIELDTYPE_PROPERTY, new Property<FieldType>( FieldType.FACT ) );
+    ratio.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.OPEN_FORMULA );
+    ratio.setProperty( IPhysicalColumn.FIELDTYPE_PROPERTY, FieldType.FACT );
 
     bt1.addLogicalColumn( ratio );
     mainCat.addLogicalColumn( ratio );
@@ -141,16 +140,16 @@ public class AggregationScenariosTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "t1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "t1" ); //$NON-NLS-1$
 
     // dimension column d1
     //
     final LogicalColumn d1 = new LogicalColumn();
     d1.setId( "d1" ); //$NON-NLS-1$
-    d1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "d" ) ); //$NON-NLS-1$
+    d1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "d" ); //$NON-NLS-1$
     d1.setLogicalTable( bt1 );
     d1.setAggregationType( AggregationType.NONE );
-    d1.setProperty( IPhysicalColumn.FIELDTYPE_PROPERTY, new Property<FieldType>( FieldType.DIMENSION ) );
+    d1.setProperty( IPhysicalColumn.FIELDTYPE_PROPERTY, FieldType.DIMENSION );
 
     bt1.addLogicalColumn( d1 );
     mainCat.addLogicalColumn( d1 );
@@ -159,10 +158,10 @@ public class AggregationScenariosTest {
     //
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "a" ) ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "a" ); //$NON-NLS-1$
     bc1.setLogicalTable( bt1 );
     bc1.setAggregationType( AggregationType.NONE );
-    bc1.setProperty( IPhysicalColumn.FIELDTYPE_PROPERTY, new Property<FieldType>( FieldType.FACT ) );
+    bc1.setProperty( IPhysicalColumn.FIELDTYPE_PROPERTY, FieldType.FACT );
 
     bt1.addLogicalColumn( bc1 );
     mainCat.addLogicalColumn( bc1 );
@@ -171,10 +170,10 @@ public class AggregationScenariosTest {
     //
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "b" ) ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "b" ); //$NON-NLS-1$
     bc2.setLogicalTable( bt1 );
     bc2.setAggregationType( AggregationType.NONE );
-    bc2.setProperty( IPhysicalColumn.FIELDTYPE_PROPERTY, new Property<FieldType>( FieldType.FACT ) );
+    bc2.setProperty( IPhysicalColumn.FIELDTYPE_PROPERTY, FieldType.FACT );
 
     bt1.addLogicalColumn( bc2 );
     mainCat.addLogicalColumn( bc2 );
@@ -183,11 +182,11 @@ public class AggregationScenariosTest {
     //
     final LogicalColumn ratio = new LogicalColumn();
     ratio.setId( "ratio" ); //$NON-NLS-1$
-    ratio.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "SUM( [bt1.bc1] / [bt1.bc2] )" ) ); //$NON-NLS-1$
+    ratio.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "SUM( [bt1.bc1] / [bt1.bc2] )" ); //$NON-NLS-1$
     ratio.setLogicalTable( bt1 );
     ratio.setAggregationType( AggregationType.SUM );
-    ratio.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.OPEN_FORMULA ) );
-    ratio.setProperty( IPhysicalColumn.FIELDTYPE_PROPERTY, new Property<FieldType>( FieldType.FACT ) );
+    ratio.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.OPEN_FORMULA );
+    ratio.setProperty( IPhysicalColumn.FIELDTYPE_PROPERTY, FieldType.FACT );
 
     bt1.addLogicalColumn( ratio );
     mainCat.addLogicalColumn( ratio );
