@@ -16,7 +16,6 @@
  */
 package org.pentaho.pms.schema.concept;
 
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
 /**
@@ -43,13 +42,13 @@ public interface ConceptPropertyInterface extends Cloneable {
   public void setId( String id );
 
   /** @return the value of this property */
-  public Property getValue();
+  public Object getValue();
 
   /**
    * @param value
    *          the value of this property to set
    */
-  public void setValue( Property value );
+  public void setValue( Object value );
 
   public boolean equals( Object obj );
 

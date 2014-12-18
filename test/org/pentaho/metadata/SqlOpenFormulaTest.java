@@ -34,7 +34,6 @@ import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.LogicalTable;
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.query.impl.sql.MappedQuery;
 import org.pentaho.metadata.query.impl.sql.SqlGenerator;
@@ -121,7 +120,7 @@ public class SqlOpenFormulaTest {
     }
   }
 
-  public void handleFormula( LogicalModel model, String databaseToTest, Map<String, Property> parameters,
+  public void handleFormula( LogicalModel model, String databaseToTest, Map<String, Object> parameters,
       String mqlFormula, String expectedSql ) {
     // retrieve various databases here
     DatabaseMeta databaseMeta = new DatabaseMeta( "", databaseToTest, "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
@@ -142,7 +141,7 @@ public class SqlOpenFormulaTest {
     handleFormula( model, databaseToTest, null, mqlFormula, expectedSql );
   }
 
-  public void handleFormulaFailure( LogicalModel model, String databaseToTest, Map<String, Property> params,
+  public void handleFormulaFailure( LogicalModel model, String databaseToTest, Map<String, Object> params,
       String mqlFormula, String expectedException ) {
     // retrieve various databases here
     DatabaseMeta databaseMeta = new DatabaseMeta( "", databaseToTest, "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
@@ -242,9 +241,9 @@ public class SqlOpenFormulaTest {
     DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
 
     SqlGenerator generator = new SqlGenerator();
-    Map<String, Property> parameters = new HashMap<String, Property>();
+    Map<String, Object> parameters = new HashMap<String, Object>();
     Date now = new Date();
-    parameters.put( "date", new Property<Date>( now ) );
+    parameters.put( "date", now );
     MappedQuery mappedQuery = generator.generateSql( query, "en_US", repo, databaseMeta, parameters, false );
 
     SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );
@@ -884,16 +883,16 @@ public class SqlOpenFormulaTest {
     handleFormula( getOrdersModel(), "Hypersonic", "EQUALS([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")",
         "BT_CUSTOMERS.COUNTRY  = 'AMERICA'" );
 
-    Map<String, Property> param = new HashMap<String, Property>();
-    param.put( "param1", new Property<String[]>( new String[] { "SHIPPED", "DELIVERED" } ) );
+    Map<String, Object> param = new HashMap<String, Object>();
+    param.put( "param1", new String[] { "SHIPPED", "DELIVERED" } );
     handleFormula( getOrdersModel(), "Hypersonic", param, "EQUALS([bc_ORDERS.BC_ORDERS_STATUS];[param:param1])",
         "BT_ORDERS.STATUS  IN ( 'SHIPPED' , 'DELIVERED' )" );
   }
 
   @Test
   public void testMultiValuedParamsForNonSupportingFunctions() {
-    Map<String, Property> param = new HashMap<String, Property>();
-    param.put( "param1", new Property<String[]>( new String[] { "SHIPPED", "DELIVERED" } ) );
+    Map<String, Object> param = new HashMap<String, Object>();
+    param.put( "param1", new String[] { "SHIPPED", "DELIVERED" } );
 
     handleFormulaFailure( getOrdersModel(), "Hypersonic", param,
         "ENDSWITH([bc_ORDERS.BC_ORDERS_STATUS];[param:param1])", Messages.getErrorString(
@@ -914,8 +913,8 @@ public class SqlOpenFormulaTest {
 
   @Test
   public void testMultiValuedParamsForNonSupportingOperators() {
-    Map<String, Property> param = new HashMap<String, Property>();
-    param.put( "param1", new Property<String[]>( new String[] { "SHIPPED", "DELIVERED" } ) );
+    Map<String, Object> param = new HashMap<String, Object>();
+    param.put( "param1", new String[] { "SHIPPED", "DELIVERED" } );
 
     handleFormulaFailure( getOrdersModel(), "Hypersonic", param, "[bc_ORDERS.BC_ORDERS_STATUS]=[param:param1]",
         Messages.getErrorString( "SqlOpenFormula.ERROR_0024_MULTIPLE_VALUES_NOT_SUPPORTED", "=" ) );

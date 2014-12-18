@@ -23,7 +23,6 @@ import java.util.List;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.pentaho.di.core.changed.ChangedFlag;
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.pms.core.event.AllowsIDChangeListenersInterface;
 import org.pentaho.pms.core.event.IDChangedEvent;
 import org.pentaho.pms.core.event.IDChangedListener;
@@ -274,7 +273,7 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
   public void setTargetSchema( String targetSchema ) {
     ConceptPropertyInterface property = concept.getChildProperty( DefaultPropertyID.TARGET_SCHEMA.getId() );
     if ( null != property ) {
-      property.setValue( new Property<String>( targetSchema ) );
+      property.setValue( targetSchema );
     } else {
       concept.addProperty( new ConceptPropertyString( DefaultPropertyID.TARGET_SCHEMA.getId(), targetSchema ) );
     }
@@ -291,7 +290,7 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
   public void setTargetTable( String targetTable ) {
     ConceptPropertyInterface property = concept.getChildProperty( DefaultPropertyID.TARGET_TABLE.getId() );
     if ( null != property ) {
-      property.setValue( new Property<String>( targetTable ) );
+      property.setValue( targetTable );
     } else {
       concept.addProperty( new ConceptPropertyString( DefaultPropertyID.TARGET_TABLE.getId(), targetTable ) );
     }
@@ -308,7 +307,7 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
   public void setMask( String mask ) {
     ConceptPropertyInterface property = concept.getChildProperty( DefaultPropertyID.MASK.getId() );
     if ( null != property ) {
-      property.setValue( new Property<String>( mask ) );
+      property.setValue( mask );
     } else {
       concept.addProperty( new ConceptPropertyString( DefaultPropertyID.MASK.getId(), mask ) );
     }
@@ -316,17 +315,17 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
 
   public TableTypeSettings getTableType() {
     ConceptPropertyInterface property = concept.getProperty( DefaultPropertyID.TABLE_TYPE.getId() );
-    if ( property == null || property.getValue() == null || property.getValue().getValue() == null ) {
+    if ( property == null ) {
       return TableTypeSettings.OTHER;
     } else {
-      return (TableTypeSettings) property.getValue().getValue();
+      return (TableTypeSettings) property.getValue();
     }
   }
 
   public void setTableType( TableTypeSettings type ) {
     ConceptPropertyInterface property = concept.getChildProperty( DefaultPropertyID.TABLE_TYPE.getId() );
     if ( null != property ) {
-      property.setValue( new Property<TableTypeSettings>( type ) );
+      property.setValue( type );
     } else {
       concept.addProperty( new ConceptPropertyTableType( DefaultPropertyID.TABLE_TYPE.getId(), type ) );
     }
@@ -351,11 +350,7 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
   public int getRelativeSize() {
     ConceptPropertyInterface property = concept.getProperty( DefaultPropertyID.RELATIVE_SIZE.getId() );
     if ( property != null ) {
-      BigDecimal value = null;
-      Property prop = property.getValue();
-      if( prop != null && prop.getValue() != null ) {
-        value = (BigDecimal) prop.getValue();
-      }
+      BigDecimal value = (BigDecimal) property.getValue();
       if ( value != null ) {
         return value.intValue();
       }
@@ -366,7 +361,7 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
   public void setRelativeSize( int size ) {
     ConceptPropertyInterface property = concept.getChildProperty( DefaultPropertyID.RELATIVE_SIZE.getId() );
     if ( null != property ) {
-      property.setValue( new Property<BigDecimal>( new BigDecimal( size ) ) );
+      property.setValue( new BigDecimal( size ) );
     } else {
       concept.addProperty( new ConceptPropertyNumber( DefaultPropertyID.RELATIVE_SIZE.getId(), size ) );
     }
@@ -374,16 +369,16 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
 
   public String getFormula() {
     ConceptPropertyInterface property = concept.getProperty( DefaultPropertyID.FORMULA.getId() );
-    if ( property == null || property.getValue() == null || property.getValue().getValue() == null ) {
+    if ( property == null ) {
       return null;
     }
-    return (String) property.getValue().getValue();
+    return (String) property.getValue();
   }
 
   public void setFormula( String formula ) {
     ConceptPropertyInterface property = concept.getChildProperty( DefaultPropertyID.FORMULA.getId() );
     if ( null != property ) {
-      property.setValue( new Property<String>( formula ) );
+      property.setValue( formula );
     } else {
       concept.addProperty( new ConceptPropertyString( DefaultPropertyID.FORMULA.getId(), formula ) );
     }
@@ -391,10 +386,10 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
 
   public FieldTypeSettings getFieldType() {
     ConceptPropertyInterface property = concept.getProperty( DefaultPropertyID.FIELD_TYPE.getId() );
-    if ( property == null || property.getValue() == null || property.getValue().getValue() == null ) {
+    if ( property == null || property.getValue() == null ) {
       return FieldTypeSettings.OTHER;
     }
-    return (FieldTypeSettings) property.getValue().getValue();
+    return (FieldTypeSettings) property.getValue();
   }
 
   /**
@@ -404,7 +399,7 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
   public void setFieldType( FieldTypeSettings fieldType ) {
     ConceptPropertyInterface property = concept.getChildProperty( DefaultPropertyID.FIELD_TYPE.getId() );
     if ( null != property ) {
-      property.setValue( new Property<FieldTypeSettings>( fieldType ) );
+      property.setValue( fieldType );
     } else {
       concept.addProperty( new ConceptPropertyFieldType( DefaultPropertyID.FIELD_TYPE.getId(), fieldType ) );
     }
@@ -417,7 +412,7 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
   public void setAggregationType( AggregationSettings aggregationType ) {
     ConceptPropertyInterface property = concept.getChildProperty( DefaultPropertyID.AGGREGATION.getId() );
     if ( null != property ) {
-      property.setValue( new Property<AggregationSettings>( aggregationType ) );
+      property.setValue( aggregationType );
     } else {
       concept.addProperty( new ConceptPropertyAggregation( DefaultPropertyID.AGGREGATION.getId(), aggregationType ) );
     }
@@ -425,10 +420,10 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
 
   public AggregationSettings getAggregationType() {
     ConceptPropertyInterface property = concept.getProperty( DefaultPropertyID.AGGREGATION.getId() );
-    if ( property == null || property.getValue() == null || property.getValue().getValue() == null ) {
+    if ( property == null || property.getValue() == null ) {
       return AggregationSettings.NONE;
     }
-    return (AggregationSettings) property.getValue().getValue();
+    return (AggregationSettings) property.getValue();
   }
 
   public String getAggregationTypeDesc() {
@@ -438,7 +433,7 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
   public void setAggregationList( List<AggregationSettings> aggregationList ) {
     ConceptPropertyInterface property = concept.getChildProperty( DefaultPropertyID.AGGREGATION_LIST.getId() );
     if ( null != property ) {
-      property.setValue( new Property<List<AggregationSettings>>( aggregationList ) );
+      property.setValue( aggregationList );
     } else {
       concept.addProperty( new ConceptPropertyAggregationList( DefaultPropertyID.AGGREGATION_LIST.getId(),
           aggregationList ) );
@@ -448,16 +443,16 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
   @SuppressWarnings( "unchecked" )
   public List<AggregationSettings> getAggregationList() {
     ConceptPropertyInterface property = concept.getProperty( DefaultPropertyID.AGGREGATION_LIST.getId() );
-    if ( property == null || property.getValue() == null || property.getValue().getValue() == null ) {
+    if ( property == null || property.getValue() == null ) {
       return null;
     }
-    return (List<AggregationSettings>) property.getValue().getValue();
+    return (List<AggregationSettings>) property.getValue();
   }
 
   public void setHidden( boolean hidden ) {
     ConceptPropertyInterface property = concept.getChildProperty( DefaultPropertyID.HIDDEN.getId() );
     if ( null != property ) {
-      property.setValue( new Property<Boolean>( new Boolean( hidden ) ) );
+      property.setValue( new Boolean( hidden ) );
     } else {
       concept.addProperty( new ConceptPropertyBoolean( DefaultPropertyID.HIDDEN.getId(), hidden ) );
     }
@@ -469,24 +464,24 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
 
   public boolean isHidden() {
     ConceptPropertyInterface property = concept.getProperty( DefaultPropertyID.HIDDEN.getId() );
-    if ( property == null || property.getValue() == null || property.getValue().getValue() == null ) {
+    if ( property == null || property.getValue() == null ) {
       return false;
     }
-    return ( (Boolean) property.getValue().getValue() ).booleanValue();
+    return ( (Boolean) property.getValue() ).booleanValue();
   }
 
   public boolean isExact() {
     ConceptPropertyInterface property = concept.getProperty( DefaultPropertyID.EXACT.getId() );
-    if ( property == null || property.getValue() == null || property.getValue().getValue() == null ) {
+    if ( property == null || property.getValue() == null ) {
       return false;
     }
-    return ( (Boolean) property.getValue().getValue() ).booleanValue();
+    return ( (Boolean) property.getValue() ).booleanValue();
   }
 
   public void setExact( boolean exact ) {
     ConceptPropertyInterface property = concept.getChildProperty( DefaultPropertyID.EXACT.getId() );
     if ( null != property ) {
-      property.setValue( new Property<Boolean>( new Boolean( exact ) ) );
+      property.setValue( new Boolean( exact ) );
     } else {
       concept.addProperty( new ConceptPropertyBoolean( DefaultPropertyID.EXACT.getId(), exact ) );
     }
@@ -514,16 +509,16 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
 
   public DataTypeSettings getDataType() {
     ConceptPropertyInterface property = concept.getProperty( DefaultPropertyID.DATA_TYPE.getId() );
-    if ( property == null || property.getValue() == null || property.getValue().getValue() == null ) {
+    if ( property == null || property.getValue() == null ) {
       return DataTypeSettings.UNKNOWN;
     }
-    return (DataTypeSettings) property.getValue().getValue();
+    return (DataTypeSettings) property.getValue();
   }
 
   public void setDataType( DataTypeSettings dataType ) {
     ConceptPropertyInterface property = concept.getChildProperty( DefaultPropertyID.DATA_TYPE.getId() );
     if ( null != property ) {
-      property.setValue( new Property<DataTypeSettings>( dataType ) );
+      property.setValue( dataType );
     } else {
       concept.addProperty( new ConceptPropertyDataType( DefaultPropertyID.DATA_TYPE.getId(), dataType ) );
     }
@@ -531,16 +526,16 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
 
   public Security getSecurity() {
     ConceptPropertyInterface property = concept.getProperty( DefaultPropertyID.SECURITY.getId() );
-    if ( property == null || property.getValue() == null || property.getValue().getValue() == null ) {
+    if ( property == null || property.getValue() == null ) {
       return new Security();
     }
-    return (Security) property.getValue().getValue();
+    return (Security) property.getValue();
   }
 
   public void setSecurity( Security security ) {
     ConceptPropertyInterface property = concept.getChildProperty( DefaultPropertyID.SECURITY.getId() );
     if ( null != property ) {
-      property.setValue( new Property<Security>( security ) );
+      property.setValue( security );
     } else {
       concept.addProperty( new ConceptPropertySecurity( DefaultPropertyID.SECURITY.getId(), security ) );
     }
@@ -548,16 +543,16 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
 
   public RowLevelSecurity getRowLevelSecurity() {
     ConceptPropertyInterface property = concept.getProperty( DefaultPropertyID.ROW_LEVEL_SECURITY.getId() );
-    if ( property == null || property.getValue() == null || property.getValue().getValue() == null ) {
+    if ( property == null || property.getValue() == null ) {
       return new RowLevelSecurity();
     }
-    return (RowLevelSecurity) property.getValue().getValue();
+    return (RowLevelSecurity) property.getValue();
   }
 
   public void setRowLevelSecurity( RowLevelSecurity rowLevelSecurity ) {
     ConceptPropertyInterface property = concept.getChildProperty( DefaultPropertyID.ROW_LEVEL_SECURITY.getId() );
     if ( null != property ) {
-      property.setValue( new Property<RowLevelSecurity>( rowLevelSecurity ) );
+      property.setValue( rowLevelSecurity );
     } else {
       concept.addProperty( new ConceptPropertyRowLevelSecurity( DefaultPropertyID.ROW_LEVEL_SECURITY.getId(),
           rowLevelSecurity ) );

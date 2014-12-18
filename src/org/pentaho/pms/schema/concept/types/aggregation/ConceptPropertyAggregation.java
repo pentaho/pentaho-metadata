@@ -18,7 +18,6 @@ package org.pentaho.pms.schema.concept.types.aggregation;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
@@ -67,12 +66,12 @@ public class ConceptPropertyAggregation extends ConceptPropertyBase implements C
     return ConceptPropertyType.AGGREGATION;
   }
 
-  public Property getValue() {
-    return new Property<AggregationSettings>( value );
+  public Object getValue() {
+    return value;
   }
 
-  public void setValue( Property value ) {
-    this.value = value != null ? (AggregationSettings) value.getValue() : null;
+  public void setValue( Object value ) {
+    this.value = (AggregationSettings) value;
   }
 
   public boolean equals( Object obj ) {

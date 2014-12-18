@@ -36,7 +36,6 @@ import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.query.model.CombinationType;
@@ -207,7 +206,7 @@ public class QueryXmlHelper {
       paramElement.setAttribute( "name", param.getName() ); //$NON-NLS-1$
       paramElement.setAttribute( "type", param.getType().toString() ); //$NON-NLS-1$
       paramElement.setAttribute(
-          "defaultValue", param.getDefaultValue() == null ? "" : param.getDefaultValue().getValue().toString() ); //$NON-NLS-1$ //$NON-NLS-2$
+          "defaultValue", param.getDefaultValue() == null ? "" : param.getDefaultValue().toString() ); //$NON-NLS-1$ //$NON-NLS-2$
       parametersElement.appendChild( paramElement );
     }
   }
@@ -217,7 +216,7 @@ public class QueryXmlHelper {
     String type = paramElement.getAttribute( "type" ); //$NON-NLS-1$
     String defaultValue = paramElement.getAttribute( "defaultValue" ); //$NON-NLS-1$
 
-    Property defaultVal = null;
+    Object defaultVal = null;
     if ( name != null && type != null && StringUtils.isNotEmpty( defaultValue ) ) {
       DataType dataType = DataType.valueOf( type.toUpperCase() );
       defaultVal = parseDefaultValue( defaultValue, dataType );
@@ -226,7 +225,7 @@ public class QueryXmlHelper {
     query.getParameters().add( param );
   }
 
-  protected Property parseDefaultValue( String defaultValue, DataType dataType ) {
+  protected Object parseDefaultValue( String defaultValue, DataType dataType ) {
     if ( defaultValue == null ) {
       return null;
     }
@@ -242,42 +241,42 @@ public class QueryXmlHelper {
     }
   }
 
-  private Property parseBooleanDefaultParam( String defaultValue, CSVTokenizer csvt ) {
+  private Object parseBooleanDefaultParam( String defaultValue, CSVTokenizer csvt ) {
     if ( csvt.countTokens() == 1 ) {
-      return new Property<Boolean>( Boolean.parseBoolean( csvt.nextToken() ) );
+      return Boolean.parseBoolean( csvt.nextToken() );
     } else {
       ArrayList<Boolean> vals = new ArrayList<Boolean>();
       while ( csvt.hasMoreTokens() ) {
         String token = csvt.nextToken();
         vals.add( Boolean.parseBoolean( token ) );
       }
-      return new Property<Boolean[]>( vals.toArray( new Boolean[0] ) );
+      return vals.toArray( new Boolean[0] );
     }
   }
 
-  private Property parseDoubleDefaultParam( String defaultValue, CSVTokenizer csvt ) {
+  private Object parseDoubleDefaultParam( String defaultValue, CSVTokenizer csvt ) {
     if ( csvt.countTokens() == 1 ) {
-      return new Property<Double>( Double.parseDouble( csvt.nextToken() ) );
+      return Double.parseDouble( csvt.nextToken() );
     } else {
       ArrayList<Double> vals = new ArrayList<Double>();
       while ( csvt.hasMoreTokens() ) {
         String token = csvt.nextToken();
         vals.add( Double.parseDouble( token ) );
       }
-      return new Property<Double[]>( vals.toArray( new Double[0] ) );
+      return vals.toArray( new Double[0] );
     }
   }
 
-  private Property parseStringDefaultParam( String defaultValue, CSVTokenizer csvt ) {
+  private Object parseStringDefaultParam( String defaultValue, CSVTokenizer csvt ) {
     if ( csvt.countTokens() == 1 ) {
-      return new Property<String>( csvt.nextToken() );
+      return csvt.nextToken();
     } else {
       ArrayList<String> vals = new ArrayList<String>();
       while ( csvt.hasMoreTokens() ) {
         String token = csvt.nextToken();
         vals.add( token );
       }
-      return new Property<String[]>( vals.toArray( new String[0] ) );
+      return vals.toArray( new String[0] );
     }
   }
 

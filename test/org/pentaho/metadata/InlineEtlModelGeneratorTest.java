@@ -34,7 +34,6 @@ import org.pentaho.metadata.model.InlineEtlPhysicalTable;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.LogicalTable;
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.query.impl.ietl.InlineEtlQueryExecutor;
@@ -319,16 +318,16 @@ public class InlineEtlModelGeneratorTest {
 
     Query query6 = new Query( domain, model );
 
-    query6.getParameters().add( new Parameter( "param1", DataType.BOOLEAN, new Property<Boolean>( false ) ) );
+    query6.getParameters().add( new Parameter( "param1", DataType.BOOLEAN, false ) );
     query6.getSelections().add( new Selection( category, category.getLogicalColumns().get( 0 ), null ) );
     query6.getConstraints().add( new Constraint( CombinationType.AND, "[param:param1]" ) );
 
     resultset = executor.executeQuery( query6, "test/solution/system/metadata/csvfiles/", null );
     Assert.assertEquals( 0, resultset.getRowCount() );
 
-    Map<String, Property> params = new HashMap<String, Property>();
+    Map<String, Object> params = new HashMap<String, Object>();
 
-    params.put( "param1", new Property<Boolean>( true ) );
+    params.put( "param1", true );
 
     resultset = executor.executeQuery( query6, "test/solution/system/metadata/csvfiles/", params );
     Assert.assertEquals( 5, resultset.getRowCount() );

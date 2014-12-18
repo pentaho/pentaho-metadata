@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.pentaho.metadata.model.IMetadataQueryExec;
 import org.pentaho.metadata.model.IPhysicalModel;
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.query.model.Parameter;
 import org.pentaho.metadata.repository.IMetadataDomainRepository;
 
@@ -48,9 +47,9 @@ public abstract class BaseMetadataQueryExec implements IMetadataQueryExec {
 
   private IPhysicalModel physicalModel;
 
-  protected Map<String, Property> parameters = new HashMap<String, Property>();
+  protected Map<String, Object> parameters = new HashMap<String, Object>();
 
-  protected Map<String, Property> inputs = new HashMap<String, Property>();
+  protected Map<String, Object> inputs = new HashMap<String, Object>();
 
   public void setDoQueryLog( boolean doQueryLog ) {
     this.doQueryLog = doQueryLog;
@@ -108,16 +107,16 @@ public abstract class BaseMetadataQueryExec implements IMetadataQueryExec {
     this.physicalModel = physicalModel;
   }
 
-  public void setParameter( Parameter param, Property value ) {
+  public void setParameter( Parameter param, Object value ) {
 
-    if ( value != null && value.getValue() != null) {
+    if ( value != null ) {
       parameters.put( param.getName(), value );
     } else {
       parameters.put( param.getName(), param.getDefaultValue() );
     }
   }
 
-  public void setInputs( Map<String, Property> inputs ) {
+  public void setInputs( Map<String, Object> inputs ) {
     this.inputs = inputs;
   }
 
@@ -131,29 +130,29 @@ public abstract class BaseMetadataQueryExec implements IMetadataQueryExec {
    * 
    * @return the converted value
    */
-  protected Property convertParameterValue( Parameter param, Property paramObj ) {
-    if ( paramObj == null || paramObj.getValue() == null) {
+  protected Object convertParameterValue( Parameter param, Object paramObj ) {
+    if ( paramObj == null ) {
       return null;
     }
     // convert the input parameter to the right parameter type
     switch ( param.getType() ) {
       case NUMERIC:
-        if ( !( paramObj.getValue() instanceof Number ) ) {
+        if ( !( paramObj instanceof Number ) ) {
           try {
-            paramObj = new Property<Double>( Double.parseDouble( paramObj.getValue().toString() ) );
+            paramObj = Double.parseDouble( paramObj.toString() );
           } catch ( NumberFormatException e ) {
             // ignore failed conversion
           }
         }
         break;
       case BOOLEAN:
-        if ( !( paramObj.getValue() instanceof Boolean ) ) {
-          paramObj = new Property<Boolean>( Boolean.parseBoolean( paramObj.getValue().toString() ) );
+        if ( !( paramObj instanceof Boolean ) ) {
+          paramObj = Boolean.parseBoolean( paramObj.toString() );
         }
         break;
       case STRING:
-        if ( !( paramObj.getValue() instanceof String ) ) {
-          paramObj = new Property<String>( paramObj.getValue().toString() );
+        if ( !( paramObj instanceof String ) ) {
+          paramObj = paramObj.toString();
         }
         break;
     }

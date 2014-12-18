@@ -39,7 +39,6 @@ import org.pentaho.metadata.model.LogicalRelationship;
 import org.pentaho.metadata.model.LogicalTable;
 import org.pentaho.metadata.model.SqlPhysicalColumn;
 import org.pentaho.metadata.model.SqlPhysicalTable;
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.model.concept.types.RelationshipType;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
@@ -129,7 +128,7 @@ public class SqlGenerator {
    */
   protected void generateSelect( SQLQueryModel query, LogicalModel model, DatabaseMeta databaseMeta,
       List<Selection> selections, boolean disableDistinct, int limit, boolean group, String locale,
-      Map<LogicalTable, String> tableAliases, Map<String, String> columnsMap, Map<String, Property> parameters,
+      Map<LogicalTable, String> tableAliases, Map<String, String> columnsMap, Map<String, Object> parameters,
       boolean genAsPreparedStatement ) {
     query.setDistinct( !disableDistinct && !group );
     query.setLimit( limit );
@@ -183,7 +182,7 @@ public class SqlGenerator {
    */
   protected void generateFromAndWhere( SQLQueryModel query, List<LogicalTable> usedBusinessTables, LogicalModel model,
       Path path, List<Constraint> conditions, Map<LogicalTable, String> tableAliases,
-      Map<Constraint, SqlOpenFormula> constraintFormulaMap, Map<String, Property> parameters,
+      Map<Constraint, SqlOpenFormula> constraintFormulaMap, Map<String, Object> parameters,
       boolean genAsPreparedStatement, DatabaseMeta databaseMeta, String locale ) throws PentahoMetadataException {
 
     // Boolean delayConditionOnOuterJoin = null;
@@ -193,10 +192,7 @@ public class SqlGenerator {
       LogicalTable businessTable = usedBusinessTables.get( i );
       String schemaName = null;
       if ( businessTable.getProperty( SqlPhysicalTable.TARGET_SCHEMA ) != null ) {
-        Property property = businessTable.getProperty( SqlPhysicalTable.TARGET_SCHEMA );
-        if ( property != null ) {
-          schemaName = databaseMeta.quoteField( (String) property.getValue() );
-        }
+        schemaName = databaseMeta.quoteField( (String) businessTable.getProperty( SqlPhysicalTable.TARGET_SCHEMA ) );
       }
       // ToDo: Allow table-level override of delaying conditions.
       // val = businessTable.getProperty("delay_table_outer_join_conditions");
@@ -210,9 +206,8 @@ public class SqlGenerator {
       // TODO: make this key off a metadata flag vs. the
       // beginning of the table name.
 
-      String tableName = (String) businessTable.getProperty( SqlPhysicalTable.TARGET_TABLE ).getValue();
-      TargetTableType type = businessTable.getProperty( SqlPhysicalTable.TARGET_TABLE_TYPE ) != null ?
-          (TargetTableType) businessTable.getProperty( SqlPhysicalTable.TARGET_TABLE_TYPE ).getValue() : null;
+      String tableName = (String) businessTable.getProperty( SqlPhysicalTable.TARGET_TABLE );
+      TargetTableType type = (TargetTableType) businessTable.getProperty( SqlPhysicalTable.TARGET_TABLE_TYPE );
       if ( type == TargetTableType.INLINE_SQL ) {
         tableName = "(" + tableName + ")"; //$NON-NLS-1$ //$NON-NLS-2$
       } else {
@@ -243,29 +238,19 @@ public class SqlGenerator {
             joinType = JoinType.INNER_JOIN;
             break;
         }
-        
-        String fromTableSchema = relation.getFromTable().getProperty( SqlPhysicalTable.TARGET_SCHEMA ) != null ?
-            (String) relation.getFromTable().getProperty( SqlPhysicalTable.TARGET_SCHEMA ).getValue() : null;
-        
-        String fromTableTable = relation.getFromTable().getProperty( SqlPhysicalTable.TARGET_TABLE ) != null ?
-            (String) relation.getFromTable().getProperty( SqlPhysicalTable.TARGET_TABLE ).getValue() : null;
-        
-        String toTableSchema = relation.getToTable().getProperty( SqlPhysicalTable.TARGET_SCHEMA ) != null ?
-            (String) relation.getToTable().getProperty( SqlPhysicalTable.TARGET_SCHEMA ).getValue() : null;
-        
-        String toTableTable = relation.getToTable().getProperty( SqlPhysicalTable.TARGET_TABLE ) != null ?
-            (String) relation.getToTable().getProperty( SqlPhysicalTable.TARGET_TABLE ).getValue() : null;
-        
+
         String leftTableName =
-            databaseMeta.getQuotedSchemaTableCombination( fromTableSchema, fromTableTable );
+            databaseMeta.getQuotedSchemaTableCombination( (String) relation.getFromTable().getProperty(
+                SqlPhysicalTable.TARGET_SCHEMA ), (String) relation.getFromTable().getProperty(
+                SqlPhysicalTable.TARGET_TABLE ) );
         String leftTableAlias = databaseMeta.quoteField( tableAliases.get( relation.getFromTable() ) );
         String rightTableName =
-            databaseMeta.getQuotedSchemaTableCombination( toTableSchema, toTableTable );
+            databaseMeta.getQuotedSchemaTableCombination( (String) relation.getToTable().getProperty(
+                SqlPhysicalTable.TARGET_SCHEMA ), (String) relation.getToTable().getProperty(
+                SqlPhysicalTable.TARGET_TABLE ) );
         String rightTableAlias = databaseMeta.quoteField( tableAliases.get( relation.getToTable() ) );
 
-        Boolean legacyOrder = model.getProperty( LEGACY_JOIN_ORDER ) != null ?
-            (Boolean) model.getProperty( LEGACY_JOIN_ORDER ).getValue() : null;
-        boolean legacyJoin = Boolean.TRUE.equals( legacyOrder );
+        boolean legacyJoin = Boolean.TRUE.equals( model.getProperty( LEGACY_JOIN_ORDER ) );
         query.addJoin( leftTableName, leftTableAlias, rightTableName, rightTableAlias, joinType, joinFormula,
             joinOrderKey, legacyJoin );
         // query.addWhereFormula(joinFormula, "AND"); //$NON-NLS-1$
@@ -316,7 +301,7 @@ public class SqlGenerator {
    *          Locale string.
    */
   protected void generateGroupBy( SQLQueryModel query, LogicalModel model, List<Selection> selections,
-      Map<LogicalTable, String> tableAliases, Map<String, Property> parameters, boolean genAsPreparedStatement,
+      Map<LogicalTable, String> tableAliases, Map<String, Object> parameters, boolean genAsPreparedStatement,
       DatabaseMeta databaseMeta, String locale ) {
     // Can be moved to selection loop.
     for ( Selection selection : selections ) {
@@ -356,7 +341,7 @@ public class SqlGenerator {
    */
   protected void generateOrderBy( SQLQueryModel query, LogicalModel model, List<Order> orderBy,
       DatabaseMeta databaseMeta, String locale, Map<LogicalTable, String> tableAliases, Map<String, String> columnsMap,
-      Map<String, Property> parameters, boolean genAsPreparedStatement ) {
+      Map<String, Object> parameters, boolean genAsPreparedStatement ) {
     if ( orderBy != null ) {
       for ( Order orderItem : orderBy ) {
         LogicalColumn businessColumn = orderItem.getSelection().getLogicalColumn();
@@ -464,7 +449,7 @@ public class SqlGenerator {
    * @throws PentahoMetadataException
    */
   public MappedQuery generateSql( Query query, String locale, IMetadataDomainRepository repo,
-      DatabaseMeta databaseMeta, Map<String, Property> parameters, boolean genAsPreparedStatement )
+      DatabaseMeta databaseMeta, Map<String, Object> parameters, boolean genAsPreparedStatement )
     throws PentahoMetadataException {
 
     Constraint securityConstraint = null;
@@ -478,7 +463,7 @@ public class SqlGenerator {
 
     // resolve any missing parameters with default values
     if ( parameters == null && query.getParameters().size() > 0 ) {
-      parameters = new HashMap<String, Property>();
+      parameters = new HashMap<String, Object>();
     }
     for ( Parameter param : query.getParameters() ) {
       if ( !parameters.containsKey( param.getName() ) ) {
@@ -520,17 +505,17 @@ public class SqlGenerator {
    * @return Returns a SQL query based on a column selection, conditions and a locale.
    */
   protected MappedQuery getSQL( LogicalModel model, List<Selection> selections, List<Constraint> conditions,
-      List<Order> orderBy, DatabaseMeta databaseMeta, String locale, Map<String, Property> parameters,
+      List<Order> orderBy, DatabaseMeta databaseMeta, String locale, Map<String, Object> parameters,
       boolean genAsPreparedStatement, boolean disableDistinct, int limit, Constraint securityConstraint )
     throws PentahoMetadataException {
 
     SQLQueryModel query = new SQLQueryModel();
 
     // Get settings for the query model
-    Property val = null;
+    Object val = null;
     val = model.getProperty( "delay_outer_join_conditions" ); //$NON-NLS-1$
-    if ( ( val != null && val.getValue() != null ) && ( val.getValue() instanceof Boolean ) ) {
-      query.setDelayOuterJoinConditions( ( (Boolean) val.getValue() ).booleanValue() );
+    if ( ( val != null ) && ( val instanceof Boolean ) ) {
+      query.setDelayOuterJoinConditions( ( (Boolean) val ).booleanValue() );
     }
 
     Map<String, String> columnsMap = new HashMap<String, String>();
@@ -624,13 +609,8 @@ public class SqlGenerator {
     while ( m.find() ) {
       String paramName = m.group( 1 );
       String repl = "?";
-      Property paramProperty = parameters.get( paramName );
-      Object param = null;
-      if ( paramProperty != null ) {
-        param = paramProperty.getValue();
-      }
-      if ( param instanceof Object[] ) {
-        Object[] paramz = (Object[]) parameters.get( paramName ).getValue();
+      if ( parameters.get( paramName ) instanceof Object[] ) {
+        Object[] paramz = (Object[]) parameters.get( paramName );
         for ( int i = 1; i < paramz.length; i++ ) {
           repl += ", ?";
         }
@@ -709,7 +689,7 @@ public class SqlGenerator {
    */
   protected List<LogicalTable> getTablesInvolved( LogicalModel model, List<Selection> selections,
       List<Constraint> conditions, List<Order> orderBy, Map<Constraint, SqlOpenFormula> constraintFormulaMap,
-      Map<String, Property> parameters, boolean genAsPreparedStatement, DatabaseMeta databaseMeta, String locale,
+      Map<String, Object> parameters, boolean genAsPreparedStatement, DatabaseMeta databaseMeta, String locale,
       Constraint securityConstraint ) {
     Set<LogicalTable> treeSet = new TreeSet<LogicalTable>();
 
@@ -797,7 +777,7 @@ public class SqlGenerator {
    * @return Returns true if a business column has aggregation in its formula or is an aggregation itself.
    */
   protected boolean hasFactsInIt( LogicalModel model, List<Selection> selections, List<Constraint> conditions,
-      Map<Constraint, SqlOpenFormula> constraintFormulaMap, Map<String, Property> parameters,
+      Map<Constraint, SqlOpenFormula> constraintFormulaMap, Map<String, Object> parameters,
       boolean genAsPreparedStatement, DatabaseMeta databaseMeta, String locale ) {
     // We don't have to simply check the columns in the selection
     // If the column is made up of a calculation, we need to verify that there is no aggregation in the calculation too.
@@ -848,7 +828,7 @@ public class SqlGenerator {
    *          The locale to use.
    * @return true if the business column uses any aggregation in the formula or is aggregated itself.
    */
-  protected boolean hasFactsInIt( LogicalModel model, Selection businessColumn, Map<String, Property> parameters,
+  protected boolean hasFactsInIt( LogicalModel model, Selection businessColumn, Map<String, Object> parameters,
       boolean genAsPreparedStatement, DatabaseMeta databaseMeta, String locale ) {
     if ( businessColumn.hasAggregate() ) {
       return true;
@@ -993,6 +973,7 @@ public class SqlGenerator {
    *          Include tables.
    * @return Returns the shortest path.
    */
+  @SuppressWarnings( "unchecked" )
   public Path getShortestPathBetween( LogicalModel model, List<LogicalTable> tables ) {
     logger.debug( "Enter getShortestPathBetween() - new" );
 
@@ -1025,11 +1006,10 @@ public class SqlGenerator {
     }
 
     // Using this for quick POC
-    Property pathBuildProperty = model.getProperty( "path_build_method" );
+    Object pathBuildProperty = model.getProperty( "path_build_method" );
     String pathMethodString;
-    if ( ( pathBuildProperty != null && pathBuildProperty.getValue() != null ) 
-        && ( pathBuildProperty.getValue() instanceof String ) ) {
-      pathMethodString = (String) pathBuildProperty.getValue();
+    if ( ( pathBuildProperty != null ) && ( pathBuildProperty instanceof String ) ) {
+      pathMethodString = (String) pathBuildProperty;
     } else {
       if ( preferClassicShortestPath ) {
         pathMethodString = "CLASSIC";
@@ -1207,12 +1187,11 @@ public class SqlGenerator {
    * @return Returns sql for specified business column.
    */
   public static SqlAndTables getBusinessColumnSQL( LogicalModel businessModel, Selection column,
-      Map<LogicalTable, String> tableAliases, Map<String, Property> parameters, boolean genAsPreparedStatement,
+      Map<LogicalTable, String> tableAliases, Map<String, Object> parameters, boolean genAsPreparedStatement,
       DatabaseMeta databaseMeta, String locale ) {
-    String targetColumn = (String) column.getLogicalColumn().getProperty( SqlPhysicalColumn.TARGET_COLUMN ).getValue();
+    String targetColumn = (String) column.getLogicalColumn().getProperty( SqlPhysicalColumn.TARGET_COLUMN );
     LogicalTable logicalTable = column.getLogicalColumn().getLogicalTable();
-    Property targetColumnProperty = column.getLogicalColumn().getProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE );
-    if ( targetColumnProperty != null && targetColumnProperty.getValue() == TargetColumnType.OPEN_FORMULA ) {
+    if ( column.getLogicalColumn().getProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE ) == TargetColumnType.OPEN_FORMULA ) {
       // convert to sql using libformula subsystem
 
       try {
@@ -1353,7 +1332,7 @@ public class SqlGenerator {
    * @throws PentahoMetadataException
    */
   protected String getJoin( LogicalModel businessModel, LogicalRelationship relation,
-      Map<LogicalTable, String> tableAliases, Map<String, Property> parameters, boolean genAsPreparedStatement,
+      Map<LogicalTable, String> tableAliases, Map<String, Object> parameters, boolean genAsPreparedStatement,
       DatabaseMeta databaseMeta, String locale ) throws PentahoMetadataException {
     String join = ""; //$NON-NLS-1$
     if ( relation.isComplex() ) {
@@ -1384,7 +1363,7 @@ public class SqlGenerator {
       join = databaseMeta.quoteField( leftTableAlias );
       join += "."; //$NON-NLS-1$
       join +=
-          databaseMeta.quoteField( (String) relation.getFromColumn().getProperty( SqlPhysicalColumn.TARGET_COLUMN ).getValue() );
+          databaseMeta.quoteField( (String) relation.getFromColumn().getProperty( SqlPhysicalColumn.TARGET_COLUMN ) );
 
       // Equals
       join += " = "; //$NON-NLS-1$
@@ -1399,7 +1378,7 @@ public class SqlGenerator {
 
       join += databaseMeta.quoteField( rightTableAlias );
       join += "."; //$NON-NLS-1$
-      join += databaseMeta.quoteField( (String) relation.getToColumn().getProperty( SqlPhysicalColumn.TARGET_COLUMN ).getValue() );
+      join += databaseMeta.quoteField( (String) relation.getToColumn().getProperty( SqlPhysicalColumn.TARGET_COLUMN ) );
     } else {
       throw new PentahoMetadataException( Messages.getErrorString(
           "SqlGenerator.ERROR_0003_INVALID_RELATION", relation.toString() ) ); //$NON-NLS-1$

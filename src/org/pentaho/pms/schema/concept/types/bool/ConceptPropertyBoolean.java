@@ -16,7 +16,6 @@
  */
 package org.pentaho.pms.schema.concept.types.bool;
 
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 
@@ -58,12 +57,12 @@ public class ConceptPropertyBoolean extends ConceptPropertyBase implements Clone
     return ConceptPropertyType.BOOLEAN;
   }
 
-  public Property getValue() {
-    return new Property<Boolean>( value );
+  public Object getValue() {
+    return value;
   }
 
-  public void setValue( Property value ) {
-    this.value = value != null ? (Boolean) value.getValue() : null;
+  public void setValue( Object value ) {
+    this.value = (Boolean) value;
   }
 
   public boolean equals( Object obj ) {

@@ -35,13 +35,6 @@ public class Concept implements IConcept {
 
   public Concept() {
     super();
-    
-    /*
-     * Do not remove... BogoPojo kind of fix. This was 
-     * required to make sure the Property gets serialized
-     * by gwt rpc. Need to research more...
-     * */
-    property.setValue( "" );
   }
 
   private static final long serialVersionUID = -6912836203678095834L;
@@ -50,7 +43,7 @@ public class Concept implements IConcept {
   public static String DESCRIPTION_PROPERTY = "description"; //$NON-NLS-1$
   public static String SECURITY_PROPERTY = "security"; //$NON-NLS-1$
 
-  Map<String, Property> properties = new HashMap<String, Property>();
+  Map<String, Object> properties = new HashMap<String, Object>();
   String id;
   IConcept parent;
   IConcept parentConcept;
@@ -58,13 +51,6 @@ public class Concept implements IConcept {
   IConcept physicalConcept;
   List<IConcept> children = null;
   
-  /*
-   * Do not remove... BogoPojo kind of fix. This was 
-   * required to make sure the Property gets serialized
-   * by gwt rpc. Need to research more...
-   * */
-  Property<String> property = new Property<String>();
-
   public void setParent( IConcept parent ) {
     this.parent = parent;
   }
@@ -104,15 +90,15 @@ public class Concept implements IConcept {
     return null;
   }
 
-  public Map<String, Property> getChildProperties() {
+  public Map<String, Object> getChildProperties() {
     return properties;
   }
 
-  public void setChildProperties( Map<String, Property> properties ) {
+  public void setChildProperties( Map<String, Object> properties ) {
     this.properties = properties;
   }
 
-  public Property getChildProperty( String name ) {
+  public Object getChildProperty( String name ) {
     return properties.get( name );
   }
 
@@ -152,8 +138,8 @@ public class Concept implements IConcept {
     return null;
   }
 
-  public Map<String, Property> getProperties() {
-    Map<String, Property> all = new HashMap<String, Property>();
+  public Map<String, Object> getProperties() {
+    Map<String, Object> all = new HashMap<String, Object>();
 
     // Properties inherited from the "logical relationship":
     // BusinessColumn inherits from Physical Column, B.Table from Ph.Table
@@ -172,7 +158,7 @@ public class Concept implements IConcept {
     // Business table inherits from Business model, business column from business table
     if ( getSecurityParentConcept() != null ) {
       // Only take over the security information, nothing else
-      Property securityProperty = ( Property ) getSecurityParentConcept().getProperty( SECURITY_PROPERTY );
+      Object securityProperty = (Object) getSecurityParentConcept().getProperty( SECURITY_PROPERTY );
       if ( securityProperty != null ) {
         all.put( SECURITY_PROPERTY, securityProperty );
       }
@@ -184,11 +170,11 @@ public class Concept implements IConcept {
     return all;
   }
 
-  public Property getProperty( String name ) {
+  public Object getProperty( String name ) {
     return getProperties().get( name );
   }
 
-  public void setProperty( String name, Property property ) {
+  public void setProperty( String name, Object property ) {
     properties.put( name, property );
   }
 
@@ -197,11 +183,7 @@ public class Concept implements IConcept {
   }
 
   public LocalizedString getName() {
-    Property property = getProperty( NAME_PROPERTY );
-    if( property != null ) {
-      return ( LocalizedString ) property.getValue();
-    }
-    return null;
+    return (LocalizedString) getProperty( NAME_PROPERTY );
   }
 
   public String getName( String locale ) {
@@ -217,7 +199,7 @@ public class Concept implements IConcept {
   }
 
   public void setName( LocalizedString name ) {
-    setProperty( NAME_PROPERTY, new Property<LocalizedString>( name ) );
+    setProperty( NAME_PROPERTY, name );
   }
 
   public String getDescription( String locale ) {
@@ -233,15 +215,11 @@ public class Concept implements IConcept {
   }
 
   public LocalizedString getDescription() {
-    Property property = getProperty( DESCRIPTION_PROPERTY );
-    if( property != null ) {
-      return ( LocalizedString ) property.getValue();
-    }
-    return null;
+    return (LocalizedString) getProperty( DESCRIPTION_PROPERTY );
   }
 
   public void setDescription( LocalizedString description ) {
-    setProperty( DESCRIPTION_PROPERTY, new Property<LocalizedString>( description ) );
+    setProperty( DESCRIPTION_PROPERTY, description );
   }
 
   public int compareTo( Object o ) {

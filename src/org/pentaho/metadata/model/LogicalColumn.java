@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.IConcept;
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.FieldType;
@@ -54,40 +53,28 @@ public class LogicalColumn extends Concept {
   }
 
   public DataType getDataType() {
-    Property property = getProperty( IPhysicalColumn.DATATYPE_PROPERTY );
-    if( property != null ) {
-      return (DataType) property.getValue();
-    }
-    return null;
+    return (DataType) getProperty( IPhysicalColumn.DATATYPE_PROPERTY );
   }
 
   public void setDataType( DataType dataType ) {
-    setProperty( IPhysicalColumn.DATATYPE_PROPERTY, new Property<DataType>( dataType ) );
+    setProperty( IPhysicalColumn.DATATYPE_PROPERTY, dataType );
   }
 
   public AggregationType getAggregationType() {
-    Property property = getProperty( IPhysicalColumn.AGGREGATIONTYPE_PROPERTY );
-    if( property != null ) {
-      return (AggregationType) property.getValue();
-    }
-    return null;
+    return (AggregationType) getProperty( IPhysicalColumn.AGGREGATIONTYPE_PROPERTY );
   }
 
   public void setAggregationType( AggregationType aggType ) {
-    setProperty( IPhysicalColumn.AGGREGATIONTYPE_PROPERTY, new Property<AggregationType>( aggType ) );
+    setProperty( IPhysicalColumn.AGGREGATIONTYPE_PROPERTY, aggType );
   }
 
   @SuppressWarnings( "unchecked" )
   public List<AggregationType> getAggregationList() {
-    Property property = getProperty( IPhysicalColumn.AGGREGATIONLIST_PROPERTY );
-    if( property != null ) {
-      return (List<AggregationType>) property.getValue();
-    }
-    return null;
+    return (List<AggregationType>) getProperty( IPhysicalColumn.AGGREGATIONLIST_PROPERTY );
   }
 
   public void setAggregationList( List<AggregationType> aggList ) {
-    setProperty( IPhysicalColumn.AGGREGATIONLIST_PROPERTY, new Property<List<AggregationType>>( aggList ) );
+    setProperty( IPhysicalColumn.AGGREGATIONLIST_PROPERTY, aggList );
   }
 
   public void setLogicalTable( LogicalTable logicalTable ) {
@@ -99,15 +86,11 @@ public class LogicalColumn extends Concept {
   }
 
   public FieldType getFieldType() {
-    Property property = getProperty( IPhysicalColumn.FIELDTYPE_PROPERTY );
-    if( property != null ) {
-      return (FieldType) property.getValue();
-    }
-    return null;
+    return (FieldType) getProperty( IPhysicalColumn.FIELDTYPE_PROPERTY );
   }
 
   public void setFieldType( FieldType fieldType ) {
-    setProperty( IPhysicalColumn.FIELDTYPE_PROPERTY, new Property<FieldType>( fieldType ) );
+    setProperty( IPhysicalColumn.FIELDTYPE_PROPERTY, fieldType );
   }
 
   public Object clone() {

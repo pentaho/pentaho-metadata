@@ -20,7 +20,6 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
@@ -63,12 +62,12 @@ public class ConceptPropertyTableType extends ConceptPropertyBase implements Con
     return ConceptPropertyType.TABLETYPE;
   }
 
-  public Property getValue() {
-    return new Property<TableTypeSettings>( value );
+  public Object getValue() {
+    return value;
   }
 
-  public void setValue( Property value ) {
-    this.value = value != null ? (TableTypeSettings) value.getValue() : null;
+  public void setValue( Object value ) {
+    this.value = (TableTypeSettings) value;
   }
 
   public boolean equals( Object obj ) {

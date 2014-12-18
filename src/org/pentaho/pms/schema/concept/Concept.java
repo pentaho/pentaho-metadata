@@ -29,7 +29,6 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.pentaho.di.core.changed.ChangedFlag;
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
 import org.pentaho.pms.schema.concept.types.localstring.ConceptPropertyLocalizedString;
@@ -380,12 +379,8 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable 
   public String getLocalizedProperty( String propertyName, String locale ) {
     ConceptPropertyInterface property = getProperty( propertyName );
     if ( property != null && property.getType().equals( ConceptPropertyType.LOCALIZED_STRING ) ) {
-      LocalizedStringSettings locString = null;
-      Property prop = property.getValue();
-      if ( prop != null ) {
-        locString = (LocalizedStringSettings) prop.getValue();
-      }
-      return locString != null ? locString.getString( locale ) : null;
+      LocalizedStringSettings locString = (LocalizedStringSettings) property.getValue();
+      return locString.getString( locale );
     }
     return null;
   }
@@ -417,7 +412,7 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable 
       property = new ConceptPropertyLocalizedString( propertyName, locStringSettings );
       addProperty( property );
     } else {
-      locStringSettings = (LocalizedStringSettings) property.getValue().getValue();
+      locStringSettings = (LocalizedStringSettings) property.getValue();
     }
 
     // Now, that we have the localized String settings property, add the localized value to it..
@@ -434,16 +429,10 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable 
       ConceptPropertyInterface property = getProperty( propertyNames[i] );
       if ( property.getType().equals( ConceptPropertyType.LOCALIZED_STRING ) ) {
         // Yep, this is localized.
-        LocalizedStringSettings locString = null;
-        Property prop = property.getValue();
-        if ( prop != null ) {
-          locString = (LocalizedStringSettings) prop.getValue();
-        }
-        if ( locString != null ) {
-          String[] locs = locString.getLocales();
-          for ( int j = 0; j < locs.length; j++ ) {
-            locales.put( locs[j], "" ); //$NON-NLS-1$
-          }
+        LocalizedStringSettings locString = (LocalizedStringSettings) property.getValue();
+        String[] locs = locString.getLocales();
+        for ( int j = 0; j < locs.length; j++ ) {
+          locales.put( locs[j], "" ); //$NON-NLS-1$
         }
       }
     }
@@ -467,12 +456,8 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable 
       ConceptPropertyInterface property = getProperty( propertyNames[i] );
       if ( property.getType().equals( ConceptPropertyType.LOCALIZED_STRING ) ) {
         // Yep, this is localized.
-        LocalizedStringSettings locString = null;
-        Property prop = property.getValue();
-        if ( prop != null ) {
-          locString = (LocalizedStringSettings) prop.getValue();
-        }
-        if ( locString != null && locString.getString( locale ) != null ) {
+        LocalizedStringSettings locString = (LocalizedStringSettings) property.getValue();
+        if ( locString.getString( locale ) != null ) {
           // We have a property for this locale
           // add it to the list or properties
           propertiesList.add( property );
@@ -505,11 +490,7 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable 
   public String getName( String locale ) {
     ConceptPropertyInterface property = getProperty( DefaultPropertyID.NAME.getId() );
     if ( property != null && property.getType().equals( ConceptPropertyType.LOCALIZED_STRING ) ) {
-      LocalizedStringSettings locString = null;
-      Property prop = property.getValue();
-      if( prop != null && prop.getValue() != null ) {
-        locString = (LocalizedStringSettings) prop.getValue();
-      }
+      LocalizedStringSettings locString = (LocalizedStringSettings) property.getValue();
       if ( locString != null ) {
         return locString.getString( locale );
       }
@@ -539,11 +520,7 @@ public class Concept extends ChangedFlag implements ConceptInterface, Cloneable 
   public String getDescription( String locale ) {
     ConceptPropertyInterface property = getProperty( DefaultPropertyID.DESCRIPTION.getId() );
     if ( property != null && property.getType().equals( ConceptPropertyType.LOCALIZED_STRING ) ) {
-      LocalizedStringSettings locString = null;
-      Property prop = property.getValue();
-      if( prop != null && prop.getValue() != null ) {
-        locString = (LocalizedStringSettings) prop.getValue();
-      }
+      LocalizedStringSettings locString = (LocalizedStringSettings) property.getValue();
       if ( locString != null ) {
         return locString.getString( locale );
       }

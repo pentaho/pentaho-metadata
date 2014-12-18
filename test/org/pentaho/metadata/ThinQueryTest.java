@@ -23,7 +23,6 @@ import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.query.model.CombinationType;
 import org.pentaho.metadata.query.model.Constraint;
@@ -54,7 +53,7 @@ public class ThinQueryTest {
     Category category = model.findCategory( "CATEGORY" );
     LogicalColumn column = category.findLogicalColumn( "LC_CUSTOMERNAME" );
 
-    query.getParameters().add( new Parameter( "test", DataType.STRING, new Property<String>( "val" ) ) );
+    query.getParameters().add( new Parameter( "test", DataType.STRING, "val" ) );
 
     query.getSelections().add( new Selection( category, column, null ) );
 

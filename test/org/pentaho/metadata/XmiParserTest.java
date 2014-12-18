@@ -97,7 +97,7 @@ public class XmiParserTest {
     @SuppressWarnings( "unchecked" )
     List<AggregationType> aggTypes =
         (List<AggregationType>) domain.findLogicalModel( "BV_ORDERS" ).findCategory( "CAT_ORDERS" ).findLogicalColumn(
-            "BC_ORDERS_ORDERNUMBER" ).getProperty( "aggregation_list" ).getValue();
+            "BC_ORDERS_ORDERNUMBER" ).getProperty( "aggregation_list" );
     Assert.assertNotNull( aggTypes );
     Assert.assertEquals( 2, aggTypes.size() );
     Assert.assertEquals( aggTypes.get( 0 ), AggregationType.COUNT );
@@ -105,7 +105,7 @@ public class XmiParserTest {
 
     // verify that inheritance is working
     Assert.assertEquals( "$#,##0.00;($#,##0.00)", domain.findLogicalModel( "BV_ORDERS" ).findCategory( "CAT_ORDERS" )
-        .findLogicalColumn( "BC_ORDERDETAILS_TOTAL" ).getProperty( "mask" ).getValue() );
+        .findLogicalColumn( "BC_ORDERDETAILS_TOTAL" ).getProperty( "mask" ) );
 
   }
 
@@ -204,7 +204,7 @@ public class XmiParserTest {
     Assert.assertEquals( 1, domain.getLogicalModels().size() );
 
     Assert.assertEquals( "http://localhost:8080/pentaho/ServiceAction", domain
-        .getChildProperty( "LEGACY_EVENT_SECURITY_SERVICE_URL" ).getValue() );
+        .getChildProperty( "LEGACY_EVENT_SECURITY_SERVICE_URL" ) );
 
     Assert.assertEquals( 1, domain.getLogicalModels().get( 0 ).getLogicalTables().size() );
     Assert.assertEquals( 29, domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 ).getLogicalColumns().size() );
@@ -235,7 +235,7 @@ public class XmiParserTest {
     SqlDataSource ds2 = ( (SqlPhysicalModel) domain2.getPhysicalModels().get( 0 ) ).getDatasource();
 
     Assert.assertEquals( "http://localhost:8080/pentaho/ServiceAction", domain2
-        .getChildProperty( "LEGACY_EVENT_SECURITY_SERVICE_URL" ).getValue() );
+        .getChildProperty( "LEGACY_EVENT_SECURITY_SERVICE_URL" ) );
 
     Assert.assertEquals( "foodmart", ds.getDatabaseName() );
     Assert.assertEquals( ds.getDatabaseName(), ds2.getDatabaseName() );
@@ -347,7 +347,7 @@ public class XmiParserTest {
 
     Assert.assertNotNull( domain.getLogicalModels().get( 0 ).getProperty( "olap_dimensions" ) );
     List<OlapDimension> dimensions =
-        (List<OlapDimension>) domain.getLogicalModels().get( 0 ).getProperty( "olap_dimensions" ).getValue();
+        (List<OlapDimension>) domain.getLogicalModels().get( 0 ).getProperty( "olap_dimensions" );
     Assert.assertEquals( 2, dimensions.size() );
 
     OlapDimension dim1 = dimensions.get( 0 );
@@ -393,7 +393,7 @@ public class XmiParserTest {
     Assert.assertEquals( "test", hier3.getName() );
 
     Assert.assertNotNull( domain.getLogicalModels().get( 0 ).getProperty( "olap_cubes" ) );
-    List<OlapCube> cubes = (List<OlapCube>) domain.getLogicalModels().get( 0 ).getProperty( "olap_cubes" ).getValue();
+    List<OlapCube> cubes = (List<OlapCube>) domain.getLogicalModels().get( 0 ).getProperty( "olap_cubes" );
     Assert.assertEquals( 1, cubes.size() );
 
     OlapCube cube = cubes.get( 0 );

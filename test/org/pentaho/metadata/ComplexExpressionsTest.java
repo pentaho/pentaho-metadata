@@ -28,7 +28,6 @@ import org.pentaho.metadata.model.LogicalRelationship;
 import org.pentaho.metadata.model.LogicalTable;
 import org.pentaho.metadata.model.SqlPhysicalColumn;
 import org.pentaho.metadata.model.SqlPhysicalTable;
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
 import org.pentaho.metadata.query.impl.sql.MappedQuery;
 import org.pentaho.metadata.query.impl.sql.SqlGenerator;
@@ -119,22 +118,22 @@ public class ComplexExpressionsTest {
 
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt1" ); //$NON-NLS-1$
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt1" ) ); //$NON-NLS-1$
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt1" ); //$NON-NLS-1$
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc1" ); //$NON-NLS-1$
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc1" ) ); //$NON-NLS-1$
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc1" ); //$NON-NLS-1$
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer>( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
     mainCat.addLogicalColumn( bc1 );
     model.getLogicalTables().add( bt1 );
 
     final LogicalTable bt2 = new LogicalTable();
     bt2.setId( "bt2" ); //$NON-NLS-1$
-    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt2" ) ); //$NON-NLS-1$
+    bt2.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt2" ); //$NON-NLS-1$
     final LogicalColumn bc2 = new LogicalColumn();
     bc2.setId( "bc2" ); //$NON-NLS-1$
-    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc2" ) ); //$NON-NLS-1$
+    bc2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc2" ); //$NON-NLS-1$
     bc2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bc2 );
     mainCat.addLogicalColumn( bc2 );
@@ -142,8 +141,8 @@ public class ComplexExpressionsTest {
 
     final LogicalColumn bce2 = new LogicalColumn();
     bce2.setId( "bce2" ); //$NON-NLS-1$
-    bce2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType>( TargetColumnType.OPEN_FORMULA ) );
-    bce2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>(  "[bt2.bc2] * [bt1.bc1]" ) ); //$NON-NLS-1$
+    bce2.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.OPEN_FORMULA );
+    bce2.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "[bt2.bc2] * [bt1.bc1]" ); //$NON-NLS-1$
     bce2.setLogicalTable( bt2 );
     bt2.addLogicalColumn( bce2 );
     mainCat.addLogicalColumn( bce2 );

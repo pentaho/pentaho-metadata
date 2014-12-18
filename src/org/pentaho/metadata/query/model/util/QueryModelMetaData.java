@@ -25,7 +25,6 @@ import java.util.TreeSet;
 import org.pentaho.commons.connection.memory.MemoryMetaData;
 import org.pentaho.metadata.messages.Messages;
 import org.pentaho.metadata.model.LogicalColumn;
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.query.model.Selection;
 
 /**
@@ -119,7 +118,7 @@ public class QueryModelMetaData extends MemoryMetaData {
     return newHeader;
   }
 
-  public Property getAttribute( int rowNo, int columnNo, String attributeName ) {
+  public Object getAttribute( int rowNo, int columnNo, String attributeName ) {
     // TODO support OLAP
 
     if ( rowNo == 0 && columnNo < columns.size() ) {

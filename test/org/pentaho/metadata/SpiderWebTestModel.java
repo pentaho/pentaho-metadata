@@ -24,7 +24,6 @@ import org.pentaho.metadata.model.LogicalRelationship;
 import org.pentaho.metadata.model.LogicalTable;
 import org.pentaho.metadata.model.SqlPhysicalColumn;
 import org.pentaho.metadata.model.SqlPhysicalTable;
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.RelationshipType;
 
@@ -106,7 +105,7 @@ public class SpiderWebTestModel {
 
     LogicalTable rtn = new LogicalTable();
     rtn.setId( "bt_" + tblId );
-    rtn.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String>( "pt_" + tblId ) ); //$NON-NLS-1$
+    rtn.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt_" + tblId ); //$NON-NLS-1$
     createBusinessKeyColumn( tblId, "keya", rtn, mainCat ); // 0
     createBusinessKeyColumn( tblId, "keyb", rtn, mainCat ); // 1
     createBusinessKeyColumn( tblId, "keyc", rtn, mainCat ); // 2
@@ -122,8 +121,8 @@ public class SpiderWebTestModel {
 
     LogicalColumn bcs1 = new LogicalColumn();
     bcs1.setId( "bcs_" + tblId );
-    bcs1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc_" + tblId ) ); //$NON-NLS-1$
-    bcs1.setProperty( IPhysicalColumn.AGGREGATIONTYPE_PROPERTY, new Property<AggregationType>( AggregationType.SUM ) );
+    bcs1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc_" + tblId ); //$NON-NLS-1$
+    bcs1.setProperty( IPhysicalColumn.AGGREGATIONTYPE_PROPERTY, AggregationType.SUM );
     bcs1.setLogicalTable( rtn );
     rtn.addLogicalColumn( bcs1 );
     mainCat.addLogicalColumn( bcs1 );
@@ -136,7 +135,7 @@ public class SpiderWebTestModel {
     throws Exception {
     LogicalColumn rtn = new LogicalColumn();
     rtn.setId( "bc_" + columnId + "_" + tblId );
-    rtn.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String>( "pc_" + columnId + "_" + tblId ) ); //$NON-NLS-1$
+    rtn.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc_" + columnId + "_" + tblId ); //$NON-NLS-1$
     rtn.setLogicalTable( tbl );
     tbl.addLogicalColumn( rtn );
     cat.addLogicalColumn( rtn );

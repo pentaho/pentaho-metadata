@@ -54,7 +54,6 @@ import org.pentaho.metadata.model.InlineEtlPhysicalColumn;
 import org.pentaho.metadata.model.InlineEtlPhysicalModel;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalTable;
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.query.BaseMetadataQueryExec;
@@ -83,7 +82,7 @@ public class InlineEtlQueryExecutor extends BaseMetadataQueryExec {
   private String csvFileLoc = null;
 
   @Override
-  public void setParameter( Parameter param, Property value ) {
+  public void setParameter( Parameter param, Object value ) {
 
     super.setParameter( param, convertParameterValue( param, value ) );
   }
@@ -145,7 +144,7 @@ public class InlineEtlQueryExecutor extends BaseMetadataQueryExec {
     Constraint orig;
   }
 
-  public List<QueryConstraint> parseConstraints( Query query, Map<String, Property> parameters ) {
+  public List<QueryConstraint> parseConstraints( Query query, Map<String, Object> parameters ) {
     List<QueryConstraint> constraints = new ArrayList<QueryConstraint>();
     for ( Constraint constraint : query.getConstraints() ) {
       QueryConstraint qc = new QueryConstraint();
@@ -159,16 +158,16 @@ public class InlineEtlQueryExecutor extends BaseMetadataQueryExec {
         String match = m.group( 1 );
         if ( match.startsWith( "param:" ) ) { //$NON-NLS-1$
           String paramName = match.substring( 6 );
-          Property paramValue = parameters.get( paramName );
+          Object paramValue = parameters.get( paramName );
           String openFormulaValue = ""; //$NON-NLS-1$
-          if ( paramValue.getValue() instanceof Boolean ) {
+          if ( paramValue instanceof Boolean ) {
             // need to get and then render either true or false function.
-            if ( ( (Boolean) paramValue.getValue() ).booleanValue() ) {
+            if ( ( (Boolean) paramValue ).booleanValue() ) {
               openFormulaValue = "TRUE()"; //$NON-NLS-1$
             } else {
               openFormulaValue = "FALSE()"; //$NON-NLS-1$
             }
-          } else if ( paramValue.getValue() instanceof Double ) {
+          } else if ( paramValue instanceof Double ) {
             openFormulaValue = paramValue.toString();
           } else {
             // assume a string, string literal quote
@@ -184,13 +183,7 @@ public class InlineEtlQueryExecutor extends BaseMetadataQueryExec {
               logger.error( Messages.getErrorString(
                   "InlineEtlQueryExecutor.ERROR_0001_FAILED_TO_LOCATE_COLUMN", seg[0], seg[1] ) ); //$NON-NLS-1$
             }
-            
-            String fieldName = "";
-            Property fieldNameProperty = col.getProperty( InlineEtlPhysicalColumn.FIELD_NAME );
-            if ( fieldNameProperty != null ) {
-              fieldName = (String) fieldNameProperty.getValue();
-            }
-            
+            String fieldName = (String) col.getProperty( InlineEtlPhysicalColumn.FIELD_NAME );
             AggregationType agg = null;
             if ( seg.length > 2 ) {
               agg = AggregationType.valueOf( seg[2].toUpperCase() );
@@ -252,13 +245,7 @@ public class InlineEtlQueryExecutor extends BaseMetadataQueryExec {
 
       LogicalColumn col = table.getLogicalColumns().get( i );
       csvinput.getInputFields()[i] = new TextFileInputField();
-      
-      String fieldName = "";
-      Property fieldNameProperty = col.getProperty( InlineEtlPhysicalColumn.FIELD_NAME );
-      if ( fieldNameProperty != null ) {
-        fieldName = (String) fieldNameProperty.getValue();
-      }
-      
+      String fieldName = (String) col.getProperty( InlineEtlPhysicalColumn.FIELD_NAME );
       if ( logger.isDebugEnabled() ) {
         logger.debug( "FROM CSV: " + fieldName ); //$NON-NLS-1$
       }
@@ -272,12 +259,12 @@ public class InlineEtlQueryExecutor extends BaseMetadataQueryExec {
     // nothing to do in CSV mode, folks can override this behavior.
   }
 
-  public IPentahoResultSet executeQuery( Query query, String fileLoc, Map<String, Property> parameters ) throws Exception {
+  public IPentahoResultSet executeQuery( Query query, String fileLoc, Map<String, Object> parameters ) throws Exception {
     setCsvFileLoc( fileLoc );
     return executeQuery( query, parameters );
   }
 
-  public IPentahoResultSet executeQuery( Query query, Map<String, Property> parameters ) throws Exception {
+  public IPentahoResultSet executeQuery( Query query, Map<String, Object> parameters ) throws Exception {
     if ( query.getLimit() >= 0 ) {
       throw new UnsupportedOperationException( Messages
           .getErrorString( "InlineEtlQueryExecutor.ERROR_0003_LIMIT_NOT_SUPPORTED" ) );
@@ -285,7 +272,7 @@ public class InlineEtlQueryExecutor extends BaseMetadataQueryExec {
 
     // resolve any missing parameters with default values
     if ( parameters == null && query.getParameters().size() > 0 ) {
-      parameters = new HashMap<String, Property>();
+      parameters = new HashMap<String, Object>();
     }
     for ( Parameter param : query.getParameters() ) {
       if ( !parameters.containsKey( param.getName() ) ) {

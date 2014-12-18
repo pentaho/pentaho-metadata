@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.metadata.model.concept.Concept;
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.model.concept.types.RelationshipType;
 
 /**
@@ -88,51 +87,35 @@ public class LogicalRelationship extends Concept {
   }
 
   public Boolean isComplex() {
-    Property property = getProperty( COMPLEX );
-    if( property != null ) {
-      return ( Boolean ) property.getValue();
-    }
-    return null;
+    return (Boolean) getProperty( COMPLEX );
   }
 
   public void setComplex( Boolean complex ) {
-    setProperty( COMPLEX, new Property<Boolean>( complex ) );
+    setProperty( COMPLEX, complex );
   }
-  
+
   public String getComplexJoin() {
-    Property property = getProperty( COMPLEX_JOIN );
-    if( property != null ) {
-      return (String) property.getValue();
-    }
-    return null;
+    return (String) getProperty( COMPLEX_JOIN );
   }
 
   public void setComplexJoin( String complexJoin ) {
-    setProperty( COMPLEX_JOIN, new Property<String>( complexJoin ) );
+    setProperty( COMPLEX_JOIN, complexJoin );
   }
 
   public RelationshipType getRelationshipType() {
-    Property property = getProperty( RELATIONSHIP_TYPE );
-    if( property != null ) {
-      return (RelationshipType) property.getValue();
-    }
-    return null;
+    return (RelationshipType) getProperty( RELATIONSHIP_TYPE );
   }
 
   public void setRelationshipType( RelationshipType relationshipType ) {
-    setProperty( RELATIONSHIP_TYPE, new Property<RelationshipType>( relationshipType ) );
+    setProperty( RELATIONSHIP_TYPE, relationshipType );
   }
 
   public String getJoinOrderKey() {
-    Property property = getProperty( JOIN_ORDER_KEY );
-    if( property != null ) {
-      return (String) property.getValue();
-    }
-    return null;
+    return (String) getProperty( JOIN_ORDER_KEY );
   }
 
   public void setJoinOrderKey( String joinOrderKey ) {
-    setProperty( JOIN_ORDER_KEY, new Property<String>( joinOrderKey ) );
+    setProperty( JOIN_ORDER_KEY, joinOrderKey );
   }
 
   public LogicalTable getFromTable() {

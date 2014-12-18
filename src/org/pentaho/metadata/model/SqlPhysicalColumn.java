@@ -19,7 +19,6 @@ package org.pentaho.metadata.model;
 import java.util.List;
 
 import org.pentaho.metadata.model.concept.Concept;
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.FieldType;
@@ -53,76 +52,52 @@ public class SqlPhysicalColumn extends Concept implements IPhysicalColumn {
   }
 
   public DataType getDataType() {
-    Property property = getProperty( IPhysicalColumn.DATATYPE_PROPERTY );
-    if( property != null ) {
-      return (DataType) property.getValue();
-    }
-    return null;
+    return (DataType) getProperty( IPhysicalColumn.DATATYPE_PROPERTY );
   }
 
   public void setDataType( DataType dataType ) {
-    setProperty( IPhysicalColumn.DATATYPE_PROPERTY, new Property<DataType>( dataType ) );
+    setProperty( IPhysicalColumn.DATATYPE_PROPERTY, dataType );
   }
 
   public FieldType getFieldType() {
-    Property property = getProperty( IPhysicalColumn.FIELDTYPE_PROPERTY );
-    if( property != null ) {
-      return (FieldType) property.getValue();
-    }    
-    return null;
+    return (FieldType) getProperty( IPhysicalColumn.FIELDTYPE_PROPERTY );
   }
 
   public void setFieldType( FieldType fieldType ) {
-    setProperty( IPhysicalColumn.FIELDTYPE_PROPERTY, new Property<FieldType>( fieldType ) );
+    setProperty( IPhysicalColumn.FIELDTYPE_PROPERTY, fieldType );
   }
 
   public AggregationType getAggregationType() {
-    Property property = getProperty( IPhysicalColumn.AGGREGATIONTYPE_PROPERTY );
-    if( property != null ) {
-      return (AggregationType) property.getValue();
-    }    
-    return null;
+    return (AggregationType) getProperty( IPhysicalColumn.AGGREGATIONTYPE_PROPERTY );
   }
 
   public void setAggregationType( AggregationType aggType ) {
-    setProperty( IPhysicalColumn.AGGREGATIONTYPE_PROPERTY, new Property<AggregationType>( aggType ) );
+    setProperty( IPhysicalColumn.AGGREGATIONTYPE_PROPERTY, aggType );
   }
 
   @SuppressWarnings( "unchecked" )
   public List<AggregationType> getAggregationList() {
-    Property property = getProperty( IPhysicalColumn.AGGREGATIONLIST_PROPERTY );
-    if( property != null ) {
-      return (List<AggregationType>) property.getValue();
-    }    
-    return null;
+    return (List<AggregationType>) getProperty( IPhysicalColumn.AGGREGATIONLIST_PROPERTY );
   }
 
   public void setAggregationList( List<AggregationType> aggList ) {
-    setProperty( IPhysicalColumn.AGGREGATIONLIST_PROPERTY, new Property<List<AggregationType>>( aggList ) );
+    setProperty( IPhysicalColumn.AGGREGATIONLIST_PROPERTY, aggList );
   }
   
   public String getTargetColumn() {
-    Property property = getProperty( TARGET_COLUMN );
-    if( property != null ) {
-      return (String) property.getValue();
-    }
-    return null;
+    return (String) getProperty( TARGET_COLUMN );
   }
 
   public void setTargetColumn( String targetTable ) {
-    setProperty( TARGET_COLUMN, new Property<String>( targetTable ) );
+    setProperty( TARGET_COLUMN, targetTable );
   }
 
   public TargetColumnType getTargetColumnType() {
-    Property property = getProperty( TARGET_COLUMN_TYPE );
-    if( property != null ) {
-      return (TargetColumnType) property.getValue();
-    }
-    return null;
+    return (TargetColumnType) getProperty( TARGET_COLUMN_TYPE );
   }
 
   public void setTargetColumnType( TargetColumnType targetTableType ) {
-    setProperty( TARGET_COLUMN_TYPE, new Property<TargetColumnType>( targetTableType ) );
+    setProperty( TARGET_COLUMN_TYPE, targetTableType );
   }
 
   public IPhysicalTable getPhysicalTable() {

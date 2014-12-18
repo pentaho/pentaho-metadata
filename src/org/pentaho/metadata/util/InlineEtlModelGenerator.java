@@ -32,7 +32,6 @@ import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.LogicalTable;
 import org.pentaho.metadata.model.concept.Concept;
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.model.concept.security.Security;
 import org.pentaho.metadata.model.concept.security.SecurityOwner;
 import org.pentaho.metadata.model.concept.security.SecurityOwner.OwnerType;
@@ -181,7 +180,7 @@ public class InlineEtlModelGenerator {
     domain.addPhysicalModel( model );
 
     if ( getCreatedBy() != null ) {
-      domain.setProperty( "created_by", new Property<String>( createdBy ) ); //$NON-NLS-1$
+      domain.setProperty( "created_by", createdBy ); //$NON-NLS-1$
     }
 
     if ( isSecurityEnabled() ) {
@@ -194,8 +193,7 @@ public class InlineEtlModelGenerator {
         SecurityOwner owner = new SecurityOwner( OwnerType.ROLE, role );
         security.putOwnerRights( owner, defaultAcls );
       }
-      
-      logicalModel.setProperty( Concept.SECURITY_PROPERTY, new Property<Security>( security ) );
+      logicalModel.setProperty( Concept.SECURITY_PROPERTY, security );
     }
 
     List<LocaleType> locales = new ArrayList<LocaleType>();

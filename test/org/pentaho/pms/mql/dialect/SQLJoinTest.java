@@ -34,7 +34,6 @@ import org.pentaho.metadata.model.LogicalRelationship;
 import org.pentaho.metadata.model.LogicalTable;
 import org.pentaho.metadata.model.SqlPhysicalColumn;
 import org.pentaho.metadata.model.SqlPhysicalTable;
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.metadata.model.concept.types.RelationshipType;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
 import org.pentaho.metadata.query.impl.sql.SqlGenerator;
@@ -130,7 +129,7 @@ public class SQLJoinTest {
               "Using legacy SQLJoin compare." ) );
 
           // set the property and make sure the legacy logic is used
-          model.setProperty( "legacy_join_order", new Property<Boolean> ( true ) );
+          model.setProperty( "legacy_join_order", true );
           generator.generateSql( myTest, "en_US", null, databaseMeta );
           Assert.assertTrue( "Should have used legacy SQLJoin.compareTo() logic.", out.toString().contains(
               "Using legacy SQLJoin compare." ) );
@@ -177,14 +176,14 @@ public class SQLJoinTest {
   private LogicalTable getDummySingleColumnTable( String identifier ) {
     final LogicalTable bt1 = new LogicalTable();
     bt1.setId( "bt" + identifier );
-    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, new Property<String> ( "pt" + identifier ) );
+    bt1.setProperty( SqlPhysicalTable.TARGET_TABLE, "pt" + identifier );
     final LogicalColumn bc1 = new LogicalColumn();
     bc1.setId( "bc" + identifier );
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, new Property<String> ( "pc" + identifier ) );
-    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, new Property<TargetColumnType> ( TargetColumnType.COLUMN_NAME ) );
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN, "pc" + identifier );
+    bc1.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE, TargetColumnType.COLUMN_NAME );
     bc1.setLogicalTable( bt1 );
     bt1.addLogicalColumn( bc1 );
-    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, new Property<Integer> ( 1 ) );
+    bt1.setProperty( SqlPhysicalTable.RELATIVE_SIZE, 1 );
     return bt1;
   }
 

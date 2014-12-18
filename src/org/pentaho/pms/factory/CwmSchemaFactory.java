@@ -35,7 +35,6 @@ import org.pentaho.di.core.ProgressMonitorListener;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.exception.KettleDatabaseException;
 import org.pentaho.di.core.exception.KettleXMLException;
-import org.pentaho.metadata.model.concept.Property;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.cwm.pentaho.meta.behavioral.CwmEvent;
@@ -1558,7 +1557,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
         // Save the localized string properties
         //
         if ( property.getType().equals( ConceptPropertyType.LOCALIZED_STRING ) ) {
-          LocalizedStringSettings stringSettings = (LocalizedStringSettings) property.getValue().getValue();
+          LocalizedStringSettings stringSettings = (LocalizedStringSettings) property.getValue();
           String[] locales = stringSettings.getLocales();
 
           for ( int j = 0; j < locales.length; j++ ) {
@@ -1571,11 +1570,8 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
         } else if ( property.getType().equals( ConceptPropertyType.STRING ) ) {
           // Save the string properties
           //
-          Property propValue = property.getValue();
-          String string = "";
-          if ( propValue != null ) {
-            string = (String) propValue.getValue();
-          }
+          String string = (String) property.getValue();
+
           CwmDescription description = cwm.createDescription( string );
           description.setName( property.getId() );
           description.setType( property.getType().getCode() );
@@ -1583,7 +1579,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
         } else if ( property.getType().equals( ConceptPropertyType.BOOLEAN ) ) {
           // Save the boolean properties
           //
-          Boolean value = (Boolean) property.getValue().getValue();
+          Boolean value = (Boolean) property.getValue();
 
           CwmDescription description = cwm.createDescription( value.booleanValue() ? "Y" : "N" ); //$NON-NLS-1$ //$NON-NLS-2$
           description.setName( property.getId() );
@@ -1592,11 +1588,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
         } else if ( property.getType().equals( ConceptPropertyType.DATE ) ) {
           // Save the date properties
           //
-          Date value = null;
-          Property prop = property.getValue();
-          if ( prop != null ) {
-            value = (Date) prop.getValue();
-          }
+          Date value = (Date) property.getValue();
           DateFormat df = new SimpleDateFormat( "yyyy/MM/dd'T'HH:mm:ss" ); //$NON-NLS-1$
           String string = ""; //$NON-NLS-1$
           if ( value != null ) {
@@ -1609,12 +1601,8 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
         } else if ( property.getType().equals( ConceptPropertyType.TABLETYPE ) ) {
           // Save the table type properties
           //
-          TableTypeSettings value = null;
-          Property prop = property.getValue();
-          if ( prop != null ) {
-            value = (TableTypeSettings) prop.getValue();
-          }
-          
+          TableTypeSettings value = (TableTypeSettings) property.getValue();
+
           String string = ""; //$NON-NLS-1$
           if ( value != null ) {
             string = value.getCode();
@@ -1626,12 +1614,8 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
         } else if ( property.getType().equals( ConceptPropertyType.FIELDTYPE ) ) {
           // Save the field type properties
           //
-          FieldTypeSettings value = null;
-          Property prop = property.getValue();
-          if ( prop != null && prop.getValue() != null ) {
-            value = (FieldTypeSettings) prop.getValue();
-          }
-          
+          FieldTypeSettings value = (FieldTypeSettings) property.getValue();
+
           String string = ""; //$NON-NLS-1$
           if ( value != null ) {
             string = value.getCode();
@@ -1643,7 +1627,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
         } else if ( property.getType().equals( ConceptPropertyType.AGGREGATION ) ) {
           // Save the aggregation properties
           //
-          AggregationSettings value = (AggregationSettings) property.getValue().getValue();
+          AggregationSettings value = (AggregationSettings) property.getValue();
 
           String string = ""; //$NON-NLS-1$
           if ( value != null ) {
@@ -1664,12 +1648,8 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
         } else if ( property.getType().equals( ConceptPropertyType.NUMBER ) ) {
           // Save the numeric properties
           //
-          BigDecimal value = (BigDecimal) property.getValue().getValue();
-          Property prop = property.getValue();
-          if ( prop != null && prop.getValue() != null ) {
-            value = (BigDecimal) prop.getValue();
-          }
-          
+          BigDecimal value = (BigDecimal) property.getValue();
+
           String string = ""; //$NON-NLS-1$
           if ( value != null ) {
             string = value.toString();
@@ -1682,11 +1662,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
         } else if ( property.getType().equals( ConceptPropertyType.COLOR ) ) {
           // Save the color properties
           //
-          ColorSettings value = null;
-          Property prop = property.getValue();
-          if ( prop != null && prop.getValue() != null ) {
-            value = (ColorSettings) prop.getValue();
-          }
+          ColorSettings value = (ColorSettings) property.getValue();
 
           String string = ""; //$NON-NLS-1$
           if ( value != null ) {
@@ -1700,11 +1676,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
         } else if ( property.getType().equals( ConceptPropertyType.DATATYPE ) ) {
           // Save the data type properties
           //
-          DataTypeSettings value = null;
-          Property prop = property.getValue();
-          if ( prop != null && prop.getValue() != null ) {
-            value = (DataTypeSettings) prop.getValue();
-          }
+          DataTypeSettings value = (DataTypeSettings) property.getValue();
 
           String string = ""; //$NON-NLS-1$
           if ( value != null ) {
@@ -1718,11 +1690,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
         } else if ( property.getType().equals( ConceptPropertyType.FONT ) ) {
           // Save the font properties
           //
-          FontSettings value = null;
-          Property prop = property.getValue();
-          if ( prop != null && prop.getValue() != null ) {
-            value = (FontSettings) prop.getValue();
-          }
+          FontSettings value = (FontSettings) property.getValue();
 
           String string = ""; //$NON-NLS-1$
           if ( value != null ) {
@@ -1736,11 +1704,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
         } else if ( property.getType().equals( ConceptPropertyType.URL ) ) {
           // Save the URL properties
           //
-          URL value = null;
-          Property prop = property.getValue();
-          if ( prop != null && prop.getValue() != null ) {
-            value = (URL) prop.getValue();
-          }
+          URL value = (URL) property.getValue();
 
           String string = ""; //$NON-NLS-1$
           if ( value != null ) {
@@ -1754,11 +1718,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
         } else if ( property.getType().equals( ConceptPropertyType.SECURITY ) ) {
           // Save the Security properties
           //
-          Security value = null;
-          Property prop = property.getValue();
-          if ( prop != null && prop.getValue() != null ) {
-            value = (Security) prop.getValue();
-          }
+          Security value = (Security) property.getValue();
 
           String string = ""; //$NON-NLS-1$
           if ( value != null ) {
@@ -1772,11 +1732,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
         } else if ( property.getType().equals( ConceptPropertyType.ROW_LEVEL_SECURITY ) ) {
           // Save the Row Level Security properties
           //
-          RowLevelSecurity value = null;
-          Property prop = property.getValue();
-          if ( prop != null && prop.getValue() != null ) {
-            value = (RowLevelSecurity) prop.getValue();
-          }
+          RowLevelSecurity value = (RowLevelSecurity) property.getValue();
 
           String string = ""; //$NON-NLS-1$
           if ( value != null ) {
@@ -1790,11 +1746,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
         } else if ( property.getType().equals( ConceptPropertyType.ALIGNMENT ) ) {
           // Save the alignment properties
           //
-          AlignmentSettings value = null;
-          Property prop = property.getValue();
-          if ( prop != null && prop.getValue() != null ) {
-            value = (AlignmentSettings) prop.getValue();
-          }
+          AlignmentSettings value = (AlignmentSettings) property.getValue();
 
           String string = ""; //$NON-NLS-1$
           if ( value != null ) {
@@ -1808,10 +1760,11 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
         } else if ( property.getType().equals( ConceptPropertyType.COLUMN_WIDTH ) ) {
           // Save the column width properties
           //
+          Object value = property.getValue();
+
           String string = ""; //$NON-NLS-1$
-          Property prop = property.getValue();
-          if( prop != null && prop.getValue() != null ) {
-            string = prop.getValue().toString();
+          if ( value != null ) {
+            string = value.toString();
           }
 
           CwmDescription description = cwm.createDescription( string );
