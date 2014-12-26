@@ -380,32 +380,7 @@ public class MondrianModelExporter {
           XMLHandler.appendReplacedChars( xml, (String) businessColumn.getProperty( SqlPhysicalColumn.TARGET_COLUMN ) );
           xml.append( "\"" ); //$NON-NLS-1$
 
-          AggregationType aggregationType = businessColumn.getAggregationType();
-          String typeDesc = null;
-          switch ( aggregationType ) {
-            case NONE:
-              typeDesc = "none"; //$NON-NLS-1$
-              break;
-            case SUM:
-              typeDesc = "sum"; //$NON-NLS-1$
-              break;
-            case AVERAGE:
-              typeDesc = "avg"; //$NON-NLS-1$
-              break;
-            case COUNT:
-              typeDesc = "count"; //$NON-NLS-1$
-              break;
-            case COUNT_DISTINCT:
-              typeDesc = "distinct count"; //$NON-NLS-1$
-              break;
-            case MINIMUM:
-              typeDesc = "min"; //$NON-NLS-1$
-              break;
-            case MAXIMUM:
-              typeDesc = "max"; //$NON-NLS-1$
-              break;
-          }
-
+          String typeDesc = convertToMondrian(businessColumn.getAggregationType());
           if ( typeDesc != null ) {
             xml.append( " aggregator=\"" ); //$NON-NLS-1$
             XMLHandler.appendReplacedChars( xml, typeDesc );
@@ -453,5 +428,33 @@ public class MondrianModelExporter {
    */
   public void setLogicalModel( LogicalModel businessModel ) {
     this.businessModel = businessModel;
+  }
+  
+  public static String convertToMondrian( AggregationType aggregationType ) {
+    String typeDesc = null;
+    switch ( aggregationType ) {
+      case NONE:
+        typeDesc = "none"; //$NON-NLS-1$
+        break;
+      case SUM:
+        typeDesc = "sum"; //$NON-NLS-1$
+        break;
+      case AVERAGE:
+        typeDesc = "avg"; //$NON-NLS-1$
+        break;
+      case COUNT:
+        typeDesc = "count"; //$NON-NLS-1$
+        break;
+      case COUNT_DISTINCT:
+        typeDesc = "distinct count"; //$NON-NLS-1$
+        break;
+      case MINIMUM:
+        typeDesc = "min"; //$NON-NLS-1$
+        break;
+      case MAXIMUM:
+        typeDesc = "max"; //$NON-NLS-1$
+        break;
+    }
+    return typeDesc;
   }
 }
