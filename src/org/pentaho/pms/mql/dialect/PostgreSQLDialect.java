@@ -27,9 +27,8 @@ import org.pentaho.reporting.libraries.formula.lvalues.FormulaFunction;
  */
 public class PostgreSQLDialect extends DefaultSQLDialect {
 
-  public PostgreSQLDialect() {
-    super( "POSTGRESQL" ); //$NON-NLS-1$
-
+  public PostgreSQLDialect(String dialectName) {
+    super(dialectName);
     // oracle specific date functions
     supportedFunctions.put(
         "NOW", new DefaultSQLFunctionGenerator( SQLFunctionGeneratorInterface.PARAM_FUNCTION, "now", 0 ) { //$NON-NLS-1$ //$NON-NLS-2$
@@ -38,6 +37,11 @@ public class PostgreSQLDialect extends DefaultSQLDialect {
             sb.append( sql );
           }
         } );
+    
+  }
+  
+  public PostgreSQLDialect() {
+    this( "POSTGRESQL" ); //$NON-NLS-1$
   }
 
   /**
