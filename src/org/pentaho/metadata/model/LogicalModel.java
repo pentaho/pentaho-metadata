@@ -43,8 +43,6 @@ public class LogicalModel extends Concept {
 
   public static final String PROPERTY_TARGET_TABLE_STAGED = "target_table_staged"; //$NON-NLS-1$
 
-  private Domain domain;
-  private IPhysicalModel physicalModel;
   private List<LogicalTable> logicalTables = new ArrayList<LogicalTable>();
   private List<LogicalRelationship> logicalRelationships = new ArrayList<LogicalRelationship>();
   private List<Category> categories = new ArrayList<Category>();
@@ -63,18 +61,13 @@ public class LogicalModel extends Concept {
     uid.add(CLASS_ID.concat(UID_TYPE_SEPARATOR) + getId());
     return uid;
   }
-  
-  @Override
-  public IConcept getParent() {
-    return domain;
-  }
 
-  public void setDomain(Domain domain) {
-    this.domain = domain;
+  public void setDomain( Domain domain ) {
+    setParent( domain );
   }
 
   public Domain getDomain() {
-    return domain;
+    return ( Domain ) getParent();
   }
 
   @Override
@@ -86,12 +79,12 @@ public class LogicalModel extends Concept {
     return children;
   }
 
-  public void setPhysicalModel(IPhysicalModel physicalModel) {
-    this.physicalModel = physicalModel;
+  public void setPhysicalModel( IPhysicalModel physicalModel ) {
+    setPhysicalConcept( physicalModel );
   }
 
   public IPhysicalModel getPhysicalModel() {
-    return physicalModel;
+    return ( IPhysicalModel ) getPhysicalConcept();
   }
 
   public List<LogicalTable> getLogicalTables() {
@@ -201,7 +194,8 @@ public class LogicalModel extends Concept {
 
     // shallow references
     clone.logicalRelationships = logicalRelationships;
-    clone.physicalModel = physicalModel;
+    clone.setParent( getParent() );
+    clone.setPhysicalConcept( getPhysicalConcept() );
     
     // actual clones
     clone.logicalTables = new ArrayList<LogicalTable>();

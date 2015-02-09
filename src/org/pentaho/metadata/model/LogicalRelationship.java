@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.metadata.model.concept.Concept;
-import org.pentaho.metadata.model.concept.IConcept;
 import org.pentaho.metadata.model.concept.types.RelationshipType;
 
 /**
@@ -44,8 +43,6 @@ public class LogicalRelationship extends Concept {
   
   // A relationship's descriptions is not to be localized
   private String relationshipDescription = null;
-  
-  private LogicalModel logicalModel;
   private LogicalTable fromTable, toTable;
   private LogicalColumn fromColumn, toColumn;
   private static final String CLASS_ID = "LogicalRelationship";
@@ -58,19 +55,19 @@ public class LogicalRelationship extends Concept {
   
   public LogicalRelationship(LogicalModel logicalModel, LogicalTable fromTable, LogicalTable toTable, LogicalColumn fromColumn, LogicalColumn toColumn) {
     this();
-    this.logicalModel = logicalModel;
+    setParent( logicalModel );
     this.fromTable = fromTable;
     this.toTable = toTable;
     this.fromColumn = fromColumn;
     this.toColumn = toColumn;
   }
-  
-  public void setLogicalModel(LogicalModel logicalModel) {
-    this.logicalModel = logicalModel;
+
+  public void setLogicalModel( LogicalModel logicalModel ) {
+    setParent( logicalModel );
   }
   
   public LogicalModel getLogicalModel() {
-    return logicalModel;
+    return ( LogicalModel )getParent();
   }
   
   public String getRelationshipDescription() {
@@ -82,14 +79,9 @@ public class LogicalRelationship extends Concept {
   }
   
   @Override
-  public IConcept getParent() {
-    return logicalModel;
-  }
-  
-  @Override
   public List<String> getUniqueId() {
-    List<String> uid = new ArrayList<String>(logicalModel.getUniqueId());
-    uid.add(CLASS_ID.concat(UID_TYPE_SEPARATOR) + getId());
+    List<String> uid = new ArrayList<String>( getParent().getUniqueId() );
+    uid.add( CLASS_ID.concat( UID_TYPE_SEPARATOR ) + getId() );
     return uid;
   }
   

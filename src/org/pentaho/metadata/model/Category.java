@@ -30,11 +30,10 @@ import org.pentaho.metadata.model.concept.types.LocalizedString;
  * @author Will Gorman (wgorman@pentaho.com)
  *
  */
-public class Category extends Concept {
+public class Category extends Concept  {
 
   private static final long serialVersionUID = -2367402604729602739L;
 
-  private LogicalModel logicalModel;
   private List<LogicalColumn> logicalColumns = new ArrayList<LogicalColumn>();
   private static final String CLASS_ID = "Category";
 
@@ -44,29 +43,16 @@ public class Category extends Concept {
     setName(new LocalizedString());
     setDescription(new LocalizedString());
   }
-  
-  public Category(LogicalModel logicalModel) {
-    this.logicalModel = logicalModel;
-  }
-  
-  @Override
-  public IConcept getParent() {
-    return logicalModel;
+
+  public Category( IConcept logicalModel ) {
+    setParent( logicalModel );
   }
   
   @Override
   public List<String> getUniqueId() {
-    List<String> uid = new ArrayList<String>(logicalModel.getUniqueId());
-    uid.add(CLASS_ID.concat(UID_TYPE_SEPARATOR) + getId());
+    List<String> uid = new ArrayList<String>( getParent().getUniqueId() );
+    uid.add( CLASS_ID.concat( UID_TYPE_SEPARATOR ) + getId() );
     return uid;
-  }
-  
-  public void setLogicalModel(LogicalModel logicalModel) {
-    this.logicalModel = logicalModel;
-  }
-
-  public LogicalModel getLogicalModel() {
-    return logicalModel;
   }
 
   /**
@@ -74,7 +60,7 @@ public class Category extends Concept {
    */
   @Override
   public IConcept getSecurityParentConcept() {
-    return getLogicalModel();
+    return getParent();
   }
   
   /**
@@ -114,9 +100,9 @@ public class Category extends Concept {
   public Object clone() {
     Category clone = new Category();
     // shallow copies
-    clone(clone);
-    clone.setLogicalModel(logicalModel);
-    
+    clone( clone );
+    clone.setParent( getParent() );
+
     // deep copies
     clone.setLogicalColumns(new ArrayList<LogicalColumn>());
     for (LogicalColumn col : getLogicalColumns()) {

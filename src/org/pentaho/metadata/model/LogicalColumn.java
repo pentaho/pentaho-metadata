@@ -35,21 +35,8 @@ public class LogicalColumn extends Concept {
 
   private static final long serialVersionUID = -5818193472199662859L;
 
-  private LogicalTable logicalTable;
-  private IPhysicalColumn physicalColumn;
-
   public LogicalColumn() {
     super();
-  }
-  
-  @Override
-  public IConcept getParent() {
-    return logicalTable;
-  }
-  
-  @Override
-  public IConcept getInheritedConcept() {
-    return physicalColumn;
   }
   
   @Override
@@ -58,11 +45,11 @@ public class LogicalColumn extends Concept {
   }
   
   public IPhysicalColumn getPhysicalColumn() {
-    return physicalColumn;
+    return ( IPhysicalColumn ) getInheritedConcept();
   }
 
-  public void setPhysicalColumn(IPhysicalColumn physicalColumn) {
-    this.physicalColumn = physicalColumn;
+  public void setPhysicalColumn( IPhysicalColumn physicalColumn ) {
+    setInheritedConcept( physicalColumn );
   }
 
   public DataType getDataType() {
@@ -90,12 +77,12 @@ public class LogicalColumn extends Concept {
     setProperty(IPhysicalColumn.AGGREGATIONLIST_PROPERTY, aggList);
   }
 
-  public void setLogicalTable(LogicalTable logicalTable) {
-    this.logicalTable = logicalTable;
+  public void setLogicalTable( LogicalTable logicalTable ) {
+    setParent( logicalTable );
   }
 
   public LogicalTable getLogicalTable() {
-    return logicalTable;
+    return ( LogicalTable ) getParent();
   }
   
   public FieldType getFieldType() {
@@ -108,11 +95,10 @@ public class LogicalColumn extends Concept {
   
   public Object clone() {
     LogicalColumn clone = new LogicalColumn();
-    clone.setId(getId());
-    clone.logicalTable = logicalTable;
-    clone.physicalColumn = physicalColumn;
-    clone.setParentConcept(getParentConcept());
-    
+    clone.setId( getId() );
+    clone.setParent( getParent() );
+    clone.setInheritedConcept( getInheritedConcept() );
+    clone.setParentConcept( getParentConcept() );
     // copy over properties
     for (String key : getChildProperties().keySet()) {
       clone.setProperty(key, getChildProperty(key));

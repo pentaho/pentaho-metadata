@@ -41,7 +41,6 @@ public class SqlPhysicalTable extends Concept implements IPhysicalTable{
   public static final String TARGET_TABLE_TYPE = "target_table_type"; //$NON-NLS-1$
   public static final String RELATIVE_SIZE = "relative_size"; //$NON-NLS-1$
   
-  SqlPhysicalModel model;
   List<IPhysicalColumn> physicalColumns = new ArrayList<IPhysicalColumn>();
 
   public SqlPhysicalTable() {
@@ -54,7 +53,7 @@ public class SqlPhysicalTable extends Concept implements IPhysicalTable{
   
   public SqlPhysicalTable(SqlPhysicalModel model) {
     this();
-    this.model = model;
+    setParent( model );
   }
   
   @Override
@@ -63,14 +62,9 @@ public class SqlPhysicalTable extends Concept implements IPhysicalTable{
     children.addAll(physicalColumns);
     return children;
   }
-  
-  @Override
-  public IConcept getParent() {
-    return model;
-  }
 
   public IPhysicalModel getPhysicalModel() {
-    return model;
+    return ( IPhysicalModel ) getParent();
   }
   
   public List<IPhysicalColumn> getPhysicalColumns() {
