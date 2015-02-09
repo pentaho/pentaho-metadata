@@ -34,23 +34,16 @@ public class LogicalTable extends Concept {
 
   private static final long serialVersionUID = -2655375483724689568L;
 
-  private LogicalModel logicalModel;
-  private IPhysicalTable physicalTable;
   private List<LogicalColumn> logicalColumns = new ArrayList<LogicalColumn>();
   private static final String CLASS_ID = "LogicalTable";
 
   public LogicalTable() {
     super();
   }
-  
-  public LogicalTable(LogicalModel logicalModel, IPhysicalTable physicalTable) { 
-    this.logicalModel = logicalModel;
-    this.physicalTable = physicalTable;
-  }
-  
-  @Override
-  public IConcept getParent() {
-    return logicalModel;
+
+  public LogicalTable( LogicalModel logicalModel, IPhysicalTable physicalTable ) {
+    setParent( logicalModel );
+    setPhysicalConcept( physicalTable );
   }
 
   @Override
@@ -62,25 +55,25 @@ public class LogicalTable extends Concept {
 
   @Override
   public List<String> getUniqueId() {
-    List<String> uid = new ArrayList<String>(logicalModel.getUniqueId());
-    uid.add(CLASS_ID.concat(UID_TYPE_SEPARATOR) + getId());
+    List<String> uid = new ArrayList<String>( getParent().getUniqueId() );
+    uid.add( CLASS_ID.concat( UID_TYPE_SEPARATOR ) + getId() );
     return uid;
   }
-  
-  public void setLogicalModel(LogicalModel logicalModel) {
-    this.logicalModel = logicalModel;
+
+  public void setLogicalModel( LogicalModel logicalModel ) {
+    setParent( logicalModel );
   }
 
   public LogicalModel getLogicalModel() {
-    return logicalModel;
+    return ( LogicalModel ) getParent();
   }
 
   public IPhysicalTable getPhysicalTable() {
-    return physicalTable;
+    return ( IPhysicalTable ) getPhysicalConcept();
   }
-  
-  public void setPhysicalTable(IPhysicalTable physicalTable) {
-    this.physicalTable = physicalTable;
+
+  public void setPhysicalTable( IPhysicalTable physicalTable ) {
+    setPhysicalConcept( physicalTable );
   }
   
   public List<LogicalColumn> getLogicalColumns() {
@@ -109,7 +102,7 @@ public class LogicalTable extends Concept {
   
   @Override
   public IConcept getInheritedConcept() {
-    return physicalTable;
+    return getPhysicalTable();
   }
   
   @Override
@@ -133,18 +126,18 @@ public class LogicalTable extends Concept {
   
   @Override
   public Object clone() {
-     LogicalTable clone = new LogicalTable();
-     // shallow copy
-     clone(clone);
-     clone.setLogicalModel(logicalModel);
-     clone.physicalTable = physicalTable;
-     
-     // deep copy
-     clone.setLogicalColumns(new ArrayList<LogicalColumn>());
-     for (LogicalColumn col : logicalColumns) {
-       clone.addLogicalColumn(col);
-     }
-     return clone;
+    LogicalTable clone = new LogicalTable();
+    // shallow copy
+    clone( clone );
+    clone.setParent( getParent() );
+    clone.setPhysicalConcept( getPhysicalConcept() );
+
+    // deep copy
+    clone.setLogicalColumns( new ArrayList<LogicalColumn>() );
+    for ( LogicalColumn col : logicalColumns ) {
+      clone.addLogicalColumn( col );
+    }
+    return clone;
   }
 
 }

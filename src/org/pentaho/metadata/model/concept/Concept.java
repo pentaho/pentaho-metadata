@@ -16,7 +16,6 @@
  */
 package org.pentaho.metadata.model.concept;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +32,7 @@ import org.pentaho.metadata.model.concept.types.LocalizedString;
  * @author Will Gorman (wgorman@pentaho.com)
  *
  */
-public class Concept implements IConcept, Serializable, Cloneable, Comparable {
+public class Concept implements IConcept {
   
   public Concept() {
     super();
@@ -47,11 +46,21 @@ public class Concept implements IConcept, Serializable, Cloneable, Comparable {
   
   Map<String, Object> properties = new HashMap<String, Object>();
   String id;
+  IConcept parent;
   IConcept parentConcept;
+  IConcept inheritedConcept;
+  IConcept physicalConcept;
   List<IConcept> children = null;
   
+  public void setParent( IConcept parent ) {
+    this.parent = parent;
+  }
+  
   public IConcept getParent() {
-    return parentConcept;
+    if ( parent == null ) {
+      return parentConcept;
+    }
+    return parent;
   }
   
   public List<String> getUniqueId() {
@@ -102,9 +111,13 @@ public class Concept implements IConcept, Serializable, Cloneable, Comparable {
   public void setId(String id) {
     this.id = id;
   }
+
+  public void setInheritedConcept( IConcept inheritedConcept ) {
+    this.inheritedConcept = inheritedConcept;
+  }
   
   public IConcept getInheritedConcept() {
-    return null;
+    return inheritedConcept;
   }
   
   public IConcept getParentConcept() {
@@ -114,6 +127,14 @@ public class Concept implements IConcept, Serializable, Cloneable, Comparable {
   public void setParentConcept(IConcept parentConcept) {
     this.parentConcept = parentConcept;
   }
+  
+  public IConcept getPhysicalConcept() {
+    return physicalConcept;
+  }
+
+  public void setPhysicalConcept( IConcept physicalConcept ) {
+    this.physicalConcept = physicalConcept;
+  }  
 
   
   public IConcept getSecurityParentConcept() {

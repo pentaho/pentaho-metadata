@@ -16,6 +16,7 @@
  */
 package org.pentaho.metadata.model.concept;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +45,7 @@ import org.pentaho.metadata.model.concept.types.LocalizedString;
  * @author Will Gorman (wgorman@pentaho.com)
  *
  */
-public interface IConcept extends Cloneable {
+public interface IConcept extends Comparable, Cloneable, Serializable  {
 
   /**
    * This is used to denote the separator between the UID's type and id.
@@ -137,6 +138,13 @@ public interface IConcept extends Cloneable {
   public IConcept getInheritedConcept();
   
   /**
+   * set the inherited concept
+   * 
+   */
+  public void setInheritedConcept( IConcept concept );
+  
+  
+  /**
    * returns all child concept objects defined by the structure of the model.
    * 
    * @return model children
@@ -160,6 +168,14 @@ public interface IConcept extends Cloneable {
   public IConcept getParent();
   
   /**
+   * Set the concepts parent represented in the model. This is different then the inheritance parent and is a
+   * structural relationship.
+   * 
+   * @return parent model object
+   */  
+  public void setParent( IConcept concept );
+  
+  /**
    * returns the inherited concept
    * 
    * @return inherited concept
@@ -179,6 +195,10 @@ public interface IConcept extends Cloneable {
    * @return inherited concept
    */
   public IConcept getSecurityParentConcept();
+
+  public IConcept getPhysicalConcept();
+
+  public void setPhysicalConcept( IConcept physicalConcept );
   
   /**
    * returns a clone of the concept.
