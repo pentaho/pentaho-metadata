@@ -72,6 +72,46 @@ public class Util {
     return name;
   }
 
+  private static boolean isLatinLetter( char ch ) {
+    return ( ( 'a' <= ch ) && ( ch <= 'z' ) ) ||
+      ( ( 'A' <= ch ) && ( ch <= 'Z' ) );
+  }
+
+  private static boolean isAsciiDigit( char ch ) {
+    return ( '0' <= ch ) && ( ch <= '9' );
+  }
+
+  private static boolean isAcceptableNonLetter( char ch ) {
+    return ( ch == '_' || ch == '$' );
+  }
+
+  /**
+   * Returns <tt>true</tt> if <tt>code</tt> contains only latin characters, digits and '<tt>_</tt>' or '<tt>$</tt>'.
+   * <tt>null</tt> or empty string is considered to be an invalid value.
+   *
+   * @param id proposed id for column or table
+   * @return <tt>true</tt> if the proposed id is acceptable and <tt>false</tt> otherwise
+   */
+  public static boolean validateId( CharSequence id ) {
+    if ( id == null || id.length() == 0 ) {
+      return false;
+    }
+
+    for ( int i = 0, len = id.length(); i < len; i++ ) {
+      char ch = id.charAt( i );
+      if ( !isLatinLetter( ch ) && !isAsciiDigit( ch ) && !isAcceptableNonLetter( ch ) ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  public static IllegalArgumentException idValidationFailed( String id ) {
+    return new IllegalArgumentException(
+      "Cannot set id '" + id + "'. Please use Util.toId() to create a well-formed identifier" );
+  }
+
   /**
    * Implements Oracle style NVL function
    * 

@@ -24,14 +24,19 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openide.util.io.ReaderInputStream;
 import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
+import org.pentaho.metadata.model.LogicalColumn;
+import org.pentaho.metadata.model.LogicalModel;
+import org.pentaho.metadata.model.LogicalTable;
 import org.pentaho.metadata.model.SqlDataSource;
 import org.pentaho.metadata.model.SqlPhysicalModel;
+import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.olap.OlapCube;
 import org.pentaho.metadata.model.olap.OlapDimension;
@@ -44,7 +49,6 @@ import org.pentaho.metadata.query.impl.sql.SqlGenerator;
 import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.util.QueryXmlHelper;
 import org.pentaho.metadata.repository.InMemoryMetadataDomainRepository;
-import org.pentaho.metadata.util.SerializationService;
 import org.pentaho.metadata.util.ThinModelConverter;
 import org.pentaho.metadata.util.XmiParser;
 import org.pentaho.pms.MetadataTestBase;
@@ -57,55 +61,65 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
+import static org.junit.Assert.*;
+import static org.pentaho.metadata.util.Util.validateId;
+
 @SuppressWarnings( "nls" )
 public class XmiParserTest {
+
+  private XmiParser parser;
 
   @BeforeClass
   public static void initKettle() throws Exception {
     MetadataTestBase.initKettleEnvironment();
   }
 
+  @Before
+  public void setUp() {
+    parser = new XmiParser();
+  }
+
   @Test
   public void testXmiParser() throws Exception {
-    Domain domain = new XmiParser().parseXmi( new FileInputStream( "samples/steelwheels.xmi" ) );
-    Assert.assertEquals( 6, domain.getConcepts().size() );
-    Assert.assertEquals( 1, domain.getPhysicalModels().size() );
-    Assert.assertEquals( 3, domain.getLogicalModels().size() );
+    Domain domain = parser.parseXmi( new FileInputStream( "samples/steelwheels.xmi" ) );
+    assertEquals( 6, domain.getConcepts().size() );
+    assertEquals( 1, domain.getPhysicalModels().size() );
+    assertEquals( 3, domain.getLogicalModels().size() );
 
-    Assert.assertEquals( 2, domain.getLogicalModels().get( 0 ).getLogicalTables().size() );
-    Assert.assertEquals( 8, domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 ).getLogicalColumns().size() );
-    Assert.assertEquals( "BC_EMPLOYEES_EMPLOYEENUMBER", domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 )
-        .getLogicalColumns().get( 0 ).getId() );
-    Assert.assertEquals( 1, domain.getLogicalModels().get( 0 ).getLogicalRelationships().size() );
+    assertEquals( 2, domain.getLogicalModels().get( 0 ).getLogicalTables().size() );
+    assertEquals( 8, domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 ).getLogicalColumns().size() );
+    assertEquals( "BC_EMPLOYEES_EMPLOYEENUMBER", domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 )
+      .getLogicalColumns().get( 0 ).getId() );
+    assertEquals( 1, domain.getLogicalModels().get( 0 ).getLogicalRelationships().size() );
 
-    Assert.assertEquals( "EMPLOYEENUMBER", domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 )
-        .getLogicalColumns().get( 0 ).getPhysicalColumn().getId() );
-    Assert.assertEquals( "PT_EMPLOYEES", domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 )
-        .getLogicalColumns().get( 0 ).getPhysicalColumn().getPhysicalTable().getId() );
-    Assert.assertNotNull( domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 ).getLogicalColumns().get( 0 )
-        .getPhysicalColumn().getPhysicalTable().getPhysicalModel() );
+    assertEquals( "EMPLOYEENUMBER", domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 )
+      .getLogicalColumns().get( 0 ).getPhysicalColumn().getId() );
+    assertEquals( "PT_EMPLOYEES", domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 )
+      .getLogicalColumns().get( 0 ).getPhysicalColumn().getPhysicalTable().getId() );
+    assertNotNull( domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 ).getLogicalColumns().get( 0 )
+      .getPhysicalColumn().getPhysicalTable().getPhysicalModel() );
 
-    Assert.assertEquals( 2, domain.getLogicalModels().get( 0 ).getCategories().size() );
-    Assert.assertEquals( 9, domain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns().size() );
-    Assert.assertEquals( "BC_OFFICES_TERRITORY", domain.getLogicalModels().get( 0 ).getCategories().get( 0 )
-        .getLogicalColumns().get( 0 ).getId() );
-    Assert.assertEquals( "TERRITORY", domain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns()
-        .get( 0 ).getPhysicalColumn().getId() );
-    Assert.assertEquals( "PT_OFFICES", domain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns()
-        .get( 0 ).getPhysicalColumn().getPhysicalTable().getId() );
+    assertEquals( 2, domain.getLogicalModels().get( 0 ).getCategories().size() );
+    assertEquals( 9, domain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns().size() );
+    assertEquals( "BC_OFFICES_TERRITORY", domain.getLogicalModels().get( 0 ).getCategories().get( 0 )
+      .getLogicalColumns().get( 0 ).getId() );
+    assertEquals( "TERRITORY", domain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns()
+      .get( 0 ).getPhysicalColumn().getId() );
+    assertEquals( "PT_OFFICES", domain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns()
+      .get( 0 ).getPhysicalColumn().getPhysicalTable().getId() );
 
     @SuppressWarnings( "unchecked" )
     List<AggregationType> aggTypes =
         (List<AggregationType>) domain.findLogicalModel( "BV_ORDERS" ).findCategory( "CAT_ORDERS" ).findLogicalColumn(
             "BC_ORDERS_ORDERNUMBER" ).getProperty( "aggregation_list" );
-    Assert.assertNotNull( aggTypes );
-    Assert.assertEquals( 2, aggTypes.size() );
-    Assert.assertEquals( aggTypes.get( 0 ), AggregationType.COUNT );
-    Assert.assertEquals( aggTypes.get( 1 ), AggregationType.COUNT_DISTINCT );
+    assertNotNull( aggTypes );
+    assertEquals( 2, aggTypes.size() );
+    assertEquals( aggTypes.get( 0 ), AggregationType.COUNT );
+    assertEquals( aggTypes.get( 1 ), AggregationType.COUNT_DISTINCT );
 
     // verify that inheritance is working
-    Assert.assertEquals( "$#,##0.00;($#,##0.00)", domain.findLogicalModel( "BV_ORDERS" ).findCategory( "CAT_ORDERS" )
-        .findLogicalColumn( "BC_ORDERDETAILS_TOTAL" ).getProperty( "mask" ) );
+    assertEquals( "$#,##0.00;($#,##0.00)", domain.findLogicalModel( "BV_ORDERS" ).findCategory( "CAT_ORDERS" )
+      .findLogicalColumn( "BC_ORDERDETAILS_TOTAL" ).getProperty( "mask" ) );
 
   }
 
@@ -113,7 +127,6 @@ public class XmiParserTest {
   public void testXmiGenerator() throws Exception {
     // String str = new XmiParser().generateXmi(new Domain());
     // System.out.println(str);
-    XmiParser parser = new XmiParser();
     Domain domain = parser.parseXmi( new FileInputStream( "samples/steelwheels.xmi" ) );
 
     String xmi = parser.generateXmi( domain );
@@ -121,13 +134,11 @@ public class XmiParserTest {
     ByteArrayInputStream is = new ByteArrayInputStream( xmi.getBytes( "UTF-8" ) );
     Domain domain2 = parser.parseXmi( is );
 
-    SerializationService serializer = new SerializationService();
-
     String xml1 = serializeWithOrderedHashmaps( domain );
     String xml2 = serializeWithOrderedHashmaps( domain2 );
 
     // note: this does not verify security objects at this time
-    Assert.assertEquals( xml1, xml2 );
+    assertEquals( xml1, xml2 );
   }
 
   @Test
@@ -143,13 +154,11 @@ public class XmiParserTest {
     ByteArrayInputStream is2 = new ByteArrayInputStream( parser.generateXmi( domain2 ).getBytes() );
     Domain domain3 = parser.parseXmi( is2 );
 
-    SerializationService serializer = new SerializationService();
-
     String xml1 = serializeWithOrderedHashmaps( domain2 );
     String xml2 = serializeWithOrderedHashmaps( domain3 );
 
     // note: this does not verify security objects at this time
-    Assert.assertEquals( xml1, xml2 );
+    assertEquals( xml1, xml2 );
   }
 
   public String serializeWithOrderedHashmaps( Domain domain ) {
@@ -197,36 +206,35 @@ public class XmiParserTest {
 
   @Test
   public void testXmiLegacyConceptProperties() throws Exception {
-    XmiParser parser = new XmiParser();
     Domain domain = parser.parseXmi( new FileInputStream( "test-res/all_concept_properties.xmi" ) );
-    Assert.assertEquals( 2, domain.getConcepts().size() );
-    Assert.assertEquals( 1, domain.getPhysicalModels().size() );
-    Assert.assertEquals( 1, domain.getLogicalModels().size() );
+    assertEquals( 2, domain.getConcepts().size() );
+    assertEquals( 1, domain.getPhysicalModels().size() );
+    assertEquals( 1, domain.getLogicalModels().size() );
 
-    Assert.assertEquals( "http://localhost:8080/pentaho/ServiceAction", domain
-        .getChildProperty( "LEGACY_EVENT_SECURITY_SERVICE_URL" ) );
+    assertEquals( "http://localhost:8080/pentaho/ServiceAction", domain
+      .getChildProperty( "LEGACY_EVENT_SECURITY_SERVICE_URL" ) );
 
-    Assert.assertEquals( 1, domain.getLogicalModels().get( 0 ).getLogicalTables().size() );
-    Assert.assertEquals( 29, domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 ).getLogicalColumns().size() );
-    Assert.assertEquals( "BC_CUSTOMER_CUSTOMER_ID", domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 )
-        .getLogicalColumns().get( 0 ).getId() );
-    Assert.assertEquals( 0, domain.getLogicalModels().get( 0 ).getLogicalRelationships().size() );
+    assertEquals( 1, domain.getLogicalModels().get( 0 ).getLogicalTables().size() );
+    assertEquals( 29, domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 ).getLogicalColumns().size() );
+    assertEquals( "BC_CUSTOMER_CUSTOMER_ID", domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 )
+      .getLogicalColumns().get( 0 ).getId() );
+    assertEquals( 0, domain.getLogicalModels().get( 0 ).getLogicalRelationships().size() );
 
-    Assert.assertEquals( "customer_id", domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 )
-        .getLogicalColumns().get( 0 ).getPhysicalColumn().getId() );
-    Assert.assertEquals( "PT_CUSTOMER", domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 )
-        .getLogicalColumns().get( 0 ).getPhysicalColumn().getPhysicalTable().getId() );
-    Assert.assertNotNull( domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 ).getLogicalColumns().get( 0 )
-        .getPhysicalColumn().getPhysicalTable().getPhysicalModel() );
+    assertEquals( "customer_id", domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 )
+      .getLogicalColumns().get( 0 ).getPhysicalColumn().getId() );
+    assertEquals( "PT_CUSTOMER", domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 )
+      .getLogicalColumns().get( 0 ).getPhysicalColumn().getPhysicalTable().getId() );
+    assertNotNull( domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 ).getLogicalColumns().get( 0 )
+      .getPhysicalColumn().getPhysicalTable().getPhysicalModel() );
 
-    Assert.assertEquals( 1, domain.getLogicalModels().get( 0 ).getCategories().size() );
-    Assert.assertEquals( 29, domain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns().size() );
-    Assert.assertEquals( "BC_CUSTOMER_FULLNAME", domain.getLogicalModels().get( 0 ).getCategories().get( 0 )
-        .getLogicalColumns().get( 0 ).getId() );
-    Assert.assertEquals( "fullname", domain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns()
-        .get( 0 ).getPhysicalColumn().getId() );
-    Assert.assertEquals( "PT_CUSTOMER", domain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns()
-        .get( 0 ).getPhysicalColumn().getPhysicalTable().getId() );
+    assertEquals( 1, domain.getLogicalModels().get( 0 ).getCategories().size() );
+    assertEquals( 29, domain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns().size() );
+    assertEquals( "BC_CUSTOMER_FULLNAME", domain.getLogicalModels().get( 0 ).getCategories().get( 0 )
+      .getLogicalColumns().get( 0 ).getId() );
+    assertEquals( "fullname", domain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns()
+      .get( 0 ).getPhysicalColumn().getId() );
+    assertEquals( "PT_CUSTOMER", domain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns()
+      .get( 0 ).getPhysicalColumn().getPhysicalTable().getId() );
 
     String xmi = parser.generateXmi( domain );
 
@@ -234,52 +242,52 @@ public class XmiParserTest {
     SqlDataSource ds = ( (SqlPhysicalModel) domain.getPhysicalModels().get( 0 ) ).getDatasource();
     SqlDataSource ds2 = ( (SqlPhysicalModel) domain2.getPhysicalModels().get( 0 ) ).getDatasource();
 
-    Assert.assertEquals( "http://localhost:8080/pentaho/ServiceAction", domain2
-        .getChildProperty( "LEGACY_EVENT_SECURITY_SERVICE_URL" ) );
+    assertEquals( "http://localhost:8080/pentaho/ServiceAction", domain2
+      .getChildProperty( "LEGACY_EVENT_SECURITY_SERVICE_URL" ) );
 
-    Assert.assertEquals( "foodmart", ds.getDatabaseName() );
-    Assert.assertEquals( ds.getDatabaseName(), ds2.getDatabaseName() );
+    assertEquals( "foodmart", ds.getDatabaseName() );
+    assertEquals( ds.getDatabaseName(), ds2.getDatabaseName() );
 
-    Assert.assertEquals( "MYSQL", ds.getDialectType() );
-    Assert.assertEquals( ds.getDialectType(), ds2.getDialectType() );
+    assertEquals( "MYSQL", ds.getDialectType() );
+    assertEquals( ds.getDialectType(), ds2.getDialectType() );
 
-    Assert.assertEquals( "NATIVE", ds.getType().toString() );
-    Assert.assertEquals( ds.getType(), ds2.getType() );
+    assertEquals( "NATIVE", ds.getType().toString() );
+    assertEquals( ds.getType(), ds2.getType() );
 
-    Assert.assertEquals( "localhost", ds.getHostname() );
-    Assert.assertEquals( ds.getHostname(), ds2.getHostname() );
+    assertEquals( "localhost", ds.getHostname() );
+    assertEquals( ds.getHostname(), ds2.getHostname() );
 
-    Assert.assertEquals( "3306", ds.getPort() );
-    Assert.assertEquals( ds.getPort(), ds2.getPort() );
+    assertEquals( "3306", ds.getPort() );
+    assertEquals( ds.getPort(), ds2.getPort() );
 
-    Assert.assertEquals( "foodmart", ds.getUsername() );
-    Assert.assertEquals( ds.getUsername(), ds2.getUsername() );
+    assertEquals( "foodmart", ds.getUsername() );
+    assertEquals( ds.getUsername(), ds2.getUsername() );
 
-    Assert.assertEquals( "foodmart", ds.getPassword() );
-    Assert.assertEquals( ds.getPassword(), ds2.getPassword() );
+    assertEquals( "foodmart", ds.getPassword() );
+    assertEquals( ds.getPassword(), ds2.getPassword() );
 
-    Assert.assertEquals( 9, ds.getAttributes().size() );
-    Assert.assertEquals( ds.getAttributes().size(), ds2.getAttributes().size() );
+    assertEquals( 9, ds.getAttributes().size() );
+    assertEquals( ds.getAttributes().size(), ds2.getAttributes().size() );
 
-    Assert.assertEquals( "Y", ds2.getAttributes().get( "QUOTE_ALL_FIELDS" ) );
+    assertEquals( "Y", ds2.getAttributes().get( "QUOTE_ALL_FIELDS" ) );
 
     // test DatabaseMeta conversion
     DatabaseMeta meta = ThinModelConverter.convertToLegacy( "test", ds );
 
-    Assert.assertEquals( "test", meta.getName() );
-    Assert.assertEquals( "MYSQL", meta.getDatabaseTypeDesc() );
-    Assert.assertEquals( "Native", meta.getAccessTypeDesc() );
-    Assert.assertEquals( "localhost", meta.getHostname() );
-    Assert.assertEquals( "3306", meta.getDatabasePortNumberString() );
-    Assert.assertEquals( "foodmart", meta.getDatabaseName() );
-    Assert.assertEquals( "foodmart", meta.getUsername() );
-    Assert.assertEquals( "foodmart", meta.getPassword() );
-    Assert.assertTrue( meta.isQuoteAllFields() );
+    assertEquals( "test", meta.getName() );
+    assertEquals( "MYSQL", meta.getDatabaseTypeDesc() );
+    assertEquals( "Native", meta.getAccessTypeDesc() );
+    assertEquals( "localhost", meta.getHostname() );
+    assertEquals( "3306", meta.getDatabasePortNumberString() );
+    assertEquals( "foodmart", meta.getDatabaseName() );
+    assertEquals( "foodmart", meta.getUsername() );
+    assertEquals( "foodmart", meta.getPassword() );
+    assertTrue( meta.isQuoteAllFields() );
 
     // Verify that RowLevelSecurity is in the xmi
-    Assert
-        .assertTrue( xmi
-            .indexOf( "&lt;row-level-security type=&quot;global&quot;&gt;&lt;formula&gt;&lt;![CDATA[TRUE()]]&gt;&lt;/formula&gt;&lt;entries&gt;&lt;/entries&gt;&lt;/row-level-security&gt;" ) >= 0 );
+    assertTrue( xmi.contains(
+      "&lt;row-level-security type=&quot;global&quot;&gt;&lt;formula&gt;&lt;![CDATA[TRUE()]]&gt;&lt;/formula&gt;"
+        + "&lt;entries&gt;&lt;/entries&gt;&lt;/row-level-security&gt;" ) );
 
     // Verify that the SqlDatasource is to and from successfully
   }
@@ -291,12 +299,11 @@ public class XmiParserTest {
     // a complex join, and also executes a basic query
     // verifying that the complex join is resolved.
 
-    XmiParser parser = new XmiParser();
     Domain domain = parser.parseXmi( new FileInputStream( "samples/complex_join.xmi" ) );
     domain.setId( "test domain" );
-    Assert.assertTrue( domain.getLogicalModels().get( 0 ).getLogicalRelationships().get( 0 ).isComplex() );
-    Assert.assertEquals( "[BT_ORDERS_ORDERS.BC_ORDERS_ORDERNUMBER]=[BT_ORDERFACT_ORDERFACT.BC_ORDERFACT_ORDERNUMBER]",
-        domain.getLogicalModels().get( 0 ).getLogicalRelationships().get( 0 ).getComplexJoin() );
+    assertTrue( domain.getLogicalModels().get( 0 ).getLogicalRelationships().get( 0 ).isComplex() );
+    assertEquals( "[BT_ORDERS_ORDERS.BC_ORDERS_ORDERNUMBER]=[BT_ORDERFACT_ORDERFACT.BC_ORDERFACT_ORDERNUMBER]",
+      domain.getLogicalModels().get( 0 ).getLogicalRelationships().get( 0 ).getComplexJoin() );
 
     String mql =
         "<mql>" + "<domain_type>relational</domain_type>" + "<domain_id>test domain</domain_id>"
@@ -326,102 +333,180 @@ public class XmiParserTest {
 
   @Test
   public void testMissingLocale() throws Exception {
-    XmiParser parser = new XmiParser();
     Domain domain = parser.parseXmi( new FileInputStream( "test-res/missing_locale.xmi" ) );
-    Assert.assertEquals( 0, domain.getLocaleCodes().length );
+    assertEquals( 0, domain.getLocaleCodes().length );
   }
 
   @Test
   public void testPartialMetadataFile() throws Exception {
-    XmiParser parser = new XmiParser();
     Domain domain = parser.parseXmi( new FileInputStream( "test-res/partial_metadata.xmi" ) );
-    Assert.assertEquals( 1, domain.getPhysicalModels().size() );
+    assertEquals( 1, domain.getPhysicalModels().size() );
   }
 
   @SuppressWarnings( "unchecked" )
   @Test
   public void testOlapMetadataFile() throws Exception {
-    XmiParser parser = new XmiParser();
     Domain domain = parser.parseXmi( new FileInputStream( "test-res/example_olap.xmi" ) );
-    Assert.assertEquals( 1, domain.getPhysicalModels().size() );
+    assertEquals( 1, domain.getPhysicalModels().size() );
 
-    Assert.assertNotNull( domain.getLogicalModels().get( 0 ).getProperty( "olap_dimensions" ) );
+    assertNotNull( domain.getLogicalModels().get( 0 ).getProperty( "olap_dimensions" ) );
     List<OlapDimension> dimensions =
         (List<OlapDimension>) domain.getLogicalModels().get( 0 ).getProperty( "olap_dimensions" );
-    Assert.assertEquals( 2, dimensions.size() );
+    assertEquals( 2, dimensions.size() );
 
     OlapDimension dim1 = dimensions.get( 0 );
     OlapDimension dim2 = dimensions.get( 1 );
 
-    Assert.assertEquals( "fname", dim1.getName() );
+    assertEquals( "fname", dim1.getName() );
 
-    Assert.assertEquals( 1, dim1.getHierarchies().size() );
+    assertEquals( 1, dim1.getHierarchies().size() );
     OlapHierarchy hier1 = dim1.getHierarchies().get( 0 );
 
-    Assert.assertEquals( "fname", hier1.getName() );
+    assertEquals( "fname", hier1.getName() );
 
-    Assert.assertNotNull( hier1.getLogicalTable() );
-    Assert.assertEquals( "BT_CUSTOMER2_CUSTOMER2", hier1.getLogicalTable().getId() );
-    Assert.assertNotNull( hier1.getPrimaryKey() );
-    Assert.assertEquals( "LC_CUSTOMER2_FNAME", hier1.getPrimaryKey().getId() );
+    assertNotNull( hier1.getLogicalTable() );
+    assertEquals( "BT_CUSTOMER2_CUSTOMER2", hier1.getLogicalTable().getId() );
+    assertNotNull( hier1.getPrimaryKey() );
+    assertEquals( "LC_CUSTOMER2_FNAME", hier1.getPrimaryKey().getId() );
 
-    Assert.assertEquals( 1, hier1.getHierarchyLevels().size() );
+    assertEquals( 1, hier1.getHierarchyLevels().size() );
 
     OlapHierarchyLevel level = hier1.getHierarchyLevels().get( 0 );
 
-    Assert.assertEquals( "fname", level.getName() );
-    Assert.assertEquals( 0, level.getLogicalColumns().size() );
-    Assert.assertEquals( "LC_CUSTOMER2_FNAME", level.getReferenceColumn().getId() );
-    Assert.assertEquals( hier1, level.getOlapHierarchy() );
+    assertEquals( "fname", level.getName() );
+    assertEquals( 0, level.getLogicalColumns().size() );
+    assertEquals( "LC_CUSTOMER2_FNAME", level.getReferenceColumn().getId() );
+    assertEquals( hier1, level.getOlapHierarchy() );
 
-    Assert.assertEquals( "lname - D", dim2.getName() );
-    Assert.assertEquals( 2, dim2.getHierarchies().size() );
+    assertEquals( "lname - D", dim2.getName() );
+    assertEquals( 2, dim2.getHierarchies().size() );
 
     OlapHierarchy hier2 = dim2.getHierarchies().get( 0 );
 
-    Assert.assertEquals( "lname - H", hier2.getName() );
+    assertEquals( "lname - H", hier2.getName() );
 
-    Assert.assertEquals( 2, hier2.getHierarchyLevels().size() );
+    assertEquals( 2, hier2.getHierarchyLevels().size() );
     OlapHierarchyLevel level2 = hier2.getHierarchyLevels().get( 0 );
     OlapHierarchyLevel level3 = hier2.getHierarchyLevels().get( 1 );
 
-    Assert.assertEquals( 4, level3.getLogicalColumns().size() );
-    Assert.assertEquals( false, level3.isHavingUniqueMembers() );
+    assertEquals( 4, level3.getLogicalColumns().size() );
+    assertEquals( false, level3.isHavingUniqueMembers() );
 
     OlapHierarchy hier3 = dim2.getHierarchies().get( 1 );
 
-    Assert.assertEquals( "test", hier3.getName() );
+    assertEquals( "test", hier3.getName() );
 
-    Assert.assertNotNull( domain.getLogicalModels().get( 0 ).getProperty( "olap_cubes" ) );
+    assertNotNull( domain.getLogicalModels().get( 0 ).getProperty( "olap_cubes" ) );
     List<OlapCube> cubes = (List<OlapCube>) domain.getLogicalModels().get( 0 ).getProperty( "olap_cubes" );
-    Assert.assertEquals( 1, cubes.size() );
+    assertEquals( 1, cubes.size() );
 
     OlapCube cube = cubes.get( 0 );
-    Assert.assertEquals( "customer2 Table", cube.getName() );
-    Assert.assertEquals( 1, cube.getOlapDimensionUsages().size() );
+    assertEquals( "customer2 Table", cube.getName() );
+    assertEquals( 1, cube.getOlapDimensionUsages().size() );
     OlapDimensionUsage usage = cube.getOlapDimensionUsages().get( 0 );
-    Assert.assertEquals( "fname", usage.getName() );
-    Assert.assertEquals( dim1, usage.getOlapDimension() );
+    assertEquals( "fname", usage.getName() );
+    assertEquals( dim1, usage.getOlapDimension() );
 
-    Assert.assertEquals( 1, cube.getOlapMeasures().size() );
+    assertEquals( 1, cube.getOlapMeasures().size() );
 
     OlapMeasure measure = cube.getOlapMeasures().get( 0 );
-    Assert.assertEquals( "num_children_at_home", measure.getName() );
-    Assert.assertEquals( "LC_CUSTOMER2_NUM_CHILDREN_AT_HOME", measure.getLogicalColumn().getId() );
+    assertEquals( "num_children_at_home", measure.getName() );
+    assertEquals( "LC_CUSTOMER2_NUM_CHILDREN_AT_HOME", measure.getLogicalColumn().getId() );
 
     String xmi = parser.generateXmi( domain );
 
     ByteArrayInputStream is = new ByteArrayInputStream( xmi.getBytes() );
     Domain domain2 = parser.parseXmi( is );
 
-    SerializationService serializer = new SerializationService();
-
     String xml1 = serializeWithOrderedHashmaps( domain );
     String xml2 = serializeWithOrderedHashmaps( domain2 );
 
     // note: this does not verify security objects at this time
-    Assert.assertEquals( xml1, xml2 );
-
+    assertEquals( xml1, xml2 );
   }
 
+  @Test
+  public void incorrectIdsAreReplacedOnTheFly() throws Exception {
+    final String modelName = "BV_HUMAN_RESOURCES";
+    final String tableName = "BT_EMPLOYEES_EMPLOYEES";
+    final String columnName = "BC_EMPLOYEES_EMPLOYEENUMBER";
+    final String categoryName = "BC_OFFICES_";
+
+    Domain domain = parser.parseXmi( new FileInputStream( "samples/steelwheels.xmi" ) );
+
+    LogicalModel model = domain.findLogicalModel( modelName );
+    assertNotNull( model );
+    Category category = model.findCategory( categoryName );
+    assertNotNull( category );
+    LogicalTable table = model.findLogicalTable( tableName );
+    assertValidId( table );
+    LogicalColumn column = table.findLogicalColumn( columnName );
+    assertValidId( column );
+
+    setInvalidId( " (Cat_Id)", category, table, column );
+
+    String spoiltXmi = parser.generateXmi( domain );
+    domain = parser.parseXmi( new ByteArrayInputStream( spoiltXmi.getBytes() ) );
+
+    model = domain.findLogicalModel( modelName );
+    assertNotNull( model );
+
+    category = findConceptStartingWith( categoryName, model.getCategories() );
+    assertValidId( category );
+
+    table = findConceptStartingWith( tableName, model.getLogicalTables() );
+    assertValidId( table );
+
+    column = findConceptStartingWith( columnName, table.getLogicalColumns() );
+    assertValidId( column );
+  }
+
+  @Test
+  public void collisionAfterCorrectionAreResolved() throws Exception {
+    Domain domain = parser.parseXmi( new FileInputStream( "samples/steelwheels.xmi" ) );
+    LogicalTable table = domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 );
+
+    assertTrue( table.getLogicalColumns().size() >= 2 );
+    LogicalColumn col1 = table.getLogicalColumns().get( 0 );
+    col1.setId( "column[x]" );
+
+    LogicalColumn col2 = table.getLogicalColumns().get( 1 );
+    col2.setId( "column{x}" );
+
+    assertFalse( "Columns have different raw ids", col1.getId().equals( col2.getId() ) );
+    assertEquals( "Columns have equal validated ids", validateId( col1.getId() ), validateId( col2.getId() ) );
+
+    String xmi = parser.generateXmi( domain );
+    domain = parser.parseXmi( new ByteArrayInputStream( xmi.getBytes() ) );
+
+    List<LogicalColumn> columns =
+      domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 ).getLogicalColumns();
+
+    col1 = columns.get( 0 );
+    col2 = columns.get( 1 );
+    assertTrue( col1.getId(), col1.getId().startsWith( "column" ) );
+    assertTrue( col2.getId(), col2.getId().startsWith( "column" ) );
+    assertFalse( "Columns have different corrected ids", col1.getId().equals( col2.getId() ) );
+  }
+
+  private static void setInvalidId(String invalidPart, Concept... concepts) {
+    for ( Concept concept : concepts ) {
+      concept.setId( concept.getId() + invalidPart );
+      assertFalse( validateId( concept.getId() ) );
+    }
+  }
+
+  private static void assertValidId( Concept concept ) {
+    assertNotNull( concept );
+    assertTrue( concept.getId(), validateId( concept.getId() ) );
+  }
+
+  private static <T extends Concept> T findConceptStartingWith( String id, List<T> concepts ) {
+    for ( T concept : concepts ) {
+      if ( concept.getId().startsWith( id ) ) {
+        return concept;
+      }
+    }
+    return null;
+  }
 }
