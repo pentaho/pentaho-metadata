@@ -213,7 +213,8 @@ public class MondrianModelExporter {
 
               for ( OlapAnnotation annotation : olapHierarchyLevel.getAnnotations() ) {
                 xml.append( Util.CR );
-                xml.append( annotation.asXml() );
+                OlapAnnotation escapedAnnotation = escapeAnnotationValue( annotation );
+                xml.append( escapedAnnotation.asXml() );
               }
               xml.append( Util.CR );
               xml.append( "        </Annotations>" );
@@ -424,6 +425,12 @@ public class MondrianModelExporter {
    */
   private String cleanseDbName( String name ) {
     return name.replaceAll( "^[`'\"]|[`'\"]$", "" );
+  }
+
+  private OlapAnnotation escapeAnnotationValue( OlapAnnotation annotation ) {
+    StringBuilder escapedValue = new StringBuilder();
+    XMLHandler.appendReplacedChars( escapedValue, annotation.getValue() );
+    return new OlapAnnotation( annotation.getName(), escapedValue.toString() );
   }
 
   /**
