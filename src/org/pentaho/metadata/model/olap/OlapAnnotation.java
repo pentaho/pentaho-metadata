@@ -2,6 +2,8 @@ package org.pentaho.metadata.model.olap;
 
 import java.io.Serializable;
 
+import org.owasp.esapi.ESAPI;
+
 /**
  * Created by IntelliJ IDEA. User: rfellows Date: 9/23/11 Time: 3:03 PM To change this template use File | Settings |
  * File Templates.
@@ -36,7 +38,7 @@ public class OlapAnnotation implements Serializable {
 
   public String asXml() {
     if ( name != null & value != null ) {
-      return "          <Annotation name=\"" + name + "\">" + value + "</Annotation>";
+      return "          <Annotation name=\"" + name + "\">" + ESAPI.encoder().encodeForXML( value ) + "</Annotation>";
     }
     return "";
   }
