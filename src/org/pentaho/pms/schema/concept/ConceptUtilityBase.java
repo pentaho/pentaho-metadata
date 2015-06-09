@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.pentaho.di.core.changed.ChangedFlag;
+import org.pentaho.metadata.util.Util;
 import org.pentaho.pms.core.event.AllowsIDChangeListenersInterface;
 import org.pentaho.pms.core.event.IDChangedEvent;
 import org.pentaho.pms.core.event.IDChangedListener;
@@ -50,7 +51,6 @@ import org.pentaho.pms.util.ObjectAlreadyExistsException;
 import org.pentaho.pms.util.UniqueList;
 
 /**
- * 
  * @deprecated as of metadata 3.0.
  */
 public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeListenersInterface {
@@ -128,10 +128,8 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
   }
 
   /**
-   * @param id
-   *          the id to set
-   * @throws ObjectAlreadyExistsException
-   *           in case the ID already exists in a parent list (UniqueList)
+   * @param id the id to set
+   * @throws ObjectAlreadyExistsException in case the ID already exists in a parent list (UniqueList)
    */
   public void setId( String id ) throws ObjectAlreadyExistsException {
     // Verify uniqueness BEFORE we change the ID!
@@ -146,7 +144,7 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
         listener.IDChanged( new IDChangedEvent( this.id, id, this ) );
       } catch ( ObjectAlreadyExistsException e ) {
         throw new ObjectAlreadyExistsException( Messages.getString(
-            "ConceptUtilityBase.ERROR_0001_OBJECT_ID_EXISTS", id ), e ); //$NON-NLS-1$
+          "ConceptUtilityBase.ERROR_0001_OBJECT_ID_EXISTS", id ), e ); //$NON-NLS-1$
       }
     }
     this.id = id;
@@ -161,8 +159,7 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
   }
 
   /**
-   * @param concept
-   *          The concept to set
+   * @param concept The concept to set
    */
   public void setConcept( ConceptInterface concept ) {
     this.concept = concept;
@@ -172,9 +169,8 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
   /**
    * Returns the display name for the concept using the specified locale. If the concept doesn't have a display name
    * given the specified locale, the default locale will be used
-   * 
-   * @param locale
-   *          The prefered locale to go for
+   *
+   * @param locale The prefered locale to go for
    * @return The localized name or the id if nothing was found for that or the default locale
    */
   public String getDisplayName( String locale ) {
@@ -184,11 +180,9 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
 
   /**
    * Set the localized name of the object
-   * 
-   * @param locale
-   *          The prefered locale to go for
-   * @param name
-   *          the name to set
+   *
+   * @param locale The prefered locale to go for
+   * @param name   the name to set
    */
   public void setName( String locale, String name ) {
     concept.setName( locale, name );
@@ -197,9 +191,8 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
   /**
    * Returns the name for the concept using the specified locale. If the concept doesn't have a name given the specified
    * locale, the default locale will be used
-   * 
-   * @param locale
-   *          The prefered locale to go for
+   *
+   * @param locale The prefered locale to go for
    * @return The localized name or the id if nothing was found for that or the default locale
    */
   public String getName( String locale ) {
@@ -225,20 +218,16 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
 
   /**
    * Set the localized description of the object
-   * 
-   * @param locale
-   *          The prefered locale to go for
-   * @param description
-   *          the description to set
-   * 
+   *
+   * @param locale      The prefered locale to go for
+   * @param description the description to set
    */
   public void setDescription( String locale, String description ) {
     concept.setDescription( locale, description );
   }
 
   /**
-   * @param locale
-   *          The prefered locale to go for
+   * @param locale The prefered locale to go for
    * @return The localized description or null if nothing was found for that locale
    */
   public String getDescription( String locale ) {
@@ -393,8 +382,7 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
   }
 
   /**
-   * @param columnType
-   *          the column type to set
+   * @param columnType the column type to set
    */
   public void setFieldType( FieldTypeSettings fieldType ) {
     ConceptPropertyInterface property = concept.getChildProperty( DefaultPropertyID.FIELD_TYPE.getId() );
@@ -436,7 +424,7 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
       property.setValue( aggregationList );
     } else {
       concept.addProperty( new ConceptPropertyAggregationList( DefaultPropertyID.AGGREGATION_LIST.getId(),
-          aggregationList ) );
+        aggregationList ) );
     }
   }
 
@@ -555,7 +543,7 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
       property.setValue( rowLevelSecurity );
     } else {
       concept.addProperty( new ConceptPropertyRowLevelSecurity( DefaultPropertyID.ROW_LEVEL_SECURITY.getId(),
-          rowLevelSecurity ) );
+        rowLevelSecurity ) );
     }
   }
 
@@ -577,6 +565,10 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
           return; // no problem
         }
 
+        if ( !Util.validateId( event.newID ) ) {
+          throw Util.idValidationFailed( event.newID );
+        }
+
         // The ID has changed
         // See if the new ID conflicts with one in the list...
         //
@@ -587,7 +579,7 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
             if ( base.getId().equals( event.newID ) ) {
               // This is a problem...
               throw new ObjectAlreadyExistsException( Messages.getString(
-                  "ConceptUtilityBase.ERROR_0001_OBJECT_ID_EXISTS", event.newID ) ); //$NON-NLS-1$
+                "ConceptUtilityBase.ERROR_0001_OBJECT_ID_EXISTS", event.newID ) ); //$NON-NLS-1$
             }
           }
         }
@@ -601,8 +593,8 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
       for ( int i = 0; i < list.size(); i++ ) {
         DefaultProperty defaultProperty = (DefaultProperty) list.get( i );
         ConceptPropertyInterface prop =
-            DefaultPropertyID.getDefaultEmptyProperty( defaultProperty.getConceptPropertyType(), defaultProperty
-                .getName() );
+          DefaultPropertyID.getDefaultEmptyProperty( defaultProperty.getConceptPropertyType(), defaultProperty
+            .getName() );
         prop.setRequired( true );
         concept.addProperty( prop );
       }

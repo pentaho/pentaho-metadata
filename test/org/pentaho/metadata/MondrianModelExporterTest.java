@@ -330,4 +330,41 @@ public class MondrianModelExporterTest {
         + "</Schema>", data );
   }
 
+  @Test
+  public void testDescriptions() throws Exception {
+    LogicalModel businessModel = getTestModel( TargetTableType.TABLE, "table", "schema" );
+    @SuppressWarnings( "unchecked" )
+    List<OlapCube> cubes = (List<OlapCube>) businessModel.getProperty( LogicalModel.PROPERTY_OLAP_CUBES );
+    OlapMeasure measure = cubes.get( 0 ).getOlapMeasures().get( 0 );
+    measure.getLogicalColumn().setDescription( new LocalizedString( "en_US", "it's a measure" ) );
+    OlapHierarchyLevel level =
+        cubes.get( 0 ).getOlapDimensionUsages().get( 0 ).getOlapDimension().getHierarchies().get( 0 )
+            .getHierarchyLevels().get( 0 );
+    OlapAnnotation description = new OlapAnnotation();
+    description.setName( "description.en_US" );
+    description.setValue( "description with > in there" );
+    level.getAnnotations().add( description );
+
+    MondrianModelExporter exporter = new MondrianModelExporter( businessModel, "en_US" );
+    final String schema = exporter.createMondrianModelXML();
+
+    TestHelper.assertEqualsIgnoreWhitespaces(
+      "<Schema name=\"model\">\n"
+      + "  <Dimension name=\"Dim1\">\n"
+      + "    <Hierarchy name=\"Hier1\" hasAll=\"false\">\n"
+      + "      <Table name=\"table\" schema=\"schema\"/>\n"
+      + "      <Level name=\"Lvl1\" uniqueMembers=\"false\" column=\"pc1\" type=\"Numeric\">\n"
+      + "        <Annotations>\n"
+      + "          <Annotation name=\"description.en_US\">description with &#x3e; in there</Annotation>\n"
+      + "        </Annotations>\n"
+      + "      </Level>\n"
+      + "    </Hierarchy>\n"
+      + "  </Dimension>\n"
+      + "  <Cube name=\"Cube1\">\n"
+      + "    <Table name=\"table\" schema=\"schema\"/>\n"
+      + "    <DimensionUsage name=\"Dim1\" source=\"Dim1\" foreignKey=\"pc2\"/>\n"
+      + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" formatString=\"Standard\" description=\"it&#x27;s a measure\"/>\n"
+      + "  </Cube>\n" + "</Schema>", schema );
+  }
+
 }

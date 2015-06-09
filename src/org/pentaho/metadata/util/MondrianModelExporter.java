@@ -29,6 +29,7 @@ import org.pentaho.metadata.model.SqlPhysicalColumn;
 import org.pentaho.metadata.model.SqlPhysicalTable;
 import org.pentaho.metadata.model.concept.types.AggregationType;
 import org.pentaho.metadata.model.concept.types.DataType;
+import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
 import org.pentaho.metadata.model.olap.OlapAnnotation;
 import org.pentaho.metadata.model.olap.OlapCube;
@@ -212,7 +213,8 @@ public class MondrianModelExporter {
 
               for ( OlapAnnotation annotation : olapHierarchyLevel.getAnnotations() ) {
                 xml.append( Util.CR );
-                xml.append( annotation.asXml() );
+                OlapAnnotation escapedAnnotation = escapeAnnotationValue( annotation );
+                xml.append( escapedAnnotation.asXml() );
               }
               xml.append( Util.CR );
               xml.append( "        </Annotations>" );
@@ -396,6 +398,16 @@ public class MondrianModelExporter {
           XMLHandler.appendReplacedChars( xml, formatString );
           xml.append( "\"" ); //$NON-NLS-1$
 
+          LocalizedString description = businessColumn.getDescription();
+          if ( description != null ) {
+            String desc = description.getLocalizedString( locale );
+            if ( !StringUtils.isEmpty( desc ) ) {
+              xml.append( " description=\"" ); //$NON-NLS-1$
+              XMLHandler.appendReplacedChars( xml, desc );
+              xml.append( "\"" ); //$NON-NLS-1$
+            }
+          }
+
           xml.append( "/>" ).append( Util.CR ); //$NON-NLS-1$
         }
 
@@ -413,6 +425,12 @@ public class MondrianModelExporter {
    */
   private String cleanseDbName( String name ) {
     return name.replaceAll( "^[`'\"]|[`'\"]$", "" );
+  }
+
+  private OlapAnnotation escapeAnnotationValue( OlapAnnotation annotation ) {
+    StringBuilder escapedValue = new StringBuilder();
+    XMLHandler.appendReplacedChars( escapedValue, annotation.getValue() );
+    return new OlapAnnotation( annotation.getName(), escapedValue.toString() );
   }
 
   /**
