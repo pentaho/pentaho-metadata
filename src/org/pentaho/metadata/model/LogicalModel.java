@@ -39,6 +39,10 @@ public class LogicalModel extends Concept {
   public static final String PROPERTY_OLAP_DIMS = "olap_dimensions"; //$NON-NLS-1$
 
   public static final String PROPERTY_OLAP_CUBES = "olap_cubes"; //$NON-NLS-1$
+  
+  public static final String PROPERTY_OLAP_CALCULATED_MEMBERS = "olap_calculated_members"; //$NON-NLS-1$
+
+  public static final String PROPERTY_OLAP_ROLES = "olap_roles"; //$NON-NLS-1$
 
   public static final String PROPERTY_TARGET_TABLE_STAGED = "target_table_staged"; //$NON-NLS-1$
 

@@ -32,12 +32,14 @@ import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
 import org.pentaho.metadata.model.olap.OlapAnnotation;
+import org.pentaho.metadata.model.olap.OlapCalculatedMember;
 import org.pentaho.metadata.model.olap.OlapCube;
 import org.pentaho.metadata.model.olap.OlapDimension;
 import org.pentaho.metadata.model.olap.OlapDimensionUsage;
 import org.pentaho.metadata.model.olap.OlapHierarchy;
 import org.pentaho.metadata.model.olap.OlapHierarchyLevel;
 import org.pentaho.metadata.model.olap.OlapMeasure;
+import org.pentaho.metadata.model.olap.OlapRole;
 
 public class MondrianModelExporter {
   private LogicalModel businessModel;
@@ -114,8 +116,7 @@ public class MondrianModelExporter {
           xml.append( ">" ); //$NON-NLS-1$
           xml.append( Util.CR );
 
-          if ( olapHierarchy.getLogicalTable().getProperty( SqlPhysicalTable.TARGET_TABLE_TYPE )
-              == TargetTableType.INLINE_SQL ) {
+          if ( olapHierarchy.getLogicalTable().getProperty( SqlPhysicalTable.TARGET_TABLE_TYPE ) == TargetTableType.INLINE_SQL ) {
             xml.append( "    <View alias=\"FACT\">" ).append( Util.CR );
             xml.append( "        <SQL dialect=\"generic\">" ).append( Util.CR );
             xml.append(
@@ -132,8 +133,8 @@ public class MondrianModelExporter {
             if ( !StringUtils.isBlank( (String) olapHierarchy.getLogicalTable().getProperty(
                 SqlPhysicalTable.TARGET_SCHEMA ) ) ) {
               xml.append( " schema=\"" ); //$NON-NLS-1$
-              XMLHandler.appendReplacedChars( xml, cleanseDbName( (String) olapHierarchy.getLogicalTable().getProperty(
-                  SqlPhysicalTable.TARGET_SCHEMA ) ) );
+              XMLHandler.appendReplacedChars( xml, cleanseDbName( (String) olapHierarchy.getLogicalTable()
+                  .getProperty( SqlPhysicalTable.TARGET_SCHEMA ) ) );
               xml.append( "\"" ); //$NON-NLS-1$
             }
             xml.append( "/>" ); //$NON-NLS-1$
@@ -285,7 +286,7 @@ public class MondrianModelExporter {
     // Now do the cubes too...
 
     @SuppressWarnings( "unchecked" )
-    List<OlapCube> olapCubes = (List<OlapCube>) businessModel.getProperty( "olap_cubes" ); //$NON-NLS-1$
+    List<OlapCube> olapCubes = (List<OlapCube>) businessModel.getProperty( LogicalModel.PROPERTY_OLAP_CUBES ); //$NON-NLS-1$
     if ( olapCubes != null ) {
       for ( int c = 0; c < olapCubes.size(); c++ ) {
         OlapCube olapCube = (OlapCube) olapCubes.get( c );
@@ -297,8 +298,7 @@ public class MondrianModelExporter {
         xml.append( "\"" ); //$NON-NLS-1$
         xml.append( ">" ).append( Util.CR ); //$NON-NLS-1$
 
-        if ( olapCube.getLogicalTable().getProperty( SqlPhysicalTable.TARGET_TABLE_TYPE )
-            == TargetTableType.INLINE_SQL ) {
+        if ( olapCube.getLogicalTable().getProperty( SqlPhysicalTable.TARGET_TABLE_TYPE ) == TargetTableType.INLINE_SQL ) {
           xml.append( "    <View alias=\"FACT\">" ).append( Util.CR );
           xml.append( "        <SQL dialect=\"generic\">" ).append( Util.CR );
           xml.append(
@@ -312,8 +312,8 @@ public class MondrianModelExporter {
           XMLHandler.appendReplacedChars( xml, cleanseDbName( (String) olapCube.getLogicalTable().getProperty(
               SqlPhysicalTable.TARGET_TABLE ) ) );
           xml.append( "\"" ); //$NON-NLS-1$
-          if ( !StringUtils.isBlank( (String) olapCube.getLogicalTable()
-              .getProperty( SqlPhysicalTable.TARGET_SCHEMA ) ) ) {
+          if ( !StringUtils
+              .isBlank( (String) olapCube.getLogicalTable().getProperty( SqlPhysicalTable.TARGET_SCHEMA ) ) ) {
             xml.append( " schema=\"" ); //$NON-NLS-1$
             XMLHandler.appendReplacedChars( xml, cleanseDbName( (String) olapCube.getLogicalTable().getProperty(
                 SqlPhysicalTable.TARGET_SCHEMA ) ) );
@@ -382,7 +382,7 @@ public class MondrianModelExporter {
           XMLHandler.appendReplacedChars( xml, (String) businessColumn.getProperty( SqlPhysicalColumn.TARGET_COLUMN ) );
           xml.append( "\"" ); //$NON-NLS-1$
 
-          String typeDesc = convertToMondrian(businessColumn.getAggregationType());
+          String typeDesc = convertToMondrian( businessColumn.getAggregationType() );
           if ( typeDesc != null ) {
             xml.append( " aggregator=\"" ); //$NON-NLS-1$
             XMLHandler.appendReplacedChars( xml, typeDesc );
@@ -410,8 +410,56 @@ public class MondrianModelExporter {
 
           xml.append( "/>" ).append( Util.CR ); //$NON-NLS-1$
         }
+        
+        // Calculated Members
+        //
+        if (olapCube.getOlapCalculatedMembers() != null) {
+          for (OlapCalculatedMember member : olapCube.getOlapCalculatedMembers()) {
+            xml.append( "    <CalculatedMember" ); //$NON-NLS-1$
+
+            // Calculated member name
+            xml.append( " name=\"" ); //$NON-NLS-1$
+            XMLHandler.appendReplacedChars( xml, member.getName() );
+            xml.append( "\"" ); //$NON-NLS-1$
+            
+            // Dimension
+            xml.append( " dimension=\"" ); //$NON-NLS-1$
+            XMLHandler.appendReplacedChars( xml, member.getDimension() );
+            xml.append( "\"" ); //$NON-NLS-1$
+            
+            // Format string
+            String formatString = member.getFormatString(); //$NON-NLS-1$
+            if ( StringUtils.isEmpty( formatString ) ) {
+              formatString = "Standard"; //$NON-NLS-1$
+            }
+            xml.append( " formatString=\"" ); //$NON-NLS-1$
+            XMLHandler.appendReplacedChars( xml, formatString );
+            xml.append( "\"" ); //$NON-NLS-1$
+
+            xml.append( ">" ).append( Util.CR ); //$NON-NLS-1$
+            
+            xml.append( "<Formula><![CDATA[").append(member.getFormula());
+            xml.append( "]]>" ).append( "</Formula>" ).append( Util.CR );
+            
+            
+            xml.append( "</CalculatedMember>" ).append( Util.CR ); //$NON-NLS-1$
+          }
+        }       
 
         xml.append( "  </Cube>" ).append( Util.CR ); //$NON-NLS-1$
+      }
+    }
+
+    // Export roles
+    @SuppressWarnings( "unchecked" )
+    List<OlapRole> roles = (List<OlapRole>) businessModel.getProperty( LogicalModel.PROPERTY_OLAP_ROLES );
+    if ( roles != null && roles.size() > 0 ) {
+      for ( OlapRole role : roles ) {
+        xml.append( "  <Role name=\">" );
+        XMLHandler.appendReplacedChars( xml, role.getName() );
+        xml.append( "\">" ).append( Util.CR ); //$NON-NLS-1$
+        xml.append( role.getRoleXml() );
+        xml.append( "  </Role>" ).append( Util.CR );
       }
     }
 
@@ -447,7 +495,7 @@ public class MondrianModelExporter {
   public void setLogicalModel( LogicalModel businessModel ) {
     this.businessModel = businessModel;
   }
-  
+
   public static String convertToMondrian( AggregationType aggregationType ) {
     String typeDesc = null;
     switch ( aggregationType ) {
