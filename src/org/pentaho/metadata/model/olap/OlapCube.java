@@ -28,12 +28,14 @@ public class OlapCube implements Cloneable, Serializable {
 
   private List<OlapDimensionUsage> olapDimensionUsages;
   private List<OlapMeasure> olapMeasures;
+  private List<OlapCalculatedMember> olapCalculatedMembers;
 
   // TODO: private dimensions
 
   public OlapCube() {
     olapDimensionUsages = new ArrayList<OlapDimensionUsage>();
     olapMeasures = new ArrayList<OlapMeasure>();
+    olapCalculatedMembers = new ArrayList<OlapCalculatedMember>();
   }
 
   public Object clone() {
@@ -48,6 +50,11 @@ public class OlapCube implements Cloneable, Serializable {
     for ( int i = 0; i < olapMeasures.size(); i++ ) {
       OlapMeasure measure = (OlapMeasure) olapMeasures.get( i );
       olapCube.olapMeasures.add( (OlapMeasure) measure.clone() );
+    }
+    
+    for ( int i = 0; i < olapCalculatedMembers.size(); i++ ) {
+      OlapCalculatedMember cm = (OlapCalculatedMember) olapCalculatedMembers.get( i );
+      olapCube.olapCalculatedMembers.add( (OlapCalculatedMember) cm.clone() );
     }
 
     if ( logicalTable != null ) {
@@ -150,5 +157,13 @@ public class OlapCube implements Cloneable, Serializable {
     }
 
     return (String[]) names.toArray( new String[names.size()] );
+  }
+
+  public List<OlapCalculatedMember> getOlapCalculatedMembers() {
+    return olapCalculatedMembers;
+  }
+
+  public void setOlapCalculatedMembers( List<OlapCalculatedMember> olapCalculatedMembers ) {
+    this.olapCalculatedMembers = olapCalculatedMembers;
   }
 }
