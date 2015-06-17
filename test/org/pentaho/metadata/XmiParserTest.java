@@ -525,8 +525,8 @@ public class XmiParserTest {
     Domain domain = parser.parseXmi( new FileInputStream( "test-res/example_olap.xmi" ) );
 
     List<OlapRole> roles = new ArrayList<OlapRole>();
-    roles.add( new OlapRole( "California Manager", "<SchemaGrant></SchemaGrant>" ) );
-    roles.add( new OlapRole( "Maryland Manager", "<SchemaGrant></SchemaGrant>" ) );
+    roles.add( new OlapRole( "California Manager", "<SchemaGrant/>" ) );
+    roles.add( new OlapRole( "Maryland Manager", "<SchemaGrant/>" ) );
 
     LogicalModel model = domain.getLogicalModels().get( 0 );
     model.setProperty( LogicalModel.PROPERTY_OLAP_ROLES, roles );
@@ -559,7 +559,7 @@ public class XmiParserTest {
     cube.setOlapCalculatedMembers( members );
     
     String xmi = parser.generateXmi( domain );
-    System.out.println(xmi);
+    
 
     ByteArrayInputStream is = new ByteArrayInputStream( xmi.getBytes() );
     Domain domain2 = parser.parseXmi( is );

@@ -458,7 +458,7 @@ public class MondrianModelExporter {
         xml.append( "  <Role name=\">" );
         XMLHandler.appendReplacedChars( xml, role.getName() );
         xml.append( "\">" ).append( Util.CR ); //$NON-NLS-1$
-        xml.append( role.getRoleXml() );
+        xml.append( role.getDefinition() );
         xml.append( "  </Role>" ).append( Util.CR );
       }
     }

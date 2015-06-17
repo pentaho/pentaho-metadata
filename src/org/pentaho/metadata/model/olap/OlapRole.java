@@ -24,11 +24,12 @@ import org.pentaho.di.core.exception.KettleXMLException;
 import org.pentaho.di.core.xml.XMLHandler;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class OlapRole implements Cloneable, Serializable {
   
   private String name;
-  private String roleXml;
+  private String definition;
   
   public OlapRole() {
   }
@@ -36,18 +37,23 @@ public class OlapRole implements Cloneable, Serializable {
   public OlapRole( String name, String roleXml ) {
     super();
     this.name = name;
-    this.roleXml = roleXml;
+    this.definition = roleXml;
   }
   
-  public OlapRole( Node node ) {
+  public OlapRole( Node node ) throws KettleXMLException {
     super();
     name = XMLHandler.getTagValue( node, "name" );
-    roleXml = XMLHandler.getTagValue( node, "roleXml" );
+    StringBuffer xml = new StringBuffer();
+    NodeList children = XMLHandler.getSubNode( node, "definition" ).getChildNodes();
+    for (int i = 0; i < children.getLength(); i++) {
+      xml.append( (XMLHandler.formatNode( children.item( i ) )));
+    }
+    definition = xml.toString();
   }
 
   @Override
   protected Object clone() {
-    return new OlapRole( name, roleXml );
+    return new OlapRole( name, definition );
   }
 
   public String getName() {
@@ -58,12 +64,12 @@ public class OlapRole implements Cloneable, Serializable {
     this.name = name;
   }
 
-  public String getRoleXml() {
-    return roleXml;
+  public String getDefinition() {
+    return definition;
   }
 
-  public void setRoleXml( String roleXml ) {
-    this.roleXml = roleXml;
+  public void setDefinition( String roleXml ) {
+    this.definition = roleXml;
   }
   
   public String toXml() {
@@ -71,12 +77,13 @@ public class OlapRole implements Cloneable, Serializable {
 
     xml.append( "<role>" ); //$NON-NLS-1$
     xml.append( XMLHandler.addTagValue( "name", name, false ) ); //$NON-NLS-1$
-    xml.append( XMLHandler.addTagValue( "roleXml", roleXml, false ) ); //$NON-NLS-1$
+    xml.append( "<definition>" ); //$NON-NLS-1$
+    xml.append( definition );
+    xml.append( "</definition>" ); //$NON-NLS-1$
     xml.append( "</role>" ); //$NON-NLS-1$
 
     return xml.toString();
   }
-
   public static String toXmlRoles( List<OlapRole> roles ) {
     StringBuffer xml = new StringBuffer();
     xml.append( "<roles>" ); 
