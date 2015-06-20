@@ -14,12 +14,14 @@ import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.concept.types.LocalizedString;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
 import org.pentaho.metadata.model.olap.OlapAnnotation;
+import org.pentaho.metadata.model.olap.OlapCalculatedMember;
 import org.pentaho.metadata.model.olap.OlapCube;
 import org.pentaho.metadata.model.olap.OlapDimension;
 import org.pentaho.metadata.model.olap.OlapDimensionUsage;
 import org.pentaho.metadata.model.olap.OlapHierarchy;
 import org.pentaho.metadata.model.olap.OlapHierarchyLevel;
 import org.pentaho.metadata.model.olap.OlapMeasure;
+import org.pentaho.metadata.model.olap.OlapRole;
 import org.pentaho.metadata.util.MondrianModelExporter;
 
 public class MondrianModelExporterTest {
@@ -327,6 +329,59 @@ public class MondrianModelExporterTest {
         + "         <![CDATA[select * from customer]]>\n" + "        </SQL>\n" + "    </View>\n"
         + "    <DimensionUsage name=\"Dim1\" source=\"Dim1\" foreignKey=\"pc2\"/>\n"
         + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" formatString=\"Standard\"/>\n" + "  </Cube>\n"
+        + "</Schema>", data );
+  }
+  
+  @Test
+  public void testRoles() throws Exception {
+    LogicalModel businessModel = getTestModel( TargetTableType.INLINE_SQL, "select * from customer", "" );
+    List<OlapRole> roles = new ArrayList<OlapRole>();
+    roles.add( new OlapRole( "California Manager", "<SchemaGrant></SchemaGrant>" ) );
+    businessModel.setProperty( LogicalModel.PROPERTY_OLAP_ROLES,  roles);
+    
+    MondrianModelExporter exporter = new MondrianModelExporter( businessModel, "en_US" );
+    String data = exporter.createMondrianModelXML();
+
+    TestHelper.assertEqualsIgnoreWhitespaces( "<Schema name=\"model\">\n" + "  <Dimension name=\"Dim1\">\n"
+        + "    <Hierarchy name=\"Hier1\" hasAll=\"false\">\n" + "    <View alias=\"FACT\">\n"
+        + "        <SQL dialect=\"generic\">\n" + "         <![CDATA[select * from customer]]>\n" + "        </SQL>\n"
+        + "    </View>\n" + "      <Level name=\"Lvl1\" uniqueMembers=\"false\" column=\"pc1\" type=\"Numeric\">\n"
+        + "      </Level>\n" + "    </Hierarchy>\n" + "  </Dimension>\n" + "  <Cube name=\"Cube1\">\n"
+        + "    <View alias=\"FACT\">\n" + "        <SQL dialect=\"generic\">\n"
+        + "         <![CDATA[select * from customer]]>\n" + "        </SQL>\n" + "    </View>\n"
+        + "    <DimensionUsage name=\"Dim1\" source=\"Dim1\" foreignKey=\"pc2\"/>\n"
+        + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" formatString=\"Standard\"/>\n" + "  </Cube>\n"
+        + "    <Role name=\">California Manager\"> <SchemaGrant></SchemaGrant> </Role>\n"
+        + "</Schema>", data );
+  }
+  
+  @Test
+  public void testCalculatedMembers() throws Exception {
+    LogicalModel businessModel = getTestModel( TargetTableType.INLINE_SQL, "select * from customer", "" );
+    List<OlapCalculatedMember> members = new ArrayList<OlapCalculatedMember>();
+    members.add( new OlapCalculatedMember( "Constant One", "Measures", "1", "Currency" ) );
+    
+    @SuppressWarnings( "unchecked" )
+    List<OlapCube> cubes = (List<OlapCube>) businessModel.getProperty( "olap_cubes" );
+    OlapCube cube = cubes.get( 0 );
+    cube.setOlapCalculatedMembers( members );
+    
+    MondrianModelExporter exporter = new MondrianModelExporter( businessModel, "en_US" );
+    String data = exporter.createMondrianModelXML();
+
+    TestHelper.assertEqualsIgnoreWhitespaces( "<Schema name=\"model\">\n" + "  <Dimension name=\"Dim1\">\n"
+        + "    <Hierarchy name=\"Hier1\" hasAll=\"false\">\n" + "    <View alias=\"FACT\">\n"
+        + "        <SQL dialect=\"generic\">\n" + "         <![CDATA[select * from customer]]>\n" + "        </SQL>\n"
+        + "    </View>\n" + "      <Level name=\"Lvl1\" uniqueMembers=\"false\" column=\"pc1\" type=\"Numeric\">\n"
+        + "      </Level>\n" + "    </Hierarchy>\n" + "  </Dimension>\n" + "  <Cube name=\"Cube1\">\n"
+        + "    <View alias=\"FACT\">\n" + "        <SQL dialect=\"generic\">\n"
+        + "         <![CDATA[select * from customer]]>\n" + "        </SQL>\n" + "    </View>\n"
+        + "    <DimensionUsage name=\"Dim1\" source=\"Dim1\" foreignKey=\"pc2\"/>\n"
+        + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" formatString=\"Standard\"/>\n" 
+        + "    <CalculatedMember name=\"Constant One\" dimension=\"Measures\" formatString=\"Currency\">\n" 
+        + "      <Formula><![CDATA[1]]></Formula>\n"
+        + "    </CalculatedMember>\n"
+        + "  </Cube>\n"
         + "</Schema>", data );
   }
 

@@ -42,6 +42,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.util.StringUtil;
+import org.pentaho.di.core.xml.XMLHandler;
 import org.pentaho.metadata.messages.Messages;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
@@ -75,12 +76,14 @@ import org.pentaho.metadata.model.concept.types.TableType;
 import org.pentaho.metadata.model.concept.types.TargetColumnType;
 import org.pentaho.metadata.model.concept.types.TargetTableType;
 import org.pentaho.metadata.model.olap.OlapAnnotation;
+import org.pentaho.metadata.model.olap.OlapCalculatedMember;
 import org.pentaho.metadata.model.olap.OlapCube;
 import org.pentaho.metadata.model.olap.OlapDimension;
 import org.pentaho.metadata.model.olap.OlapDimensionUsage;
 import org.pentaho.metadata.model.olap.OlapHierarchy;
 import org.pentaho.metadata.model.olap.OlapHierarchyLevel;
 import org.pentaho.metadata.model.olap.OlapMeasure;
+import org.pentaho.metadata.model.olap.OlapRole;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.locale.LocaleInterface;
@@ -105,6 +108,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+
 
 /**
  * This code parses an XMI xml file.
@@ -370,7 +375,25 @@ public class XmiParser {
         String idstr = idGen.getNextId();
         mdbSchema.setAttribute( "xmi.id", idstr ); //$NON-NLS-1$
         createDescriptions( doc, model, "CWMMDB:Schema", idstr, allDescriptions, idGen ); //$NON-NLS-1$
-
+        
+        // Serialize all calculated members across cubes into a single XML string and store as a description
+        @SuppressWarnings( "unchecked" )
+        List<OlapCube> cubes = (List<OlapCube>) model.getProperty( "olap_cubes" );
+        if (cubes != null) {
+          StringBuffer buffer = new StringBuffer();
+          buffer.append("<cubes>");
+          for (OlapCube cube : cubes) {
+            if (cube.getOlapCalculatedMembers() != null && cube.getOlapCalculatedMembers().size() > 0) {
+              buffer.append("<cube>");
+              buffer.append( XMLHandler.addTagValue( "name", cube.getName()) );
+              buffer.append( OlapCalculatedMember.toXmlMembers(cube.getOlapCalculatedMembers()) );
+              buffer.append("</cube>");
+            }
+          }
+          buffer.append("</cubes>");
+          createDescription( doc, buffer.toString(), LogicalModel.PROPERTY_OLAP_CALCULATED_MEMBERS, "String", null, idGen, "CWMMDB:Schema", idstr, allDescriptions );
+        }
+        
         Element ownedElement = doc.createElement( "CWM:Namespace.ownedElement" ); //$NON-NLS-1$
         mdbSchema.appendChild( ownedElement );
         for ( Category category : model.getCategories() ) {
@@ -916,6 +939,9 @@ public class XmiParser {
             ConceptPropertyAggregationList list = new ConceptPropertyAggregationList( key, aggSettings );
             type = "AggregationList"; //$NON-NLS-1$
             body = list.toXML();
+          } else if ( objs.get( 0 ) instanceof OlapRole ) {
+            body = OlapRole.toXmlRoles( (List<OlapRole>) objs );
+            type = "String";
           } else if ( objs.get( 0 ) instanceof OlapCube || objs.get( 0 ) instanceof OlapDimension ) {
             // ignore
           } else {
@@ -1471,11 +1497,27 @@ public class XmiParser {
           if ( propType.equals( "LocString" ) ) { //$NON-NLS-1$
             addLocalizedString( description, concept, name, body );
           } else if ( propType.equals( "String" ) ) { //$NON-NLS-1$
-            // <CWM:Description body="" name="mask" type="String" xmi.id="a90">
-            if ( name.equals( "formula" ) ) { //$NON-NLS-1$
-              name = SqlPhysicalColumn.TARGET_COLUMN;
+            if ( name.equals( LogicalModel.PROPERTY_OLAP_ROLES )) {
+              // De-serialize roles and set directly into the LogicalModel
+              List<OlapRole> roles = OlapRole.fromXmlRoles(body);
+              concept.setProperty( name, roles );
+            } else if ( name.equals( LogicalModel.PROPERTY_OLAP_CALCULATED_MEMBERS )) {
+              // De-serialize calculated members by cube
+              Map<String, List<OlapCalculatedMember>> cubeMembers = OlapCalculatedMember.fromXmlMembers(body);
+              @SuppressWarnings( "unchecked" )
+              List<OlapCube> cubes = (List<OlapCube>) concept.getProperty( LogicalModel.PROPERTY_OLAP_CUBES );
+              for (OlapCube cube : cubes) {
+                // Set the calculated members into the cube model objects
+                if (cubeMembers.containsKey( cube.getName() ))
+                  cube.setOlapCalculatedMembers( cubeMembers.get( cube.getName() ) );
+              }
+            } else {
+              // <CWM:Description body="" name="mask" type="String" xmi.id="a90">
+              if ( name.equals( "formula" ) ) { //$NON-NLS-1$
+                name = SqlPhysicalColumn.TARGET_COLUMN;
+              } 
+              concept.setProperty( name, body );
             }
-            concept.setProperty( name, body );
           } else if ( propType.equals( "Boolean" ) ) { //$NON-NLS-1$
             if ( name.equals( "exact" ) ) { //$NON-NLS-1$
               concept.setProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE,

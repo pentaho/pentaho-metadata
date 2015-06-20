@@ -16,9 +16,16 @@
  */
 package org.pentaho.metadata;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.pentaho.metadata.util.Util.validateId;
+
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -38,17 +45,20 @@ import org.pentaho.metadata.model.SqlDataSource;
 import org.pentaho.metadata.model.SqlPhysicalModel;
 import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.types.AggregationType;
+import org.pentaho.metadata.model.olap.OlapCalculatedMember;
 import org.pentaho.metadata.model.olap.OlapCube;
 import org.pentaho.metadata.model.olap.OlapDimension;
 import org.pentaho.metadata.model.olap.OlapDimensionUsage;
 import org.pentaho.metadata.model.olap.OlapHierarchy;
 import org.pentaho.metadata.model.olap.OlapHierarchyLevel;
 import org.pentaho.metadata.model.olap.OlapMeasure;
+import org.pentaho.metadata.model.olap.OlapRole;
 import org.pentaho.metadata.query.impl.sql.MappedQuery;
 import org.pentaho.metadata.query.impl.sql.SqlGenerator;
 import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.util.QueryXmlHelper;
 import org.pentaho.metadata.repository.InMemoryMetadataDomainRepository;
+import org.pentaho.metadata.util.SerializationService;
 import org.pentaho.metadata.util.ThinModelConverter;
 import org.pentaho.metadata.util.XmiParser;
 import org.pentaho.pms.MetadataTestBase;
@@ -60,9 +70,6 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.xml.DomDriver;
-
-import static org.junit.Assert.*;
-import static org.pentaho.metadata.util.Util.validateId;
 
 @SuppressWarnings( "nls" )
 public class XmiParserTest {
@@ -89,24 +96,24 @@ public class XmiParserTest {
     assertEquals( 2, domain.getLogicalModels().get( 0 ).getLogicalTables().size() );
     assertEquals( 8, domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 ).getLogicalColumns().size() );
     assertEquals( "BC_EMPLOYEES_EMPLOYEENUMBER", domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 )
-      .getLogicalColumns().get( 0 ).getId() );
+        .getLogicalColumns().get( 0 ).getId() );
     assertEquals( 1, domain.getLogicalModels().get( 0 ).getLogicalRelationships().size() );
 
     assertEquals( "EMPLOYEENUMBER", domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 )
-      .getLogicalColumns().get( 0 ).getPhysicalColumn().getId() );
+        .getLogicalColumns().get( 0 ).getPhysicalColumn().getId() );
     assertEquals( "PT_EMPLOYEES", domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 )
-      .getLogicalColumns().get( 0 ).getPhysicalColumn().getPhysicalTable().getId() );
+        .getLogicalColumns().get( 0 ).getPhysicalColumn().getPhysicalTable().getId() );
     assertNotNull( domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 ).getLogicalColumns().get( 0 )
-      .getPhysicalColumn().getPhysicalTable().getPhysicalModel() );
+        .getPhysicalColumn().getPhysicalTable().getPhysicalModel() );
 
     assertEquals( 2, domain.getLogicalModels().get( 0 ).getCategories().size() );
     assertEquals( 9, domain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns().size() );
     assertEquals( "BC_OFFICES_TERRITORY", domain.getLogicalModels().get( 0 ).getCategories().get( 0 )
-      .getLogicalColumns().get( 0 ).getId() );
+        .getLogicalColumns().get( 0 ).getId() );
     assertEquals( "TERRITORY", domain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns()
-      .get( 0 ).getPhysicalColumn().getId() );
+        .get( 0 ).getPhysicalColumn().getId() );
     assertEquals( "PT_OFFICES", domain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns()
-      .get( 0 ).getPhysicalColumn().getPhysicalTable().getId() );
+        .get( 0 ).getPhysicalColumn().getPhysicalTable().getId() );
 
     @SuppressWarnings( "unchecked" )
     List<AggregationType> aggTypes =
@@ -119,7 +126,7 @@ public class XmiParserTest {
 
     // verify that inheritance is working
     assertEquals( "$#,##0.00;($#,##0.00)", domain.findLogicalModel( "BV_ORDERS" ).findCategory( "CAT_ORDERS" )
-      .findLogicalColumn( "BC_ORDERDETAILS_TOTAL" ).getProperty( "mask" ) );
+        .findLogicalColumn( "BC_ORDERDETAILS_TOTAL" ).getProperty( "mask" ) );
 
   }
 
@@ -212,27 +219,27 @@ public class XmiParserTest {
     assertEquals( 1, domain.getLogicalModels().size() );
 
     assertEquals( "http://localhost:8080/pentaho/ServiceAction", domain
-      .getChildProperty( "LEGACY_EVENT_SECURITY_SERVICE_URL" ) );
+        .getChildProperty( "LEGACY_EVENT_SECURITY_SERVICE_URL" ) );
 
     assertEquals( 1, domain.getLogicalModels().get( 0 ).getLogicalTables().size() );
     assertEquals( 29, domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 ).getLogicalColumns().size() );
     assertEquals( "BC_CUSTOMER_CUSTOMER_ID", domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 )
-      .getLogicalColumns().get( 0 ).getId() );
+        .getLogicalColumns().get( 0 ).getId() );
     assertEquals( 0, domain.getLogicalModels().get( 0 ).getLogicalRelationships().size() );
 
     assertEquals( "customer_id", domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 )
-      .getLogicalColumns().get( 0 ).getPhysicalColumn().getId() );
+        .getLogicalColumns().get( 0 ).getPhysicalColumn().getId() );
     assertEquals( "PT_CUSTOMER", domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 )
-      .getLogicalColumns().get( 0 ).getPhysicalColumn().getPhysicalTable().getId() );
+        .getLogicalColumns().get( 0 ).getPhysicalColumn().getPhysicalTable().getId() );
     assertNotNull( domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 ).getLogicalColumns().get( 0 )
-      .getPhysicalColumn().getPhysicalTable().getPhysicalModel() );
+        .getPhysicalColumn().getPhysicalTable().getPhysicalModel() );
 
     assertEquals( 1, domain.getLogicalModels().get( 0 ).getCategories().size() );
     assertEquals( 29, domain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns().size() );
     assertEquals( "BC_CUSTOMER_FULLNAME", domain.getLogicalModels().get( 0 ).getCategories().get( 0 )
-      .getLogicalColumns().get( 0 ).getId() );
+        .getLogicalColumns().get( 0 ).getId() );
     assertEquals( "fullname", domain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns()
-      .get( 0 ).getPhysicalColumn().getId() );
+        .get( 0 ).getPhysicalColumn().getId() );
     assertEquals( "PT_CUSTOMER", domain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns()
       .get( 0 ).getPhysicalColumn().getPhysicalTable().getId() );
 
@@ -243,7 +250,7 @@ public class XmiParserTest {
     SqlDataSource ds2 = ( (SqlPhysicalModel) domain2.getPhysicalModels().get( 0 ) ).getDatasource();
 
     assertEquals( "http://localhost:8080/pentaho/ServiceAction", domain2
-      .getChildProperty( "LEGACY_EVENT_SECURITY_SERVICE_URL" ) );
+        .getChildProperty( "LEGACY_EVENT_SECURITY_SERVICE_URL" ) );
 
     assertEquals( "foodmart", ds.getDatabaseName() );
     assertEquals( ds.getDatabaseName(), ds2.getDatabaseName() );
@@ -303,7 +310,7 @@ public class XmiParserTest {
     domain.setId( "test domain" );
     assertTrue( domain.getLogicalModels().get( 0 ).getLogicalRelationships().get( 0 ).isComplex() );
     assertEquals( "[BT_ORDERS_ORDERS.BC_ORDERS_ORDERNUMBER]=[BT_ORDERFACT_ORDERFACT.BC_ORDERFACT_ORDERNUMBER]",
-      domain.getLogicalModels().get( 0 ).getLogicalRelationships().get( 0 ).getComplexJoin() );
+        domain.getLogicalModels().get( 0 ).getLogicalRelationships().get( 0 ).getComplexJoin() );
 
     String mql =
         "<mql>" + "<domain_type>relational</domain_type>" + "<domain_id>test domain</domain_id>"
@@ -324,10 +331,12 @@ public class XmiParserTest {
     DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
     MappedQuery queryObj = generator.generateSql( query, "en_US", repo, databaseMeta );
     // TestHelper.printOutJava(queryObj.getQuery());
-    TestHelper.assertEqualsIgnoreWhitespaces( "SELECT DISTINCT \n" + "          BT_ORDERS_ORDERS.STATUS AS COL0\n"
+    TestHelper
+        .assertEqualsIgnoreWhitespaces( "SELECT DISTINCT \n" + "          BT_ORDERS_ORDERS.STATUS AS COL0\n"
         + "         ,BT_ORDERFACT_ORDERFACT.PRODUCTCODE AS COL1\n" + "FROM \n"
         + "          ORDERFACT BT_ORDERFACT_ORDERFACT\n" + "         ,ORDERS BT_ORDERS_ORDERS\n" + "WHERE \n"
-        + "          (  BT_ORDERS_ORDERS.ORDERNUMBER  =  BT_ORDERFACT_ORDERFACT.ORDERNUMBER  )\n", queryObj.getQuery() );
+            + "          (  BT_ORDERS_ORDERS.ORDERNUMBER  =  BT_ORDERFACT_ORDERFACT.ORDERNUMBER  )\n", queryObj
+            .getQuery() );
 
   }
 
@@ -508,5 +517,59 @@ public class XmiParserTest {
       }
     }
     return null;
+  }
+
+  @Test
+  public void testOlapRoles() throws Exception {
+    XmiParser parser = new XmiParser();
+    Domain domain = parser.parseXmi( new FileInputStream( "test-res/example_olap.xmi" ) );
+
+    List<OlapRole> roles = new ArrayList<OlapRole>();
+    roles.add( new OlapRole( "California Manager", "<SchemaGrant/>" ) );
+    roles.add( new OlapRole( "Maryland Manager", "<SchemaGrant/>" ) );
+
+    LogicalModel model = domain.getLogicalModels().get( 0 );
+    model.setProperty( LogicalModel.PROPERTY_OLAP_ROLES, roles );
+
+    String xmi = parser.generateXmi( domain );
+
+    ByteArrayInputStream is = new ByteArrayInputStream( xmi.getBytes() );
+    Domain domain2 = parser.parseXmi( is );
+
+    SerializationService serializer = new SerializationService();
+
+    String xml1 = serializeWithOrderedHashmaps( domain );
+    String xml2 = serializeWithOrderedHashmaps( domain2 );
+
+    assertEquals( xml1, xml2 );
+
+  }
+
+  @Test
+  public void testOlapCalculatedMembers() throws Exception {
+    XmiParser parser = new XmiParser();
+    Domain domain = parser.parseXmi( new FileInputStream( "test-res/example_olap.xmi" ) );
+
+    List<OlapCalculatedMember> members = new ArrayList<OlapCalculatedMember>();
+    members.add( new OlapCalculatedMember( "Constant One", "Measures", "1", "Currency" ) );
+    members.add( new OlapCalculatedMember( "Constant Two", "Measures", "2", "Currency" ) );
+
+    List<OlapCube> cubes = (List<OlapCube>) domain.getLogicalModels().get( 0 ).getProperty( "olap_cubes" );
+    OlapCube cube = cubes.get( 0 );
+    cube.setOlapCalculatedMembers( members );
+    
+    String xmi = parser.generateXmi( domain );
+    
+
+    ByteArrayInputStream is = new ByteArrayInputStream( xmi.getBytes() );
+    Domain domain2 = parser.parseXmi( is );
+
+    SerializationService serializer = new SerializationService();
+
+    String xml1 = serializeWithOrderedHashmaps( domain );
+    String xml2 = serializeWithOrderedHashmaps( domain2 );
+
+    assertEquals( xml1, xml2 );
+
   }
 }
