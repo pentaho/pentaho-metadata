@@ -1,6 +1,6 @@
 <module>
 	<!-- org.pentaho.metadata.model package -->
     <source path="model">
-     <exclude name="**/olap/OlapCalculatedMember*"/>
+     <exclude name="**/olap/*"/>
     </source>
 </module>
