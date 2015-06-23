@@ -12,20 +12,11 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2015 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.metadata.model.olap;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.pentaho.di.core.exception.KettleXMLException;
-import org.pentaho.di.core.xml.XMLHandler;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 
 public class OlapCalculatedMember implements Cloneable, Serializable {
 
@@ -43,14 +34,6 @@ public class OlapCalculatedMember implements Cloneable, Serializable {
     this.dimension = dimension;
     this.formula = formula;
     this.formatString = formatString;
-  }
-
-  public OlapCalculatedMember( Node node ) {
-    super();
-    name = XMLHandler.getTagValue( node, "name" );
-    dimension = XMLHandler.getTagValue( node, "dimension" );
-    formula = XMLHandler.getTagValue( node, "formula" );
-    formatString = XMLHandler.getTagValue( node, "formatString" );
   }
 
   public String getName() {
@@ -85,51 +68,8 @@ public class OlapCalculatedMember implements Cloneable, Serializable {
     this.formatString = formatString;
   }
 
-  @Override
   protected Object clone() {
     return new OlapCalculatedMember( name, dimension, formula, formatString );
   }
 
-  public String toXml() {
-    StringBuffer xml = new StringBuffer();
-
-    xml.append( "<calculatedMember>" ); //$NON-NLS-1$
-    xml.append( XMLHandler.addTagValue( "name", name, false ) ); //$NON-NLS-1$
-    xml.append( XMLHandler.addTagValue( "dimension", dimension, false ) ); //$NON-NLS-1$
-    xml.append( XMLHandler.addTagValue( "formula", formula, false ) ); //$NON-NLS-1$
-    xml.append( XMLHandler.addTagValue( "formatString", formatString, false ) ); //$NON-NLS-1$
-    xml.append( "</calculatedMember>" ); //$NON-NLS-1$
-
-    return xml.toString();
-  }
-
-  public static String toXmlMembers( List<OlapCalculatedMember> members ) {
-    StringBuffer xml = new StringBuffer();
-    xml.append( "<calculatedMembers>" );
-    for ( OlapCalculatedMember member : members ) {
-      xml.append( member.toXml() );
-    }
-    xml.append( "</calculatedMembers>" );
-    return xml.toString();
-  }
-
-  public static Map<String, List<OlapCalculatedMember>> fromXmlMembers( String xml ) throws Exception {
-    Map<String, List<OlapCalculatedMember>> cubeMembers = new HashMap<String, List<OlapCalculatedMember>>();
-
-    Document doc = XMLHandler.loadXMLString( xml );
-    Node cubesNode = XMLHandler.getSubNode( doc, "cubes" );
-    int numCubes = XMLHandler.countNodes( cubesNode, "cube" ); //$NON-NLS-1$
-    for ( int i = 0; i < numCubes; i++ ) {
-      Node cubeNode = XMLHandler.getSubNodeByNr( cubesNode, "cube", i ); //$NON-NLS-1$
-      Node membersNode = XMLHandler.getSubNode( cubeNode, "calculatedMembers" );
-      int numMembers = XMLHandler.countNodes( membersNode, "calculatedMember" ); //$NON-NLS-1$ = XMLHandler.countNodes( cubesNode, "cube" ); //$NON-NLS-1$
-      List<OlapCalculatedMember> members = new ArrayList<OlapCalculatedMember>();
-      for ( int j = 0; j < numMembers; j++ ) {
-        Node memberNode = XMLHandler.getSubNodeByNr( membersNode, "calculatedMember", j ); //$NON-NLS-1$
-        members.add( new OlapCalculatedMember( memberNode ) );
-      }
-      cubeMembers.put( XMLHandler.getTagValue( cubeNode, "name" ), members );
-    }
-    return cubeMembers;
-  }
 }
