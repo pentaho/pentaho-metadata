@@ -84,6 +84,7 @@ import org.pentaho.metadata.model.olap.OlapHierarchy;
 import org.pentaho.metadata.model.olap.OlapHierarchyLevel;
 import org.pentaho.metadata.model.olap.OlapMeasure;
 import org.pentaho.metadata.model.olap.OlapRole;
+import org.pentaho.metadata.model.olap.util.OlapUtil;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.locale.LocaleInterface;
@@ -386,7 +387,7 @@ public class XmiParser {
             if (cube.getOlapCalculatedMembers() != null && cube.getOlapCalculatedMembers().size() > 0) {
               buffer.append("<cube>");
               buffer.append( XMLHandler.addTagValue( "name", cube.getName()) );
-              buffer.append( OlapCalculatedMember.toXmlMembers(cube.getOlapCalculatedMembers()) );
+              buffer.append( OlapUtil.toXmlCalculatedMembers(cube.getOlapCalculatedMembers()) );
               buffer.append("</cube>");
             }
           }
@@ -940,7 +941,7 @@ public class XmiParser {
             type = "AggregationList"; //$NON-NLS-1$
             body = list.toXML();
           } else if ( objs.get( 0 ) instanceof OlapRole ) {
-            body = OlapRole.toXmlRoles( (List<OlapRole>) objs );
+            body = OlapUtil.toXmlRoles( (List<OlapRole>) objs );
             type = "String";
           } else if ( objs.get( 0 ) instanceof OlapCube || objs.get( 0 ) instanceof OlapDimension ) {
             // ignore
@@ -1499,11 +1500,11 @@ public class XmiParser {
           } else if ( propType.equals( "String" ) ) { //$NON-NLS-1$
             if ( name.equals( LogicalModel.PROPERTY_OLAP_ROLES )) {
               // De-serialize roles and set directly into the LogicalModel
-              List<OlapRole> roles = OlapRole.fromXmlRoles(body);
+              List<OlapRole> roles = OlapUtil.fromXmlRoles(body);
               concept.setProperty( name, roles );
             } else if ( name.equals( LogicalModel.PROPERTY_OLAP_CALCULATED_MEMBERS )) {
               // De-serialize calculated members by cube
-              Map<String, List<OlapCalculatedMember>> cubeMembers = OlapCalculatedMember.fromXmlMembers(body);
+              Map<String, List<OlapCalculatedMember>> cubeMembers = OlapUtil.fromXmlCalculatedMembers(body);
               @SuppressWarnings( "unchecked" )
               List<OlapCube> cubes = (List<OlapCube>) concept.getProperty( LogicalModel.PROPERTY_OLAP_CUBES );
               for (OlapCube cube : cubes) {
