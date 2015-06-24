@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<cubes>
+    <Cube>
+        <name>Quadrant Analysis</name>
+        <Table name="QUADRANT_ACTUALS"/>
+        <DimensionUsage name="Region" source="Region"/>
+        <DimensionUsage name="Department" source="Department"/>
+        <DimensionUsage name="Positions" source="Positions"/>
+        <Measure name="Actual" column="ACTUAL" aggregator="sum" formatString="#,###.00"/>
+        <Measure name="Budget" column="BUDGET" aggregator="sum" formatString="#,###.00"/>
+        <Measure name="Variance" column="VARIANCE" aggregator="sum" formatString="#,###.00"/>
+        <calculatedMembers>
+            <CalculatedMember>
+                <name>Variance Percent</name>
+                <dimension>Measures</dimension>
+                <formula>([Measures].[Variance]/[Measures].[Budget])*100</formula>
+                <formatString>#,###%</formatString>
+            </CalculatedMember>
+        </calculatedMembers>
+    </Cube>
+</cubes>
