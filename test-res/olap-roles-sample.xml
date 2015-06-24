@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<roles>
+    <role>
+        <name>role1</name>
+        <definition>definition 1</definition>
+    </role>
+    <role>
+        <name>role2</name>
+        <definition>definition 2</definition>
+    </role>
+</roles>
