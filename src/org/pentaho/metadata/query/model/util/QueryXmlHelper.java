@@ -451,7 +451,7 @@ public class QueryXmlHelper {
     if ( category != null ) {
       column = category.findLogicalColumn( columnId );
     } else {
-      column = query.getLogicalModel().findLogicalColumn( columnId );
+      column = query.getLogicalModel().findLogicalColumnInCategories( columnId );
     }
     if ( column != null ) {
       AggregationType aggsetting = null;
