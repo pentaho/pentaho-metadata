@@ -28,8 +28,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.pentaho.metadata.TestHelper;
+import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
+import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
+import org.pentaho.metadata.model.LogicalTable;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.repository.IMetadataDomainRepository;
@@ -56,6 +59,20 @@ public class QueryXmlHelperTest {
     domain.addLogicalModel( model );
     model.setId( "MODEL1" );
     query = new Query( domain, model );
+
+    LogicalColumn column = new LogicalColumn();
+    column.setId( "LC_Test_Column1" );
+    LogicalColumn column2 = new LogicalColumn();
+    column2.setId( "LC_Test_Column2" );
+    Category category = new Category();
+    category.getLogicalColumns().add( column );
+    query.getLogicalModel().getCategories().add( category );
+
+    LogicalTable lt = new LogicalTable();
+    lt.getLogicalColumns().add( column );
+    lt.getLogicalColumns().add( column2 );
+    query.getLogicalModel().getLogicalTables().add( lt );
+
     documentBuilderFactory = DocumentBuilderFactory.newInstance();
     db = documentBuilderFactory.newDocumentBuilder();
     doc = db.newDocument();
@@ -72,6 +89,22 @@ public class QueryXmlHelperTest {
 
     helper.addParameterFromXmlNode( query, paramElement );
     assertEquals( 2, ( (Object[]) query.getParameters().get( 0 ).getDefaultValue() ).length );
+  }
+
+  @Test
+  public void testAddSelectionFromXmlNode() throws Exception {
+    String mql =
+        "<mql>" + "<domain_type>relational</domain_type>" + "<domain_id>DOMAIN</domain_id>"
+            + "<model_id>MODEL1</model_id>" + "<options>" + "<disable_distinct>false</disable_distinct>"
+            + "</options>" + "<parameters></parameters>" + "<selections>" + "<selection>" + "<table>Test</table>"
+            + "<column>LC_Test_Column1</column>" + "<aggregation>NONE</aggregation>"
+            + "</selection><selection>" + "<table>Test</table>" + "<column>LC_Test_Column2</column>"
+            + "<aggregation>NONE</aggregation>" + "</selection></selections>" + "<constraints></constraints>"
+            + "<orders></orders>" +"</mql>";
+    Query q = helper.fromXML( metadataDomainRepository, mql );
+
+    assertEquals( 1, q.getSelections().size() );
+    assertEquals( "LC_Test_Column1", q.getSelections().get( 0 ).getLogicalColumn().getId() );
   }
 
   @Test
