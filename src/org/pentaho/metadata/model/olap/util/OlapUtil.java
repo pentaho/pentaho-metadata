@@ -43,64 +43,67 @@ public class OlapUtil {
      * @param members
      * @return
      */
-    public static String toXmlCalculatedMembers(List<OlapCalculatedMember> members) {
-        StringBuffer xml = new StringBuffer();
-        xml.append( "<calculatedMembers>" );
-        for ( OlapCalculatedMember member : members ) {
-            xml.append( calculatedMemberToXml(member) );
-        }
-        xml.append( "</calculatedMembers>" );
-        return xml.toString();
+  public static String toXmlCalculatedMembers( List<OlapCalculatedMember> members ) {
+    StringBuffer xml = new StringBuffer();
+    xml.append( "<calculatedMembers>" );
+    for ( OlapCalculatedMember member : members ) {
+      xml.append( calculatedMemberToXml( member ) );
     }
+    xml.append( "</calculatedMembers>" );
+    return xml.toString();
+  }
 
-    /**
-     * Create OlapCalculatedMembers from XML
-     * @param xml
-     * @return
-     * @throws Exception
-     */
-    public static Map<String, List<OlapCalculatedMember>> fromXmlCalculatedMembers(String xml) throws Exception {
-        Map<String, List<OlapCalculatedMember>> cubeMembers = new HashMap<String, List<OlapCalculatedMember>>();
+  /**
+   * Create OlapCalculatedMembers from XML
+   *
+   * @param xml
+   * @return
+   * @throws Exception
+   */
+  public static Map<String, List<OlapCalculatedMember>> fromXmlCalculatedMembers( String xml ) throws Exception {
+    Map<String, List<OlapCalculatedMember>> cubeMembers = new HashMap<String, List<OlapCalculatedMember>>();
 
-        Document doc = XMLHandler.loadXMLString(xml);
-        Node cubesNode = XMLHandler.getSubNode( doc, "cubes" );
-        int numCubes = XMLHandler.countNodes( cubesNode, "cube" ); //$NON-NLS-1$
-        for ( int i = 0; i < numCubes; i++ ) {
-            Node cubeNode = XMLHandler.getSubNodeByNr( cubesNode, "cube", i ); //$NON-NLS-1$
-            Node membersNode = XMLHandler.getSubNode( cubeNode, "calculatedMembers" );
-            int numMembers = XMLHandler.countNodes( membersNode, "calculatedMember" ); //$NON-NLS-1$ = XMLHandler.countNodes( cubesNode, "cube" ); //$NON-NLS-1$
-            List<OlapCalculatedMember> members = new ArrayList<OlapCalculatedMember>();
-            for ( int j = 0; j < numMembers; j++ ) {
-                Node memberNode = XMLHandler.getSubNodeByNr( membersNode, "calculatedMember", j ); //$NON-NLS-1$
+    Document doc = XMLHandler.loadXMLString( xml );
+    Node cubesNode = XMLHandler.getSubNode( doc, "cubes" );
+    int numCubes = XMLHandler.countNodes( cubesNode, "cube" ); //$NON-NLS-1$
+    for ( int i = 0; i < numCubes; i++ ) {
+      Node cubeNode = XMLHandler.getSubNodeByNr( cubesNode, "cube", i ); //$NON-NLS-1$
+      Node membersNode = XMLHandler.getSubNode( cubeNode, "calculatedMembers" );
+      int numMembers = XMLHandler.countNodes( membersNode,
+          "calculatedMember" ); //$NON-NLS-1$ = XMLHandler.countNodes( cubesNode, "cube" ); //$NON-NLS-1$
+      List<OlapCalculatedMember> members = new ArrayList<OlapCalculatedMember>();
+      for ( int j = 0; j < numMembers; j++ ) {
+        Node memberNode = XMLHandler.getSubNodeByNr( membersNode, "calculatedMember", j ); //$NON-NLS-1$
 
-                members.add(
-                        new OlapCalculatedMember(
-                                XMLHandler.getTagValue( memberNode, "name" ),
-                                XMLHandler.getTagValue( memberNode, "dimension" ),
-                                XMLHandler.getTagValue( memberNode, "formula" ),
-                                XMLHandler.getTagValue( memberNode, "formatString" )
-                        )
-                );
-            }
-            cubeMembers.put( XMLHandler.getTagValue( cubeNode, "name" ), members );
-        }
-        return cubeMembers;
+        members.add(
+            new OlapCalculatedMember(
+                XMLHandler.getTagValue( memberNode, "name" ),
+                XMLHandler.getTagValue( memberNode, "dimension" ),
+                XMLHandler.getTagValue( memberNode, "formula" ),
+                XMLHandler.getTagValue( memberNode, "formatString" ),
+                "Y".equalsIgnoreCase( XMLHandler.getTagValue( memberNode, "calculateSubtotals" ) )
+            )
+        );
+      }
+      cubeMembers.put( XMLHandler.getTagValue( cubeNode, "name" ), members );
     }
+    return cubeMembers;
+  }
 
     /**
      * Create an XML representation of OlapRoles
      * @param roles
      * @return
      */
-    public static String toXmlRoles( List<OlapRole> roles ) {
-        StringBuffer xml = new StringBuffer();
-        xml.append( "<roles>" );
-        for ( OlapRole role : roles ) {
-            xml.append( olapRoleToXml( role ) );
-        }
-        xml.append( "</roles>" );
-        return xml.toString();
+  public static String toXmlRoles( List<OlapRole> roles ) {
+    StringBuffer xml = new StringBuffer();
+    xml.append( "<roles>" );
+    for ( OlapRole role : roles ) {
+      xml.append( olapRoleToXml( role ) );
     }
+    xml.append( "</roles>" );
+    return xml.toString();
+  }
 
     /**
      * Create list of OlapRole objects from XML
@@ -108,17 +111,17 @@ public class OlapUtil {
      * @return
      * @throws Exception
      */
-    public static List<OlapRole> fromXmlRoles (String xml) throws Exception {
-        List<OlapRole> roles = new ArrayList<OlapRole> ();
-        Document doc = XMLHandler.loadXMLString( xml );
-        Node rolesNode = XMLHandler.getSubNode( doc, "roles" );
-        int num = XMLHandler.countNodes( rolesNode, "role" ); //$NON-NLS-1$
-        for ( int i = 0; i < num; i++ ) {
-            Node roleNode = XMLHandler.getSubNodeByNr( rolesNode, "role", i ); //$NON-NLS-1$
-            roles.add( olapRoleFromNode( roleNode ) );
-        }
-        return roles;
+  public static List<OlapRole> fromXmlRoles( String xml ) throws Exception {
+    List<OlapRole> roles = new ArrayList<OlapRole>();
+    Document doc = XMLHandler.loadXMLString( xml );
+    Node rolesNode = XMLHandler.getSubNode( doc, "roles" );
+    int num = XMLHandler.countNodes( rolesNode, "role" ); //$NON-NLS-1$
+    for ( int i = 0; i < num; i++ ) {
+      Node roleNode = XMLHandler.getSubNodeByNr( rolesNode, "role", i ); //$NON-NLS-1$
+      roles.add( olapRoleFromNode( roleNode ) );
     }
+    return roles;
+  }
 
     /**
      * Create an OlapRole object from an XML node
@@ -126,51 +129,52 @@ public class OlapUtil {
      * @return
      * @throws KettleXMLException
      */
-    public static OlapRole olapRoleFromNode( Node node ) throws KettleXMLException {
-        String name = XMLHandler.getTagValue( node, "name" );
-        StringBuffer xml = new StringBuffer();
-        NodeList children = XMLHandler.getSubNode( node, "definition" ).getChildNodes();
-        for (int i = 0; i < children.getLength(); i++) {
-            xml.append( (XMLHandler.formatNode( children.item( i ) )));
-        }
-        String definition = xml.toString();
-
-        return new OlapRole( name, definition );
+  public static OlapRole olapRoleFromNode( Node node ) throws KettleXMLException {
+    String name = XMLHandler.getTagValue( node, "name" );
+    StringBuilder xml = new StringBuilder();
+    NodeList children = XMLHandler.getSubNode( node, "definition" ).getChildNodes();
+    for ( int i = 0; i < children.getLength(); i++ ) {
+      xml.append( ( XMLHandler.formatNode( children.item( i ) ) ) );
     }
+    String definition = xml.toString();
+
+    return new OlapRole( name, definition );
+  }
 
     /**
      * Create an XML representation of an OlapCalculatedMember
      * @param member
      * @return
      */
-    public static String calculatedMemberToXml(OlapCalculatedMember member) {
-        StringBuffer xml = new StringBuffer();
+  public static String calculatedMemberToXml( OlapCalculatedMember member ) {
+    StringBuilder xml = new StringBuilder();
 
-        xml.append( "<calculatedMember>" ); //$NON-NLS-1$
-        xml.append( XMLHandler.addTagValue( "name", member.getName(), false ) ); //$NON-NLS-1$
-        xml.append( XMLHandler.addTagValue( "dimension", member.getDimension(), false ) ); //$NON-NLS-1$
-        xml.append( XMLHandler.addTagValue( "formula", member.getFormula(), false ) ); //$NON-NLS-1$
-        xml.append( XMLHandler.addTagValue( "formatString", member.getFormatString(), false ) ); //$NON-NLS-1$
-        xml.append( "</calculatedMember>" ); //$NON-NLS-1$
+    xml.append( "<calculatedMember>" ); //$NON-NLS-1$
+    xml.append( XMLHandler.addTagValue( "name", member.getName(), false ) ); //$NON-NLS-1$
+    xml.append( XMLHandler.addTagValue( "dimension", member.getDimension(), false ) ); //$NON-NLS-1$
+    xml.append( XMLHandler.addTagValue( "formula", member.getFormula(), false ) ); //$NON-NLS-1$
+    xml.append( XMLHandler.addTagValue( "formatString", member.getFormatString(), false ) ); //$NON-NLS-1$
+    xml.append( XMLHandler.addTagValue( "calculateSubtotals", member.isCalculateSubtotals() ) );
+    xml.append( "</calculatedMember>" ); //$NON-NLS-1$
 
-        return xml.toString();
-    }
+    return xml.toString();
+  }
 
     /**
      * Create an XML representation of an OlapRole
      * @param role
      * @return
      */
-    public static String olapRoleToXml( OlapRole role ) {
-        StringBuffer xml = new StringBuffer();
+  public static String olapRoleToXml( OlapRole role ) {
+    StringBuilder xml = new StringBuilder();
 
-        xml.append( "<role>" ); //$NON-NLS-1$
-        xml.append( XMLHandler.addTagValue( "name", role.getName(), false ) ); //$NON-NLS-1$
-        xml.append( "<definition>" ); //$NON-NLS-1$
-        xml.append( role.getDefinition() );
-        xml.append( "</definition>" ); //$NON-NLS-1$
-        xml.append( "</role>" ); //$NON-NLS-1$
+    xml.append( "<role>" ); //$NON-NLS-1$
+    xml.append( XMLHandler.addTagValue( "name", role.getName(), false ) ); //$NON-NLS-1$
+    xml.append( "<definition>" ); //$NON-NLS-1$
+    xml.append( role.getDefinition() );
+    xml.append( "</definition>" ); //$NON-NLS-1$
+    xml.append( "</role>" ); //$NON-NLS-1$
 
-        return xml.toString();
-    }
+    return xml.toString();
+  }
 }

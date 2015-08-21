@@ -331,14 +331,14 @@ public class MondrianModelExporterTest {
         + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" formatString=\"Standard\"/>\n" + "  </Cube>\n"
         + "</Schema>", data );
   }
-  
+
   @Test
   public void testRoles() throws Exception {
     LogicalModel businessModel = getTestModel( TargetTableType.INLINE_SQL, "select * from customer", "" );
     List<OlapRole> roles = new ArrayList<OlapRole>();
     roles.add( new OlapRole( "California Manager", "<SchemaGrant></SchemaGrant>" ) );
-    businessModel.setProperty( LogicalModel.PROPERTY_OLAP_ROLES,  roles);
-    
+    businessModel.setProperty( LogicalModel.PROPERTY_OLAP_ROLES,  roles );
+
     MondrianModelExporter exporter = new MondrianModelExporter( businessModel, "en_US" );
     String data = exporter.createMondrianModelXML();
 
@@ -354,18 +354,19 @@ public class MondrianModelExporterTest {
         + "    <Role name=\">California Manager\"> <SchemaGrant></SchemaGrant> </Role>\n"
         + "</Schema>", data );
   }
-  
+
   @Test
   public void testCalculatedMembers() throws Exception {
     LogicalModel businessModel = getTestModel( TargetTableType.INLINE_SQL, "select * from customer", "" );
     List<OlapCalculatedMember> members = new ArrayList<OlapCalculatedMember>();
-    members.add( new OlapCalculatedMember( "Constant One", "Measures", "1", "Currency" ) );
-    
+    members.add( new OlapCalculatedMember( "Constant One", "Measures", "1", "Currency", false ) );
+    members.add( new OlapCalculatedMember( "Constant Two", "Measures", "2", "Currency", true ) );
+
     @SuppressWarnings( "unchecked" )
     List<OlapCube> cubes = (List<OlapCube>) businessModel.getProperty( "olap_cubes" );
     OlapCube cube = cubes.get( 0 );
     cube.setOlapCalculatedMembers( members );
-    
+
     MondrianModelExporter exporter = new MondrianModelExporter( businessModel, "en_US" );
     String data = exporter.createMondrianModelXML();
 
@@ -377,9 +378,14 @@ public class MondrianModelExporterTest {
         + "    <View alias=\"FACT\">\n" + "        <SQL dialect=\"generic\">\n"
         + "         <![CDATA[select * from customer]]>\n" + "        </SQL>\n" + "    </View>\n"
         + "    <DimensionUsage name=\"Dim1\" source=\"Dim1\" foreignKey=\"pc2\"/>\n"
-        + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" formatString=\"Standard\"/>\n" 
-        + "    <CalculatedMember name=\"Constant One\" dimension=\"Measures\" formatString=\"Currency\">\n" 
+        + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" formatString=\"Standard\"/>\n"
+        + "    <CalculatedMember name=\"Constant One\" dimension=\"Measures\" formatString=\"Currency\">\n"
         + "      <Formula><![CDATA[1]]></Formula>\n"
+        + "      <CalculatedMemberProperty name=\"SOLVE_ORDER\" value=\"0\"/>\n"
+        + "    </CalculatedMember>\n"
+        + "    <CalculatedMember name=\"Constant Two\" dimension=\"Measures\" formatString=\"Currency\">\n"
+        + "      <Formula><![CDATA[2]]></Formula>\n"
+        + "      <CalculatedMemberProperty name=\"SOLVE_ORDER\" value=\"200\"/>\n"
         + "    </CalculatedMember>\n"
         + "  </Cube>\n"
         + "</Schema>", data );
@@ -404,22 +410,22 @@ public class MondrianModelExporterTest {
     final String schema = exporter.createMondrianModelXML();
 
     TestHelper.assertEqualsIgnoreWhitespaces(
-      "<Schema name=\"model\">\n"
-      + "  <Dimension name=\"Dim1\">\n"
-      + "    <Hierarchy name=\"Hier1\" hasAll=\"false\">\n"
-      + "      <Table name=\"table\" schema=\"schema\"/>\n"
-      + "      <Level name=\"Lvl1\" uniqueMembers=\"false\" column=\"pc1\" type=\"Numeric\">\n"
-      + "        <Annotations>\n"
-      + "          <Annotation name=\"description.en_US\">description with &#x3e; in there</Annotation>\n"
-      + "        </Annotations>\n"
-      + "      </Level>\n"
-      + "    </Hierarchy>\n"
-      + "  </Dimension>\n"
-      + "  <Cube name=\"Cube1\">\n"
-      + "    <Table name=\"table\" schema=\"schema\"/>\n"
-      + "    <DimensionUsage name=\"Dim1\" source=\"Dim1\" foreignKey=\"pc2\"/>\n"
-      + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" formatString=\"Standard\" description=\"it&#x27;s a measure\"/>\n"
-      + "  </Cube>\n" + "</Schema>", schema );
+        "<Schema name=\"model\">\n"
+            + "  <Dimension name=\"Dim1\">\n"
+            + "    <Hierarchy name=\"Hier1\" hasAll=\"false\">\n"
+            + "      <Table name=\"table\" schema=\"schema\"/>\n"
+            + "      <Level name=\"Lvl1\" uniqueMembers=\"false\" column=\"pc1\" type=\"Numeric\">\n"
+            + "        <Annotations>\n"
+            + "          <Annotation name=\"description.en_US\">description with &#x3e; in there</Annotation>\n"
+            + "        </Annotations>\n"
+            + "      </Level>\n"
+            + "    </Hierarchy>\n"
+            + "  </Dimension>\n"
+            + "  <Cube name=\"Cube1\">\n"
+            + "    <Table name=\"table\" schema=\"schema\"/>\n"
+            + "    <DimensionUsage name=\"Dim1\" source=\"Dim1\" foreignKey=\"pc2\"/>\n"
+            + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" formatString=\"Standard\" description=\"it&#x27;s a measure\"/>\n"
+            + "  </Cube>\n" + "</Schema>", schema );
   }
 
 }

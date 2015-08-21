@@ -24,16 +24,19 @@ public class OlapCalculatedMember implements Cloneable, Serializable {
   private String dimension;
   private String formula;
   private String formatString;
+  private boolean calculateSubtotals;
 
   public OlapCalculatedMember() {
   }
 
-  public OlapCalculatedMember( String name, String dimension, String formula, String formatString ) {
+  public OlapCalculatedMember(
+      String name, String dimension, String formula, String formatString, boolean calculateSubtotals ) {
     super();
     this.name = name;
     this.dimension = dimension;
     this.formula = formula;
     this.formatString = formatString;
+    this.calculateSubtotals = calculateSubtotals;
   }
 
   public String getName() {
@@ -68,8 +71,15 @@ public class OlapCalculatedMember implements Cloneable, Serializable {
     this.formatString = formatString;
   }
 
-  protected Object clone() {
-    return new OlapCalculatedMember( name, dimension, formula, formatString );
+  public boolean isCalculateSubtotals() {
+    return calculateSubtotals;
   }
 
+  public void setCalculateSubtotals( final boolean calculateSubtotals ) {
+    this.calculateSubtotals = calculateSubtotals;
+  }
+
+  protected Object clone() {
+    return new OlapCalculatedMember( name, dimension, formula, formatString, calculateSubtotals );
+  }
 }

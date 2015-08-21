@@ -35,9 +35,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 
 public class OlapUtilTest {
   private static final String OLAP_SAMPLE_CALC_MEMBER_NAME = "Variance Percent";
@@ -71,17 +71,19 @@ public class OlapUtilTest {
   @Before
   public void setUp() throws Exception {
     olapCalculatedMember1 = new OlapCalculatedMember(
-      CALC_MEMBER_NAME_1,
-      CALC_MEMBER_DIMENSION_1,
-      CALC_MEMBER_FORMULA_1,
-      CALC_MEMBER_FORMAT_STRING_1
+        CALC_MEMBER_NAME_1,
+        CALC_MEMBER_DIMENSION_1,
+        CALC_MEMBER_FORMULA_1,
+        CALC_MEMBER_FORMAT_STRING_1,
+        false
     );
 
     olapCalculatedMember2 = new OlapCalculatedMember(
-      CALC_MEMBER_NAME_2,
-      CALC_MEMBER_DIMENSION_2,
-      CALC_MEMBER_FORMULA_2,
-      CALC_MEMBER_FORMAT_STRING_2
+        CALC_MEMBER_NAME_2,
+        CALC_MEMBER_DIMENSION_2,
+        CALC_MEMBER_FORMULA_2,
+        CALC_MEMBER_FORMAT_STRING_2,
+        true
     );
 
     olapCalculatedMemberList.add( olapCalculatedMember1 );
@@ -125,7 +127,7 @@ public class OlapUtilTest {
     assertNotNull( olapCalculatedMembers );
     assertTrue( olapCalculatedMembers.size() == 1 );
     assertTrue(
-      olapCalculatedMembers.get( "Quadrant Analysis" ).get( 0 ).getName().equals( OLAP_SAMPLE_CALC_MEMBER_NAME ) );
+        olapCalculatedMembers.get( "Quadrant Analysis" ).get( 0 ).getName().equals( OLAP_SAMPLE_CALC_MEMBER_NAME ) );
   }
 
   @Test
@@ -159,12 +161,16 @@ public class OlapUtilTest {
 
   @Test
   public void testCalculatedMemberToXml() throws Exception {
-    String xmlResult = OlapUtil.calculatedMemberToXml( olapCalculatedMember1 );
-    assertNotNull( xmlResult );
-    assertTrue( xmlResult.contains( CALC_MEMBER_NAME_1 ) );
-    assertTrue( xmlResult.contains( CALC_MEMBER_DIMENSION_1 ) );
-    assertTrue( xmlResult.contains( CALC_MEMBER_FORMAT_STRING_1 ) );
-    assertTrue( xmlResult.contains( CALC_MEMBER_FORMULA_1 ) );
+    assertEquals(
+        "<calculatedMember><name>calcMemberOne</name><dimension>dimension1</dimension><formula>formula1"
+            + "</formula><formatString>formatString1</formatString><calculateSubtotals>N</calculateSubtotals>\n"
+            + "</calculatedMember>",
+        OlapUtil.calculatedMemberToXml( olapCalculatedMember1 ) );
+    assertEquals(
+        "<calculatedMember><name>calcMemberTwo</name><dimension>dimension2</dimension><formula>formula2</formula"
+            + "><formatString>formatString2</formatString><calculateSubtotals>Y</calculateSubtotals>\n"
+            + "</calculatedMember>",
+        OlapUtil.calculatedMemberToXml( olapCalculatedMember2 ) );
   }
 
   @Test
