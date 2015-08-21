@@ -410,23 +410,23 @@ public class MondrianModelExporter {
 
           xml.append( "/>" ).append( Util.CR ); //$NON-NLS-1$
         }
-        
+
         // Calculated Members
         //
-        if (olapCube.getOlapCalculatedMembers() != null) {
-          for (OlapCalculatedMember member : olapCube.getOlapCalculatedMembers()) {
+        if ( olapCube.getOlapCalculatedMembers() != null ) {
+          for ( OlapCalculatedMember member : olapCube.getOlapCalculatedMembers() ) {
             xml.append( "    <CalculatedMember" ); //$NON-NLS-1$
 
             // Calculated member name
             xml.append( " name=\"" ); //$NON-NLS-1$
             XMLHandler.appendReplacedChars( xml, member.getName() );
             xml.append( "\"" ); //$NON-NLS-1$
-            
+
             // Dimension
             xml.append( " dimension=\"" ); //$NON-NLS-1$
             XMLHandler.appendReplacedChars( xml, member.getDimension() );
             xml.append( "\"" ); //$NON-NLS-1$
-            
+
             // Format string
             String formatString = member.getFormatString(); //$NON-NLS-1$
             if ( StringUtils.isEmpty( formatString ) ) {
@@ -437,14 +437,17 @@ public class MondrianModelExporter {
             xml.append( "\"" ); //$NON-NLS-1$
 
             xml.append( ">" ).append( Util.CR ); //$NON-NLS-1$
-            
-            xml.append( "<Formula><![CDATA[").append(member.getFormula());
+
+            xml.append( "<Formula><![CDATA[" ).append( member.getFormula() );
             xml.append( "]]>" ).append( "</Formula>" ).append( Util.CR );
-            
-            
+
+            String solveOrder = member.isCalculateSubtotals() ? "200" : "0";
+            xml.append( "<CalculatedMemberProperty name=\"SOLVE_ORDER\" value=\"" )
+                .append( solveOrder ).append( "\"/>" ).append( Util.CR );
+
             xml.append( "</CalculatedMember>" ).append( Util.CR ); //$NON-NLS-1$
           }
-        }       
+        }
 
         xml.append( "  </Cube>" ).append( Util.CR ); //$NON-NLS-1$
       }

@@ -241,7 +241,7 @@ public class XmiParserTest {
     assertEquals( "fullname", domain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns()
         .get( 0 ).getPhysicalColumn().getId() );
     assertEquals( "PT_CUSTOMER", domain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns()
-      .get( 0 ).getPhysicalColumn().getPhysicalTable().getId() );
+        .get( 0 ).getPhysicalColumn().getPhysicalTable().getId() );
 
     String xmi = parser.generateXmi( domain );
 
@@ -293,8 +293,8 @@ public class XmiParserTest {
 
     // Verify that RowLevelSecurity is in the xmi
     assertTrue( xmi.contains(
-      "&lt;row-level-security type=&quot;global&quot;&gt;&lt;formula&gt;&lt;![CDATA[TRUE()]]&gt;&lt;/formula&gt;"
-        + "&lt;entries&gt;&lt;/entries&gt;&lt;/row-level-security&gt;" ) );
+        "&lt;row-level-security type=&quot;global&quot;&gt;&lt;formula&gt;&lt;![CDATA[TRUE()]]&gt;&lt;/formula&gt;"
+            + "&lt;entries&gt;&lt;/entries&gt;&lt;/row-level-security&gt;" ) );
 
     // Verify that the SqlDatasource is to and from successfully
   }
@@ -489,7 +489,7 @@ public class XmiParserTest {
     domain = parser.parseXmi( new ByteArrayInputStream( xmi.getBytes() ) );
 
     List<LogicalColumn> columns =
-      domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 ).getLogicalColumns();
+        domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 ).getLogicalColumns();
 
     col1 = columns.get( 0 );
     col2 = columns.get( 1 );
@@ -498,7 +498,7 @@ public class XmiParserTest {
     assertFalse( "Columns have different corrected ids", col1.getId().equals( col2.getId() ) );
   }
 
-  private static void setInvalidId(String invalidPart, Concept... concepts) {
+  private static void setInvalidId( String invalidPart, Concept... concepts ) {
     for ( Concept concept : concepts ) {
       concept.setId( concept.getId() + invalidPart );
       assertFalse( validateId( concept.getId() ) );
@@ -551,15 +551,14 @@ public class XmiParserTest {
     Domain domain = parser.parseXmi( new FileInputStream( "test-res/example_olap.xmi" ) );
 
     List<OlapCalculatedMember> members = new ArrayList<OlapCalculatedMember>();
-    members.add( new OlapCalculatedMember( "Constant One", "Measures", "1", "Currency" ) );
-    members.add( new OlapCalculatedMember( "Constant Two", "Measures", "2", "Currency" ) );
+    members.add( new OlapCalculatedMember( "Constant One", "Measures", "1", "Currency", false ) );
+    members.add( new OlapCalculatedMember( "Constant Two", "Measures", "2", "Currency", true ) );
 
     List<OlapCube> cubes = (List<OlapCube>) domain.getLogicalModels().get( 0 ).getProperty( "olap_cubes" );
     OlapCube cube = cubes.get( 0 );
     cube.setOlapCalculatedMembers( members );
-    
+
     String xmi = parser.generateXmi( domain );
-    
 
     ByteArrayInputStream is = new ByteArrayInputStream( xmi.getBytes() );
     Domain domain2 = parser.parseXmi( is );
