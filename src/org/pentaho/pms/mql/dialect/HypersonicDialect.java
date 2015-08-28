@@ -29,4 +29,17 @@ public class HypersonicDialect extends DefaultSQLDialect {
     generateTopBeforeDistinct( query, sql, TOP_KEYWORD );
   }
 
+  /**
+   * return HSQL formatted date, 'YYYY-MM-DD hh:mm:ss'
+   *
+   * @param year
+   * @param month
+   * @param day
+   *
+   * @return date string
+   */
+  @Override
+  public String getDateSQL( int year, int month, int day ) {
+    return getDateSQL( year, month, day, 0, 0, 0, 0 );
+  }
 }
