@@ -132,10 +132,10 @@ fi
 
 # ******************************************************************
 # ** Set java runtime options                                     **
-# ** Change 256m to higher values in case you run out of memory.  **
+# ** Change 1024m to higher values in case you run out of memory. **
 # ******************************************************************
 
-OPT="-Xmx256m -cp $CLASSPATH -Djava.library.path=$LIBPATH"
+OPT="-Xms1024m -Xmx2048m -cp $CLASSPATH -Djava.library.path=$LIBPATH"
 
 # ***************
 # ** Run...    **
