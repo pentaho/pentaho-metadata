@@ -514,7 +514,7 @@ public class SqlOpenFormulaTest {
 
     handleFormula( getOrdersModel(), "Hypersonic", //$NON-NLS-1$ 
         "DATE(2007;5;23)" //$NON-NLS-1$
-        , "'2007-05-23'" //$NON-NLS-1$
+        , "'2007-05-23 00:00:00.0'" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "DB2", //$NON-NLS-1$ 
@@ -551,7 +551,7 @@ public class SqlOpenFormulaTest {
 
     handleFormula( getOrdersModel(), "Hypersonic", //$NON-NLS-1$ 
         "DATEVALUE(\"2007-05-23\")" //$NON-NLS-1$
-        , "'2007-05-23'" //$NON-NLS-1$
+        , "'2007-05-23 00:00:00.0'" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "DB2", //$NON-NLS-1$ 
