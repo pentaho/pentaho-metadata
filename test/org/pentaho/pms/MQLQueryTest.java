@@ -367,7 +367,7 @@ public class MQLQueryTest extends TestCase {
 
     handleFormula( ordersModel, "Hypersonic", //$NON-NLS-1$ 
         "DATE(2007;5;23)" //$NON-NLS-1$
-        , "'2007-05-23'" //$NON-NLS-1$
+        , "'2007-05-23 00:00:00.0'" //$NON-NLS-1$
     );
 
     handleFormula( ordersModel, "DB2", //$NON-NLS-1$ 
@@ -403,7 +403,7 @@ public class MQLQueryTest extends TestCase {
 
     handleFormula( ordersModel, "Hypersonic", //$NON-NLS-1$ 
         "DATEVALUE(\"2007-05-23\")" //$NON-NLS-1$
-        , "'2007-05-23'" //$NON-NLS-1$
+        , "'2007-05-23 00:00:00.0'" //$NON-NLS-1$
     );
 
     handleFormula( ordersModel, "DB2", //$NON-NLS-1$ 
@@ -625,7 +625,7 @@ public class MQLQueryTest extends TestCase {
 
       MappedQuery query = mqlquery.getQuery();
       String sqlQuery = query.getQuery();
-      assertTrue( sqlQuery.indexOf( ">= '1-01-2007'" ) >= 0 ); //$NON-NLS-1$
+      assertTrue( sqlQuery.indexOf( ">= '1-01-2007 00:00:00.0'" ) >= 0 ); //$NON-NLS-1$
 
       // now replace with oracle database metadata
       DatabaseMeta meta = (DatabaseMeta) ( (MQLQueryImpl) mqlquery ).getDatabaseMeta().clone();
