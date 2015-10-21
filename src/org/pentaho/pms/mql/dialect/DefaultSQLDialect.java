@@ -244,28 +244,28 @@ public class DefaultSQLDialect implements SQLDialectInterface {
         } );
 
     supportedFunctions.put( "SUM", new DefaultSQLFunctionGenerator( SQLFunctionGeneratorInterface.PARAM_AGG_FUNCTION ) { //$NON-NLS-1$
-          public String getSQL() {
-            return databaseMeta.getFunctionSum();
-          }
-        } );
+        public String getSQL() {
+          return databaseMeta.getFunctionSum();
+        }
+      } );
 
     supportedFunctions.put( "AVG", new DefaultSQLFunctionGenerator( SQLFunctionGeneratorInterface.PARAM_AGG_FUNCTION ) { //$NON-NLS-1$
-          public String getSQL() {
-            return databaseMeta.getFunctionAverage();
-          }
-        } );
+        public String getSQL() {
+          return databaseMeta.getFunctionAverage();
+        }
+      } );
 
     supportedFunctions.put( "MIN", new DefaultSQLFunctionGenerator( SQLFunctionGeneratorInterface.PARAM_AGG_FUNCTION ) { //$NON-NLS-1$
-          public String getSQL() {
-            return databaseMeta.getFunctionMinimum();
-          }
-        } );
+        public String getSQL() {
+          return databaseMeta.getFunctionMinimum();
+        }
+      } );
 
     supportedFunctions.put( "MAX", new DefaultSQLFunctionGenerator( SQLFunctionGeneratorInterface.PARAM_AGG_FUNCTION ) { //$NON-NLS-1$
-          public String getSQL() {
-            return databaseMeta.getFunctionMaximum();
-          }
-        } );
+        public String getSQL() {
+          return databaseMeta.getFunctionMaximum();
+        }
+      } );
 
     //
     // date functions
@@ -363,6 +363,17 @@ public class DefaultSQLDialect implements SQLDialectInterface {
               year = Integer.parseInt( m.group( 1 ) );
               month = Integer.parseInt( m.group( 2 ) );
               day = Integer.parseInt( m.group( 3 ) );
+            } else if ( dateValue instanceof java.sql.Timestamp ) {
+              useTime = true;
+              Calendar c = Calendar.getInstance();
+              c.setTime( (java.sql.Timestamp) dateValue );
+              year = c.get( Calendar.YEAR );
+              month = c.get( Calendar.MONTH ) + 1;
+              day = c.get( Calendar.DAY_OF_MONTH );
+              hour = c.get( Calendar.HOUR_OF_DAY );
+              minute = c.get( Calendar.MINUTE );
+              second = c.get( Calendar.SECOND );
+              milli = c.get( Calendar.MILLISECOND );
             } else if ( dateValue instanceof java.util.Date ) {
               Calendar c = Calendar.getInstance();
               c.setTime( (java.util.Date) dateValue );
@@ -1138,13 +1149,17 @@ public class DefaultSQLDialect implements SQLDialectInterface {
     //
     switch ( joinType ) {
       case INNER_JOIN:
-        clause.append( " JOIN " );break; //$NON-NLS-1$
+        clause.append( " JOIN " ); //$NON-NLS-1$
+        break;
       case LEFT_OUTER_JOIN:
-        clause.append( " LEFT OUTER JOIN " );break; //$NON-NLS-1$
+        clause.append( " LEFT OUTER JOIN " ); //$NON-NLS-1$
+        break;
       case RIGHT_OUTER_JOIN:
-        clause.append( " RIGHT OUTER JOIN " );break; //$NON-NLS-1$
+        clause.append( " RIGHT OUTER JOIN " ); //$NON-NLS-1$
+        break;
       case FULL_OUTER_JOIN:
-        clause.append( " FULL OUTER JOIN " );break; //$NON-NLS-1$
+        clause.append( " FULL OUTER JOIN " ); //$NON-NLS-1$
+        break;
     }
 
     // Now, we generate the clause in one go...
