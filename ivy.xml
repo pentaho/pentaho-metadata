@@ -66,7 +66,7 @@
     <dependency org="${dependency.libbase.group}" name="libbase" rev="${dependency.libbase.revision}" />
     
     <!-- test dependencies -->
-    <dependency org="junit" name="junit" rev="4.4" conf="test->default" />
+    <dependency org="junit" name="junit" rev="4.12" conf="test->default" />
 	<dependency org="org.apache.ws.commons.axiom" name="axiom-api" rev="1.2.7" conf="test->default" transitive="false"/>
 	<dependency org="org.apache.ws.commons.axiom" name="axiom-dom" rev="1.2.7" conf="test->default" transitive="false"/>
 	<dependency org="org.apache.ws.commons.schema" name="XmlSchema" rev="1.4.2" conf="test->default" transitive="false"/>
