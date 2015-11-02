@@ -4,6 +4,8 @@ js-lib/
 lib/
 test-lib/
 eclipse-bin/
+test-res/org/pentaho/metadata/sampledata.properties
+checkstyle/
 override.properties
 testdata.log
 testdata.properties
