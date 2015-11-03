@@ -21,6 +21,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.pentaho.di.core.xml.XMLHandler;
+import org.pentaho.helpers.SQLDialectHelper;
 import org.pentaho.metadata.model.olap.OlapCalculatedMember;
 import org.pentaho.metadata.model.olap.OlapRole;
 import org.w3c.dom.Document;
@@ -35,7 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -161,12 +161,12 @@ public class OlapUtilIT {
 
   @Test
   public void testCalculatedMemberToXml() throws Exception {
-    assertEquals(
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces(
         "<calculatedMember><name>calcMemberOne</name><dimension>dimension1</dimension><formula>formula1"
             + "</formula><formatString>formatString1</formatString><calculateSubtotals>N</calculateSubtotals>\n"
             + "</calculatedMember>",
         OlapUtil.calculatedMemberToXml( olapCalculatedMember1 ) );
-    assertEquals(
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces(
         "<calculatedMember><name>calcMemberTwo</name><dimension>dimension2</dimension><formula>formula2</formula"
             + "><formatString>formatString2</formatString><calculateSubtotals>Y</calculateSubtotals>\n"
             + "</calculatedMember>",
