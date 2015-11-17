@@ -15,7 +15,7 @@
     
     <!--  external dependencies -->
     <dependency org="joda-time" name="joda-time" rev="1.6" transitive="false"/>
-    <dependency org="commons-collections" name="commons-collections" rev="3.2.1" />
+    <dependency org="commons-collections" name="commons-collections" rev="3.2.2" />
     <dependency org="commons-lang" name="commons-lang" rev="2.6" />
     <dependency org="commons-io" name="commons-io" rev="2.1" />
     <dependency org="commons-logging" name="commons-logging" rev="1.1.1" >
