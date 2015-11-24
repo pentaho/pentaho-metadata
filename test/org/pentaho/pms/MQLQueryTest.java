@@ -27,6 +27,7 @@ import junit.framework.TestCase;
 
 import org.pentaho.di.core.database.DatabaseInterface;
 import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.helpers.SQLDialectHelper;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.factory.CwmSchemaFactory;
