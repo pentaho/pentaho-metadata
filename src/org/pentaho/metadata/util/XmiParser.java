@@ -597,6 +597,12 @@ public class XmiParser {
                 Element measModelElement = doc.createElement( "CWM:ModelElement.taggedValue" ); //$NON-NLS-1$
                 measModelElement.appendChild( createTaggedValue( doc,
                     "MEASURE_BUSINESS_COLUMN", measure.getLogicalColumn().getId(), idGen.getNextId() ) ); //$NON-NLS-1$
+
+                if( measure.isHidden() ){
+                  measModelElement.appendChild(
+                      createTaggedValue( doc, OlapMeasure.MEASURE_HIDDEN, measure.isHidden() + "", idGen.getNextId() ));
+                }
+
                 measureElement.appendChild( measModelElement );
                 ownedElement.appendChild( measureElement );
               }
@@ -739,6 +745,13 @@ public class XmiParser {
                       lvlModelElement.appendChild( createTaggedValue( doc, "HIERARCHY_LEVEL_TYPE",
                           level.getLevelType(), idGen.getNextId() ) );
                     }
+
+                    if( level.isHidden() ){
+                      lvlModelElement.appendChild(
+                          createTaggedValue( doc, OlapHierarchyLevel.HIERARCHY_LEVEL_HIDDEN, level.isHidden() + "",
+                              idGen.getNextId() ) );
+                    }
+
                     // add annotations as tagged values
                     if ( level.getAnnotations() != null & level.getAnnotations().size() > 0 ) {
                       for ( OlapAnnotation annotation : level.getAnnotations() ) {
@@ -1772,6 +1785,9 @@ public class XmiParser {
                 referenceCols.add( model.findLogicalColumn( col.getAttribute( "name" ) ) ); //$NON-NLS-1$
               }
 
+              levelObj.setHidden( nvp.get( OlapHierarchyLevel.HIERARCHY_LEVEL_HIDDEN ) != null ?
+                  Boolean.parseBoolean( nvp.get( OlapHierarchyLevel.HIERARCHY_LEVEL_HIDDEN ) ) : false );
+
               // CWM:TaggedValue tag="ANNOTATION_*
               for ( String taggedValueKey : nvp.keySet() ) {
                 if ( taggedValueKey != null && taggedValueKey.startsWith( "ANNOTATION_" ) ) {
@@ -1819,6 +1835,10 @@ public class XmiParser {
             measureObj.setName( measure.getAttribute( "name" ) ); //$NON-NLS-1$
             Map<String, String> nvp2 = getKeyValuePairs( measure, "CWM:TaggedValue", "tag", "value" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             measureObj.setLogicalColumn( model.findLogicalColumn( nvp2.get( "MEASURE_BUSINESS_COLUMN" ) ) ); //$NON-NLS-1$
+
+            measureObj.setHidden( nvp2.get( OlapMeasure.MEASURE_HIDDEN ) != null ?
+                Boolean.parseBoolean( nvp2.get( OlapMeasure.MEASURE_HIDDEN ) ) : false );
+
             measureList.add( measureObj );
           }
           cubeObj.setOlapMeasures( measureList );

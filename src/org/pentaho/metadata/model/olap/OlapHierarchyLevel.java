@@ -37,6 +37,10 @@ public class OlapHierarchyLevel implements Cloneable, Serializable {
 
   private OlapHierarchy olapHierarchy;
 
+  private boolean hidden;
+
+  public static final String HIERARCHY_LEVEL_HIDDEN = "HIERARCHY_LEVEL_HIDDEN";
+
   public OlapHierarchyLevel() {
 
   }
@@ -242,5 +246,13 @@ public class OlapHierarchyLevel implements Cloneable, Serializable {
 
   public void setAnnotations( List<OlapAnnotation> annotations ) {
     this.annotations = annotations;
+  }
+
+  public boolean isHidden() {
+    return hidden;
+  }
+
+  public void setHidden( boolean hidden ) {
+    this.hidden = hidden;
   }
 }
