@@ -1,3 +1,20 @@
+/*
+ * This program is free software; you can redistribute it and/or modify it under the
+ * terms of the GNU Lesser General Public License, version 2.1 as published by the Free Software
+ * Foundation.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with this
+ * program; if not, you can obtain a copy at http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
+ * or from the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * Copyright (c) 2006 - 2009 Pentaho Corporation..  All rights reserved.
+ */
+
 package org.pentaho.metadata;
 
 import java.util.ArrayList;
@@ -252,7 +269,31 @@ public class MondrianModelExporterTest {
         + "</Schema>", data );
   }
 
+  @Test
+  public void testModelsWithHiddenMembers() throws Exception {
+    LogicalModel businessModel = getTestModel( TargetTableType.TABLE, "tableName", "schemaName", true );
+    MondrianModelExporter exporter = new MondrianModelExporter( businessModel, "en_US" );
+    String data = exporter.createMondrianModelXML();
+
+    TestHelper.assertEqualsIgnoreWhitespaces( "<Schema name=\"model\">\n" + "  <Dimension name=\"Dim1\">\n"
+        + "    <Hierarchy name=\"Hier1\" hasAll=\"false\">\n"
+        + "    <Table name=\"tableName\" schema=\"schemaName\" />\n"
+        + "      <Level name=\"Lvl1\" uniqueMembers=\"false\" column=\"pc1\" type=\"Numeric\" visible=\"false\">\n"
+        + "      </Level>\n"
+        + "    </Hierarchy>\n" + "  </Dimension>\n" + "  <Cube name=\"Cube1\">\n"
+        + "    <Table name=\"tableName\" schema=\"schemaName\" />\n"
+        + "    <DimensionUsage name=\"Dim1\" source=\"Dim1\" foreignKey=\"pc2\"/>\n"
+        + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" formatString=\"Standard\" visible=\"false\"/>\n"
+        + "  </Cube>\n"
+        + "</Schema>", data );
+  }
+
   private LogicalModel getTestModel( TargetTableType tableType, String targetTable, String targetSchema ) {
+    return getTestModel( tableType, targetTable, targetSchema, false );
+  }
+
+  private LogicalModel getTestModel( TargetTableType tableType, String targetTable, String targetSchema,
+      boolean hiddenMembers ) {
     List<OlapDimension> dimensions = new ArrayList<OlapDimension>();
     OlapDimension dimension = new OlapDimension();
     dimension.setName( "Dim1" );
@@ -263,6 +304,7 @@ public class MondrianModelExporterTest {
     List<OlapHierarchyLevel> hierarchyLevels = new ArrayList<OlapHierarchyLevel>();
     OlapHierarchyLevel level = new OlapHierarchyLevel();
     level.setName( "Lvl1" );
+    level.setHidden( hiddenMembers );
     hierarchyLevels.add( level );
 
     hierarchy.setHierarchyLevels( hierarchyLevels );
@@ -280,6 +322,7 @@ public class MondrianModelExporterTest {
     OlapMeasure measure = new OlapMeasure();
     measure.setName( "Meas1" );
     measures.add( measure );
+    measure.setHidden( hiddenMembers );
     cube.setOlapMeasures( measures );
 
     List<OlapDimensionUsage> dimensionUsages = new ArrayList<OlapDimensionUsage>();

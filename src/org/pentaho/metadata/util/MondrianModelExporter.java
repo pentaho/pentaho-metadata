@@ -206,6 +206,13 @@ public class MondrianModelExporter {
               xml.append( "\"" ); //$NON-NLS-1$
             }
 
+            // include only when hidden
+            if ( olapHierarchyLevel.isHidden() ) {
+              xml.append( " visible=\"" ); //$NON-NLS-1$
+              XMLHandler.appendReplacedChars( xml, !olapHierarchyLevel.isHidden() + "" );
+              xml.append( "\"" ); //$NON-NLS-1$
+            }
+
             xml.append( ">" ); //$NON-NLS-1$
             xml.append( Util.CR );
 
@@ -406,6 +413,13 @@ public class MondrianModelExporter {
               XMLHandler.appendReplacedChars( xml, desc );
               xml.append( "\"" ); //$NON-NLS-1$
             }
+          }
+
+          // include only when hidden
+          if ( measure.isHidden() ) {
+            xml.append( " visible=\"" ); //$NON-NLS-1$
+            XMLHandler.appendReplacedChars( xml, !measure.isHidden() + "" );
+            xml.append( "\"" ); //$NON-NLS-1$
           }
 
           xml.append( "/>" ).append( Util.CR ); //$NON-NLS-1$

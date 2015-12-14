@@ -114,11 +114,10 @@ import org.xml.sax.SAXException;
 
 /**
  * This code parses an XMI xml file.
- * 
+ * <p/>
  * Note: olap support (CWMOLAP:Schema) is not supported at this time.
- * 
+ *
  * @author Will Gorman (wgorman@pentaho.com)
- * 
  */
 @SuppressWarnings( "deprecation" )
 public class XmiParser {
@@ -257,8 +256,10 @@ public class XmiParser {
         cwmParameter.setAttribute( "xmi.id", idGen.getNextId() ); //$NON-NLS-1$
         Element modelElement = doc.createElement( "CWM:ModelElement.taggedValue" ); //$NON-NLS-1$
         modelElement.appendChild( createTaggedValue( doc,
-            "LOCALE_IS_DEFAULT", "" + ( ( val == 1 ) ? "Y" : "N" ), idGen.getNextId() ) ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-        modelElement.appendChild( createTaggedValue( doc, "LOCALE_ORDER", "" + val++, idGen.getNextId() ) ); //$NON-NLS-1$ //$NON-NLS-2$
+            "LOCALE_IS_DEFAULT", "" + ( ( val == 1 ) ? "Y" : "N" ),
+            idGen.getNextId() ) ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        modelElement.appendChild(
+            createTaggedValue( doc, "LOCALE_ORDER", "" + val++, idGen.getNextId() ) ); //$NON-NLS-1$ //$NON-NLS-2$
         modelElement.appendChild( createTaggedValue( doc,
             "LOCALE_DESCRIPTION", localeType.getDescription(), idGen.getNextId() ) ); //$NON-NLS-1$
         cwmParameter.appendChild( modelElement );
@@ -290,7 +291,8 @@ public class XmiParser {
               "DATABASE_DATABASE", datasource.getDatabaseName(), idGen.getNextId() ) ); //$NON-NLS-1$
           modelElement.appendChild( createTaggedValue( doc,
               "DATABASE_SERVER", datasource.getHostname(), idGen.getNextId() ) ); //$NON-NLS-1$
-          modelElement.appendChild( createTaggedValue( doc, "DATABASE_PORT", datasource.getPort(), idGen.getNextId() ) ); //$NON-NLS-1$
+          modelElement.appendChild(
+              createTaggedValue( doc, "DATABASE_PORT", datasource.getPort(), idGen.getNextId() ) ); //$NON-NLS-1$
           modelElement.appendChild( createTaggedValue( doc,
               "DATABASE_USERNAME", datasource.getUsername(), idGen.getNextId() ) ); //$NON-NLS-1$
           modelElement.appendChild( createTaggedValue( doc,
@@ -299,7 +301,7 @@ public class XmiParser {
             modelElement.appendChild( createTaggedValue( doc,
                 "DATABASE_SERVER_INSTANCE", datasource.getServername(), idGen.getNextId() ) ); //$NON-NLS-1$
           }
-          
+
           for ( String attribute : datasource.getAttributes().keySet() ) {
             modelElement.appendChild( createTaggedValue( doc, CWM.TAG_DATABASE_ATTRIBUTE_PREFIX + attribute, datasource
                 .getAttributes().get( attribute ), idGen.getNextId() ) );
@@ -376,25 +378,26 @@ public class XmiParser {
         String idstr = idGen.getNextId();
         mdbSchema.setAttribute( "xmi.id", idstr ); //$NON-NLS-1$
         createDescriptions( doc, model, "CWMMDB:Schema", idstr, allDescriptions, idGen ); //$NON-NLS-1$
-        
+
         // Serialize all calculated members across cubes into a single XML string and store as a description
         @SuppressWarnings( "unchecked" )
         List<OlapCube> cubes = (List<OlapCube>) model.getProperty( "olap_cubes" );
-        if (cubes != null) {
+        if ( cubes != null ) {
           StringBuffer buffer = new StringBuffer();
-          buffer.append("<cubes>");
-          for (OlapCube cube : cubes) {
-            if (cube.getOlapCalculatedMembers() != null && cube.getOlapCalculatedMembers().size() > 0) {
-              buffer.append("<cube>");
-              buffer.append( XMLHandler.addTagValue( "name", cube.getName()) );
-              buffer.append( OlapUtil.toXmlCalculatedMembers(cube.getOlapCalculatedMembers()) );
-              buffer.append("</cube>");
+          buffer.append( "<cubes>" );
+          for ( OlapCube cube : cubes ) {
+            if ( cube.getOlapCalculatedMembers() != null && cube.getOlapCalculatedMembers().size() > 0 ) {
+              buffer.append( "<cube>" );
+              buffer.append( XMLHandler.addTagValue( "name", cube.getName() ) );
+              buffer.append( OlapUtil.toXmlCalculatedMembers( cube.getOlapCalculatedMembers() ) );
+              buffer.append( "</cube>" );
             }
           }
-          buffer.append("</cubes>");
-          createDescription( doc, buffer.toString(), LogicalModel.PROPERTY_OLAP_CALCULATED_MEMBERS, "String", null, idGen, "CWMMDB:Schema", idstr, allDescriptions );
+          buffer.append( "</cubes>" );
+          createDescription( doc, buffer.toString(), LogicalModel.PROPERTY_OLAP_CALCULATED_MEMBERS, "String", null,
+              idGen, "CWMMDB:Schema", idstr, allDescriptions );
         }
-        
+
         Element ownedElement = doc.createElement( "CWM:Namespace.ownedElement" ); //$NON-NLS-1$
         mdbSchema.appendChild( ownedElement );
         for ( Category category : model.getCategories() ) {
@@ -404,7 +407,8 @@ public class XmiParser {
           extent.setAttribute( "xmi.id", idstr ); //$NON-NLS-1$
           createDescriptions( doc, category, "CWM:Extent", idstr, allDescriptions, idGen ); //$NON-NLS-1$
           Element modelElement = doc.createElement( "CWM:ModelElement.taggedValue" ); //$NON-NLS-1$
-          modelElement.appendChild( createTaggedValue( doc, "BUSINESS_CATEGORY_ROOT", "Y", idGen.getNextId() ) ); //$NON-NLS-1$ //$NON-NLS-2$
+          modelElement.appendChild(
+              createTaggedValue( doc, "BUSINESS_CATEGORY_ROOT", "Y", idGen.getNextId() ) ); //$NON-NLS-1$ //$NON-NLS-2$
           if ( category.getParentConcept() != null ) {
             modelElement.appendChild( createTaggedValue( doc,
                 "CONCEPT_PARENT_NAME", category.getParentConcept().getId(), idGen.getNextId() ) ); //$NON-NLS-1$
@@ -417,7 +421,8 @@ public class XmiParser {
             attribute.setAttribute( "name", col.getId() ); //$NON-NLS-1$
             attribute.setAttribute( "xmi.id", idGen.getNextId() ); //$NON-NLS-1$
             modelElement = doc.createElement( "CWM:ModelElement.taggedValue" ); //$NON-NLS-1$
-            modelElement.appendChild( createTaggedValue( doc, "BUSINESS_CATEGORY_TYPE", "Column", idGen.getNextId() ) ); //$NON-NLS-1$ //$NON-NLS-2$
+            modelElement.appendChild( createTaggedValue( doc, "BUSINESS_CATEGORY_TYPE", "Column",
+                idGen.getNextId() ) ); //$NON-NLS-1$ //$NON-NLS-2$
             attribute.appendChild( modelElement );
             cOwnedElement.appendChild( attribute );
           }
@@ -435,32 +440,33 @@ public class XmiParser {
 
           if ( rel.getToColumn() != null ) {
             modelElement.appendChild( createTaggedValue( doc,
-                "RELATIONSHIP_FIELDNAME_CHILD", rel.getToColumn().getId(), idGen.getNextId() ) );//$NON-NLS-1$
+                "RELATIONSHIP_FIELDNAME_CHILD", rel.getToColumn().getId(), idGen.getNextId() ) ); //$NON-NLS-1$
           }
           if ( rel.getFromColumn() != null ) {
             modelElement.appendChild( createTaggedValue( doc,
-                "RELATIONSHIP_FIELDNAME_PARENT", rel.getFromColumn().getId(), idGen.getNextId() ) );//$NON-NLS-1$
+                "RELATIONSHIP_FIELDNAME_PARENT", rel.getFromColumn().getId(), idGen.getNextId() ) ); //$NON-NLS-1$
           }
           if ( rel.getToTable() != null ) {
             modelElement.appendChild( createTaggedValue( doc,
-                "RELATIONSHIP_TABLENAME_CHILD", rel.getToTable().getId(), idGen.getNextId() ) );//$NON-NLS-1$
+                "RELATIONSHIP_TABLENAME_CHILD", rel.getToTable().getId(), idGen.getNextId() ) ); //$NON-NLS-1$
           }
           if ( rel.getFromTable() != null ) {
             modelElement.appendChild( createTaggedValue( doc,
-                "RELATIONSHIP_TABLENAME_PARENT", rel.getFromTable().getId(), idGen.getNextId() ) );//$NON-NLS-1$
+                "RELATIONSHIP_TABLENAME_PARENT", rel.getFromTable().getId(), idGen.getNextId() ) ); //$NON-NLS-1$
           }
           if ( rel.isComplex() ) {
-            modelElement.appendChild( createTaggedValue( doc, "RELATIONSHIP_IS_COMPLEX", "Y", idGen.getNextId() ) );//$NON-NLS-1$ //$NON-NLS-2$
+            modelElement.appendChild( createTaggedValue( doc, "RELATIONSHIP_IS_COMPLEX", "Y",
+                idGen.getNextId() ) ); //$NON-NLS-1$ //$NON-NLS-2$
             modelElement.appendChild( createTaggedValue( doc,
-                "RELATIONSHIP_COMPLEX_JOIN", rel.getComplexJoin(), idGen.getNextId() ) );//$NON-NLS-1$
+                "RELATIONSHIP_COMPLEX_JOIN", rel.getComplexJoin(), idGen.getNextId() ) ); //$NON-NLS-1$
           }
           if ( rel.getDescription() != null ) {
             modelElement.appendChild( createTaggedValue( doc,
-                "RELATIONSHIP_DESCRIPTION", rel.getRelationshipDescription(), idGen.getNextId() ) );//$NON-NLS-1$
+                "RELATIONSHIP_DESCRIPTION", rel.getRelationshipDescription(), idGen.getNextId() ) ); //$NON-NLS-1$
           }
           if ( rel.getJoinOrderKey() != null ) {
             modelElement.appendChild( createTaggedValue( doc,
-                "RELATIONSHIP_JOIN_ORDER_KEY", rel.getJoinOrderKey(), idGen.getNextId() ) );//$NON-NLS-1$
+                "RELATIONSHIP_JOIN_ORDER_KEY", rel.getJoinOrderKey(), idGen.getNextId() ) ); //$NON-NLS-1$
           }
           ownedElement.appendChild( keyRel );
         }
@@ -480,22 +486,26 @@ public class XmiParser {
           Element modelElement = doc.createElement( "CWM:ModelElement.taggedValue" ); //$NON-NLS-1$
           if ( table.getProperty( "__LEGACY_TABLE_IS_DRAWN" ) != null ) { //$NON-NLS-1$
             modelElement.appendChild( createTaggedValue( doc,
-                "TABLE_IS_DRAWN", (String) table.getProperty( "__LEGACY_TABLE_IS_DRAWN" ), idGen.getNextId() ) ); //$NON-NLS-1$ //$NON-NLS-2$
+                "TABLE_IS_DRAWN", (String) table.getProperty( "__LEGACY_TABLE_IS_DRAWN" ),
+                idGen.getNextId() ) ); //$NON-NLS-1$ //$NON-NLS-2$
           }
           if ( table.getProperty( "__LEGACY_TAG_POSITION_Y" ) != null ) { //$NON-NLS-1$
             modelElement.appendChild( createTaggedValue( doc,
-                "TAG_POSITION_Y", (String) table.getProperty( "__LEGACY_TAG_POSITION_Y" ), idGen.getNextId() ) ); //$NON-NLS-1$ //$NON-NLS-2$
+                "TAG_POSITION_Y", (String) table.getProperty( "__LEGACY_TAG_POSITION_Y" ),
+                idGen.getNextId() ) ); //$NON-NLS-1$ //$NON-NLS-2$
           }
           if ( table.getProperty( "__LEGACY_TAG_POSITION_X" ) != null ) { //$NON-NLS-1$
             modelElement.appendChild( createTaggedValue( doc,
-                "TAG_POSITION_X", (String) table.getProperty( "__LEGACY_TAG_POSITION_X" ), idGen.getNextId() ) ); //$NON-NLS-1$ //$NON-NLS-2$
+                "TAG_POSITION_X", (String) table.getProperty( "__LEGACY_TAG_POSITION_X" ),
+                idGen.getNextId() ) ); //$NON-NLS-1$ //$NON-NLS-2$
           }
           if ( table.getParentConcept() != null ) {
             modelElement.appendChild( createTaggedValue( doc,
                 "CONCEPT_PARENT_NAME", table.getParentConcept().getId(), idGen.getNextId() ) ); //$NON-NLS-1$
           }
           modelElement.appendChild( createTaggedValue( doc,
-              "BUSINESS_TABLE_PHYSICAL_TABLE_NAME", table.getPhysicalTable().getId(), idGen.getNextId() ) ); //$NON-NLS-1$
+              "BUSINESS_TABLE_PHYSICAL_TABLE_NAME", table.getPhysicalTable().getId(),
+              idGen.getNextId() ) ); //$NON-NLS-1$
           dim.appendChild( modelElement );
           Element dimObjs = doc.createElement( "CWMMDB:Dimension.dimensionedObject" ); //$NON-NLS-1$
           dim.appendChild( dimObjs );
@@ -511,7 +521,8 @@ public class XmiParser {
             modelElement.appendChild( createTaggedValue( doc,
                 "BUSINESS_COLUMN_BUSINESS_TABLE", column.getLogicalTable().getId(), idGen.getNextId() ) ); //$NON-NLS-1$
             modelElement.appendChild( createTaggedValue( doc,
-                "BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME", column.getPhysicalColumn().getId(), idGen.getNextId() ) ); //$NON-NLS-1$
+                "BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME", column.getPhysicalColumn().getId(),
+                idGen.getNextId() ) ); //$NON-NLS-1$
             if ( column.getParentConcept() != null ) {
               modelElement.appendChild( createTaggedValue( doc,
                   "CONCEPT_PARENT_NAME", column.getParentConcept().getId(), idGen.getNextId() ) ); //$NON-NLS-1$
@@ -597,6 +608,13 @@ public class XmiParser {
                 Element measModelElement = doc.createElement( "CWM:ModelElement.taggedValue" ); //$NON-NLS-1$
                 measModelElement.appendChild( createTaggedValue( doc,
                     "MEASURE_BUSINESS_COLUMN", measure.getLogicalColumn().getId(), idGen.getNextId() ) ); //$NON-NLS-1$
+
+                if ( measure.isHidden() ) {
+                  measModelElement.appendChild(
+                      createTaggedValue( doc, OlapMeasure.MEASURE_HIDDEN, measure.isHidden() + "",
+                          idGen.getNextId() ) );
+                }
+
                 measureElement.appendChild( measModelElement );
                 ownedElement.appendChild( measureElement );
               }
@@ -680,11 +698,14 @@ public class XmiParser {
                       "HIERARCHY_PRIMARY_KEY", hier.getPrimaryKey().getId(), idGen.getNextId() ) ); //$NON-NLS-1$
                 }
                 modelElement.appendChild( createTaggedValue( doc,
-                    "HIERARCHY_HAVING_ALL", hier.isHavingAll() ? "Y" : "N", idGen.getNextId() ) ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    "HIERARCHY_HAVING_ALL", hier.isHavingAll() ? "Y" : "N",
+                    idGen.getNextId() ) ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 hierarchyElement.appendChild( modelElement );
 
                 if ( hier.getHierarchyLevels() != null && hier.getHierarchyLevels().size() > 0 ) {
-                  Element hla = doc.createElement( "CWMOLAP:LevelBasedHierarchy.hierarchyLevelAssociation" ); //$NON-NLS-1$
+                  Element
+                      hla =
+                      doc.createElement( "CWMOLAP:LevelBasedHierarchy.hierarchyLevelAssociation" ); //$NON-NLS-1$
                   for ( OlapHierarchyLevel level : hier.getHierarchyLevels() ) {
 
                     Element hierLvlAssoc = doc.createElement( "CWMOLAP:HierarchyLevelAssociation" ); //$NON-NLS-1$
@@ -692,7 +713,9 @@ public class XmiParser {
                     hierLvlAssoc.setAttribute( "xmi.id", hlaId ); //$NON-NLS-1$
                     hierLvlAssoc.setAttribute( "name", level.getName() ); //$NON-NLS-1$
                     hierLvlAssoc.setAttribute( "isAbstract", "false" ); //$NON-NLS-1$  //$NON-NLS-2$
-                    Element currLvl = doc.createElement( "CWMOLAP:HierarchyLevelAssociation.currentLevel" ); //$NON-NLS-1$
+                    Element
+                        currLvl =
+                        doc.createElement( "CWMOLAP:HierarchyLevelAssociation.currentLevel" ); //$NON-NLS-1$
                     Element lvlref = doc.createElement( "CWMOLAP:Level" ); //$NON-NLS-1$
                     String lvlId = idGen.getNextId();
 
@@ -709,7 +732,8 @@ public class XmiParser {
                     lvlModelElement
                         .appendChild( createTaggedValue(
                             doc,
-                            "HIERARCHY_LEVEL_UNIQUE_MEMBERS", level.isHavingUniqueMembers() ? "Y" : "N", idGen.getNextId() ) ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                            "HIERARCHY_LEVEL_UNIQUE_MEMBERS", level.isHavingUniqueMembers() ? "Y" : "N",
+                            idGen.getNextId() ) ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
                     LogicalColumn logicalColumn;
                     String tag;
@@ -739,6 +763,13 @@ public class XmiParser {
                       lvlModelElement.appendChild( createTaggedValue( doc, "HIERARCHY_LEVEL_TYPE",
                           level.getLevelType(), idGen.getNextId() ) );
                     }
+
+                    if ( level.isHidden() ) {
+                      lvlModelElement.appendChild(
+                          createTaggedValue( doc, OlapHierarchyLevel.HIERARCHY_LEVEL_HIDDEN, level.isHidden() + "",
+                              idGen.getNextId() ) );
+                    }
+
                     // add annotations as tagged values
                     if ( level.getAnnotations() != null & level.getAnnotations().size() > 0 ) {
                       for ( OlapAnnotation annotation : level.getAnnotations() ) {
@@ -774,7 +805,9 @@ public class XmiParser {
                     // lvlElement.appendChild(annotationsElement);
                     // }
 
-                    Element lvlHierLvlAssoc = doc.createElement( "CWMOLAP:Level.hierarchyLevelAssociation" ); //$NON-NLS-1$
+                    Element
+                        lvlHierLvlAssoc =
+                        doc.createElement( "CWMOLAP:Level.hierarchyLevelAssociation" ); //$NON-NLS-1$
                     Element lhla = doc.createElement( "CWMOLAP:HierarchyLevelAssociation" ); //$NON-NLS-1$
                     lhla.setAttribute( "xmi.idref", hlaId ); //$NON-NLS-1$
                     lvlHierLvlAssoc.appendChild( lhla );
@@ -881,7 +914,9 @@ public class XmiParser {
         body = rls.toXML();
         type = "RowLevelSecurity"; //$NON-NLS-1$
       } else if ( val instanceof Font ) {
-        ConceptPropertyFont font = (ConceptPropertyFont) ThinModelConverter.convertPropertyToLegacy( "font", val ); //$NON-NLS-1$
+        ConceptPropertyFont
+            font =
+            (ConceptPropertyFont) ThinModelConverter.convertPropertyToLegacy( "font", val ); //$NON-NLS-1$
         body = ( (FontSettings) font.getValue() ).toString();
         type = "Font"; //$NON-NLS-1$
       } else if ( val instanceof TargetTableType ) {
@@ -952,9 +987,11 @@ public class XmiParser {
         }
       } else {
         if ( val == null ) {
-          logger.error( Messages.getErrorString( "XmiParser.ERROR_0005_UNSUPPORTED_CONCEPT_PROPERTY", "null" ) ); //$NON-NLS-1$ //$NON-NLS-2$
+          logger.error( Messages.getErrorString( "XmiParser.ERROR_0005_UNSUPPORTED_CONCEPT_PROPERTY",
+              "null" ) ); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
-          logger.error( Messages.getErrorString( "XmiParser.ERROR_0005_UNSUPPORTED_CONCEPT_PROPERTY", val.getClass() ) ); //$NON-NLS-1$
+          logger.error( Messages
+              .getErrorString( "XmiParser.ERROR_0005_UNSUPPORTED_CONCEPT_PROPERTY", val.getClass() ) ); //$NON-NLS-1$
         }
       }
       if ( type != null ) {
@@ -1065,7 +1102,9 @@ public class XmiParser {
     Map<String, Concept> xmiConceptMap = new HashMap<String, Concept>();
 
     for ( Element event : events ) {
-      Map<String, String> kvp = getKeyValuePairs( event, "CWM:TaggedValue", "tag", "value" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      Map<String, String>
+          kvp =
+          getKeyValuePairs( event, "CWM:TaggedValue", "tag", "value" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
       for ( String key : kvp.keySet() ) {
         domain.setProperty( "LEGACY_EVENT_" + key, kvp.get( key ) ); //$NON-NLS-1$
       }
@@ -1081,7 +1120,10 @@ public class XmiParser {
       String name = concept.getAttribute( "name" ); //$NON-NLS-1$
       c.setId( name );
       String xmiId = concept.getAttribute( "xmi.id" ); //$NON-NLS-1$
-      String parentName = getKeyValue( concept, "CWM:TaggedValue", "tag", "value", "CONCEPT_PARENT_NAME" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+      String
+          parentName =
+          getKeyValue( concept, "CWM:TaggedValue", "tag", "value",
+              "CONCEPT_PARENT_NAME" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
       if ( parentName != null ) {
         c.setProperty( "__TMP_CONCEPT_PARENT_NAME", parentName ); //$NON-NLS-1$
       }
@@ -1144,16 +1186,18 @@ public class XmiParser {
 
       String name = datasource.getAttribute( "name" ); //$NON-NLS-1$
       sqlPhysicalModel.setId( name );
-      Map<String, String> kvp = getKeyValuePairs( datasource, "CWM:TaggedValue", "tag", "value" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
+      Map<String, String>
+          kvp =
+          getKeyValuePairs( datasource, "CWM:TaggedValue", "tag", "value" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
       String database_access_type = kvp.get( "DATABASE_ACCESS" );
-      if( database_access_type.equals( ", " ) ) {
+      if ( database_access_type.equals( ", " ) ) {
         logger.warn( Messages.getErrorString( "XmiParser.ERROR_0011_UNSUPPORTED_DOMAIN", database_access_type ) );
         database_access_type = "JNDI";
       }
 
-      sqlDataSource.setType( DataSourceType.values()[DatabaseMeta.getAccessType( database_access_type )] ); //$NON-NLS-1$
+      sqlDataSource
+          .setType( DataSourceType.values()[DatabaseMeta.getAccessType( database_access_type )] ); //$NON-NLS-1$
       sqlDataSource.setDatabaseName( kvp.get( "DATABASE_DATABASE" ) ); //$NON-NLS-1$
       sqlDataSource.setHostname( kvp.get( "DATABASE_SERVER" ) ); //$NON-NLS-1$
       sqlDataSource.setPort( kvp.get( "DATABASE_PORT" ) ); //$NON-NLS-1$
@@ -1190,7 +1234,10 @@ public class XmiParser {
           }
         }
       }
-      String databaseName = getKeyValue( tagged, "CWM:TaggedValue", "tag", "value", "TABLE_TARGET_DATABASE_NAME" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+      String
+          databaseName =
+          getKeyValue( tagged, "CWM:TaggedValue", "tag", "value",
+              "TABLE_TARGET_DATABASE_NAME" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
       if ( databaseName == null ) {
         logger.warn( Messages.getErrorString( "XmiParser.ERROR_0009_MISSING_DATABASE_PARENT", name ) ); //$NON-NLS-1$
@@ -1247,7 +1294,8 @@ public class XmiParser {
         if ( schemaChildren.item( i ).getNodeType() == Node.ELEMENT_NODE ) {
           if ( schemaChildren.item( i ).getNodeName().equals( "CWMMDB:Schema.dimension" ) ) { //$NON-NLS-1$
             dimension = (Element) schemaChildren.item( i );
-          } else if ( schemaChildren.item( i ).getNodeName().equals( "CWMMDB:Schema.dimensionedObject" ) ) { //$NON-NLS-1$
+          } else if ( schemaChildren.item( i ).getNodeName()
+              .equals( "CWMMDB:Schema.dimensionedObject" ) ) { //$NON-NLS-1$
             dimensionedObject = (Element) schemaChildren.item( i );
           } else if ( schemaChildren.item( i ).getNodeName().equals( "CWM:Namespace.ownedElement" ) ) { //$NON-NLS-1$
             ownedElement = (Element) schemaChildren.item( i );
@@ -1267,7 +1315,9 @@ public class XmiParser {
           LogicalTable table = new LogicalTable();
           table.setId( biztable.getAttribute( "name" ) ); //$NON-NLS-1$
           bindParentConcept( biztable, domain, table );
-          Map<String, String> nvp = getKeyValuePairs( biztable, "CWM:TaggedValue", "tag", "value" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+          Map<String, String>
+              nvp =
+              getKeyValuePairs( biztable, "CWM:TaggedValue", "tag", "value" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
           String pt = nvp.get( "BUSINESS_TABLE_PHYSICAL_TABLE_NAME" ); //$NON-NLS-1$
           IPhysicalTable physTable = domain.findPhysicalTable( pt );
 
@@ -1318,7 +1368,9 @@ public class XmiParser {
           xmiConceptMap.put( bizcol.getAttribute( "xmi.id" ), col ); //$NON-NLS-1$
           bindParentConcept( bizcol, domain, col );
 
-          Map<String, String> nvp = getKeyValuePairs( bizcol, "CWM:TaggedValue", "tag", "value" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+          Map<String, String>
+              nvp =
+              getKeyValuePairs( bizcol, "CWM:TaggedValue", "tag", "value" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
           String biztbl = nvp.get( "BUSINESS_COLUMN_BUSINESS_TABLE" ); //$NON-NLS-1$
           String pcol = nvp.get( "BUSINESS_COLUMN_PHYSICAL_COLUMN_NAME" ); //$NON-NLS-1$
           LogicalTable parent = logicalModel.findLogicalTable( biztbl );
@@ -1382,7 +1434,9 @@ public class XmiParser {
            * value="BT_EMPLOYEES_EMPLOYEES" xmi.id="a1342"/> <CWM:TaggedValue tag="RELATIONSHIP_TABLENAME_PARENT"
            * value="BT_OFFICES_OFFICES" xmi.id="a1343"/> </CWM:ModelElement.taggedValue> </CWM:KeyRelationship>
            */
-          Map<String, String> nvp = getKeyValuePairs( rel, "CWM:TaggedValue", "tag", "value" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+          Map<String, String>
+              nvp =
+              getKeyValuePairs( rel, "CWM:TaggedValue", "tag", "value" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
           LogicalRelationship relation = new LogicalRelationship();
           String type = nvp.get( "RELATIONSHIP_TYPE" ); //$NON-NLS-1$
           RelationshipType reltype = RelationshipType.values()[RelationshipMeta.getType( type )];
@@ -1468,7 +1522,9 @@ public class XmiParser {
        * <CWM:Description body="N" name="hidden" type="Boolean" xmi.id="a989"> <CWM:Description.modelElement>
        * <CWMRDB:Column xmi.idref="a985"/> </CWM:Description.modelElement> </CWM:Description>
        */
-      Element modelElem = (Element) description.getElementsByTagName( "CWM:Description.modelElement" ).item( 0 ); //$NON-NLS-1$
+      Element
+          modelElem =
+          (Element) description.getElementsByTagName( "CWM:Description.modelElement" ).item( 0 ); //$NON-NLS-1$
       if ( modelElem == null ) {
         continue;
       }
@@ -1491,32 +1547,34 @@ public class XmiParser {
         String name = description.getAttribute( "name" ); //$NON-NLS-1$
         String body = description.getAttribute( "body" ); //$NON-NLS-1$
         if ( concept == null ) {
-          logger.error( Messages.getErrorString( "XmiParser.ERROR_0010_CANNOT_FIND_PARENT", type, parentRef ) ); //$NON-NLS-1$
+          logger.error(
+              Messages.getErrorString( "XmiParser.ERROR_0010_CANNOT_FIND_PARENT", type, parentRef ) ); //$NON-NLS-1$
         } else {
           // ADD PROPERTY
           String propType = description.getAttribute( "type" ); //$NON-NLS-1$
           if ( propType.equals( "LocString" ) ) { //$NON-NLS-1$
             addLocalizedString( description, concept, name, body );
           } else if ( propType.equals( "String" ) ) { //$NON-NLS-1$
-            if ( name.equals( LogicalModel.PROPERTY_OLAP_ROLES )) {
+            if ( name.equals( LogicalModel.PROPERTY_OLAP_ROLES ) ) {
               // De-serialize roles and set directly into the LogicalModel
-              List<OlapRole> roles = OlapUtil.fromXmlRoles(body);
+              List<OlapRole> roles = OlapUtil.fromXmlRoles( body );
               concept.setProperty( name, roles );
-            } else if ( name.equals( LogicalModel.PROPERTY_OLAP_CALCULATED_MEMBERS )) {
+            } else if ( name.equals( LogicalModel.PROPERTY_OLAP_CALCULATED_MEMBERS ) ) {
               // De-serialize calculated members by cube
-              Map<String, List<OlapCalculatedMember>> cubeMembers = OlapUtil.fromXmlCalculatedMembers(body);
+              Map<String, List<OlapCalculatedMember>> cubeMembers = OlapUtil.fromXmlCalculatedMembers( body );
               @SuppressWarnings( "unchecked" )
               List<OlapCube> cubes = (List<OlapCube>) concept.getProperty( LogicalModel.PROPERTY_OLAP_CUBES );
-              for (OlapCube cube : cubes) {
+              for ( OlapCube cube : cubes ) {
                 // Set the calculated members into the cube model objects
-                if (cubeMembers.containsKey( cube.getName() ))
+                if ( cubeMembers.containsKey( cube.getName() ) ) {
                   cube.setOlapCalculatedMembers( cubeMembers.get( cube.getName() ) );
+                }
               }
             } else {
               // <CWM:Description body="" name="mask" type="String" xmi.id="a90">
               if ( name.equals( "formula" ) ) { //$NON-NLS-1$
                 name = SqlPhysicalColumn.TARGET_COLUMN;
-              } 
+              }
               concept.setProperty( name, body );
             }
           } else if ( propType.equals( "Boolean" ) ) { //$NON-NLS-1$
@@ -1558,7 +1616,8 @@ public class XmiParser {
             securityObj.setGlobalConstraint( security.getGlobalConstraint() );
 
             Map<SecurityOwner, String> map = new HashMap<SecurityOwner, String>();
-            for ( org.pentaho.pms.schema.security.SecurityOwner owner : security.getRoleBasedConstraintMap().keySet() ) {
+            for ( org.pentaho.pms.schema.security.SecurityOwner owner : security.getRoleBasedConstraintMap()
+                .keySet() ) {
               SecurityOwner ownerObj =
                   new SecurityOwner( SecurityOwner.OwnerType.values()[owner.getOwnerType()], owner.getOwnerName() );
               map.put( ownerObj, security.getRoleBasedConstraintMap().get( owner ) );
@@ -1612,7 +1671,7 @@ public class XmiParser {
       }
     }
 
-    validateDomain(domain);
+    validateDomain( domain );
     return domain;
   }
 
@@ -1660,14 +1719,16 @@ public class XmiParser {
             if ( dimensionChildren.item( j ).getNodeType() == Node.ELEMENT_NODE ) {
               if ( dimensionChildren.item( j ).getNodeName().equals( "CWMOLAP:Dimension.hierarchy" ) ) { //$NON-NLS-1$
                 hierarchies = (Element) dimensionChildren.item( j );
-              } else if ( dimensionChildren.item( j ).getNodeName().equals( "CWMOLAP:Dimension.memberSelection" ) ) { //$NON-NLS-1$
+              } else if ( dimensionChildren.item( j ).getNodeName()
+                  .equals( "CWMOLAP:Dimension.memberSelection" ) ) { //$NON-NLS-1$
                 memberSelections = (Element) dimensionChildren.item( j );
               } else if ( dimensionChildren.item( j ).getNodeName().equals(
                   "CWMOLAP:Dimension.cubeDimensionAssociation" ) ) { //$NON-NLS-1$
                 // ignored, cubes and dimensions are mapped later through dimension usages.
               } else {
                 if ( logger.isDebugEnabled() ) {
-                  logger.debug( "Dimension object ignored: " + dimensionChildren.item( j ).getNodeName() ); //$NON-NLS-1$
+                  logger
+                      .debug( "Dimension object ignored: " + dimensionChildren.item( j ).getNodeName() ); //$NON-NLS-1$
                 }
               }
             }
@@ -1680,7 +1741,10 @@ public class XmiParser {
               Element hierarchy = (Element) hiers.item( j );
               OlapHierarchy hierarchyObj = new OlapHierarchy( dimensionObj );
               hierarchyObj.setName( hierarchy.getAttribute( "name" ) ); //$NON-NLS-1$
-              Map<String, String> nvp = getKeyValuePairs( hierarchy, "CWM:TaggedValue", "tag", "value" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+              Map<String, String>
+                  nvp =
+                  getKeyValuePairs( hierarchy, "CWM:TaggedValue", "tag",
+                      "value" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
               // tagged values
               hierarchyObj.setHavingAll( "Y".equals( nvp.get( "HIERARCHY_HAVING_ALL" ) ) ); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1742,8 +1806,12 @@ public class XmiParser {
               Element level = (Element) levels.item( j );
               String xmiid = level.getAttribute( "xmi.id" ); //$NON-NLS-1$
               OlapHierarchyLevel levelObj = levelMap.get( xmiid );
-              Map<String, String> nvp = getKeyValuePairs( level, "CWM:TaggedValue", "tag", "value" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-              levelObj.setHavingUniqueMembers( "Y".equals( nvp.get( "HIERARCHY_LEVEL_UNIQUE_MEMBERS" ) ) ); //$NON-NLS-1$ //$NON-NLS-2$
+              Map<String, String>
+                  nvp =
+                  getKeyValuePairs( level, "CWM:TaggedValue", "tag",
+                      "value" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+              levelObj.setHavingUniqueMembers(
+                  "Y".equals( nvp.get( "HIERARCHY_LEVEL_UNIQUE_MEMBERS" ) ) ); //$NON-NLS-1$ //$NON-NLS-2$
               levelObj.setLevelType( nvp.get( "HIERARCHY_LEVEL_TYPE" ) ); //$NON-NLS-1$
               String levelRefCol, tag;
 
@@ -1771,6 +1839,9 @@ public class XmiParser {
                 Element col = (Element) dimensionedObjs.item( k );
                 referenceCols.add( model.findLogicalColumn( col.getAttribute( "name" ) ) ); //$NON-NLS-1$
               }
+
+              levelObj.setHidden( nvp.get( OlapHierarchyLevel.HIERARCHY_LEVEL_HIDDEN ) != null
+                  ? Boolean.parseBoolean( nvp.get( OlapHierarchyLevel.HIERARCHY_LEVEL_HIDDEN ) ) : false );
 
               // CWM:TaggedValue tag="ANNOTATION_*
               for ( String taggedValueKey : nvp.keySet() ) {
@@ -1808,7 +1879,9 @@ public class XmiParser {
           Element cube = (Element) cubes.item( i );
           OlapCube cubeObj = new OlapCube();
           cubeObj.setName( cube.getAttribute( "name" ) ); //$NON-NLS-1$
-          Map<String, String> nvp = getKeyValuePairs( cube, "CWM:TaggedValue", "tag", "value" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+          Map<String, String>
+              nvp =
+              getKeyValuePairs( cube, "CWM:TaggedValue", "tag", "value" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
           cubeObj.setLogicalTable( model.findLogicalTable( nvp.get( "CUBE_BUSINESS_TABLE" ) ) ); //$NON-NLS-1$
 
           List<OlapMeasure> measureList = new ArrayList<OlapMeasure>();
@@ -1817,8 +1890,16 @@ public class XmiParser {
             Element measure = (Element) measures.item( j );
             OlapMeasure measureObj = new OlapMeasure();
             measureObj.setName( measure.getAttribute( "name" ) ); //$NON-NLS-1$
-            Map<String, String> nvp2 = getKeyValuePairs( measure, "CWM:TaggedValue", "tag", "value" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            measureObj.setLogicalColumn( model.findLogicalColumn( nvp2.get( "MEASURE_BUSINESS_COLUMN" ) ) ); //$NON-NLS-1$
+            Map<String, String>
+                nvp2 =
+                getKeyValuePairs( measure, "CWM:TaggedValue", "tag",
+                    "value" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            measureObj
+                .setLogicalColumn( model.findLogicalColumn( nvp2.get( "MEASURE_BUSINESS_COLUMN" ) ) ); //$NON-NLS-1$
+
+            measureObj.setHidden( nvp2.get( OlapMeasure.MEASURE_HIDDEN ) != null
+                ? Boolean.parseBoolean( nvp2.get( OlapMeasure.MEASURE_HIDDEN ) ) : false );
+
             measureList.add( measureObj );
           }
           cubeObj.setOlapMeasures( measureList );
@@ -1892,11 +1973,15 @@ public class XmiParser {
       }
     }
     if ( tagged != null ) {
-      String conceptParentName = getKeyValue( tagged, "CWM:TaggedValue", "tag", "value", "CONCEPT_PARENT_NAME" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+      String
+          conceptParentName =
+          getKeyValue( tagged, "CWM:TaggedValue", "tag", "value",
+              "CONCEPT_PARENT_NAME" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
       if ( conceptParentName != null ) {
         Concept parent = domain.findConcept( conceptParentName );
         if ( parent == null ) {
-          logger.error( Messages.getErrorString( "XmiParser.ERROR_0006_FAILED_TO_LOCATE_CONCEPT", conceptParentName ) ); //$NON-NLS-1$
+          logger.error( Messages
+              .getErrorString( "XmiParser.ERROR_0006_FAILED_TO_LOCATE_CONCEPT", conceptParentName ) ); //$NON-NLS-1$
         } else {
           concept.setParentConcept( parent );
         }
@@ -1930,7 +2015,9 @@ public class XmiParser {
        */
       LocaleInterface locale = new LocaleMeta();
       locale.setCode( parameter.getAttribute( "name" ) ); //$NON-NLS-1$
-      Map<String, String> kvp = getKeyValuePairs( parameter, "CWM:TaggedValue", "tag", "value" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      Map<String, String>
+          kvp =
+          getKeyValuePairs( parameter, "CWM:TaggedValue", "tag", "value" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
       // The description
       String description = kvp.get( "LOCALE_DESCRIPTION" ); //$NON-NLS-1$
@@ -2009,7 +2096,7 @@ public class XmiParser {
     validateConceptId( category, mapping, "XmiParser.ERROR_0012_INVALID_CATEGORY_ID" );
   }
 
-  private static <T extends Concept> Map<String, T> createIdToConceptMapping(List<T> concepts) {
+  private static <T extends Concept> Map<String, T> createIdToConceptMapping( List<T> concepts ) {
     Map<String, T> map = new HashMap<String, T>( concepts.size() );
     for ( T concept : concepts ) {
       map.put( concept.getId(), concept );
@@ -2019,7 +2106,7 @@ public class XmiParser {
 
   private static <T extends Concept> void validateConceptId( T concept, Map<String, T> siblings, String i18nKey ) {
     String id = concept.getId();
-    if (!Util.validateId( id )) {
+    if ( !Util.validateId( id ) ) {
       String newId = Util.toId( id );
 
       int n = 1;
@@ -2038,7 +2125,6 @@ public class XmiParser {
     }
   }
 
-
   private static Map<String, String> getKeyValuePairs( Element parent, String childName, String keyAttrib,
       String valAttrib ) {
     HashMap<String, String> map = new HashMap<String, String>();
@@ -2050,8 +2136,8 @@ public class XmiParser {
     return map;
   }
 
-  private static String
-    getKeyValue( Element parent, String childName, String keyAttrib, String valAttrib, String keyVal ) {
+  private static String getKeyValue( Element parent, String childName,
+      String keyAttrib, String valAttrib, String keyVal ) {
     if ( parent == null ) {
       return null;
     }

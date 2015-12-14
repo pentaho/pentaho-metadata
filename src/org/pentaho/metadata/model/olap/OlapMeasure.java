@@ -23,6 +23,9 @@ import org.pentaho.metadata.model.LogicalColumn;
 public class OlapMeasure implements Cloneable, Serializable {
   private String name;
   private LogicalColumn logicalColumn;
+  private boolean hidden;
+
+  public static final String MEASURE_HIDDEN = "MEASURE_HIDDEN";
 
   public OlapMeasure() {
   }
@@ -72,4 +75,11 @@ public class OlapMeasure implements Cloneable, Serializable {
     this.name = name;
   }
 
+  public boolean isHidden() {
+    return hidden;
+  }
+
+  public void setHidden( boolean hidden ) {
+    this.hidden = hidden;
+  }
 }
