@@ -38,6 +38,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 public class OlapUtilIT {
   private static final String OLAP_SAMPLE_CALC_MEMBER_NAME = "Variance Percent";
@@ -75,7 +76,8 @@ public class OlapUtilIT {
         CALC_MEMBER_DIMENSION_1,
         CALC_MEMBER_FORMULA_1,
         CALC_MEMBER_FORMAT_STRING_1,
-        false
+        false,
+        true
     );
 
     olapCalculatedMember2 = new OlapCalculatedMember(
@@ -83,7 +85,8 @@ public class OlapUtilIT {
         CALC_MEMBER_DIMENSION_2,
         CALC_MEMBER_FORMULA_2,
         CALC_MEMBER_FORMAT_STRING_2,
-        true
+        true,
+        false
     );
 
     olapCalculatedMemberList.add( olapCalculatedMember1 );
@@ -128,6 +131,8 @@ public class OlapUtilIT {
     assertTrue( olapCalculatedMembers.size() == 1 );
     assertTrue(
         olapCalculatedMembers.get( "Quadrant Analysis" ).get( 0 ).getName().equals( OLAP_SAMPLE_CALC_MEMBER_NAME ) );
+    assertFalse( olapCalculatedMembers.get( "Quadrant Analysis" ).get( 0 ).isHidden() );
+    assertTrue( olapCalculatedMembers.get( "Quadrant Analysis" ).get( 1 ).isHidden() );
   }
 
   @Test
@@ -163,12 +168,14 @@ public class OlapUtilIT {
   public void testCalculatedMemberToXml() throws Exception {
     SQLDialectHelper.assertEqualsIgnoreWhitespaces(
         "<calculatedMember><name>calcMemberOne</name><dimension>dimension1</dimension><formula>formula1"
-            + "</formula><formatString>formatString1</formatString><calculateSubtotals>N</calculateSubtotals>\n"
+            + "</formula><formatString>formatString1</formatString><calculateSubtotals>N</calculateSubtotals>"
+            + "<hidden>Y</hidden>\n"
             + "</calculatedMember>",
         OlapUtil.calculatedMemberToXml( olapCalculatedMember1 ) );
     SQLDialectHelper.assertEqualsIgnoreWhitespaces(
         "<calculatedMember><name>calcMemberTwo</name><dimension>dimension2</dimension><formula>formula2</formula"
-            + "><formatString>formatString2</formatString><calculateSubtotals>Y</calculateSubtotals>\n"
+            + "><formatString>formatString2</formatString><calculateSubtotals>Y</calculateSubtotals>"
+            + "<hidden>N</hidden>\n"
             + "</calculatedMember>",
         OlapUtil.calculatedMemberToXml( olapCalculatedMember2 ) );
   }

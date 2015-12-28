@@ -25,6 +25,7 @@ public class OlapCalculatedMember implements Cloneable, Serializable {
   private String formula;
   private String formatString;
   private boolean calculateSubtotals;
+  private boolean hidden;
 
   public OlapCalculatedMember() {
   }
@@ -37,6 +38,12 @@ public class OlapCalculatedMember implements Cloneable, Serializable {
     this.formula = formula;
     this.formatString = formatString;
     this.calculateSubtotals = calculateSubtotals;
+  }
+
+  public OlapCalculatedMember(
+      String name, String dimension, String formula, String formatString, boolean calculateSubtotals, boolean hidden ) {
+    this( name, dimension, formula, formatString, calculateSubtotals ); // Backwards Compatibility
+    this.hidden = hidden;
   }
 
   public String getName() {
@@ -79,7 +86,15 @@ public class OlapCalculatedMember implements Cloneable, Serializable {
     this.calculateSubtotals = calculateSubtotals;
   }
 
+  public boolean isHidden() {
+    return hidden;
+  }
+
+  public void setHidden( boolean hidden ) {
+    this.hidden = hidden;
+  }
+
   protected Object clone() {
-    return new OlapCalculatedMember( name, dimension, formula, formatString, calculateSubtotals );
+    return new OlapCalculatedMember( name, dimension, formula, formatString, calculateSubtotals, hidden );
   }
 }

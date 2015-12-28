@@ -450,6 +450,13 @@ public class MondrianModelExporter {
             XMLHandler.appendReplacedChars( xml, formatString );
             xml.append( "\"" ); //$NON-NLS-1$
 
+            // include only when hidden
+            if ( member.isHidden() ) {
+              xml.append( " visible=\"" ); //$NON-NLS-1$
+              XMLHandler.appendReplacedChars( xml, !member.isHidden() + "" );
+              xml.append( "\"" ); //$NON-NLS-1$
+            }
+
             xml.append( ">" ).append( Util.CR ); //$NON-NLS-1$
 
             xml.append( "<Formula><![CDATA[" ).append( member.getFormula() );

@@ -81,7 +81,8 @@ public class OlapUtil {
                 XMLHandler.getTagValue( memberNode, "dimension" ),
                 XMLHandler.getTagValue( memberNode, "formula" ),
                 XMLHandler.getTagValue( memberNode, "formatString" ),
-                "Y".equalsIgnoreCase( XMLHandler.getTagValue( memberNode, "calculateSubtotals" ) )
+                "Y".equalsIgnoreCase( XMLHandler.getTagValue( memberNode, "calculateSubtotals" ) ),
+                "Y".equalsIgnoreCase( XMLHandler.getTagValue( memberNode, "hidden" ) )
             )
         );
       }
@@ -154,7 +155,8 @@ public class OlapUtil {
     xml.append( XMLHandler.addTagValue( "dimension", member.getDimension(), false ) ); //$NON-NLS-1$
     xml.append( XMLHandler.addTagValue( "formula", member.getFormula(), false ) ); //$NON-NLS-1$
     xml.append( XMLHandler.addTagValue( "formatString", member.getFormatString(), false ) ); //$NON-NLS-1$
-    xml.append( XMLHandler.addTagValue( "calculateSubtotals", member.isCalculateSubtotals() ) );
+    xml.append( XMLHandler.addTagValue( "calculateSubtotals", member.isCalculateSubtotals(), false ) );
+    xml.append( XMLHandler.addTagValue( "hidden", member.isHidden() ) ); //$NON-NLS-1$
     xml.append( "</calculatedMember>" ); //$NON-NLS-1$
 
     return xml.toString();
