@@ -16,6 +16,13 @@
                 <formula>([Measures].[Variance]/[Measures].[Budget])*100</formula>
                 <formatString>#,###%</formatString>
             </CalculatedMember>
+            <CalculatedMember>
+                <name>Hidden Variance Percent</name>
+                <dimension>Measures</dimension>
+                <formula>([Measures].[Variance]/[Measures].[Budget])*100</formula>
+                <formatString>#,###%</formatString>
+                <hidden>Y</hidden>
+            </CalculatedMember>
         </calculatedMembers>
     </Cube>
 </cubes>

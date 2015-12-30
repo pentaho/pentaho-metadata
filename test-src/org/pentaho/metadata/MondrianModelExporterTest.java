@@ -271,7 +271,7 @@ public class MondrianModelExporterTest {
 
   @Test
   public void testModelsWithHiddenMembers() throws Exception {
-    LogicalModel businessModel = getTestModel( TargetTableType.TABLE, "tableName", "schemaName", true );
+    LogicalModel businessModel = getTestModelWithCalcMembers( TargetTableType.TABLE, "tableName", "schemaName", true );
     MondrianModelExporter exporter = new MondrianModelExporter( businessModel, "en_US" );
     String data = exporter.createMondrianModelXML();
 
@@ -284,6 +284,10 @@ public class MondrianModelExporterTest {
         + "    <Table name=\"tableName\" schema=\"schemaName\" />\n"
         + "    <DimensionUsage name=\"Dim1\" source=\"Dim1\" foreignKey=\"pc2\"/>\n"
         + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" formatString=\"Standard\" visible=\"false\"/>\n"
+        + "    <CalculatedMember name=\"hcm\" dimension=\"Dim1\" formatString=\"Standard\" visible=\"false\"> "
+        + "      <Formula><![CDATA[[Measures].[Meas1]*2]]></Formula> "
+        + "      <CalculatedMemberProperty name=\"SOLVE_ORDER\" value=\"200\"/> "
+        + "    </CalculatedMember>"
         + "  </Cube>\n"
         + "</Schema>", data );
   }
@@ -353,6 +357,26 @@ public class MondrianModelExporterTest {
     businessModel.setProperty( "olap_cubes", cubes );
 
     businessModel.setName( new LocalizedString( "en_US", "model" ) );
+    return businessModel;
+  }
+
+  private LogicalModel getTestModelWithCalcMembers( TargetTableType tableType, String targetTable, String targetSchema,
+      boolean hiddenMembers ) {
+
+    LogicalModel businessModel = getTestModel( tableType, targetTable, targetSchema, hiddenMembers );
+
+    List<OlapCube> cubes = (List<OlapCube>) businessModel.getProperty( "olap_cubes" );
+    OlapCube cube = cubes.get( 0 );
+
+    // Add calculated member
+    OlapCalculatedMember hiddenCalculatedMember = new OlapCalculatedMember(
+        "hcm", "Dim1", "[Measures].[Meas1] * 2", null, true
+    );
+    hiddenCalculatedMember.setHidden( hiddenMembers );
+    List<OlapCalculatedMember> calculatedMembers = new ArrayList<>();
+    calculatedMembers.add( hiddenCalculatedMember );
+    cube.setOlapCalculatedMembers( calculatedMembers );
+
     return businessModel;
   }
 
