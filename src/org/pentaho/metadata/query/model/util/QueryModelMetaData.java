@@ -35,6 +35,17 @@ public class QueryModelMetaData extends MemoryMetaData {
 
   private List<? extends Selection> columns;
 
+  public QueryModelMetaData( Object[][] columnHeaders, Object[][] rowHeaders, String columnNameFormatStr,
+      String[] columnTypes, String[] columnNames, String[] rowHeaderNames, List<? extends Selection> columns ) {
+    super( columnHeaders, rowHeaders, columnNameFormatStr, columnTypes, columnNames, rowHeaderNames );
+    this.columns = columns;
+  }
+
+  public QueryModelMetaData( QueryModelMetaData metadata ) {
+    super( metadata );
+    this.columns = metadata.getColumns();
+  }
+
   /**
    * 
    * In some database implementations, the "as" identifier has a finite length; for instance, Oracle cannot handle a
@@ -92,7 +103,7 @@ public class QueryModelMetaData extends MemoryMetaData {
       this.columnHeaders = newHeaders;
     }
   }
-  
+
   private Map<String, String> upperCaseKeys( Map<?, ?> source ) {
     Map<String, String> result = new HashMap<String, String>( source.size() );
     for ( Entry<?, ?> entry : source.entrySet() ) {
@@ -120,11 +131,15 @@ public class QueryModelMetaData extends MemoryMetaData {
 
   public Object getAttribute( int rowNo, int columnNo, String attributeName ) {
     // TODO support OLAP
-
     if ( rowNo == 0 && columnNo < columns.size() ) {
       LogicalColumn column = columns.get( columnNo ).getLogicalColumn();
       return column.getProperty( attributeName );
     }
     return null;
   }
+
+  public List<? extends Selection> getColumns() {
+    return columns;
+  }
+
 }
