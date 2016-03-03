@@ -19,6 +19,15 @@ package org.pentaho.metadata.model.concept.types;
 /**
  * The data type of a physical or logical column.
  * 
+ * <li> {@link #UNKNOWN}
+ * <li> {@link #STRING}
+ * <li> {@link #DATE}
+ * <li> {@link #BOOLEAN}
+ * <li> {@link #NUMERIC}
+ * <li> {@link #BINARY}
+ * <li> {@link #IMAGE}
+ * <li> {@link #URL}
+ * 
  * @author Will Gorman (wgorman@pentaho.com)
  * 
  */
