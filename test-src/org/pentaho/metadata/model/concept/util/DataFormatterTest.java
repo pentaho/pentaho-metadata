@@ -35,7 +35,7 @@ public class DataFormatterTest {
 
   private static final String SAMPLE_STRING = "sampleString";
 
-  private static final String SAMPLE_DATE_MASK = "yyyy-MM-dd";
+  private static final String SAMPLE_DATE_MASK = "yyyy-MM-dd HH:mm:ss.SSS";
 
   private static final String SAMPLE_DATE_ERROR = "2000 year 01 month 01 ";
 
@@ -67,9 +67,11 @@ public class DataFormatterTest {
   public void setUp() {
     RootLogger.getRootLogger().setLevel( Level.OFF );
     SimpleDateFormat format = new SimpleDateFormat( SAMPLE_DATE_MASK );
-    sampleJavaDate = new Date( 0 );
-    sampleSqlDate = new java.sql.Date( 0 );
-    sampleSqlTimeStamp = new Timestamp( 0 );
+    //add custom seconds
+    int seconds = 123456;
+    sampleJavaDate = new Date( seconds );
+    sampleSqlDate = new java.sql.Date( seconds );
+    sampleSqlTimeStamp = new Timestamp( seconds );
     sampleStringDate = format.format( sampleJavaDate );
     expectedDate = format.format( sampleJavaDate );
   }
