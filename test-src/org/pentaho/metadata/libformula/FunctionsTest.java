@@ -1,3 +1,19 @@
+/*
+ * This program is free software; you can redistribute it and/or modify it under the
+ * terms of the GNU Lesser General Public License, version 2.1 as published by the Free Software
+ * Foundation.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along with this
+ * program; if not, you can obtain a copy at http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
+ * or from the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * Copyright (c) 2016 Pentaho Corporation..  All rights reserved.
+ */
 package org.pentaho.metadata.libformula;
 
 import org.junit.Test;
@@ -24,8 +40,7 @@ public class FunctionsTest {
     try {
       TypeValuePair tvp = bwf.evaluate( new DefaultFormulaContext(), parameters );
       assertTrue( tvp.getValue().equals( Boolean.TRUE ) );
-    }
-    catch( Exception ex ) {
+    } catch ( Exception ex ) {
       ex.printStackTrace();
       fail();
     }
@@ -34,15 +49,14 @@ public class FunctionsTest {
   @Test
   public void testBegingsWithNegative() {
     BeginsWithFunction bwf = new BeginsWithFunction();
-    StaticValue[] params = new StaticValue[ 2 ];
+    StaticValue[] params = new StaticValue[2];
     params[0] = new StaticValue( "my favorite string", TextType.TYPE );
     params[1] = new StaticValue( "string", TextType.TYPE );
     ParameterCallback parameters = new TestParameterCallback( params );
     try {
       TypeValuePair tvp = bwf.evaluate( new DefaultFormulaContext(), parameters );
       assertTrue( tvp.getValue().equals( Boolean.FALSE ) );
-    }
-    catch( Exception ex ) {
+    } catch ( Exception ex ) {
       fail();
     }
   }
@@ -57,8 +71,7 @@ public class FunctionsTest {
     try {
       TypeValuePair tvp = bwf.evaluate( new DefaultFormulaContext(), parameters );
       assertTrue( tvp.getValue().equals( Boolean.TRUE ) );
-    }
-    catch( Exception ex ) {
+    } catch ( Exception ex ) {
       ex.printStackTrace();
       fail();
     }
@@ -67,15 +80,14 @@ public class FunctionsTest {
   @Test
   public void testContainsNegative() {
     ContainsFunction bwf = new ContainsFunction();
-    StaticValue[] params = new StaticValue[ 2 ];
+    StaticValue[] params = new StaticValue[2];
     params[0] = new StaticValue( "my favorite string", TextType.TYPE );
     params[1] = new StaticValue( "string1", TextType.TYPE );
     ParameterCallback parameters = new TestParameterCallback( params );
     try {
       TypeValuePair tvp = bwf.evaluate( new DefaultFormulaContext(), parameters );
       assertTrue( tvp.getValue().equals( Boolean.FALSE ) );
-    }
-    catch( Exception ex ) {
+    } catch ( Exception ex ) {
       fail();
     }
   }
@@ -90,8 +102,7 @@ public class FunctionsTest {
     try {
       TypeValuePair tvp = bwf.evaluate( new DefaultFormulaContext(), parameters );
       assertTrue( tvp.getValue().equals( Boolean.TRUE ) );
-    }
-    catch( Exception ex ) {
+    } catch ( Exception ex ) {
       ex.printStackTrace();
       fail();
     }
@@ -100,15 +111,14 @@ public class FunctionsTest {
   @Test
   public void testEndsWithNegative() {
     EndsWithFunction bwf = new EndsWithFunction();
-    StaticValue[] params = new StaticValue[ 2 ];
+    StaticValue[] params = new StaticValue[2];
     params[0] = new StaticValue( "my favorite string", TextType.TYPE );
     params[1] = new StaticValue( "my", TextType.TYPE );
     ParameterCallback parameters = new TestParameterCallback( params );
     try {
       TypeValuePair tvp = bwf.evaluate( new DefaultFormulaContext(), parameters );
       assertTrue( tvp.getValue().equals( Boolean.FALSE ) );
-    }
-    catch( Exception ex ) {
+    } catch ( Exception ex ) {
       fail();
     }
   }
@@ -123,8 +133,7 @@ public class FunctionsTest {
     try {
       TypeValuePair tvp = bwf.evaluate( new DefaultFormulaContext(), parameters );
       assertTrue( tvp.getValue().equals( Boolean.TRUE ) );
-    }
-    catch( Exception ex ) {
+    } catch ( Exception ex ) {
       ex.printStackTrace();
       fail();
     }
@@ -133,15 +142,14 @@ public class FunctionsTest {
   @Test
   public void testEqualsNegative() {
     EqualsFunction bwf = new EqualsFunction();
-    StaticValue[] params = new StaticValue[ 2 ];
+    StaticValue[] params = new StaticValue[2];
     params[0] = new StaticValue( "my favorite string", TextType.TYPE );
     params[1] = new StaticValue( "my", TextType.TYPE );
     ParameterCallback parameters = new TestParameterCallback( params );
     try {
       TypeValuePair tvp = bwf.evaluate( new DefaultFormulaContext(), parameters );
       assertTrue( tvp.getValue().equals( Boolean.FALSE ) );
-    }
-    catch( Exception ex ) {
+    } catch ( Exception ex ) {
       fail();
     }
   }
@@ -159,8 +167,7 @@ public class FunctionsTest {
     try {
       TypeValuePair tvp = bwf.evaluate( new DefaultFormulaContext(), parameters );
       assertTrue( tvp.getValue().equals( Boolean.TRUE ) );
-    }
-    catch( Exception ex ) {
+    } catch ( Exception ex ) {
       ex.printStackTrace();
       fail();
     }
@@ -178,8 +185,7 @@ public class FunctionsTest {
     try {
       TypeValuePair tvp = bwf.evaluate( new DefaultFormulaContext(), parameters );
       assertTrue( tvp.getValue().equals( Boolean.FALSE ) );
-    }
-    catch( Exception ex ) {
+    } catch ( Exception ex ) {
       ex.printStackTrace();
       fail();
     }
@@ -195,11 +201,10 @@ public class FunctionsTest {
     try {
       TypeValuePair tvp = bwf.evaluate( new DefaultFormulaContext(), parameters );
       assertTrue( tvp.getValue().equals( Boolean.TRUE ) );
-      params[1] = new StaticValue( "*ing", TextType.TYPE );      
+      params[1] = new StaticValue( "*ing", TextType.TYPE );
       tvp = bwf.evaluate( new DefaultFormulaContext(), parameters );
       assertTrue( tvp.getValue().equals( Boolean.TRUE ) );
-    }
-    catch( Exception ex ) {
+    } catch ( Exception ex ) {
       ex.printStackTrace();
       fail();
     }
@@ -218,8 +223,7 @@ public class FunctionsTest {
       params[1] = new StaticValue( "ltrin", TextType.TYPE );
       tvp = bwf.evaluate( new DefaultFormulaContext(), parameters );
       assertTrue( tvp.getValue().equals( Boolean.FALSE ) );
-    }
-    catch( Exception ex ) {
+    } catch ( Exception ex ) {
       ex.printStackTrace();
       fail();
     }
@@ -228,7 +232,7 @@ public class FunctionsTest {
   class TestParameterCallback implements ParameterCallback {
     private StaticValue[] values = new StaticValue[0];
 
-    public TestParameterCallback ( StaticValue[] vals ) {
+    public TestParameterCallback( StaticValue[] vals ) {
       values = vals;
     }
 
@@ -236,12 +240,12 @@ public class FunctionsTest {
     public Object getValue( int position ) throws EvaluationException {
       return values[position].getValue();
     }
-    
+
     @Override
     public Type getType( int position ) throws EvaluationException {
       return values[position].getValueType();
     }
-    
+
     @Override
     public LValue getRaw( int position ) {
       return values[position];
@@ -250,6 +254,6 @@ public class FunctionsTest {
     @Override
     public int getParameterCount() {
       return values.length;
-    } 
+    }
   }
 }
