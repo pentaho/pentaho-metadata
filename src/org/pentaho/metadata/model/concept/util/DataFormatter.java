@@ -56,6 +56,9 @@ public class DataFormatter {
           return decimalFormat.format( data  );
         case DATE:
           SimpleDateFormat simpleDateFormat = new SimpleDateFormat( mask );
+          if ( data instanceof Date ) {
+            return simpleDateFormat.format( data );
+          }
           Date dateFromstring = DateDetector.getDateFromString( String.valueOf( data  ) );
           return simpleDateFormat.format( dateFromstring );
         case STRING:
