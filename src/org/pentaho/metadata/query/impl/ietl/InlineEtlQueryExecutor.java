@@ -12,8 +12,9 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2009-2016 Pentaho Corporation..  All rights reserved.
  */
+
 package org.pentaho.metadata.query.impl.ietl;
 
 import java.util.ArrayList;
@@ -286,7 +287,7 @@ public class InlineEtlQueryExecutor extends BaseMetadataQueryExec {
 
     TreeSet<String> repeatedSelections = new TreeSet<String>();
     List<Selection> allSelections = getAllSelections( query, queryConstraints );
-    Map<Selection, String> selectionFieldNames = new HashMap<Selection, String>();
+    Map<Selection, String> selectionFieldNames = new HashMap<>();
 
     // calculate number of group bys, also build up a list
     // of unique field names.
@@ -305,13 +306,12 @@ public class InlineEtlQueryExecutor extends BaseMetadataQueryExec {
     }
 
     String fileAddress = getTransformLocation() + "inlinecsv.ktr"; //$NON-NLS-1$
-    if ( groupBys > 0 && query.getConstraints().size() == 0) {
+    if ( groupBys > 0 && query.getConstraints().size() == 0 ) {
       fileAddress = getTransformLocation() + "inlinecsv_groupby.ktr"; //$NON-NLS-1$
     }
-    if ( groupBys > 0 && query.getConstraints().size() > 0) {
+    if ( groupBys > 0 && query.getConstraints().size() > 0 ) {
       fileAddress = getTransformLocation() + "inlinecsv_groupby_and_constraints.ktr"; //$NON-NLS-1$
     }
-    
     TransMeta transMeta = new TransMeta( fileAddress, null, true );
     transMeta.setFilename( fileAddress );
 
@@ -324,34 +324,40 @@ public class InlineEtlQueryExecutor extends BaseMetadataQueryExec {
     StepMeta selections = getStepMeta( transMeta, "Select values" ); //$NON-NLS-1$
     SelectValuesMeta selectVals = (SelectValuesMeta) selections.getStepMetaInterface();
     selectVals.allocate( allSelections.size(), 0, 0 );
+    final String[] selectNames = new String[ allSelections.size() ];
+    final String[] selectRenames = new String[ allSelections.size() ];
     for ( int i = 0; i < allSelections.size(); i++ ) {
       Selection selection = allSelections.get( i );
       String fieldName = ( (InlineEtlPhysicalColumn) selection.getLogicalColumn().getPhysicalColumn() ).getFieldName();
       String renameFieldName = selectionFieldNames.get( selection );
-      selectVals.getSelectName()[i] = fieldName;
 
+      selectNames[ i ] = fieldName;
       // add a rename property if this field is used for multiple
       // selections
       if ( !fieldName.equals( renameFieldName ) ) {
-        selectVals.getSelectRename()[i] = renameFieldName;
+        selectRenames[ i ] = renameFieldName;
       }
 
       if ( logger.isDebugEnabled() ) {
         logger.debug( "SELECT " + fieldName + " RENAME TO " + renameFieldName ); //$NON-NLS-1$//$NON-NLS-2$
       }
     }
+    selectVals.setSelectName( selectNames );
+    selectVals.setSelectRename( selectRenames );
 
     StepMeta finalSelections = getStepMeta( transMeta, "Select values 2" ); //$NON-NLS-1$
-    Map<String, String> fieldNameMap = new HashMap<String, String>();
+    Map<String, String> fieldNameMap = new HashMap<>();
 
     SelectValuesMeta finalSelectVals = (SelectValuesMeta) finalSelections.getStepMetaInterface();
     finalSelectVals.allocate( query.getSelections().size(), 0, 0 );
+    final String[] finalSelectValsNames = new String[ query.getSelections().size() ];
     for ( int i = 0; i < query.getSelections().size(); i++ ) {
       Selection selection = query.getSelections().get( i );
       String fieldName = selectionFieldNames.get( selection );
       fieldNameMap.put( fieldName.toUpperCase(), selection.getLogicalColumn().getId() );
-      finalSelectVals.getSelectName()[i] = fieldName;
+      finalSelectValsNames[ i ] = fieldName;
     }
+    finalSelectVals.setSelectName( finalSelectValsNames );
 
     //
     // CONSTRAINTS
@@ -449,9 +455,8 @@ public class InlineEtlQueryExecutor extends BaseMetadataQueryExec {
         }
       }
 
-    } else {
-      // we could remove the formula and filter steps for performance.
     }
+    // we could remove the formula and filter steps for performance.
 
     //
     // SORT
