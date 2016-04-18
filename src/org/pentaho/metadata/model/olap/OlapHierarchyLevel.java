@@ -41,6 +41,7 @@ public class OlapHierarchyLevel implements Cloneable, Serializable {
   private String formatter;
 
   public static final String HIERARCHY_LEVEL_HIDDEN = "HIERARCHY_LEVEL_HIDDEN";
+  public static final String HIERARCHY_LEVEL_FORMATTER = "HIERARCHY_LEVEL_FORMATTER";
 
   public OlapHierarchyLevel() {
 

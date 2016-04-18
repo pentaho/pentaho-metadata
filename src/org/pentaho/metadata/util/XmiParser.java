@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.metadata.util;
 
@@ -768,6 +768,12 @@ public class XmiParser {
                       lvlModelElement.appendChild(
                           createTaggedValue( doc, OlapHierarchyLevel.HIERARCHY_LEVEL_HIDDEN, level.isHidden() + "",
                               idGen.getNextId() ) );
+                    }
+
+                    if ( !StringUtils.isBlank( level.getFormatter() ) ) {
+                      lvlModelElement.appendChild(
+                        createTaggedValue( doc, OlapHierarchyLevel.HIERARCHY_LEVEL_FORMATTER, level.getFormatter(),
+                          idGen.getNextId() ) );
                     }
 
                     // add annotations as tagged values
@@ -1842,6 +1848,8 @@ public class XmiParser {
 
               levelObj.setHidden( nvp.get( OlapHierarchyLevel.HIERARCHY_LEVEL_HIDDEN ) != null
                   ? Boolean.parseBoolean( nvp.get( OlapHierarchyLevel.HIERARCHY_LEVEL_HIDDEN ) ) : false );
+
+              levelObj.setFormatter( nvp.get( OlapHierarchyLevel.HIERARCHY_LEVEL_FORMATTER ) );
 
               // CWM:TaggedValue tag="ANNOTATION_*
               for ( String taggedValueKey : nvp.keySet() ) {

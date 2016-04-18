@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation.  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation.  All rights reserved.
  */
 package org.pentaho.metadata;
 
@@ -570,5 +570,26 @@ public class XmiParserIT {
 
     assertEquals( xml1, xml2 );
 
+  }
+
+  @Test
+  public void testWriteAndParseLevelFormatter() throws Exception {
+    Domain domain = parser.parseXmi( new FileInputStream( "test-res/example_olap.xmi" ) );
+    LogicalModel analysisModel = domain.getLogicalModels().get( 0 );
+    @SuppressWarnings( "unchecked" )
+    List<OlapDimension> dims = (List<OlapDimension>) analysisModel.getProperty( LogicalModel.PROPERTY_OLAP_DIMS );
+
+    OlapHierarchyLevel firstLevel = dims.get( 0 ).getHierarchies().get( 0 ).getHierarchyLevels().get( 0 );
+    firstLevel.setFormatter( "InlineMemberFormatter" );
+
+    String xmi = parser.generateXmi( domain );
+    assertTrue( xmi.contains( "<CWM:TaggedValue tag=\"HIERARCHY_LEVEL_FORMATTER\" value=\"InlineMemberFormatter\"" ) );
+
+    domain = parser.parseXmi( new ByteArrayInputStream( xmi.getBytes() ) );
+    analysisModel = domain.getLogicalModels().get( 0 );
+    @SuppressWarnings( "unchecked" )
+    List<OlapDimension> parsedDims = (List<OlapDimension>) analysisModel.getProperty( LogicalModel.PROPERTY_OLAP_DIMS );
+    firstLevel = parsedDims.get( 0 ).getHierarchies().get( 0 ).getHierarchyLevels().get( 0 );
+    assertEquals( "InlineMemberFormatter", firstLevel.getFormatter() );
   }
 }
