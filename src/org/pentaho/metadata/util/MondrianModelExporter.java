@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.metadata.util;
 
@@ -211,6 +211,12 @@ public class MondrianModelExporter {
               xml.append( " visible=\"" ); //$NON-NLS-1$
               XMLHandler.appendReplacedChars( xml, !olapHierarchyLevel.isHidden() + "" );
               xml.append( "\"" ); //$NON-NLS-1$
+            }
+
+            if ( !StringUtils.isBlank( olapHierarchyLevel.getFormatter() ) ) {
+              xml.append( " formatter=\"" );
+              XMLHandler.appendReplacedChars( xml, olapHierarchyLevel.getFormatter() );
+              xml.append( "\"" );
             }
 
             xml.append( ">" ); //$NON-NLS-1$
