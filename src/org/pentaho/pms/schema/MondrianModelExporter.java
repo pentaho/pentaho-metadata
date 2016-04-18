@@ -46,7 +46,7 @@ public class MondrianModelExporter {
   }
 
   public String createMondrianModelXML() throws Exception {
-    StringBuffer xml = new StringBuffer( 10000 );
+    StringBuilder xml = new StringBuilder( 10000 );
 
     xml.append( "<Schema " ); //$NON-NLS-1$
     xml.append( "name=\"" ); //$NON-NLS-1$
