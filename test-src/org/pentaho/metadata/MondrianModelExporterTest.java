@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2016 Pentaho Corporation..  All rights reserved.
  */
 
 package org.pentaho.metadata;
@@ -108,6 +108,7 @@ public class MondrianModelExporterTest {
     List<OlapHierarchyLevel> hierarchyLevels = new ArrayList<OlapHierarchyLevel>();
     OlapHierarchyLevel level = new OlapHierarchyLevel();
     level.setName( "Lvl1" );
+    level.setFormatter( "com.pentaho.formatter" );
 
     level.getAnnotations().add( new OlapAnnotation( "GeoRole", "city" ) );
     level.getAnnotations().add( new OlapAnnotation( "RequiredParents", "country,state" ) );
@@ -161,17 +162,31 @@ public class MondrianModelExporterTest {
     MondrianModelExporter exporter = new MondrianModelExporter( businessModel, "en_US" );
     String data = exporter.createMondrianModelXML();
 
-    TestHelper.assertEqualsIgnoreWhitespaces( "<Schema name=\"model\">\n" + "  <Dimension name=\"Dim1\">\n"
-        + "    <Hierarchy name=\"Hier1\" hasAll=\"false\">\n" + "    <View alias=\"FACT\">\n"
-        + "        <SQL dialect=\"generic\">\n" + "         <![CDATA[select * from customer]]>\n" + "        </SQL>\n"
-        + "    </View>\n" + "      <Level name=\"Lvl1\" uniqueMembers=\"false\" column=\"pc1\" type=\"Numeric\">\n"
-        + "        <Annotations>\n" + "          <Annotation name=\"GeoRole\">city</Annotation>\n"
-        + "          <Annotation name=\"RequiredParents\">country,state</Annotation>\n" + "        </Annotations>\n"
-        + "      </Level>\n" + "    </Hierarchy>\n" + "  </Dimension>\n" + "  <Cube name=\"Cube1\">\n"
-        + "    <View alias=\"FACT\">\n" + "        <SQL dialect=\"generic\">\n"
-        + "         <![CDATA[select * from customer]]>\n" + "        </SQL>\n" + "    </View>\n"
+    TestHelper.assertEqualsIgnoreWhitespaces(
+      "<Schema name=\"model\">\n"
+        + "  <Dimension name=\"Dim1\">\n"
+        + "    <Hierarchy name=\"Hier1\" hasAll=\"false\">\n"
+        + "    <View alias=\"FACT\">\n"
+        + "        <SQL dialect=\"generic\">\n"
+        + "         <![CDATA[select * from customer]]>\n"
+        + "        </SQL>\n"
+        + "    </View>\n"
+        + "      <Level name=\"Lvl1\" uniqueMembers=\"false\" column=\"pc1\" type=\"Numeric\" formatter=\"com.pentaho.formatter\">\n"
+        + "        <Annotations>\n"
+        + "          <Annotation name=\"GeoRole\">city</Annotation>\n"
+        + "          <Annotation name=\"RequiredParents\">country,state</Annotation>\n"
+        + "        </Annotations>\n"
+        + "      </Level>\n"
+        + "    </Hierarchy>\n"
+        + "  </Dimension>\n"
+        + "  <Cube name=\"Cube1\">\n"
+        + "    <View alias=\"FACT\">\n"
+        + "        <SQL dialect=\"generic\">\n"
+        + "         <![CDATA[select * from customer]]>\n"
+        + "        </SQL>\n" + "    </View>\n"
         + "    <DimensionUsage name=\"Dim1\" source=\"Dim1\" foreignKey=\"pc2\"/>\n"
-        + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" formatString=\"Standard\"/>\n" + "  </Cube>\n"
+        + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" formatString=\"Standard\"/>\n"
+        + "  </Cube>\n"
         + "</Schema>", data );
   }
 

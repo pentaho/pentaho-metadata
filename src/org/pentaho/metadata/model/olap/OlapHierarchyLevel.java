@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.metadata.model.olap;
 
@@ -38,6 +38,7 @@ public class OlapHierarchyLevel implements Cloneable, Serializable {
   private OlapHierarchy olapHierarchy;
 
   private boolean hidden;
+  private String formatter;
 
   public static final String HIERARCHY_LEVEL_HIDDEN = "HIERARCHY_LEVEL_HIDDEN";
 
@@ -254,5 +255,13 @@ public class OlapHierarchyLevel implements Cloneable, Serializable {
 
   public void setHidden( boolean hidden ) {
     this.hidden = hidden;
+  }
+
+  public void setFormatter( final String formatter ) {
+    this.formatter = formatter;
+  }
+
+  public String getFormatter() {
+    return formatter;
   }
 }
