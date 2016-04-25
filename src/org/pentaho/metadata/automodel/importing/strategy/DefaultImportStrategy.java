@@ -21,14 +21,14 @@ import org.pentaho.di.core.row.ValueMetaInterface;
 import org.pentaho.metadata.automodel.PhysicalTableImporter;
 
 public class DefaultImportStrategy implements PhysicalTableImporter.ImportStrategy {
-@Override
-public boolean shouldInclude( final ValueMetaInterface valueMeta ) {
-  return true;
+
+  @Override
+  public boolean shouldInclude( final ValueMetaInterface valueMeta ) {
+    return true;
   }
 
-@Override
-public String displayName( final ValueMetaInterface valueMeta ) {
-  return valueMeta.getName();
+  @Override
+  public String displayName( final ValueMetaInterface valueMeta ) {
+    return valueMeta.getName();
   }
-
 }
