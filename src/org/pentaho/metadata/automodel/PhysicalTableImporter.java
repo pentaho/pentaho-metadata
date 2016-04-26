@@ -42,7 +42,7 @@ public class PhysicalTableImporter {
     String displayName( ValueMetaInterface valueMeta );
   }
 
-  static final ImportStrategy defaultImportStrategy = new DefaultImportStrategy();
+  public static final ImportStrategy defaultImportStrategy = new DefaultImportStrategy();
 
   public static SqlPhysicalTable importTableDefinition(
       Database database, String schemaName, String tableName, String locale ) throws KettleException {
