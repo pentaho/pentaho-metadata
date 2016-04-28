@@ -57,7 +57,7 @@ public class MondrianModelExporterTest {
         + "    <View alias=\"FACT\">\n" + "        <SQL dialect=\"generic\">\n"
         + "         <![CDATA[select * from customer]]>\n" + "        </SQL>\n" + "    </View>\n"
         + "    <DimensionUsage name=\"Dim1\" source=\"Dim1\" foreignKey=\"pc2\"/>\n"
-        + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" formatString=\"Standard\"/>\n" + "  </Cube>\n"
+        + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\"/>\n" + "  </Cube>\n"
         + "</Schema>", data );
   }
 
@@ -74,7 +74,7 @@ public class MondrianModelExporterTest {
         + "    </Hierarchy>\n" + "  </Dimension>\n" + "  <Cube name=\"Cube1\">\n"
         + "    <Table name=\"tableName\" schema=\"schemaName\" />\n"
         + "    <DimensionUsage name=\"Dim1\" source=\"Dim1\" foreignKey=\"pc2\"/>\n"
-        + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" formatString=\"Standard\"/>\n" + "  </Cube>\n"
+        + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\"/>\n" + "  </Cube>\n"
         + "</Schema>", data );
   }
 
@@ -91,7 +91,7 @@ public class MondrianModelExporterTest {
         + "    </Hierarchy>\n" + "  </Dimension>\n" + "  <Cube name=\"Cube1\">\n"
         + "    <Table name=\"tableName\" schema=\"schemaName\" />\n"
         + "    <DimensionUsage name=\"Dim1\" source=\"Dim1\" foreignKey=\"pc2\"/>\n"
-        + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" formatString=\"Standard\"/>\n" + "  </Cube>\n"
+        + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\"/>\n" + "  </Cube>\n"
         + "</Schema>", data );
   }
 
@@ -185,7 +185,7 @@ public class MondrianModelExporterTest {
         + "         <![CDATA[select * from customer]]>\n"
         + "        </SQL>\n" + "    </View>\n"
         + "    <DimensionUsage name=\"Dim1\" source=\"Dim1\" foreignKey=\"pc2\"/>\n"
-        + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" formatString=\"Standard\"/>\n"
+        + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\"/>\n"
         + "  </Cube>\n"
         + "</Schema>", data );
   }
@@ -280,7 +280,7 @@ public class MondrianModelExporterTest {
         + "    </Hierarchy>\n" + "  </Dimension>\n" + "  <Cube name=\"Cube1\">\n" + "    <View alias=\"FACT\">\n"
         + "        <SQL dialect=\"generic\">\n" + "         <![CDATA[select * from customer]]>\n" + "        </SQL>\n"
         + "    </View>\n" + "    <DimensionUsage name=\"Dim1\" source=\"Dim1\" foreignKey=\"pc2\"/>\n"
-        + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" formatString=\"Standard\"/>\n" + "  </Cube>\n"
+        + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\"/>\n" + "  </Cube>\n"
         + "</Schema>", data );
   }
 
@@ -298,8 +298,8 @@ public class MondrianModelExporterTest {
         + "    </Hierarchy>\n" + "  </Dimension>\n" + "  <Cube name=\"Cube1\">\n"
         + "    <Table name=\"tableName\" schema=\"schemaName\" />\n"
         + "    <DimensionUsage name=\"Dim1\" source=\"Dim1\" foreignKey=\"pc2\"/>\n"
-        + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" formatString=\"Standard\" visible=\"false\"/>\n"
-        + "    <CalculatedMember name=\"hcm\" dimension=\"Dim1\" formatString=\"Standard\" visible=\"false\"> "
+        + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" visible=\"false\"/>\n"
+        + "    <CalculatedMember name=\"hcm\" dimension=\"Dim1\" visible=\"false\"> "
         + "      <Formula><![CDATA[[Measures].[Meas1]*2]]></Formula> "
         + "      <CalculatedMemberProperty name=\"SOLVE_ORDER\" value=\"200\"/> "
         + "    </CalculatedMember>"
@@ -410,7 +410,7 @@ public class MondrianModelExporterTest {
         + "    <View alias=\"FACT\">\n" + "        <SQL dialect=\"generic\">\n"
         + "         <![CDATA[select * from customer]]>\n" + "        </SQL>\n" + "    </View>\n"
         + "    <DimensionUsage name=\"Dim1\" source=\"Dim1\" foreignKey=\"pc2\"/>\n"
-        + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" formatString=\"Standard\"/>\n" + "  </Cube>\n"
+        + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\"/>\n" + "  </Cube>\n"
         + "</Schema>", data );
   }
 
@@ -432,7 +432,7 @@ public class MondrianModelExporterTest {
         + "    <View alias=\"FACT\">\n" + "        <SQL dialect=\"generic\">\n"
         + "         <![CDATA[select * from customer]]>\n" + "        </SQL>\n" + "    </View>\n"
         + "    <DimensionUsage name=\"Dim1\" source=\"Dim1\" foreignKey=\"pc2\"/>\n"
-        + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" formatString=\"Standard\"/>\n" + "  </Cube>\n"
+        + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\"/>\n" + "  </Cube>\n"
         + "    <Role name=\">California Manager\"> <SchemaGrant></SchemaGrant> </Role>\n"
         + "</Schema>", data );
   }
@@ -460,7 +460,7 @@ public class MondrianModelExporterTest {
         + "    <View alias=\"FACT\">\n" + "        <SQL dialect=\"generic\">\n"
         + "         <![CDATA[select * from customer]]>\n" + "        </SQL>\n" + "    </View>\n"
         + "    <DimensionUsage name=\"Dim1\" source=\"Dim1\" foreignKey=\"pc2\"/>\n"
-        + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" formatString=\"Standard\"/>\n"
+        + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\"/>\n"
         + "    <CalculatedMember name=\"Constant One\" dimension=\"Measures\" formatString=\"Currency\">\n"
         + "      <Formula><![CDATA[1]]></Formula>\n"
         + "      <CalculatedMemberProperty name=\"SOLVE_ORDER\" value=\"0\"/>\n"
@@ -506,7 +506,7 @@ public class MondrianModelExporterTest {
             + "  <Cube name=\"Cube1\">\n"
             + "    <Table name=\"table\" schema=\"schema\"/>\n"
             + "    <DimensionUsage name=\"Dim1\" source=\"Dim1\" foreignKey=\"pc2\"/>\n"
-            + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" formatString=\"Standard\" description=\"it&#x27;s a measure\"/>\n"
+            + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" description=\"it&#x27;s a measure\"/>\n"
             + "  </Cube>\n" + "</Schema>", schema );
   }
 
