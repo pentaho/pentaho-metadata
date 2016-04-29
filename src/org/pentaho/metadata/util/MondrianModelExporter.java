@@ -403,13 +403,11 @@ public class MondrianModelExporter {
           }
 
           String formatString = (String) businessColumn.getProperty( "mask" ); //$NON-NLS-1$
-          if ( StringUtils.isEmpty( formatString ) ) {
-            formatString = "Standard"; //$NON-NLS-1$
+          if ( !StringUtils.isEmpty( formatString ) ) {
+            xml.append( " formatString=\"" ); //$NON-NLS-1$
+            XMLHandler.appendReplacedChars( xml, formatString );
+            xml.append( "\"" ); //$NON-NLS-1$
           }
-
-          xml.append( " formatString=\"" ); //$NON-NLS-1$
-          XMLHandler.appendReplacedChars( xml, formatString );
-          xml.append( "\"" ); //$NON-NLS-1$
 
           LocalizedString description = businessColumn.getDescription();
           if ( description != null ) {
@@ -449,12 +447,11 @@ public class MondrianModelExporter {
 
             // Format string
             String formatString = member.getFormatString(); //$NON-NLS-1$
-            if ( StringUtils.isEmpty( formatString ) ) {
-              formatString = "Standard"; //$NON-NLS-1$
+            if ( !StringUtils.isEmpty( formatString ) ) {
+              xml.append( " formatString=\"" ); //$NON-NLS-1$
+              XMLHandler.appendReplacedChars( xml, formatString );
+              xml.append( "\"" ); //$NON-NLS-1$
             }
-            xml.append( " formatString=\"" ); //$NON-NLS-1$
-            XMLHandler.appendReplacedChars( xml, formatString );
-            xml.append( "\"" ); //$NON-NLS-1$
 
             // include only when hidden
             if ( member.isHidden() ) {
