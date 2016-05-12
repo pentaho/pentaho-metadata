@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation.  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation.  All rights reserved.
  */
 package org.pentaho.metadata.automodel;
 
@@ -24,6 +24,7 @@ import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.core.row.ValueMetaInterface;
+import org.pentaho.metadata.automodel.importing.strategy.DefaultImportStrategy;
 import org.pentaho.metadata.model.IPhysicalColumn;
 import org.pentaho.metadata.model.SqlPhysicalColumn;
 import org.pentaho.metadata.model.SqlPhysicalTable;
@@ -36,22 +37,12 @@ import org.pentaho.metadata.util.Util;
 
 public class PhysicalTableImporter {
 
-  public static interface ImportStrategy {
+  public interface ImportStrategy {
     boolean shouldInclude( ValueMetaInterface valueMeta );
     String displayName( ValueMetaInterface valueMeta );
   }
 
-  public static final ImportStrategy defaultImportStrategy = new ImportStrategy() {
-    @Override
-    public boolean shouldInclude( final ValueMetaInterface valueMeta ) {
-      return true;
-    }
-
-    @Override
-    public String displayName( final ValueMetaInterface valueMeta ) {
-      return valueMeta.getName();
-    }
-  };
+  public static final ImportStrategy defaultImportStrategy = new DefaultImportStrategy();
 
   public static SqlPhysicalTable importTableDefinition(
       Database database, String schemaName, String tableName, String locale ) throws KettleException {
@@ -109,14 +100,9 @@ public class PhysicalTableImporter {
   private static IPhysicalColumn importPhysicalColumnDefinition( ValueMetaInterface v, SqlPhysicalTable physicalTable,
                                                                  String locale,
                                                                  final ImportStrategy importStrategy ) {
-    // The id
+     // The name of the column in the database
     //
-    String id = Util.getPhysicalColumnIdPrefix() + v.getName();
-    id = id.toUpperCase();
-
-    // The name of the column in the database
-    //
-    String dbname = v.getName();
+    String columnName = v.getName();
 
     // The field type?
     //
@@ -126,7 +112,7 @@ public class PhysicalTableImporter {
     //
     SqlPhysicalColumn physicalColumn = new SqlPhysicalColumn( physicalTable );
     physicalColumn.setId( v.getName() );
-    physicalColumn.setTargetColumn( dbname );
+    physicalColumn.setTargetColumn( columnName );
     physicalColumn.setFieldType( fieldType );
     physicalColumn.setAggregationType( AggregationType.NONE );
 
