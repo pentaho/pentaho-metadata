@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright 2005 - 2010 Pentaho Corporation.  All rights reserved.
+ * Copyright 2005 - 2016 Pentaho Corporation.  All rights reserved.
  */
 
 package org.pentaho.metadata.query.model.util;
@@ -101,7 +101,7 @@ public class QueryXmlHelperTest {
             + "<column>LC_Test_Column1</column>" + "<aggregation>NONE</aggregation>"
             + "</selection><selection>" + "<table>Test</table>" + "<column>LC_Test_Column2</column>"
             + "<aggregation>NONE</aggregation>" + "</selection></selections>" + "<constraints></constraints>"
-            + "<orders></orders>" +"</mql>";
+            + "<orders></orders>" + "</mql>";
     Query q = helper.fromXML( metadataDomainRepository, mql );
 
     assertEquals( 1, q.getSelections().size() );
@@ -109,8 +109,7 @@ public class QueryXmlHelperTest {
   }
 
 
-
-  @Test(expected = PentahoMetadataException.class)
+  @Test( expected = PentahoMetadataException.class )
   public void exceptionThrown_WhenParsingXmlWith_BigNumberOfExternalEntities() throws Exception {
     /**
      * @see  <a href="https://en.wikipedia.org/wiki/Billion_laughs" />
@@ -132,7 +131,7 @@ public class QueryXmlHelperTest {
         + "]>\n"
         + "<lolz>&lol9;</lolz>";
 
-    helper.fromXML( mock(IMetadataDomainRepository.class), maliciousXml );
+    helper.fromXML( mock( IMetadataDomainRepository.class ), maliciousXml );
   }
 
   @Test

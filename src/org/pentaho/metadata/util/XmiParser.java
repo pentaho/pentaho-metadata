@@ -925,9 +925,7 @@ public class XmiParser {
         type = "Font"; //$NON-NLS-1$
       } else if ( val instanceof TargetTableType ) {
         TargetTableType ttt = (TargetTableType) val;
-        if ( ttt == TargetTableType.TABLE ) {
-          // do nothing
-        } else {
+        if ( !( ttt == TargetTableType.TABLE ) ) {
           type = "TargetTableType"; //$NON-NLS-1$
           body = ttt.toString();
         }
@@ -982,11 +980,9 @@ public class XmiParser {
           } else if ( objs.get( 0 ) instanceof OlapRole ) {
             body = OlapUtil.toXmlRoles( (List<OlapRole>) objs );
             type = "String";
-          } else if ( objs.get( 0 ) instanceof OlapCube || objs.get( 0 ) instanceof OlapDimension ) {
-            // ignore
-          } else {
+          } else if ( !( objs.get( 0 ) instanceof OlapCube || objs.get( 0 ) instanceof OlapDimension ) ) {
             logger.error( Messages.getErrorString(
-                "XmiParser.ERROR_0004_UNSUPPORTED_CONCEPT_PROPERTY_LIST", objs.get( 0 ).getClass() ) ); //$NON-NLS-1$
+              "XmiParser.ERROR_0004_UNSUPPORTED_CONCEPT_PROPERTY_LIST", objs.get( 0 ).getClass() ) ); //$NON-NLS-1$
           }
         }
       } else {
@@ -1724,13 +1720,12 @@ public class XmiParser {
               } else if ( dimensionChildren.item( j ).getNodeName()
                   .equals( "CWMOLAP:Dimension.memberSelection" ) ) { //$NON-NLS-1$
                 memberSelections = (Element) dimensionChildren.item( j );
-              } else if ( dimensionChildren.item( j ).getNodeName().equals(
-                  "CWMOLAP:Dimension.cubeDimensionAssociation" ) ) { //$NON-NLS-1$
-                // ignored, cubes and dimensions are mapped later through dimension usages.
-              } else {
+              } else if ( !dimensionChildren.item( j ).getNodeName().equals(
+                "CWMOLAP:Dimension.cubeDimensionAssociation" ) ) { //$NON-NLS-1$
+                //  cubes and dimensions are mapped later through dimension usages.
                 if ( logger.isDebugEnabled() ) {
                   logger
-                      .debug( "Dimension object ignored: " + dimensionChildren.item( j ).getNodeName() ); //$NON-NLS-1$
+                    .debug( "Dimension object ignored: " + dimensionChildren.item( j ).getNodeName() ); //$NON-NLS-1$
                 }
               }
             }
@@ -1920,8 +1915,6 @@ public class XmiParser {
             if ( dimensionLinks.getLength() == 1 ) {
               Element dimensionLink = (Element) dimensionLinks.item( 0 );
               dimUsage.setOlapDimension( dimensionMap.get( dimensionLink.getAttribute( "xmi.idref" ) ) ); //$NON-NLS-1$
-            } else {
-              // BAD
             }
           }
           cubeObj.setOlapDimensionUsages( dimensionUsages );

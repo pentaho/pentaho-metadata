@@ -29,7 +29,7 @@ import static org.mockito.Mockito.mock;
 public class MQLQueryTest {
   private MQLQueryImpl mqlQuery;
 
-  private final static String MALICIOUS_XML =
+  private static final String MALICIOUS_XML =
     "<?xml version=\"1.0\"?>\n"
       + "<!DOCTYPE lolz [\n"
       + " <!ENTITY lol \"lol\">\n"
@@ -48,7 +48,7 @@ public class MQLQueryTest {
 
   @Before
   public void setUp() throws Exception {
-    mqlQuery = mock(MQLQueryImpl.class);
+    mqlQuery = mock( MQLQueryImpl.class );
     doCallRealMethod().when( mqlQuery ).fromXML( anyString() );
     doCallRealMethod().when( mqlQuery ).fromXML( anyString(), any( SchemaMeta.class ) );
   }

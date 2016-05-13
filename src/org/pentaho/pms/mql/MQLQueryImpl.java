@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.pms.mql;
 
@@ -579,9 +579,9 @@ public class MQLQueryImpl implements MQLQuery {
     this.disableDistinct = false;
     this.limit = -1;
     if ( optionElement != null ) {
-      String disableStr = getElementText( optionElement, "disable_distinct" );//$NON-NLS-1$
+      String disableStr = getElementText( optionElement, "disable_distinct" ); //$NON-NLS-1$
       if ( disableStr != null ) {
-        this.disableDistinct = disableStr.equalsIgnoreCase( "true" );//$NON-NLS-1$
+        this.disableDistinct = disableStr.equalsIgnoreCase( "true" ); //$NON-NLS-1$
       }
       String limitStr = getElementText( optionElement, "limit" );
       if ( limitStr != null ) {
