@@ -21,6 +21,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
+import static org.mockito.Mockito.mock;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -105,6 +106,33 @@ public class QueryXmlHelperTest {
 
     assertEquals( 1, q.getSelections().size() );
     assertEquals( "LC_Test_Column1", q.getSelections().get( 0 ).getLogicalColumn().getId() );
+  }
+
+
+
+  @Test(expected = PentahoMetadataException.class)
+  public void exceptionThrown_WhenParsingXmlWith_BigNumberOfExternalEntities() throws Exception {
+    /**
+     * @see  <a href="https://en.wikipedia.org/wiki/Billion_laughs" />
+     */
+    final String maliciousXml =
+      "<?xml version=\"1.0\"?>\n"
+        + "<!DOCTYPE lolz [\n"
+        + " <!ENTITY lol \"lol\">\n"
+        + " <!ELEMENT lolz (#PCDATA)>\n"
+        + " <!ENTITY lol1 \"&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;\">\n"
+        + " <!ENTITY lol2 \"&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;&lol1;\">\n"
+        + " <!ENTITY lol3 \"&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;\">\n"
+        + " <!ENTITY lol4 \"&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;\">\n"
+        + " <!ENTITY lol5 \"&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;&lol4;\">\n"
+        + " <!ENTITY lol6 \"&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;&lol5;\">\n"
+        + " <!ENTITY lol7 \"&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;&lol6;\">\n"
+        + " <!ENTITY lol8 \"&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;&lol7;\">\n"
+        + " <!ENTITY lol9 \"&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;&lol8;\">\n"
+        + "]>\n"
+        + "<lolz>&lol9;</lolz>";
+
+    helper.fromXML( mock(IMetadataDomainRepository.class), maliciousXml );
   }
 
   @Test

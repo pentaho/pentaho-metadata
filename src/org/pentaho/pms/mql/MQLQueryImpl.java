@@ -33,6 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.xml.XMLHandler;
+import org.pentaho.metadata.util.XmiParser;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
@@ -222,14 +223,12 @@ public class MQLQueryImpl implements MQLQuery {
   }
 
   public Document getDocument() {
-    DocumentBuilderFactory dbf;
-    DocumentBuilder db;
     Document doc;
 
     try {
       // create an XML document
-      dbf = DocumentBuilderFactory.newInstance();
-      db = dbf.newDocumentBuilder();
+      DocumentBuilderFactory dbf = XmiParser.createSecureDocBuilderFactory();
+      DocumentBuilder db = dbf.newDocumentBuilder();
       doc = db.newDocument();
       Element mqlElement = doc.createElement( "mql" ); //$NON-NLS-1$
       doc.appendChild( mqlElement );
@@ -429,15 +428,13 @@ public class MQLQueryImpl implements MQLQuery {
     if ( XML == null ) {
       throw new PentahoMetadataException( Messages.getErrorString( "MQLQuery.ERROR_0017_XML_NULL" ) ); //$NON-NLS-1$
     }
-    DocumentBuilderFactory dbf;
-    DocumentBuilder db;
-    Document doc;
 
+    Document doc;
     // Check and open XML document
-    dbf = DocumentBuilderFactory.newInstance();
     try {
-      db = dbf.newDocumentBuilder();
-      doc = db.parse( new InputSource( new java.io.StringReader( XML ) ) );
+      DocumentBuilderFactory dbf = XmiParser.createSecureDocBuilderFactory();
+      DocumentBuilder docBuilder = dbf.newDocumentBuilder();
+      doc = docBuilder.parse( new InputSource( new java.io.StringReader( XML ) ) );
     } catch ( ParserConfigurationException pcx ) {
       throw new PentahoMetadataException( pcx );
     } catch ( SAXException sex ) {
@@ -452,14 +449,12 @@ public class MQLQueryImpl implements MQLQuery {
     if ( XML == null ) {
       throw new PentahoMetadataException( Messages.getErrorString( "MQLQuery.ERROR_0017_XML_NULL" ) ); //$NON-NLS-1$
     }
-    DocumentBuilderFactory dbf;
-    DocumentBuilder db;
-    Document doc;
 
+    Document doc;
     // Check and open XML document
-    dbf = DocumentBuilderFactory.newInstance();
     try {
-      db = dbf.newDocumentBuilder();
+      DocumentBuilderFactory dbf = XmiParser.createSecureDocBuilderFactory();
+      DocumentBuilder db = dbf.newDocumentBuilder();
       doc = db.parse( new InputSource( new java.io.StringReader( XML ) ) );
     } catch ( ParserConfigurationException pcx ) {
       throw new PentahoMetadataException( pcx );

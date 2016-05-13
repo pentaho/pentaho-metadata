@@ -45,6 +45,7 @@ import org.pentaho.metadata.query.model.Parameter;
 import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.metadata.repository.IMetadataDomainRepository;
+import org.pentaho.metadata.util.XmiParser;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.reporting.libraries.base.util.CSVTokenizer;
 import org.w3c.dom.Document;
@@ -96,14 +97,11 @@ public class QueryXmlHelper {
       return null;
     }
 
-    DocumentBuilderFactory dbf;
-    DocumentBuilder db;
     Document doc;
-
     try {
       // create an XML document
-      dbf = DocumentBuilderFactory.newInstance();
-      db = dbf.newDocumentBuilder();
+      DocumentBuilderFactory dbf = XmiParser.createSecureDocBuilderFactory();
+      DocumentBuilder db = dbf.newDocumentBuilder();
       doc = db.newDocument();
       Element mqlElement = doc.createElement( "mql" ); //$NON-NLS-1$
       doc.appendChild( mqlElement );
@@ -320,14 +318,12 @@ public class QueryXmlHelper {
     if ( XML == null ) {
       throw new PentahoMetadataException( Messages.getErrorString( "QueryXmlHelper.ERROR_0008_XML_NULL" ) ); //$NON-NLS-1$
     }
-    DocumentBuilderFactory dbf;
-    DocumentBuilder db;
     Document doc;
 
     // Check and open XML document
-    dbf = DocumentBuilderFactory.newInstance();
     try {
-      db = dbf.newDocumentBuilder();
+      DocumentBuilderFactory dbf = XmiParser.createSecureDocBuilderFactory();
+      DocumentBuilder db = dbf.newDocumentBuilder();
       doc = db.parse( new InputSource( new java.io.StringReader( XML ) ) );
     } catch ( ParserConfigurationException pcx ) {
       throw new PentahoMetadataException( pcx );

@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -160,15 +161,11 @@ public class XmiParser {
       return null;
     }
 
-    DocumentBuilderFactory dbf;
-    DocumentBuilder db;
     Document doc;
-    IdGen idGen = new IdGen();
-
     try {
       // create an XML document
-      dbf = DocumentBuilderFactory.newInstance();
-      db = dbf.newDocumentBuilder();
+      DocumentBuilderFactory dbf = XmiParser.createSecureDocBuilderFactory();
+      DocumentBuilder db = dbf.newDocumentBuilder();
       doc = db.newDocument();
       Element xmiElement = doc.createElement( "XMI" ); //$NON-NLS-1$
       xmiElement.setAttribute( "xmlns:CWM", "org.omg.xmi.namespace.CWM" ); //$NON-NLS-1$ //$NON-NLS-2$
@@ -194,6 +191,7 @@ public class XmiParser {
       // first add concepts
       List<Element> allDescriptions = new ArrayList<Element>();
 
+      IdGen idGen = new IdGen();
       for ( Concept concept : domain.getConcepts() ) {
         /*
          * <CWM:Class isAbstract="false" name="Date" xmi.id="a1"> <CWM:ModelElement.taggedValue> <CWM:TaggedValue
@@ -202,11 +200,11 @@ public class XmiParser {
         Element cwmClass = doc.createElement( "CWM:Class" ); //$NON-NLS-1$
         cwmClass.setAttribute( "isAbstract", "false" ); //$NON-NLS-1$ //$NON-NLS-2$
         cwmClass.setAttribute( "name", concept.getId() ); //$NON-NLS-1$
-        String idstr = idGen.getNextId();
+        String idStr = idGen.getNextId();
 
-        createDescriptions( doc, concept, "CWM:Class", idstr, allDescriptions, idGen ); //$NON-NLS-1$
+        createDescriptions( doc, concept, "CWM:Class", idStr, allDescriptions, idGen ); //$NON-NLS-1$
 
-        cwmClass.setAttribute( "xmi.id", idstr ); //$NON-NLS-1$
+        cwmClass.setAttribute( "xmi.id", idStr ); //$NON-NLS-1$
 
         if ( concept.getParentConcept() != null ) {
           Element modelElement = doc.createElement( "CWM:ModelElement.taggedValue" ); //$NON-NLS-1$
@@ -1044,14 +1042,12 @@ public class XmiParser {
    * @throws PentahoMetadataException
    */
   public Domain parseXmi( InputStream xmi ) throws Exception {
-    DocumentBuilderFactory dbf;
-    DocumentBuilder db;
     Document doc;
 
     // Check and open XML document
-    dbf = DocumentBuilderFactory.newInstance();
     try {
-      db = dbf.newDocumentBuilder();
+      DocumentBuilderFactory dbf = XmiParser.createSecureDocBuilderFactory();
+      DocumentBuilder db = dbf.newDocumentBuilder();
       doc = db.parse( new InputSource( xmi ) );
     } catch ( ParserConfigurationException pcx ) {
       throw new PentahoMetadataException( pcx );
@@ -2157,5 +2153,20 @@ public class XmiParser {
       }
     }
     return null;
+  }
+
+  /**
+   * Creates an instance of DocumentBuilderFactory class with enabled {@link XMLConstants#FEATURE_SECURE_PROCESSING} property.
+   * Enabling this feature prevents from some XXE attacks (e.g. XML bomb)
+   * See PPP-3506 for more details.
+   *
+   * @throws ParserConfigurationException if feature can't be enabled
+   *
+   */
+  public static DocumentBuilderFactory createSecureDocBuilderFactory() throws ParserConfigurationException {
+    DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+    documentBuilderFactory.setFeature( XMLConstants.FEATURE_SECURE_PROCESSING, true );
+
+    return documentBuilderFactory;
   }
 }
