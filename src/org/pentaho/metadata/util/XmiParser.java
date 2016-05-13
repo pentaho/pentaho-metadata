@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -160,15 +161,11 @@ public class XmiParser {
       return null;
     }
 
-    DocumentBuilderFactory dbf;
-    DocumentBuilder db;
     Document doc;
-    IdGen idGen = new IdGen();
-
     try {
       // create an XML document
-      dbf = DocumentBuilderFactory.newInstance();
-      db = dbf.newDocumentBuilder();
+      DocumentBuilderFactory dbf = XmiParser.createSecureDocBuilderFactory();
+      DocumentBuilder db = dbf.newDocumentBuilder();
       doc = db.newDocument();
       Element xmiElement = doc.createElement( "XMI" ); //$NON-NLS-1$
       xmiElement.setAttribute( "xmlns:CWM", "org.omg.xmi.namespace.CWM" ); //$NON-NLS-1$ //$NON-NLS-2$
@@ -194,6 +191,7 @@ public class XmiParser {
       // first add concepts
       List<Element> allDescriptions = new ArrayList<Element>();
 
+      IdGen idGen = new IdGen();
       for ( Concept concept : domain.getConcepts() ) {
         /*
          * <CWM:Class isAbstract="false" name="Date" xmi.id="a1"> <CWM:ModelElement.taggedValue> <CWM:TaggedValue
@@ -202,11 +200,11 @@ public class XmiParser {
         Element cwmClass = doc.createElement( "CWM:Class" ); //$NON-NLS-1$
         cwmClass.setAttribute( "isAbstract", "false" ); //$NON-NLS-1$ //$NON-NLS-2$
         cwmClass.setAttribute( "name", concept.getId() ); //$NON-NLS-1$
-        String idstr = idGen.getNextId();
+        String idStr = idGen.getNextId();
 
-        createDescriptions( doc, concept, "CWM:Class", idstr, allDescriptions, idGen ); //$NON-NLS-1$
+        createDescriptions( doc, concept, "CWM:Class", idStr, allDescriptions, idGen ); //$NON-NLS-1$
 
-        cwmClass.setAttribute( "xmi.id", idstr ); //$NON-NLS-1$
+        cwmClass.setAttribute( "xmi.id", idStr ); //$NON-NLS-1$
 
         if ( concept.getParentConcept() != null ) {
           Element modelElement = doc.createElement( "CWM:ModelElement.taggedValue" ); //$NON-NLS-1$
@@ -927,9 +925,7 @@ public class XmiParser {
         type = "Font"; //$NON-NLS-1$
       } else if ( val instanceof TargetTableType ) {
         TargetTableType ttt = (TargetTableType) val;
-        if ( ttt == TargetTableType.TABLE ) {
-          // do nothing
-        } else {
+        if ( !( ttt == TargetTableType.TABLE ) ) {
           type = "TargetTableType"; //$NON-NLS-1$
           body = ttt.toString();
         }
@@ -984,11 +980,9 @@ public class XmiParser {
           } else if ( objs.get( 0 ) instanceof OlapRole ) {
             body = OlapUtil.toXmlRoles( (List<OlapRole>) objs );
             type = "String";
-          } else if ( objs.get( 0 ) instanceof OlapCube || objs.get( 0 ) instanceof OlapDimension ) {
-            // ignore
-          } else {
+          } else if ( !( objs.get( 0 ) instanceof OlapCube || objs.get( 0 ) instanceof OlapDimension ) ) {
             logger.error( Messages.getErrorString(
-                "XmiParser.ERROR_0004_UNSUPPORTED_CONCEPT_PROPERTY_LIST", objs.get( 0 ).getClass() ) ); //$NON-NLS-1$
+              "XmiParser.ERROR_0004_UNSUPPORTED_CONCEPT_PROPERTY_LIST", objs.get( 0 ).getClass() ) ); //$NON-NLS-1$
           }
         }
       } else {
@@ -1044,14 +1038,12 @@ public class XmiParser {
    * @throws PentahoMetadataException
    */
   public Domain parseXmi( InputStream xmi ) throws Exception {
-    DocumentBuilderFactory dbf;
-    DocumentBuilder db;
     Document doc;
 
     // Check and open XML document
-    dbf = DocumentBuilderFactory.newInstance();
     try {
-      db = dbf.newDocumentBuilder();
+      DocumentBuilderFactory dbf = XmiParser.createSecureDocBuilderFactory();
+      DocumentBuilder db = dbf.newDocumentBuilder();
       doc = db.parse( new InputSource( xmi ) );
     } catch ( ParserConfigurationException pcx ) {
       throw new PentahoMetadataException( pcx );
@@ -1728,13 +1720,12 @@ public class XmiParser {
               } else if ( dimensionChildren.item( j ).getNodeName()
                   .equals( "CWMOLAP:Dimension.memberSelection" ) ) { //$NON-NLS-1$
                 memberSelections = (Element) dimensionChildren.item( j );
-              } else if ( dimensionChildren.item( j ).getNodeName().equals(
-                  "CWMOLAP:Dimension.cubeDimensionAssociation" ) ) { //$NON-NLS-1$
-                // ignored, cubes and dimensions are mapped later through dimension usages.
-              } else {
+              } else if ( !dimensionChildren.item( j ).getNodeName().equals(
+                "CWMOLAP:Dimension.cubeDimensionAssociation" ) ) { //$NON-NLS-1$
+                //  cubes and dimensions are mapped later through dimension usages.
                 if ( logger.isDebugEnabled() ) {
                   logger
-                      .debug( "Dimension object ignored: " + dimensionChildren.item( j ).getNodeName() ); //$NON-NLS-1$
+                    .debug( "Dimension object ignored: " + dimensionChildren.item( j ).getNodeName() ); //$NON-NLS-1$
                 }
               }
             }
@@ -1924,8 +1915,6 @@ public class XmiParser {
             if ( dimensionLinks.getLength() == 1 ) {
               Element dimensionLink = (Element) dimensionLinks.item( 0 );
               dimUsage.setOlapDimension( dimensionMap.get( dimensionLink.getAttribute( "xmi.idref" ) ) ); //$NON-NLS-1$
-            } else {
-              // BAD
             }
           }
           cubeObj.setOlapDimensionUsages( dimensionUsages );
@@ -2157,5 +2146,20 @@ public class XmiParser {
       }
     }
     return null;
+  }
+
+  /**
+   * Creates an instance of DocumentBuilderFactory class with enabled {@link XMLConstants#FEATURE_SECURE_PROCESSING} property.
+   * Enabling this feature prevents from some XXE attacks (e.g. XML bomb)
+   * See PPP-3506 for more details.
+   *
+   * @throws ParserConfigurationException if feature can't be enabled
+   *
+   */
+  public static DocumentBuilderFactory createSecureDocBuilderFactory() throws ParserConfigurationException {
+    DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+    documentBuilderFactory.setFeature( XMLConstants.FEATURE_SECURE_PROCESSING, true );
+
+    return documentBuilderFactory;
   }
 }
