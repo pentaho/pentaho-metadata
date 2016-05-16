@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.metadata.util;
 
@@ -85,8 +85,8 @@ public class Util {
   }
 
   private static boolean isLatinLetter( char ch ) {
-    return ( ( 'a' <= ch ) && ( ch <= 'z' ) ) ||
-      ( ( 'A' <= ch ) && ( ch <= 'Z' ) );
+    return ( ( 'a' <= ch ) && ( ch <= 'z' ) )
+        || ( ( 'A' <= ch ) && ( ch <= 'Z' ) );
   }
 
   private static boolean isAsciiDigit( char ch ) {
