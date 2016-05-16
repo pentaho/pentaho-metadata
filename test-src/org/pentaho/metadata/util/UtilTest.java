@@ -58,4 +58,9 @@ public class UtilTest {
   public void validateId_Empty() {
     assertFalse( Util.validateId( "" ) );
   }
+
+  @Test
+  public void validateId_Japanese() {
+    assertTrue( Util.validateId( "個人ID" ) );
+  }
 }

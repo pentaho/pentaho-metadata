@@ -16,7 +16,9 @@
  */
 package org.pentaho.metadata.util;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.LogicalColumn;
@@ -30,6 +32,16 @@ import org.pentaho.pms.util.Settings;
 public class Util {
 
   public static final String CR = System.getProperty( "line.separator" ); //$NON-NLS-1$
+
+  private static final Set<Character.UnicodeBlock> acceptableUnicodeBlocks = new HashSet();
+
+  static {
+    acceptableUnicodeBlocks.add( Character.UnicodeBlock.KATAKANA );
+    acceptableUnicodeBlocks.add( Character.UnicodeBlock.HIRAGANA );
+    acceptableUnicodeBlocks.add( Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS );
+    acceptableUnicodeBlocks.add( Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A );
+    // Other legit unicode blocks can be added
+  }
 
   public static String getCategoryIdPrefix() {
     return "c_"; //$NON-NLS-1$
@@ -85,6 +97,14 @@ public class Util {
     return ( ch == '_' || ch == '$' );
   }
 
+  private static boolean isAcceptableUnicodeLetter( char ch ) {
+    Character.UnicodeBlock block = Character.UnicodeBlock.of( ch );
+    if ( !acceptableUnicodeBlocks.contains( block ) ) {
+      return false;
+    }
+    return true;
+  }
+
   /**
    * Returns <tt>true</tt> if <tt>code</tt> contains only latin characters, digits and '<tt>_</tt>' or '<tt>$</tt>'.
    * <tt>null</tt> or empty string is considered to be an invalid value.
@@ -99,7 +119,7 @@ public class Util {
 
     for ( int i = 0, len = id.length(); i < len; i++ ) {
       char ch = id.charAt( i );
-      if ( !isLatinLetter( ch ) && !isAsciiDigit( ch ) && !isAcceptableNonLetter( ch ) ) {
+      if ( !isLatinLetter( ch ) && !isAsciiDigit( ch ) && !isAcceptableNonLetter( ch ) && !isAcceptableUnicodeLetter( ch ) ) {
         return false;
       }
     }
