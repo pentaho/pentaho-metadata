@@ -12,11 +12,13 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.metadata.util;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.LogicalColumn;
@@ -30,6 +32,16 @@ import org.pentaho.pms.util.Settings;
 public class Util {
 
   public static final String CR = System.getProperty( "line.separator" ); //$NON-NLS-1$
+
+  private static final Set<Character.UnicodeBlock> acceptableUnicodeBlocks = new HashSet();
+
+  static {
+    acceptableUnicodeBlocks.add( Character.UnicodeBlock.KATAKANA );
+    acceptableUnicodeBlocks.add( Character.UnicodeBlock.HIRAGANA );
+    acceptableUnicodeBlocks.add( Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS );
+    acceptableUnicodeBlocks.add( Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A );
+    // Other legit unicode blocks can be added
+  }
 
   public static String getCategoryIdPrefix() {
     return "c_"; //$NON-NLS-1$
@@ -73,8 +85,8 @@ public class Util {
   }
 
   private static boolean isLatinLetter( char ch ) {
-    return ( ( 'a' <= ch ) && ( ch <= 'z' ) ) ||
-      ( ( 'A' <= ch ) && ( ch <= 'Z' ) );
+    return ( ( 'a' <= ch ) && ( ch <= 'z' ) )
+        || ( ( 'A' <= ch ) && ( ch <= 'Z' ) );
   }
 
   private static boolean isAsciiDigit( char ch ) {
@@ -83,6 +95,14 @@ public class Util {
 
   private static boolean isAcceptableNonLetter( char ch ) {
     return ( ch == '_' || ch == '$' );
+  }
+
+  private static boolean isAcceptableUnicodeLetter( char ch ) {
+    Character.UnicodeBlock block = Character.UnicodeBlock.of( ch );
+    if ( !acceptableUnicodeBlocks.contains( block ) ) {
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -99,7 +119,7 @@ public class Util {
 
     for ( int i = 0, len = id.length(); i < len; i++ ) {
       char ch = id.charAt( i );
-      if ( !isLatinLetter( ch ) && !isAsciiDigit( ch ) && !isAcceptableNonLetter( ch ) ) {
+      if ( !isLatinLetter( ch ) && !isAsciiDigit( ch ) && !isAcceptableNonLetter( ch ) && !isAcceptableUnicodeLetter( ch ) ) {
         return false;
       }
     }
