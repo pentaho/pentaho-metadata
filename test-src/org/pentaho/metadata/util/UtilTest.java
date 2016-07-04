@@ -39,6 +39,9 @@ public class UtilTest {
     assertTrue( Util.validateId( "qwerty_1" ) );
     assertTrue( Util.validateId( "qwerty_$1" ) );
     assertTrue( Util.validateId( "qWerTy_$1" ) );
+    assertTrue( Util.validateId( "Кириллические_символы" ) );
+    assertTrue( Util.validateId( "日本の手紙" ) );
+    assertTrue( Util.validateId( "caractères_français" ) );
   }
 
   @Test

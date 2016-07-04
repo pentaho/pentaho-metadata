@@ -72,19 +72,6 @@ public class Util {
     return name;
   }
 
-  private static boolean isLatinLetter( char ch ) {
-    return ( ( 'a' <= ch ) && ( ch <= 'z' ) ) ||
-      ( ( 'A' <= ch ) && ( ch <= 'Z' ) );
-  }
-
-  private static boolean isAsciiDigit( char ch ) {
-    return ( '0' <= ch ) && ( ch <= '9' );
-  }
-
-  private static boolean isAcceptableNonLetter( char ch ) {
-    return ( ch == '_' || ch == '$' );
-  }
-
   /**
    * Returns <tt>true</tt> if <tt>code</tt> contains only latin characters, digits and '<tt>_</tt>' or '<tt>$</tt>'.
    * <tt>null</tt> or empty string is considered to be an invalid value.
@@ -99,12 +86,23 @@ public class Util {
 
     for ( int i = 0, len = id.length(); i < len; i++ ) {
       char ch = id.charAt( i );
-      if ( !isLatinLetter( ch ) && !isAsciiDigit( ch ) && !isAcceptableNonLetter( ch ) ) {
+      if ( isUnacceptableCharacter( ch ) ) {
         return false;
       }
     }
 
     return true;
+  }
+
+  /**
+   * Check if character is unacceptable for MQL and need to be converted.
+   * List of unacceptable characters should corresponds to the regexp's inside the Util#toId method.
+   *
+   * @param ch character to check
+   * @return true if character is unacceptable for MQL, false otherwise
+   */
+  private static boolean isUnacceptableCharacter( char ch ) {
+    return " .,:(){}[]\"`'*/+-".indexOf( ch ) != -1;
   }
 
   public static IllegalArgumentException idValidationFailed( String id ) {
