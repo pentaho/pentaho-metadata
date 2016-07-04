@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.metadata.util;
 
@@ -28,6 +28,9 @@ import org.pentaho.metadata.model.concept.IConcept;
 import org.pentaho.pms.util.Settings;
 
 public class Util {
+
+  /** List of unacceptable characters which should corresponds to the regexp's inside the Util#toId method. */
+  public static final String MQL_RESERVED_CHARS = " .,:(){}[]\"`'*/+-";
 
   public static final String CR = System.getProperty( "line.separator" ); //$NON-NLS-1$
 
@@ -72,19 +75,6 @@ public class Util {
     return name;
   }
 
-  private static boolean isLatinLetter( char ch ) {
-    return ( ( 'a' <= ch ) && ( ch <= 'z' ) ) ||
-      ( ( 'A' <= ch ) && ( ch <= 'Z' ) );
-  }
-
-  private static boolean isAsciiDigit( char ch ) {
-    return ( '0' <= ch ) && ( ch <= '9' );
-  }
-
-  private static boolean isAcceptableNonLetter( char ch ) {
-    return ( ch == '_' || ch == '$' );
-  }
-
   /**
    * Returns <tt>true</tt> if <tt>code</tt> contains only latin characters, digits and '<tt>_</tt>' or '<tt>$</tt>'.
    * <tt>null</tt> or empty string is considered to be an invalid value.
@@ -99,12 +89,22 @@ public class Util {
 
     for ( int i = 0, len = id.length(); i < len; i++ ) {
       char ch = id.charAt( i );
-      if ( !isLatinLetter( ch ) && !isAsciiDigit( ch ) && !isAcceptableNonLetter( ch ) ) {
+      if ( isUnacceptableCharacter( ch ) ) {
         return false;
       }
     }
 
     return true;
+  }
+
+  /**
+   * Check if character is unacceptable for MQL and need to be converted.
+   *
+   * @param ch character to check
+   * @return true if character is unacceptable for MQL, false otherwise
+   */
+  private static boolean isUnacceptableCharacter( char ch ) {
+    return MQL_RESERVED_CHARS.indexOf( ch ) != -1;
   }
 
   public static IllegalArgumentException idValidationFailed( String id ) {
