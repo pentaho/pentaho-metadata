@@ -29,6 +29,9 @@ import org.pentaho.pms.util.Settings;
 
 public class Util {
 
+  /** List of unacceptable characters which should corresponds to the regexp's inside the Util#toId method. */
+  public static final String MQL_RESERVED_CHARS = " .,:(){}[]\"`'*/+-";
+
   public static final String CR = System.getProperty( "line.separator" ); //$NON-NLS-1$
 
   public static String getCategoryIdPrefix() {
@@ -96,13 +99,12 @@ public class Util {
 
   /**
    * Check if character is unacceptable for MQL and need to be converted.
-   * List of unacceptable characters should corresponds to the regexp's inside the Util#toId method.
    *
    * @param ch character to check
    * @return true if character is unacceptable for MQL, false otherwise
    */
   private static boolean isUnacceptableCharacter( char ch ) {
-    return " .,:(){}[]\"`'*/+-".indexOf( ch ) != -1;
+    return MQL_RESERVED_CHARS.indexOf( ch ) != -1;
   }
 
   public static IllegalArgumentException idValidationFailed( String id ) {
