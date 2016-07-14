@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.metadata.util;
 
@@ -39,13 +39,39 @@ public class DatabaseMetaUtil {
     }
 
     // look through all available database dialects for a match
-    for ( int i = 0; i < DatabaseMeta.getDatabaseInterfaces().length; i++ ) {
-      String typeDesc = DatabaseMeta.getDatabaseInterfaces()[i].getPluginId().toLowerCase();
+    DatabaseInterface[] interfaces = DatabaseMeta.getDatabaseInterfaces();
+    for ( int i = 0; i < interfaces.length; i++ ) {
+      String typeDesc = interfaces[i].getPluginId().toLowerCase();
+      if ( productName.equals( typeDesc ) ) {
+        return DatabaseMeta.getDatabaseInterfaces()[i];
+      }
+    }
+    for ( int i = 0; i < interfaces.length; i++ ) {
+      String typeDesc = interfaces[i].getPluginId().toLowerCase();
       if ( productName.indexOf( typeDesc ) >= 0 ) {
         return DatabaseMeta.getDatabaseInterfaces()[i];
       }
     }
 
     return null;
+  }
+
+  public static DatabaseInterface getDatabaseInterface( String productName, DatabaseMeta databaseMeta ) {
+
+    if ( productName == null ) {
+      return null;
+    }
+
+    // special case to separate hive1 and hive2
+    if ( productName.indexOf( "Apache Hive" ) >= 0 ) { //$NON-NLS-1$
+      String hivePluginId = databaseMeta.getDatabaseInterface().getPluginId();
+      switch ( hivePluginId ) {
+        case "HIVE": //$NON-NLS-1$
+        case "HIVE2": //$NON-NLS-1$
+          productName = hivePluginId;
+          break;
+      }
+    }
+    return getDatabaseInterface( productName );
   }
 }
