@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.metadata.model;
 
@@ -26,9 +26,8 @@ import org.pentaho.metadata.model.concept.types.LocalizedString;
 
 /**
  * The Inline Etl column inherits from the abstract physical column, and also defines a column number to get data from.
- * 
+ *
  * @author Will Gorman (wgorman@pentaho.com)
- * 
  */
 public class InlineEtlPhysicalColumn extends Concept implements IPhysicalColumn {
 
@@ -76,13 +75,13 @@ public class InlineEtlPhysicalColumn extends Concept implements IPhysicalColumn 
   public void setAggregationList( List<AggregationType> aggList ) {
     setProperty( IPhysicalColumn.AGGREGATIONLIST_PROPERTY, aggList );
   }
-  
+
   public void setTable( InlineEtlPhysicalTable table ) {
     setParent( table );
   }
 
   public InlineEtlPhysicalTable getPhysicalTable() {
-    return ( InlineEtlPhysicalTable )getParent();
+    return (InlineEtlPhysicalTable) getParent();
   }
 
   public String getFieldName() {

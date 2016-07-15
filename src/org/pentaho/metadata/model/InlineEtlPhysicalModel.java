@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.metadata.model;
 
@@ -25,9 +25,8 @@ import org.pentaho.metadata.model.concept.IConcept;
 /**
  * The Inline ETL Physical model is designed to handle CSV files and uses inline ETL (Kettle Transformations) to execute
  * query models.
- * 
+ *
  * @author Will Gorman (wgorman@pentaho.com)
- * 
  */
 public class InlineEtlPhysicalModel extends Concept implements IPhysicalModel {
 
@@ -37,12 +36,12 @@ public class InlineEtlPhysicalModel extends Concept implements IPhysicalModel {
   public static final String HEADER_PRESENT = "header_present"; //$NON-NLS-1$
   public static final String ENCLOSURE = "enclosure"; //$NON-NLS-1$
   public static final String DELIMITER = "delimiter"; //$NON-NLS-1$
-  
+
   private static final String CLASS_ID = "IPhysicalModel";
 
   // this contains a list of the physical tables
   private List<InlineEtlPhysicalTable> physicalTables = new ArrayList<InlineEtlPhysicalTable>();
-  
+
   public InlineEtlPhysicalModel() {
     super();
   }
@@ -52,7 +51,7 @@ public class InlineEtlPhysicalModel extends Concept implements IPhysicalModel {
   }
 
   public Domain getDomain() {
-    return ( Domain )getParent();
+    return (Domain) getParent();
   }
 
   @Override

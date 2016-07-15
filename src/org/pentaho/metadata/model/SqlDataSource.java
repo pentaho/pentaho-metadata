@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.metadata.model;
 
@@ -23,9 +23,8 @@ import java.util.Map;
 /**
  * This class is temporary until we have a thin DatabaseMeta implementation. The thin implementation will not be
  * available until Kettle 4.0, so this class will need to survive for a while.
- * 
+ *
  * @author Will Gorman (wgorman@pentaho.com)
- * 
  */
 public class SqlDataSource implements Serializable {
 
@@ -116,5 +115,5 @@ public class SqlDataSource implements Serializable {
   public void setServername( String serverName ) {
     this.servername = serverName;
   }
-  
+
 }

@@ -12,14 +12,13 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.pms.factory;
 
 import org.pentaho.di.core.NotePadMeta;
 import org.pentaho.di.core.ProgressMonitorListener;
 import org.pentaho.di.core.database.DatabaseMeta;
-import org.pentaho.di.core.exception.KettleXMLException;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.cwm.pentaho.meta.behavioral.CwmParameter;
 import org.pentaho.pms.cwm.pentaho.meta.businessinformation.CwmDescription;

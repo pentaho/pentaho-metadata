@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation.  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation.  All rights reserved.
  */
 package org.pentaho.pms.mql;
 
@@ -49,9 +49,8 @@ import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 
 /**
  * This class contains the SQL generation algorithm. The primary entrance method into this class is getSQL()
- * 
+ *
  * @author Will Gorman (wgorman@pentaho.org)
- * 
  * @deprecated as of metadata 3.0. please use org.pentaho.metadata.query.impl.sql.SqlGenerator
  */
 public class SQLGenerator {
@@ -82,27 +81,20 @@ public class SQLGenerator {
    * This method traverses the set of selections and renders those selections to the SQL string buffer. This method
    * determines the SQL column aliases. It also calls getBusinessColumnSQL() which renders each individual business
    * column in three different ways. Either as an MQL Formula, an aggregate function, or as a standard SQL column.
-   * 
-   * @param sql
-   *          sql string buffer
-   * @param model
-   *          business model
-   * @param databaseMeta
-   *          database metadata
-   * @param selections
-   *          sql selections
-   * @param disableDistinct
-   *          if true, disable distinct rendering
-   * @param group
-   *          if true, disable distinct rendering
-   * @param locale
-   *          locale string
-   * @param columnsMap
-   *          map of column aliases to populate
+   *
+   * @param sql             sql string buffer
+   * @param model           business model
+   * @param databaseMeta    database metadata
+   * @param selections      sql selections
+   * @param disableDistinct if true, disable distinct rendering
+   * @param group           if true, disable distinct rendering
+   * @param locale          locale string
+   * @param columnsMap      map of column aliases to populate
    */
   public void generateSelect( SQLQueryModel query, BusinessModel model, DatabaseMeta databaseMeta,
-      List<Selection> selections, boolean disableDistinct, int limit, boolean group, String locale,
-      Map<BusinessTable, String> tableAliases, Map<String, String> columnsMap ) {
+                              List<Selection> selections, boolean disableDistinct, int limit, boolean group,
+                              String locale,
+                              Map<BusinessTable, String> tableAliases, Map<String, String> columnsMap ) {
     query.setDistinct( !disableDistinct && !group );
     query.setLimit( limit );
     for ( int i = 0; i < selections.size(); i++ ) {
@@ -118,7 +110,8 @@ public class SQLGenerator {
       } else {
         alias = databaseMeta.quoteField( selections.get( i ).getBusinessColumn().getId() );
       }
-      SQLAndTables sqlAndTables = getBusinessColumnSQL( model, selections.get( i ), tableAliases, databaseMeta, locale );
+      SQLAndTables sqlAndTables =
+        getBusinessColumnSQL( model, selections.get( i ), tableAliases, databaseMeta, locale );
       query.addSelection( sqlAndTables.getSql(), alias );
     }
   }
@@ -127,25 +120,19 @@ public class SQLGenerator {
    * This method first traverses the set of included business tables and renders those tables to the SQL string buffer.
    * Second, it traverses the list of joins and renders those in the WHERE clause. Finally, it traverses the constraints
    * and adds them to the where or having clauses.
-   * 
-   * @param query
-   *          sql query model
-   * @param usedBusinessTables
-   *          used business tables in query
-   * @param model
-   *          the current business model
-   * @param path
-   *          the join path
-   * @param conditions
-   *          the where conditions
-   * @param databaseMeta
-   *          database metadata
-   * @param locale
-   *          locale string
+   *
+   * @param query              sql query model
+   * @param usedBusinessTables used business tables in query
+   * @param model              the current business model
+   * @param path               the join path
+   * @param conditions         the where conditions
+   * @param databaseMeta       database metadata
+   * @param locale             locale string
    */
   public void generateFromAndWhere( SQLQueryModel query, List<BusinessTable> usedBusinessTables, BusinessModel model,
-      Path path, List<WhereCondition> conditions, Map<BusinessTable, String> tableAliases, DatabaseMeta databaseMeta,
-      String locale ) throws PentahoMetadataException {
+                                    Path path, List<WhereCondition> conditions, Map<BusinessTable, String> tableAliases,
+                                    DatabaseMeta databaseMeta,
+                                    String locale ) throws PentahoMetadataException {
 
     // ConceptInterface concept = null;
     // ConceptPropertyInterface delayOuterJoin = null;
@@ -206,16 +193,16 @@ public class SQLGenerator {
         }
 
         String leftTableName =
-            databaseMeta.getQuotedSchemaTableCombination( relation.getTableFrom().getTargetSchema(), relation
-                .getTableFrom().getTargetTable() );
+          databaseMeta.getQuotedSchemaTableCombination( relation.getTableFrom().getTargetSchema(), relation
+            .getTableFrom().getTargetTable() );
         String leftTableAlias = databaseMeta.quoteField( relation.getTableFrom().getId() );
         String rightTableName =
-            databaseMeta.getQuotedSchemaTableCombination( relation.getTableTo().getTargetSchema(), relation
-                .getTableTo().getTargetTable() );
+          databaseMeta.getQuotedSchemaTableCombination( relation.getTableTo().getTargetSchema(), relation
+            .getTableTo().getTargetTable() );
         String rightTableAlias = databaseMeta.quoteField( relation.getTableTo().getId() );
 
         query.addJoin( leftTableName, leftTableAlias, rightTableName, rightTableAlias, joinType, joinFormula,
-            joinOrderKey );
+          joinOrderKey );
         // query.addWhereFormula(joinFormula, "AND"); //$NON-NLS-1$
       }
     }
@@ -244,20 +231,15 @@ public class SQLGenerator {
 
   /**
    * this method adds the group by statements to the query model
-   * 
-   * @param query
-   *          sql query model
-   * @param model
-   *          business model
-   * @param selections
-   *          list of selections
-   * @param databaseMeta
-   *          database info
-   * @param locale
-   *          locale string
+   *
+   * @param query        sql query model
+   * @param model        business model
+   * @param selections   list of selections
+   * @param databaseMeta database info
+   * @param locale       locale string
    */
   public void generateGroupBy( SQLQueryModel query, BusinessModel model, List<Selection> selections,
-      Map<BusinessTable, String> tableAliases, DatabaseMeta databaseMeta, String locale ) {
+                               Map<BusinessTable, String> tableAliases, DatabaseMeta databaseMeta, String locale ) {
     // can be moved to selection loop
     for ( Selection selection : selections ) {
       // Check if the column has any nested aggregation in there like a calculated column : SUM(a)/SUM(b) with no
@@ -272,21 +254,17 @@ public class SQLGenerator {
 
   /**
    * this method adds the order by statements to the query model
-   * 
-   * @param query
-   *          sql query model
-   * @param model
-   *          business model
-   * @param orderBy
-   *          list of order bys
-   * @param databaseMeta
-   *          database info
-   * @param locale
-   *          locale string
+   *
+   * @param query        sql query model
+   * @param model        business model
+   * @param orderBy      list of order bys
+   * @param databaseMeta database info
+   * @param locale       locale string
    */
-  public void
-    generateOrderBy( SQLQueryModel query, BusinessModel model, List<OrderBy> orderBy, DatabaseMeta databaseMeta,
-        String locale, Map<BusinessTable, String> tableAliases, Map<String, String> columnsMap ) {
+  public void generateOrderBy( SQLQueryModel query, BusinessModel model, List<OrderBy> orderBy,
+                               DatabaseMeta databaseMeta,
+                               String locale, Map<BusinessTable, String> tableAliases,
+                               Map<String, String> columnsMap ) {
     if ( orderBy != null ) {
       for ( OrderBy orderItem : orderBy ) {
         BusinessColumn businessColumn = orderItem.getSelection().getBusinessColumn();
@@ -309,9 +287,9 @@ public class SQLGenerator {
           }
         }
         SQLAndTables sqlAndTables =
-            getBusinessColumnSQL( model, orderItem.getSelection(), tableAliases, databaseMeta, locale );
+          getBusinessColumnSQL( model, orderItem.getSelection(), tableAliases, databaseMeta, locale );
         query.addOrderBy( sqlAndTables.getSql(), databaseMeta.quoteField( alias ), !orderItem.isAscending()
-            ? OrderType.DESCENDING : null ); //$NON-NLS-1$
+          ? OrderType.DESCENDING : null ); //$NON-NLS-1$
       }
     }
   }
@@ -325,14 +303,10 @@ public class SQLGenerator {
 
   /**
    * this method generates a unique alias name, limited to a specific length
-   * 
-   * @param alias
-   *          The name of the original alias to use
-   * @param maxLength
-   *          the maximum length the alias can be
-   * @param existingAliases
-   *          existing aliases
-   * 
+   *
+   * @param alias           The name of the original alias to use
+   * @param maxLength       the maximum length the alias can be
+   * @param existingAliases existing aliases
    * @return
    */
   public static String generateUniqueAlias( String alias, int maxLength, Collection<String> existingAliases ) {
@@ -358,27 +332,20 @@ public class SQLGenerator {
 
   /**
    * returns the generated SQL and additional metadata
-   * 
-   * @param selections
-   *          The selected business columns
-   * @param conditions
-   *          the conditions to apply (null = no conditions)
-   * @param orderBy
-   *          the ordering (null = no order by clause)
-   * @param databaseMeta
-   *          the meta info which determines the SQL generated.
-   * @param locale
-   *          the locale
-   * @param disableDistinct
-   *          if true, disables default behavior of using DISTINCT when there are no groupings.
-   * @param securityConstraint
-   *          if provided, applies a global security constraint to the query
-   * 
+   *
+   * @param selections         The selected business columns
+   * @param conditions         the conditions to apply (null = no conditions)
+   * @param orderBy            the ordering (null = no order by clause)
+   * @param databaseMeta       the meta info which determines the SQL generated.
+   * @param locale             the locale
+   * @param disableDistinct    if true, disables default behavior of using DISTINCT when there are no groupings.
+   * @param securityConstraint if provided, applies a global security constraint to the query
    * @return a SQL query based on a column selection, conditions and a locale
    */
   public MappedQuery getSQL( BusinessModel model, List<Selection> selections, List<WhereCondition> conditions,
-      List<OrderBy> orderBy, DatabaseMeta databaseMeta, String locale, boolean disableDistinct, int limit,
-      WhereCondition securityConstraint ) throws PentahoMetadataException {
+                             List<OrderBy> orderBy, DatabaseMeta databaseMeta, String locale, boolean disableDistinct,
+                             int limit,
+                             WhereCondition securityConstraint ) throws PentahoMetadataException {
     SQLQueryModel query = new SQLQueryModel();
     // Get settings for the query model
     ConceptInterface concept = model.getConcept();
@@ -394,19 +361,20 @@ public class SQLGenerator {
     // These are the tables involved in the field selection
     //
     List<BusinessTable> tabs =
-        getTablesInvolved( model, selections, conditions, orderBy, databaseMeta, locale, securityConstraint );
+      getTablesInvolved( model, selections, conditions, orderBy, databaseMeta, locale, securityConstraint );
 
     // Now get the shortest path between these tables.
     Path path = getShortestPathBetween( model, tabs );
     if ( path == null ) {
-      throw new PentahoMetadataException( Messages.getErrorString( "BusinessModel.ERROR_0001_FAILED_TO_FIND_PATH" ) ); //$NON-NLS-1$
+      throw new PentahoMetadataException(
+        Messages.getErrorString( "BusinessModel.ERROR_0001_FAILED_TO_FIND_PATH" ) ); //$NON-NLS-1$
     }
 
     List<BusinessTable> usedBusinessTables = path.getUsedTables();
     if ( path.size() == 0 ) {
       // just a selection from 1 table: pick any column...
-      if ( selections.size() > 0 ) // Otherwise, why bother, right?
-      {
+      if ( selections.size() > 0 ) {
+        // Otherwise, why bother, right?
         usedBusinessTables.add( selections.get( 0 ).getBusinessColumn().getBusinessTable() );
       }
     }
@@ -425,7 +393,7 @@ public class SQLGenerator {
       boolean group = hasFactsInIt( model, selections, conditions, databaseMeta, locale );
 
       generateSelect( query, model, databaseMeta, selections, disableDistinct, limit, group, locale, tableAliases,
-          columnsMap );
+        columnsMap );
       generateFromAndWhere( query, usedBusinessTables, model, path, conditions, tableAliases, databaseMeta, locale );
       if ( group ) {
         generateGroupBy( query, model, selections, tableAliases, databaseMeta, locale );
@@ -453,8 +421,9 @@ public class SQLGenerator {
   }
 
   protected List<BusinessTable> getTablesInvolved( BusinessModel model, List<Selection> selections,
-      List<WhereCondition> conditions, List<OrderBy> orderBy, DatabaseMeta databaseMeta, String locale,
-      WhereCondition securityConstraint ) {
+                                                   List<WhereCondition> conditions, List<OrderBy> orderBy,
+                                                   DatabaseMeta databaseMeta, String locale,
+                                                   WhereCondition securityConstraint ) {
     Set<BusinessTable> treeSet = new TreeSet<BusinessTable>();
 
     // Figure out which tables are involved in the SELECT
@@ -514,7 +483,7 @@ public class SQLGenerator {
   }
 
   public boolean hasFactsInIt( BusinessModel model, List<Selection> selections, List<WhereCondition> conditions,
-      DatabaseMeta databaseMeta, String locale ) {
+                               DatabaseMeta databaseMeta, String locale ) {
     // We don't have to simply check the columns in the selection
     // If the column is made up of a calculation, we need to verify that there is no aggregation in the calculation too.
     //
@@ -545,21 +514,18 @@ public class SQLGenerator {
   }
 
   /**
-   * See if the business column specified has a fact in it.<br>
-   * We verify the formula specified in the column to see if it contains calculations with any aggregated column.<br>
-   * We even do this nested down through the used business columns in the formula.<br>
-   * 
-   * @param model
-   *          the business model to reference
-   * @param businessColumn
-   *          the column to verify for facts
-   * @param databaseMeta
-   *          the database to reference
-   * @param locale
-   *          the locale to use
+   * See if the business column specified has a fact in it.<br> We verify the formula specified in the column to see if
+   * it contains calculations with any aggregated column.<br> We even do this nested down through the used business
+   * columns in the formula.<br>
+   *
+   * @param model          the business model to reference
+   * @param businessColumn the column to verify for facts
+   * @param databaseMeta   the database to reference
+   * @param locale         the locale to use
    * @return true if the business column uses any aggregation in the formula or is aggregated itself.
    */
-  public boolean hasFactsInIt( BusinessModel model, Selection businessColumn, DatabaseMeta databaseMeta, String locale ) {
+  public boolean hasFactsInIt( BusinessModel model, Selection businessColumn, DatabaseMeta databaseMeta,
+                               String locale ) {
     if ( businessColumn.hasAggregate() ) {
       return true;
     }
@@ -607,11 +573,9 @@ public class SQLGenerator {
    * new tables to the list until a path is discovered. If more than one path is available with a certain number of
    * tables, the algorithm uses the relative size values if specified to determine which path to traverse in the SQL
    * Join.
-   * 
-   * @param model
-   *          the business model
-   * @param tables
-   *          include tables
+   *
+   * @param model  the business model
+   * @param tables include tables
    * @return shortest path
    */
   public Path getShortestPathBetweenOrig( BusinessModel model, List<BusinessTable> tables ) {
@@ -699,11 +663,9 @@ public class SQLGenerator {
    * new tables to the list until a path is discovered. If more than one path is available with a certain number of
    * tables, the algorithm uses the relative size values if specified to determine which path to traverse in the SQL
    * Join.
-   * 
-   * @param model
-   *          the business model
-   * @param tables
-   *          include tables
+   *
+   * @param model  the business model
+   * @param tables include tables
    * @return shortest path
    */
   @SuppressWarnings( "unchecked" )
@@ -845,14 +807,15 @@ public class SQLGenerator {
   }
 
   public static SQLAndTables getBusinessColumnSQL( BusinessModel businessModel, Selection column,
-      Map<BusinessTable, String> tableAliases, DatabaseMeta databaseMeta, String locale ) {
+                                                   Map<BusinessTable, String> tableAliases, DatabaseMeta databaseMeta,
+                                                   String locale ) {
     if ( column.getBusinessColumn().isExact() ) {
       // convert to sql using libformula subsystem
       try {
         // we'll need to pass in some context to PMSFormula so it can resolve aliases if necessary
         PMSFormula formula =
-            new PMSFormula( businessModel, column.getBusinessColumn().getBusinessTable(), databaseMeta, column
-                .getBusinessColumn().getFormula(), tableAliases );
+          new PMSFormula( businessModel, column.getBusinessColumn().getBusinessTable(), databaseMeta, column
+            .getBusinessColumn().getFormula(), tableAliases );
         formula.parseAndValidate();
 
         String formulaSql = formula.generateSQL( locale );
@@ -867,12 +830,13 @@ public class SQLGenerator {
         // this is for backwards compatibility.
         // eventually throw any errors
         logger.error( Messages.getErrorString(
-            "BusinessColumn.ERROR_0001_FAILED_TO_PARSE_FORMULA", column.getBusinessColumn().getFormula() ), e ); //$NON-NLS-1$
+          "BusinessColumn.ERROR_0001_FAILED_TO_PARSE_FORMULA", column.getBusinessColumn().getFormula() ),
+          e ); //$NON-NLS-1$
 
         // Report just this table and column as being used along with the formula.
         //
         return new SQLAndTables( column.getBusinessColumn().getFormula(),
-            column.getBusinessColumn().getBusinessTable(), column );
+          column.getBusinessColumn().getBusinessTable(), column );
       }
     } else {
       String tableColumn = ""; //$NON-NLS-1$
@@ -893,10 +857,10 @@ public class SQLGenerator {
       // TODO: WPG: instead of using formula, shouldn't we use the physical column's name?
       tableColumn += databaseMeta.quoteField( column.getBusinessColumn().getFormula() );
 
-      if ( column.hasAggregate() ) // For the having clause, for example: HAVING sum(turnover) > 100
-      {
+      if ( column.hasAggregate() ) {
+        // For the having clause, for example: HAVING sum(turnover) > 100
         return new SQLAndTables( getFunctionExpression( column, tableColumn, databaseMeta ), column.getBusinessColumn()
-            .getBusinessTable(), column );
+          .getBusinessTable(), column );
       } else {
         return new SQLAndTables( tableColumn, column.getBusinessColumn().getBusinessTable(), column );
       }
@@ -908,10 +872,10 @@ public class SQLGenerator {
   private static boolean hasAggregateDefinedAlready( String sql, DatabaseMeta databaseMeta ) {
     String trimmed = sql.trim();
     return trimmed.startsWith( databaseMeta.getFunctionAverage() + "(" )
-        || trimmed.startsWith( databaseMeta.getFunctionCount() + "(" )
-        || trimmed.startsWith( databaseMeta.getFunctionMaximum() + "(" )
-        || trimmed.startsWith( databaseMeta.getFunctionMinimum() + "(" )
-        || trimmed.startsWith( databaseMeta.getFunctionSum() + "(" );
+      || trimmed.startsWith( databaseMeta.getFunctionCount() + "(" )
+      || trimmed.startsWith( databaseMeta.getFunctionMaximum() + "(" )
+      || trimmed.startsWith( databaseMeta.getFunctionMinimum() + "(" )
+      || trimmed.startsWith( databaseMeta.getFunctionSum() + "(" );
   }
 
   public static String getFunctionExpression( Selection column, String tableColumn, DatabaseMeta databaseMeta ) {
@@ -919,9 +883,11 @@ public class SQLGenerator {
 
     switch ( column.getActiveAggregationType().getType() ) {
       case AggregationSettings.TYPE_AGGREGATION_COUNT_DISTINCT:
-        expression += "(DISTINCT " + tableColumn + ")";break; //$NON-NLS-1$ //$NON-NLS-2$
+        expression += "(DISTINCT " + tableColumn + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+        break;
       default:
-        expression += "(" + tableColumn + ")";break; //$NON-NLS-1$ //$NON-NLS-2$
+        expression += "(" + tableColumn + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+        break;
     }
 
     return expression;
@@ -955,7 +921,7 @@ public class SQLGenerator {
   }
 
   public String getJoin( BusinessModel businessModel, RelationshipMeta relation,
-      Map<BusinessTable, String> tableAliases, DatabaseMeta databaseMeta, String locale ) {
+                         Map<BusinessTable, String> tableAliases, DatabaseMeta databaseMeta, String locale ) {
     String join = ""; //$NON-NLS-1$
     if ( relation.isComplex() ) {
       try {
@@ -967,11 +933,11 @@ public class SQLGenerator {
         // backward compatibility, deprecate
         // FIXME: we need to get rid of this and just throw an exception
         logger.error( Messages.getErrorString(
-            "MQLQueryImpl.ERROR_0017_FAILED_TO_PARSE_COMPLEX_JOIN", relation.getComplexJoin() ), e ); //$NON-NLS-1$
+          "MQLQueryImpl.ERROR_0017_FAILED_TO_PARSE_COMPLEX_JOIN", relation.getComplexJoin() ), e ); //$NON-NLS-1$
         join = relation.getComplexJoin();
       }
     } else if ( relation.getTableFrom() != null && relation.getTableTo() != null && relation.getFieldFrom() != null
-        && relation.getFieldTo() != null ) {
+      && relation.getFieldTo() != null ) {
 
       // Left side
       String leftTableAlias = null;
@@ -1000,7 +966,8 @@ public class SQLGenerator {
       join += "."; //$NON-NLS-1$
       join += databaseMeta.quoteField( relation.getFieldTo().getFormula() );
     } else {
-      logger.error( Messages.getErrorString( "SQLGenerator.ERROR_0001_INVALID_RELATION", relation.toString() ) ); //$NON-NLS-1$
+      logger.error(
+        Messages.getErrorString( "SQLGenerator.ERROR_0001_INVALID_RELATION", relation.toString() ) ); //$NON-NLS-1$
     }
 
     return join;

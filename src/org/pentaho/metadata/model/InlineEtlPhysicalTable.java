@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.metadata.model;
 
@@ -25,9 +25,8 @@ import org.pentaho.metadata.model.concept.types.LocalizedString;
 
 /**
  * The inline etl physical table simply holds pointers to the physical columns.
- * 
+ *
  * @author Will Gorman (wgorman@pentaho.com)
- * 
  */
 public class InlineEtlPhysicalTable extends Concept implements IPhysicalTable {
 
@@ -58,7 +57,7 @@ public class InlineEtlPhysicalTable extends Concept implements IPhysicalTable {
   }
 
   public IPhysicalModel getPhysicalModel() {
-    return ( IPhysicalModel )getParent();
+    return (IPhysicalModel) getParent();
   }
 
 }

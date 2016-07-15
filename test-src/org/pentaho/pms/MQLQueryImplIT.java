@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation.  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation.  All rights reserved.
  */
 package org.pentaho.pms;
 
@@ -401,10 +401,12 @@ public class MQLQueryImplIT extends MetadataTestBase {
     model.addRelationship( rl3 );
 
     SQLGenerator sqlGenerator = new SQLGenerator();
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
     String joinSQL = sqlGenerator.getJoin( model, rl1, null, databaseMeta, locale );
 
-    assertEqualsIgnoreWhitespaces( joinSQL, " bt1.pc1  =  bt2.pc2 " );//$NON-NLS-1$
+    assertEqualsIgnoreWhitespaces( joinSQL, " bt1.pc1  =  bt2.pc2 " ); //$NON-NLS-1$
   }
 
   public void testGroupBySQLGeneration() {
@@ -415,13 +417,15 @@ public class MQLQueryImplIT extends MetadataTestBase {
       bc1.setAggregationType( AggregationSettings.SUM );
       BusinessColumn bc2 = model.findBusinessColumn( "bc2" );
       BusinessColumn bce2 = model.findBusinessColumn( "bce2" );
-      DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+      DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "",
+        "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+      // $NON-NLS-8$
       MQLQueryImpl myTest = new MQLQueryImpl( null, model, databaseMeta, "en_US" ); //$NON-NLS-1$
       myTest.addSelection( new Selection( bc1 ) );
       myTest.addSelection( new Selection( bc2 ) );
       myTest.addSelection( new Selection( bce2 ) );
 
-      myTest.addConstraint( WhereCondition.operators[0], "[bt1.bc1] > 25" ); //$NON-NLS-1$
+      myTest.addConstraint( WhereCondition.operators[ 0 ], "[bt1.bc1] > 25" ); //$NON-NLS-1$
 
       MappedQuery query = myTest.getQuery();
       assertEqualsIgnoreWhitespaces( "SELECT \n" //$NON-NLS-1$
@@ -442,7 +446,7 @@ public class MQLQueryImplIT extends MetadataTestBase {
           + "          (\n" //$NON-NLS-1$
           + "              SUM(bt1.pc1)  > 25\n" //$NON-NLS-1$
           + "          )\n", //$NON-NLS-1$
-          query.getQuery() );
+        query.getQuery() );
       Map map = query.getMap();
       assertNotNull( map );
       assertEquals( map.size(), 3 );
@@ -468,10 +472,10 @@ public class MQLQueryImplIT extends MetadataTestBase {
           + "          (\n" //$NON-NLS-1$        
           + "              SUM(bt1.pc1)  > 25\n" //$NON-NLS-1$
           + "          )\n", //$NON-NLS-1$
-          query.getDisplayQuery() );
+        query.getDisplayQuery() );
 
       MemoryMetaData mmd = new MemoryMetaData( new Object[][] { { "COL0", "COL1" } }, //$NON-NLS-1$  //$NON-NLS-2$
-          null );
+        null );
 
       ExtendedMetaData emd = (ExtendedMetaData) query.generateMetadata( mmd );
 
@@ -497,13 +501,15 @@ public class MQLQueryImplIT extends MetadataTestBase {
 
       BusinessColumn bc2 = model.findBusinessColumn( "bc2" );
       BusinessColumn bce2 = model.findBusinessColumn( "bce2" );
-      DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+      DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "",
+        "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+      // $NON-NLS-8$
       MQLQueryImpl myTest = new MQLQueryImpl( null, model, databaseMeta, "en_US" ); //$NON-NLS-1$
       myTest.addSelection( new Selection( bc1 ) );
       myTest.addSelection( new Selection( bc2 ) );
       myTest.addSelection( new Selection( bce2 ) );
 
-      myTest.addConstraint( WhereCondition.operators[0], "[bt1.bc1] > 25" ); //$NON-NLS-1$
+      myTest.addConstraint( WhereCondition.operators[ 0 ], "[bt1.bc1] > 25" ); //$NON-NLS-1$
 
       MappedQuery query = myTest.getQuery();
       assertEqualsIgnoreWhitespaces( "SELECT \n" //$NON-NLS-1$
@@ -524,7 +530,7 @@ public class MQLQueryImplIT extends MetadataTestBase {
           + "          (\n" //$NON-NLS-1$
           + "              SUM(bt1.pc1)  > 25\n" //$NON-NLS-1$
           + "          )\n", //$NON-NLS-1$
-          query.getQuery() );
+        query.getQuery() );
       Map map = query.getMap();
       assertNotNull( map );
       assertEquals( map.size(), 3 );
@@ -550,10 +556,10 @@ public class MQLQueryImplIT extends MetadataTestBase {
           + "          (\n" //$NON-NLS-1$        
           + "              SUM(bt1.pc1)  > 25\n" //$NON-NLS-1$
           + "          )\n", //$NON-NLS-1$
-          query.getDisplayQuery() );
+        query.getDisplayQuery() );
 
       MemoryMetaData mmd = new MemoryMetaData( new Object[][] { { "COL0", "COL1" } }, //$NON-NLS-1$  //$NON-NLS-2$
-          null );
+        null );
 
       ExtendedMetaData emd = (ExtendedMetaData) query.generateMetadata( mmd );
 
@@ -566,7 +572,7 @@ public class MQLQueryImplIT extends MetadataTestBase {
       myTest2.addSelection( new Selection( bc2 ) );
       myTest2.addSelection( new Selection( bce2 ) );
 
-      myTest2.addConstraint( WhereCondition.operators[0], "[bt1.bc1.none] > 25" ); //$NON-NLS-1$
+      myTest2.addConstraint( WhereCondition.operators[ 0 ], "[bt1.bc1.none] > 25" ); //$NON-NLS-1$
 
       MappedQuery query2 = myTest2.getQuery();
       assertEqualsIgnoreWhitespaces( "SELECT DISTINCT \n" //$NON-NLS-1$
@@ -583,7 +589,7 @@ public class MQLQueryImplIT extends MetadataTestBase {
           + "AND       ((\n" //$NON-NLS-1$
           + "              bt1.pc1 > 25\n" //$NON-NLS-1$
           + "          ))\n", //$NON-NLS-1$
-          query2.getQuery() );
+        query2.getQuery() );
 
       // select count aggregate
       MQLQueryImpl myTest3 = new MQLQueryImpl( null, model, databaseMeta, "en_US" ); //$NON-NLS-1$
@@ -591,7 +597,7 @@ public class MQLQueryImplIT extends MetadataTestBase {
       myTest3.addSelection( new Selection( bc2 ) );
       myTest3.addSelection( new Selection( bce2 ) );
 
-      myTest3.addConstraint( WhereCondition.operators[0], "[bt1.bc1.count] > 25" ); //$NON-NLS-1$
+      myTest3.addConstraint( WhereCondition.operators[ 0 ], "[bt1.bc1.count] > 25" ); //$NON-NLS-1$
 
       MappedQuery query3 = myTest3.getQuery();
       assertEqualsIgnoreWhitespaces( "SELECT \n" //$NON-NLS-1$
@@ -612,7 +618,7 @@ public class MQLQueryImplIT extends MetadataTestBase {
           + "          (\n" //$NON-NLS-1$        
           + "              COUNT(bt1.pc1)  > 25\n" //$NON-NLS-1$
           + "          )\n", //$NON-NLS-1$
-          query3.getQuery() );
+        query3.getQuery() );
 
     } catch ( Exception e ) {
       e.printStackTrace();
@@ -622,7 +628,8 @@ public class MQLQueryImplIT extends MetadataTestBase {
 
   public void testLocale() {
     BusinessModel model = buildDefaultModel();
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
     MQLQueryImpl myTest = new MQLQueryImpl( null, model, databaseMeta, "en_US" ); //$NON-NLS-1$
 
     assertEquals( "en_US", myTest.getLocale() ); //$NON-NLS-1$
@@ -634,7 +641,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
     BusinessModel model = buildDefaultModel();
     BusinessColumn bc1 = model.findBusinessColumn( "bc1" ); //$NON-NLS-1$
 
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
     MQLQueryImpl myTest = new MQLQueryImpl( null, model, databaseMeta, "en_US" ); //$NON-NLS-1$
 
     // test adding of a selection twice to the list
@@ -864,7 +873,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
     model.addRelationship( rl2 );
     model.addRelationship( rl3 );
     model.addRelationship( rl4 );
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
     MQLQueryImpl myTest = new MQLQueryImpl( null, model, databaseMeta, "en_US" ); //$NON-NLS-1$
     myTest.addSelection( new Selection( bc1 ) );
     myTest.addSelection( new Selection( bc4 ) );
@@ -883,7 +894,8 @@ public class MQLQueryImplIT extends MetadataTestBase {
         + "WHERE \n" //$NON-NLS-1$
         + "          (\n" + "             bt2.pc2 = bt3.pc3\n" //$NON-NLS-1$
         + "          )\n" + "      AND (\n" + "             bt3.pc3 = bt4.pc4\n" //$NON-NLS-1$
-        + "          )\n" + "      AND (\n" + "             bt1.pc1 = bt2.pc2\n" + "          )\n", queryString ); //$NON-NLS-1$
+        + "          )\n" + "      AND (\n" + "             bt1.pc1 = bt2.pc2\n" + "          )\n",
+      queryString ); //$NON-NLS-1$
   }
 
   public void testClassicGetShortestPathBetween() throws Exception {
@@ -981,7 +993,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
     model.addRelationship( rl2 );
     model.addRelationship( rl3 );
     model.addRelationship( rl4 );
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
     MQLQueryImpl myTest = new MQLQueryImpl( null, model, databaseMeta, "en_US" ); //$NON-NLS-1$
     myTest.addSelection( new Selection( bc1 ) );
     myTest.addSelection( new Selection( bc4 ) );
@@ -1000,7 +1014,8 @@ public class MQLQueryImplIT extends MetadataTestBase {
         + "WHERE \n" //$NON-NLS-1$
         + "          (\n" + "             bt2.pc2 = bt3.pc3\n" //$NON-NLS-1$
         + "          )\n" + "      AND (\n" + "             bt3.pc3 = bt4.pc4\n" //$NON-NLS-1$
-        + "          )\n" + "      AND (\n" + "             bt1.pc1 = bt2.pc2\n" + "          )\n", queryString ); //$NON-NLS-1$
+        + "          )\n" + "      AND (\n" + "             bt1.pc1 = bt2.pc2\n" + "          )\n",
+      queryString ); //$NON-NLS-1$
   }
 
   public void testGetShortestPathBetween5() throws Exception {
@@ -1095,7 +1110,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
     model.addRelationship( rl2 );
     model.addRelationship( rl3 );
     model.addRelationship( rl4 );
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
     MQLQueryImpl myTest = new MQLQueryImpl( null, model, databaseMeta, "en_US" ); //$NON-NLS-1$
     myTest.addSelection( new Selection( bc1 ) );
     myTest.addSelection( new Selection( bc4 ) );
@@ -1104,19 +1121,19 @@ public class MQLQueryImplIT extends MetadataTestBase {
     String queryString = query.getQuery();
     // System.out.println(queryString);
     assertEqualsIgnoreWhitespaces( "SELECT DISTINCT \n" //$NON-NLS-1$
-        + "          bt1.pc1 AS COL0\n" //$NON-NLS-1$
-        + "         ,bt4.pc4 AS COL1\n" //$NON-NLS-1$
-        + "FROM \n" //$NON-NLS-1$
-        + "          pt1 bt1\n" //$NON-NLS-1$
-        + "         ,pt2 bt2\n" //$NON-NLS-1$
-        + "         ,pt3 bt3\n" //$NON-NLS-1$
-        + "         ,pt4 bt4\n" //$NON-NLS-1$
-        + "WHERE \n" //$NON-NLS-1$
-        + "          (\n" + "             bt1.pc1 = bt2.pc2\n" + "          )\n"
-        + "      AND (\n"
-        + "             bt2.pc2 = bt3.pc3\n" //$NON-NLS-1$
-        + "          )\n" + "      AND (\n" + "             bt3.pc3 = bt4.pc4\n" //$NON-NLS-1$
-        + "          )\n", queryString ); //$NON-NLS-1$
+      + "          bt1.pc1 AS COL0\n" //$NON-NLS-1$
+      + "         ,bt4.pc4 AS COL1\n" //$NON-NLS-1$
+      + "FROM \n" //$NON-NLS-1$
+      + "          pt1 bt1\n" //$NON-NLS-1$
+      + "         ,pt2 bt2\n" //$NON-NLS-1$
+      + "         ,pt3 bt3\n" //$NON-NLS-1$
+      + "         ,pt4 bt4\n" //$NON-NLS-1$
+      + "WHERE \n" //$NON-NLS-1$
+      + "          (\n" + "             bt1.pc1 = bt2.pc2\n" + "          )\n"
+      + "      AND (\n"
+      + "             bt2.pc2 = bt3.pc3\n" //$NON-NLS-1$
+      + "          )\n" + "      AND (\n" + "             bt3.pc3 = bt4.pc4\n" //$NON-NLS-1$
+      + "          )\n", queryString ); //$NON-NLS-1$
   }
 
   public void testClassicGetShortestPathBetweenNoPathPossible() throws Exception {
@@ -1206,7 +1223,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
     model.addRelationship( rl2 );
     model.addRelationship( rl3 );
 
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
     List<BusinessTable> tbls = new ArrayList<BusinessTable>();
     tbls.add( bt1 );
     tbls.add( bt5 );
@@ -1306,7 +1325,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
     model.addRelationship( rl2 );
     model.addRelationship( rl3 );
 
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
     List<BusinessTable> tbls = new ArrayList<BusinessTable>();
     tbls.add( bt1 );
     tbls.add( bt5 );
@@ -1427,7 +1448,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
     model.addRelationship( rl3 );
     model.addRelationship( rl4 );
     model.addRelationship( rl5 );
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
     MQLQueryImpl myTest = new MQLQueryImpl( null, model, databaseMeta, "en_US" ); //$NON-NLS-1$
     myTest.addSelection( new Selection( bc1 ) );
     myTest.addSelection( new Selection( bc5 ) );
@@ -1438,9 +1461,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
     // System.out.println("*********");
     // System.out.println(queryString);
     assertEqualsIgnoreWhitespaces( "SELECT DISTINCT  " + "          bt1.pc1 AS COL0 " + "         ,bt5.pc5 AS COL1 "
-        + "FROM  " + "          pt1 bt1 " + "         ,pt2 bt2 " + "         ,pt3 bt3 " + "         ,pt5 bt5 "
-        + "WHERE  " + "          ( bt1.pc1 = bt3.pc3 ) " + "      AND ( bt1.pc1 = bt2.pc2 ) "
-        + "      AND ( bt2.pc2 = bt5.pc5 ) " + "      AND ( bt3.pc3 = bt5.pc5 ) ", queryString ); //$NON-NLS-1$
+      + "FROM  " + "          pt1 bt1 " + "         ,pt2 bt2 " + "         ,pt3 bt3 " + "         ,pt5 bt5 "
+      + "WHERE  " + "          ( bt1.pc1 = bt3.pc3 ) " + "      AND ( bt1.pc1 = bt2.pc2 ) "
+      + "      AND ( bt2.pc2 = bt5.pc5 ) " + "      AND ( bt3.pc3 = bt5.pc5 ) ", queryString ); //$NON-NLS-1$
   }
 
   public void testfirstShortGetShortestPathBetween() throws Exception {
@@ -1542,7 +1565,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
     model.addRelationship( rl2 );
     model.addRelationship( rl3 );
     model.addRelationship( rl4 );
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
     MQLQueryImpl myTest = new MQLQueryImpl( null, model, databaseMeta, "en_US" ); //$NON-NLS-1$
     myTest.addSelection( new Selection( bc1 ) );
     myTest.addSelection( new Selection( bc5 ) );
@@ -1553,8 +1578,8 @@ public class MQLQueryImplIT extends MetadataTestBase {
     // System.out.println("*********");
     // System.out.println(queryString);
     assertEqualsIgnoreWhitespaces( "SELECT DISTINCT  " + "          bt1.pc1 AS COL0 " + "         ,bt5.pc5 AS COL1 "
-        + "FROM  " + "          pt1 bt1 " + "         ,pt3 bt3 " + "         ,pt5 bt5 " + "WHERE  "
-        + "          ( bt1.pc1 = bt3.pc3 ) " + "      AND ( bt3.pc3 = bt5.pc5 ) ", queryString ); //$NON-NLS-1$
+      + "FROM  " + "          pt1 bt1 " + "         ,pt3 bt3 " + "         ,pt5 bt5 " + "WHERE  "
+      + "          ( bt1.pc1 = bt3.pc3 ) " + "      AND ( bt3.pc3 = bt5.pc5 ) ", queryString ); //$NON-NLS-1$
   }
 
   public void testlowestScoreGetShortestPathBetween() throws Exception {
@@ -1653,7 +1678,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
     model.addRelationship( rl2 );
     model.addRelationship( rl3 );
     model.addRelationship( rl4 );
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
     MQLQueryImpl myTest = new MQLQueryImpl( null, model, databaseMeta, "en_US" ); //$NON-NLS-1$
     myTest.addSelection( new Selection( bc1 ) );
     myTest.addSelection( new Selection( bc5 ) );
@@ -1664,8 +1691,8 @@ public class MQLQueryImplIT extends MetadataTestBase {
     // System.out.println("*********");
     // System.out.println(queryString);
     assertEqualsIgnoreWhitespaces( " SELECT DISTINCT " + " bt1.pc1 AS COL0 " + " ,bt5.pc5 AS COL1 " + " FROM  "
-        + " pt1 bt1 " + " ,pt3 bt3 " + " ,pt5 bt5 " + " WHERE  " + " ( bt1.pc1 = bt3.pc3 ) "
-        + "  AND ( bt3.pc3 = bt5.pc5 ) ", queryString ); //$NON-NLS-1$
+      + " pt1 bt1 " + " ,pt3 bt3 " + " ,pt5 bt5 " + " WHERE  " + " ( bt1.pc1 = bt3.pc3 ) "
+      + "  AND ( bt3.pc3 = bt5.pc5 ) ", queryString ); //$NON-NLS-1$
   }
 
   public static String subsetsToString( List subsets ) {
@@ -1716,7 +1743,8 @@ public class MQLQueryImplIT extends MetadataTestBase {
     assertNotNull( subsets );
     assertEquals( 10, subsets.size() );
     subsetStr = subsetsToString( subsets );
-    assertEquals( "[A,B,C],[A,B,D],[A,B,E],[A,C,D],[A,C,E],[A,D,E],[B,C,D],[B,C,E],[B,D,E],[C,D,E]", subsetStr ); //$NON-NLS-1$
+    assertEquals( "[A,B,C],[A,B,D],[A,B,E],[A,C,D],[A,C,E],[A,D,E],[B,C,D],[B,C,E],[B,D,E],[C,D,E]",
+      subsetStr ); //$NON-NLS-1$
 
     subsets = myTest.getSubsetsOfSize( 4, testList );
     assertNotNull( subsets );
@@ -1784,13 +1812,16 @@ public class MQLQueryImplIT extends MetadataTestBase {
 
     model.addRelationship( rl1 );
 
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
     MQLQueryImpl myTest = new MQLQueryImpl( null, model, databaseMeta, "en_US" ); //$NON-NLS-1$
     myTest.addSelection( new Selection( bce2 ) );
 
     MappedQuery query = myTest.getQuery();
     assertEqualsIgnoreWhitespaces(
-        "SELECT DISTINCT bt2.pc2 * bt1.pc1 AS COL0 FROM pt1 bt1 ,pt2 bt2 WHERE ( bt1.pc1 = bt2.pc2 )", query.getQuery() ); //$NON-NLS-1$
+      "SELECT DISTINCT bt2.pc2 * bt1.pc1 AS COL0 FROM pt1 bt1 ,pt2 bt2 WHERE ( bt1.pc1 = bt2.pc2 )",
+      query.getQuery() ); //$NON-NLS-1$
 
   }
 
@@ -1837,15 +1868,17 @@ public class MQLQueryImplIT extends MetadataTestBase {
 
     model.addRelationship( rl1 );
 
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
     MQLQueryImpl myTest = new MQLQueryImpl( null, model, databaseMeta, "en_US" ); //$NON-NLS-1$
     myTest.addSelection( new Selection( bc1 ) );
     myTest.addSelection( new Selection( bc2 ) );
 
     MappedQuery query = myTest.getQuery();
     assertEqualsIgnoreWhitespaces(
-        "SELECT DISTINCT bt1.pc1 AS COL0 ,bt2.pc2 AS COL1 FROM pt1 bt1 LEFT OUTER JOIN pt2 bt2 ON ( bt1.pc1 = bt2.pc2 )",
-        query.getQuery() ); //$NON-NLS-1$
+      "SELECT DISTINCT bt1.pc1 AS COL0 ,bt2.pc2 AS COL1 FROM pt1 bt1 LEFT OUTER JOIN pt2 bt2 ON ( bt1.pc1 = bt2.pc2 )",
+      query.getQuery() ); //$NON-NLS-1$
   }
 
   /**
@@ -1891,7 +1924,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
 
     model.addRelationship( rl1 );
 
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
     MQLQueryImpl myTest = new MQLQueryImpl( null, model, databaseMeta, "en_US" ); //$NON-NLS-1$
     myTest.addSelection( new Selection( bc1 ) );
     myTest.addSelection( new Selection( bc2 ) );
@@ -1899,8 +1934,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
 
     MappedQuery query = myTest.getQuery();
     assertEqualsIgnoreWhitespaces(
-        "SELECT DISTINCT bt1.pc1 AS COL0 ,bt2.pc2 AS COL1 FROM pt1 bt1 LEFT OUTER JOIN pt2 bt2 ON ( bt1.pc1 = bt2.pc2 AND ( bt2.pc2 > 1 ) )",
-        query.getQuery() ); //$NON-NLS-1$
+      "SELECT DISTINCT bt1.pc1 AS COL0 ,bt2.pc2 AS COL1 FROM pt1 bt1 LEFT OUTER JOIN pt2 bt2 ON ( bt1.pc1 = bt2.pc2 "
+        + "AND ( bt2.pc2 > 1 ) )",
+      query.getQuery() ); //$NON-NLS-1$
   }
 
   /**
@@ -1947,15 +1983,18 @@ public class MQLQueryImplIT extends MetadataTestBase {
 
     model.addRelationship( rl1 );
 
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
     MQLQueryImpl myTest = new MQLQueryImpl( null, model, databaseMeta, "en_US" ); //$NON-NLS-1$
     myTest.addSelection( new Selection( bc1 ) );
     myTest.addSelection( new Selection( bc2 ) );
 
     MappedQuery query = myTest.getQuery();
     assertEqualsIgnoreWhitespaces(
-        "SELECT bt1.pc1 AS COL0 ,SUM(bt2.pc2) AS COL1 FROM pt1 bt1 LEFT OUTER JOIN pt2 bt2 ON ( bt1.pc1 = bt2.pc2 ) GROUP BY bt1.pc1",
-        query.getQuery() ); //$NON-NLS-1$
+      "SELECT bt1.pc1 AS COL0 ,SUM(bt2.pc2) AS COL1 FROM pt1 bt1 LEFT OUTER JOIN pt2 bt2 ON ( bt1.pc1 = bt2.pc2 ) "
+        + "GROUP BY bt1.pc1",
+      query.getQuery() ); //$NON-NLS-1$
   }
 
   /**
@@ -2002,7 +2041,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
 
     model.addRelationship( rl1 );
 
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
     MQLQueryImpl myTest = new MQLQueryImpl( null, model, databaseMeta, "en_US" ); //$NON-NLS-1$
     myTest.addSelection( new Selection( bc1 ) );
     myTest.addSelection( new Selection( bc2 ) );
@@ -2010,8 +2051,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
 
     MappedQuery query = myTest.getQuery();
     assertEqualsIgnoreWhitespaces(
-        "SELECT bt1.pc1 AS COL0 ,SUM(bt2.pc2) AS COL1 FROM pt1 bt1 LEFT OUTER JOIN pt2 bt2 ON ( bt1.pc1 = bt2.pc2 ) GROUP BY bt1.pc1 HAVING ( SUM(bt2.pc2) > 1 )",
-        query.getQuery() ); //$NON-NLS-1$
+      "SELECT bt1.pc1 AS COL0 ,SUM(bt2.pc2) AS COL1 FROM pt1 bt1 LEFT OUTER JOIN pt2 bt2 ON ( bt1.pc1 = bt2.pc2 ) "
+        + "GROUP BY bt1.pc1 HAVING ( SUM(bt2.pc2) > 1 )",
+      query.getQuery() ); //$NON-NLS-1$
   }
 
   /**
@@ -2060,7 +2102,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
 
     model.addRelationship( rl1 );
 
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
     MQLQueryImpl myTest = new MQLQueryImpl( null, model, databaseMeta, "en_US" ); //$NON-NLS-1$
     myTest.addSelection( new Selection( bc1 ) );
     myTest.addSelection( new Selection( bc2 ) );
@@ -2069,8 +2113,10 @@ public class MQLQueryImplIT extends MetadataTestBase {
 
     MappedQuery query = myTest.getQuery();
     assertEqualsIgnoreWhitespaces(
-        "SELECT DISTINCT bt1.pc1 AS COL0 ,bt2.pc2 AS COL1 FROM pt1 bt1 LEFT OUTER JOIN pt2 bt2 ON ( bt1.pc1 = bt2.pc2 AND ( bt2.pc2 > 1 ) ) WHERE (( bt1.pc1 > 1 ))", //$NON-NLS-1$
-        query.getQuery() );
+      "SELECT DISTINCT bt1.pc1 AS COL0 ,bt2.pc2 AS COL1 FROM pt1 bt1 LEFT OUTER JOIN pt2 bt2 ON ( bt1.pc1 = bt2.pc2 "
+        + "AND ( bt2.pc2 > 1 ) ) WHERE (( bt1.pc1 > 1 ))",
+      //$NON-NLS-1$
+      query.getQuery() );
   }
 
   /**
@@ -2135,7 +2181,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
 
     model.addRelationship( rl2 );
 
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
     MQLQueryImpl myTest = new MQLQueryImpl( null, model, databaseMeta, "en_US" ); //$NON-NLS-1$
     myTest.addSelection( new Selection( bc1 ) );
     myTest.addSelection( new Selection( bc2 ) );
@@ -2143,8 +2191,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
 
     MappedQuery query = myTest.getQuery();
     assertEqualsIgnoreWhitespaces(
-        "SELECT DISTINCT bt1.pc1 AS COL0,bt2.pc2 AS COL1,bt3.pc3 AS COL2 FROM pt3 bt3 JOIN(pt1 bt1 LEFT OUTER JOIN pt2 bt2 ON(bt1.pc1 = bt2.pc2))ON(bt2.pc2 = bt3.pc3)",
-        query.getQuery() ); //$NON-NLS-1$
+      "SELECT DISTINCT bt1.pc1 AS COL0,bt2.pc2 AS COL1,bt3.pc3 AS COL2 FROM pt3 bt3 JOIN(pt1 bt1 LEFT OUTER JOIN pt2 "
+        + "bt2 ON(bt1.pc1 = bt2.pc2))ON(bt2.pc2 = bt3.pc3)",
+      query.getQuery() ); //$NON-NLS-1$
   }
 
   /**
@@ -2228,7 +2277,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
 
     model.addRelationship( rl3 );
 
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
     MQLQueryImpl myTest = new MQLQueryImpl( null, model, databaseMeta, "en_US" ); //$NON-NLS-1$
     myTest.addSelection( new Selection( bc1 ) );
     myTest.addSelection( new Selection( bc2 ) );
@@ -2237,8 +2288,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
 
     MappedQuery query = myTest.getQuery();
     assertEqualsIgnoreWhitespaces(
-        "SELECT DISTINCT bt1.k AS COL0,bt2.k AS COL1,bt3.k AS COL2,bt4.k AS COL3 FROM t1 bt1 JOIN(t4 bt4 JOIN(t2 bt2 LEFT OUTER JOIN t3 bt3 ON(bt2.k = bt3.k))ON(bt3.k = bt4.k))ON(bt1.k = bt2.k)",
-        query.getQuery() ); //$NON-NLS-1$
+      "SELECT DISTINCT bt1.k AS COL0,bt2.k AS COL1,bt3.k AS COL2,bt4.k AS COL3 FROM t1 bt1 JOIN(t4 bt4 JOIN(t2 bt2 "
+        + "LEFT OUTER JOIN t3 bt3 ON(bt2.k = bt3.k))ON(bt3.k = bt4.k))ON(bt1.k = bt2.k)",
+      query.getQuery() ); //$NON-NLS-1$
   }
 
   /**
@@ -2303,7 +2355,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
 
     model.addRelationship( rl2 );
 
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
     MQLQueryImpl myTest = new MQLQueryImpl( null, model, databaseMeta, "en_US" ); //$NON-NLS-1$
     myTest.addSelection( new Selection( bc1 ) );
     myTest.addSelection( new Selection( bc2 ) );
@@ -2311,8 +2365,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
 
     MappedQuery query = myTest.getQuery();
     assertEqualsIgnoreWhitespaces(
-        "SELECT DISTINCT bt1.k AS COL0 ,bt2.k AS COL1 ,bt3.k AS COL2 FROM t1 bt1 LEFT OUTER JOIN ( t2 bt2 LEFT OUTER JOIN t3 bt3 ON ( bt2.k = bt3.k ) ) ON ( bt1.k = bt2.k )",
-        query.getQuery() ); //$NON-NLS-1$
+      "SELECT DISTINCT bt1.k AS COL0 ,bt2.k AS COL1 ,bt3.k AS COL2 FROM t1 bt1 LEFT OUTER JOIN ( t2 bt2 LEFT OUTER "
+        + "JOIN t3 bt3 ON ( bt2.k = bt3.k ) ) ON ( bt1.k = bt2.k )",
+      query.getQuery() ); //$NON-NLS-1$
   }
 
   /**
@@ -2377,7 +2432,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
 
     model.addRelationship( rl2 );
 
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
     MQLQueryImpl myTest = new MQLQueryImpl( null, model, databaseMeta, "en_US" ); //$NON-NLS-1$
     myTest.addSelection( new Selection( bc1 ) );
     myTest.addSelection( new Selection( bc2 ) );
@@ -2385,8 +2442,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
 
     MappedQuery query = myTest.getQuery();
     assertEqualsIgnoreWhitespaces(
-        "SELECT DISTINCT bt1.k AS COL0 ,bt2.k AS COL1 ,bt3.k AS COL2 FROM t2 bt2 RIGHT OUTER JOIN ( t1 bt1 LEFT OUTER JOIN t3 bt3 ON ( bt1.k = bt3.k ) ) ON ( bt1.k = bt2.k )",
-        query.getQuery() ); //$NON-NLS-1$
+      "SELECT DISTINCT bt1.k AS COL0 ,bt2.k AS COL1 ,bt3.k AS COL2 FROM t2 bt2 RIGHT OUTER JOIN ( t1 bt1 LEFT OUTER "
+        + "JOIN t3 bt3 ON ( bt1.k = bt3.k ) ) ON ( bt1.k = bt2.k )",
+      query.getQuery() ); //$NON-NLS-1$
   }
 
   /**
@@ -2453,7 +2511,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
 
     model.addRelationship( rl2 );
 
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
     MQLQueryImpl myTest = new MQLQueryImpl( null, model, databaseMeta, "en_US" ); //$NON-NLS-1$
     myTest.addSelection( new Selection( bc1 ) );
     myTest.addSelection( new Selection( bc2 ) );
@@ -2461,8 +2521,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
 
     MappedQuery query = myTest.getQuery();
     assertEqualsIgnoreWhitespaces(
-        "SELECT DISTINCT bt1.k AS COL0 ,bt2.k AS COL1 ,bt3.k AS COL2 FROM t3 bt3 LEFT OUTER JOIN ( t1 bt1 RIGHT OUTER JOIN t2 bt2 ON ( bt1.k = bt2.k ) ) ON ( bt1.k = bt3.k )",
-        query.getQuery() ); //$NON-NLS-1$
+      "SELECT DISTINCT bt1.k AS COL0 ,bt2.k AS COL1 ,bt3.k AS COL2 FROM t3 bt3 LEFT OUTER JOIN ( t1 bt1 RIGHT OUTER "
+        + "JOIN t2 bt2 ON ( bt1.k = bt2.k ) ) ON ( bt1.k = bt3.k )",
+      query.getQuery() ); //$NON-NLS-1$
   }
 
   /**
@@ -2529,7 +2590,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
 
     model.addRelationship( rl2 );
 
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
     MQLQueryImpl myTest = new MQLQueryImpl( null, model, databaseMeta, "en_US" ); //$NON-NLS-1$
     myTest.addSelection( new Selection( bc1 ) );
     myTest.addSelection( new Selection( bc2 ) );
@@ -2537,13 +2600,14 @@ public class MQLQueryImplIT extends MetadataTestBase {
 
     MappedQuery query = myTest.getQuery();
     assertEqualsIgnoreWhitespaces(
-        "SELECT DISTINCT bt1.k AS COL0 ,bt2.k AS COL1 ,bt3.k AS COL2 FROM t2 bt2 LEFT OUTER JOIN ( t1 bt1 RIGHT OUTER JOIN t3 bt3 ON ( bt1.k = bt3.k ) ) ON ( bt1.k = bt2.k )",
-        query.getQuery() ); //$NON-NLS-1$
+      "SELECT DISTINCT bt1.k AS COL0 ,bt2.k AS COL1 ,bt3.k AS COL2 FROM t2 bt2 LEFT OUTER JOIN ( t1 bt1 RIGHT OUTER "
+        + "JOIN t3 bt3 ON ( bt1.k = bt3.k ) ) ON ( bt1.k = bt2.k )",
+      query.getQuery() ); //$NON-NLS-1$
   }
 
   /**
    * Scenario 6: 4 tables outer joined
-   * 
+   * <p>
    * NOTE: This does not work on MYSQL, because FULL OUTER JOIN is not supported.
    */
   public void testOuterJoinScenario6() throws Exception {
@@ -2627,7 +2691,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
 
     model.addRelationship( rl3 );
 
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
     MQLQueryImpl myTest = new MQLQueryImpl( null, model, databaseMeta, "en_US" ); //$NON-NLS-1$
     myTest.addSelection( new Selection( bc1 ) );
     myTest.addSelection( new Selection( bc2 ) );
@@ -2636,8 +2702,10 @@ public class MQLQueryImplIT extends MetadataTestBase {
 
     MappedQuery query = myTest.getQuery();
     assertEqualsIgnoreWhitespaces(
-        "SELECT DISTINCT bt1.k AS COL0 ,bt2.k AS COL1 ,bt3.k AS COL2 ,bt4.k AS COL3 FROM t3 bt3 FULL OUTER JOIN ( t1 bt1 FULL OUTER JOIN ( t2 bt2 LEFT OUTER JOIN t4 bt4 ON ( bt2.k = bt4.k ) ) ON ( bt1.k = bt2.k ) ) ON ( bt2.k = bt3.k )",
-        query.getQuery() ); //$NON-NLS-1$
+      "SELECT DISTINCT bt1.k AS COL0 ,bt2.k AS COL1 ,bt3.k AS COL2 ,bt4.k AS COL3 FROM t3 bt3 FULL OUTER JOIN ( t1 "
+        + "bt1 FULL OUTER JOIN ( t2 bt2 LEFT OUTER JOIN t4 bt4 ON ( bt2.k = bt4.k ) ) ON ( bt1.k = bt2.k ) ) ON ( bt2"
+        + ".k = bt3.k )",
+      query.getQuery() ); //$NON-NLS-1$
   }
 
   public void testGenerateUniqueAlias() {
@@ -2764,36 +2832,39 @@ public class MQLQueryImplIT extends MetadataTestBase {
     model.addRelationship( rl2 );
     model.addRelationship( rl3 );
     model.addRelationship( rl4 );
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
     MQLQueryImpl myTest = new MQLQueryImpl( null, model, databaseMeta, "en_US" ); //$NON-NLS-1$
     myTest.addSelection( new Selection( bc1 ) );
     myTest.addSelection( new Selection( bc4 ) );
 
-    myTest.addConstraint( WhereCondition.operators[0], "[metadata_business_table_very_long_name_1.bc1] > 25" ); //$NON-NLS-1$
+    myTest.addConstraint( WhereCondition.operators[ 0 ],
+      "[metadata_business_table_very_long_name_1.bc1] > 25" ); //$NON-NLS-1$
 
     MappedQuery query = myTest.getQuery();
     String queryString = query.getQuery();
     assertEqualsIgnoreWhitespaces( "SELECT DISTINCT \n" //$NON-NLS-1$
-        + "          metadata_business_table_very01.pc1 AS COL0\n" //$NON-NLS-1$
-        + "         ,metadata_business_table_very04.pc4 AS COL1\n" //$NON-NLS-1$
-        + "FROM \n" //$NON-NLS-1$
-        + "          pt1 metadata_business_table_very01\n" //$NON-NLS-1$
-        + "         ,pt2 metadata_business_table_very02\n" //$NON-NLS-1$
-        + "         ,pt3 metadata_business_table_very03\n" //$NON-NLS-1$
-        + "         ,pt4 metadata_business_table_very04\n" //$NON-NLS-1$
-        + "WHERE \n" //$NON-NLS-1$
-        + "          (\n"
-        + "             metadata_business_table_very02.pc2 = metadata_business_table_very03.pc3\n" //$NON-NLS-1$
-        + "          )\n"
-        + "      AND (\n"
-        + "             metadata_business_table_very03.pc3 = metadata_business_table_very04.pc4\n" //$NON-NLS-1$
-        + "          )\n"
-        + "      AND (\n"
-        + "             metadata_business_table_very01.pc1 = metadata_business_table_very02.pc2\n"
-        + "          )\n"
-        + "      AND (\n" + "          (\n" + "             metadata_business_table_very01.pc1 > 25"
-        + "          )"
-        + "          )", queryString ); //$NON-NLS-1$
+      + "          metadata_business_table_very01.pc1 AS COL0\n" //$NON-NLS-1$
+      + "         ,metadata_business_table_very04.pc4 AS COL1\n" //$NON-NLS-1$
+      + "FROM \n" //$NON-NLS-1$
+      + "          pt1 metadata_business_table_very01\n" //$NON-NLS-1$
+      + "         ,pt2 metadata_business_table_very02\n" //$NON-NLS-1$
+      + "         ,pt3 metadata_business_table_very03\n" //$NON-NLS-1$
+      + "         ,pt4 metadata_business_table_very04\n" //$NON-NLS-1$
+      + "WHERE \n" //$NON-NLS-1$
+      + "          (\n"
+      + "             metadata_business_table_very02.pc2 = metadata_business_table_very03.pc3\n" //$NON-NLS-1$
+      + "          )\n"
+      + "      AND (\n"
+      + "             metadata_business_table_very03.pc3 = metadata_business_table_very04.pc4\n" //$NON-NLS-1$
+      + "          )\n"
+      + "      AND (\n"
+      + "             metadata_business_table_very01.pc1 = metadata_business_table_very02.pc2\n"
+      + "          )\n"
+      + "      AND (\n" + "          (\n" + "             metadata_business_table_very01.pc1 > 25"
+      + "          )"
+      + "          )", queryString ); //$NON-NLS-1$
 
     //
     // This tests the physical column aliasing
@@ -2806,11 +2877,11 @@ public class MQLQueryImplIT extends MetadataTestBase {
     query = myTest.getQuery();
 
     assertEqualsIgnoreWhitespaces( "SELECT \n" + "             metadata_business_table_very01.pc4 AS COL0 \n"
-        + "           , SUM( metadata_business_table_very02.pc5  * 2) AS COL1 \n" + "FROM \n"
-        + "             pt4 metadata_business_table_very01 \n" + "            ,pt5 metadata_business_table_very02 \n"
-        + "WHERE \n" + "             (\n"
-        + "                metadata_business_table_very01.pc4 = metadata_business_table_very02.pc5 "
-        + "             )\n" + "GROUP BY \n" + "             metadata_business_table_very01.pc4 \n", query.getQuery() );
+      + "           , SUM( metadata_business_table_very02.pc5  * 2) AS COL1 \n" + "FROM \n"
+      + "             pt4 metadata_business_table_very01 \n" + "            ,pt5 metadata_business_table_very02 \n"
+      + "WHERE \n" + "             (\n"
+      + "                metadata_business_table_very01.pc4 = metadata_business_table_very02.pc5 "
+      + "             )\n" + "GROUP BY \n" + "             metadata_business_table_very01.pc4 \n", query.getQuery() );
   }
 
   public void testSumFormula() throws Exception {
@@ -2923,37 +2994,40 @@ public class MQLQueryImplIT extends MetadataTestBase {
     model.addRelationship( rl2 );
     model.addRelationship( rl3 );
     model.addRelationship( rl4 );
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
     MQLQueryImpl myTest = new MQLQueryImpl( null, model, databaseMeta, "en_US" ); //$NON-NLS-1$
     myTest.addSelection( new Selection( bc1 ) );
     myTest.addSelection( new Selection( bc4 ) );
 
-    myTest.addConstraint( WhereCondition.operators[0], "[metadata_business_table_very_long_name_1.bc1] > 25" ); //$NON-NLS-1$
+    myTest.addConstraint( WhereCondition.operators[ 0 ],
+      "[metadata_business_table_very_long_name_1.bc1] > 25" ); //$NON-NLS-1$
 
     MappedQuery query = myTest.getQuery();
     String queryString = query.getQuery();
     // System.out.println(queryString);
     assertEqualsIgnoreWhitespaces( "SELECT DISTINCT \n" //$NON-NLS-1$
-        + "          metadata_business_table_very01.pc1 AS COL0\n" //$NON-NLS-1$
-        + "         ,metadata_business_table_very04.pc4 AS COL1\n" //$NON-NLS-1$
-        + "FROM \n" //$NON-NLS-1$
-        + "          pt1 metadata_business_table_very01\n" //$NON-NLS-1$
-        + "         ,pt2 metadata_business_table_very02\n" //$NON-NLS-1$
-        + "         ,pt3 metadata_business_table_very03\n" //$NON-NLS-1$
-        + "         ,pt4 metadata_business_table_very04\n" //$NON-NLS-1$
-        + "WHERE \n" //$NON-NLS-1$
-        + "          (\n"
-        + "             metadata_business_table_very02.pc2 = metadata_business_table_very03.pc3\n" //$NON-NLS-1$
-        + "          )\n"
-        + "      AND (\n"
-        + "             metadata_business_table_very03.pc3 = metadata_business_table_very04.pc4\n" //$NON-NLS-1$
-        + "          )\n"
-        + "      AND (\n"
-        + "             metadata_business_table_very01.pc1 = metadata_business_table_very02.pc2\n"
-        + "          )\n"
-        + "      AND (\n" + "          (\n" + "             metadata_business_table_very01.pc1 > 25"
-        + "          )"
-        + "          )", queryString ); //$NON-NLS-1$
+      + "          metadata_business_table_very01.pc1 AS COL0\n" //$NON-NLS-1$
+      + "         ,metadata_business_table_very04.pc4 AS COL1\n" //$NON-NLS-1$
+      + "FROM \n" //$NON-NLS-1$
+      + "          pt1 metadata_business_table_very01\n" //$NON-NLS-1$
+      + "         ,pt2 metadata_business_table_very02\n" //$NON-NLS-1$
+      + "         ,pt3 metadata_business_table_very03\n" //$NON-NLS-1$
+      + "         ,pt4 metadata_business_table_very04\n" //$NON-NLS-1$
+      + "WHERE \n" //$NON-NLS-1$
+      + "          (\n"
+      + "             metadata_business_table_very02.pc2 = metadata_business_table_very03.pc3\n" //$NON-NLS-1$
+      + "          )\n"
+      + "      AND (\n"
+      + "             metadata_business_table_very03.pc3 = metadata_business_table_very04.pc4\n" //$NON-NLS-1$
+      + "          )\n"
+      + "      AND (\n"
+      + "             metadata_business_table_very01.pc1 = metadata_business_table_very02.pc2\n"
+      + "          )\n"
+      + "      AND (\n" + "          (\n" + "             metadata_business_table_very01.pc1 > 25"
+      + "          )"
+      + "          )", queryString ); //$NON-NLS-1$
 
     //
     // This tests the physical column aliasing
@@ -2966,11 +3040,11 @@ public class MQLQueryImplIT extends MetadataTestBase {
     query = myTest.getQuery();
 
     assertEqualsIgnoreWhitespaces( "SELECT \n" + "             metadata_business_table_very01.pc4 AS COL0 \n"
-        + "           , SUM( metadata_business_table_very02.pc5  * 2) AS COL1 \n" + "FROM \n"
-        + "             pt4 metadata_business_table_very01 \n" + "            ,pt5 metadata_business_table_very02 \n"
-        + "WHERE \n" + "             (\n"
-        + "                metadata_business_table_very01.pc4 = metadata_business_table_very02.pc5 "
-        + "             )\n" + "GROUP BY \n" + "             metadata_business_table_very01.pc4 \n", query.getQuery() );
+      + "           , SUM( metadata_business_table_very02.pc5  * 2) AS COL1 \n" + "FROM \n"
+      + "             pt4 metadata_business_table_very01 \n" + "            ,pt5 metadata_business_table_very02 \n"
+      + "WHERE \n" + "             (\n"
+      + "                metadata_business_table_very01.pc4 = metadata_business_table_very02.pc5 "
+      + "             )\n" + "GROUP BY \n" + "             metadata_business_table_very01.pc4 \n", query.getQuery() );
   }
 
   public void testInlineTable() throws Exception {
@@ -3069,7 +3143,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
     model.addRelationship( rl2 );
     model.addRelationship( rl3 );
     model.addRelationship( rl4 );
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
     MQLQueryImpl myTest = new MQLQueryImpl( null, model, databaseMeta, "en_US" ); //$NON-NLS-1$
     myTest.addSelection( new Selection( bc1 ) );
     myTest.addSelection( new Selection( bc4 ) );
@@ -3088,7 +3164,8 @@ public class MQLQueryImplIT extends MetadataTestBase {
         + "WHERE \n" //$NON-NLS-1$
         + "          (\n" + "             bt2.pc2 = bt3.pc3\n" //$NON-NLS-1$
         + "          )\n" + "      AND (\n" + "             bt3.pc3 = bt4.pc4\n" //$NON-NLS-1$
-        + "          )\n" + "      AND (\n" + "             bt1.pc1 = bt2.pc2\n" + "          )\n", queryString ); //$NON-NLS-1$
+        + "          )\n" + "      AND (\n" + "             bt1.pc1 = bt2.pc2\n" + "          )\n",
+      queryString ); //$NON-NLS-1$
   }
 
   @Test
@@ -3104,7 +3181,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
     bt1.addBusinessColumn( bc1 );
     bt1.setRelativeSize( 1 );
     model.addBusinessTable( bt1 );
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "HYPERSONIC", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "HYPERSONIC", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
     MQLQueryImpl myTest = new MQLQueryImpl( null, model, databaseMeta, "en_US" ); //$NON-NLS-1$
     myTest.setLimit( 10 );
     myTest.addSelection( new Selection( bc1 ) );
@@ -3115,7 +3194,7 @@ public class MQLQueryImplIT extends MetadataTestBase {
         + "          bt1.pc1 AS COL0\n" //$NON-NLS-1$
         + "FROM \n" //$NON-NLS-1$
         + "          (select * from mytable) bt1\n", //$NON-NLS-1,
-        query.getQuery() ); //$NON-NLS-1$
+      query.getQuery() ); //$NON-NLS-1$
 
   }
 
@@ -3125,7 +3204,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
     BusinessModel model = spiderweb.getSpiderModel();
     BusinessCategory bcat = model.getRootCategory();
 
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "HYPERSONIC", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "HYPERSONIC", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
 
     // Get all business tables for future processing
     BusinessTable bt01 = model.getBusinessTable( 0 ); // zero-based index
@@ -3167,9 +3248,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
     // looks for pt_13 - the code in SpiderWebTestModel adds the bt03->bt13 rel
     // as the last bt03 rel
     assertEqualsIgnoreWhitespaces( "SELECT " + " SUM(bt_03.pc_03) AS COL0 " + " ,SUM(bt_05.pc_05) AS COL1 " + " FROM  "
-        + " pt_03 bt_03 " + " ,pt_05 bt_05 " + " ,pt_13 bt_13 " + " WHERE  "
-        + " ( bt_03.pc_keya_03 = bt_13.pc_keyk_13 ) " + " AND ( bt_05.pc_keyb_05 = bt_13.pc_keyi_13 )", query1
-        .getQuery() );
+      + " pt_03 bt_03 " + " ,pt_05 bt_05 " + " ,pt_13 bt_13 " + " WHERE  "
+      + " ( bt_03.pc_keya_03 = bt_13.pc_keyk_13 ) " + " AND ( bt_05.pc_keyb_05 = bt_13.pc_keyi_13 )", query1
+      .getQuery() );
 
     // Now, do the same query, but with "LOWEST_SCORE"
     ConceptInterface concept = model.getConcept();
@@ -3200,9 +3281,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
     MappedQuery query2 = test2.getQuery();
     String queryString2 = query2.getQuery();
     assertEqualsIgnoreWhitespaces( " SELECT  " + "           SUM(bt_03.pc_03) AS COL0 "
-        + "          ,SUM(bt_05.pc_05) AS COL1 " + " FROM  " + "           pt_03 bt_03 " + "          ,pt_05 bt_05 "
-        + "          ,pt_06 bt_06 " + " WHERE  " + "           ( bt_03.pc_keya_03 = bt_06.pc_keyd_06 ) "
-        + "       AND ( bt_05.pc_keyb_05 = bt_06.pc_keyc_06 ) ", query2.getQuery() );
+      + "          ,SUM(bt_05.pc_05) AS COL1 " + " FROM  " + "           pt_03 bt_03 " + "          ,pt_05 bt_05 "
+      + "          ,pt_06 bt_06 " + " WHERE  " + "           ( bt_03.pc_keya_03 = bt_06.pc_keyd_06 ) "
+      + "       AND ( bt_05.pc_keyb_05 = bt_06.pc_keyc_06 ) ", query2.getQuery() );
 
   }
 
@@ -3212,7 +3293,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
     BusinessModel model = spiderweb.getSpiderModel();
     BusinessCategory bcat = model.getRootCategory();
 
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "HYPERSONIC", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "HYPERSONIC", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
 
     // Get all business tables for future processing
     BusinessTable bt05 = model.getBusinessTable( 4 ); // zero-based index
@@ -3241,11 +3324,11 @@ public class MQLQueryImplIT extends MetadataTestBase {
     // 05,07,14,15,17
 
     assertEqualsIgnoreWhitespaces( " SELECT  " + "           SUM(bt_05.pc_05) AS COL0 "
-        + "          ,SUM(bt_14.pc_14) AS COL1 " + "          ,SUM(bt_17.pc_17) AS COL2 " + " FROM  "
-        + "           pt_05 bt_05 " + "          ,pt_13 bt_13 " + "          ,pt_14 bt_14 " + "          ,pt_16 bt_16 "
-        + "          ,pt_17 bt_17 " + " WHERE  " + "           ( bt_05.pc_keyb_05 = bt_13.pc_keyi_13 ) "
-        + "       AND ( bt_14.pc_keyc_14 = bt_16.pc_keye_16 ) " + "       AND ( bt_17.pc_keyd_17 = bt_13.pc_keye_13 ) "
-        + "       AND ( bt_17.pc_keyd_17 = bt_16.pc_keyg_16 ) ", query1.getQuery() );
+      + "          ,SUM(bt_14.pc_14) AS COL1 " + "          ,SUM(bt_17.pc_17) AS COL2 " + " FROM  "
+      + "           pt_05 bt_05 " + "          ,pt_13 bt_13 " + "          ,pt_14 bt_14 " + "          ,pt_16 bt_16 "
+      + "          ,pt_17 bt_17 " + " WHERE  " + "           ( bt_05.pc_keyb_05 = bt_13.pc_keyi_13 ) "
+      + "       AND ( bt_14.pc_keyc_14 = bt_16.pc_keye_16 ) " + "       AND ( bt_17.pc_keyd_17 = bt_13.pc_keye_13 ) "
+      + "       AND ( bt_17.pc_keyd_17 = bt_16.pc_keyg_16 ) ", query1.getQuery() );
 
   }
 
@@ -3255,7 +3338,9 @@ public class MQLQueryImplIT extends MetadataTestBase {
     BusinessModel model = spiderweb.getSpiderModel();
     BusinessCategory bcat = model.getRootCategory();
 
-    DatabaseMeta databaseMeta = new DatabaseMeta( "", "HYPERSONIC", "Native", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "HYPERSONIC", "Native", "", "", "", "",
+      "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+    // $NON-NLS-8$
 
     // Get all business tables for future processing
     BusinessTable bt05 = model.getBusinessTable( 4 ); // zero-based index
@@ -3276,11 +3361,11 @@ public class MQLQueryImplIT extends MetadataTestBase {
     // In this case, the correct answer is 07/05/17 - There are direct joins (if you can ignore all the noise)
 
     assertEqualsIgnoreWhitespaces(
-        " SELECT  " + "           SUM(bt_07.pc_07) AS COL0 " + "          ,SUM(bt_05.pc_05) AS COL1 "
-            + "          ,SUM(bt_17.pc_17) AS COL2 " + " FROM  " + "           pt_05 bt_05 "
-            + "          ,pt_07 bt_07 " + "          ,pt_17 bt_17 " + " WHERE  "
-            + "           ( bt_05.pc_keyb_05 = bt_07.pc_keyd_07 ) "
-            + "       AND ( bt_17.pc_keyd_17 = bt_07.pc_keyb_07 ) ", query1.getQuery() );
+      " SELECT  " + "           SUM(bt_07.pc_07) AS COL0 " + "          ,SUM(bt_05.pc_05) AS COL1 "
+        + "          ,SUM(bt_17.pc_17) AS COL2 " + " FROM  " + "           pt_05 bt_05 "
+        + "          ,pt_07 bt_07 " + "          ,pt_17 bt_17 " + " WHERE  "
+        + "           ( bt_05.pc_keyb_05 = bt_07.pc_keyd_07 ) "
+        + "       AND ( bt_17.pc_keyd_17 = bt_07.pc_keyb_07 ) ", query1.getQuery() );
 
   }
 

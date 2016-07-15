@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.pms.schema.concept.types;
 
@@ -48,57 +48,63 @@ public class ConceptPropertyType {
    * These are the core property types to bootstrap the property system.
    */
   public static final ConceptPropertyType[] propertyTypes =
-      {
-        new ConceptPropertyType( PROPERTY_TYPE_STRING,
-            "String", Messages.getString( "ConceptPropertyType.USER_STRING_DESC" ) ), //$NON-NLS-1$ //$NON-NLS-2$
-        new ConceptPropertyType( PROPERTY_TYPE_DATE, "Date", Messages.getString( "ConceptPropertyType.USER_DATE_DESC" ) ), //$NON-NLS-1$ //$NON-NLS-2$
-        new ConceptPropertyType( PROPERTY_TYPE_NUMBER,
-            "Number", Messages.getString( "ConceptPropertyType.USER_NUMBER_DESC" ) ), //$NON-NLS-1$ //$NON-NLS-2$
-        new ConceptPropertyType( PROPERTY_TYPE_COLOR,
-            "Color", Messages.getString( "ConceptPropertyType.USER_COLOR_DESC" ) ), //$NON-NLS-1$ //$NON-NLS-2$
-        new ConceptPropertyType( PROPERTY_TYPE_FONT, "Font", Messages.getString( "ConceptPropertyType.USER_FONT_DESC" ) ), //$NON-NLS-1$ //$NON-NLS-2$
-        new ConceptPropertyType( PROPERTY_TYPE_FIELDTYPE,
-            "FieldType", Messages.getString( "ConceptPropertyType.USER_FIELDTYPE_DESC" ) ), //$NON-NLS-1$ //$NON-NLS-2$
-        new ConceptPropertyType( PROPERTY_TYPE_AGGREGATION,
-            "Aggregation", Messages.getString( "ConceptPropertyType.USER_AGGREGATION_DESC" ) ), //$NON-NLS-1$ //$NON-NLS-2$
-        new ConceptPropertyType( PROPERTY_TYPE_BOOLEAN,
-            "Boolean", Messages.getString( "ConceptPropertyType.USER_BOOLEAN_DESC" ) ), //$NON-NLS-1$ //$NON-NLS-2$
-        new ConceptPropertyType( PROPERTY_TYPE_DATATYPE,
-            "DataType", Messages.getString( "ConceptPropertyType.USER_DATATYPE_DESC" ) ), //$NON-NLS-1$ //$NON-NLS-2$
-        new ConceptPropertyType( PROPERTY_TYPE_LOCALIZED_STRING,
-            "LocString", Messages.getString( "ConceptPropertyType.USER_LOCALIZED_STRING_DESC" ) ), //$NON-NLS-1$ //$NON-NLS-2$
-        new ConceptPropertyType( PROPERTY_TYPE_TABLETYPE,
-            "TableType", Messages.getString( "ConceptPropertyType.USER_TABLE_TYPE_DESC" ) ), //$NON-NLS-1$ //$NON-NLS-2$
-        new ConceptPropertyType( PROPERTY_TYPE_URL, "URL", Messages.getString( "ConceptPropertyType.USER_URL_DESC" ) ), //$NON-NLS-1$ //$NON-NLS-2$
-        new ConceptPropertyType( PROPERTY_TYPE_SECURITY,
-            "Security", Messages.getString( "ConceptPropertyType.USER_SECURITY_DESC" ) ), //$NON-NLS-1$ //$NON-NLS-2$
-        new ConceptPropertyType( PROPERTY_TYPE_ALIGNMENT,
-            "Alignment", Messages.getString( "ConceptPropertyType.USER_ALIGNMENT_DESC" ) ), //$NON-NLS-1$ //$NON-NLS-2$
-        new ConceptPropertyType( PROPERTY_TYPE_COLUMN_WIDTH,
-            "ColumnWidth", Messages.getString( "ConceptPropertyType.USER_COLUMN_WIDTH_DESC" ) ), //$NON-NLS-1$ //$NON-NLS-2$
-        new ConceptPropertyType( PROPERTY_TYPE_ROW_LEVEL_SECURITY,
-            "RowLevelSecurity", Messages.getString( "ConceptPropertyType.USER_ROW_LEVEL_SECURITY_DESC" ) ), //$NON-NLS-1$ //$NON-NLS-2$
-        new ConceptPropertyType( PROPERTY_TYPE_AGGREGATION_LIST,
-            "AggregationList", Messages.getString( "ConceptPropertyType.USER_AGGREGATION_LIST_DESC" ) ), //$NON-NLS-1$ //$NON-NLS-2$
-      };
+    {
+    new ConceptPropertyType( PROPERTY_TYPE_STRING,
+        "String", Messages.getString( "ConceptPropertyType.USER_STRING_DESC" ) ), //$NON-NLS-1$ //$NON-NLS-2$
+    new ConceptPropertyType( PROPERTY_TYPE_DATE, "Date", Messages.getString( "ConceptPropertyType.USER_DATE_DESC" ) ),
+      //$NON-NLS-1$ //$NON-NLS-2$
+    new ConceptPropertyType( PROPERTY_TYPE_NUMBER,
+        "Number", Messages.getString( "ConceptPropertyType.USER_NUMBER_DESC" ) ), //$NON-NLS-1$ //$NON-NLS-2$
+    new ConceptPropertyType( PROPERTY_TYPE_COLOR,
+        "Color", Messages.getString( "ConceptPropertyType.USER_COLOR_DESC" ) ), //$NON-NLS-1$ //$NON-NLS-2$
+    new ConceptPropertyType( PROPERTY_TYPE_FONT, "Font", Messages.getString( "ConceptPropertyType.USER_FONT_DESC" ) ),
+      //$NON-NLS-1$ //$NON-NLS-2$
+    new ConceptPropertyType( PROPERTY_TYPE_FIELDTYPE,
+        "FieldType", Messages.getString( "ConceptPropertyType.USER_FIELDTYPE_DESC" ) ), //$NON-NLS-1$ //$NON-NLS-2$
+    new ConceptPropertyType( PROPERTY_TYPE_AGGREGATION,
+        "Aggregation", Messages.getString( "ConceptPropertyType.USER_AGGREGATION_DESC" ) ), //$NON-NLS-1$ //$NON-NLS-2$
+    new ConceptPropertyType( PROPERTY_TYPE_BOOLEAN,
+        "Boolean", Messages.getString( "ConceptPropertyType.USER_BOOLEAN_DESC" ) ), //$NON-NLS-1$ //$NON-NLS-2$
+    new ConceptPropertyType( PROPERTY_TYPE_DATATYPE,
+        "DataType", Messages.getString( "ConceptPropertyType.USER_DATATYPE_DESC" ) ), //$NON-NLS-1$ //$NON-NLS-2$
+    new ConceptPropertyType( PROPERTY_TYPE_LOCALIZED_STRING,
+        "LocString", Messages.getString( "ConceptPropertyType.USER_LOCALIZED_STRING_DESC" ) ),
+      //$NON-NLS-1$ //$NON-NLS-2$
+    new ConceptPropertyType( PROPERTY_TYPE_TABLETYPE,
+        "TableType", Messages.getString( "ConceptPropertyType.USER_TABLE_TYPE_DESC" ) ), //$NON-NLS-1$ //$NON-NLS-2$
+    new ConceptPropertyType( PROPERTY_TYPE_URL, "URL", Messages.getString( "ConceptPropertyType.USER_URL_DESC" ) ),
+      //$NON-NLS-1$ //$NON-NLS-2$
+    new ConceptPropertyType( PROPERTY_TYPE_SECURITY,
+        "Security", Messages.getString( "ConceptPropertyType.USER_SECURITY_DESC" ) ), //$NON-NLS-1$ //$NON-NLS-2$
+    new ConceptPropertyType( PROPERTY_TYPE_ALIGNMENT,
+        "Alignment", Messages.getString( "ConceptPropertyType.USER_ALIGNMENT_DESC" ) ), //$NON-NLS-1$ //$NON-NLS-2$
+    new ConceptPropertyType( PROPERTY_TYPE_COLUMN_WIDTH,
+        "ColumnWidth", Messages.getString( "ConceptPropertyType.USER_COLUMN_WIDTH_DESC" ) ), //$NON-NLS-1$ //$NON-NLS-2$
+    new ConceptPropertyType( PROPERTY_TYPE_ROW_LEVEL_SECURITY,
+        "RowLevelSecurity", Messages.getString( "ConceptPropertyType.USER_ROW_LEVEL_SECURITY_DESC" ) ),
+      //$NON-NLS-1$ //$NON-NLS-2$
+    new ConceptPropertyType( PROPERTY_TYPE_AGGREGATION_LIST,
+        "AggregationList", Messages.getString( "ConceptPropertyType.USER_AGGREGATION_LIST_DESC" ) ),
+      //$NON-NLS-1$ //$NON-NLS-2$
+    };
 
-  public static final ConceptPropertyType STRING = propertyTypes[PROPERTY_TYPE_STRING];
-  public static final ConceptPropertyType DATE = propertyTypes[PROPERTY_TYPE_DATE];
-  public static final ConceptPropertyType NUMBER = propertyTypes[PROPERTY_TYPE_NUMBER];
-  public static final ConceptPropertyType COLOR = propertyTypes[PROPERTY_TYPE_COLOR];
-  public static final ConceptPropertyType FONT = propertyTypes[PROPERTY_TYPE_FONT];
-  public static final ConceptPropertyType FIELDTYPE = propertyTypes[PROPERTY_TYPE_FIELDTYPE];
-  public static final ConceptPropertyType AGGREGATION = propertyTypes[PROPERTY_TYPE_AGGREGATION];
-  public static final ConceptPropertyType BOOLEAN = propertyTypes[PROPERTY_TYPE_BOOLEAN];
-  public static final ConceptPropertyType DATATYPE = propertyTypes[PROPERTY_TYPE_DATATYPE];
-  public static final ConceptPropertyType LOCALIZED_STRING = propertyTypes[PROPERTY_TYPE_LOCALIZED_STRING];
-  public static final ConceptPropertyType TABLETYPE = propertyTypes[PROPERTY_TYPE_TABLETYPE];
-  public static final ConceptPropertyType URL = propertyTypes[PROPERTY_TYPE_URL];
-  public static final ConceptPropertyType SECURITY = propertyTypes[PROPERTY_TYPE_SECURITY];
-  public static final ConceptPropertyType ALIGNMENT = propertyTypes[PROPERTY_TYPE_ALIGNMENT];
-  public static final ConceptPropertyType COLUMN_WIDTH = propertyTypes[PROPERTY_TYPE_COLUMN_WIDTH];
-  public static final ConceptPropertyType ROW_LEVEL_SECURITY = propertyTypes[PROPERTY_TYPE_ROW_LEVEL_SECURITY];
-  public static final ConceptPropertyType AGGREGATION_LIST = propertyTypes[PROPERTY_TYPE_AGGREGATION_LIST];
+  public static final ConceptPropertyType STRING = propertyTypes[ PROPERTY_TYPE_STRING ];
+  public static final ConceptPropertyType DATE = propertyTypes[ PROPERTY_TYPE_DATE ];
+  public static final ConceptPropertyType NUMBER = propertyTypes[ PROPERTY_TYPE_NUMBER ];
+  public static final ConceptPropertyType COLOR = propertyTypes[ PROPERTY_TYPE_COLOR ];
+  public static final ConceptPropertyType FONT = propertyTypes[ PROPERTY_TYPE_FONT ];
+  public static final ConceptPropertyType FIELDTYPE = propertyTypes[ PROPERTY_TYPE_FIELDTYPE ];
+  public static final ConceptPropertyType AGGREGATION = propertyTypes[ PROPERTY_TYPE_AGGREGATION ];
+  public static final ConceptPropertyType BOOLEAN = propertyTypes[ PROPERTY_TYPE_BOOLEAN ];
+  public static final ConceptPropertyType DATATYPE = propertyTypes[ PROPERTY_TYPE_DATATYPE ];
+  public static final ConceptPropertyType LOCALIZED_STRING = propertyTypes[ PROPERTY_TYPE_LOCALIZED_STRING ];
+  public static final ConceptPropertyType TABLETYPE = propertyTypes[ PROPERTY_TYPE_TABLETYPE ];
+  public static final ConceptPropertyType URL = propertyTypes[ PROPERTY_TYPE_URL ];
+  public static final ConceptPropertyType SECURITY = propertyTypes[ PROPERTY_TYPE_SECURITY ];
+  public static final ConceptPropertyType ALIGNMENT = propertyTypes[ PROPERTY_TYPE_ALIGNMENT ];
+  public static final ConceptPropertyType COLUMN_WIDTH = propertyTypes[ PROPERTY_TYPE_COLUMN_WIDTH ];
+  public static final ConceptPropertyType ROW_LEVEL_SECURITY = propertyTypes[ PROPERTY_TYPE_ROW_LEVEL_SECURITY ];
+  public static final ConceptPropertyType AGGREGATION_LIST = propertyTypes[ PROPERTY_TYPE_AGGREGATION_LIST ];
 
   public static final String ISO_DATE_FORMAT = "yyyy/MM/dd'T'HH:mm:ss"; //$NON-NLS-1$
 
@@ -106,9 +112,9 @@ public class ConceptPropertyType {
    * @return an array of the core concept property type descriptions
    */
   public static String[] getTypeDescriptions() {
-    String[] types = new String[propertyTypes.length];
+    String[] types = new String[ propertyTypes.length ];
     for ( int i = 0; i < types.length; i++ ) {
-      types[i] = propertyTypes[i].getDescription();
+      types[ i ] = propertyTypes[ i ].getDescription();
     }
     return types;
   }
@@ -117,9 +123,9 @@ public class ConceptPropertyType {
    * @return an array of the core concept property type codes
    */
   public static String[] getTypeCodes() {
-    String[] types = new String[propertyTypes.length];
+    String[] types = new String[ propertyTypes.length ];
     for ( int i = 0; i < types.length; i++ ) {
-      types[i] = propertyTypes[i].getCode();
+      types[ i ] = propertyTypes[ i ].getCode();
     }
     return types;
   }
@@ -141,7 +147,7 @@ public class ConceptPropertyType {
 
   public String toString() {
     return new ToStringBuilder( this, ToStringStyle.SHORT_PREFIX_STYLE ).append( type ).append( code ).append(
-        description ).toString();
+      description ).toString();
   }
 
   public boolean equals( Object obj ) {
@@ -153,7 +159,7 @@ public class ConceptPropertyType {
     }
     ConceptPropertyType rhs = (ConceptPropertyType) obj;
     return new EqualsBuilder().append( type, rhs.type ).append( code, rhs.code ).append( description, rhs.description )
-        .isEquals();
+      .isEquals();
   }
 
   public int hashCode() {
@@ -168,8 +174,7 @@ public class ConceptPropertyType {
   }
 
   /**
-   * @param code
-   *          the code to set
+   * @param code the code to set
    */
   public void setCode( String code ) {
     this.code = code;
@@ -183,8 +188,7 @@ public class ConceptPropertyType {
   }
 
   /**
-   * @param description
-   *          the description to set
+   * @param description the description to set
    */
   public void setDescription( String description ) {
     this.description = description;
@@ -198,25 +202,23 @@ public class ConceptPropertyType {
   }
 
   /**
-   * @param type
-   *          the type to set
+   * @param type the type to set
    */
   public void setType( int type ) {
     this.type = type;
   }
 
   /**
-   * @param typeDesc
-   *          The description or code of the type
+   * @param typeDesc The description or code of the type
    * @return The concept property type or null if nothing was found to match.
    */
   public static ConceptPropertyType getType( String typeDesc ) {
     for ( int i = 0; i < propertyTypes.length; i++ ) {
-      if ( propertyTypes[i].getDescription().equals( typeDesc ) ) {
-        return propertyTypes[i];
+      if ( propertyTypes[ i ].getDescription().equals( typeDesc ) ) {
+        return propertyTypes[ i ];
       }
-      if ( propertyTypes[i].getCode().equals( typeDesc ) ) {
-        return propertyTypes[i];
+      if ( propertyTypes[ i ].getCode().equals( typeDesc ) ) {
+        return propertyTypes[ i ];
       }
     }
     return null;

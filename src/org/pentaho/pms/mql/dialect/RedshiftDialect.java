@@ -12,14 +12,14 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2015 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.pms.mql.dialect;
 
 public class RedshiftDialect extends PostgreSQLDialect {
 
   public RedshiftDialect() {
-    super("REDSHIFT");
+    super( "REDSHIFT" );
   }
 
 }

@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.pms.util;
 
@@ -30,10 +30,9 @@ import java.util.Locale;
 /**
  * This class is used to define a number of default values for various settings throughout Pentaho Metadata. It also
  * contains a number of static final methods to make your life easier.
- * 
+ *
  * @author Matt
  * @since 07-05-2003
- * 
  */
 public class Const {
 
@@ -59,11 +58,9 @@ public class Const {
 
   /**
    * Convert a String into an integer. If the conversion fails, assign a default value.
-   * 
-   * @param str
-   *          The String to convert to an integer
-   * @param def
-   *          The default value
+   *
+   * @param str The String to convert to an integer
+   * @param def The default value
    * @return The converted value or the default.
    */
   public static final int toInt( String str, int def ) {
@@ -78,11 +75,9 @@ public class Const {
 
   /**
    * Convert a String into a long integer. If the conversion fails, assign a default value.
-   * 
-   * @param str
-   *          The String to convert to a long integer
-   * @param def
-   *          The default value
+   *
+   * @param str The String to convert to a long integer
+   * @param def The default value
    * @return The converted value or the default.
    */
   public static final long toLong( String str, long def ) {
@@ -97,11 +92,9 @@ public class Const {
 
   /**
    * Convert a String into a double. If the conversion fails, assign a default value.
-   * 
-   * @param str
-   *          The String to convert to a double
-   * @param def
-   *          The default value
+   *
+   * @param str The String to convert to a double
+   * @param def The default value
    * @return The converted value or the default.
    */
   public static final double toDouble( String str, double def ) {
@@ -117,11 +110,9 @@ public class Const {
   /**
    * Convert a String into a date. The date format is <code>yyyy/MM/dd HH:mm:ss.SSS</code>. If the conversion fails,
    * assign a default value.
-   * 
-   * @param str
-   *          The String to convert into a Date
-   * @param def
-   *          The default value
+   *
+   * @param str The String to convert into a Date
+   * @param def The default value
    * @return The converted value or the default.
    */
   public static final Date toDate( String str, Date def ) {
@@ -135,9 +126,8 @@ public class Const {
 
   /**
    * Right trim: remove spaces to the right of a string
-   * 
-   * @param str
-   *          The string to right trim
+   *
+   * @param str The string to right trim
    * @return The trimmed string.
    */
   public static final String rtrim( String str ) {
@@ -152,9 +142,8 @@ public class Const {
   /**
    * Determines whether or not a character is considered a space. A character is considered a space in Kettle if it is a
    * space, a tab, a newline or a cariage return.
-   * 
-   * @param c
-   *          The character to verify if it is a space.
+   *
+   * @param c The character to verify if it is a space.
    * @return true if the character is a space. false otherwise.
    */
   public static final boolean isSpace( char c ) {
@@ -163,9 +152,8 @@ public class Const {
 
   /**
    * Left trim: remove spaces to the left of a String.
-   * 
-   * @param str
-   *          The String to left trim
+   *
+   * @param str The String to left trim
    * @return The left trimmed String
    */
   public static final String ltrim( String str ) {
@@ -179,9 +167,8 @@ public class Const {
 
   /**
    * Trims a string: removes the leading and trailing spaces of a String.
-   * 
-   * @param str
-   *          The string to trim
+   *
+   * @param str The string to trim
    * @return The trimmed string.
    */
   public static final String trim( String str ) {
@@ -205,11 +192,9 @@ public class Const {
   /**
    * Right pad a string: adds spaces to a string until a certain length. If the length is smaller then the limit
    * specified, the String is truncated.
-   * 
-   * @param ret
-   *          The string to pad
-   * @param limit
-   *          The desired length of the padded string.
+   *
+   * @param ret   The string to pad
+   * @param limit The desired length of the padded string.
    * @return The padded String.
    */
   public static final String rightPad( String ret, int limit ) {
@@ -223,11 +208,9 @@ public class Const {
   /**
    * Right pad a StringBuffer: adds spaces to a string until a certain length. If the length is smaller then the limit
    * specified, the String is truncated.
-   * 
-   * @param ret
-   *          The StringBuffer to pad
-   * @param limit
-   *          The desired length of the padded string.
+   *
+   * @param ret   The StringBuffer to pad
+   * @param limit The desired length of the padded string.
    * @return The padded String.
    */
   public static final String rightPad( StringBuffer ret, int limit ) {
@@ -246,13 +229,10 @@ public class Const {
 
   /**
    * Replace values in a String with another.
-   * 
-   * @param string
-   *          The original String.
-   * @param repl
-   *          The text to replace
-   * @param with
-   *          The new text bit
+   *
+   * @param string The original String.
+   * @param repl   The text to replace
+   * @param with   The new text bit
    * @return The resulting string with the text pieces replaced.
    */
   public static final String replace( String string, String repl, String with ) {
@@ -268,13 +248,10 @@ public class Const {
 
   /**
    * Alternate faster version of string replace using a stringbuffer as input.
-   * 
-   * @param str
-   *          The string where we want to replace in
-   * @param code
-   *          The code to search for
-   * @param repl
-   *          The replacement string for code
+   *
+   * @param str  The string where we want to replace in
+   * @param code The code to search for
+   * @param repl The replacement string for code
    */
   public static void repl( StringBuffer str, String code, String repl ) {
     int clength = code.length();
@@ -293,9 +270,8 @@ public class Const {
 
   /**
    * Count the number of spaces to the left of a text. (leading)
-   * 
-   * @param field
-   *          The text to examine
+   *
+   * @param field The text to examine
    * @return The number of leading spaces found.
    */
   public static final int nrSpacesBefore( String field ) {
@@ -309,9 +285,8 @@ public class Const {
 
   /**
    * Count the number of spaces to the right of a text. (trailing)
-   * 
-   * @param field
-   *          The text to examine
+   *
+   * @param field The text to examine
    * @return The number of trailing spaces found.
    */
   public static final int nrSpacesAfter( String field ) {
@@ -325,9 +300,8 @@ public class Const {
 
   /**
    * Checks whether or not a String consists only of spaces.
-   * 
-   * @param str
-   *          The string to check
+   *
+   * @param str The string to check
    * @return true if the string has nothing but spaces.
    */
   public static final boolean onlySpaces( String str ) {
@@ -341,11 +315,9 @@ public class Const {
 
   /**
    * Implements Oracle style NVL function
-   * 
-   * @param source
-   *          The source argument
-   * @param def
-   *          The default value in case source is null or the length of the string is 0
+   *
+   * @param source The source argument
+   * @param def    The default value in case source is null or the length of the string is 0
    * @return source if source is not null, otherwise return def
    */
   public static final String NVL( String source, String def ) {
@@ -357,11 +329,9 @@ public class Const {
 
   /**
    * Search for a string in an array of strings and return the index.
-   * 
-   * @param lookup
-   *          The string to search for
-   * @param array
-   *          The array of strings to look in
+   *
+   * @param lookup The string to search for
+   * @param array  The array of strings to look in
    * @return The index of a search string in an array of strings. -1 if not found.
    */
   public static final int indexOfString( String lookup, String[] array ) {
@@ -373,7 +343,7 @@ public class Const {
     }
 
     for ( int i = 0; i < array.length; i++ ) {
-      if ( lookup.equalsIgnoreCase( array[i] ) ) {
+      if ( lookup.equalsIgnoreCase( array[ i ] ) ) {
         return i;
       }
     }
@@ -382,11 +352,9 @@ public class Const {
 
   /**
    * Search for a string in a list of strings and return the index.
-   * 
-   * @param lookup
-   *          The string to search for
-   * @param list
-   *          The ArrayList of strings to look in
+   *
+   * @param lookup The string to search for
+   * @param list   The ArrayList of strings to look in
    * @return The index of a search string in an array of strings. -1 if not found.
    */
   public static final int indexOfString( String lookup, List list ) {
@@ -405,9 +373,8 @@ public class Const {
 
   /**
    * Sort the strings of an array in alphabetical order.
-   * 
-   * @param input
-   *          The array of strings to sort.
+   *
+   * @param input The array of strings to sort.
    * @return The sorted array of strings.
    */
   public static final String[] sortStrings( String[] input ) {
@@ -418,16 +385,11 @@ public class Const {
   /**
    * Convert strings separated by a string into an array of strings.
    * <p>
-   * <code>
-	 Example: a;b;c;d    ==  new String[] { a, b, c, d }
-	 * </code>
-   * 
-   * @param string
-   *          The string to split
-   * @param separator
-   *          The separator used.
+   * <code> Example: a;b;c;d    ==  new String[] { a, b, c, d } </code>
+   *
+   * @param string    The string to split
+   * @param separator The separator used.
    * @return the string split into an array of strings
-   * 
    * @deprecated
    */
   public static final String[] splitString( String string, String separator ) {
@@ -459,20 +421,16 @@ public class Const {
       list.add( NVL( string.substring( from, string.length() ), "" ) ); //$NON-NLS-1$
     }
 
-    return (String[]) list.toArray( new String[list.size()] );
+    return (String[]) list.toArray( new String[ list.size() ] );
   }
 
   /**
    * Convert strings separated by a character into an array of strings.
    * <p>
-   * <code>
-	 Example: a;b;c;d    ==  new String[] { a, b, c, d }
-	 * </code>
-   * 
-   * @param string
-   *          The string to split
-   * @param separator
-   *          The separator used.
+   * <code> Example: a;b;c;d    ==  new String[] { a, b, c, d } </code>
+   *
+   * @param string    The string to split
+   * @param separator The separator used.
    * @return the string split into an array of strings
    */
   public static final String[] splitString( String string, char separator ) {
@@ -503,20 +461,16 @@ public class Const {
       list.add( NVL( string.substring( from, string.length() ), "" ) ); //$NON-NLS-1$
     }
 
-    return (String[]) list.toArray( new String[list.size()] );
+    return (String[]) list.toArray( new String[ list.size() ] );
   }
 
   /**
    * Convert strings separated by a string into an array of strings.
    * <p>
-   * <code>
-   *   Example /a/b/c --> new String[] { a, b, c }
-   * </code>
-   * 
-   * @param path
-   *          The string to split
-   * @param separator
-   *          The separator used.
+   * <code> Example /a/b/c --> new String[] { a, b, c } </code>
+   *
+   * @param path      The string to split
+   * @param separator The separator used.
    * @return the string split into an array of strings
    */
   public static final String[] splitPath( String path, String separator ) {
@@ -539,18 +493,18 @@ public class Const {
       }
     }
 
-    String[] spath = new String[nr_separators];
+    String[] spath = new String[ nr_separators ];
     int nr = 0;
     for ( int i = from; i < path.length(); i += sepLen ) {
       if ( path.substring( i, i + sepLen ).equalsIgnoreCase( separator ) ) {
-        spath[nr] = path.substring( from, i );
+        spath[ nr ] = path.substring( from, i );
         nr++;
 
         from = i + sepLen;
       }
     }
     if ( nr < spath.length ) {
-      spath[nr] = path.substring( from );
+      spath[ nr ] = path.substring( from );
     }
 
     //
@@ -565,9 +519,8 @@ public class Const {
 
   /**
    * Sorts the array of Strings, determines the uniquely occuring strings.
-   * 
-   * @param strings
-   *          the array that you want to do a distinct on
+   *
+   * @param strings the array that you want to do a distinct on
    * @return a sorted array of uniquely occuring strings
    */
   public static final String[] getDistinctStrings( String[] strings ) {
@@ -582,13 +535,13 @@ public class Const {
     List<String> result = new ArrayList<String>();
     String previous = ""; //$NON-NLS-1$
     for ( int i = 0; i < sorted.length; i++ ) {
-      if ( !sorted[i].equalsIgnoreCase( previous ) ) {
-        result.add( sorted[i] );
+      if ( !sorted[ i ].equalsIgnoreCase( previous ) ) {
+        result.add( sorted[ i ] );
       }
-      previous = sorted[i];
+      previous = sorted[ i ];
     }
 
-    return (String[]) result.toArray( new String[result.size()] );
+    return (String[]) result.toArray( new String[ result.size() ] );
   }
 
   /**
@@ -602,15 +555,15 @@ public class Const {
     try {
       stringWriter.close();
     } catch ( IOException ioe ) {
+      //ignored
     } // is this really required?
     return string;
   }
 
   /**
    * Check if the string supplied is empty. A String is empty when it is null or when the length is 0
-   * 
-   * @param string
-   *          The string to check
+   *
+   * @param string The string to check
    * @return true if the string supplied is empty
    */
   public static final boolean isEmpty( String string ) {
@@ -619,9 +572,8 @@ public class Const {
 
   /**
    * Check if the stringBuffer supplied is empty. A StringBuffer is empty when it is null or when the length is 0
-   * 
-   * @param string
-   *          The stringBuffer to check
+   *
+   * @param string The stringBuffer to check
    * @return true if the stringBuffer supplied is empty
    */
   public static final boolean isEmpty( StringBuffer string ) {
@@ -630,9 +582,8 @@ public class Const {
 
   /**
    * Convert a normal name with spaces into an ID: with underscores replacing the spaces, etc.
-   * 
-   * @param name
-   *          the name to convert to an ID
+   *
+   * @param name the name to convert to an ID
    * @return The ID-ified name
    */
   public static final String toID( String name ) {

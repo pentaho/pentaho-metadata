@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.metadata.query.example;
 
@@ -49,9 +49,8 @@ import org.pentaho.pms.mql.dialect.SQLQueryModel.OrderType;
 
 /**
  * This is an example of extending the metadata query model.
- * 
+ *
  * @author Will Gorman (wgorman@penthao.com)
- * 
  */
 public class AdvancedSqlGenerator extends SqlGenerator {
 
@@ -82,18 +81,20 @@ public class AdvancedSqlGenerator extends SqlGenerator {
 
   @Override
   protected MappedQuery getSQL( LogicalModel model, List<Selection> selections, List<Constraint> constraints,
-      List<Order> orderbys, DatabaseMeta databaseMeta, String locale, Map<String, Object> parameters,
-      boolean genAsPreparedStatement, boolean disableDistinct, int limit, Constraint securityConstraint )
+                                List<Order> orderbys, DatabaseMeta databaseMeta, String locale,
+                                Map<String, Object> parameters,
+                                boolean genAsPreparedStatement, boolean disableDistinct, int limit,
+                                Constraint securityConstraint )
     throws PentahoMetadataException {
 
     // generate the formula objects for constraints
     Map<Constraint, AliasAwareSqlOpenFormula> constraintFormulaMap =
-        new HashMap<Constraint, AliasAwareSqlOpenFormula>();
+      new HashMap<Constraint, AliasAwareSqlOpenFormula>();
     Map<AliasedSelection, AliasAwareSqlOpenFormula> selectionFormulaMap =
-        new HashMap<AliasedSelection, AliasAwareSqlOpenFormula>();
+      new HashMap<AliasedSelection, AliasAwareSqlOpenFormula>();
     for ( Constraint constraint : constraints ) {
       AliasAwareSqlOpenFormula formula =
-          new AliasAwareSqlOpenFormula( model, databaseMeta, constraint.getFormula(), selections, DEFAULT_ALIAS );
+        new AliasAwareSqlOpenFormula( model, databaseMeta, constraint.getFormula(), selections, DEFAULT_ALIAS );
       formula.parseAndValidate();
       constraintFormulaMap.put( constraint, formula );
     }
@@ -121,7 +122,7 @@ public class AdvancedSqlGenerator extends SqlGenerator {
 
       if ( sel.hasFormula() ) {
         AliasAwareSqlOpenFormula formula =
-            new AliasAwareSqlOpenFormula( model, databaseMeta, sel.getFormula(), selections, DEFAULT_ALIAS ); // formula;
+          new AliasAwareSqlOpenFormula( model, databaseMeta, sel.getFormula(), selections, DEFAULT_ALIAS ); // formula;
         formula.setAllowAggregateFunctions( true );
         formula.parseAndValidate();
         selectionFormulaMap.put( sel, formula );
@@ -156,8 +157,8 @@ public class AdvancedSqlGenerator extends SqlGenerator {
     List<AliasedLogicalRelationship> allRelationships = new ArrayList<AliasedLogicalRelationship>();
 
     List<LogicalTable> defaultTables =
-        getTablesInvolved( model, defaultList, constraints, orderbys, databaseMeta, locale, selectionFormulaMap,
-            constraintFormulaMap );
+      getTablesInvolved( model, defaultList, constraints, orderbys, databaseMeta, locale, selectionFormulaMap,
+        constraintFormulaMap );
     Path defaultPath = getShortestPathBetween( model, defaultTables );
     List<LogicalTable> tbls = defaultPath.getUsedTables();
     List<AliasedPathLogicalTable> allTables = new ArrayList<AliasedPathLogicalTable>();
@@ -169,12 +170,13 @@ public class AdvancedSqlGenerator extends SqlGenerator {
     }
 
     if ( defaultPath == null ) {
-      throw new PentahoMetadataException( Messages.getErrorString( "SqlGenerator.ERROR_0002_FAILED_TO_FIND_PATH" ) ); //$NON-NLS-1$
+      throw new PentahoMetadataException(
+        Messages.getErrorString( "SqlGenerator.ERROR_0002_FAILED_TO_FIND_PATH" ) ); //$NON-NLS-1$
     }
 
     for ( int i = 0; i < defaultPath.size(); i++ ) {
       allRelationships.add( new AliasedLogicalRelationship( DEFAULT_ALIAS, DEFAULT_ALIAS, defaultPath
-          .getRelationship( i ) ) );
+        .getRelationship( i ) ) );
     }
 
     for ( int i = 1; i < lists.size(); i++ ) {
@@ -183,18 +185,18 @@ public class AdvancedSqlGenerator extends SqlGenerator {
       aliasedAndDefaultColumns.addAll( aliasedColumns );
       aliasedAndDefaultColumns.addAll( defaultList );
       List<LogicalTable> aliasedTables =
-          getTablesInvolved( model, aliasedColumns, null, null, databaseMeta, locale, selectionFormulaMap,
-              constraintFormulaMap );
+        getTablesInvolved( model, aliasedColumns, null, null, databaseMeta, locale, selectionFormulaMap,
+          constraintFormulaMap );
       List<LogicalTable> aliasedAndDefaultTables =
-          getTablesInvolved( model, aliasedAndDefaultColumns, null, null, databaseMeta, locale, selectionFormulaMap,
-              constraintFormulaMap );
+        getTablesInvolved( model, aliasedAndDefaultColumns, null, null, databaseMeta, locale, selectionFormulaMap,
+          constraintFormulaMap );
       Path aliasedAndDefaultPath = getShortestPathBetween( model, aliasedAndDefaultTables );
 
       // Prune and connect aliased path with default path
       for ( LogicalTable aliasedTable : aliasedTables ) {
         // follow the path, move relationships into allRelationships and allTables
         traversePath( (String) aliasNames.get( i ), aliasedTable, aliasedAndDefaultPath, aliasedTables, defaultTables,
-            allTables, allRelationships );
+          allTables, allRelationships );
       }
 
     }
@@ -255,12 +257,12 @@ public class AdvancedSqlGenerator extends SqlGenerator {
       String schemaName = null;
       if ( tbl.getLogicalTable().getProperty( SqlPhysicalTable.TARGET_SCHEMA ) != null ) {
         schemaName =
-            databaseMeta.quoteField( (String) tbl.getLogicalTable().getProperty( SqlPhysicalTable.TARGET_SCHEMA ) );
+          databaseMeta.quoteField( (String) tbl.getLogicalTable().getProperty( SqlPhysicalTable.TARGET_SCHEMA ) );
       }
       String tableName =
-          databaseMeta.quoteField( (String) tbl.getLogicalTable().getProperty( SqlPhysicalTable.TARGET_TABLE ) );
+        databaseMeta.quoteField( (String) tbl.getLogicalTable().getProperty( SqlPhysicalTable.TARGET_TABLE ) );
       sqlquery.addTable( databaseMeta.getSchemaTableCombination( schemaName, tableName ), databaseMeta
-          .quoteField( alias ) );
+        .quoteField( alias ) );
 
     }
 
@@ -291,7 +293,8 @@ public class AdvancedSqlGenerator extends SqlGenerator {
           break;
       }
 
-      String leftSchema = (String) aliasedRelation.relation.getFromTable().getProperty( SqlPhysicalTable.TARGET_SCHEMA );
+      String leftSchema =
+        (String) aliasedRelation.relation.getFromTable().getProperty( SqlPhysicalTable.TARGET_SCHEMA );
       String leftTable = (String) aliasedRelation.relation.getFromTable().getProperty( SqlPhysicalTable.TARGET_TABLE );
 
       String rightSchema = (String) aliasedRelation.relation.getToTable().getProperty( SqlPhysicalTable.TARGET_SCHEMA );
@@ -311,7 +314,7 @@ public class AdvancedSqlGenerator extends SqlGenerator {
       }
 
       sqlquery.addJoin( leftTableName, leftTableAlias, rightTableName, rightTableAlias, joinType, joinFormula,
-          joinOrderKey );
+        joinOrderKey );
     }
 
     // WHERE CONDITIONS
@@ -327,7 +330,8 @@ public class AdvancedSqlGenerator extends SqlGenerator {
 
           // usedTables should be getBusinessAliases()
           String[] usedTables = formula.getTableAliasNames();
-          sqlquery.addWhereFormula( sql, first ? "AND" : constraint.getCombinationType().toString(), usedTables ); //$NON-NLS-1$
+          sqlquery.addWhereFormula( sql, first ? "AND" : constraint.getCombinationType().toString(),
+            usedTables ); //$NON-NLS-1$
           first = false;
         } else {
           sqlquery.addHavingFormula( formula.generateSQL( locale ), constraint.getCombinationType().toString() );
@@ -368,7 +372,8 @@ public class AdvancedSqlGenerator extends SqlGenerator {
           AliasAwareSqlOpenFormula formula = selectionFormulaMap.get( selection );
           sqlSelection = formula.generateSQL( locale );
         }
-        sqlquery.addOrderBy( sqlSelection, null, ( orderItem.getType() != Type.ASC ) ? OrderType.DESCENDING : null ); //$NON-NLS-1$
+        sqlquery.addOrderBy( sqlSelection, null,
+          ( orderItem.getType() != Type.ASC ) ? OrderType.DESCENDING : null ); //$NON-NLS-1$
       }
     }
 
@@ -389,8 +394,8 @@ public class AdvancedSqlGenerator extends SqlGenerator {
   }
 
   protected boolean hasFactsInIt( List<Selection> selections, List<Constraint> conditions,
-      Map<AliasedSelection, AliasAwareSqlOpenFormula> selectionFormulaMap,
-      Map<Constraint, AliasAwareSqlOpenFormula> constraintFormulaMap ) {
+                                  Map<AliasedSelection, AliasAwareSqlOpenFormula> selectionFormulaMap,
+                                  Map<Constraint, AliasAwareSqlOpenFormula> constraintFormulaMap ) {
     for ( Selection selection : selections ) {
       AliasedSelection aliasedSelection = (AliasedSelection) selection;
       if ( aliasedSelection.hasFormula() ) {
@@ -423,9 +428,10 @@ public class AdvancedSqlGenerator extends SqlGenerator {
   }
 
   protected List<LogicalTable> getTablesInvolved( LogicalModel model, List<Selection> selections,
-      List<Constraint> conditions, List<Order> orderBys, DatabaseMeta databaseMeta, String locale,
-      Map<AliasedSelection, AliasAwareSqlOpenFormula> selectionFormulaMap,
-      Map<Constraint, AliasAwareSqlOpenFormula> constraintFormulaMap ) {
+                                                  List<Constraint> conditions, List<Order> orderBys,
+                                                  DatabaseMeta databaseMeta, String locale,
+                                                  Map<AliasedSelection, AliasAwareSqlOpenFormula> selectionFormulaMap,
+                                                  Map<Constraint, AliasAwareSqlOpenFormula> constraintFormulaMap ) {
     Set<LogicalTable> treeSet = new TreeSet<LogicalTable>();
 
     for ( Selection selection : selections ) {
@@ -474,7 +480,7 @@ public class AdvancedSqlGenerator extends SqlGenerator {
           }
         } else {
           SQLAndAliasedTables sqlAndTables =
-              getSelectionSQL( model, (AliasedSelection) order.getSelection(), databaseMeta, locale );
+            getSelectionSQL( model, (AliasedSelection) order.getSelection(), databaseMeta, locale );
 
           // Add the involved tables to the list...
           //
@@ -520,15 +526,16 @@ public class AdvancedSqlGenerator extends SqlGenerator {
   // this is primarily due to the context that would need to get passed into PMSFormula
   // we don't want the pentaho MQL solution to ever come across aliases, etc.
   public static SQLAndAliasedTables getSelectionSQL( LogicalModel LogicalModel, AliasedSelection selection,
-      DatabaseMeta databaseMeta, String locale ) {
+                                                     DatabaseMeta databaseMeta, String locale ) {
     String columnStr = (String) selection.getLogicalColumn().getProperty( SqlPhysicalColumn.TARGET_COLUMN );
-    if ( selection.getLogicalColumn().getProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE ) == TargetColumnType.OPEN_FORMULA ) {
+    if ( selection.getLogicalColumn().getProperty( SqlPhysicalColumn.TARGET_COLUMN_TYPE )
+      == TargetColumnType.OPEN_FORMULA ) {
       // convert to sql using libformula subsystem
       try {
         // we'll need to pass in some context to PMSFormula so it can resolve aliases if necessary
         AliasAwareSqlOpenFormula formula =
-            new AliasAwareSqlOpenFormula( LogicalModel, selection.getLogicalColumn().getLogicalTable(), databaseMeta,
-                columnStr, selection.getAlias() );
+          new AliasAwareSqlOpenFormula( LogicalModel, selection.getLogicalColumn().getLogicalTable(), databaseMeta,
+            columnStr, selection.getAlias() );
         formula.parseAndValidate();
         // return formula.generateSQL(locale);
         return new SQLAndAliasedTables( formula.generateSQL( locale ), formula.getUsedAliasedTables() );
@@ -536,7 +543,7 @@ public class AdvancedSqlGenerator extends SqlGenerator {
         // this is for backwards compatibility.
         // eventually throw any errors
         throw new RuntimeException( Messages.getErrorString(
-            "SqlGenerator.ERROR_0001_FAILED_TO_PARSE_FORMULA", columnStr ) ); //$NON-NLS-1$  
+          "SqlGenerator.ERROR_0001_FAILED_TO_PARSE_FORMULA", columnStr ) ); //$NON-NLS-1$
       }
     } else {
       String tableColumn = ""; //$NON-NLS-1$
@@ -550,27 +557,27 @@ public class AdvancedSqlGenerator extends SqlGenerator {
       // TODO: WPG: instead of using formula, shouldn't we use the physical column's name?
       tableColumn += databaseMeta.quoteField( columnStr );
 
-      if ( selection.hasAggregate() ) // For the having clause, for example: HAVING sum(turnover) > 100
-      {
+      // For the having clause, for example: HAVING sum(turnover) > 100
+      if ( selection.hasAggregate() ) {
         // return getFunctionExpression(selection.getLogicalColumn(), tableColumn, databaseMeta);
         return new SQLAndAliasedTables( getFunctionExpression( selection, tableColumn, databaseMeta ),
-            new AliasedPathLogicalTable( tblName, selection.getLogicalColumn().getLogicalTable() ) );
+          new AliasedPathLogicalTable( tblName, selection.getLogicalColumn().getLogicalTable() ) );
       } else {
         return new SQLAndAliasedTables( tableColumn, new AliasedPathLogicalTable( tblName, selection.getLogicalColumn()
-            .getLogicalTable() ) );
+          .getLogicalTable() ) );
       }
     }
   }
 
   public String getJoin( LogicalModel LogicalModel, AliasedLogicalRelationship relation, DatabaseMeta databaseMeta,
-      String locale, List<Selection> selections ) throws PentahoMetadataException {
+                         String locale, List<Selection> selections ) throws PentahoMetadataException {
     String join = ""; //$NON-NLS-1$
 
     if ( relation.relation.isComplex() ) {
       // parse join as MQL
       String formulaString = relation.relation.getComplexJoin();
       AliasAwareSqlOpenFormula formula =
-          new AliasAwareSqlOpenFormula( LogicalModel, databaseMeta, formulaString, selections, DEFAULT_ALIAS );
+        new AliasAwareSqlOpenFormula( LogicalModel, databaseMeta, formulaString, selections, DEFAULT_ALIAS );
 
       // if we're dealing with an aliased join, inform the formula
       if ( !relation.rightAlias.equals( DEFAULT_ALIAS ) || !relation.leftAlias.equals( DEFAULT_ALIAS ) ) {
@@ -588,7 +595,7 @@ public class AdvancedSqlGenerator extends SqlGenerator {
       join = formula.generateSQL( locale );
 
     } else if ( relation.relation.getFromTable() != null && relation.relation.getToTable() != null
-        && relation.relation.getFromColumn() != null && relation.relation.getToColumn() != null ) {
+      && relation.relation.getFromColumn() != null && relation.relation.getToColumn() != null ) {
       String rightAlias = relation.relation.getToTable().getId();
       if ( !relation.rightAlias.equals( DEFAULT_ALIAS ) ) {
         rightAlias = rightAlias + "_" + relation.rightAlias; //$NON-NLS-1$
@@ -603,8 +610,8 @@ public class AdvancedSqlGenerator extends SqlGenerator {
       join = databaseMeta.quoteField( leftAlias );
       join += "."; //$NON-NLS-1$
       join +=
-          databaseMeta.quoteField( (String) relation.relation.getFromColumn().getProperty(
-              SqlPhysicalColumn.TARGET_COLUMN ) );
+        databaseMeta.quoteField( (String) relation.relation.getFromColumn().getProperty(
+          SqlPhysicalColumn.TARGET_COLUMN ) );
 
       // Equals
       join += " = "; //$NON-NLS-1$
@@ -613,8 +620,8 @@ public class AdvancedSqlGenerator extends SqlGenerator {
       join += databaseMeta.quoteField( rightAlias );
       join += "."; //$NON-NLS-1$
       join +=
-          databaseMeta.quoteField( (String) relation.relation.getToColumn().getProperty(
-              SqlPhysicalColumn.TARGET_COLUMN ) );
+        databaseMeta.quoteField( (String) relation.relation.getToColumn().getProperty(
+          SqlPhysicalColumn.TARGET_COLUMN ) );
     }
 
     return join;
@@ -633,8 +640,9 @@ public class AdvancedSqlGenerator extends SqlGenerator {
   }
 
   protected void traversePath( String alias, LogicalTable aliasedTable, Path aliasedPath,
-      List<LogicalTable> aliasedTables, List<LogicalTable> defaultTables, List<AliasedPathLogicalTable> allTables,
-      List<AliasedLogicalRelationship> allRelationships ) {
+                               List<LogicalTable> aliasedTables, List<LogicalTable> defaultTables,
+                               List<AliasedPathLogicalTable> allTables,
+                               List<AliasedLogicalRelationship> allRelationships ) {
     AliasedPathLogicalTable aliasedPathTable = new AliasedPathLogicalTable( alias, aliasedTable );
     if ( allTables.contains( aliasedPathTable ) ) {
       allTables.add( aliasedPathTable );

@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.pms.mql.dialect;
 
@@ -21,53 +21,54 @@ import org.pentaho.reporting.libraries.formula.lvalues.FormulaFunction;
 
 /**
  * PostgreSQL Implementation of Metadata SQL Dialect
- * 
+ *
  * @author Will Gorman (wgorman@pentaho.org)
- * 
  */
 public class PostgreSQLDialect extends DefaultSQLDialect {
 
-  public PostgreSQLDialect(String dialectName) {
-    super(dialectName);
+  public PostgreSQLDialect( String dialectName ) {
+    super( dialectName );
     // oracle specific date functions
     supportedFunctions.put(
-        "NOW", new DefaultSQLFunctionGenerator( SQLFunctionGeneratorInterface.PARAM_FUNCTION, "now", 0 ) { //$NON-NLS-1$ //$NON-NLS-2$
-          public void generateFunctionSQL( FormulaTraversalInterface formula, StringBuffer sb, String locale,
-              FormulaFunction f ) throws PentahoMetadataException {
-            sb.append( sql );
-          }
-        } );
-    
+      "NOW", new DefaultSQLFunctionGenerator( SQLFunctionGeneratorInterface.PARAM_FUNCTION, "now",
+        0 ) { //$NON-NLS-1$ //$NON-NLS-2$
+        public void generateFunctionSQL( FormulaTraversalInterface formula, StringBuffer sb, String locale,
+                                         FormulaFunction f ) throws PentahoMetadataException {
+          sb.append( sql );
+        }
+      } );
+
   }
-  
+
   public PostgreSQLDialect() {
     this( "POSTGRESQL" ); //$NON-NLS-1$
   }
 
   /**
    * return PostgreSQL formatted date, date 'YYYY-MM-DD'
-   * 
+   *
    * @param year
    * @param month
    * @param day
-   * 
    * @return date string
    */
   public String getDateSQL( int year, int month, int day ) {
     return "date " + //$NON-NLS-1$
-        quoteStringLiteral( year + "-" + displayAsTwoOrMoreDigits( month ) + "-" + displayAsTwoOrMoreDigits( day ) ); //$NON-NLS-1$ //$NON-NLS-2$
+      quoteStringLiteral( year + "-" + displayAsTwoOrMoreDigits( month ) + "-" + displayAsTwoOrMoreDigits(
+        day ) ); //$NON-NLS-1$ //$NON-NLS-2$
   }
 
   public String getDateSQL( int year, int month, int day, int hour, int minute, int second, int milli ) {
-    return "timestamp "
-        + quoteStringLiteral( year + "-" + displayAsTwoOrMoreDigits( month ) + "-" + displayAsTwoOrMoreDigits( day ) + //$NON-NLS-1$ //$NON-NLS-2$
-            " " + displayAsTwoOrMoreDigits( hour )
-            + ":" + displayAsTwoOrMoreDigits( minute ) + ":" + displayAsTwoOrMoreDigits( second ) + "." + milli ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    return "timestamp " //$NON-NLS-1$
+      + quoteStringLiteral( year + "-" + displayAsTwoOrMoreDigits( month ) + "-" + displayAsTwoOrMoreDigits( day ) //$NON-NLS-1$ //$NON-NLS-2$
+      + " " + displayAsTwoOrMoreDigits( hour ) //$NON-NLS-1$
+      + ":" + displayAsTwoOrMoreDigits( minute ) + ":" + displayAsTwoOrMoreDigits( second ) + "." //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      + milli );
   }
 
   /**
    * PostgreSQL has a 63 character limit on table name length
-   * 
+   *
    * @return max table name length
    */
   public int getMaxTableNameLength() {

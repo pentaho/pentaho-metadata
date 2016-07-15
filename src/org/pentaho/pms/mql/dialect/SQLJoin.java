@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation.  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation.  All rights reserved.
  */
 package org.pentaho.pms.mql.dialect;
 
@@ -25,7 +25,6 @@ import org.pentaho.pms.util.Const;
 
 /**
  * This class defines the join paths between the tables
- * 
  */
 public class SQLJoin implements Comparable<SQLJoin> {
   private String leftTablename;
@@ -40,23 +39,16 @@ public class SQLJoin implements Comparable<SQLJoin> {
   private static final Log logger = LogFactory.getLog( SQLJoin.class );
 
   /**
-   * @param leftTablename
-   *          the name of the left join table
-   * @param leftTableAlias
-   *          the alias of the left join table
-   * @param rightTablename
-   *          the name of the right join table
-   * @param rightTableAlias
-   *          the alias of the right join table
-   * @param sqlWhereFormula
-   *          the SQL formula to do the join (the operator is ignored)
-   * @param joinType
-   *          the join type (inner, left outer, right outer, full outer)
-   * @param joinOrderKey
-   *          the join order key
+   * @param leftTablename   the name of the left join table
+   * @param leftTableAlias  the alias of the left join table
+   * @param rightTablename  the name of the right join table
+   * @param rightTableAlias the alias of the right join table
+   * @param sqlWhereFormula the SQL formula to do the join (the operator is ignored)
+   * @param joinType        the join type (inner, left outer, right outer, full outer)
+   * @param joinOrderKey    the join order key
    */
   public SQLJoin( String leftTablename, String leftTableAlias, String rightTablename, String rightTableAlias,
-      SQLWhereFormula sqlWhereFormula, JoinType joinType, String joinOrderKey ) {
+                  SQLWhereFormula sqlWhereFormula, JoinType joinType, String joinOrderKey ) {
     this.leftTablename = leftTablename;
     this.leftTableAlias = leftTableAlias;
     this.rightTablename = rightTablename;
@@ -67,7 +59,7 @@ public class SQLJoin implements Comparable<SQLJoin> {
   }
 
   public SQLJoin( String leftTablename, String leftTableAlias, String rightTablename, String rightTableAlias,
-      SQLWhereFormula sqlWhereFormula, JoinType joinType, String joinOrderKey, boolean legacyJoinOrder ) {
+                  SQLWhereFormula sqlWhereFormula, JoinType joinType, String joinOrderKey, boolean legacyJoinOrder ) {
     this( leftTablename, leftTableAlias, rightTablename, rightTableAlias, sqlWhereFormula, joinType, joinOrderKey );
     this.legacyJoinOrder = legacyJoinOrder;
   }
@@ -80,8 +72,7 @@ public class SQLJoin implements Comparable<SQLJoin> {
   }
 
   /**
-   * @param leftTablename
-   *          the leftTablename to set
+   * @param leftTablename the leftTablename to set
    */
   public void setLeftTablename( String leftTablename ) {
     this.leftTablename = leftTablename;
@@ -95,8 +86,7 @@ public class SQLJoin implements Comparable<SQLJoin> {
   }
 
   /**
-   * @param rightTablename
-   *          the rightTablename to set
+   * @param rightTablename the rightTablename to set
    */
   public void setRightTablename( String rightTablename ) {
     this.rightTablename = rightTablename;
@@ -110,8 +100,7 @@ public class SQLJoin implements Comparable<SQLJoin> {
   }
 
   /**
-   * @param sqlWhereFormula
-   *          the sqlWhereFormula to set
+   * @param sqlWhereFormula the sqlWhereFormula to set
    */
   public void setSqlWhereFormula( SQLWhereFormula sqlWhereFormula ) {
     this.sqlWhereFormula = sqlWhereFormula;
@@ -125,8 +114,7 @@ public class SQLJoin implements Comparable<SQLJoin> {
   }
 
   /**
-   * @param joinType
-   *          the join type : INNER_JOIN, LEFT_OUTER_JOIN, RIGHT_OUTER_JOIN, FULL_OUTER_JOIN
+   * @param joinType the join type : INNER_JOIN, LEFT_OUTER_JOIN, RIGHT_OUTER_JOIN, FULL_OUTER_JOIN
    */
   public void setJoinType( JoinType joinType ) {
     this.joinType = joinType;
@@ -140,8 +128,7 @@ public class SQLJoin implements Comparable<SQLJoin> {
   }
 
   /**
-   * @param joinOrderKey
-   *          the joinOrderKey to set
+   * @param joinOrderKey the joinOrderKey to set
    */
   public void setJoinOrderKey( String joinOrderKey ) {
     this.joinOrderKey = joinOrderKey;
@@ -164,19 +151,16 @@ public class SQLJoin implements Comparable<SQLJoin> {
       //
       if ( getJoinType() == INNER_JOIN ) {
         return -1;
-      }
-      // CASE: no inner join / inner join : goes to the top
-      else if ( other.getJoinType() == INNER_JOIN ) {
+      } else if ( other.getJoinType() == INNER_JOIN ) {
+        // CASE: no inner join / inner join : goes to the top
         return 1;
       } else {
         // CASE: no inner join / no inner join : nothing to work with:
         return 0;
       }
-    }
-    // Case: Join order / no join order
-    //
-    else if ( !Const.isEmpty( getJoinOrderKey() ) && Const.isEmpty( other.getJoinOrderKey() ) ) {
-
+    } else if ( !Const.isEmpty( getJoinOrderKey() ) && Const.isEmpty( other.getJoinOrderKey() ) ) {
+      // Case: Join order / no join order
+          //
       // Case: ? / inner join : goes to the top
       //
       if ( getJoinType() != INNER_JOIN ) {
@@ -185,11 +169,9 @@ public class SQLJoin implements Comparable<SQLJoin> {
         // CASE: ? / no inner join : nothing to work with:
         return 0;
       }
-    }
-    // Case: No join order / join order
-    //
-    else if ( Const.isEmpty( getJoinOrderKey() ) && !Const.isEmpty( other.getJoinOrderKey() ) ) {
-
+    } else if ( Const.isEmpty( getJoinOrderKey() ) && !Const.isEmpty( other.getJoinOrderKey() ) ) {
+      // Case: No join order / join order
+      //
       // Case: inner join / ? : goes to the bottom
       //
       if ( getJoinType() == INNER_JOIN ) {
@@ -198,9 +180,8 @@ public class SQLJoin implements Comparable<SQLJoin> {
         // CASE: no inner join / ? : nothing to work with:
         return 0;
       }
-    }
-    // Case: both join orders are specified
-    else {
+    } else {
+      // Case: both join orders are specified
       return -getJoinOrderKey().compareTo( other.getJoinOrderKey() );
     }
   }
@@ -229,8 +210,7 @@ public class SQLJoin implements Comparable<SQLJoin> {
   }
 
   /**
-   * @param leftTableAlias
-   *          the leftTableAlias to set
+   * @param leftTableAlias the leftTableAlias to set
    */
   public void setLeftTableAlias( String leftTableAlias ) {
     this.leftTableAlias = leftTableAlias;
@@ -244,8 +224,7 @@ public class SQLJoin implements Comparable<SQLJoin> {
   }
 
   /**
-   * @param rightTableAlias
-   *          the rightTableAlias to set
+   * @param rightTableAlias the rightTableAlias to set
    */
   public void setRightTableAlias( String rightTableAlias ) {
     this.rightTableAlias = rightTableAlias;

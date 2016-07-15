@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 20011 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2016 Pentaho Corporation..  All rights reserved.
  * 
  * Contributed by Nick Coleman
  */
@@ -23,7 +23,7 @@ import org.pentaho.pms.schema.RelationshipMeta;
 /**
  * Represents a bi-directional relationship between two <code>Node</code> objects that will be reviewed by the graph to
  * determine if it is required to connect all necessary <code>Node</code> objects.
- * 
+ *
  * @author Nick Coleman
  */
 public class Arc implements GraphElement {
@@ -44,7 +44,7 @@ public class Arc implements GraphElement {
 
   /**
    * Returns true if this <code>Arc</code> is required by the graph
-   * 
+   *
    * @return True if <code>Arc</code> is required
    */
   public boolean isRequired() {
@@ -53,7 +53,7 @@ public class Arc implements GraphElement {
 
   /**
    * Returns true if this <code>Arc</code> is not required by the graph
-   * 
+   *
    * @return True if <code>Arc</code> is not required
    */
   public boolean isNotRequired() {
@@ -62,7 +62,7 @@ public class Arc implements GraphElement {
 
   /**
    * Returns true if this <code>Arc</code> is known to be required or not required by the graph
-   * 
+   *
    * @return True if <code>Arc</code> requirement is unknown
    */
   public boolean isRequirementKnown() {
@@ -71,7 +71,7 @@ public class Arc implements GraphElement {
 
   /**
    * Returns left <code>Node</code> of <code>Arc</code>
-   * 
+   *
    * @return left <code>Node</code> of <code>Arc</code>
    */
   public Node getLeft() {
@@ -80,7 +80,7 @@ public class Arc implements GraphElement {
 
   /**
    * Returns right <code>Node</code> of <code>Arc</code>
-   * 
+   *
    * @return right <code>Node</code> of <code>Arc</code>
    */
   public Node getRight() {
@@ -89,7 +89,7 @@ public class Arc implements GraphElement {
 
   /**
    * Returns <code>RelationshipMeta</code> associated with this <code>Arc</code>
-   * 
+   *
    * @return <code>RelationshipMeta</code> associated with this <code>Arc</code>
    */
   public RelationshipMeta getRelationship() {
@@ -99,7 +99,7 @@ public class Arc implements GraphElement {
   /**
    * Returns the status of the <code>queued</code> flag which is used by the graphing functions to determine if this
    * <code>Node</code> is currently in the queue waiting to be processed.
-   * 
+   *
    * @return value of <code>queued</code> flag
    */
   public boolean isQueued() {
@@ -108,9 +108,8 @@ public class Arc implements GraphElement {
 
   /**
    * Sets value of <code>queued</code> flag
-   * 
-   * @param queued
-   *          New value of <code>queued</code> flag
+   *
+   * @param queued New value of <code>queued</code> flag
    * @see #isQueued()
    */
   public void setQueued( boolean queued ) {
@@ -119,12 +118,10 @@ public class Arc implements GraphElement {
 
   /**
    * Assigns a requirement value to this element
-   * 
-   * @param required
-   *          True if element is required / false if not required
-   * @throws ConsistencyException
-   *           When assignment is inconsistent with graph constraints or an attempt to set a different value when one is
-   *           already set
+   *
+   * @param required True if element is required / false if not required
+   * @throws ConsistencyException When assignment is inconsistent with graph constraints or an attempt to set a
+   *                              different value when one is already set
    */
   public void setRequirement( boolean required ) throws ConsistencyException {
     // check if value will alter the domain
@@ -134,11 +131,9 @@ public class Arc implements GraphElement {
       if ( required ) {
         left.setRequirement( true );
         right.setRequirement( true );
-      }
-
-      // if arc is not required, we can prune nodes that this was the last
-      // possible path to
-      else {
+      } else {
+        // if arc is not required, we can prune nodes that this was the last
+        // possible path to
         left.prune();
         right.prune();
       }
@@ -157,11 +152,9 @@ public class Arc implements GraphElement {
   /**
    * Enforces the constraints of this <code>Arc</code> on related <code>Nodes</code>. This method is called during
    * propagation of changes in a graph when a <code>Node</code> changes.
-   * 
-   * @param source
-   *          A node that is bound from which arc constraints should be enforced
-   * @throws ConsistencyException
-   *           When constraints cannot be enforced
+   *
+   * @param source A node that is bound from which arc constraints should be enforced
+   * @throws ConsistencyException When constraints cannot be enforced
    */
   public void propagate( Node source ) throws ConsistencyException {
     Node target = ( source == left ) ? right : left;
@@ -172,13 +165,13 @@ public class Arc implements GraphElement {
     }
 
     switch ( domain.getRequirement() ) {
-    // if this arc has been marked as required, the target will be
-    // required as well
+      // if this arc has been marked as required, the target will be
+      // required as well
       case REQUIRED:
         target.setRequirement( true );
         return;
 
-        // if this arc has been marked as required, try to prune target
+      // if this arc has been marked as required, try to prune target
       case NOT_REQUIRED:
         target.prune();
         return;

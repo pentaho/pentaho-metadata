@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 20011 Pentaho Corporation.  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation.  All rights reserved.
  */
 package org.pentaho.pms.mql.dialect;
 
@@ -165,9 +165,9 @@ public class ImpalaDialect extends BaseHiveDialect {
         String t = lhs;
         lhs = rhs;
         rhs = t;
-      } else {
-        // Keep original order, used on left, unused on right.
       }
+      //Else Keep original order, used on left, unused on right.
+
       // We've found a join to be included, remove it from the list of unused joins
       iter.remove();
       // Join the RHS table

@@ -12,8 +12,9 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation.  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation.  All rights reserved.
  */
+
 package org.pentaho.pms.example;
 
 import java.util.List;
@@ -43,9 +44,8 @@ import org.w3c.dom.NodeList;
  * This class shows an example of extending MQLQuery's functionality. While the implementation isn't 100% complete, it
  * demonstrates extending various parts of the MQL XML Serialization / Deserialization, along with algorithm extensions
  * in the AdvancedSQLGenerator class.
- * 
+ *
  * @author Will Gorman (wgorman@pentaho.org)
- * 
  */
 @SuppressWarnings( "deprecation" )
 public class AdvancedMQLQuery extends MQLQueryImpl {
@@ -88,14 +88,15 @@ public class AdvancedMQLQuery extends MQLQueryImpl {
     public void initPMSFormula( BusinessModel model, DatabaseMeta databaseMeta, List<Selection> selections )
       throws PentahoMetadataException {
       pmsformula =
-          new AliasAwarePMSFormula( model, databaseMeta, formula, selections, AdvancedSQLGenerator.DEFAULT_ALIAS ); // formula;
+        new AliasAwarePMSFormula( model, databaseMeta, formula, selections,
+          AdvancedSQLGenerator.DEFAULT_ALIAS ); // formula;
       pmsformula.setAllowAggregateFunctions( true );
       pmsformula.parseAndValidate();
     }
 
     /**
      * traverse the field list and see if any of the fields are aggregate fields. we cache hasAgg for future calls
-     * 
+     *
      * @return true if aggregate
      */
     public boolean hasAggregate() {
@@ -135,7 +136,7 @@ public class AdvancedMQLQuery extends MQLQueryImpl {
     public boolean equals( Object obj ) {
       AliasedSelection abc = (AliasedSelection) obj;
       return equals( abc.getBusinessColumn(), getBusinessColumn() ) && equals( alias, abc.getAlias() )
-          && equals( formula, abc.getFormula() );
+        && equals( formula, abc.getFormula() );
     }
 
     public boolean equals( Object a, Object b ) {
@@ -278,12 +279,12 @@ public class AdvancedMQLQuery extends MQLQueryImpl {
       BusinessCategory businessCategory = rootCat.findBusinessCategory( view );
       if ( businessCategory == null ) {
         throw new PentahoMetadataException( Messages.getErrorString(
-            "MQLQuery.ERROR_0014_BUSINESS_CATEGORY_NOT_FOUND", view ) ); //$NON-NLS-1$ 
+          "MQLQuery.ERROR_0014_BUSINESS_CATEGORY_NOT_FOUND", view ) ); //$NON-NLS-1$
       }
       BusinessColumn businessColumn = businessCategory.findBusinessColumn( column );
       if ( businessColumn == null ) {
         throw new PentahoMetadataException( Messages.getErrorString(
-            "MQLQuery.ERROR_0016_BUSINESS_COLUMN_NOT_FOUND", businessCategory.getId(), column ) ); //$NON-NLS-1$ 
+          "MQLQuery.ERROR_0016_BUSINESS_COLUMN_NOT_FOUND", businessCategory.getId(), column ) ); //$NON-NLS-1$
       }
       getOrder().add( new OrderBy( new AliasedSelection( businessColumn, alias ), ascending ) );
     } else if ( formula != null ) {
@@ -327,16 +328,14 @@ public class AdvancedMQLQuery extends MQLQueryImpl {
 
   /**
    * override addConstraint to use own where condition
-   * 
-   * @param operator
-   *          operator to separate constraints with
-   * @param condition
-   *          MQL Function which defines the constraint
+   *
+   * @param operator  operator to separate constraints with
+   * @param condition MQL Function which defines the constraint
    */
   public void addConstraint( String operator, String condition ) throws PentahoMetadataException {
     List<Selection> aliases = super.getSelections();
     AliasAwarePMSFormula formula =
-        new AliasAwarePMSFormula( getModel(), getDatabaseMeta(), condition, aliases, AdvancedSQLGenerator.DEFAULT_ALIAS );
+      new AliasAwarePMSFormula( getModel(), getDatabaseMeta(), condition, aliases, AdvancedSQLGenerator.DEFAULT_ALIAS );
     formula.setAllowAggregateFunctions( true );
     WhereCondition where = new WhereCondition( formula, operator, condition );
     getConstraints().add( where );
@@ -348,7 +347,7 @@ public class AdvancedMQLQuery extends MQLQueryImpl {
 
   public MappedQuery getQuery() throws PentahoMetadataException {
     return advancedSQLGenerator.getQuery( getModel(), getSelections(), getConstraints(), getOrder(), getDatabaseMeta(),
-        getDisableDistinct(), getLimit(), getLocale() );
+      getDisableDistinct(), getLimit(), getLocale() );
   }
 
 }
