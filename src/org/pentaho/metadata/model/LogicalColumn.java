@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.metadata.model;
 
@@ -27,9 +27,8 @@ import org.pentaho.metadata.model.concept.types.FieldType;
 /**
  * The logical column a logical table as a parent. It inherits from a physical column. Also, the logical column may
  * exist in one or more categories.
- * 
+ *
  * @author Will Gorman (wgorman@pentaho.com)
- * 
  */
 public class LogicalColumn extends Concept {
 
@@ -45,7 +44,7 @@ public class LogicalColumn extends Concept {
   }
 
   public IPhysicalColumn getPhysicalColumn() {
-    return ( IPhysicalColumn ) getInheritedConcept();
+    return (IPhysicalColumn) getInheritedConcept();
   }
 
   public void setPhysicalColumn( IPhysicalColumn physicalColumn ) {
@@ -82,7 +81,7 @@ public class LogicalColumn extends Concept {
   }
 
   public LogicalTable getLogicalTable() {
-    return ( LogicalTable ) getParent();
+    return (LogicalTable) getParent();
   }
 
   public FieldType getFieldType() {

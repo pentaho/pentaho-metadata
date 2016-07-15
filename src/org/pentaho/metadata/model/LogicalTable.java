@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.metadata.model;
 
@@ -24,9 +24,8 @@ import org.pentaho.metadata.model.concept.IConcept;
 
 /**
  * The logical table contains logical columns, and inherits properties from a physical table implementation.
- * 
+ *
  * @author Will Gorman (wgorman@pentaho.com)
- * 
  */
 public class LogicalTable extends Concept {
 
@@ -63,11 +62,11 @@ public class LogicalTable extends Concept {
   }
 
   public LogicalModel getLogicalModel() {
-    return ( LogicalModel ) getParent();
+    return (LogicalModel) getParent();
   }
 
   public IPhysicalTable getPhysicalTable() {
-    return ( IPhysicalTable ) getPhysicalConcept();
+    return (IPhysicalTable) getPhysicalConcept();
   }
 
   public void setPhysicalTable( IPhysicalTable physicalTable ) {
@@ -137,5 +136,4 @@ public class LogicalTable extends Concept {
     }
     return clone;
   }
-
 }

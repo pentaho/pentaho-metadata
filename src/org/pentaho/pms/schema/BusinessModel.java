@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation.  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation.  All rights reserved.
  */
 package org.pentaho.pms.schema;
 
@@ -47,7 +47,7 @@ import org.pentaho.pms.util.UniqueList;
  * @deprecated as of metadata 3.0. Please use org.pentaho.metadata.model.LogicalModel
  */
 public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInterface, Cloneable,
-    ConceptUtilityInterface {
+  ConceptUtilityInterface {
 
   private UniqueList<BusinessTable> businessTables;
 
@@ -107,8 +107,8 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
       BusinessModel businessModel = (BusinessModel) super.clone();
       businessModel.setConcept( (ConceptInterface) getConcept().clone() );
       return businessModel;
-    } catch ( CloneNotSupportedException e ) // Why would this ever happen anyway???
-    {
+    } catch ( CloneNotSupportedException e ) {
+      // Why would this ever happen anyway???
       return null;
     }
   }
@@ -147,17 +147,16 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Finds the relationship with the specified origin and destination table.
-   * 
-   * @param from
-   *          The id of the physical origin table
-   * @param to
-   *          The id of the physical destination table
+   *
+   * @param from The id of the physical origin table
+   * @param to   The id of the physical destination table
    * @return The relationship or null if nothing was found
    */
   public RelationshipMeta findRelationship( String from, String to ) {
     for ( int i = 0; i < nrRelationships(); i++ ) {
       RelationshipMeta relationshipMeta = getRelationship( i );
-      if ( relationshipMeta.getTableFrom().getId().equals( from ) && relationshipMeta.getTableTo().getId().equals( to ) ) {
+      if ( relationshipMeta.getTableFrom().getId().equals( from ) && relationshipMeta.getTableTo().getId()
+        .equals( to ) ) {
         return relationshipMeta;
       }
     }
@@ -166,9 +165,8 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Finds the relationship with the specified id
-   * 
-   * @param id
-   *          The id of the relationship (compares with toString())
+   *
+   * @param id The id of the relationship (compares with toString())
    * @return The relationship or null if nothing was found
    */
   public RelationshipMeta findRelationship( String id ) {
@@ -229,8 +227,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
   }
 
   /**
-   * @param notes
-   *          the notes to set
+   * @param notes the notes to set
    */
   public void setNotes( List<NotePadMeta> notes ) {
     this.notes = notes;
@@ -248,11 +245,11 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
   }
 
   public BusinessTable[] getSelected() {
-    BusinessTable[] bTables = new BusinessTable[nrSelected()];
+    BusinessTable[] bTables = new BusinessTable[ nrSelected() ];
     for ( int i = 0, j = 0; i < nrBusinessTables(); i++ ) {
       BusinessTable aTable = getBusinessTable( i );
       if ( aTable.isSelected() ) {
-        bTables[j++] = aTable;
+        bTables[ j++ ] = aTable;
       }
     }
     return bTables;
@@ -293,11 +290,11 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   public Point[] getSelectedLocations() {
     int sels = nrSelected();
-    Point[] retval = new Point[sels];
+    Point[] retval = new Point[ sels ];
     for ( int i = 0; i < sels; i++ ) {
       BusinessTable ti = getSelected( i );
       Point p = ti.getLocation();
-      retval[i] = new Point( p.x, p.y ); // explicit copy of location
+      retval[ i ] = new Point( p.x, p.y ); // explicit copy of location
     }
     return retval;
   }
@@ -308,10 +305,10 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
       return null;
     }
 
-    BusinessTable[] retval = new BusinessTable[sels];
+    BusinessTable[] retval = new BusinessTable[ sels ];
     for ( int i = 0; i < sels; i++ ) {
       BusinessTable table = getSelected( i );
-      retval[i] = table;
+      retval[ i ] = table;
     }
     return retval;
   }
@@ -388,13 +385,13 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
   public NotePadMeta getNote( int x, int y ) {
     int i, s;
     s = notes.size();
-    for ( i = s - 1; i >= 0; i-- ) // Back to front because drawing goes from start to end
-    {
+    // Back to front because drawing goes from start to end
+    for ( i = s - 1; i >= 0; i-- ) {
       NotePadMeta ni = (NotePadMeta) notes.get( i );
       Point loc = ni.getLocation();
       Point p = new Point( loc.x, loc.y );
       if ( x >= p.x && x <= p.x + ni.width + 2 * Const.NOTE_MARGIN && y >= p.y
-          && y <= p.y + ni.height + 2 * Const.NOTE_MARGIN ) {
+        && y <= p.y + ni.height + 2 * Const.NOTE_MARGIN ) {
         return ni;
       }
     }
@@ -402,8 +399,8 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
   }
 
   public BusinessTable getTable( int x, int y, int iconsize ) {
-    for ( int i = nrBusinessTables() - 1; i >= 0; i-- ) // Back to front because drawing goes from start to end
-    {
+    // Back to front because drawing goes from start to end
+    for ( int i = nrBusinessTables() - 1; i >= 0; i-- ) {
       BusinessTable table = getBusinessTable( i );
       // Only consider tables that are on the canvas
       if ( table.isDrawn() ) {
@@ -419,10 +416,10 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
   }
 
   public int[] getTableIndexes( BusinessTable[] tables ) {
-    int[] retval = new int[tables.length];
+    int[] retval = new int[ tables.length ];
 
     for ( int i = 0; i < tables.length; i++ ) {
-      retval[i] = indexOfBusinessTable( tables[i] );
+      retval[ i ] = indexOfBusinessTable( tables[ i ] );
     }
 
     return retval;
@@ -430,16 +427,15 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Search for a relationship starting with a given starting point
-   * 
-   * @param id
-   *          The physical table id (ID) to start from
+   *
+   * @param id The physical table id (ID) to start from
    * @return The relationship if any could be found or null if nothing could be found.
    */
   public RelationshipMeta findRelationshipFrom( String id ) {
     for ( int i = 0; i < nrRelationships(); i++ ) {
       RelationshipMeta ri = getRelationship( i );
-      if ( ri.getTableFrom().getId().equalsIgnoreCase( id ) ) // return the first
-      {
+      // return the first
+      if ( ri.getTableFrom().getId().equalsIgnoreCase( id ) ) {
         return ri;
       }
     }
@@ -448,16 +444,15 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Search for a relationship starting with a given termination point
-   * 
-   * @param id
-   *          The physical table id (ID) to look for as an ending point
+   *
+   * @param id The physical table id (ID) to look for as an ending point
    * @return The relationship if any could be found or null if nothing could be found.
    */
   public RelationshipMeta findRelationshipTo( String id ) {
     for ( int i = 0; i < nrRelationships(); i++ ) {
       RelationshipMeta ri = getRelationship( i );
-      if ( ri.getTableTo().getId().equalsIgnoreCase( id ) ) // return the first
-      {
+      // return the first
+      if ( ri.getTableTo().getId().equalsIgnoreCase( id ) ) {
         return ri;
       }
     }
@@ -466,11 +461,10 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Is the physical table with the specified id used in a relationship in this business model?
-   * 
-   * @param id
-   *          The physical table id to look out for
+   *
+   * @param id The physical table id to look out for
    * @return true if the physical table with the specified id is used in this business model in one or more
-   *         relationships. False if this is not the case.
+   * relationships. False if this is not the case.
    */
   public boolean isTableUsedInRelationships( String id ) {
     RelationshipMeta fr = findRelationshipFrom( id );
@@ -521,14 +515,14 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
   }
 
   public RelationshipMeta[] findRelationshipsUsing( BusinessTable one ) {
-    RelationshipMeta[] rels = new RelationshipMeta[countRelationshipsUsing( one )];
+    RelationshipMeta[] rels = new RelationshipMeta[ countRelationshipsUsing( one ) ];
 
     int nr = 0;
 
     for ( int i = 0; i < nrRelationships(); i++ ) {
       RelationshipMeta relationship = getRelationship( i );
       if ( relationship.isUsingTable( one ) ) {
-        rels[nr] = relationship;
+        rels[ nr ] = relationship;
         nr++;
       }
     }
@@ -583,11 +577,9 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Finds a business table using the display name and locale or the ID
-   * 
-   * @param locale
-   *          The locale to use
-   * @param tablename
-   *          The name of the table or the ID if the table name
+   *
+   * @param locale    The locale to use
+   * @param tablename The name of the table or the ID if the table name
    * @return
    */
   public BusinessTable findBusinessTable( String locale, String tablename ) {
@@ -610,9 +602,8 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Finds a business table using the table's ID
-   * 
-   * @param tableID
-   *          The ID of the table to look for
+   *
+   * @param tableID The ID of the table to look for
    * @return The business table of null if nothing could be found.
    */
   public BusinessTable findBusinessTable( String tableID ) {
@@ -628,7 +619,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Get an array of all the selected job entries
-   * 
+   *
    * @return A list containing all the selected & drawn job entries.
    */
   public List<BusinessTable> getSelectedDrawnBusinessTableList() {
@@ -646,16 +637,15 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Get an array of the locations of an array of business tables
-   * 
-   * @param steps
-   *          An array of business tables
+   *
+   * @param steps An array of business tables
    * @return an array of the indices of an array of business tables
    */
   public int[] getBusinessTableIndexes( BusinessTable[] tables ) {
-    int[] retval = new int[tables.length];
+    int[] retval = new int[ tables.length ];
 
     for ( int i = 0; i < tables.length; i++ ) {
-      retval[i] = indexOfBusinessTable( tables[i] );
+      retval[ i ] = indexOfBusinessTable( tables[ i ] );
     }
 
     return retval;
@@ -663,19 +653,18 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * This method deletes all objects in the business model that reference the given physical table
-   * 
-   * @param physicalTable
-   *          The physical table to which all references have to be deleted.
+   *
+   * @param physicalTable The physical table to which all references have to be deleted.
    */
   public void deletePhysicalTableReferences( PhysicalTable physicalTable ) {
     for ( int t = nrBusinessTables() - 1; t >= 0; t-- ) {
       BusinessTable businessTable = getBusinessTable( t );
-      if ( businessTable.getPhysicalTable().equals( physicalTable ) ) // This reference has to go
-      {
+      // This reference has to go
+      if ( businessTable.getPhysicalTable().equals( physicalTable ) ) {
         // See if there are any relationships using this businesstable
         RelationshipMeta[] tableRelationships = findRelationshipsUsing( businessTable );
         for ( int r = 0; r < tableRelationships.length; r++ ) {
-          int idx = indexOfRelationship( tableRelationships[r] );
+          int idx = indexOfRelationship( tableRelationships[ r ] );
           removeRelationship( idx );
         }
         // Then remove the business table
@@ -686,13 +675,11 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Find the business category using a path (array) with the names
-   * 
-   * @param path
-   *          the path to the business category
-   * @param locale
-   *          The locale to look for. If the locale is not found, we try the ID
+   *
+   * @param path   the path to the business category
+   * @param locale The locale to look for. If the locale is not found, we try the ID
    * @return The business category when one is found or the best match possible using the path. If nothing matches, we
-   *         return the root category.
+   * return the root category.
    */
   public BusinessCategory findBusinessCategory( String[] path, String locale ) {
     return findBusinessCategory( path, locale, false );
@@ -700,16 +687,13 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Find the business category using a path (array) with the names
-   * 
-   * @param path
-   *          the path to the business category
-   * @param locale
-   *          The locale to look for. If the locale is not found, we try the ID
-   * @param exact
-   *          if true, we do an exact match and don't return the closest match nor root category. In that case we return
-   *          null.
+   *
+   * @param path   the path to the business category
+   * @param locale The locale to look for. If the locale is not found, we try the ID
+   * @param exact  if true, we do an exact match and don't return the closest match nor root category. In that case we
+   *               return null.
    * @return The business category when one is found or the best match possible using the path. If nothing matches, we
-   *         return the root category.
+   * return the root category.
    */
   public BusinessCategory findBusinessCategory( String[] path, String locale, boolean exact ) {
     if ( path.length == 0 ) {
@@ -734,11 +718,11 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
   }
 
   private BusinessCategory findBusinessCategory( String[] path, int level, BusinessCategory businessCategory,
-      String locale, boolean exact ) {
+                                                 String locale, boolean exact ) {
     // if (level>path.length-1) return null; // how is this possible?
 
-    if ( path[level].equals( businessCategory.getDisplayName( locale ) )
-        || path[level].equals( businessCategory.getId() ) ) {
+    if ( path[ level ].equals( businessCategory.getDisplayName( locale ) )
+      || path[ level ].equals( businessCategory.getId() ) ) {
       // We're on the right path...
       //
       if ( level >= path.length - 1 ) {
@@ -768,7 +752,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Returns all business columns
-   * 
+   *
    * @return a UniqueList of all business columns in this model
    */
   public UniqueList<BusinessColumn> getAllBusinessColumns() {
@@ -789,9 +773,8 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Finds a column using the id
-   * 
-   * @param columnId
-   *          the id of the column to look for
+   *
+   * @param columnId the id of the column to look for
    * @return a business column in this model with the specified id or null if nothing was found.
    */
   public BusinessColumn findBusinessColumn( String columnId ) {
@@ -807,11 +790,9 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Finds a column name using a localized name
-   * 
-   * @param locale
-   *          the locale to search for
-   * @param name
-   *          the displayed name of the column to look for or the ID of the column if no localized name was found
+   *
+   * @param locale the locale to search for
+   * @param name   the displayed name of the column to look for or the ID of the column if no localized name was found
    * @return a business column in this model with the specified id or null if nothing was found.
    */
   public BusinessColumn findBusinessColumn( String locale, String name ) {
@@ -826,8 +807,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
   }
 
   /**
-   * @param locale
-   *          the locale to display the categories and columns in.
+   * @param locale the locale to display the categories and columns in.
    * @return a "flat" representation of the categories. Note: it is a List<BusinessColumn>
    */
   public List getFlatCategoriesView( String locale ) {
@@ -840,7 +820,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
   }
 
   private void getFlatCategoriesView( List<BusinessColumnString> strings, Stack<BusinessCategory> categoriesPath,
-      BusinessCategory parentCategory, String locale ) {
+                                      BusinessCategory parentCategory, String locale ) {
     // Add the category id itself...
     StringBuffer pathString = new StringBuffer();
     for ( int i = 0; i < categoriesPath.size(); i++ ) {
@@ -857,8 +837,8 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
     }
 
     BusinessColumnString categoryString = new BusinessColumnString( pathString.toString(), strings.size(), null ); // no
-                                                                                                                   // column
-                                                                                                                   // here!
+    // column
+    // here!
     strings.add( categoryString );
 
     // Now add the sub-categories...
@@ -876,11 +856,12 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
       // Only show columns that are not hidden in the physical table
       //
       if ( !businessColumn.getPhysicalColumn().isHidden() ) {
-        String desc = Const.rightPad( " ", pathString.length() ) + "  " + businessColumn.getDisplayName( locale ); //$NON-NLS-1$ //$NON-NLS-2$
+        String desc = Const.rightPad( " ", pathString.length() ) + "  " + businessColumn
+          .getDisplayName( locale ); //$NON-NLS-1$ //$NON-NLS-2$
 
         BusinessColumnString columnString = new BusinessColumnString( desc, strings.size(), businessColumn ); // no
-                                                                                                              // column
-                                                                                                              // here!
+        // column
+        // here!
         strings.add( columnString );
       }
     }
@@ -897,7 +878,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
 
   /**
    * Find the business table containing the business column
-   * 
+   *
    * @param businessColumn
    * @return
    */
@@ -1002,12 +983,10 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
   }
 
   /**
-   * @param businessTable
-   *          the table to calculate the number of neighbours for
-   * @param selectedTables
-   *          the list of selected business tables
+   * @param businessTable  the table to calculate the number of neighbours for
+   * @param selectedTables the list of selected business tables
    * @return The number of neighbours in a list of selected tables using the relationships defined in this business
-   *         model
+   * model
    */
   public int getNrNeighbours( BusinessTable businessTable, List selectedTables ) {
     int nr = 0;
@@ -1049,9 +1028,9 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
   }
 
   public String[] getBusinessTableNames( String locale ) {
-    String[] names = new String[nrBusinessTables()];
+    String[] names = new String[ nrBusinessTables() ];
     for ( int i = 0; i < nrBusinessTables(); i++ ) {
-      names[i] = getBusinessTable( i ).getDisplayName( locale );
+      names[ i ] = getBusinessTable( i ).getDisplayName( locale );
     }
     return names;
   }
@@ -1152,7 +1131,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
     ArrayList<RelationshipMeta> relations = new ArrayList<RelationshipMeta>();
     for ( RelationshipMeta relation : this.relationships ) {
       if ( relation.isComplex() && relation.getCJReferencedColumns() != null
-          && relation.getCJReferencedColumns().contains( column ) ) {
+        && relation.getCJReferencedColumns().contains( column ) ) {
         relations.add( relation );
       }
     }
@@ -1181,7 +1160,7 @@ public class BusinessModel extends ConceptUtilityBase implements ChangedFlagInte
   }
 
   private List<RelationFormulaUpdate> updateComplexRelationships( Map<String, String> changes,
-      Collection<RelationshipMeta> relations ) {
+                                                                  Collection<RelationshipMeta> relations ) {
     List<RelationFormulaUpdate> updates = new ArrayList<RelationFormulaUpdate>();
     for ( RelationshipMeta relation : relations ) {
 

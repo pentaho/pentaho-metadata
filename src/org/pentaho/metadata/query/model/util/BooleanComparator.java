@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation.  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation.  All rights reserved.
  */
 package org.pentaho.metadata.query.model.util;
 
@@ -73,6 +73,7 @@ public class BooleanComparator implements Comparator<Object> {
             return true;
           }
         } catch ( MathException e ) {
+          // ignore
         }
       }
     }

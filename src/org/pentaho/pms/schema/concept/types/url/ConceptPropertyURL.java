@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.pms.schema.concept.types.url;
 
@@ -48,6 +48,7 @@ public class ConceptPropertyURL extends ConceptPropertyBase implements ConceptPr
       try {
         rtn.value = new URL( value.toString() );
       } catch ( MalformedURLException ignored ) {
+        // ignored
       }
     }
     return rtn;

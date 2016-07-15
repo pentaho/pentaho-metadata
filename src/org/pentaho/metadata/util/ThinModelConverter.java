@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.metadata.util;
 
@@ -196,14 +196,15 @@ public class ThinModelConverter {
 
         // hardcode to mysql, the platform will autodetect the correct datasource
         // type before generating SQL.
+        //noinspection StatementWithEmptyBody
         if ( sqlModel.getDatasource().getType() == DataSourceType.JNDI ) {
           database = new DatabaseMeta( ( (SqlPhysicalModel) physicalModel ).getDatasource().getDatabaseName(), "MYSQL", //$NON-NLS-1$
               "JNDI", "", "", "", "", "" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
           database.getDatabaseInterface().setDatabaseName(
               ( (SqlPhysicalModel) physicalModel ).getDatasource().getDatabaseName() );
-        } else {
-          // TODO: support JDBC
         }
+        // TODO: support JDBC
+
         // set the JNDI connection string
 
         schemaMeta.addDatabase( database );
@@ -309,6 +310,7 @@ public class ThinModelConverter {
     }
   }
 
+  @SuppressWarnings( "StatementWithEmptyBody" )
   public static ConceptPropertyInterface convertPropertyToLegacy( String propertyName, Object property ) {
 
     if ( property instanceof String ) {
@@ -327,9 +329,6 @@ public class ThinModelConverter {
       DataTypeSettings datatypeSettings = DataTypeSettings.types[dt.ordinal()];
       ConceptPropertyDataType cpdt = new ConceptPropertyDataType( propertyName, datatypeSettings );
       return cpdt;
-    } else if ( property instanceof List ) {
-      // TODO: List<AggregationType>
-
     } else if ( property instanceof AggregationType ) {
       AggregationSettings aggSettings = convertToLegacy( (AggregationType) property );
       ConceptPropertyAggregation agg = new ConceptPropertyAggregation( propertyName, aggSettings );

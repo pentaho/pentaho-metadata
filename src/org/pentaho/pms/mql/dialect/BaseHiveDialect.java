@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 20011 Pentaho Corporation.  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation.  All rights reserved.
  */
 package org.pentaho.pms.mql.dialect;
 
@@ -38,7 +38,6 @@ import org.pentaho.pms.util.Const;
 
 /**
  * Abstract class Implementation of Metadata SQL Dialect for all Hive flavors (Hive 1, 2, Impala, etc.)
- * 
  */
 public abstract class BaseHiveDialect extends DefaultSQLDialect {
 
@@ -50,7 +49,7 @@ public abstract class BaseHiveDialect extends DefaultSQLDialect {
 
   /**
    * Pattern that matches any table qualifier before a column name in a SQL formula.<br>
-   * 
+   * <p>
    * e.g. "a.id" should match "a.", "count(a.id)" should match "a."
    */
   protected final Pattern TABLE_QUALIFIER_PATTERN = Pattern.compile( "([^\\(\\s.])+(\\s)*[.]" ); //$NON-NLS-1$
@@ -72,7 +71,7 @@ public abstract class BaseHiveDialect extends DefaultSQLDialect {
 
   /**
    * Determine if this dialect can be loaded in the current environment.
-   * 
+   *
    * @return True if the Hive Database Meta Plugin is registered with the Kettle environment
    */
   public static boolean canLoad() {
@@ -116,13 +115,15 @@ public abstract class BaseHiveDialect extends DefaultSQLDialect {
 
   @Override
   protected List<SQLWhereFormula> generateOuterJoin( SQLQueryModel query, StringBuilder sql ) {
-    throw new RuntimeException( Messages.getErrorString( "HiveDialect.ERROR_0001_OUTER_JOIN_NOT_SUPPORTED" ) ); //$NON-NLS-1$
+    throw new RuntimeException(
+      Messages.getErrorString( "HiveDialect.ERROR_0001_OUTER_JOIN_NOT_SUPPORTED" ) ); //$NON-NLS-1$
   }
 
   @Override
   protected void generateHaving( SQLQueryModel query, StringBuilder sql ) {
     if ( !query.getHavings().isEmpty() ) {
-      throw new RuntimeException( Messages.getErrorString( "HiveDialect.ERROR_0004_HAVING_NOT_SUPPORTED" ) ); //$NON-NLS-1$
+      throw new RuntimeException(
+        Messages.getErrorString( "HiveDialect.ERROR_0004_HAVING_NOT_SUPPORTED" ) ); //$NON-NLS-1$
     }
   }
 
@@ -171,9 +172,8 @@ public abstract class BaseHiveDialect extends DefaultSQLDialect {
 
   /**
    * Create a FROM clause by joining the tables of the model without any conditions.
-   * 
-   * @param query
-   *          Query Model
+   *
+   * @param query Query Model
    * @return From clause built up by joining all tables together
    */
   protected String getFromClauseWithTables( SQLQueryModel query ) {
@@ -194,13 +194,12 @@ public abstract class BaseHiveDialect extends DefaultSQLDialect {
 
   /**
    * Creates a FROM clause by joining tables and their WHERE conditions optimized for Hive. The basic logic is:
-   * 
+   * <p>
    * 1. Honor the user defined Join Order if possible. 2. Include WHERE condition if only equalities are used. 3. Joins
    * with WHERE conditions that contain operators other than '=' should be joined without a condition and the conditions
    * be placed in the WHERE clause of the query.
-   * 
-   * @param query
-   *          Query Model
+   *
+   * @param query Query Model
    * @return String representing FROM and WHERE clause based on the Inner Joins of the query model.
    */
   protected String getFromAndWhereClauseWithInnerJoins( SQLQueryModel query ) {
@@ -224,9 +223,10 @@ public abstract class BaseHiveDialect extends DefaultSQLDialect {
     connectNode( sql, usedTables, joins, joinsForWhereClause );
     // If there are joins left after we're done connecting nodes they are unreachable
     if ( !joins.isEmpty() ) {
-      throw new RuntimeException( String.format( Messages.getErrorString( "HiveDialect.ERROR_0002_JOIN_PATH_NOT_FOUND", //$NON-NLS-1$
+      throw new RuntimeException(
+        String.format( Messages.getErrorString( "HiveDialect.ERROR_0002_JOIN_PATH_NOT_FOUND", //$NON-NLS-1$
           getTableAndAlias( join.getLeftTablename(), join.getLeftTableAlias() ), getTableAndAlias( join
-              .getRightTablename(), join.getRightTableAlias() ) ) ) );
+            .getRightTablename(), join.getRightTableAlias() ) ) ) );
     }
     // Add any joins that have where conditions that cannot be put into the ON clause because of Hive's join syntax
     generateInnerJoinWhereConditions( query, sql, joinsForWhereClause );
@@ -235,18 +235,14 @@ public abstract class BaseHiveDialect extends DefaultSQLDialect {
 
   /**
    * Attempt to connect another {@link SQLJoin} to the query.
-   * 
-   * @param sql
-   *          In-progress query string being built
-   * @param usedTables
-   *          Tables already used in this query
-   * @param unusedJoins
-   *          Remaining, unused {@link SQLJoin}s.
-   * @param joinsForWhereClause
-   *          {@link SQLJoin}s with WHERE conditions that have not been used in any ON conditions
+   *
+   * @param sql                 In-progress query string being built
+   * @param usedTables          Tables already used in this query
+   * @param unusedJoins         Remaining, unused {@link SQLJoin}s.
+   * @param joinsForWhereClause {@link SQLJoin}s with WHERE conditions that have not been used in any ON conditions
    */
   protected void connectNode( StringBuilder sql, Set<String> usedTables, List<SQLJoin> unusedJoins,
-      List<SQLJoin> joinsForWhereClause ) {
+                              List<SQLJoin> joinsForWhereClause ) {
     Iterator<SQLJoin> iter = unusedJoins.iterator();
     while ( iter.hasNext() ) {
       SQLJoin join = iter.next();
@@ -258,7 +254,7 @@ public abstract class BaseHiveDialect extends DefaultSQLDialect {
       if ( lhsUsed && rhsUsed ) {
         // Multiple joins against the same tables. This is assumed to be not possible.
         throw new RuntimeException( Messages.getErrorString(
-            "HiveDialect.ERROR_0003_ADDITIONAL_JOIN_CONDITIONS_FOUND", lhs, rhs ) ); //$NON-NLS-1$
+          "HiveDialect.ERROR_0003_ADDITIONAL_JOIN_CONDITIONS_FOUND", lhs, rhs ) ); //$NON-NLS-1$
       } else if ( !lhsUsed && !rhsUsed ) {
         // If neither of the tables have been used yet skip this join for now.
         continue;
@@ -267,9 +263,9 @@ public abstract class BaseHiveDialect extends DefaultSQLDialect {
         String t = lhs;
         lhs = rhs;
         rhs = t;
-      } else {
-        // Keep original order, used on left, unused on right.
       }
+      // Keep original order, used on left, unused on right.
+
       // We've found a join to be included, remove it from the list of unused joins
       iter.remove();
       // Join the RHS table
@@ -282,7 +278,8 @@ public abstract class BaseHiveDialect extends DefaultSQLDialect {
         joinsForWhereClause.add( join );
       } else {
         // Use the Hive-valid join condition in the ON clause of this join
-        sql.append( " ON ( " ).append( join.getSqlWhereFormula().getFormula() ).append( " )" ); //$NON-NLS-1$ //$NON-NLS-2$
+        sql.append( " ON ( " ).append( join.getSqlWhereFormula().getFormula() )
+          .append( " )" ); //$NON-NLS-1$ //$NON-NLS-2$
       }
       sql.append( Const.CR );
       // We successfully found a new SQLJoin node to attach to the query, attempt to connect another
@@ -294,9 +291,8 @@ public abstract class BaseHiveDialect extends DefaultSQLDialect {
 
   /**
    * Checks if a formula is a valid Hive join condition.
-   * 
-   * @param formula
-   *          SQL where (join) formula
+   *
+   * @param formula SQL where (join) formula
    * @return True if the formula can be used in the ON condition of a join in Hive.
    */
   protected boolean isValidJoinFormula( String formula ) {
@@ -305,13 +301,10 @@ public abstract class BaseHiveDialect extends DefaultSQLDialect {
 
   /**
    * Add join conditions that contain operators other than equalities to the WHERE condition.
-   * 
-   * @param query
-   *          Query Model
-   * @param sql
-   *          In-progress query string being built
-   * @param joins
-   *          {@link SQLJoin}s with WHERE conditions that have not been used in any ON clauses
+   *
+   * @param query Query Model
+   * @param sql   In-progress query string being built
+   * @param joins {@link SQLJoin}s with WHERE conditions that have not been used in any ON clauses
    */
   protected void generateInnerJoinWhereConditions( SQLQueryModel query, StringBuilder sql, List<SQLJoin> joins ) {
     if ( !joins.isEmpty() ) {
@@ -332,7 +325,7 @@ public abstract class BaseHiveDialect extends DefaultSQLDialect {
 
   /**
    * Append a table's name and alias to the end of {@code sql}.
-   * 
+   *
    * @see #getTableAndAlias(String, String)
    */
   protected void appendTableAndAlias( StringBuilder sql, SQLTable table ) {
@@ -341,11 +334,9 @@ public abstract class BaseHiveDialect extends DefaultSQLDialect {
 
   /**
    * Get the concatenation of table name and alias (if it exists).
-   * 
-   * @param table
-   *          Name of table
-   * @param alias
-   *          Alias for table
+   *
+   * @param table Name of table
+   * @param alias Alias for table
    * @return "{@code table}" or "{@code table} {@code alias}" if alias exists.
    */
   protected String getTableAndAlias( String table, String alias ) {
@@ -427,7 +418,7 @@ public abstract class BaseHiveDialect extends DefaultSQLDialect {
 
   /**
    * Remote table aliases from the provided SQL formula
-   * 
+   *
    * @param formula
    * @return
    */
@@ -437,12 +428,12 @@ public abstract class BaseHiveDialect extends DefaultSQLDialect {
 
   /**
    * The query should already contain a WHERE condition if there are any joins that have "invalid" join formulas.
-   * 
+   *
    * @see #isValidJoinFormula(String)
    */
   @Override
   protected boolean containsWhereCondition( SQLQueryModel query, StringBuilder sql,
-      List<SQLWhereFormula> usedSQLWhereFormula ) {
+                                            List<SQLWhereFormula> usedSQLWhereFormula ) {
     for ( SQLJoin join : query.getJoins() ) {
       // If we have a join with an invalid join formula the WHERE clause should have
       // already been started
@@ -461,7 +452,7 @@ public abstract class BaseHiveDialect extends DefaultSQLDialect {
       if ( i != 0 ) {
         sb.append( "," ); //$NON-NLS-1$
       }
-      sb.append( vals[i] );
+      sb.append( vals[ i ] );
     }
     return sb.append( ")" ).toString(); //$NON-NLS-1$
   }
@@ -514,9 +505,9 @@ public abstract class BaseHiveDialect extends DefaultSQLDialect {
   /**
    * Check that the version of the driver being used is at least the driver you want. If you do not care about the minor
    * version, pass in a 0 (The assumption being that the minor version will ALWAYS be 0 or greater)
-   * 
+   *
    * @return true: the version being used is equal to or newer than the one you requested false: the version being used
-   *         is older than the one you requested
+   * is older than the one you requested
    */
   protected boolean isDriverVersion( int majorVersion, int minorVersion ) {
     // lazy load driver info, no need to have this unless dialect is put to use

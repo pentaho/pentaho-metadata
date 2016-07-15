@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.metadata.model;
 
@@ -25,21 +25,22 @@ import org.pentaho.metadata.model.concept.IConcept;
 /**
  * This is the SQL implementation of the physical model. For now it contains a string reference to it's data source
  * (JNDI or Pentaho).
- * 
+ *
  * @author Will Gorman (wgorman@pentaho.com)
- * 
  */
 public class SqlPhysicalModel extends Concept implements IPhysicalModel {
 
   private static final long serialVersionUID = 8834210720816769790L;
 
   private static final String CLASS_ID = "IPhysicalModel";
-  
+
   // this property should be replaced with a thin
   // representation of database meta, which is required
   // for full backward compatibility.
 
-  /** returns a pentaho or JNDI datasource **/
+  /**
+   * returns a pentaho or JNDI datasource
+   **/
   private SqlDataSource datasource;
 
   // this contains a list of the physical tables
@@ -54,7 +55,7 @@ public class SqlPhysicalModel extends Concept implements IPhysicalModel {
   }
 
   public Domain getDomain() {
-    return ( Domain )getParent();
+    return (Domain) getParent();
   }
 
   @Override
@@ -63,7 +64,7 @@ public class SqlPhysicalModel extends Concept implements IPhysicalModel {
     uid.add( CLASS_ID.concat( UID_TYPE_SEPARATOR ) + getId() );
     return uid;
   }
-  
+
   @Override
   public List<IConcept> getChildren() {
     List<IConcept> children = new ArrayList<IConcept>();

@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.metadata.model.olap;
 
@@ -51,7 +51,7 @@ public class OlapCube implements Cloneable, Serializable {
       OlapMeasure measure = (OlapMeasure) olapMeasures.get( i );
       olapCube.olapMeasures.add( (OlapMeasure) measure.clone() );
     }
-    
+
     for ( int i = 0; i < olapCalculatedMembers.size(); i++ ) {
       OlapCalculatedMember cm = (OlapCalculatedMember) olapCalculatedMembers.get( i );
       olapCube.olapCalculatedMembers.add( (OlapCalculatedMember) cm.clone() );
@@ -76,8 +76,7 @@ public class OlapCube implements Cloneable, Serializable {
   }
 
   /**
-   * @param name
-   *          the name to set
+   * @param name the name to set
    */
   public void setName( String name ) {
     this.name = name;
@@ -91,8 +90,7 @@ public class OlapCube implements Cloneable, Serializable {
   }
 
   /**
-   * @param logicalTable
-   *          the businessTable to set
+   * @param logicalTable the businessTable to set
    */
   public void setLogicalTable( LogicalTable logicalTable ) {
     this.logicalTable = logicalTable;
@@ -106,8 +104,7 @@ public class OlapCube implements Cloneable, Serializable {
   }
 
   /**
-   * @param olapDimensionUsages
-   *          the olapDimensionUsages to set
+   * @param olapDimensionUsages the olapDimensionUsages to set
    */
   public void setOlapDimensionUsages( List<OlapDimensionUsage> olapDimensionUsages ) {
     this.olapDimensionUsages = olapDimensionUsages;
@@ -121,8 +118,7 @@ public class OlapCube implements Cloneable, Serializable {
   }
 
   /**
-   * @param olapMeasures
-   *          the olapMeasures to set
+   * @param olapMeasures the olapMeasures to set
    */
   public void setOlapMeasures( List<OlapMeasure> olapMeasures ) {
     this.olapMeasures = olapMeasures;
@@ -140,7 +136,7 @@ public class OlapCube implements Cloneable, Serializable {
 
   /**
    * TODO: This should use IDs vs Names
-   * 
+   *
    * @param locale
    * @return
    */
@@ -156,7 +152,7 @@ public class OlapCube implements Cloneable, Serializable {
       }
     }
 
-    return (String[]) names.toArray( new String[names.size()] );
+    return (String[]) names.toArray( new String[ names.size() ] );
   }
 
   public List<OlapCalculatedMember> getOlapCalculatedMembers() {

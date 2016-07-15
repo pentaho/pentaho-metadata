@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation.  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation.  All rights reserved.
  */
 package org.pentaho.pms.example;
 
@@ -46,9 +46,8 @@ import org.pentaho.pms.schema.RelationshipMeta;
 /**
  * This class demonstrates extending SQLGenerator. The example here is an alias algorithm, allowing multiple aliased
  * join paths.
- * 
+ *
  * @author Will Gorman (wgorman@pentaho.org)
- * 
  */
 @SuppressWarnings( "deprecation" )
 public class AdvancedSQLGenerator extends SQLGenerator {
@@ -79,7 +78,8 @@ public class AdvancedSQLGenerator extends SQLGenerator {
   }
 
   public MappedQuery getQuery( BusinessModel model, List<Selection> selections, List<WhereCondition> constraints,
-      List<OrderBy> orderbys, DatabaseMeta databaseMeta, boolean disableDistinct, int limit, String locale )
+                               List<OrderBy> orderbys, DatabaseMeta databaseMeta, boolean disableDistinct, int limit,
+                               String locale )
     throws PentahoMetadataException {
     Map<String, String> columnsMap = new HashMap<String, String>();
     if ( model == null || selections.size() == 0 ) {
@@ -135,7 +135,7 @@ public class AdvancedSQLGenerator extends SQLGenerator {
     List<AliasedRelationshipMeta> allRelationships = new ArrayList<AliasedRelationshipMeta>();
 
     List<BusinessTable> defaultTables =
-        getTablesInvolved( model, defaultList, constraints, orderbys, databaseMeta, locale );
+      getTablesInvolved( model, defaultList, constraints, orderbys, databaseMeta, locale );
     Path defaultPath = getShortestPathBetween( model, defaultTables );
     List<BusinessTable> tbls = defaultPath.getUsedTables();
     List<AliasedPathBusinessTable> allTables = new ArrayList<AliasedPathBusinessTable>();
@@ -147,12 +147,13 @@ public class AdvancedSQLGenerator extends SQLGenerator {
     }
 
     if ( defaultPath == null ) {
-      throw new PentahoMetadataException( Messages.getErrorString( "BusinessModel.ERROR_0001_FAILED_TO_FIND_PATH" ) ); //$NON-NLS-1$
+      throw new PentahoMetadataException(
+        Messages.getErrorString( "BusinessModel.ERROR_0001_FAILED_TO_FIND_PATH" ) ); //$NON-NLS-1$
     }
 
     for ( int i = 0; i < defaultPath.size(); i++ ) {
       allRelationships
-          .add( new AliasedRelationshipMeta( DEFAULT_ALIAS, DEFAULT_ALIAS, defaultPath.getRelationship( i ) ) );
+        .add( new AliasedRelationshipMeta( DEFAULT_ALIAS, DEFAULT_ALIAS, defaultPath.getRelationship( i ) ) );
     }
 
     for ( int i = 1; i < lists.size(); i++ ) {
@@ -162,14 +163,14 @@ public class AdvancedSQLGenerator extends SQLGenerator {
       aliasedAndDefaultColumns.addAll( defaultList );
       List<BusinessTable> aliasedTables = getTablesInvolved( model, aliasedColumns, null, null, databaseMeta, locale );
       List<BusinessTable> aliasedAndDefaultTables =
-          getTablesInvolved( model, aliasedAndDefaultColumns, null, null, databaseMeta, locale );
+        getTablesInvolved( model, aliasedAndDefaultColumns, null, null, databaseMeta, locale );
       Path aliasedAndDefaultPath = getShortestPathBetween( model, aliasedAndDefaultTables );
 
       // Prune and connect aliased path with default path
       for ( BusinessTable aliasedTable : aliasedTables ) {
         // follow the path, move relationships into allRelationships and allTables
         traversePath( (String) aliasNames.get( i ), aliasedTable, aliasedAndDefaultPath, aliasedTables, defaultTables,
-            allTables, allRelationships );
+          allTables, allRelationships );
       }
 
     }
@@ -235,7 +236,7 @@ public class AdvancedSQLGenerator extends SQLGenerator {
       }
       String tableName = databaseMeta.quoteField( tbl.getBusinessTable().getTargetTable() );
       sqlquery.addTable( databaseMeta.getSchemaTableCombination( schemaName, tableName ), databaseMeta
-          .quoteField( alias ) );
+        .quoteField( alias ) );
 
     }
 
@@ -267,11 +268,11 @@ public class AdvancedSQLGenerator extends SQLGenerator {
       }
 
       String leftTableName =
-          databaseMeta.getQuotedSchemaTableCombination( aliasedRelation.relation.getTableFrom().getTargetSchema(),
-              aliasedRelation.relation.getTableFrom().getTargetTable() );
+        databaseMeta.getQuotedSchemaTableCombination( aliasedRelation.relation.getTableFrom().getTargetSchema(),
+          aliasedRelation.relation.getTableFrom().getTargetTable() );
       String rightTableName =
-          databaseMeta.getQuotedSchemaTableCombination( aliasedRelation.relation.getTableTo().getTargetSchema(),
-              aliasedRelation.relation.getTableTo().getTargetTable() );
+        databaseMeta.getQuotedSchemaTableCombination( aliasedRelation.relation.getTableTo().getTargetSchema(),
+          aliasedRelation.relation.getTableTo().getTargetTable() );
 
       String leftTableAlias = aliasedRelation.relation.getTableFrom().getId();
       if ( !aliasedRelation.leftAlias.equals( DEFAULT_ALIAS ) ) {
@@ -284,7 +285,7 @@ public class AdvancedSQLGenerator extends SQLGenerator {
       }
 
       sqlquery.addJoin( leftTableName, leftTableAlias, rightTableName, rightTableAlias, joinType, joinFormula,
-          joinOrderKey );
+        joinOrderKey );
     }
 
     // WHERE CONDITIONS
@@ -369,7 +370,8 @@ public class AdvancedSQLGenerator extends SQLGenerator {
   }
 
   protected List<BusinessTable> getTablesInvolved( BusinessModel model, List<Selection> selections,
-      List<WhereCondition> conditions, List<OrderBy> orderBys, DatabaseMeta databaseMeta, String locale ) {
+                                                   List<WhereCondition> conditions, List<OrderBy> orderBys,
+                                                   DatabaseMeta databaseMeta, String locale ) {
     Set<BusinessTable> treeSet = new TreeSet<BusinessTable>();
 
     for ( Selection selection : selections ) {
@@ -415,7 +417,7 @@ public class AdvancedSQLGenerator extends SQLGenerator {
           }
         } else {
           SQLAndAliasedTables sqlAndTables =
-              getSelectionSQL( model, (AliasedSelection) order.getSelection(), databaseMeta, locale );
+            getSelectionSQL( model, (AliasedSelection) order.getSelection(), databaseMeta, locale );
 
           // Add the involved tables to the list...
           //
@@ -461,14 +463,14 @@ public class AdvancedSQLGenerator extends SQLGenerator {
   // this is primarily due to the context that would need to get passed into PMSFormula
   // we don't want the pentaho MQL solution to ever come across aliases, etc.
   public static SQLAndAliasedTables getSelectionSQL( BusinessModel businessModel, AliasedSelection selection,
-      DatabaseMeta databaseMeta, String locale ) {
+                                                     DatabaseMeta databaseMeta, String locale ) {
     if ( selection.getBusinessColumn().isExact() ) {
       // convert to sql using libformula subsystem
       try {
         // we'll need to pass in some context to PMSFormula so it can resolve aliases if necessary
         AliasAwarePMSFormula formula =
-            new AliasAwarePMSFormula( businessModel, selection.getBusinessColumn().getBusinessTable(), databaseMeta,
-                selection.getBusinessColumn().getFormula(), selection.getAlias() );
+          new AliasAwarePMSFormula( businessModel, selection.getBusinessColumn().getBusinessTable(), databaseMeta,
+            selection.getBusinessColumn().getFormula(), selection.getAlias() );
         formula.parseAndValidate();
         // return formula.generateSQL(locale);
         return new SQLAndAliasedTables( formula.generateSQL( locale ), formula.getUsedAliasedTables() );
@@ -476,7 +478,8 @@ public class AdvancedSQLGenerator extends SQLGenerator {
         // this is for backwards compatibility.
         // eventually throw any errors
         throw new RuntimeException( Messages.getErrorString(
-            "BusinessColumn.ERROR_0001_FAILED_TO_PARSE_FORMULA", selection.getBusinessColumn().getFormula() ) ); //$NON-NLS-1$  
+          "BusinessColumn.ERROR_0001_FAILED_TO_PARSE_FORMULA",
+          selection.getBusinessColumn().getFormula() ) ); //$NON-NLS-1$
       }
     } else {
       String tableColumn = ""; //$NON-NLS-1$
@@ -490,27 +493,27 @@ public class AdvancedSQLGenerator extends SQLGenerator {
       // TODO: WPG: instead of using formula, shouldn't we use the physical column's name?
       tableColumn += databaseMeta.quoteField( selection.getBusinessColumn().getFormula() );
 
-      if ( selection.hasAggregate() ) // For the having clause, for example: HAVING sum(turnover) > 100
-      {
+      // For the having clause, for example: HAVING sum(turnover) > 100
+      if ( selection.hasAggregate() ) {
         // return getFunctionExpression(selection.getBusinessColumn(), tableColumn, databaseMeta);
         return new SQLAndAliasedTables( getFunctionExpression( selection, tableColumn, databaseMeta ),
-            new AliasedPathBusinessTable( tblName, selection.getBusinessColumn().getBusinessTable() ) );
+          new AliasedPathBusinessTable( tblName, selection.getBusinessColumn().getBusinessTable() ) );
       } else {
         return new SQLAndAliasedTables( tableColumn, new AliasedPathBusinessTable( tblName, selection
-            .getBusinessColumn().getBusinessTable() ) );
+          .getBusinessColumn().getBusinessTable() ) );
       }
     }
   }
 
   public String getJoin( BusinessModel businessModel, AliasedRelationshipMeta relation, DatabaseMeta databaseMeta,
-      String locale, List<Selection> selections ) throws PentahoMetadataException {
+                         String locale, List<Selection> selections ) throws PentahoMetadataException {
     String join = ""; //$NON-NLS-1$
 
     if ( relation.relation.isComplex() ) {
       // parse join as MQL
       String formulaString = relation.relation.getComplexJoin();
       AliasAwarePMSFormula formula =
-          new AliasAwarePMSFormula( businessModel, databaseMeta, formulaString, selections, DEFAULT_ALIAS );
+        new AliasAwarePMSFormula( businessModel, databaseMeta, formulaString, selections, DEFAULT_ALIAS );
 
       // if we're dealing with an aliased join, inform the formula
       if ( !relation.rightAlias.equals( DEFAULT_ALIAS ) || !relation.leftAlias.equals( DEFAULT_ALIAS ) ) {
@@ -528,7 +531,7 @@ public class AdvancedSQLGenerator extends SQLGenerator {
       join = formula.generateSQL( locale );
 
     } else if ( relation.relation.getTableFrom() != null && relation.relation.getTableTo() != null
-        && relation.relation.getFieldFrom() != null && relation.relation.getFieldTo() != null ) {
+      && relation.relation.getFieldFrom() != null && relation.relation.getFieldTo() != null ) {
       String rightAlias = relation.relation.getTableTo().getId();
       if ( !relation.rightAlias.equals( DEFAULT_ALIAS ) ) {
         rightAlias = rightAlias + "_" + relation.rightAlias; //$NON-NLS-1$
@@ -569,8 +572,9 @@ public class AdvancedSQLGenerator extends SQLGenerator {
   }
 
   protected void traversePath( String alias, BusinessTable aliasedTable, Path aliasedPath,
-      List<BusinessTable> aliasedTables, List<BusinessTable> defaultTables, List<AliasedPathBusinessTable> allTables,
-      List<AliasedRelationshipMeta> allRelationships ) {
+                               List<BusinessTable> aliasedTables, List<BusinessTable> defaultTables,
+                               List<AliasedPathBusinessTable> allTables,
+                               List<AliasedRelationshipMeta> allRelationships ) {
     AliasedPathBusinessTable aliasedPathTable = new AliasedPathBusinessTable( alias, aliasedTable );
     if ( allTables.contains( aliasedPathTable ) ) {
       allTables.add( aliasedPathTable );

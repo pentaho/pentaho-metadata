@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.pms.messages;
 
@@ -29,7 +29,7 @@ import org.pentaho.pms.messages.util.LocaleHelper;
  * @deprecated as of metadata 3.0. Please use org.pentaho.metadata.messages.Messages
  */
 public class Messages {
-  private static final String BUNDLE_NAME = "org.pentaho.pms.locale.messages";//$NON-NLS-1$
+  private static final String BUNDLE_NAME = "org.pentaho.pms.locale.messages"; //$NON-NLS-1$
 
   private static final Map<Locale, ResourceBundle> locales = Collections
       .synchronizedMap( new HashMap<Locale, ResourceBundle>() );

@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.metadata.model;
 
@@ -27,9 +27,8 @@ import org.pentaho.metadata.model.concept.types.TargetColumnType;
 
 /**
  * this is the SQL implementation of physical column.
- * 
+ *
  * @author Will Gorman (wgorman@pentaho.com)
- * 
  */
 public class SqlPhysicalColumn extends Concept implements IPhysicalColumn {
 
@@ -43,7 +42,7 @@ public class SqlPhysicalColumn extends Concept implements IPhysicalColumn {
     setTargetColumnType( TargetColumnType.COLUMN_NAME );
     // physical column has the following default properties:
     setName( new LocalizedString() );
-    setDescription( new LocalizedString() );    
+    setDescription( new LocalizedString() );
   }
 
   public SqlPhysicalColumn( SqlPhysicalTable table ) {
@@ -83,7 +82,7 @@ public class SqlPhysicalColumn extends Concept implements IPhysicalColumn {
   public void setAggregationList( List<AggregationType> aggList ) {
     setProperty( IPhysicalColumn.AGGREGATIONLIST_PROPERTY, aggList );
   }
-  
+
   public String getTargetColumn() {
     return (String) getProperty( TARGET_COLUMN );
   }
@@ -101,7 +100,7 @@ public class SqlPhysicalColumn extends Concept implements IPhysicalColumn {
   }
 
   public IPhysicalTable getPhysicalTable() {
-    return ( IPhysicalTable ) getParent();
+    return (IPhysicalTable) getParent();
   }
 
 }

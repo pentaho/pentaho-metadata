@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2008 - 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2008 - 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.pms;
 
@@ -25,9 +25,8 @@ import org.pentaho.pms.mql.dialect.SQLQueryModel.OrderType;
 
 /**
  * Tests the Outer Join SQLQueryModel and sql query generation system.
- * 
+ *
  * @author Matt Casters (mcasters@pentaho.org)
- * 
  */
 public class OuterJoinSQLQueryIT extends MetadataTestBase {
 
@@ -44,8 +43,8 @@ public class OuterJoinSQLQueryIT extends MetadataTestBase {
     query.addSelection( "t2.pk", "t2_pk" ); // $NON-NLS-1$ $NON-NLS-2$
     query.addTable( "t1", null ); // $NON-NLS-1$
     query.addTable( "t2", null ); // $NON-NLS-1$
-    query.addJoin( "t1", null, "t2", null, JoinType.LEFT_OUTER_JOIN, "t1.pk = t2.fk", "A" ); // $NON-NLS-1$ $NON-NLS-2$
-                                                                                             // $NON-NLS-3$
+    query.addJoin( "t1", null, "t2", null, JoinType.LEFT_OUTER_JOIN, "t1.pk = t2.fk", "A" ); // $NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
+
     query.addOrderBy( null, "t1_pk", OrderType.ASCENDING ); // $NON-NLS-1$
 
     SQLDialectInterface dialect = SQLDialectFactory.getSQLDialect( createOracleDatabaseMeta() );
@@ -54,7 +53,7 @@ public class OuterJoinSQLQueryIT extends MetadataTestBase {
     assertEqualsIgnoreWhitespacesAndCase( "SELECT DISTINCT t1.pk AS t1_pk ,t2.pk AS t2_pk " + // $NON-NLS-1$
         "FROM t1 LEFT OUTER JOIN t2 ON ( t1.pk = t2.fk ) " + // $NON-NLS-1$
         "ORDER BY t1_pk ASC", // $NON-NLS-1$
-        sql );
+      sql );
   }
 
   /**
@@ -67,8 +66,7 @@ public class OuterJoinSQLQueryIT extends MetadataTestBase {
     query.addSelection( "sum(t1.pk)", "Total" ); // $NON-NLS-1$ $NON-NLS-2$
     query.addTable( "t1", null ); // $NON-NLS-1$
     query.addTable( "t2", null ); // $NON-NLS-1$
-    query.addJoin( "t1", null, "t2", null, JoinType.LEFT_OUTER_JOIN, "t1.pk = t2.fk", "A" ); // $NON-NLS-1$ $NON-NLS-2$
-                                                                                             // $NON-NLS-3$ $NON-NLS-4$
+    query.addJoin( "t1", null, "t2", null, JoinType.LEFT_OUTER_JOIN, "t1.pk = t2.fk", "A" ); // $NON-NLS-1$ $NON-NLS-2$  $NON-NLS-3$ $NON-NLS-4$
     query.addOrderBy( null, "t1_pk", OrderType.ASCENDING ); // $NON-NLS-1$ $NON-NLS-2$
     query.addGroupBy( "t1.pk", "t1_pk" ); // $NON-NLS-1$ $NON-NLS-2$
     query.addGroupBy( "t2.pk", "t2_pk" ); // $NON-NLS-1$ $NON-NLS-2$
@@ -81,7 +79,7 @@ public class OuterJoinSQLQueryIT extends MetadataTestBase {
         "FROM t1 LEFT OUTER JOIN t2 ON ( t1.pk = t2.fk ) " + // $NON-NLS-1$
         "GROUP BY t1_pk ,t2_pk " + // $NON-NLS-1$
         "ORDER BY t1_pk ASC", // $NON-NLS-1$
-        sql );
+      sql );
   }
 
   /**
@@ -93,8 +91,8 @@ public class OuterJoinSQLQueryIT extends MetadataTestBase {
     query.addSelection( "t2.pk", "t2_pk" ); // $NON-NLS-1$ $NON-NLS-2$
     query.addTable( "t1", null ); // $NON-NLS-1$
     query.addTable( "t2", null ); // $NON-NLS-1$
-    query.addJoin( "t1", null, "t2", null, JoinType.RIGHT_OUTER_JOIN, "t1.pk = t2.fk", "A" );// $NON-NLS-1$ $NON-NLS-2$
-                                                                                             // $NON-NLS-3$ $NON-NLS-4$
+    query.addJoin( "t1", null, "t2", null, JoinType.RIGHT_OUTER_JOIN, "t1.pk = t2.fk", // $NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
+      "A" ); // $NON-NLS-1$
     query.addOrderBy( null, "t1_pk", OrderType.DESCENDING ); // $NON-NLS-1$
 
     DatabaseMeta databaseMeta = MetadataTestBase.createOracleDatabaseMeta();
@@ -104,7 +102,7 @@ public class OuterJoinSQLQueryIT extends MetadataTestBase {
     assertEqualsIgnoreWhitespacesAndCase( "SELECT DISTINCT t1.pk AS t1_pk ,t2.pk AS t2_pk " + // $NON-NLS-1$
         "FROM t1 RIGHT OUTER JOIN t2 ON ( t1.pk = t2.fk ) " + // $NON-NLS-1$
         "ORDER BY t1_pk DESC", // $NON-NLS-1$
-        sql );
+      sql );
   }
 
   /**
@@ -117,8 +115,8 @@ public class OuterJoinSQLQueryIT extends MetadataTestBase {
     query.addSelection( "sum(t2.pk)", "Total" ); // $NON-NLS-1$ $NON-NLS-2$
     query.addTable( "t1", null ); // $NON-NLS-1$
     query.addTable( "t2", null ); // $NON-NLS-1$
-    query.addJoin( "t1", null, "t2", null, JoinType.RIGHT_OUTER_JOIN, "t1.pk = t2.fk", "A" );// $NON-NLS-1$ $NON-NLS-2$
-                                                                                             // $NON-NLS-3$ $NON-NLS-4$
+    query.addJoin( "t1", null, "t2", null, JoinType.RIGHT_OUTER_JOIN, "t1.pk = t2.fk", // $NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
+      "A" ); // $NON-NLS-1$
     query.addOrderBy( null, "t1_pk", OrderType.ASCENDING ); // $NON-NLS-1$
     query.addGroupBy( "t1.pk", "t1_pk" ); // $NON-NLS-1$ $NON-NLS-2$
     query.addGroupBy( "t2.pk", "t2_pk" ); // $NON-NLS-1$ $NON-NLS-2$
@@ -131,7 +129,7 @@ public class OuterJoinSQLQueryIT extends MetadataTestBase {
         "FROM t1 RIGHT OUTER JOIN t2 ON ( t1.pk = t2.fk ) " + // $NON-NLS-1$
         "GROUP BY t1_pk ,t2_pk " + // $NON-NLS-1$
         "ORDER BY t1_pk ASC", // $NON-NLS-1$
-        sql );
+      sql );
   }
 
   /**
@@ -143,8 +141,8 @@ public class OuterJoinSQLQueryIT extends MetadataTestBase {
     query.addSelection( "t2.pk", "t2_pk" ); // $NON-NLS-1$ $NON-NLS-2$
     query.addTable( "t1", null ); // $NON-NLS-1$
     query.addTable( "t2", null ); // $NON-NLS-1$
-    query.addJoin( "t1", null, "t2", null, JoinType.FULL_OUTER_JOIN, "t1.pk = t2.fk", null ); // $NON-NLS-1$ $NON-NLS-2$
-                                                                                              // $NON-NLS-3$
+    query.addJoin( "t1", null, "t2", null, JoinType.FULL_OUTER_JOIN, "t1.pk = t2.fk", null ); // $NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
+
 
     DatabaseMeta databaseMeta = MetadataTestBase.createOracleDatabaseMeta();
     SQLDialectInterface dialect = SQLDialectFactory.getSQLDialect( databaseMeta );
@@ -152,7 +150,7 @@ public class OuterJoinSQLQueryIT extends MetadataTestBase {
     String sql = dialect.generateSelectStatement( query );
     assertEqualsIgnoreWhitespacesAndCase( "SELECT DISTINCT t1.pk AS t1_pk ,t2.pk AS t2_pk " + // $NON-NLS-1$
         "FROM t1 FULL OUTER JOIN t2 ON ( t1.pk = t2.fk )", // $NON-NLS-1$
-        sql );
+      sql );
   }
 
   /**
@@ -164,8 +162,8 @@ public class OuterJoinSQLQueryIT extends MetadataTestBase {
     query.addSelection( "sum(t1.pk)", "Total" ); // $NON-NLS-1$ $NON-NLS-2$
     query.addTable( "t1", null ); // $NON-NLS-1$
     query.addTable( "t2", null ); // $NON-NLS-1$
-    query.addJoin( "t1", null, "t2", null, JoinType.FULL_OUTER_JOIN, "t1.pk = t2.fk", "A" ); // $NON-NLS-1$ $NON-NLS-2$
-                                                                                             // $NON-NLS-3$ $NON-NLS-4$
+    query.addJoin( "t1", null, "t2", null, JoinType.FULL_OUTER_JOIN, "t1.pk = t2.fk", "A" ); // $NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$ $NON-NLS-4$
+
     query.addOrderBy( null, "t2_pk", OrderType.DESCENDING ); // $NON-NLS-1$
     query.addGroupBy( "t2.pk", "t2_pk" ); // $NON-NLS-1$ $NON-NLS-2$
     query.setDistinct( false );
@@ -177,7 +175,7 @@ public class OuterJoinSQLQueryIT extends MetadataTestBase {
         "FROM t1 FULL OUTER JOIN t2 ON ( t1.pk = t2.fk ) " + // $NON-NLS-1$
         "GROUP BY t2_pk " + // $NON-NLS-1$
         "ORDER BY t2_pk DESC", // $NON-NLS-1$
-        sql );
+      sql );
   }
 
   /*****************************************************************************
@@ -185,10 +183,8 @@ public class OuterJoinSQLQueryIT extends MetadataTestBase {
    *****************************************************************************/
 
   /**
-   * Test an OUTER JOIN scenario with 3 tables.<br>
-   * - T1-T2 : a left outer join (to be executed second)<br>
-   * - T2-T3 : an inner join (to be executed first)<br>
-   * <br>
+   * Test an OUTER JOIN scenario with 3 tables.<br> - T1-T2 : a left outer join (to be executed second)<br> - T2-T3 : an
+   * inner join (to be executed first)<br> <br>
    */
   public void test3TablesLeftOuterJoin() {
     SQLQueryModel query = new SQLQueryModel();
@@ -198,28 +194,26 @@ public class OuterJoinSQLQueryIT extends MetadataTestBase {
     query.addTable( "t1", null ); // $NON-NLS-1$
     query.addTable( "t2", null ); // $NON-NLS-1$
     query.addTable( "t3", null ); // $NON-NLS-1$
-    query.addJoin( "t1", null, "t2", null, JoinType.LEFT_OUTER_JOIN, "t1.pk = t2.fk", "B" ); // $NON-NLS-1$ $NON-NLS-2$
-                                                                                             // $NON-NLS-3$ $NON-NLS-4$
-    query.addJoin( "t2", null, "t3", null, JoinType.INNER_JOIN, "t2.pk = t3.fk", "A" ); // $NON-NLS-1$ $NON-NLS-2$
-                                                                                        // $NON-NLS-3$ $NON-NLS-4$
+    query.addJoin( "t1", null, "t2", null, JoinType.LEFT_OUTER_JOIN, "t1.pk = t2.fk", "B" ); // $NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$ $NON-NLS-4$
+
+    query.addJoin( "t2", null, "t3", null, JoinType.INNER_JOIN, "t2.pk = t3.fk", "A" ); // $NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$ $NON-NLS-4$
+
     query.addOrderBy( null, "t1_pk", OrderType.ASCENDING ); // $NON-NLS-1$
 
     SQLDialectInterface dialect = SQLDialectFactory.getSQLDialect( createOracleDatabaseMeta() );
 
     String sql = dialect.generateSelectStatement( query );
-    assertEqualsIgnoreWhitespacesAndCase( "SELECT DISTINCT T1.PK AS T1_PK ,T2.PK AS T2_PK ,T3.PK AS T3_PK " + // $NON-NLS-1$
+    assertEqualsIgnoreWhitespacesAndCase(
+      "SELECT DISTINCT T1.PK AS T1_PK ,T2.PK AS T2_PK ,T3.PK AS T3_PK " + // $NON-NLS-1$
         "FROM T1 LEFT OUTER JOIN ( T2 JOIN T3 ON ( T2.PK = T3.FK ) ) ON ( T1.PK = T2.FK ) " + // $NON-NLS-1$
         "ORDER BY T1_PK ASC", // $NON-NLS-1$
-        sql );
+      sql );
   }
 
   /**
-   * Test an OUTER JOIN scenario with 3 tables.<br>
-   * - T1-T2 : a left outer join (to be executed second)<br>
-   * - T2-T3 : an inner join (to be executed first)<br>
-   * <br>
-   * It's the same test as test3TablesLeftOuterJoin() but <b>we didn't specify an order</b>.<br>
-   * As such, <u>we expect the inner join to be executed first</u><br>
+   * Test an OUTER JOIN scenario with 3 tables.<br> - T1-T2 : a left outer join (to be executed second)<br> - T2-T3 : an
+   * inner join (to be executed first)<br> <br> It's the same test as test3TablesLeftOuterJoin() but <b>we didn't
+   * specify an order</b>.<br> As such, <u>we expect the inner join to be executed first</u><br>
    */
   public void test3TablesLeftOuterJoinNoOrder() {
     SQLQueryModel query = new SQLQueryModel();
@@ -229,25 +223,20 @@ public class OuterJoinSQLQueryIT extends MetadataTestBase {
     query.addTable( "t1", null ); // $NON-NLS-1$
     query.addTable( "t2", null ); // $NON-NLS-1$
     query.addTable( "t3", null ); // $NON-NLS-1$
-    query.addJoin( "t1", null, "t2", null, JoinType.LEFT_OUTER_JOIN, "t1.pk = t2.fk", null ); // $NON-NLS-1$ $NON-NLS-2$
-                                                                                              // $NON-NLS-3$
-    query.addJoin( "t2", null, "t3", null, JoinType.INNER_JOIN, "t2.pk = t3.fk", null ); // $NON-NLS-1$ $NON-NLS-2$
-                                                                                         // $NON-NLS-3$
+    query.addJoin( "t1", null, "t2", null, JoinType.LEFT_OUTER_JOIN, "t1.pk = t2.fk", null ); // $NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
+    query.addJoin( "t2", null, "t3", null, JoinType.INNER_JOIN, "t2.pk = t3.fk", null ); // $NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
     query.addOrderBy( null, "t3_pk", OrderType.DESCENDING ); // $NON-NLS-1$
 
     SQLDialectInterface dialect = SQLDialectFactory.getSQLDialect( createOracleDatabaseMeta() );
 
     String sql = dialect.generateSelectStatement( query );
     assertEqualsIgnoreWhitespacesAndCase( "SELECT DISTINCT T1.PK AS T1_PK,T2.PK AS T2_PK,T3.PK AS T3_PK FROM "
-        + "T3 JOIN(T1 LEFT OUTER JOIN T2 ON(T1.PK = T2.FK))ON(T2.PK = T3.FK)ORDER BY T3_PK DESC", sql );
+      + "T3 JOIN(T1 LEFT OUTER JOIN T2 ON(T1.PK = T2.FK))ON(T2.PK = T3.FK)ORDER BY T3_PK DESC", sql );
   }
 
   /**
-   * Test an OUTER JOIN scenario with 4 tables.<br>
-   * - T1-T2 : a left outer join (to be executed second)<br>
-   * - T2-T3 : an inner join (to be executed first)<br>
-   * - T2-T4 : an cross join (to be executed last) (==full outer join)<br>
-   * <br>
+   * Test an OUTER JOIN scenario with 4 tables.<br> - T1-T2 : a left outer join (to be executed second)<br> - T2-T3 : an
+   * inner join (to be executed first)<br> - T2-T4 : an cross join (to be executed last) (==full outer join)<br> <br>
    */
   public void test4TablesWithOuterJoins() {
     SQLQueryModel query = new SQLQueryModel();
@@ -259,26 +248,26 @@ public class OuterJoinSQLQueryIT extends MetadataTestBase {
     query.addTable( "t2", null ); // $NON-NLS-1$
     query.addTable( "t3", null ); // $NON-NLS-1$
     query.addTable( "t4", null ); // $NON-NLS-1$
-    query.addJoin( "t1", null, "t2", null, JoinType.LEFT_OUTER_JOIN, "t1.pk = t2.fk", "A" ); // $NON-NLS-1$ $NON-NLS-2$
-                                                                                             // $NON-NLS-3$
-    query.addJoin( "t2", null, "t3", null, JoinType.INNER_JOIN, "t2.pk = t3.fk", "B" ); // $NON-NLS-1$ $NON-NLS-2$
-                                                                                        // $NON-NLS-3$
-    query.addJoin( "t2", null, "t4", null, JoinType.FULL_OUTER_JOIN, "t2.pk = t4.fk", "C" ); // $NON-NLS-1$ $NON-NLS-2$
-                                                                                             // $NON-NLS-3$
+    query.addJoin( "t1", null, "t2", null, JoinType.LEFT_OUTER_JOIN, "t1.pk = t2.fk", "A" ); // $NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
+
+    query.addJoin( "t2", null, "t3", null, JoinType.INNER_JOIN, "t2.pk = t3.fk", "B" ); // $NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
+
+    query.addJoin( "t2", null, "t4", null, JoinType.FULL_OUTER_JOIN, "t2.pk = t4.fk", "C" ); // $NON-NLS-1$ $NON-NLS-2$ $NON-NLS-3$
+
     query.addOrderBy( null, "t2_pk", OrderType.ASCENDING ); // $NON-NLS-1$
 
     SQLDialectInterface dialect = SQLDialectFactory.getSQLDialect( createOracleDatabaseMeta() );
 
     String sql = dialect.generateSelectStatement( query );
     assertEqualsIgnoreWhitespacesAndCase(
-        "SELECT DISTINCT T1.PK AS T1_PK ,T2.PK AS T2_PK ,T3.PK AS T3_PK ,T4.PK AS T4_PK " + // $NON-NLS-1$
-            "FROM T4 FULL OUTER JOIN ( " + // $NON-NLS-1$
-            "	T3 JOIN ( " + // $NON-NLS-1$
-            "		T1 LEFT OUTER JOIN T2 ON ( T1.PK = T2.FK ) " + // $NON-NLS-1$
-            "		) ON ( T2.PK = T3.FK ) " + // $NON-NLS-1$
-            "	) ON ( T2.PK = T4.FK ) " + // $NON-NLS-1$
-            "ORDER BY T2_PK ASC", // $NON-NLS-1$
-        sql );
+      "SELECT DISTINCT T1.PK AS T1_PK ,T2.PK AS T2_PK ,T3.PK AS T3_PK ,T4.PK AS T4_PK " + // $NON-NLS-1$
+        "FROM T4 FULL OUTER JOIN ( " + // $NON-NLS-1$
+        "T3 JOIN ( " + // $NON-NLS-1$
+        "T1 LEFT OUTER JOIN T2 ON ( T1.PK = T2.FK ) " + // $NON-NLS-1$
+        ") ON ( T2.PK = T3.FK ) " + // $NON-NLS-1$
+        ") ON ( T2.PK = T4.FK ) " + // $NON-NLS-1$
+        "ORDER BY T2_PK ASC", // $NON-NLS-1$
+      sql );
   }
 
 }

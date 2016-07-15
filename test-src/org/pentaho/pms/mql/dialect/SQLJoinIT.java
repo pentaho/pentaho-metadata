@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2013 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.pms.mql.dialect;
 
@@ -56,29 +56,29 @@ public class SQLJoinIT {
     // Parameters for TestScenario are
     // ( this.JoinType, this.joinOrderKey, other.joinType, other.joinOrderKey, expectedComparison)
     TestScenario[] scenarios =
-        { new TestScenario( JoinType.INNER_JOIN, null, JoinType.INNER_JOIN, null, 0 ),
-          new TestScenario( JoinType.LEFT_OUTER_JOIN, null, JoinType.LEFT_OUTER_JOIN, null, 0 ),
+      { new TestScenario( JoinType.INNER_JOIN, null, JoinType.INNER_JOIN, null, 0 ),
+        new TestScenario( JoinType.LEFT_OUTER_JOIN, null, JoinType.LEFT_OUTER_JOIN, null, 0 ),
 
-          new TestScenario( JoinType.INNER_JOIN, null, JoinType.LEFT_OUTER_JOIN, null, -1 ),
-          new TestScenario( JoinType.LEFT_OUTER_JOIN, null, JoinType.INNER_JOIN, null, 1 ),
+        new TestScenario( JoinType.INNER_JOIN, null, JoinType.LEFT_OUTER_JOIN, null, -1 ),
+        new TestScenario( JoinType.LEFT_OUTER_JOIN, null, JoinType.INNER_JOIN, null, 1 ),
 
-          new TestScenario( JoinType.INNER_JOIN, "A", JoinType.INNER_JOIN, "B", 1 ),
-          new TestScenario( JoinType.INNER_JOIN, "B", JoinType.INNER_JOIN, "A", -1 ),
+        new TestScenario( JoinType.INNER_JOIN, "A", JoinType.INNER_JOIN, "B", 1 ),
+        new TestScenario( JoinType.INNER_JOIN, "B", JoinType.INNER_JOIN, "A", -1 ),
 
-          new TestScenario( JoinType.INNER_JOIN, "A", JoinType.INNER_JOIN, "A", 0 ),
+        new TestScenario( JoinType.INNER_JOIN, "A", JoinType.INNER_JOIN, "A", 0 ),
 
-          new TestScenario( JoinType.INNER_JOIN, "A", JoinType.LEFT_OUTER_JOIN, null, 0 ),
-          new TestScenario( JoinType.LEFT_OUTER_JOIN, null, JoinType.INNER_JOIN, "A", 0 ),
+        new TestScenario( JoinType.INNER_JOIN, "A", JoinType.LEFT_OUTER_JOIN, null, 0 ),
+        new TestScenario( JoinType.LEFT_OUTER_JOIN, null, JoinType.INNER_JOIN, "A", 0 ),
 
-          new TestScenario( JoinType.LEFT_OUTER_JOIN, "A", JoinType.INNER_JOIN, null, 1 ),
-          new TestScenario( JoinType.INNER_JOIN, null, JoinType.LEFT_OUTER_JOIN, "A", -1 ), };
+        new TestScenario( JoinType.LEFT_OUTER_JOIN, "A", JoinType.INNER_JOIN, null, 1 ),
+        new TestScenario( JoinType.INNER_JOIN, null, JoinType.LEFT_OUTER_JOIN, "A", -1 ), };
 
     for ( TestScenario scenario : scenarios ) {
       SQLJoin thisObject = makeSQLJoin( scenario.joinTypeThis, scenario.joinOrderThis );
       SQLJoin otherObject = makeSQLJoin( scenario.joinTypeOther, scenario.joinOrderOther );
 
       Assert.assertEquals( "\nTesting SQLJoin.compareTo() with scenario: \n" + scenario.toString(), scenario.expected,
-          thisObject.compareTo( otherObject ) );
+        thisObject.compareTo( otherObject ) );
     }
   }
 
@@ -87,14 +87,14 @@ public class SQLJoinIT {
    */
   private SQLJoin makeSQLJoin( JoinType joinType, String joinOrderKey ) {
     return new SQLJoin( "Left", "LeftAlias", "Right", "RightAlias", new SQLQueryModel.SQLWhereFormula( "1=1", null,
-        false ), joinType, joinOrderKey );
+      false ), joinType, joinOrderKey );
   }
 
   /**
    * Since the legacy join compare logic is non-deterministic, it is not safe to build any expected test results on the
    * generated SQL. The fallback is to validate that the legacy code path is traversed when the "legacy_join_order"
    * boolean set to true in the model. To do this, the test verifies that logging output is as expected.
-   * 
+   *
    * @throws PentahoMetadataException
    */
   @Test
@@ -117,22 +117,22 @@ public class SQLJoinIT {
           LogicalTable[] tables = getTablesWithRelationships( firstRel, secondRel, mainCat, model );
           DatabaseMeta databaseMeta = new DatabaseMeta( "", "ORACLE", "Native", "", "", "", "", "" );
           Query myTest = new Query( null, model );
-          myTest.getSelections().add( new Selection( null, tables[0].getLogicalColumns().get( 0 ), null ) );
-          myTest.getSelections().add( new Selection( null, tables[1].getLogicalColumns().get( 0 ), null ) );
-          myTest.getSelections().add( new Selection( null, tables[2].getLogicalColumns().get( 0 ), null ) );
+          myTest.getSelections().add( new Selection( null, tables[ 0 ].getLogicalColumns().get( 0 ), null ) );
+          myTest.getSelections().add( new Selection( null, tables[ 1 ].getLogicalColumns().get( 0 ), null ) );
+          myTest.getSelections().add( new Selection( null, tables[ 2 ].getLogicalColumns().get( 0 ), null ) );
 
           SqlGenerator generator = new SqlGenerator();
 
           // first verify the legacy logic is not used if the property is not set
           generator.generateSql( myTest, "en_US", null, databaseMeta );
           Assert.assertTrue( "Did not expect to use the legacy SQLJoin.compareTo() logic.", !out.toString().contains(
-              "Using legacy SQLJoin compare." ) );
+            "Using legacy SQLJoin compare." ) );
 
           // set the property and make sure the legacy logic is used
           model.setProperty( "legacy_join_order", true );
           generator.generateSql( myTest, "en_US", null, databaseMeta );
           Assert.assertTrue( "Should have used legacy SQLJoin.compareTo() logic.", out.toString().contains(
-              "Using legacy SQLJoin compare." ) );
+            "Using legacy SQLJoin compare." ) );
           out.reset(); // clear out accumulated logs for next run
         }
       }
@@ -143,7 +143,7 @@ public class SQLJoinIT {
   }
 
   private LogicalTable[] getTablesWithRelationships( RelationshipType relationship1, RelationshipType relationship2,
-      Category category, LogicalModel model ) {
+                                                     Category category, LogicalModel model ) {
     LogicalTable table = getDummySingleColumnTable( "1" );
     category.addLogicalColumn( table.getLogicalColumns().get( 0 ) );
 
@@ -204,8 +204,8 @@ public class SQLJoinIT {
 
     public String toString() {
       return "this.joinType=" + joinTypeThis + ", this.joinOrderKey=" + joinOrderThis + "\n" + "other.joinType="
-          + joinTypeOther + ", other.joinOrderKey=" + joinOrderOther + "\n"
-          + "Expected result of this.compareTo(other)=" + expected + "\n";
+        + joinTypeOther + ", other.joinOrderKey=" + joinOrderOther + "\n"
+        + "Expected result of this.compareTo(other)=" + expected + "\n";
     }
   }
 }

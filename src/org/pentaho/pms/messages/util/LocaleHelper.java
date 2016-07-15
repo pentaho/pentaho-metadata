@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.pms.messages.util;
 
@@ -101,15 +101,15 @@ public class LocaleHelper {
         closeMatch = idx;
       }
     }
-    if ( exactMatch != -1 ) {
-      // do nothing we have an exact match
-    } else if ( closeMatch != -1 ) {
-      locale = locales[closeMatch];
-    } else if ( looseMatch != -1 ) {
-      locale = locales[looseMatch];
-    } else {
-      // no locale is close , just go with the first?
-      locale = locales[0];
+    if ( exactMatch == -1 ) {
+      if ( closeMatch != -1 ) {
+        locale = locales[closeMatch];
+      } else if ( looseMatch != -1 ) {
+        locale = locales[looseMatch];
+      } else {
+        // no locale is close , just go with the first?
+        locale = locales[0];
+      }
     }
     return locale;
   }
@@ -209,6 +209,7 @@ public class LocaleHelper {
       decoder.decode( ByteBuffer.wrap( stringBytes ) );
       return true;
     } catch ( CharacterCodingException ignored ) {
+      //ignored
     }
     return false;
   }

@@ -1,3 +1,4 @@
+// CHECKSTYLE:FileLength:OFF
 /*
  * This program is free software; you can redistribute it and/or modify it under the
  * terms of the GNU Lesser General Public License, version 2.1 as published by the Free Software
@@ -14,6 +15,7 @@
  *
  * Copyright (c) 2016 Pentaho Corporation..  All rights reserved.
  */
+
 package org.pentaho.metadata.util;
 
 import java.io.IOException;

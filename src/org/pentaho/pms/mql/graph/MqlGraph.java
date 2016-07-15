@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 20011 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2016 Pentaho Corporation..  All rights reserved.
  * 
  * Contributed by Nick Coleman
  */
@@ -59,9 +59,8 @@ public class MqlGraph implements GraphElementChangeListener {
 
   /**
    * Creates a new graph for a business model
-   * 
-   * @param model
-   *          Business model to base graph upon
+   *
+   * @param model Business model to base graph upon
    */
   @SuppressWarnings( "unchecked" )
   public MqlGraph( BusinessModel model ) {
@@ -77,9 +76,8 @@ public class MqlGraph implements GraphElementChangeListener {
 
   /**
    * Calculates and returns a path that satisfies the required tables list or null if one cannot be found
-   * 
-   * @param requiredTables
-   *          Tables that are required to be in path
+   *
+   * @param requiredTables Tables that are required to be in path
    * @return Path with smallest number of relationships to ensure all required tables are included
    */
   public Path getPath( PathType searchTechnique, List<BusinessTable> requiredTables ) {
@@ -96,14 +94,14 @@ public class MqlGraph implements GraphElementChangeListener {
           path.addRelationship( arc.getRelationship() );
         } else if ( logger.isDebugEnabled() ) {
           logger.debug( "Arc not used for path: Requirement Known[" + arc.isRequirementKnown() + "], Required["
-              + arc.isRequired() + "]" );
+            + arc.isRequired() + "]" );
         }
       }
 
       if ( logger.isDebugEnabled() ) {
         for ( Node n : nodes ) {
           logger.debug( "Node selection state: Requirement Known[" + n.isRequirementKnown() + "], Required["
-              + n.isRequired() + "]" );
+            + n.isRequired() + "]" );
         }
       }
       if ( path.size() > 0 ) {
@@ -191,11 +189,9 @@ public class MqlGraph implements GraphElementChangeListener {
 
   /**
    * Performs work necessary to bind all nodes that have not been assigned a requirement value yet
-   * 
-   * @param searchTechnique
-   *          Indicates type of search that should be performed
-   * @throws ConsistencyException
-   *           When determine that graph is impossible to satisfy
+   *
+   * @param searchTechnique Indicates type of search that should be performed
+   * @throws ConsistencyException When determine that graph is impossible to satisfy
    */
   private void search( PathType searchTechnique ) throws ConsistencyException {
     // locate first solution
@@ -215,7 +211,7 @@ public class MqlGraph implements GraphElementChangeListener {
 
           if ( lastSolution != null && logger.isDebugEnabled() ) {
             logger.debug( "Next solution result: " + toBitPath( lastSolution.searchPath ) + " - partial["
-                + lastSolution.isPartial() + "]" );
+              + lastSolution.isPartial() + "]" );
           }
 
           // check if a new complete solution was located
@@ -259,16 +255,14 @@ public class MqlGraph implements GraphElementChangeListener {
 
   /**
    * Attempts to find next valid solution to the graph depending on what type of <code>PathType</code> is desired.
-   * 
-   * @param searchTechnique
-   *          Indicates type of search that should be performed
-   * @param prevSolution
-   *          Previous solution to allow this search to continue from that point
+   *
+   * @param searchTechnique Indicates type of search that should be performed
+   * @param prevSolution    Previous solution to allow this search to continue from that point
    * @return The resulting solution
-   * @throws ConsistencyException
-   *           When determine that graph is impossible to satisfy
+   * @throws ConsistencyException When determine that graph is impossible to satisfy
    */
-  private Solution searchForNextSolution( PathType searchTechnique, Solution prevSolution ) throws ConsistencyException {
+  private Solution searchForNextSolution( PathType searchTechnique, Solution prevSolution )
+    throws ConsistencyException {
     // A left move equates to setting a requirement to false and a right move is equivalent to true.
     // Try setting to "false" first to reduce the number of tables for most searches.
     // For the "any relevant" search use "true" first which is quicker
@@ -441,7 +435,7 @@ public class MqlGraph implements GraphElementChangeListener {
     if ( logger.isDebugEnabled() ) {
       logger.debug( "-------------------------------------------------" );
 
-      for ( Arc arc : arcs )
+      for ( Arc arc : arcs ) {
         if ( arc.isRequired() ) {
           logger.debug( arc + "-> Yes" );
         } else if ( arc.isNotRequired() ) {
@@ -449,8 +443,9 @@ public class MqlGraph implements GraphElementChangeListener {
         } else {
           logger.debug( arc + "-> ?" );
         }
+      }
 
-      for ( Node n : nodes )
+      for ( Node n : nodes ) {
         if ( n.isRequired() ) {
           logger.debug( n + "-> Yes" );
         } else if ( n.isNotRequired() ) {
@@ -458,6 +453,7 @@ public class MqlGraph implements GraphElementChangeListener {
         } else {
           logger.debug( n + "-> ?" );
         }
+      }
 
       logger.debug( "=================================================" );
     }
@@ -465,9 +461,8 @@ public class MqlGraph implements GraphElementChangeListener {
 
   /**
    * Calculates rating of current solution that is in progress
-   * 
-   * @param searchTechnique
-   *          Technique being used in searching to determine rating method
+   *
+   * @param searchTechnique Technique being used in searching to determine rating method
    */
   private int getRatingForCurrentState( PathType searchTechnique ) {
     int rating = 0;
@@ -556,9 +551,8 @@ public class MqlGraph implements GraphElementChangeListener {
 
   /**
    * Performs work of propagating changes from source nodes to target nodes until consistency is reached
-   * 
-   * @throws ConsistencyException
-   *           When current graph cannot be made consistent
+   *
+   * @throws ConsistencyException When current graph cannot be made consistent
    */
   private void propagate() throws ConsistencyException {
     logger.debug( "Beginning propagation" );
@@ -630,9 +624,8 @@ public class MqlGraph implements GraphElementChangeListener {
 
   /**
    * Called whenever a target node is altered
-   * 
-   * @param n
-   *          Node that was altered
+   *
+   * @param n Node that was altered
    */
   public void graphElementChanged( GraphElement element ) {
     List<GraphElement> searchDelta = ( searchStack != null && searchStack.size() > 0 ) ? searchStack.getLast() : null;
@@ -653,9 +646,8 @@ public class MqlGraph implements GraphElementChangeListener {
 
   /**
    * Builds this graph based on data stored in list of relationships
-   * 
-   * @param relationships
-   *          List of relationships that describe the graph
+   *
+   * @param relationships List of relationships that describe the graph
    */
   private void build( List<RelationshipMeta> relationships ) {
     // loop through relationships and add necessary arcs
@@ -681,9 +673,8 @@ public class MqlGraph implements GraphElementChangeListener {
 
   /**
    * Returns a node corresponding to a business table
-   * 
-   * @param table
-   *          Table to locate node
+   *
+   * @param table Table to locate node
    * @return Node corresponding to table
    */
   private Node getNodeForTable( BusinessTable table ) {
@@ -699,11 +690,9 @@ public class MqlGraph implements GraphElementChangeListener {
 
   /**
    * Creates a new arc and records appropriate dependencies in internal collections and maps
-   * 
-   * @param left
-   *          Left node for arc
-   * @param right
-   *          RIght node for arc
+   *
+   * @param left  Left node for arc
+   * @param right RIght node for arc
    */
   private Arc createArc( Node left, Node right, RelationshipMeta relationship ) {
     Arc arc = new Arc( left, right, relationship, this );

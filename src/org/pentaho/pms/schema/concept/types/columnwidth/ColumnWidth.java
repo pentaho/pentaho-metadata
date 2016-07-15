@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.pms.schema.concept.types.columnwidth;
 
@@ -38,13 +38,17 @@ public class ColumnWidth {
   public static final ColumnWidth CM = new ColumnWidth( TYPE_WIDTH_CM, 10 );
   public static final ColumnWidth POINTS = new ColumnWidth( TYPE_WIDTH_POINTS, 1 );
 
-  private static final String[] typeCodes = { "pixels", "percent", "inches", "cm", "points", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+  private static final String[] typeCodes = { "pixels", "percent", "inches", "cm", "points",
+    //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
   };
 
   private static final String[] typeDescriptions =
-      {
-        Messages.getString( "ColumnWidth.USER_PIXELS_DESC" ), Messages.getString( "ColumnWidth.USER_PERCENT_DESC" ), Messages.getString( "ColumnWidth.USER_INCHES_DESC" ), Messages.getString( "ColumnWidth.USER_CENTIMETERS_DESC" ), Messages.getString( "ColumnWidth.USER_POINTS_DESC" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-      };
+    {
+      Messages.getString( "ColumnWidth.USER_PIXELS_DESC" ), Messages.getString( "ColumnWidth.USER_PERCENT_DESC" ),
+      Messages.getString( "ColumnWidth.USER_INCHES_DESC" ), Messages.getString( "ColumnWidth.USER_CENTIMETERS_DESC" ),
+      Messages.getString( "ColumnWidth.USER_POINTS_DESC" ),
+      //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+    };
 
   public static final ColumnWidth[] types = new ColumnWidth[] { PIXELS, PERCENT, INCHES, CM, POINTS, };
 
@@ -53,10 +57,8 @@ public class ColumnWidth {
   private static final String SEPARATOR = ",";
 
   /**
-   * @param type
-   *          the column width type
-   * @param width
-   *          the prefered width of the column
+   * @param type  the column width type
+   * @param width the prefered width of the column
    */
   public ColumnWidth( int type, BigDecimal width ) {
     this.type = type;
@@ -64,10 +66,8 @@ public class ColumnWidth {
   }
 
   /**
-   * @param type
-   *          the column width type
-   * @param width
-   *          the prefered width of the column
+   * @param type  the column width type
+   * @param width the prefered width of the column
    */
   public ColumnWidth( int type, int width ) {
     this.type = type;
@@ -75,10 +75,8 @@ public class ColumnWidth {
   }
 
   /**
-   * @param type
-   *          the column width type
-   * @param width
-   *          the prefered width of the column
+   * @param type  the column width type
+   * @param width the prefered width of the column
    */
   public ColumnWidth( int type, double width ) {
     this.type = type;
@@ -93,8 +91,7 @@ public class ColumnWidth {
   }
 
   /**
-   * @param type
-   *          the type to set
+   * @param type the type to set
    */
   public void setType( int type ) {
     this.type = type;
@@ -124,29 +121,29 @@ public class ColumnWidth {
     if ( parts.length != 2 ) {
       return null;
     }
-    return new ColumnWidth( Integer.parseInt( parts[0] ), new BigDecimal( parts[1] ) );
+    return new ColumnWidth( Integer.parseInt( parts[ 0 ] ), new BigDecimal( parts[ 1 ] ) );
   }
 
   public static ColumnWidth getType( String description ) {
     for ( int i = 0; i < typeDescriptions.length; i++ ) {
-      if ( typeDescriptions[i].equalsIgnoreCase( description ) ) {
-        return types[i];
+      if ( typeDescriptions[ i ].equalsIgnoreCase( description ) ) {
+        return types[ i ];
       }
     }
     for ( int i = 0; i < typeCodes.length; i++ ) {
-      if ( typeCodes[i].equalsIgnoreCase( description ) ) {
-        return types[i];
+      if ( typeCodes[ i ].equalsIgnoreCase( description ) ) {
+        return types[ i ];
       }
     }
     return PIXELS;
   }
 
   public String getCode() {
-    return typeCodes[type];
+    return typeCodes[ type ];
   }
 
   public String getDescription() {
-    return typeDescriptions[type];
+    return typeDescriptions[ type ];
   }
 
   /**
@@ -157,8 +154,7 @@ public class ColumnWidth {
   }
 
   /**
-   * @param width
-   *          the width to set
+   * @param width the width to set
    */
   public void setWidth( BigDecimal width ) {
     this.width = width;

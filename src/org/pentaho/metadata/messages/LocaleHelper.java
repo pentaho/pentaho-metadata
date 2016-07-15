@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.metadata.messages;
 
@@ -81,7 +81,7 @@ public class LocaleHelper {
       return locale;
     }
     if ( locale == null || locale.length() == 0 ) {
-      return locales[0];
+      return locales[ 0 ];
     }
     String localeLanguage = locale.substring( 0, 2 );
     String localeCountry = ( locale.length() > 4 ) ? locale.substring( 0, 5 ) : localeLanguage;
@@ -89,24 +89,24 @@ public class LocaleHelper {
     int closeMatch = -1;
     int exactMatch = -1;
     for ( int idx = 0; idx < locales.length; idx++ ) {
-      if ( locales[idx].equals( locale ) ) {
+      if ( locales[ idx ].equals( locale ) ) {
         exactMatch = idx;
         break;
-      } else if ( locales[idx].length() > 1 && locales[idx].substring( 0, 2 ).equals( localeLanguage ) ) {
+      } else if ( locales[ idx ].length() > 1 && locales[ idx ].substring( 0, 2 ).equals( localeLanguage ) ) {
         looseMatch = idx;
-      } else if ( locales[idx].length() > 4 && locales[idx].substring( 0, 5 ).equals( localeCountry ) ) {
+      } else if ( locales[ idx ].length() > 4 && locales[ idx ].substring( 0, 5 ).equals( localeCountry ) ) {
         closeMatch = idx;
       }
     }
-    if ( exactMatch != -1 ) {
-      // do nothing we have an exact match
-    } else if ( closeMatch != -1 ) {
-      locale = locales[closeMatch];
-    } else if ( looseMatch != -1 ) {
-      locale = locales[looseMatch];
-    } else {
-      // no locale is close , just go with the first?
-      locale = locales[0];
+    if ( exactMatch == -1 ) {
+      if ( closeMatch != -1 ) {
+        locale = locales[ closeMatch ];
+      } else if ( looseMatch != -1 ) {
+        locale = locales[ looseMatch ];
+      } else {
+        // no locale is close , just go with the first?
+        locale = locales[ 0 ];
+      }
     }
     return locale;
   }
@@ -116,7 +116,7 @@ public class LocaleHelper {
   /**
    * This method is called to convert strings from ISO-8859-1 (post/get parameters for example) into the default system
    * locale.
-   * 
+   *
    * @param isoString
    * @return Re-encoded string
    */
@@ -126,7 +126,7 @@ public class LocaleHelper {
 
   /**
    * This method converts strings from a known encoding into a string encoded by the system default encoding.
-   * 
+   *
    * @param fromEncoding
    * @param encodedStr
    * @return Re-encoded string
@@ -137,7 +137,7 @@ public class LocaleHelper {
 
   /**
    * This method converts an ISO-8859-1 encoded string to a UTF-8 encoded string.
-   * 
+   *
    * @param isoString
    * @return Re-encoded string
    */
@@ -147,7 +147,7 @@ public class LocaleHelper {
 
   /**
    * This method converts a UTF8-encoded string to ISO-8859-1
-   * 
+   *
    * @param utf8String
    * @return Re-encoded string
    */
@@ -157,7 +157,7 @@ public class LocaleHelper {
 
   /**
    * This method converts strings between various encodings.
-   * 
+   *
    * @param sourceString
    * @param sourceEncoding
    * @param targetEncoding
@@ -206,6 +206,7 @@ public class LocaleHelper {
       decoder.decode( ByteBuffer.wrap( stringBytes ) );
       return true;
     } catch ( CharacterCodingException ignored ) {
+      //ignored
     }
     return false;
   }

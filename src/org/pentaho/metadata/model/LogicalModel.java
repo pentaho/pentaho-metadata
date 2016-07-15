@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.metadata.model;
 
@@ -26,9 +26,8 @@ import org.pentaho.metadata.model.concept.types.LocalizedString;
 
 /**
  * The logical model contains logical tables and categories, and the name and description are presented to end users.
- * 
+ *
  * @author Will Gorman (wgorman@pentaho.com)
- * 
  */
 public class LogicalModel extends Concept {
 
@@ -39,7 +38,7 @@ public class LogicalModel extends Concept {
   public static final String PROPERTY_OLAP_DIMS = "olap_dimensions"; //$NON-NLS-1$
 
   public static final String PROPERTY_OLAP_CUBES = "olap_cubes"; //$NON-NLS-1$
-  
+
   public static final String PROPERTY_OLAP_CALCULATED_MEMBERS = "olap_calculated_members"; //$NON-NLS-1$
 
   public static final String PROPERTY_OLAP_ROLES = "olap_roles"; //$NON-NLS-1$
@@ -70,7 +69,7 @@ public class LogicalModel extends Concept {
   }
 
   public Domain getDomain() {
-    return ( Domain ) getParent();
+    return (Domain) getParent();
   }
 
   @Override
@@ -87,7 +86,7 @@ public class LogicalModel extends Concept {
   }
 
   public IPhysicalModel getPhysicalModel() {
-    return ( IPhysicalModel ) getPhysicalConcept();
+    return (IPhysicalModel) getPhysicalConcept();
   }
 
   public List<LogicalTable> getLogicalTables() {
@@ -133,9 +132,8 @@ public class LogicalModel extends Concept {
 
   /**
    * finds a logical table within the model.
-   * 
-   * @param tableId
-   *          the table to find
+   *
+   * @param tableId the table to find
    * @return a logical table object.
    */
   public LogicalTable findLogicalTable( String tableId ) {
@@ -149,9 +147,8 @@ public class LogicalModel extends Concept {
 
   /**
    * finds a logical column within the model.
-   * 
-   * @param columnId
-   *          the column to find
+   *
+   * @param columnId the column to find
    * @return a logical column object.
    */
   public LogicalColumn findLogicalColumn( String columnId ) {
@@ -167,9 +164,8 @@ public class LogicalModel extends Concept {
 
   /**
    * finds a logical column within the model.
-   * 
-   * @param columnId
-   *          the column to find
+   *
+   * @param columnId the column to find
    * @return a logical column object.
    */
   public LogicalColumn findLogicalColumnInCategories( String columnId ) {
@@ -202,7 +198,7 @@ public class LogicalModel extends Concept {
     clone.logicalRelationships = logicalRelationships;
     clone.setParent( getParent() );
     clone.setPhysicalConcept( getPhysicalConcept() );
-    
+
     // actual clones
     clone.logicalTables = new ArrayList<LogicalTable>();
     for ( LogicalTable table : logicalTables ) {

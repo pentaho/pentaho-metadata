@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 20011 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2016 Pentaho Corporation..  All rights reserved.
  * 
  * Contributed by Nick Coleman
  */
@@ -47,7 +47,7 @@ public class Node implements GraphElement, Comparable {
 
   /**
    * Returns true if this <code>Node</code> is required by the graph
-   * 
+   *
    * @return True if <code>Node</code> is required
    */
   public boolean isRequired() {
@@ -56,7 +56,7 @@ public class Node implements GraphElement, Comparable {
 
   /**
    * Returns true if this <code>Node</code> is not required by the graph
-   * 
+   *
    * @return True if <code>Node</code> is not required
    */
   public boolean isNotRequired() {
@@ -65,7 +65,7 @@ public class Node implements GraphElement, Comparable {
 
   /**
    * Returns true if this <code>Node</code> is known to be required or not required by the graph
-   * 
+   *
    * @return True if <code>Node</code> requirement is unknown
    */
   public boolean isRequirementKnown() {
@@ -74,7 +74,7 @@ public class Node implements GraphElement, Comparable {
 
   /**
    * Returns the <code>BusinessTable</code> associated with this <code>Node</code>
-   * 
+   *
    * @return <code>BusinessTable</code> for <code>Node</code>
    */
   public BusinessTable getTable() {
@@ -84,7 +84,7 @@ public class Node implements GraphElement, Comparable {
   /**
    * Returns the status of the <code>queued</code> flag which is used by the graphing functions to determine if this
    * <code>Node</code> is currently in the queue waiting to be processed.
-   * 
+   *
    * @return value of <code>queued</code> flag
    */
   public boolean isQueued() {
@@ -93,9 +93,8 @@ public class Node implements GraphElement, Comparable {
 
   /**
    * Sets value of <code>queued</code> flag
-   * 
-   * @param queued
-   *          New value of <code>queued</code> flag
+   *
+   * @param queued New value of <code>queued</code> flag
    * @see #isQueued()
    */
   public void setQueued( boolean queued ) {
@@ -104,9 +103,8 @@ public class Node implements GraphElement, Comparable {
 
   /**
    * Attaches an <code>Arc</code> to this <code>Node</code>
-   * 
-   * @param arc
-   *          <code>Arc</code> to associate with <code>Node</code>
+   *
+   * @param arc <code>Arc</code> to associate with <code>Node</code>
    */
   public void addArc( Arc arc ) {
     arcs.add( arc );
@@ -114,9 +112,8 @@ public class Node implements GraphElement, Comparable {
 
   /**
    * Adds an <code>Arc</code> that should be required if this <code>Node</code> is required
-   * 
-   * @param arc
-   *          Arc this node depends upon
+   *
+   * @param arc Arc this node depends upon
    */
   public void addRequiredArc( Arc arc ) {
     if ( requiredArcs == null ) {
@@ -145,7 +142,7 @@ public class Node implements GraphElement, Comparable {
 
   /**
    * Returns list of <code>Arcs</code> associated to this <code>Node</code>
-   * 
+   *
    * @return
    */
   public List<Arc> getArcs() {
@@ -154,12 +151,10 @@ public class Node implements GraphElement, Comparable {
 
   /**
    * Assigns a requirement value to this element
-   * 
-   * @param required
-   *          True if element is required / false if not required
-   * @throws ConsistencyException
-   *           When assignment is inconsistent with graph constraints or an attempt to set a different value when one is
-   *           already set
+   *
+   * @param required True if element is required / false if not required
+   * @throws ConsistencyException When assignment is inconsistent with graph constraints or an attempt to set a
+   *                              different value when one is already set
    */
   public void setRequirement( boolean required ) throws ConsistencyException {
     // check if value will alter the domain
@@ -167,8 +162,9 @@ public class Node implements GraphElement, Comparable {
       if ( required ) {
         // update all required arcs' status
         if ( requiredArcs != null ) {
-          for ( Arc arc : requiredArcs )
+          for ( Arc arc : requiredArcs ) {
             arc.setRequirement( true );
+          }
         }
 
         // if node is required and there is only one possible arc, the arc
@@ -188,12 +184,11 @@ public class Node implements GraphElement, Comparable {
         if ( requiredArc != null ) {
           requiredArc.setRequirement( true );
         }
-      }
-
-      // if node is not required, no arcs to it will be either
-      else {
-        for ( Arc arc : arcs )
+      } else {
+        // if node is not required, no arcs to it will be either
+        for ( Arc arc : arcs ) {
           arc.setRequirement( false );
+        }
       }
 
       listener.graphElementChanged( this );
@@ -209,9 +204,8 @@ public class Node implements GraphElement, Comparable {
 
   /**
    * Returns true if this node was successfully marked as not required
-   * 
-   * @throws ConsistencyException
-   *           If a prune attempt is made, but graph constraints are violated
+   *
+   * @throws ConsistencyException If a prune attempt is made, but graph constraints are violated
    */
   public boolean prune() throws ConsistencyException {
     boolean prune = false;
@@ -219,17 +213,13 @@ public class Node implements GraphElement, Comparable {
     // when no arcs reach this node it should be pruned
     if ( arcs.size() == 0 ) {
       prune = true;
-    }
-
-    // if only 1 arc to this node and it is not yet marked as required we can prune it
-    else if ( domain.getRequirement() == GraphElementRequirement.UNKNOWN ) {
+    } else if ( domain.getRequirement() == GraphElementRequirement.UNKNOWN ) {
+      // if only 1 arc to this node and it is not yet marked as required we can prune it
       // if list has only 1 arc, no need to check if it is required
       if ( arcs.size() == 1 ) {
         prune = true;
-      }
-
-      // when multiple paths exist, make sure not more than one is possible
-      else {
+      } else {
+        // when multiple paths exist, make sure not more than one is possible
         int possiblePaths = 0;
         for ( Arc arc : arcs ) {
           // if any arc is required, this node must be required
@@ -264,11 +254,9 @@ public class Node implements GraphElement, Comparable {
 
   /**
    * Returns true if the target node can be reached from this node to a target.
-   * 
-   * @param target
-   *          Node to be found during search
-   * @param avoidArc
-   *          An optional arc to avoid when searching
+   *
+   * @param target   Node to be found during search
+   * @param avoidArc An optional arc to avoid when searching
    * @return True if target node can be reached
    */
   public boolean canReachNode( Node target, Arc avoidArc ) {
@@ -283,9 +271,8 @@ public class Node implements GraphElement, Comparable {
 
   /**
    * Returns true if the all the nodes in target list can be reached from this node
-   * 
-   * @param targetList
-   *          List of Nodes to find
+   *
+   * @param targetList List of Nodes to find
    * @return True if all target nodes can be reached
    */
   public boolean canReachAllNodes( List<Node> targetList ) {
@@ -301,21 +288,15 @@ public class Node implements GraphElement, Comparable {
   /**
    * Returns true if the target node can be reached from the current node through some other <code>Arc</code> than this
    * one.
-   * 
-   * @param current
-   *          Node to search for an arc that will lead to target
-   * @param targetList
-   *          List of Nodes to find
-   * @param target
-   *          Node to be found during search
-   * @param visitedList
-   *          List of nodes previously visited to avoid visiting again
-   * @param avoidArc
-   *          An optional arc to avoid when searching
+   *
+   * @param current     Node to search for an arc that will lead to target
+   * @param targetList  List of Nodes to find
+   * @param target      Node to be found during search
+   * @param visitedList List of nodes previously visited to avoid visiting again
+   * @param avoidArc    An optional arc to avoid when searching
    * @return True if target node can be reached
    */
-  private boolean
-    doTargetSearch( Node current, List<Node> targetList, Node target, List<Node> visitedList, Arc avoidArc ) {
+  private boolean doTargetSearch( Node current, List<Node> targetList, Node target, List<Node> visitedList, Arc avoidArc ) {
     // append the current node to the list of visited nodes
     // the list upon the first call
     visitedList.add( current );

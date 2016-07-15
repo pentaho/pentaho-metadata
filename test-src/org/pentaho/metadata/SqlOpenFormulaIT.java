@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.metadata;
 
@@ -311,8 +311,8 @@ public class SqlOpenFormulaIT {
     String dateStr = fmt.format( cal.getTime() );
 
     handleFormula( getOrdersModel(), "Oracle", //$NON-NLS-1$
-        "DATEMATH(\"0:MS\")" //$NON-NLS-1$
-        , "TO_DATE('" + dateStr + "','YYYY-MM-DD')" //$NON-NLS-1$
+        "DATEMATH(\"0:MS\")", //$NON-NLS-1$
+        "TO_DATE('" + dateStr + "','YYYY-MM-DD')" //$NON-NLS-1$
     );
 
   }
@@ -365,20 +365,20 @@ public class SqlOpenFormulaIT {
   @Test
   public void testNestedAndOrs() throws Exception {
     handleFormula( getOrdersModel(), "Oracle", //$NON-NLS-1$
-        "AND(1 <> 2; OR(2<> 3; 3<>4); 4<>5)" //$NON-NLS-1$
-        , "(1 <> 2) AND ((2 <> 3) OR (3 <> 4)) AND (4 <> 5)" //$NON-NLS-1$
+        "AND(1 <> 2; OR(2<> 3; 3<>4); 4<>5)", //$NON-NLS-1$
+        "(1 <> 2) AND ((2 <> 3) OR (3 <> 4)) AND (4 <> 5)" //$NON-NLS-1$
     );
   }
 
   @Test
   public void testNotFunction() throws Exception {
     handleFormula( getOrdersModel(), "Oracle", //$NON-NLS-1$
+        "NOT(1 <> 2)", //$NON-NLS-1$,
         "NOT(1 <> 2)" //$NON-NLS-1$
-        , "NOT(1 <> 2)" //$NON-NLS-1$
     );
     handleFormula( getOrdersModel(), "Oracle", //$NON-NLS-1$
-        "NOT(AND(1 <> 2; 2<>3))" //$NON-NLS-1$
-        , "NOT((1 <> 2) AND (2 <> 3))" //$NON-NLS-1$
+        "NOT(AND(1 <> 2; 2<>3))", //$NON-NLS-1$
+        "NOT((1 <> 2) AND (2 <> 3))" //$NON-NLS-1$
     );
 
     handleFormulaFailure( getOrdersModel(), "Oracle", //$NON-NLS-1$
@@ -390,113 +390,113 @@ public class SqlOpenFormulaIT {
   @Test
   public void testBooleanFunctions() throws Exception {
     handleFormula( getOrdersModel(), "MySQL", //$NON-NLS-1$ 
-        "TRUE()" //$NON-NLS-1$
-        , "TRUE" //$NON-NLS-1$
+        "TRUE()", //$NON-NLS-1$
+        "TRUE" //$NON-NLS-1$
     );
     handleFormula( getOrdersModel(), "MySQL", //$NON-NLS-1$ 
-        "FALSE()" //$NON-NLS-1$
-        , "FALSE" //$NON-NLS-1$
+        "FALSE()", //$NON-NLS-1$
+        "FALSE" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "Oracle", //$NON-NLS-1$
-        "TRUE()" //$NON-NLS-1$
-        , "1=1" //$NON-NLS-1$
+        "TRUE()", //$NON-NLS-1$
+        "1=1" //$NON-NLS-1$
     );
     handleFormula( getOrdersModel(), "Oracle", //$NON-NLS-1$
-        "FALSE()" //$NON-NLS-1$
-        , "1=0" //$NON-NLS-1$
+        "FALSE()", //$NON-NLS-1$
+        "1=0" //$NON-NLS-1$
     );
     handleFormula( getOrdersModel(), "Oracle", //$NON-NLS-1$
-        "AND(TRUE();OR(FALSE();TRUE()))" //$NON-NLS-1$
-        , "1=1 AND (1=0 OR 1=1)" //$NON-NLS-1$
+        "AND(TRUE();OR(FALSE();TRUE()))", //$NON-NLS-1$
+        "1=1 AND (1=0 OR 1=1)" //$NON-NLS-1$
     );
     handleFormula( getOrdersModel(), "Hypersonic", //$NON-NLS-1$ 
-        "TRUE()" //$NON-NLS-1$
-        , "TRUE" //$NON-NLS-1$
+        "TRUE()", //$NON-NLS-1$
+        "TRUE" //$NON-NLS-1$
     );
     handleFormula( getOrdersModel(), "Hypersonic", //$NON-NLS-1$ 
-        "FALSE()" //$NON-NLS-1$
-        , "FALSE" //$NON-NLS-1$
+        "FALSE()", //$NON-NLS-1$
+        "FALSE" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "DB2", //$NON-NLS-1$ 
-        "TRUE()" //$NON-NLS-1$
-        , "1=1" //$NON-NLS-1$
+        "TRUE()", //$NON-NLS-1$
+        "1=1" //$NON-NLS-1$
     );
     handleFormula( getOrdersModel(), "DB2", //$NON-NLS-1$ 
-        "FALSE()" //$NON-NLS-1$
-        , "1=0" //$NON-NLS-1$
+        "FALSE()", //$NON-NLS-1$
+        "1=0" //$NON-NLS-1$
     );
     handleFormula( getOrdersModel(), "DB2", //$NON-NLS-1$
-        "AND(TRUE();OR(FALSE();TRUE()))" //$NON-NLS-1$
-        , "1=1 AND (1=0 OR 1=1)" //$NON-NLS-1$
+        "AND(TRUE();OR(FALSE();TRUE()))", //$NON-NLS-1$
+        "1=1 AND (1=0 OR 1=1)" //$NON-NLS-1$
     );
     handleFormula( getOrdersModel(), "MSSQL", //$NON-NLS-1$
-        "TRUE()" //$NON-NLS-1$
-        , "(1=1)" //$NON-NLS-1$
+        "TRUE()", //$NON-NLS-1$
+        "(1=1)" //$NON-NLS-1$
     );
     handleFormula( getOrdersModel(), "MSSQL", //$NON-NLS-1$ 
-        "FALSE()" //$NON-NLS-1$
-        , "(0=1)" //$NON-NLS-1$
+        "FALSE()", //$NON-NLS-1$
+        "(0=1)" //$NON-NLS-1$
     );
     handleFormula( getOrdersModel(), "MSSQL", //$NON-NLS-1$ 
-        "OR(TRUE();FALSE())" //$NON-NLS-1$
-        , "(1=1) OR (0=1)" //$NON-NLS-1$
+        "OR(TRUE();FALSE())", //$NON-NLS-1$
+        "(1=1) OR (0=1)" //$NON-NLS-1$
     );
     handleFormula( getOrdersModel(), "MSAccess", //$NON-NLS-1$ 
-        "TRUE()" //$NON-NLS-1$
-        , "TRUE" //$NON-NLS-1$
+        "TRUE()", //$NON-NLS-1$
+        "TRUE" //$NON-NLS-1$
     );
     handleFormula( getOrdersModel(), "MSAccess", //$NON-NLS-1$ 
-        "FALSE()" //$NON-NLS-1$
-        , "FALSE" //$NON-NLS-1$
+        "FALSE()", //$NON-NLS-1$
+        "FALSE" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "PostgreSQL", //$NON-NLS-1$ 
-        "TRUE()" //$NON-NLS-1$
-        , "TRUE" //$NON-NLS-1$
+        "TRUE()", //$NON-NLS-1$
+        "TRUE" //$NON-NLS-1$
     );
     handleFormula( getOrdersModel(), "PostgreSQL", //$NON-NLS-1$ 
-        "FALSE()" //$NON-NLS-1$
-        , "FALSE" //$NON-NLS-1$
+        "FALSE()", //$NON-NLS-1$
+        "FALSE" //$NON-NLS-1$
     );
   }
 
   @Test
   public void testDateFunctionNow() throws Exception {
     handleFormula( getOrdersModel(), "Oracle", //$NON-NLS-1$
-        "NOW()" //$NON-NLS-1$
-        , "SYSDATE" //$NON-NLS-1$
+        "NOW()", //$NON-NLS-1$
+        "SYSDATE" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "MySQL", //$NON-NLS-1$ 
+        "NOW()", //$NON-NLS-1$
         "NOW()" //$NON-NLS-1$
-        , "NOW()" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "Hypersonic", //$NON-NLS-1$ 
+        "NOW()", //$NON-NLS-1$
         "NOW()" //$NON-NLS-1$
-        , "NOW()" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "DB2", //$NON-NLS-1$ 
-        "NOW()" //$NON-NLS-1$
-        , "( CURRENT DATE )" //$NON-NLS-1$
+        "NOW()", //$NON-NLS-1$
+        "( CURRENT DATE )" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "MSSQL", //$NON-NLS-1$ 
-        "NOW()" //$NON-NLS-1$
-        , "GETDATE()" //$NON-NLS-1$
+        "NOW()", //$NON-NLS-1$
+        "GETDATE()" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "MSAccess", //$NON-NLS-1$ 
+        "NOW()", //$NON-NLS-1$
         "NOW()" //$NON-NLS-1$
-        , "NOW()" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "PostgreSQL", //$NON-NLS-1$ 
-        "NOW()" //$NON-NLS-1$
-        , "now" //$NON-NLS-1$
+        "NOW()", //$NON-NLS-1$
+        "now" //$NON-NLS-1$
     );
   }
 
@@ -504,74 +504,74 @@ public class SqlOpenFormulaIT {
   public void testDateFunctionDate() throws Exception {
 
     handleFormula( getOrdersModel(), "Oracle", //$NON-NLS-1$
-        "DATE(2007;5;23)" //$NON-NLS-1$
-        , "TO_DATE('2007-05-23','YYYY-MM-DD')" //$NON-NLS-1$
+        "DATE(2007;5;23)", //$NON-NLS-1$
+        "TO_DATE('2007-05-23','YYYY-MM-DD')" //$NON-NLS-1$
     );
     handleFormula( getOrdersModel(), "MySQL", //$NON-NLS-1$ 
-        "DATE(2007;5;23)" //$NON-NLS-1$
-        , "DATE('2007-05-23')" //$NON-NLS-1$
+        "DATE(2007;5;23)", //$NON-NLS-1$
+        "DATE('2007-05-23')" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "Hypersonic", //$NON-NLS-1$ 
-        "DATE(2007;5;23)" //$NON-NLS-1$
-        , "'2007-05-23 00:00:00.0'" //$NON-NLS-1$
+        "DATE(2007;5;23)", //$NON-NLS-1$
+        "'2007-05-23 00:00:00.0'" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "DB2", //$NON-NLS-1$ 
-        "DATE(2007;5;23)" //$NON-NLS-1$
-        , "DATE('2007-05-23')" //$NON-NLS-1$
+        "DATE(2007;5;23)", //$NON-NLS-1$
+        "DATE('2007-05-23')" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "MSSQL", //$NON-NLS-1$ 
-        "DATE(2007;5;23)" //$NON-NLS-1$
-        , "'20070523'" //$NON-NLS-1$
+        "DATE(2007;5;23)", //$NON-NLS-1$
+        "'20070523'" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "MSAccess", //$NON-NLS-1$ 
-        "DATE(2007;5;23)" //$NON-NLS-1$
-        , "#05/23/2007#" //$NON-NLS-1$
+        "DATE(2007;5;23)", //$NON-NLS-1$
+        "#05/23/2007#" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "PostgreSQL", //$NON-NLS-1$ 
-        "DATE(2007;5;23)" //$NON-NLS-1$
-        , "date '2007-05-23'" //$NON-NLS-1$
+        "DATE(2007;5;23)", //$NON-NLS-1$
+        "date '2007-05-23'" //$NON-NLS-1$
     );
   }
 
   @Test
   public void testDateFunctionDateValue() throws Exception {
     handleFormula( getOrdersModel(), "Oracle", //$NON-NLS-1$
-        "DATEVALUE(\"2007-05-23\")" //$NON-NLS-1$
-        , "TO_DATE('2007-05-23','YYYY-MM-DD')" //$NON-NLS-1$
+        "DATEVALUE(\"2007-05-23\")", //$NON-NLS-1$
+        "TO_DATE('2007-05-23','YYYY-MM-DD')" //$NON-NLS-1$
     );
     handleFormula( getOrdersModel(), "MySQL", //$NON-NLS-1$ 
-        "DATEVALUE(\"2007-05-23\")" //$NON-NLS-1$
-        , "DATE('2007-05-23')" //$NON-NLS-1$
+        "DATEVALUE(\"2007-05-23\")", //$NON-NLS-1$
+        "DATE('2007-05-23')" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "Hypersonic", //$NON-NLS-1$ 
-        "DATEVALUE(\"2007-05-23\")" //$NON-NLS-1$
-        , "'2007-05-23 00:00:00.0'" //$NON-NLS-1$
+        "DATEVALUE(\"2007-05-23\")", //$NON-NLS-1$
+        "'2007-05-23 00:00:00.0'" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "DB2", //$NON-NLS-1$ 
-        "DATEVALUE(\"2007-05-23\")" //$NON-NLS-1$
-        , "DATE('2007-05-23')" //$NON-NLS-1$
+        "DATEVALUE(\"2007-05-23\")", //$NON-NLS-1$
+        "DATE('2007-05-23')" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "MSSQL", //$NON-NLS-1$ 
-        "DATEVALUE(\"2007-05-23\")" //$NON-NLS-1$
-        , "'20070523'" //$NON-NLS-1$
+        "DATEVALUE(\"2007-05-23\")", //$NON-NLS-1$
+        "'20070523'" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "MSAccess", //$NON-NLS-1$ 
-        "DATEVALUE(\"2007-05-23\")" //$NON-NLS-1$
-        , "#05/23/2007#" //$NON-NLS-1$
+        "DATEVALUE(\"2007-05-23\")", //$NON-NLS-1$
+        "#05/23/2007#" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "PostgreSQL", //$NON-NLS-1$ 
-        "DATEVALUE(\"2007-05-23\")" //$NON-NLS-1$
-        , "date '2007-05-23'" //$NON-NLS-1$
+        "DATEVALUE(\"2007-05-23\")", //$NON-NLS-1$
+        "date '2007-05-23'" //$NON-NLS-1$
     );
   }
 
@@ -620,55 +620,54 @@ public class SqlOpenFormulaIT {
   @Test
   public void testLike() throws Exception {
     handleFormula( getOrdersModel(), "Hypersonic", //$NON-NLS-1$ 
-        "LIKE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"%\")" //$NON-NLS-1$
-        , "BT_CUSTOMERS.COUNTRY  LIKE '%'" //$NON-NLS-1$
+        "LIKE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"%\")", //$NON-NLS-1$
+        "BT_CUSTOMERS.COUNTRY  LIKE '%'" //$NON-NLS-1$
     );
   }
 
   @Test
   public void testCase() throws Exception {
     handleFormula( getOrdersModel(), "Hypersonic", //$NON-NLS-1$ 
-        "CASE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]=\"US\"; \"USA\";[BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]=\"JAPAN\"; \"Japan\")" //$NON-NLS-1$
-        , "CASE  WHEN  BT_CUSTOMERS.COUNTRY  = 'US' THEN 'USA' WHEN  BT_CUSTOMERS.COUNTRY  = 'JAPAN' THEN 'Japan' END" //$NON-NLS-1$
+        "CASE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]=\"US\"; \"USA\";[BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]=\"JAPAN\"; \"Japan\")", //$NON-NLS-1$
+        "CASE  WHEN  BT_CUSTOMERS.COUNTRY  = 'US' THEN 'USA' WHEN  BT_CUSTOMERS.COUNTRY  = 'JAPAN' THEN 'Japan' END" //$NON-NLS-1$
     );
     handleFormula(
         getOrdersModel(),
         "Hypersonic", //$NON-NLS-1$ 
-        "CASE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]=\"US\"; \"USA\";[BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]=\"JAPAN\"; \"Japan\"; \"Canada\")" //$NON-NLS-1$
-        ,
+        "CASE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]=\"US\"; \"USA\";[BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]=\"JAPAN\"; \"Japan\"; \"Canada\")", //$NON-NLS-1$
         "CASE  WHEN  BT_CUSTOMERS.COUNTRY  = 'US' THEN 'USA' WHEN  BT_CUSTOMERS.COUNTRY  = 'JAPAN' THEN 'Japan' ELSE 'Canada' END" //$NON-NLS-1$
     );
     handleFormulaFailure( getOrdersModel(), "Hypersonic", //$NON-NLS-1$ 
-        "CASE()" //$NON-NLS-1$
-        , "PMSFormulaContext.ERROR_0002 - Invalid number of parameters for function CASE, expecting 2 params" //$NON-NLS-1$
+        "CASE()", //$NON-NLS-1$
+        "PMSFormulaContext.ERROR_0002 - Invalid number of parameters for function CASE, expecting 2 params" //$NON-NLS-1$
     );
     handleFormulaFailure( getOrdersModel(), "Hypersonic", //$NON-NLS-1$ 
-        "CASE(\"\")" //$NON-NLS-1$
-        , "PMSFormulaContext.ERROR_0002 - Invalid number of parameters for function CASE, expecting 2 params" //$NON-NLS-1$
+        "CASE(\"\")", //$NON-NLS-1$
+        "PMSFormulaContext.ERROR_0002 - Invalid number of parameters for function CASE, expecting 2 params" //$NON-NLS-1$
     );
   }
 
   @Test
   public void testCoalesce() throws Exception {
     handleFormula( getOrdersModel(), "Hypersonic", //$NON-NLS-1$ 
-        "COALESCE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]; \"USA\")" //$NON-NLS-1$
-        , "COALESCE( BT_CUSTOMERS.COUNTRY  , 'USA')" //$NON-NLS-1$
+        "COALESCE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]; \"USA\")", //$NON-NLS-1$
+        "COALESCE( BT_CUSTOMERS.COUNTRY  , 'USA')" //$NON-NLS-1$
     );
     handleFormula( getOrdersModel(), "Hypersonic", //$NON-NLS-1$ 
-        "COALESCE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY])" //$NON-NLS-1$
-        , "COALESCE( BT_CUSTOMERS.COUNTRY )" //$NON-NLS-1$
+        "COALESCE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY])", //$NON-NLS-1$
+        "COALESCE( BT_CUSTOMERS.COUNTRY )" //$NON-NLS-1$
     );
     handleFormulaFailure( getOrdersModel(), "Hypersonic", //$NON-NLS-1$ 
-        "COALESCE()" //$NON-NLS-1$
-        , "PMSFormulaContext.ERROR_0002 - Invalid number of parameters for function COALESCE, expecting 1 params" //$NON-NLS-1$
+        "COALESCE()", //$NON-NLS-1$
+        "PMSFormulaContext.ERROR_0002 - Invalid number of parameters for function COALESCE, expecting 1 params" //$NON-NLS-1$
     );
   }
 
   @Test
   public void testNoFunction() throws Exception {
     handleFormula( getOrdersModel(), "Hypersonic", //$NON-NLS-1$ 
-        "[BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]" //$NON-NLS-1$
-        , "BT_CUSTOMERS.COUNTRY" //$NON-NLS-1$
+        "[BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]", //$NON-NLS-1$
+        "BT_CUSTOMERS.COUNTRY" //$NON-NLS-1$
     );
   }
 
@@ -759,37 +758,37 @@ public class SqlOpenFormulaIT {
   public void testContainsFunction() throws Exception {
 
     handleFormula( getOrdersModel(), "Oracle", //$NON-NLS-1$
-        "CONTAINS([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
-        , "BT_CUSTOMERS.COUNTRY  LIKE '%' || 'AMERICA' || '%'" //$NON-NLS-1$
+        "CONTAINS([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")", //$NON-NLS-1$
+        "BT_CUSTOMERS.COUNTRY  LIKE '%' || 'AMERICA' || '%'" //$NON-NLS-1$
     );
     handleFormula( getOrdersModel(), "MySQL", //$NON-NLS-1$ 
-        "CONTAINS([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
-        , "BT_CUSTOMERS.COUNTRY  LIKE CONCAT('%', 'AMERICA', '%')" //$NON-NLS-1$
+        "CONTAINS([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")", //$NON-NLS-1$
+        "BT_CUSTOMERS.COUNTRY  LIKE CONCAT('%', 'AMERICA', '%')" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "Hypersonic", //$NON-NLS-1$ 
-        "CONTAINS([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
-        , "BT_CUSTOMERS.COUNTRY  LIKE '%' || 'AMERICA' || '%'" //$NON-NLS-1$
+        "CONTAINS([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")", //$NON-NLS-1$
+        "BT_CUSTOMERS.COUNTRY  LIKE '%' || 'AMERICA' || '%'" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "DB2", //$NON-NLS-1$ 
-        "CONTAINS([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
-        , "BT_CUSTOMERS.COUNTRY  LIKE '%' || 'AMERICA' || '%'" //$NON-NLS-1$
+        "CONTAINS([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")",  //$NON-NLS-1$
+        "BT_CUSTOMERS.COUNTRY  LIKE '%' || 'AMERICA' || '%'" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "MSSQL", //$NON-NLS-1$ 
-        "CONTAINS([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
-        , "BT_CUSTOMERS.COUNTRY  LIKE '%' + 'AMERICA' + '%'" //$NON-NLS-1$
+        "CONTAINS([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")",  //$NON-NLS-1$
+        "BT_CUSTOMERS.COUNTRY  LIKE '%' + 'AMERICA' + '%'" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "MSAccess", //$NON-NLS-1$ 
-        "CONTAINS([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
-        , "BT_CUSTOMERS.COUNTRY  LIKE '%' + 'AMERICA' + '%'" //$NON-NLS-1$
+        "CONTAINS([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")", //$NON-NLS-1$
+        "BT_CUSTOMERS.COUNTRY  LIKE '%' + 'AMERICA' + '%'" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "PostgreSQL", //$NON-NLS-1$ 
-        "CONTAINS([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
-        , "BT_CUSTOMERS.COUNTRY  LIKE '%' || 'AMERICA' || '%'" //$NON-NLS-1$
+        "CONTAINS([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")", //$NON-NLS-1$
+        "BT_CUSTOMERS.COUNTRY  LIKE '%' || 'AMERICA' || '%'" //$NON-NLS-1$
     );
   }
 
@@ -797,37 +796,37 @@ public class SqlOpenFormulaIT {
   public void testBeginsWithFunction() throws Exception {
 
     handleFormula( getOrdersModel(), "Oracle", //$NON-NLS-1$
-        "BEGINSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
-        , "BT_CUSTOMERS.COUNTRY  LIKE 'AMERICA' || '%'" //$NON-NLS-1$
+        "BEGINSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")",  //$NON-NLS-1$
+        "BT_CUSTOMERS.COUNTRY  LIKE 'AMERICA' || '%'" //$NON-NLS-1$
     );
     handleFormula( getOrdersModel(), "MySQL", //$NON-NLS-1$ 
-        "BEGINSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
-        , "BT_CUSTOMERS.COUNTRY  LIKE CONCAT('AMERICA', '%')" //$NON-NLS-1$
+        "BEGINSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")",  //$NON-NLS-1$
+        "BT_CUSTOMERS.COUNTRY  LIKE CONCAT('AMERICA', '%')" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "Hypersonic", //$NON-NLS-1$ 
-        "BEGINSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
-        , "BT_CUSTOMERS.COUNTRY  LIKE 'AMERICA' || '%'" //$NON-NLS-1$
+        "BEGINSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")",  //$NON-NLS-1$
+        "BT_CUSTOMERS.COUNTRY  LIKE 'AMERICA' || '%'" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "DB2", //$NON-NLS-1$ 
-        "BEGINSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
-        , "BT_CUSTOMERS.COUNTRY  LIKE 'AMERICA' || '%'" //$NON-NLS-1$
+        "BEGINSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")",  //$NON-NLS-1$
+        "BT_CUSTOMERS.COUNTRY  LIKE 'AMERICA' || '%'" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "MSSQL", //$NON-NLS-1$ 
-        "BEGINSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
-        , "BT_CUSTOMERS.COUNTRY  LIKE 'AMERICA' + '%'" //$NON-NLS-1$
+        "BEGINSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")",  //$NON-NLS-1$
+        "BT_CUSTOMERS.COUNTRY  LIKE 'AMERICA' + '%'" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "MSAccess", //$NON-NLS-1$ 
-        "BEGINSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
-        , "BT_CUSTOMERS.COUNTRY  LIKE 'AMERICA' + '%'" //$NON-NLS-1$
+        "BEGINSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")",  //$NON-NLS-1$
+        "BT_CUSTOMERS.COUNTRY  LIKE 'AMERICA' + '%'" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "PostgreSQL", //$NON-NLS-1$ 
-        "BEGINSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
-        , "BT_CUSTOMERS.COUNTRY  LIKE 'AMERICA' || '%'" //$NON-NLS-1$
+        "BEGINSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")",  //$NON-NLS-1$
+        "BT_CUSTOMERS.COUNTRY  LIKE 'AMERICA' || '%'" //$NON-NLS-1$
     );
   }
 
@@ -835,37 +834,37 @@ public class SqlOpenFormulaIT {
   public void testEndsWithFunction() throws Exception {
 
     handleFormula( getOrdersModel(), "Oracle", //$NON-NLS-1$
-        "ENDSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
-        , "BT_CUSTOMERS.COUNTRY  LIKE '%' || 'AMERICA'" //$NON-NLS-1$
+        "ENDSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")",  //$NON-NLS-1$
+        "BT_CUSTOMERS.COUNTRY  LIKE '%' || 'AMERICA'" //$NON-NLS-1$
     );
     handleFormula( getOrdersModel(), "MySQL", //$NON-NLS-1$ 
-        "ENDSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
-        , "BT_CUSTOMERS.COUNTRY  LIKE CONCAT('%', 'AMERICA')" //$NON-NLS-1$
+        "ENDSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")",  //$NON-NLS-1$
+        "BT_CUSTOMERS.COUNTRY  LIKE CONCAT('%', 'AMERICA')" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "Hypersonic", //$NON-NLS-1$ 
-        "ENDSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
-        , "BT_CUSTOMERS.COUNTRY  LIKE '%' || 'AMERICA'" //$NON-NLS-1$
+        "ENDSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")",  //$NON-NLS-1$
+        "BT_CUSTOMERS.COUNTRY  LIKE '%' || 'AMERICA'" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "DB2", //$NON-NLS-1$ 
-        "ENDSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
-        , "BT_CUSTOMERS.COUNTRY  LIKE '%' || 'AMERICA'" //$NON-NLS-1$
+        "ENDSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")",  //$NON-NLS-1$
+        "BT_CUSTOMERS.COUNTRY  LIKE '%' || 'AMERICA'" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "MSSQL", //$NON-NLS-1$ 
-        "ENDSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
-        , "BT_CUSTOMERS.COUNTRY  LIKE '%' + 'AMERICA'" //$NON-NLS-1$
+        "ENDSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")",  //$NON-NLS-1$
+        "BT_CUSTOMERS.COUNTRY  LIKE '%' + 'AMERICA'" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "MSAccess", //$NON-NLS-1$ 
-        "ENDSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
-        , "BT_CUSTOMERS.COUNTRY  LIKE '%' + 'AMERICA'" //$NON-NLS-1$
+        "ENDSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")",  //$NON-NLS-1$
+        "BT_CUSTOMERS.COUNTRY  LIKE '%' + 'AMERICA'" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "PostgreSQL", //$NON-NLS-1$ 
-        "ENDSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")" //$NON-NLS-1$
-        , "BT_CUSTOMERS.COUNTRY  LIKE '%' || 'AMERICA'" //$NON-NLS-1$
+        "ENDSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")",  //$NON-NLS-1$
+        "BT_CUSTOMERS.COUNTRY  LIKE '%' || 'AMERICA'" //$NON-NLS-1$
     );
   }
 
@@ -873,8 +872,8 @@ public class SqlOpenFormulaIT {
   public void testISNAFunction() throws Exception {
 
     handleFormula( getOrdersModel(), "Oracle", //$NON-NLS-1$
-        "ISNA([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY])" //$NON-NLS-1$
-        , "BT_CUSTOMERS.COUNTRY  IS NULL" //$NON-NLS-1$
+        "ISNA([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY])", //$NON-NLS-1$
+        "BT_CUSTOMERS.COUNTRY  IS NULL" //$NON-NLS-1$
     );
   }
 

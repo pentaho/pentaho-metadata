@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.pms.mql;
 
@@ -380,7 +380,7 @@ public class PMSFormula implements FormulaTraversalInterface {
         throw new PentahoMetadataException(
             Messages
                 .getErrorString(
-                    "PMSFormula.ERROR_0010_FIELDNAME_ERROR_COLUMN_NOT_FOUND", fieldName, fieldName, toString( getBusinessTableIDs() ) ) );//$NON-NLS-1$
+                    "PMSFormula.ERROR_0010_FIELDNAME_ERROR_COLUMN_NOT_FOUND", fieldName, fieldName, toString( getBusinessTableIDs() ) ) ); //$NON-NLS-1$
 
       } else {
 

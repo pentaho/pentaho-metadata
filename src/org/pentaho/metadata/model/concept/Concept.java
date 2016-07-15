@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.metadata.model.concept;
 
@@ -27,9 +27,8 @@ import org.pentaho.metadata.model.concept.types.LocalizedString;
  * This is the base implementation of a concept, and may be used in generic terms when defining parent concepts or
  * modeling metadata. More concrete implementations extend the Concept class within Pentaho Metadata, found in the
  * org.pentaho.metadata.model package.
- * 
+ *
  * @author Will Gorman (wgorman@pentaho.com)
- * 
  */
 public class Concept implements IConcept {
 
@@ -50,11 +49,11 @@ public class Concept implements IConcept {
   IConcept inheritedConcept;
   IConcept physicalConcept;
   List<IConcept> children = null;
-  
+
   public void setParent( IConcept parent ) {
     this.parent = parent;
   }
-  
+
   public IConcept getParent() {
     if ( parent == null ) {
       return parentConcept;
@@ -113,7 +112,7 @@ public class Concept implements IConcept {
   public void setInheritedConcept( IConcept inheritedConcept ) {
     this.inheritedConcept = inheritedConcept;
   }
-  
+
   public IConcept getInheritedConcept() {
     return inheritedConcept;
   }
@@ -125,14 +124,14 @@ public class Concept implements IConcept {
   public void setParentConcept( IConcept parentConcept ) {
     this.parentConcept = parentConcept;
   }
-  
+
   public IConcept getPhysicalConcept() {
     return physicalConcept;
   }
 
   public void setPhysicalConcept( IConcept physicalConcept ) {
     this.physicalConcept = physicalConcept;
-  }  
+  }
 
   public IConcept getSecurityParentConcept() {
     return null;

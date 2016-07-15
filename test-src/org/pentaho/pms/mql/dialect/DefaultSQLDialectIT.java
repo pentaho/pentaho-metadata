@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2010 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.pms.mql.dialect;
 
@@ -47,15 +47,15 @@ public class DefaultSQLDialectIT {
 
     String singleDigitString = "01";
     int singleDigitInt = 1;
-    assertEquals( singleDigitString,  dialect.displayAsTwoOrMoreDigits( singleDigitInt ) );
+    assertEquals( singleDigitString, dialect.displayAsTwoOrMoreDigits( singleDigitInt ) );
 
     String twoDigitString = "10";
     int twoDigitInt = 10;
-    assertEquals( twoDigitString ,  dialect.displayAsTwoOrMoreDigits( twoDigitInt ) );
+    assertEquals( twoDigitString, dialect.displayAsTwoOrMoreDigits( twoDigitInt ) );
 
     String negativeDigitString = "-1";
     int negativeDigitInt = -1;
-    assertEquals( negativeDigitString ,  dialect.displayAsTwoOrMoreDigits( negativeDigitInt ) );
+    assertEquals( negativeDigitString, dialect.displayAsTwoOrMoreDigits( negativeDigitInt ) );
   }
 
   @Test
@@ -101,10 +101,12 @@ public class DefaultSQLDialectIT {
     query.addSelection( "t.id", null ); //$NON-NLS-1$
     query.addTable( "TABLE", "t" ); //$NON-NLS-1$ //$NON-NLS-2$
     query.addTable( "TABLE2", "two" ); //$NON-NLS-1$ //$NON-NLS-2$
-    query.addJoin( "TABLE", "t", "TABLE2", "two", JoinType.INNER_JOIN, "t.id = two.id", null ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+    query.addJoin( "TABLE", "t", "TABLE2", "two", JoinType.INNER_JOIN, "t.id = two.id",
+      null ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
     query.addWhereFormula( "t.id is null", null ); //$NON-NLS-1$
 
-    String expected = "SELECT DISTINCT t.id FROM TABLE t, TABLE2 two WHERE ( t.id = two.id) AND ( ( t.id is null ) )"; //$NON-NLS-1$
+    String expected =
+      "SELECT DISTINCT t.id FROM TABLE t, TABLE2 two WHERE ( t.id = two.id) AND ( ( t.id is null ) )"; //$NON-NLS-1$
     SQLDialectInterface dialect = new DefaultSQLDialect();
     String result = dialect.generateSelectStatement( query );
     SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
@@ -119,11 +121,13 @@ public class DefaultSQLDialectIT {
     query.addSelection( "t.id", null ); //$NON-NLS-1$
     query.addTable( "TABLE", "t" ); //$NON-NLS-1$ //$NON-NLS-2$
     query.addTable( "TABLE2", "two" ); //$NON-NLS-1$ //$NON-NLS-2$
-    query.addJoin( "TABLE", "t", "TABLE2", "two", JoinType.FULL_OUTER_JOIN, "t.id = two.id", null ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+    query.addJoin( "TABLE", "t", "TABLE2", "two", JoinType.FULL_OUTER_JOIN, "t.id = two.id",
+      null ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
     query.addWhereFormula( "t.id is null", null ); //$NON-NLS-1$
 
     String expected =
-        "SELECT DISTINCT t.id FROM TABLE t FULL OUTER JOIN TABLE2 two ON ( t.id = two.id) WHERE ( ( t.id is null ) )"; //$NON-NLS-1$
+      "SELECT DISTINCT t.id FROM TABLE t FULL OUTER JOIN TABLE2 two ON ( t.id = two.id) WHERE ( ( t.id is null ) )";
+    //$NON-NLS-1$
     SQLDialectInterface dialect = new DefaultSQLDialect();
     String result = dialect.generateSelectStatement( query );
     SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
@@ -131,14 +135,15 @@ public class DefaultSQLDialectIT {
 
   @Test
   public void testLimitSQL() {
-    SQLDialectHelper.assertSelect( "SELECT DISTINCT TOP 10 t.id FROM TABLE t WHERE ( ( t.id is null ) ) ORDER BY t.id ASC",
+    SQLDialectHelper
+      .assertSelect( "SELECT DISTINCT TOP 10 t.id FROM TABLE t WHERE ( ( t.id is null ) ) ORDER BY t.id ASC",
         new DefaultSQLDialect(), SQLDialectHelper.createLimitedQuery() );
   }
 
   @Test
   public void testNoLimitSQL() {
     SQLDialectHelper.assertSelect( "SELECT DISTINCT t.id FROM TABLE t WHERE ( ( t.id is null ) ) ORDER BY t.id ASC",
-        new DefaultSQLDialect(), SQLDialectHelper.createUnlimitedQuery() );
+      new DefaultSQLDialect(), SQLDialectHelper.createUnlimitedQuery() );
   }
 
   @Test

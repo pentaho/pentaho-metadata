@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.metadata.model;
 
@@ -25,11 +25,10 @@ import org.pentaho.metadata.model.concept.types.RelationshipType;
 /**
  * Logical relationships define the relationship between two business tables through columns or an open formula
  * expression.
- * 
+ * <p>
  * TODO: This class needs additional work before it can support the capabilities in the original metadata model
- * 
+ *
  * @author Will Gorman (wgorman@pentaho.com)
- * 
  */
 public class LogicalRelationship extends Concept {
 
@@ -54,7 +53,7 @@ public class LogicalRelationship extends Concept {
   }
 
   public LogicalRelationship( LogicalModel logicalModel, LogicalTable fromTable, LogicalTable toTable,
-      LogicalColumn fromColumn, LogicalColumn toColumn ) {
+                              LogicalColumn fromColumn, LogicalColumn toColumn ) {
     this();
     setParent( logicalModel );
     this.fromTable = fromTable;
@@ -68,7 +67,7 @@ public class LogicalRelationship extends Concept {
   }
 
   public LogicalModel getLogicalModel() {
-    return ( LogicalModel )getParent();
+    return (LogicalModel) getParent();
   }
 
   public String getRelationshipDescription() {

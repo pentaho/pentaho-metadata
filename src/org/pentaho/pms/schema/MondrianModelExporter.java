@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.pms.schema;
 
@@ -207,24 +207,24 @@ public class MondrianModelExporter {
         BusinessTable cubeTable = olapCube.getBusinessTable();
         RelationshipMeta relationshipMeta = businessModel.findRelationshipUsing( dimTable, cubeTable );
 
-        if ( dimTable.equals( cubeTable ) && relationshipMeta == null ) {
-          // this is ok
-        } else if ( relationshipMeta != null ) {
-          BusinessColumn keyColumn;
-          if ( relationshipMeta.getTableFrom().equals( dimTable ) ) {
-            keyColumn = relationshipMeta.getFieldTo();
-          } else {
-            keyColumn = relationshipMeta.getFieldFrom();
-          }
+        if ( !dimTable.equals( cubeTable ) || relationshipMeta != null ) {
+          if ( relationshipMeta != null ) {
+            BusinessColumn keyColumn;
+            if ( relationshipMeta.getTableFrom().equals( dimTable ) ) {
+              keyColumn = relationshipMeta.getFieldTo();
+            } else {
+              keyColumn = relationshipMeta.getFieldFrom();
+            }
 
-          xml.append( " foreignKey=\"" ); //$NON-NLS-1$
-          XMLHandler.appendReplacedChars( xml, keyColumn.getFormula() );
-          xml.append( "\"" ); //$NON-NLS-1$
-        } else {
-          throw new Exception(
-              Messages
-                  .getString(
-                      "MondrianModelExporter.ERROR_0001_ERROR_NO_RELATIONSHIP", dimTable.getDisplayName( locale ), cubeTable.toString() ) ); //$NON-NLS-1$  
+            xml.append( " foreignKey=\"" ); //$NON-NLS-1$
+            XMLHandler.appendReplacedChars( xml, keyColumn.getFormula() );
+            xml.append( "\"" ); //$NON-NLS-1$
+          } else {
+            throw new Exception(
+                Messages
+                    .getString(
+                        "MondrianModelExporter.ERROR_0001_ERROR_NO_RELATIONSHIP", dimTable.getDisplayName( locale ), cubeTable.toString() ) ); //$NON-NLS-1$
+          }
         }
         xml.append( "/>" ).append( Const.CR ); //$NON-NLS-1$
       }

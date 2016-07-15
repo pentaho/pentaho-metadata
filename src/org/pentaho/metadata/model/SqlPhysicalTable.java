@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.metadata.model;
 
@@ -27,9 +27,8 @@ import org.pentaho.metadata.model.concept.types.TargetTableType;
 
 /**
  * This is the SQL implementation of a physical table. It acts as either a table in the database or a SQL statement.
- * 
+ *
  * @author Will Gorman (wgorman@pentaho.com)
- * 
  */
 public class SqlPhysicalTable extends Concept implements IPhysicalTable {
 
@@ -63,7 +62,7 @@ public class SqlPhysicalTable extends Concept implements IPhysicalTable {
   }
 
   public IPhysicalModel getPhysicalModel() {
-    return ( IPhysicalModel ) getParent();
+    return (IPhysicalModel) getParent();
   }
 
   public List<IPhysicalColumn> getPhysicalColumns() {
