@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 20011 Pentaho Corporation.  All rights reserved.
+ * Copyright (c) 2016 Pentaho Corporation.  All rights reserved.
  */
 package org.pentaho.pms.mql.dialect;
 
@@ -28,9 +28,8 @@ import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.varia.NullAppender;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.pentaho.di.core.database.DatabaseInterface;
-import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.exception.KettleException;
+import org.pentaho.helpers.SQLDialectHelper;
 import org.pentaho.pms.MetadataTestBase;
 import org.pentaho.pms.mql.dialect.SQLQueryModel.OrderType;
 
@@ -86,7 +85,7 @@ public class HiveDialectTest {
     SQLDialectInterface dialect = new HiveDialect();
     String result = dialect.generateSelectStatement( query );
 
-    assertEquals( expected, result );
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
   }
 
   @Test
@@ -101,7 +100,7 @@ public class HiveDialectTest {
     SQLDialectInterface dialect = new HiveDialect();
     String result = dialect.generateSelectStatement( query );
 
-    assertEquals( expected, result );
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
   }
 
   @Test
@@ -116,7 +115,7 @@ public class HiveDialectTest {
     SQLDialectInterface dialect = new HiveDialect();
     String result = dialect.generateSelectStatement( query );
 
-    assertEquals( expected, result );
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
   }
 
   @Test
@@ -130,7 +129,7 @@ public class HiveDialectTest {
     SQLDialectInterface dialect = new HiveDialect();
     String result = dialect.generateSelectStatement( query );
 
-    assertEquals( expected, result );
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
   }
 
   @Test
@@ -146,7 +145,7 @@ public class HiveDialectTest {
     SQLDialectInterface dialect = new HiveDialect();
     String result = dialect.generateSelectStatement( query );
 
-    assertEquals( expected, result );
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
   }
 
   @Test
@@ -171,7 +170,7 @@ public class HiveDialectTest {
     String expected = "SELECT DISTINCT \n          id\nFROM \n          A\n          JOIN B ON ( A.b = B.id )\n"; //$NON-NLS-1$
     SQLDialectInterface dialect = new HiveDialect();
     String result = dialect.generateSelectStatement( query );
-    assertEquals( expected, result );
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
   }
 
   @Test
@@ -183,7 +182,7 @@ public class HiveDialectTest {
         "SELECT DISTINCT \n          id\nFROM \n          A\n          JOIN B\nWHERE\n          ( A.b > B.id )\n"; //$NON-NLS-1$
     SQLDialectInterface dialect = new HiveDialect();
     String result = dialect.generateSelectStatement( query );
-    assertEquals( expected, result );
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
   }
 
   @Test
@@ -196,7 +195,7 @@ public class HiveDialectTest {
         "SELECT DISTINCT \n          id\nFROM \n          A\n          JOIN B ON ( A.b = B.id )\n          JOIN C ON ( B.c = C.id )\n"; //$NON-NLS-1$
     SQLDialectInterface dialect = new HiveDialect();
     String result = dialect.generateSelectStatement( query );
-    assertEquals( expected, result );
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
   }
 
   @Test
@@ -209,7 +208,7 @@ public class HiveDialectTest {
         "SELECT DISTINCT \n          id\nFROM \n          A\n          JOIN B\n          JOIN C\nWHERE\n          ( A.b > B.id )\n      AND ( B.c > C.id )\n"; //$NON-NLS-1$
     SQLDialectInterface dialect = new HiveDialect();
     String result = dialect.generateSelectStatement( query );
-    assertEquals( expected, result );
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
   }
 
   @Test
@@ -222,7 +221,7 @@ public class HiveDialectTest {
         "SELECT DISTINCT \n          id\nFROM \n          B\n          JOIN C ON ( B.c = C.id )\n          JOIN A ON ( A.b = B.id )\n"; //$NON-NLS-1$
     SQLDialectInterface dialect = new HiveDialect();
     String result = dialect.generateSelectStatement( query );
-    assertEquals( expected, result );
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
   }
 
   @Test
@@ -235,7 +234,7 @@ public class HiveDialectTest {
         "SELECT DISTINCT \n          id\nFROM \n          B\n          JOIN C\n          JOIN A ON ( A.b = B.id )\nWHERE\n          ( B.c > C.id )\n"; //$NON-NLS-1$
     SQLDialectInterface dialect = new HiveDialect();
     String result = dialect.generateSelectStatement( query );
-    assertEquals( expected, result );
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
   }
 
   @Test
@@ -249,7 +248,7 @@ public class HiveDialectTest {
         "SELECT DISTINCT \n          id\nFROM \n          A\n          JOIN B ON ( A.b = B.id )\n          JOIN C ON ( B.c = C.id )\n          JOIN D ON ( C.d = D.id )\n"; //$NON-NLS-1$
     SQLDialectInterface dialect = new HiveDialect();
     String result = dialect.generateSelectStatement( query );
-    assertEquals( expected, result );
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
   }
 
   @Test
@@ -263,7 +262,7 @@ public class HiveDialectTest {
         "SELECT DISTINCT \n          id\nFROM \n          A\n          JOIN B ON ( A.b = B.id )\n          JOIN C\n          JOIN D ON ( C.d = D.id )\nWHERE\n          ( B.c > C.id )\n"; //$NON-NLS-1$
     SQLDialectInterface dialect = new HiveDialect();
     String result = dialect.generateSelectStatement( query );
-    assertEquals( expected, result );
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
   }
 
   @Test
@@ -277,7 +276,7 @@ public class HiveDialectTest {
         "SELECT DISTINCT \n          id\nFROM \n          C\n          JOIN D ON ( C.d = D.id )\n          JOIN B\n          JOIN A ON ( A.b = B.id )\nWHERE\n          ( B.c > C.id )\n"; //$NON-NLS-1$
     SQLDialectInterface dialect = new HiveDialect();
     String result = dialect.generateSelectStatement( query );
-    assertEquals( expected, result );
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
   }
 
   @Test
@@ -338,7 +337,7 @@ public class HiveDialectTest {
     SQLDialectInterface dialect = new HiveDialect();
     String result = dialect.generateSelectStatement( query );
 
-    assertEquals( expected, result );
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
   }
 
   @Test
@@ -358,7 +357,7 @@ public class HiveDialectTest {
     SQLDialectInterface dialect = new HiveDialect();
     String result = dialect.generateSelectStatement( query );
 
-    assertEquals( expected, result );
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
   }
 
   @Test
@@ -382,7 +381,7 @@ public class HiveDialectTest {
     };
     String result = dialect.generateSelectStatement( query );
 
-    assertEquals( expected, result );
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
   }
 
   @Test
@@ -401,7 +400,7 @@ public class HiveDialectTest {
     SQLDialectInterface dialect = new HiveDialect();
     String result = dialect.generateSelectStatement( query );
 
-    assertEquals( expected, result );
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
   }
 
   @Test
@@ -423,7 +422,7 @@ public class HiveDialectTest {
     String formula = "a.id"; //$NON-NLS-1$
     String expected = "id"; //$NON-NLS-1$
     String result = new HiveDialect().stripTableAliasesFromFormula( formula );
-    assertEquals( expected, result );
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
   }
 
   @Test
@@ -438,7 +437,7 @@ public class HiveDialectTest {
     String formula = "count(a.id)"; //$NON-NLS-1$
     String expected = "count(id)"; //$NON-NLS-1$
     String result = new HiveDialect().stripTableAliasesFromFormula( formula );
-    assertEquals( expected, result );
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
   }
 
   @Test
@@ -446,7 +445,7 @@ public class HiveDialectTest {
     String formula = "count( a .id)"; //$NON-NLS-1$
     String expected = "count( id)"; //$NON-NLS-1$
     String result = new HiveDialect().stripTableAliasesFromFormula( formula );
-    assertEquals( expected, result );
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
   }
 
   @Test
@@ -459,7 +458,7 @@ public class HiveDialectTest {
         "SELECT DISTINCT \n          id\nFROM \n          TABLE t\nWHERE \n        (\n          (\n             name <> 'test'\n          )\n        )\n"; //$NON-NLS-1$
     SQLDialectInterface dialect = new HiveDialect();
     String result = dialect.generateSelectStatement( query );
-    assertEquals( expected, result );
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
   }
 
   @Test
@@ -473,7 +472,7 @@ public class HiveDialectTest {
         "SELECT DISTINCT \n          id\nFROM \n          TABLE t\nWHERE \n        (\n          (\n             name <> 'test'\n          )\n      AND (\n             age = 10\n          )\n        )\n"; //$NON-NLS-1$
     SQLDialectInterface dialect = new HiveDialect();
     String result = dialect.generateSelectStatement( query );
-    assertEquals( expected, result );
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
   }
 
   @Test
@@ -487,7 +486,7 @@ public class HiveDialectTest {
         "SELECT DISTINCT \n          id\nFROM \n          TABLE2 two\n          JOIN TABLE t\nWHERE\n          ( two.id > t.id )\n      AND \n        (\n          (\n             name <> 'test'\n          )\n        )\n"; //$NON-NLS-1$
     SQLDialectInterface dialect = new HiveDialect();
     String result = dialect.generateSelectStatement( query );
-    assertEquals( expected, result );
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
   }
 
   @Test
@@ -500,7 +499,7 @@ public class HiveDialectTest {
         "SELECT DISTINCT \n          t.WHERES_WALDO\nFROM \n          TABLE t\nWHERE \n        (\n          (\n             name <> 'test'\n          )\n        )\n"; //$NON-NLS-1$
     SQLDialectInterface dialect = new HiveDialect();
     String result = dialect.generateSelectStatement( query );
-    assertEquals( expected, result );
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
 
   }
 
@@ -510,7 +509,7 @@ public class HiveDialectTest {
     String expected = "CONCAT('string')"; //$NON-NLS-1$
     HiveDialect dialect = new HiveDialect();
     String result = dialect.generateStringConcat( vals );
-    assertEquals( expected, result );
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
   }
 
   @Test
@@ -519,7 +518,7 @@ public class HiveDialectTest {
     String expected = "CONCAT('%',value,'%')"; //$NON-NLS-1$
     HiveDialect dialect = new HiveDialect();
     String result = dialect.generateStringConcat( vals );
-    assertEquals( expected, result );
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
   }
 
   /**
@@ -558,7 +557,7 @@ public class HiveDialectTest {
     String expected =
         "SELECT DISTINCT \n          a.a_column\nFROM \n          A a\nORDER BY \n          a_column ASC\n\nLIMIT 10\n";
     String result = new HiveDialect().generateSelectStatement( query );
-    assertEquals( expected, result );
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
   }
 
   @Test
@@ -570,7 +569,7 @@ public class HiveDialectTest {
     String expected =
         "SELECT DISTINCT \n          a.a_column\nFROM \n          A a\nORDER BY \n          a_column ASC\n";
     String result = new HiveDialect().generateSelectStatement( query );
-    assertEquals( expected, result );
+    SQLDialectHelper.assertEqualsIgnoreWhitespaces( expected, result );
   }
 
   @Test
