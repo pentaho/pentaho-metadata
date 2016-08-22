@@ -12,15 +12,15 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.pms.mql.dialect;
 
 /**
  * MySQL Implementation of Metadata SQL Dialect
- * 
+ *
  * @author Will Gorman (wgorman@pentaho.org)
- * 
+ *
  */
 public class MySQLDialect extends DefaultSQLDialect {
 
@@ -28,13 +28,17 @@ public class MySQLDialect extends DefaultSQLDialect {
     super( "MYSQL" ); //$NON-NLS-1$
   }
 
+  protected MySQLDialect( String compatibleDialect ) {
+    super( compatibleDialect ); //$NON-NLS-1$
+  }
+
   /**
    * return MySQL formatted date, DATE('YYYY-MM-DD')
-   * 
+   *
    * @param year
    * @param month
    * @param day
-   * 
+   *
    * @return date string
    */
   public String getDateSQL( int year, int month, int day ) {
@@ -45,7 +49,7 @@ public class MySQLDialect extends DefaultSQLDialect {
 
   /**
    * MYSQL has a 64 character limit on table name length
-   * 
+   *
    * @return max table name length
    */
   public int getMaxTableNameLength() {

@@ -26,12 +26,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.metadata.messages.Messages;
+import org.pentaho.pms.mql.MariaDBDialect;
 
 /**
  * This class should eventually load additional plugin dialects
- * 
+ *
  * @author Will Gorman
- * 
+ *
  */
 public class SQLDialectFactory {
   /** singleton instance, one per classloader */
@@ -61,6 +62,7 @@ public class SQLDialectFactory {
     addDialect( new MSSQLNativeDialect() );
     addDialect( new DB2Dialect() );
     addDialect( new PostgreSQLDialect() );
+    addDialect( new MariaDBDialect() );
     addDialect( new MySQLDialect() );
     addDialect( new MSAccessDialect() );
     addDialect( new NetezzaDialect() );
@@ -121,9 +123,9 @@ public class SQLDialectFactory {
 
   public static SQLDialectInterface getSQLDialect( DatabaseMeta databaseMeta ) {
     SQLDialectInterface sqlDialect =
-        (SQLDialectInterface) singleton.supportedDialects.get( databaseMeta.getDatabaseTypeDesc() );
+        singleton.supportedDialects.get( databaseMeta.getDatabaseTypeDesc() );
     if ( sqlDialect == null ) {
-      sqlDialect = (SQLDialectInterface) singleton.supportedDialects.get( "GENERIC" ); //$NON-NLS-1$
+      sqlDialect = singleton.supportedDialects.get( "GENERIC" ); //$NON-NLS-1$
     }
     return sqlDialect;
   }
