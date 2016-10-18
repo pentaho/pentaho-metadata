@@ -1594,6 +1594,13 @@ public class XmiParser {
             // <CWM:Description body="String,50,-1" name="datatype" type="DataType" xmi.id="a100">
             DataTypeSettings setting = DataTypeSettings.fromString( body );
             concept.setProperty( name, DataType.valueOf( setting.getCode().toUpperCase() ) );
+            if ( setting.getPrecision() > 0 ) {
+              String mask = "#.";
+              for ( int i = 0; i < setting.getPrecision(); i++ ) {
+                mask += "0";
+              }
+              concept.setProperty( "mask", mask );
+            }
           } else if ( propType.equals( "Security" ) ) { //$NON-NLS-1$
             // <CWM:Description
             // body="&lt;security&gt;&#10;  &lt;owner-rights&gt;&#10;  &lt;owner&gt;&lt;type&gt;user&lt;/type&gt;&lt;name&gt;suzy&lt;/name&gt;&lt;/owner&gt; &lt;rights&gt;31&lt;/rights&gt;&#10;  &lt;/owner-rights&gt;&#10;  &lt;owner-rights&gt;&#10;  &lt;owner&gt;&lt;type&gt;role&lt;/type&gt;&lt;name&gt;Admin&lt;/name&gt;&lt;/owner&gt; &lt;rights&gt;31&lt;/rights&gt;&#10;  &lt;/owner-rights&gt;&#10;&lt;/security&gt;&#10;"
