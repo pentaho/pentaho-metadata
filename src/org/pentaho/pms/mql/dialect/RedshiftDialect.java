@@ -22,4 +22,8 @@ public class RedshiftDialect extends PostgreSQLDialect {
     super( "REDSHIFT" );
   }
 
+  @Override
+  public boolean supportsNLSLiteral() {
+    return false;
+  }
 }
