@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.metadata.query.impl.sql;
 
@@ -230,6 +230,36 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
     return selectionMap;
   }
 
+  private String transformInCondition( String c ) {
+    if ( c.contains( ";\"\"" ) ) {
+      String field = c.substring( c.indexOf( "[" ), c.indexOf( ";" ) );
+      StringBuilder sb = new StringBuilder();
+      sb.append( "OR(" );
+      sb.append( c );
+      sb.append( ";" ).append( "ISNA(" ).append( field ).append( ")" );
+      sb.append( ")" );
+      c = sb.toString();
+    }
+    return c;
+  }
+
+  private String verifyNullInsideINcondition( String f ) {
+    int pos = 0;
+    int in_pos = 0;
+    while ( ( in_pos = f.indexOf( "IN(", pos ) ) >= 0 ) {
+      int pB = in_pos;
+      int pE = f.indexOf( ")", in_pos ) + 1;
+      String in_cond = f.substring( pB, pE );
+      StringBuilder sb = new StringBuilder();
+      sb.append( f.substring( 0, pB ) );
+      String new_in_cond = transformInCondition( in_cond );
+      sb.append( new_in_cond );
+      sb.append( f.substring( pB + in_cond.length() ) );
+      f = sb.toString();
+      pos = pB + new_in_cond.length();
+    }
+    return f;
+  }
   /**
    * parse and validate formula, including resolving all fields
    * 
@@ -239,6 +269,7 @@ public class SqlOpenFormula implements FormulaTraversalInterface {
     if ( !isValidated ) {
       // throws an error if failed to parse and validate condition
       try {
+        formulaString = verifyNullInsideINcondition( formulaString );
         formulaObject = new Formula( formulaString );
         formulaObject.initialize( formulaContext );
         LValue val = formulaObject.getRootReference();

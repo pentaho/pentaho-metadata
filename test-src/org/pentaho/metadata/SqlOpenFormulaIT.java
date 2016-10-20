@@ -928,4 +928,56 @@ public class SqlOpenFormulaIT {
         Messages.getErrorString( "SqlOpenFormula.ERROR_0024_MULTIPLE_VALUES_NOT_SUPPORTED", "<=" ) );
 
   }
+
+  @Test
+  public void testWhereConditionWithINwIthNull() throws Exception {
+    handleFormula( getOrdersModel(), "Hypersonic",
+        // mql formula
+        "IN([BT_CUSTOMERS.BC_CUSTOMERS_CUSTOMERNAME];\"EuroCars1\";\"\";\"EuroCars3\")", //$NON-NLS-1$
+            // expected hypersonic sql
+        "BT_CUSTOMERS.CUSTOMERNAME  IN ( 'EuroCars1' , '' , 'EuroCars3' )  OR ( BT_CUSTOMERS.CUSTOMERNAME  IS NULL)" //$NON-NLS-1$
+    );
+    handleFormula( getOrdersModel(), "Hypersonic",
+        // mql formula
+        "IN([BT_CUSTOMERS.BC_CUSTOMERS_CUSTOMERNAME];\"\";\"EuroCars1\";\"EuroCars3\")", //$NON-NLS-1$
+            // expected hypersonic sql
+        "BT_CUSTOMERS.CUSTOMERNAME  IN ( '' , 'EuroCars1' , 'EuroCars3' )  OR ( BT_CUSTOMERS.CUSTOMERNAME  IS NULL)" //$NON-NLS-1$
+    );
+    handleFormula( getOrdersModel(), "Hypersonic",
+        // mql formula
+        "IN([BT_CUSTOMERS.BC_CUSTOMERS_CUSTOMERNAME];\"EuroCars1\";\"EuroCars3\";\"\")", //$NON-NLS-1$
+            // expected hypersonic sql
+        "BT_CUSTOMERS.CUSTOMERNAME  IN ( 'EuroCars1' , 'EuroCars3' , '' )  OR ( BT_CUSTOMERS.CUSTOMERNAME  IS NULL)" //$NON-NLS-1$
+    );
+    handleFormula( getOrdersModel(), "Hypersonic",
+        // mql formula
+        "OR(IN([BT_CUSTOMERS.BC_CUSTOMERS_CUSTOMERNAME];\"ML\";\"FT\");IN([BT_CUSTOMERS.BC_CUSTOMERS_CUSTOMERNAME];\"BA\";\"\";\"CA\"))", //$NON-NLS-1$
+            // expected hypersonic sql
+        "BT_CUSTOMERS.CUSTOMERNAME  IN ( 'ML' , 'FT' )  OR ( BT_CUSTOMERS.CUSTOMERNAME  IN ( 'BA' , '' , 'CA' )  "
+        + "OR ( BT_CUSTOMERS.CUSTOMERNAME  IS NULL))" //$NON-NLS-1$
+    );
+    handleFormula( getOrdersModel(), "Hypersonic",
+        // mql formula
+        "AND(IN([BT_CUSTOMERS.BC_CUSTOMERS_CUSTOMERNAME];\"ML\";\"FT\");IN([BT_CUSTOMERS.BC_CUSTOMERS_CUSTOMERNAME];\"BA\";\"\";\"CA\"))", //$NON-NLS-1$
+            // expected hypersonic sql
+        "BT_CUSTOMERS.CUSTOMERNAME  IN ( 'ML' , 'FT' )  AND ( BT_CUSTOMERS.CUSTOMERNAME  IN ( 'BA' , '' , 'CA' )  "
+        + "OR ( BT_CUSTOMERS.CUSTOMERNAME  IS NULL))" //$NON-NLS-1$
+    );
+    handleFormula( getOrdersModel(), "Hypersonic",
+        // mql formula
+        "OR(IN([BT_CUSTOMERS.BC_CUSTOMERS_CUSTOMERNAME];\"BA\";\"\";\"CA\");IN([BT_CUSTOMERS.BC_CUSTOMERS_CUSTOMERNAME];\"ML\";\"FT\"))", //$NON-NLS-1$
+            // expected hypersonic sql
+        "( BT_CUSTOMERS.CUSTOMERNAME  IN ( 'BA' , '' , 'CA' )  OR ( BT_CUSTOMERS.CUSTOMERNAME  IS NULL)) "
+        + "OR  BT_CUSTOMERS.CUSTOMERNAME  IN ( 'ML' , 'FT' )" //$NON-NLS-1$
+    );
+    handleFormula( getOrdersModel(), "Hypersonic",
+        // mql formula
+        "OR(IN([BT_CUSTOMERS.BC_CUSTOMERS_CUSTOMERNAME];\"BA\";\"\";\"CA\");"
+        + "AND(IN([BT_CUSTOMERS.BC_CUSTOMERS_CUSTOMERNAME];\"ML\";\"FT\");IN([BT_CUSTOMERS.BC_CUSTOMERS_CUSTOMERNAME];\"AA\";\"\";\"CC\")))", //$NON-NLS-1$
+            // expected hypersonic sql
+        "( BT_CUSTOMERS.CUSTOMERNAME  IN ( 'BA' , '' , 'CA' )  OR ( BT_CUSTOMERS.CUSTOMERNAME  IS NULL)) "
+        + "OR ( BT_CUSTOMERS.CUSTOMERNAME  IN ( 'ML' , 'FT' )  AND ( BT_CUSTOMERS.CUSTOMERNAME  IN ( 'AA' , '' , 'CC' ) "
+        + " OR ( BT_CUSTOMERS.CUSTOMERNAME  IS NULL)))" //$NON-NLS-1$
+    );
+  }
 }
