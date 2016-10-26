@@ -40,6 +40,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -939,7 +941,7 @@ public class XmiParser {
         // need to add description for each locale
         LocalizedString lstr = (LocalizedString) val;
         for ( String locale : lstr.getLocales() ) {
-          createDescription( doc, lstr.getLocalizedString( locale ), key,
+          createDescription( doc, StringEscapeUtils.escapeXml( lstr.getLocalizedString( locale ) ), key,
               "LocString", locale, idGen, parentTag, idstr, allDescriptions ); //$NON-NLS-1$
         }
       } else if ( val instanceof TargetColumnType ) {
