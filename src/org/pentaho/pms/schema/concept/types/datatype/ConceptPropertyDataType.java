@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2016 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.pms.schema.concept.types.datatype;
 
@@ -58,7 +58,7 @@ public class ConceptPropertyDataType extends ConceptPropertyBase implements Clon
   public Object clone() throws CloneNotSupportedException {
     ConceptPropertyDataType rtn = (ConceptPropertyDataType) super.clone();
     if ( value != null ) {
-      rtn.value = new DataTypeSettings( value.getType() );
+      rtn.value = new DataTypeSettings( value.getType(), value.getLength(), value.getPrecision() );
     }
     return rtn;
   }
