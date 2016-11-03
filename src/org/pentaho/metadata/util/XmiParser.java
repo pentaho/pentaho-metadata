@@ -32,7 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -46,6 +45,7 @@ import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.util.StringUtil;
 import org.pentaho.di.core.xml.XMLHandler;
+import org.pentaho.di.core.xml.XMLParserFactoryProducer;
 import org.pentaho.metadata.messages.Messages;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
@@ -2158,16 +2158,13 @@ public class XmiParser {
   }
 
   /**
-   * Creates an instance of DocumentBuilderFactory class with enabled {@link XMLConstants#FEATURE_SECURE_PROCESSING} property.
-   * Enabling this feature prevents from some XXE attacks (e.g. XML bomb)
-   * See PPP-3506 for more details.
+   * Delegates creating of DocumentBuilderFactory to {@link XMLParserFactoryProducer#createSecureDocBuilderFactory}.
    *
    * @throws ParserConfigurationException if feature can't be enabled
    *
    */
   public static DocumentBuilderFactory createSecureDocBuilderFactory() throws ParserConfigurationException {
-    DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-    documentBuilderFactory.setFeature( XMLConstants.FEATURE_SECURE_PROCESSING, true );
+    DocumentBuilderFactory documentBuilderFactory = XMLParserFactoryProducer.createSecureDocBuilderFactory();
 
     return documentBuilderFactory;
   }
