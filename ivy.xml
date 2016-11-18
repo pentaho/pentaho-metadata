@@ -42,8 +42,8 @@
     <dependency org="xpp3" name="xpp3_min" rev="1.1.4c" transitive="false"/>
     <dependency org="com.thoughtworks.xstream" name="xstream" rev="${dependency.xstream.revision}" transitive="false"/>
     
-    <dependency org="org.apache.axis2" name="axis2-adb" rev="1.5" transitive="false"/>
-    <dependency org="org.apache.axis2" name="axis2-kernel" rev="1.5" transitive="false"/>
+    <dependency org="org.apache.axis2" name="axis2-adb" rev="1.7.3" transitive="false"/>
+    <dependency org="org.apache.axis2" name="axis2-kernel" rev="1.7.3" transitive="false"/>
     
     <!-- kettle dependencies -->
     <dependency org="org.javassist"        name="javassist"    rev="${dependency.javassist.revision}" conf="default->default" transitive="false"/>
