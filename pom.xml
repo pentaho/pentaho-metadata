@@ -20,6 +20,11 @@
     <url>scm:git:git@github.com:pentaho/${project.artifactId}.git</url>
   </scm>
   <properties>
+    <pentaho-connections.version>7.1-SNAPSHOT</pentaho-connections.version>
+    <pentaho-registry.version>7.1-SNAPSHOT</pentaho-registry.version>
+    <pentaho-kettle.version>7.1-SNAPSHOT</pentaho-kettle.version>
+    <libformula.version>7.1-SNAPSHOT</libformula.version>
+    <libbase.version>7.1-SNAPSHOT</libbase.version>
   </properties>
   <dependencies>
     <dependency>
@@ -282,17 +287,17 @@
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-connections</artifactId>
-      <version>7.1-SNAPSHOT</version>
+      <version>${pentaho-connections.version}</version>
     </dependency>
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-registry</artifactId>
-      <version>7.1-SNAPSHOT</version>
+      <version>${pentaho-registry.version}</version>
     </dependency>
     <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-engine</artifactId>
-      <version>7.1-SNAPSHOT</version>
+      <version>${pentaho-kettle.version}</version>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>
@@ -303,7 +308,7 @@
     <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-core</artifactId>
-      <version>7.1-SNAPSHOT</version>
+      <version>${pentaho-kettle.version}</version>
     </dependency>
     <dependency>
       <groupId>pentaho</groupId>
@@ -313,12 +318,12 @@
     <dependency>
       <groupId>pentaho-library</groupId>
       <artifactId>libformula</artifactId>
-      <version>7.1-SNAPSHOT</version>
+      <version>${libformula.version}</version>
     </dependency>
     <dependency>
       <groupId>pentaho-library</groupId>
       <artifactId>libbase</artifactId>
-      <version>7.1-SNAPSHOT</version>
+      <version>${libbase.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
