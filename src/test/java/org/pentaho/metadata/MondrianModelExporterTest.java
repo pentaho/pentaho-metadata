@@ -323,7 +323,7 @@ public class MondrianModelExporterTest {
       + "    </Hierarchy>\n" + "  </Dimension>\n" + "  <Cube name=\"Cube1\">\n"
       + "    <Table name=\"tableName\" schema=\"schemaName\" />\n"
       + "    <DimensionUsage name=\"Dim1\" source=\"Dim1\" foreignKey=\"pc2\"/>\n"
-      + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" formatString=\"&#x23;&#x23;&#x23;.&#x23;&#x23;\" visible=\"false\"/>\n"
+      + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" formatString=\"###.##\" visible=\"false\"/>\n"
       + "  </Cube>\n"
       + "</Schema>", data );
   }
@@ -518,7 +518,7 @@ public class MondrianModelExporterTest {
             + "      <Table name=\"table\" schema=\"schema\"/>\n"
             + "      <Level name=\"Lvl1\" uniqueMembers=\"false\" column=\"pc1\" type=\"Numeric\">\n"
             + "        <Annotations>\n"
-            + "          <Annotation name=\"description.en_US\">description with &#x3e; in there</Annotation>\n"
+            + "          <Annotation name=\"description.en_US\">description with &gt; in there</Annotation>\n"
             + "        </Annotations>\n"
             + "      </Level>\n"
             + "    </Hierarchy>\n"
@@ -526,7 +526,7 @@ public class MondrianModelExporterTest {
             + "  <Cube name=\"Cube1\">\n"
             + "    <Table name=\"table\" schema=\"schema\"/>\n"
             + "    <DimensionUsage name=\"Dim1\" source=\"Dim1\" foreignKey=\"pc2\"/>\n"
-            + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" description=\"it&#x27;s a measure\"/>\n"
+            + "    <Measure name=\"bc1\" column=\"pc1\" aggregator=\"sum\" description=\"it&#39;s a measure\"/>\n"
             + "  </Cube>\n" + "</Schema>", schema );
   }
 
