@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2017 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.pms;
 
@@ -25,6 +25,8 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.commons.io.IOUtils;
+import org.mockito.Mockito;
 import org.pentaho.di.core.database.DatabaseInterface;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.core.CWM;
@@ -42,6 +44,7 @@ import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
 import org.pentaho.pms.schema.SchemaMeta;
+import org.pentaho.pms.schema.RelationshipMeta;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.util.Const;
 
@@ -94,7 +97,7 @@ public class MQLQueryIT extends TestCase {
     try {
       cwm = CWM.getInstance( "Orders", true ); //$NON-NLS-1$
       assertNotNull( "CWM singleton instance is null", cwm );
-      cwm.importFromXMI( "samples/orders.xmi" ); //$NON-NLS-1$      
+      cwm.importFromXMI( "samples/orders.xmi" ); //$NON-NLS-1$
     } catch ( Exception e ) {
       e.printStackTrace();
       fail();
@@ -227,6 +230,56 @@ public class MQLQueryIT extends TestCase {
         "MAX([QUANTITYORDERED])", //$NON-NLS-1$
         "MAX( BT_ORDER_DETAILS.QUANTITYORDERED )" ); //$NON-NLS-1$
 
+  }
+
+  public void testComplexFormulaAndAggFunctions() {
+    String complexJoin = "" +
+            "AND([BT_ORDERS.BC_ORDERS_ORDERNUMBER]=\n" +
+            "[BT_ORDER_DETAILS.BC_ORDER_DETAILS_ORDERNUMBER])";
+    String expectedSql = "( BT_ORDERS.ORDERNUMBER  =  BT_ORDER_DETAILS.ORDERNUMBER )";
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "Oracle", "Native", "", "", "", "", "" );
+    BusinessTable btOrders = ordersModel.findBusinessTable( "BT_ORDERS" );
+    BusinessColumn bcOrderNumber = btOrders.findBusinessColumn( "BC_ORDERS_ORDERNUMBER" );
+
+    RelationshipMeta relation = Mockito.mock( RelationshipMeta.class );
+    Mockito.when( relation.getComplexJoin() ).thenReturn( complexJoin );
+    Mockito.when( relation.isComplex() ).thenReturn( true );
+
+    bcOrderNumber.setAggregationType( AggregationSettings.COUNT_DISTINCT );
+    try {
+      PMSFormula formula = new PMSFormula( ordersModel, databaseMeta, relation, null );
+      formula.parseAndValidate();
+      String sql = formula.generateSQL( "en_US" ); //$NON-NLS-1$
+      assertNotNull( sql );
+      sql = sql.trim();
+      assertEquals( expectedSql, sql );
+    } catch ( Exception e ) {
+      e.printStackTrace();
+      fail();
+    }
+  }
+
+  public void testFormulaAndAggFunctions() {
+    String complexJoin = "" +
+            "AND([BT_ORDERS.BC_ORDERS_ORDERNUMBER]=\n" +
+            "[BT_ORDER_DETAILS.BC_ORDER_DETAILS_ORDERNUMBER])";
+    String expectedSql = "( COUNT(DISTINCT BT_ORDERS.ORDERNUMBER)  =  BT_ORDER_DETAILS.ORDERNUMBER )";
+    DatabaseMeta databaseMeta = new DatabaseMeta( "", "Oracle", "Native", "", "", "", "", "" );
+    BusinessTable btOrders = ordersModel.findBusinessTable( "BT_ORDERS" );
+    BusinessColumn bcOrderNumber = btOrders.findBusinessColumn( "BC_ORDERS_ORDERNUMBER" );
+
+    bcOrderNumber.setAggregationType( AggregationSettings.COUNT_DISTINCT );
+    try {
+      PMSFormula formula = new PMSFormula( ordersModel, databaseMeta, complexJoin, null );
+      formula.parseAndValidate();
+      String sql = formula.generateSQL( "en_US" ); //$NON-NLS-1$
+      assertNotNull( sql );
+      sql = sql.trim();
+      assertEquals( expectedSql, sql );
+    } catch ( Exception e ) {
+      e.printStackTrace();
+      fail();
+    }
   }
 
   public void testNestedAndOrs() {
@@ -486,7 +539,7 @@ public class MQLQueryIT extends TestCase {
     );
     handleFormula(
         ordersModel,
-        "Hypersonic", //$NON-NLS-1$ 
+        "Hypersonic", //$NON-NLS-1$
         "CASE([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]=\"US\"; \"USA\";[BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY]=\"JAPAN\"; \"Japan\"; \"Canada\")" //$NON-NLS-1$
         ,
         "CASE  WHEN  BT_CUSTOMERS.COUNTRY  = 'US' THEN 'USA' WHEN  BT_CUSTOMERS.COUNTRY  = 'JAPAN' THEN 'Japan' ELSE 'Canada' END" //$NON-NLS-1$

@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation.  All rights reserved.
+ * Copyright (c) 2017 Pentaho Corporation.  All rights reserved.
  */
 package org.pentaho.pms.mql;
 
@@ -49,9 +49,9 @@ import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 
 /**
  * This class contains the SQL generation algorithm. The primary entrance method into this class is getSQL()
- * 
+ *
  * @author Will Gorman (wgorman@pentaho.org)
- * 
+ *
  * @deprecated as of metadata 3.0. please use org.pentaho.metadata.query.impl.sql.SqlGenerator
  */
 public class SQLGenerator {
@@ -82,7 +82,7 @@ public class SQLGenerator {
    * This method traverses the set of selections and renders those selections to the SQL string buffer. This method
    * determines the SQL column aliases. It also calls getBusinessColumnSQL() which renders each individual business
    * column in three different ways. Either as an MQL Formula, an aggregate function, or as a standard SQL column.
-   * 
+   *
    * @param sql
    *          sql string buffer
    * @param model
@@ -127,7 +127,7 @@ public class SQLGenerator {
    * This method first traverses the set of included business tables and renders those tables to the SQL string buffer.
    * Second, it traverses the list of joins and renders those in the WHERE clause. Finally, it traverses the constraints
    * and adds them to the where or having clauses.
-   * 
+   *
    * @param query
    *          sql query model
    * @param usedBusinessTables
@@ -244,7 +244,7 @@ public class SQLGenerator {
 
   /**
    * this method adds the group by statements to the query model
-   * 
+   *
    * @param query
    *          sql query model
    * @param model
@@ -272,7 +272,7 @@ public class SQLGenerator {
 
   /**
    * this method adds the order by statements to the query model
-   * 
+   *
    * @param query
    *          sql query model
    * @param model
@@ -325,14 +325,14 @@ public class SQLGenerator {
 
   /**
    * this method generates a unique alias name, limited to a specific length
-   * 
+   *
    * @param alias
    *          The name of the original alias to use
    * @param maxLength
    *          the maximum length the alias can be
    * @param existingAliases
    *          existing aliases
-   * 
+   *
    * @return
    */
   public static String generateUniqueAlias( String alias, int maxLength, Collection<String> existingAliases ) {
@@ -358,7 +358,7 @@ public class SQLGenerator {
 
   /**
    * returns the generated SQL and additional metadata
-   * 
+   *
    * @param selections
    *          The selected business columns
    * @param conditions
@@ -373,7 +373,7 @@ public class SQLGenerator {
    *          if true, disables default behavior of using DISTINCT when there are no groupings.
    * @param securityConstraint
    *          if provided, applies a global security constraint to the query
-   * 
+   *
    * @return a SQL query based on a column selection, conditions and a locale
    */
   public MappedQuery getSQL( BusinessModel model, List<Selection> selections, List<WhereCondition> conditions,
@@ -548,7 +548,7 @@ public class SQLGenerator {
    * See if the business column specified has a fact in it.<br>
    * We verify the formula specified in the column to see if it contains calculations with any aggregated column.<br>
    * We even do this nested down through the used business columns in the formula.<br>
-   * 
+   *
    * @param model
    *          the business model to reference
    * @param businessColumn
@@ -607,7 +607,7 @@ public class SQLGenerator {
    * new tables to the list until a path is discovered. If more than one path is available with a certain number of
    * tables, the algorithm uses the relative size values if specified to determine which path to traverse in the SQL
    * Join.
-   * 
+   *
    * @param model
    *          the business model
    * @param tables
@@ -699,7 +699,7 @@ public class SQLGenerator {
    * new tables to the list until a path is discovered. If more than one path is available with a certain number of
    * tables, the algorithm uses the relative size values if specified to determine which path to traverse in the SQL
    * Join.
-   * 
+   *
    * @param model
    *          the business model
    * @param tables
@@ -845,7 +845,14 @@ public class SQLGenerator {
   }
 
   public static SQLAndTables getBusinessColumnSQL( BusinessModel businessModel, Selection column,
-      Map<BusinessTable, String> tableAliases, DatabaseMeta databaseMeta, String locale ) {
+                                                   Map<BusinessTable, String> tableAliases, DatabaseMeta databaseMeta,
+                                                   String locale ) {
+    return getBusinessColumnSQL( businessModel, column, tableAliases, databaseMeta, locale, false );
+  }
+
+  public static SQLAndTables getBusinessColumnSQL( BusinessModel businessModel, Selection column,
+                                                   Map<BusinessTable, String> tableAliases, DatabaseMeta databaseMeta,
+                                                   String locale, boolean isComplexJoin ) {
     if ( column.getBusinessColumn().isExact() ) {
       // convert to sql using libformula subsystem
       try {
@@ -893,8 +900,9 @@ public class SQLGenerator {
       // TODO: WPG: instead of using formula, shouldn't we use the physical column's name?
       tableColumn += databaseMeta.quoteField( column.getBusinessColumn().getFormula() );
 
-      if ( column.hasAggregate() ) // For the having clause, for example: HAVING sum(turnover) > 100
-      {
+      // complex join allowed only in where clause
+      if ( column.hasAggregate() && !isComplexJoin ) {
+        // For the having clause, for example: HAVING sum(turnover) > 100
         return new SQLAndTables( getFunctionExpression( column, tableColumn, databaseMeta ), column.getBusinessColumn()
             .getBusinessTable(), column );
       } else {
@@ -960,7 +968,7 @@ public class SQLGenerator {
     if ( relation.isComplex() ) {
       try {
         // parse join as MQL
-        PMSFormula formula = new PMSFormula( businessModel, databaseMeta, relation.getComplexJoin(), tableAliases );
+        PMSFormula formula = new PMSFormula( businessModel, databaseMeta, relation, tableAliases );
         formula.parseAndValidate();
         join = formula.generateSQL( locale );
       } catch ( PentahoMetadataException e ) {
