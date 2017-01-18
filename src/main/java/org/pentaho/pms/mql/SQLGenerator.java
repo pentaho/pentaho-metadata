@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2016 Pentaho Corporation.  All rights reserved.
+ * Copyright (c) 2017 Pentaho Corporation.  All rights reserved.
  */
 package org.pentaho.pms.mql;
 
@@ -809,6 +809,12 @@ public class SQLGenerator {
   public static SQLAndTables getBusinessColumnSQL( BusinessModel businessModel, Selection column,
                                                    Map<BusinessTable, String> tableAliases, DatabaseMeta databaseMeta,
                                                    String locale ) {
+    return getBusinessColumnSQL( businessModel, column, tableAliases, databaseMeta, locale, false );
+  }
+
+  public static SQLAndTables getBusinessColumnSQL( BusinessModel businessModel, Selection column,
+                                                   Map<BusinessTable, String> tableAliases, DatabaseMeta databaseMeta,
+                                                   String locale, boolean isComplexJoin ) {
     if ( column.getBusinessColumn().isExact() ) {
       // convert to sql using libformula subsystem
       try {
@@ -857,7 +863,8 @@ public class SQLGenerator {
       // TODO: WPG: instead of using formula, shouldn't we use the physical column's name?
       tableColumn += databaseMeta.quoteField( column.getBusinessColumn().getFormula() );
 
-      if ( column.hasAggregate() ) {
+      // complex join allowed only in where clause
+      if ( column.hasAggregate() && !isComplexJoin ) {
         // For the having clause, for example: HAVING sum(turnover) > 100
         return new SQLAndTables( getFunctionExpression( column, tableColumn, databaseMeta ), column.getBusinessColumn()
           .getBusinessTable(), column );
@@ -926,7 +933,7 @@ public class SQLGenerator {
     if ( relation.isComplex() ) {
       try {
         // parse join as MQL
-        PMSFormula formula = new PMSFormula( businessModel, databaseMeta, relation.getComplexJoin(), tableAliases );
+        PMSFormula formula = new PMSFormula( businessModel, databaseMeta, relation, tableAliases );
         formula.parseAndValidate();
         join = formula.generateSQL( locale );
       } catch ( PentahoMetadataException e ) {
