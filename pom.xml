@@ -463,4 +463,43 @@
       </exclusions>
     </dependency>
   </dependencies>
+  <profiles>
+    <profile>
+      <id>integration-tests</id>
+      <activation>
+        <property>
+          <name>runITs</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>integration-test</id>
+                <goals>
+                  <goal>integration-test</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>verify</id>
+                <goals>
+                  <goal>verify</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <forkCount>1</forkCount>
+              <reuseForks>false</reuseForks>
+              <argLine>-Xmx512m -Djava.awt.headless=true</argLine>
+              <testFailureIgnore>true</testFailureIgnore>
+              <testClassesDirectory>${project.build.directory}/it-classes</testClassesDirectory>
+              <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>         
 </project>
