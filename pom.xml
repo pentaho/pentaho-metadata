@@ -51,7 +51,7 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
-      <version>2.1</version>
+      <version>2.2</version>
     </dependency>
     <dependency>
       <groupId>commons-logging</groupId>
@@ -248,6 +248,12 @@
       <groupId>org.scannotation</groupId>
       <artifactId>scannotation</artifactId>
       <version>1.0.2</version>
+      <exclusions>
+        <exclusion>
+          <groupId>javassist</groupId>
+          <artifactId>javassist</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>jug-lgpl</groupId>
