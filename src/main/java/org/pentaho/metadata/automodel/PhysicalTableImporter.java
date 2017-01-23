@@ -129,6 +129,11 @@ public class PhysicalTableImporter {
     DataType dataType = getDataType( v );
     physicalColumn.setDataType( dataType );
 
+    physicalColumn.setProperty( "mask", v.getConversionMask() );
+    physicalColumn.setProperty( "decimalSymbol", v.getDecimalSymbol() );
+    physicalColumn.setProperty( "groupingSymbol", v.getGroupingSymbol() );
+    physicalColumn.setProperty( "currencySymbol", v.getCurrencySymbol() );
+
     return physicalColumn;
   }
 
