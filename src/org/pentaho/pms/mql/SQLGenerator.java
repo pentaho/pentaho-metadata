@@ -405,8 +405,8 @@ public class SQLGenerator {
     List<BusinessTable> usedBusinessTables = path.getUsedTables();
     if ( path.size() == 0 ) {
       // just a selection from 1 table: pick any column...
-      if ( selections.size() > 0 ) // Otherwise, why bother, right?
-      {
+      // Otherwise, why bother, right?
+      if ( selections.size() > 0 ) {
         usedBusinessTables.add( selections.get( 0 ).getBusinessColumn().getBusinessTable() );
       }
     }
@@ -927,9 +927,11 @@ public class SQLGenerator {
 
     switch ( column.getActiveAggregationType().getType() ) {
       case AggregationSettings.TYPE_AGGREGATION_COUNT_DISTINCT:
-        expression += "(DISTINCT " + tableColumn + ")";break; //$NON-NLS-1$ //$NON-NLS-2$
+        expression += "(DISTINCT " + tableColumn + ")";
+        break; //$NON-NLS-1$ //$NON-NLS-2$
       default:
-        expression += "(" + tableColumn + ")";break; //$NON-NLS-1$ //$NON-NLS-2$
+        expression += "(" + tableColumn + ")";
+        break; //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     return expression;

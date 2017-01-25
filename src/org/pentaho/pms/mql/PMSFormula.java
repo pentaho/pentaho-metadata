@@ -390,7 +390,7 @@ public class PMSFormula implements FormulaTraversalInterface {
         throw new PentahoMetadataException(
             Messages
                 .getErrorString(
-                    "PMSFormula.ERROR_0010_FIELDNAME_ERROR_COLUMN_NOT_FOUND", fieldName, fieldName, toString( getBusinessTableIDs() ) ) );//$NON-NLS-1$
+                    "PMSFormula.ERROR_0010_FIELDNAME_ERROR_COLUMN_NOT_FOUND", fieldName, fieldName, toString( getBusinessTableIDs() ) ) ); //$NON-NLS-1$
 
       } else {
 
