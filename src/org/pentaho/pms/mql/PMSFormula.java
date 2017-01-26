@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2016 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2017 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.pms.mql;
 
@@ -38,6 +38,7 @@ import org.pentaho.pms.schema.BusinessCategory;
 import org.pentaho.pms.schema.BusinessColumn;
 import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.BusinessTable;
+import org.pentaho.pms.schema.RelationshipMeta;
 import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.reporting.libraries.formula.EvaluationException;
 import org.pentaho.reporting.libraries.formula.Formula;
@@ -113,6 +114,9 @@ public class PMSFormula implements FormulaTraversalInterface {
 
   private boolean hasAggregateFunction = false;
 
+  // complex join appear only in where clause of the sql statement
+  private boolean isComplexJoin = false;
+
   /** the string to parse */
   private String formulaString;
 
@@ -153,6 +157,12 @@ public class PMSFormula implements FormulaTraversalInterface {
     if ( formulaString == null ) {
       throw new PentahoMetadataException( Messages.getErrorString( "PMSFormula.ERROR_0003_NO_FORMULA_STRING_PROVIDED" ) ); //$NON-NLS-1$
     }
+  }
+
+  public PMSFormula( BusinessModel model, DatabaseMeta databaseMeta, RelationshipMeta relation,
+                            Map<BusinessTable, String> tableAliases ) throws PentahoMetadataException {
+    this( model, databaseMeta, relation.getComplexJoin(), tableAliases );
+    this.isComplexJoin = relation.isComplex();
   }
 
   /**
@@ -792,7 +802,7 @@ public class PMSFormula implements FormulaTraversalInterface {
     } else {
       // render the column sql
       sb.append( " " ); //$NON-NLS-1$
-      SQLAndTables sqlAndTables = SQLGenerator.getBusinessColumnSQL( model, column, tableAliases, databaseMeta, locale );
+      SQLAndTables sqlAndTables = SQLGenerator.getBusinessColumnSQL( model, column, tableAliases, databaseMeta, locale, isComplexJoin );
       sb.append( sqlAndTables.getSql() );
       sb.append( " " ); //$NON-NLS-1$
 
