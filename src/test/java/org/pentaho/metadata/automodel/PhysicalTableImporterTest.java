@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2016 Pentaho Corporation.  All rights reserved.
+ * Copyright (c) 2017 Pentaho Corporation.  All rights reserved.
  */
 package org.pentaho.metadata.automodel;
 
@@ -24,6 +24,8 @@ import org.pentaho.di.core.row.ValueMetaInterface;
 import org.pentaho.di.core.row.value.ValueMetaInteger;
 import org.pentaho.di.core.row.value.ValueMetaNumber;
 import org.pentaho.di.core.row.value.ValueMetaString;
+import org.pentaho.di.core.row.value.ValueMetaTimestamp;
+import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.model.IPhysicalColumn;
 import org.pentaho.metadata.model.SqlPhysicalTable;
 
@@ -68,6 +70,29 @@ public class PhysicalTableImporterTest {
     assertContainsColumn( "productcode", physicalColumns );
     assertContainsColumn( "status", physicalColumns );
 
+  }
+
+  @Test
+  public void testGetDataTypeTimestamp() throws Exception {
+    final Database database = mock( Database.class );
+    RowMeta rowMeta = new RowMeta();
+    rowMeta.addValueMeta( new ValueMetaTimestamp( "ordertime" ) );
+    DatabaseMeta databaseMeta = mock( DatabaseMeta.class );
+    when( database.getDatabaseMeta() ).thenReturn( databaseMeta );
+    when( databaseMeta.quoteField( "aSchema" ) ).thenReturn( "aSchema" );
+    when( databaseMeta.quoteField( "aTable" ) ).thenReturn( "aTable" );
+    when( databaseMeta.getSchemaTableCombination( "aSchema", "aTable" ) ).thenReturn( "aSchema.aTable" );
+    when( database.getTableFields( "aSchema.aTable" ) ).thenReturn( rowMeta );
+
+    SqlPhysicalTable physicalTable =
+      importTableDefinition( database, "aSchema", "aTable", "klingon" );
+    List<IPhysicalColumn> physicalColumns = physicalTable.getPhysicalColumns();
+
+    assertEquals( 1, physicalColumns.size() );
+
+    IPhysicalColumn column = physicalColumns.get( 0 );
+    DataType dt = ( DataType ) column.getProperty( "datatype" );
+    assertEquals( "Date", dt.getName() );
   }
 
   private void assertContainsColumn( final String columnName, final List<IPhysicalColumn> physicalColumns ) {
