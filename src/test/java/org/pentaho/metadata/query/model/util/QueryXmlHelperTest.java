@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright 2005 - 2016 Pentaho Corporation.  All rights reserved.
+ * Copyright 2005 - 2017 Pentaho Corporation.  All rights reserved.
  */
 
 package org.pentaho.metadata.query.model.util;
@@ -219,6 +219,22 @@ public class QueryXmlHelperTest {
     xml = helper.toXML( query );
     xml = xml.replaceAll( "<limit>\\s*123\\s*</limit>", "<limit>abc</limit>" );
 
+    try {
+      query = helper.fromXML( metadataDomainRepository, xml );
+      fail();
+    } catch ( PentahoMetadataException e ) {
+      // expected
+    }
+  }
+
+  @Test
+  public void testFromXML() throws Exception {
+    Domain domain = TestHelper.getBasicDomain();
+    LogicalModel model = TestHelper.buildDefaultModel();
+    domain.addLogicalModel( model );
+    model.setId( "MODEL2" );
+    Query query = new Query( domain, model );
+    String xml = helper.toXML( query );
     try {
       query = helper.fromXML( metadataDomainRepository, xml );
       fail();
