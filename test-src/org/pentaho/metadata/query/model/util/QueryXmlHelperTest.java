@@ -12,15 +12,12 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright 2005 - 2010 Pentaho Corporation.  All rights reserved.
+ * Copyright 2005 - 2017 Pentaho Corporation.  All rights reserved.
  */
 
 package org.pentaho.metadata.query.model.util;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
+import junit.framework.Assert;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -88,7 +85,7 @@ public class QueryXmlHelperTest {
     paramElement.setAttribute( "defaultValue", "a|b" ); //$NON-NLS-1$ //$NON-NLS-2$
 
     helper.addParameterFromXmlNode( query, paramElement );
-    assertEquals( 2, ( (Object[]) query.getParameters().get( 0 ).getDefaultValue() ).length );
+    Assert.assertEquals( 2, ( (Object[]) query.getParameters().get( 0 ).getDefaultValue() ).length );
   }
 
   @Test
@@ -100,59 +97,59 @@ public class QueryXmlHelperTest {
             + "<column>LC_Test_Column1</column>" + "<aggregation>NONE</aggregation>"
             + "</selection><selection>" + "<table>Test</table>" + "<column>LC_Test_Column2</column>"
             + "<aggregation>NONE</aggregation>" + "</selection></selections>" + "<constraints></constraints>"
-            + "<orders></orders>" +"</mql>";
+            + "<orders></orders>" + "</mql>";
     Query q = helper.fromXML( metadataDomainRepository, mql );
 
-    assertEquals( 1, q.getSelections().size() );
-    assertEquals( "LC_Test_Column1", q.getSelections().get( 0 ).getLogicalColumn().getId() );
+    Assert.assertEquals( 1, q.getSelections().size() );
+    Assert.assertEquals( "LC_Test_Column1", q.getSelections().get( 0 ).getLogicalColumn().getId() );
   }
 
   @Test
   public void testParseMutivaluedDefault_String() throws Exception {
     Object values = helper.parseDefaultValue( "a|b|c|d|e", DataType.STRING );
-    assertTrue( values instanceof String[] );
+    Assert.assertTrue( values instanceof String[] );
     String[] stringValues = (String[]) values;
-    assertEquals( 5, stringValues.length );
-    assertEquals( "a", stringValues[0] );
-    assertEquals( "b", stringValues[1] );
-    assertEquals( "c", stringValues[2] );
-    assertEquals( "d", stringValues[3] );
-    assertEquals( "e", stringValues[4] );
+    Assert.assertEquals( 5, stringValues.length );
+    Assert.assertEquals( "a", stringValues[0] );
+    Assert.assertEquals( "b", stringValues[1] );
+    Assert.assertEquals( "c", stringValues[2] );
+    Assert.assertEquals( "d", stringValues[3] );
+    Assert.assertEquals( "e", stringValues[4] );
 
     values = helper.parseDefaultValue( "a", DataType.STRING );
-    assertTrue( values instanceof String );
-    assertEquals( "a", values );
+    Assert.assertTrue( values instanceof String );
+    Assert.assertEquals( "a", values );
 
     // try "a|b"|"c|d"
     values = helper.parseDefaultValue( "\"a|b\"|\"c|d\"", DataType.STRING );
-    assertTrue( values instanceof String[] );
+    Assert.assertTrue( values instanceof String[] );
     stringValues = (String[]) values;
-    assertEquals( 2, stringValues.length );
-    assertEquals( "a|b", stringValues[0] );
-    assertEquals( "c|d", stringValues[1] );
+    Assert.assertEquals( 2, stringValues.length );
+    Assert.assertEquals( "a|b", stringValues[0] );
+    Assert.assertEquals( "c|d", stringValues[1] );
   }
 
   @Test
   public void testParseMultivaluedDefault_Numeric() throws Exception {
     Object values = helper.parseDefaultValue( "1|2|3|4|5", DataType.NUMERIC );
-    assertTrue( values instanceof Double[] );
+    Assert.assertTrue( values instanceof Double[] );
     Double[] numericValues = (Double[]) values;
-    assertEquals( 5, numericValues.length );
-    assertEquals( 1D, numericValues[0] );
-    assertEquals( 2D, numericValues[1] );
-    assertEquals( 3D, numericValues[2] );
-    assertEquals( 4D, numericValues[3] );
-    assertEquals( 5D, numericValues[4] );
+    Assert.assertEquals( 5, numericValues.length );
+    Assert.assertEquals( 1D, numericValues[0] );
+    Assert.assertEquals( 2D, numericValues[1] );
+    Assert.assertEquals( 3D, numericValues[2] );
+    Assert.assertEquals( 4D, numericValues[3] );
+    Assert.assertEquals( 5D, numericValues[4] );
   }
 
   @Test
   public void testParseMultivaluedDefault_Boolean() throws Exception {
     Object values = helper.parseDefaultValue( "true|false", DataType.BOOLEAN );
-    assertTrue( values instanceof Boolean[] );
+    Assert.assertTrue( values instanceof Boolean[] );
     Boolean[] boolValues = (Boolean[]) values;
-    assertEquals( 2, boolValues.length );
-    assertTrue( boolValues[0] );
-    assertFalse( boolValues[1] );
+    Assert.assertEquals( 2, boolValues.length );
+    Assert.assertTrue( boolValues[0] );
+    Assert.assertFalse( boolValues[1] );
   }
 
   @Test
@@ -165,27 +162,27 @@ public class QueryXmlHelperTest {
     // to xml, no limit
     xml = helper.toXML( query );
     limitString = getLimitFromXML( xml );
-    assertTrue( Integer.parseInt( limitString ) < 0 );
+    Assert.assertTrue( Integer.parseInt( limitString ) < 0 );
 
     // from xml, no limit
     query = helper.fromXML( metadataDomainRepository, xml );
-    assertTrue( query.getLimit() < 0 );
+    Assert.assertTrue( query.getLimit() < 0 );
 
     // to xml, limit
     query.setLimit( LIMIT );
     xml = helper.toXML( query );
     limitString = getLimitFromXML( xml );
-    assertEquals( String.valueOf( LIMIT ), limitString );
+    Assert.assertEquals( String.valueOf( LIMIT ), limitString );
 
     // from xml, limit
     query = helper.fromXML( metadataDomainRepository, xml );
-    assertEquals( LIMIT, query.getLimit() );
+    Assert.assertEquals( LIMIT, query.getLimit() );
 
     // legacy (no limit element in xml)
     xml = helper.toXML( query );
     xml = xml.replaceAll( "<limit>\\s*\\w*\\s*</limit>", "" );
     query = helper.fromXML( metadataDomainRepository, xml );
-    assertTrue( query.getLimit() < 0 );
+    Assert.assertTrue( query.getLimit() < 0 );
 
     // invalid limit in xml
     query.setLimit( 123 );
@@ -194,7 +191,23 @@ public class QueryXmlHelperTest {
 
     try {
       query = helper.fromXML( metadataDomainRepository, xml );
-      fail();
+      Assert.fail();
+    } catch ( PentahoMetadataException e ) {
+      // expected
+    }
+  }
+
+  @Test
+  public void testFromXML() throws Exception {
+    Domain domain = TestHelper.getBasicDomain();
+    LogicalModel model = TestHelper.buildDefaultModel();
+    domain.addLogicalModel( model );
+    model.setId( "MODEL2" );
+    Query query = new Query( domain, model );
+    String xml = helper.toXML( query );
+    try {
+      query = helper.fromXML( metadataDomainRepository, xml );
+      Assert.fail();
     } catch ( PentahoMetadataException e ) {
       // expected
     }

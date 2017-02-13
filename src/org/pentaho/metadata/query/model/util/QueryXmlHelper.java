@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2009 - 2017 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.metadata.query.model.util;
 
@@ -345,7 +345,19 @@ public class QueryXmlHelper {
     String domainId = getElementText( doc, "domain_id" ); //$NON-NLS-1$
     Domain domain = repo.getDomain( domainId );
     if ( domain == null ) {
+      if ( domainId != null && !domainId.contains( ".xmi" ) ) {
+        domain = repo.getDomain( domainId + ".xmi" );
+      }
+      if ( domain != null ) {
+        logger.warn( String.format( "Metadata model [%1$s] was requested, but the model doesn't exist. "
+            + "Substituting [%1$s.xmi] instead as a legacy fallback. "
+            + "Please change your reports to reference %1$s.xmi instead", domainId ) );
+      }
+    }
+    if ( domain == null ) {
       // need to throw an error
+      logger.error( String.format( "Metadata model [%1$s] doesn't exist. "
+          + "Please check the existence of the model", domainId ) );
       throw new PentahoMetadataException( Messages.getErrorString(
           "QueryXmlHelper.ERROR_0009_DOMAIN_INSTANCE_NULL", domainId ) ); //$NON-NLS-1$
     }
