@@ -30,9 +30,9 @@ import org.pentaho.metadata.model.IPhysicalColumn;
 import org.pentaho.metadata.model.SqlPhysicalTable;
 
 import java.util.List;
+import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.pentaho.metadata.automodel.PhysicalTableImporter.importTableDefinition;
@@ -66,10 +66,18 @@ public class PhysicalTableImporterTest {
       importTableDefinition( database, "aSchema", "aTable", "klingon", importStrategy );
     List<IPhysicalColumn> physicalColumns = physicalTable.getPhysicalColumns();
     assertEquals( 3, physicalColumns.size() );
-    assertContainsColumn( "quantityordered", physicalColumns );
-    assertContainsColumn( "productcode", physicalColumns );
-    assertContainsColumn( "status", physicalColumns );
 
+    // Depending on the class the formatting values are set or unset. If NULL formatting values were set on the
+    // property map, this would cause an XmiParsing Error. Testing that values that are NULL are not set in the
+    // property map.
+    IPhysicalColumn column = assertContainsColumn( "quantityordered", physicalColumns );
+    assertNotNullFormattingValues( column.getProperties() );
+
+    column = assertContainsColumn( "productcode", physicalColumns );
+    assertNotNullFormattingValues( column.getProperties() );
+
+    column = assertContainsColumn( "status", physicalColumns );
+    assertNotNullFormattingValues( column.getProperties() );
   }
 
   @Test
@@ -95,12 +103,27 @@ public class PhysicalTableImporterTest {
     assertEquals( "Date", dt.getName() );
   }
 
-  private void assertContainsColumn( final String columnName, final List<IPhysicalColumn> physicalColumns ) {
+  private IPhysicalColumn assertContainsColumn( final String columnName, final List<IPhysicalColumn> physicalColumns ) {
     for ( IPhysicalColumn column : physicalColumns ) {
       if ( column.getId().equals( columnName ) ) {
-        return;
+        return column;
       }
     }
+
     fail( "column " + columnName + " not found" );
+    return null;
+  }
+
+  private void assertNotNullFormattingValues( Map properties ) {
+    assertNotNullPropertyValue( "mask", properties );
+    assertNotNullPropertyValue( "decimalSymbol", properties );
+    assertNotNullPropertyValue( "groupingSymbol", properties );
+    assertNotNullPropertyValue( "currencySymbol", properties );
+  }
+
+  private void assertNotNullPropertyValue( String key, Map properties ) {
+    if( properties.containsKey( key ) ) {
+      assertNotNull( properties.get( key ) );
+    }
   }
 }
