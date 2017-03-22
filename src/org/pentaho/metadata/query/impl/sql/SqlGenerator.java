@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2009-2017 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.metadata.query.impl.sql;
 
@@ -208,7 +208,7 @@ public class SqlGenerator {
 
       String tableName = (String) businessTable.getProperty( SqlPhysicalTable.TARGET_TABLE );
       TargetTableType type = (TargetTableType) businessTable.getProperty( SqlPhysicalTable.TARGET_TABLE_TYPE );
-      if ( type == TargetTableType.INLINE_SQL ) {
+      if ( type == TargetTableType.INLINE_SQL || tableName.contains( "," ) ) {
         tableName = "(" + tableName + ")"; //$NON-NLS-1$ //$NON-NLS-2$
       } else {
         tableName = databaseMeta.getQuotedSchemaTableCombination( schemaName, tableName );
