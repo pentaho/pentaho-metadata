@@ -115,10 +115,10 @@ public class PhysicalTableImporterTest {
   }
 
   private void assertNotNullFormattingValues( Map properties ) {
-    assertNotNullPropertyValue( "mask", properties );
-    assertNotNullPropertyValue( "decimalSymbol", properties );
-    assertNotNullPropertyValue( "groupingSymbol", properties );
-    assertNotNullPropertyValue( "currencySymbol", properties );
+    assertNotNullPropertyValue( "source_mask", properties );
+    assertNotNullPropertyValue( "source_decimalSymbol", properties );
+    assertNotNullPropertyValue( "source_groupingSymbol", properties );
+    assertNotNullPropertyValue( "source_currencySymbol", properties );
   }
 
   private void assertNotNullPropertyValue( String key, Map properties ) {

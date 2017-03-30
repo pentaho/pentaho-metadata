@@ -130,19 +130,19 @@ public class PhysicalTableImporter {
     physicalColumn.setDataType( dataType );
 
     if ( null != v.getConversionMask() ) {
-      physicalColumn.setProperty( "mask", v.getConversionMask() );
+      physicalColumn.setProperty( "source_mask", v.getConversionMask() );
     }
 
     if ( null != v.getDecimalSymbol() ) {
-      physicalColumn.setProperty( "decimalSymbol", v.getDecimalSymbol() );
+      physicalColumn.setProperty( "source_decimalSymbol", v.getDecimalSymbol() );
     }
 
     if ( null != v.getGroupingSymbol() ) {
-      physicalColumn.setProperty( "groupingSymbol", v.getGroupingSymbol() );
+      physicalColumn.setProperty( "source_groupingSymbol", v.getGroupingSymbol() );
     }
 
     if ( null != v.getCurrencySymbol() ) {
-      physicalColumn.setProperty( "currencySymbol", v.getCurrencySymbol() );
+      physicalColumn.setProperty( "source_currencySymbol", v.getCurrencySymbol() );
     }
 
     return physicalColumn;
