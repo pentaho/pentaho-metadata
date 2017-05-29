@@ -13,7 +13,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2016 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2017 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.pms.factory;
 
@@ -1752,7 +1752,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
           throw new RuntimeException( "Unrecognized concept property type: " + property.getType() );
         }
       } else {
-        logger.error( Messages.getString( "CwmSchemaFactory.ERROR_PROPERTY_VALUE_IS_NULL", property.getType()
+        logger.info( Messages.getString( "CwmSchemaFactory.ERROR_PROPERTY_VALUE_IS_NULL", property.getType()
           .toString() ) );
       }
     }
