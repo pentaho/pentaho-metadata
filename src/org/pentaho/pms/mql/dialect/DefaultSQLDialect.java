@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2017 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.pms.mql.dialect;
 
@@ -214,6 +214,18 @@ public class DefaultSQLDialect implements SQLDialectInterface {
               Object val = formula.getParameterValue( (ContextLookup) f.getChildValues()[1] );
               multiVal = ( val instanceof Object[] ) && ( ( (Object[]) val ).length > 1 );
             }
+            // If f.getChildValues()[1] is DATEVALUE and it's value is the array, then we need to go deeper
+            // in order to find out is this a multivalued or not. See PIR-1340.
+            if ( f.getChildValues()[1] instanceof FormulaFunction ) {
+              if ( ( (FormulaFunction) f.getChildValues()[1] ).getFunctionName().equals( "DATEVALUE" ) ) {
+                if ( f.getChildValues()[1].getChildValues() != null
+                      && f.getChildValues()[1].getChildValues()[0] != null
+                      && f.getChildValues()[1].getChildValues()[0] instanceof ContextLookup ) {
+                  Object val = formula.getParameterValue( (ContextLookup) f.getChildValues()[1].getChildValues()[0] );
+                  multiVal = multiVal || ( ( val instanceof Object[] ) && ( ( (Object[]) val ).length > 1 ) );
+                }
+              }
+            }
             if ( multiVal ) {
               formula.generateSQL( f, f.getChildValues()[0], sb, locale );
               sb.append( " IN ( " ); //$NON-NLS-1$
@@ -334,62 +346,65 @@ public class DefaultSQLDialect implements SQLDialectInterface {
             } else if ( f.getChildValues()[0] instanceof ContextLookup ) {
               dateValue = formula.getParameterValue( (ContextLookup) f.getChildValues()[0] );
             }
-
-            int year = 0;
-            int month = 0;
-            int day = 0;
-            int hour = 0;
-            int minute = 0;
-            int second = 0;
-            int milli = 0;
-            boolean useTime = false;
-            if ( dateValue instanceof String ) {
-              Pattern p = Pattern.compile( "(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d) (\\d\\d):(\\d\\d):(\\d\\d)\\.(\\d*)" ); //$NON-NLS-1$
-              Matcher m = p.matcher( (String) dateValue );
-              if ( m.matches() ) {
-                useTime = true;
-                hour = Integer.parseInt( m.group( 4 ) );
-                minute = Integer.parseInt( m.group( 5 ) );
-                second = Integer.parseInt( m.group( 6 ) );
-                milli = Integer.parseInt( m.group( 7 ) );
-              } else {
-                p = Pattern.compile( "(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)" ); //$NON-NLS-1$
-                m = p.matcher( (String) dateValue );
-                if ( !m.matches() ) {
-                  throw new PentahoMetadataException( Messages.getErrorString(
-                      "DefaultSQLDialect.ERROR_0001_DATE_STRING_SYNTAX_INVALID", (String) dateValue ) ); //$NON-NLS-1$
+            if ( dateValue instanceof Object[] ) {
+                formula.generateSQL( f, f.getChildValues()[0], sb, locale );
+            } else {
+              int year = 0;
+              int month = 0;
+              int day = 0;
+              int hour = 0;
+              int minute = 0;
+              int second = 0;
+              int milli = 0;
+              boolean useTime = false;
+              if ( dateValue instanceof String ) {
+                Pattern p = Pattern.compile( "(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d) (\\d\\d):(\\d\\d):(\\d\\d)\\.(\\d*)" ); //$NON-NLS-1$
+                Matcher m = p.matcher( (String) dateValue );
+                if ( m.matches() ) {
+                  useTime = true;
+                  hour = Integer.parseInt( m.group( 4 ) );
+                  minute = Integer.parseInt( m.group( 5 ) );
+                  second = Integer.parseInt( m.group( 6 ) );
+                  milli = Integer.parseInt( m.group( 7 ) );
+                } else {
+                  p = Pattern.compile( "(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)" ); //$NON-NLS-1$
+                  m = p.matcher( (String) dateValue );
+                  if ( !m.matches() ) {
+                    throw new PentahoMetadataException( Messages.getErrorString(
+                        "DefaultSQLDialect.ERROR_0001_DATE_STRING_SYNTAX_INVALID", (String) dateValue ) ); //$NON-NLS-1$
+                  }
                 }
+                year = Integer.parseInt( m.group( 1 ) );
+                month = Integer.parseInt( m.group( 2 ) );
+                day = Integer.parseInt( m.group( 3 ) );
+              } else if ( dateValue instanceof java.sql.Timestamp ) {
+                  useTime = true;
+                  Calendar c = Calendar.getInstance();
+                  c.setTime( (java.sql.Timestamp) dateValue );
+                  year = c.get( Calendar.YEAR );
+                  month = c.get( Calendar.MONTH ) + 1;
+                  day = c.get( Calendar.DAY_OF_MONTH );
+                  hour = c.get( Calendar.HOUR_OF_DAY );
+                  minute = c.get( Calendar.MINUTE );
+                  second = c.get( Calendar.SECOND );
+                  milli = c.get( Calendar.MILLISECOND );
+              } else if ( dateValue instanceof java.util.Date ) {
+                  Calendar c = Calendar.getInstance();
+                  c.setTime( (java.util.Date) dateValue );
+                  year = c.get( Calendar.YEAR );
+                  month = c.get( Calendar.MONTH ) + 1;
+                  day = c.get( Calendar.DAY_OF_MONTH );
+              } else {
+                // The dateValue could be null here or some other data type we're not expecting
+                String dateValueType = dateValue == null ? "null" : dateValue.getClass().getName(); //$NON-NLS-1$
+                throw new PentahoMetadataException( Messages.getErrorString(
+                    "DefaultSQLDialect.ERROR_0003_DATE_PARAMETER_UNRECOGNIZED", dateValueType ) ); //$NON-NLS-1$
               }
-              year = Integer.parseInt( m.group( 1 ) );
-              month = Integer.parseInt( m.group( 2 ) );
-              day = Integer.parseInt( m.group( 3 ) );
-            } else if ( dateValue instanceof java.sql.Timestamp ) {
-              useTime = true;
-              Calendar c = Calendar.getInstance();
-              c.setTime( (java.sql.Timestamp) dateValue );
-              year = c.get( Calendar.YEAR );
-              month = c.get( Calendar.MONTH ) + 1;
-              day = c.get( Calendar.DAY_OF_MONTH );
-              hour = c.get( Calendar.HOUR_OF_DAY );
-              minute = c.get( Calendar.MINUTE );
-              second = c.get( Calendar.SECOND );
-              milli = c.get( Calendar.MILLISECOND );
-            } else if ( dateValue instanceof java.util.Date ) {
-              Calendar c = Calendar.getInstance();
-              c.setTime( (java.util.Date) dateValue );
-              year = c.get( Calendar.YEAR );
-              month = c.get( Calendar.MONTH ) + 1;
-              day = c.get( Calendar.DAY_OF_MONTH );
-            } else {
-              // The dateValue could be null here or some other data type we're not expecting
-              String dateValueType = dateValue == null ? "null" : dateValue.getClass().getName(); //$NON-NLS-1$
-              throw new PentahoMetadataException( Messages.getErrorString(
-                  "DefaultSQLDialect.ERROR_0003_DATE_PARAMETER_UNRECOGNIZED", dateValueType ) ); //$NON-NLS-1$
-            }
-            if ( useTime ) {
-              sb.append( getDateSQL( year, month, day, hour, minute, second, milli ) );
-            } else {
-              sb.append( getDateSQL( year, month, day ) );
+              if ( useTime ) {
+                sb.append( getDateSQL( year, month, day, hour, minute, second, milli ) );
+              } else {
+                sb.append( getDateSQL( year, month, day ) );
+              }
             }
           }
 
