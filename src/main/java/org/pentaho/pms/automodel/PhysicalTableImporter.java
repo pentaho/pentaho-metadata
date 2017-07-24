@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation.  All rights reserved.
+ * Copyright (c) 2017 Pentaho Corporation.  All rights reserved.
  */
 package org.pentaho.pms.automodel;
 
@@ -90,8 +90,8 @@ public class PhysicalTableImporter {
     return physicalTable;
   }
 
-  public static final String beautifyName( String name ) {
-    return StringUtils.capitalize( name.replaceAll( "[\"`']", "" ).replace( "_", " " ) ); //$NON-NLS-1$  //$NON-NLS-2$
+  public static String beautifyName( String name ) {
+    return StringUtils.capitalize( name.replaceAll( "[\"`'\\\\]", "" ).replace( "_", " " ) ); //$NON-NLS-1$  //$NON-NLS-2$
   }
 
   private static PhysicalColumn importPhysicalColumnDefinition( ValueMetaInterface v, PhysicalTable physicalTable,
