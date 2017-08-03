@@ -12,9 +12,29 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2009 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2017 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.pms.schema.security;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.pentaho.di.core.changed.ChangedFlag;
+import org.pentaho.di.core.exception.KettleXMLException;
+import org.pentaho.di.core.logging.LogChannel;
+import org.pentaho.di.core.logging.LogChannelInterface;
+import org.pentaho.di.core.util.HttpClientManager;
+import org.pentaho.di.core.util.HttpClientUtil;
+import org.pentaho.di.core.xml.XMLHandler;
+import org.pentaho.pms.core.exception.PentahoMetadataException;
+import org.pentaho.pms.messages.Messages;
+import org.pentaho.pms.util.Const;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -22,24 +42,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import org.apache.commons.httpclient.Credentials;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.pentaho.di.core.changed.ChangedFlag;
-import org.pentaho.di.core.exception.KettleXMLException;
-import org.pentaho.di.core.logging.LogChannel;
-import org.pentaho.di.core.logging.LogChannelInterface;
-import org.pentaho.di.core.xml.XMLHandler;
-import org.pentaho.pms.core.exception.PentahoMetadataException;
-import org.pentaho.pms.messages.Messages;
-import org.pentaho.pms.util.Const;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 
 @SuppressWarnings( "deprecation" )
 public class SecurityService extends ChangedFlag implements Cloneable {
@@ -111,8 +113,8 @@ public class SecurityService extends ChangedFlag implements Cloneable {
   }
 
   /**
-   * @param detailNameParameter
-   *          the detailNameParameter to set
+   * @param detailServiceName
+   *          the DetailServiceName to set
    */
   public void setDetailNameParameter( String detailServiceName ) {
     this.detailNameParameter = detailServiceName;
@@ -141,7 +143,7 @@ public class SecurityService extends ChangedFlag implements Cloneable {
   }
 
   /**
-   * @param serviceName
+   * @param name
    *          the serviceName to set
    */
   public void setServiceName( String name ) {
@@ -295,75 +297,59 @@ public class SecurityService extends ChangedFlag implements Cloneable {
 
     }
 
-    HttpClient client = new HttpClient();
+    HttpClientManager.HttpClientBuilderFacade httpClientBuilder = HttpClientManager.getInstance().createBuilder();
     log.logDebug( Messages.getString( "SecurityService.INFO_CONNECTING_TO_URL", urlToUse ) ); //$NON-NLS-1$
 
     // Assume we are using a proxy if proxyHostName is set?
     // TODO: Mod ui to include check for enable or disable proxy; rather than rely on proxyhostname (post v1)
-    if ( ( proxyHostname != null ) && ( proxyHostname.trim().length() > 0 ) ) {
-
-      int port =
-          ( proxyPort == null ) || ( proxyPort.trim().length() == 0 ) ? client.getHostConfiguration().getPort()
-              : Integer.parseInt( proxyPort );
+    HttpClientContext context = null;
+    if ( StringUtils.isNotBlank( proxyHostname ) && StringUtils.isNotBlank( proxyPort ) ) {
+      int port = Integer.parseInt( this.proxyPort );
+      httpClientBuilder.setProxy( proxyHostname, port );
 
       // TODO: Where to set nonProxyHosts?
-
-      client.getHostConfiguration().setProxy( proxyHostname, port );
-
       // TODO: Credentials for proxy will be added if demand shows for it (post v1)
       // if (username != null && username.length() > 0) {
       // client.getState().setProxyCredentials(AuthScope.ANY,
       // new UsernamePasswordCredentials(username, password != null ? password : new String()));
       // }
 
+      // If server userid/password was supplied, use basic authentication to
+      // authenticate with the server.
+      if ( StringUtils.isNotBlank( username ) && StringUtils.isNotBlank( password )  ) {
+        AuthScope authScope = new AuthScope( tempURL.getHost(), tempURL.getPort() );
+        httpClientBuilder.setCredentials( username, password, authScope );
+        HttpClientUtil.createPreemptiveBasicAuthentication( proxyHostname, port, username, password );
+      }
     }
 
-    // If server userid/password was supplied, use basic authentication to
-    // authenticate with the server.
-    if ( ( username != null ) && ( username.length() > 0 ) && ( password != null ) && ( password.length() > 0 ) ) {
-
-      Credentials creds = new UsernamePasswordCredentials( username, password );
-      client.getState().setCredentials( new AuthScope( tempURL.getHost(), tempURL.getPort() ), creds );
-      client.getParams().setAuthenticationPreemptive( true );
-
-    }
-
+    HttpClient client = httpClientBuilder.build();
     // Get a stream for the specified URL
-    GetMethod getMethod = new GetMethod( urlToUse );
+    HttpGet getMethod = new HttpGet( urlToUse );
     try {
-
-      status = client.executeMethod( getMethod );
+      HttpResponse response =
+              context != null ? client.execute( getMethod, context ) : client.execute( getMethod );
+      status = response.getStatusLine().getStatusCode();
 
       if ( status == HttpStatus.SC_OK ) {
-
         log.logDetailed( Messages.getString( "SecurityService.INFO_START_READING_WEBSERVER_REPLY" ) ); //$NON-NLS-1$
-        result = getMethod.getResponseBodyAsString();
+        result = HttpClientUtil.responseToString( response );
 
         log.logBasic( Messages.getString(
             "SecurityService.INFO_FINISHED_READING_RESPONSE", Integer.toString( result.length() ) ) ); //$NON-NLS-1$ 
 
       } else if ( status == HttpStatus.SC_UNAUTHORIZED ) {
-
         String msg = Messages.getString( "SecurityService.ERROR_0009_UNAUTHORIZED_ACCESS_TO_URL", urlToUse ); //$NON-NLS-1$
         log.logError( msg );
         throw new PentahoMetadataException( msg );
 
       }
 
-    } catch ( HttpException e ) {
-
+    } catch ( IOException e ) {
       String msg = Messages.getString( "SecurityService.ERROR_0003_CANT_SAVE_IO_ERROR", e.getMessage() ); //$NON-NLS-1$
       log.logError( msg );
       log.logError( Const.getStackTracker( e ) );
       throw new PentahoMetadataException( msg, e );
-
-    } catch ( IOException e ) {
-
-      String msg = Messages.getString( "SecurityService.ERROR_0004_ERROR_RETRIEVING_FILE_FROM_HTTP", e.getMessage() ); //$NON-NLS-1$
-      // log.logError(toString(), msg);
-      // log.logError(toString(), Const.getStackTracker(e));
-      throw new PentahoMetadataException( msg, e );
-
     }
 
     if ( result != null ) {
