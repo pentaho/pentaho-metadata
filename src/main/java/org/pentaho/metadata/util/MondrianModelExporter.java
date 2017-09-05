@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2016 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2017 Pentaho Corporation..  All rights reserved.
  */
 package org.pentaho.metadata.util;
 
@@ -55,17 +55,35 @@ public class MondrianModelExporter {
     this.locale = locale;
   }
 
+  public void updateModelToNewDomainName( String catalogName ) {
+    if ( getSchemaName().equals( catalogName ) ) {
+      return;
+    }
+
+    setSchemaName( catalogName );
+  }
+
+  private void setSchemaName( String catalogName ) {
+    String newName = catalogName;
+
+    if ( businessModel.getProperty( "AGILE_BI_GENERATED_SCHEMA" ) != null ) {
+      newName = catalogName.concat( "_OLAP" );
+    }
+
+    if ( businessModel.getName() == null ) {
+      businessModel.setId( newName );
+    } else {
+      businessModel.getName().setString( locale, newName );
+    }
+  }
+
   public String createMondrianModelXML() throws Exception {
     StringBuilder xml = new StringBuilder( 10000 );
 
     xml.append( "<Schema " ); //$NON-NLS-1$
     xml.append( "name=\"" ); //$NON-NLS-1$
 
-    String name = businessModel.getName( locale );
-    if ( businessModel.getProperty( "AGILE_BI_GENERATED_SCHEMA" ) != null ) {
-      // clean up the _OLAP suffix on the name
-      name = name.replace( "_OLAP", "" );
-    }
+    String name = getSchemaName();
     XMLHandler.appendReplacedChars( xml, name );
     xml.append( "\">" ); //$NON-NLS-1$
     xml.append( Util.CR );
@@ -493,6 +511,15 @@ public class MondrianModelExporter {
     xml.append( "</Schema>" ); //$NON-NLS-1$
 
     return xml.toString();
+  }
+
+  private String getSchemaName() {
+    String name = businessModel.getName( locale );
+    if ( businessModel.getProperty( "AGILE_BI_GENERATED_SCHEMA" ) != null ) {
+      // clean up the _OLAP suffix on the name
+      name = name.replace( "_OLAP", "" );
+    }
+    return name;
   }
 
   /**
