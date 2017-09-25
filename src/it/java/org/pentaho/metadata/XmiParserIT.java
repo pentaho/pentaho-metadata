@@ -12,29 +12,25 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2016 Pentaho Corporation.  All rights reserved.
+ * Copyright (c) 2016-2017 Pentaho Corporation.  All rights reserved.
  */
 package org.pentaho.metadata;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.pentaho.metadata.util.Util.validateId;
-
-import java.io.ByteArrayInputStream;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.Converter;
+import com.thoughtworks.xstream.converters.MarshallingContext;
+import com.thoughtworks.xstream.converters.UnmarshallingContext;
+import com.thoughtworks.xstream.io.HierarchicalStreamReader;
+import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.openide.util.io.ReaderInputStream;
 import org.pentaho.di.core.database.DatabaseMeta;
+import org.pentaho.metadata.messages.Messages;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalColumn;
@@ -61,19 +57,29 @@ import org.pentaho.metadata.util.SerializationService;
 import org.pentaho.metadata.util.ThinModelConverter;
 import org.pentaho.metadata.util.XmiParser;
 import org.pentaho.pms.MetadataTestBase;
+import org.pentaho.pms.core.exception.PentahoMetadataException;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.Converter;
-import com.thoughtworks.xstream.converters.MarshallingContext;
-import com.thoughtworks.xstream.converters.UnmarshallingContext;
-import com.thoughtworks.xstream.io.HierarchicalStreamReader;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import com.thoughtworks.xstream.io.xml.DomDriver;
+import java.io.ByteArrayInputStream;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.pentaho.metadata.util.Util.validateId;
 
 @SuppressWarnings( "nls" )
 public class XmiParserIT {
 
   private XmiParser parser;
+
+  @Rule
+  public ExpectedException thrown = ExpectedException.none();
 
   @BeforeClass
   public static void initKettle() throws Exception {
@@ -434,7 +440,7 @@ public class XmiParserIT {
   }
 
   @Test
-  public void incorrectIdsAreReplacedOnTheFly() throws Exception {
+  public void incorrectIdsWithoutValidation() throws Exception {
     final String modelName = "BV_HUMAN_RESOURCES";
     final String tableName = "BT_EMPLOYEES_EMPLOYEES";
     final String columnName = "BC_EMPLOYEES_EMPLOYEENUMBER";
@@ -452,6 +458,9 @@ public class XmiParserIT {
     assertValidId( column );
 
     setInvalidId( " (Cat_Id)", category, table, column );
+    String categoryBeforeParsing = category.getId();
+    String tableBeforeParsing = table.getId();
+    String columnBeforeParsing = column.getId();
 
     String spoiltXmi = parser.generateXmi( domain );
     domain = parser.parseXmi( new ByteArrayInputStream( spoiltXmi.getBytes() ) );
@@ -460,13 +469,88 @@ public class XmiParserIT {
     assertNotNull( model );
 
     category = findConceptStartingWith( categoryName, model.getCategories() );
-    assertValidId( category );
+    assertEquals( categoryBeforeParsing, category.getId() );
 
     table = findConceptStartingWith( tableName, model.getLogicalTables() );
-    assertValidId( table );
+    assertEquals( tableBeforeParsing, table.getId() );
 
     column = findConceptStartingWith( columnName, table.getLogicalColumns() );
+    assertEquals( columnBeforeParsing, column.getId() );
+  }
+
+  @Test
+  public void incorrectCategoryIdValidation() throws Exception {
+    final String modelName = "BV_HUMAN_RESOURCES";
+    final String categoryName = "BC_OFFICES_";
+
+    Domain domain = parser.parseXmi( getClass().getResourceAsStream( "/samples/steelwheels.xmi" ) );
+
+    LogicalModel model = domain.findLogicalModel( modelName );
+    assertNotNull( model );
+    Category category = model.findCategory( categoryName );
+    assertNotNull( category );
+
+    setInvalidId( " (Cat_Id)", category );
+    String categoryId = category.getId();
+
+    String errorMessage = Messages.getErrorString( "XmiParser.ERROR_0012_INVALID_CATEGORY_ID", categoryId, "{}" );
+    initExpectedException( errorMessage );
+
+    String spoiltXmi = parser.generateXmi( domain );
+    parser.parseXmi( new ByteArrayInputStream( spoiltXmi.getBytes() ), true );
+  }
+
+  @Test
+  public void incorrectTableIdValidation() throws Exception {
+    final String modelName = "BV_HUMAN_RESOURCES";
+    final String tableName = "BT_EMPLOYEES_EMPLOYEES";
+
+    Domain domain = parser.parseXmi( getClass().getResourceAsStream( "/samples/steelwheels.xmi" ) );
+
+    LogicalModel model = domain.findLogicalModel( modelName );
+    assertNotNull( model );
+    LogicalTable table = model.findLogicalTable( tableName );
+    assertValidId( table );
+
+    setInvalidId( " (Cat_Id)", table );
+    String tableId = table.getId();
+
+    String errorMessage = Messages.getErrorString( "XmiParser.ERROR_0012_INVALID_TABLE_ID", tableId, "{}" );
+    initExpectedException(errorMessage);
+
+    String spoiltXmi = parser.generateXmi( domain );
+    parser.parseXmi( new ByteArrayInputStream( spoiltXmi.getBytes() ), true );
+  }
+
+  @Test
+  public void incorrectColumnIdValidation() throws Exception {
+    final String modelName = "BV_HUMAN_RESOURCES";
+    final String tableName = "BT_EMPLOYEES_EMPLOYEES";
+    final String columnName = "BC_EMPLOYEES_EMPLOYEENUMBER";
+
+    Domain domain = parser.parseXmi( getClass().getResourceAsStream( "/samples/steelwheels.xmi" ) );
+    LogicalModel model = domain.findLogicalModel( modelName );
+    assertNotNull( model );
+
+    LogicalTable table = model.findLogicalTable( tableName );
+    assertValidId( table );
+    LogicalColumn column = table.findLogicalColumn( columnName );
     assertValidId( column );
+
+    setInvalidId( " (Cat_Id)", column );
+    String columnId = column.getId();
+
+    String errorMessage = Messages.getErrorString( "XmiParser.ERROR_0012_INVALID_COLUMN_ID", columnId, "{}" );
+    initExpectedException( errorMessage );
+
+    String spoiltXmi = parser.generateXmi( domain );
+    parser.parseXmi( new ByteArrayInputStream( spoiltXmi.getBytes() ), true );
+  }
+
+  private void initExpectedException( String errorString ) {
+    thrown.expect( PentahoMetadataException.class );
+    thrown.expectMessage( errorString );
+    thrown.reportMissingExceptionWithMessage( "PentahoMetadataException expected" );
   }
 
   @Test
