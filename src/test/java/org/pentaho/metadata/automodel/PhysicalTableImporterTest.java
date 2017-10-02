@@ -32,7 +32,9 @@ import org.pentaho.metadata.model.SqlPhysicalTable;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.pentaho.metadata.automodel.PhysicalTableImporter.importTableDefinition;
@@ -101,6 +103,15 @@ public class PhysicalTableImporterTest {
     IPhysicalColumn column = physicalColumns.get( 0 );
     DataType dt = ( DataType ) column.getProperty( "datatype" );
     assertEquals( "Date", dt.getName() );
+  }
+
+  @Test
+  public void testBeautifyName(){
+    assertEquals( "TestName", PhysicalTableImporter.beautifyName("\"TestName\"") );
+    assertEquals( "TestName", PhysicalTableImporter.beautifyName("'TestName'") );
+    assertEquals( "Test Name", PhysicalTableImporter.beautifyName("Test_Name") );
+    assertEquals( "TestName", PhysicalTableImporter.beautifyName("TestName\\") );
+    assertEquals( "TestName", PhysicalTableImporter.beautifyName("`TestName`") );
   }
 
   private IPhysicalColumn assertContainsColumn( final String columnName, final List<IPhysicalColumn> physicalColumns ) {
