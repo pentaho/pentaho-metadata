@@ -313,14 +313,14 @@ public class SecurityService extends ChangedFlag implements Cloneable {
       // client.getState().setProxyCredentials(AuthScope.ANY,
       // new UsernamePasswordCredentials(username, password != null ? password : new String()));
       // }
+    }
 
-      // If server userid/password was supplied, use basic authentication to
-      // authenticate with the server.
-      if ( StringUtils.isNotBlank( username ) && StringUtils.isNotBlank( password )  ) {
-        AuthScope authScope = new AuthScope( tempURL.getHost(), tempURL.getPort() );
-        httpClientBuilder.setCredentials( username, password, authScope );
-        HttpClientUtil.createPreemptiveBasicAuthentication( proxyHostname, port, username, password );
-      }
+    // If server userid/password was supplied, use basic authentication to
+    // authenticate with the server.
+    if ( StringUtils.isNotBlank( username ) && StringUtils.isNotBlank( password )  ) {
+      AuthScope authScope = new AuthScope( tempURL.getHost(), tempURL.getPort() );
+      httpClientBuilder.setCredentials( username, password, authScope );
+      context = HttpClientUtil.createPreemptiveBasicAuthentication( tempURL.getHost(), tempURL.getPort(), username, password );
     }
 
     HttpClient client = httpClientBuilder.build();
