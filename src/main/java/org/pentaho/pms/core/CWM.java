@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2009 Pentaho Corporation....  All rights reserved.
+ * Copyright (c) 2006 - 2017 Hitachi Vantara....  All rights reserved.
  */
 package org.pentaho.pms.core;
 
@@ -163,7 +163,7 @@ public class CWM {
   public static final String TAG_DATABASE_INDEX_TABLESPACE = "DATABASE_INDEX_TABLESPACE"; //$NON-NLS-1$
   public static final String TAG_DATABASE_ATTRIBUTE_PREFIX = "DATABASE_ATTRIBUTE_PREFIX_"; //$NON-NLS-1$
 
-  /** calculated for use by other Pentaho Tools */
+  /** calculated for use by other Hitachi Vantara Tools */
   public static final String TAG_DATABASE_JDBC_URL = "DATABASE_JDBC_URL"; //$NON-NLS-1$
 
   /*

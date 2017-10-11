@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2016 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2016 - 2017 Hitachi Vantara..  All rights reserved.
  */
 package org.pentaho.metadata.model;
 
@@ -24,7 +24,7 @@ import org.pentaho.metadata.model.concept.IConcept;
 
 /**
  * This is the SQL implementation of the physical model. For now it contains a string reference to it's data source
- * (JNDI or Pentaho).
+ * (JNDI or Hitachi Vantara).
  *
  * @author Will Gorman (wgorman@pentaho.com)
  */
