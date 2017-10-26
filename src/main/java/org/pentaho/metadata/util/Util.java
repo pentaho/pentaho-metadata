@@ -16,8 +16,6 @@
  */
 package org.pentaho.metadata.util;
 
-import java.util.List;
-
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalTable;
@@ -27,10 +25,9 @@ import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.IConcept;
 import org.pentaho.pms.util.Settings;
 
-public class Util {
+import java.util.List;
 
-  /** List of unacceptable characters which should corresponds to the regexp's inside the Util#toId method. */
-  public static final String MQL_RESERVED_CHARS = " .,:(){}[]\"`'*/+-";
+public class Util {
 
   public static final String CR = System.getProperty( "line.separator" ); //$NON-NLS-1$
 
@@ -73,43 +70,6 @@ public class Util {
     name = name.replaceAll( "[-]", "_HYPHEN_" ); //$NON-NLS-1$ //$NON-NLS-2$
     name = name.replaceAll( "_+", "_" ); //$NON-NLS-1$ //$NON-NLS-2$
     return name;
-  }
-
-  /**
-   * Returns <tt>true</tt> if <tt>code</tt> contains only latin characters, digits and '<tt>_</tt>' or '<tt>$</tt>'.
-   * <tt>null</tt> or empty string is considered to be an invalid value.
-   *
-   * @param id proposed id for column or table
-   * @return <tt>true</tt> if the proposed id is acceptable and <tt>false</tt> otherwise
-   */
-  public static boolean validateId( CharSequence id ) {
-    if ( id == null || id.length() == 0 ) {
-      return false;
-    }
-
-    for ( int i = 0, len = id.length(); i < len; i++ ) {
-      char ch = id.charAt( i );
-      if ( isUnacceptableCharacter( ch ) ) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  /**
-   * Check if character is unacceptable for MQL and need to be converted.
-   *
-   * @param ch character to check
-   * @return true if character is unacceptable for MQL, false otherwise
-   */
-  private static boolean isUnacceptableCharacter( char ch ) {
-    return MQL_RESERVED_CHARS.indexOf( ch ) != -1;
-  }
-
-  public static IllegalArgumentException idValidationFailed( String id ) {
-    return new IllegalArgumentException(
-      "Cannot set id '" + id + "'. Please use Util.toId() to create a well-formed identifier" );
   }
 
   /**
