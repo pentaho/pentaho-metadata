@@ -25,6 +25,7 @@
     <pentaho-kettle.version>7.1-SNAPSHOT</pentaho-kettle.version>
     <libformula.version>7.1-SNAPSHOT</libformula.version>
     <libbase.version>7.1-SNAPSHOT</libbase.version>
+    <xstream.version>1.4.10</xstream.version>
   </properties>
   <dependencies>
     <dependency>
@@ -203,7 +204,7 @@
     <dependency>
       <groupId>com.thoughtworks.xstream</groupId>
       <artifactId>xstream</artifactId>
-      <version>1.4.9</version>
+      <version>${xstream.version}</version>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>
@@ -507,5 +508,5 @@
         </plugins>
       </build>
     </profile>
-  </profiles>         
+  </profiles>
 </project>
