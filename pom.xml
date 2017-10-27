@@ -24,6 +24,7 @@
     <pentaho-kettle.version>8.1-SNAPSHOT</pentaho-kettle.version>
     <pentaho-connections.version>8.1-SNAPSHOT</pentaho-connections.version>
     <libbase.version>8.1-SNAPSHOT</libbase.version>
+    <xstream.version>1.4.10</xstream.version>
   </properties>
   <dependencies>
     <dependency>
@@ -202,7 +203,7 @@
     <dependency>
       <groupId>com.thoughtworks.xstream</groupId>
       <artifactId>xstream</artifactId>
-      <version>1.4.9</version>
+      <version>${xstream.version}</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
