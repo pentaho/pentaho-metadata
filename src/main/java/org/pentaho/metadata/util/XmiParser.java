@@ -18,27 +18,6 @@
 
 package org.pentaho.metadata.util;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.math.BigDecimal;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -112,6 +91,26 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.math.BigDecimal;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 
@@ -1677,8 +1676,6 @@ public class XmiParser {
         }
       }
     }
-
-    validateDomain( domain );
     return domain;
   }
 
@@ -2065,70 +2062,6 @@ public class XmiParser {
     }
     domain.setLocales( localeTypes );
 
-  }
-
-  private void validateDomain( Domain domain ) {
-    for ( LogicalModel model : domain.getLogicalModels() ) {
-      validateModel( model );
-    }
-  }
-
-  private void validateModel( LogicalModel model ) {
-    Map<String, LogicalTable> tablesMapping = createIdToConceptMapping( model.getLogicalTables() );
-    for ( LogicalTable table : model.getLogicalTables() ) {
-      validateTable( table, tablesMapping );
-    }
-
-    Map<String, Category> categoiesMapping = createIdToConceptMapping( model.getCategories() );
-    for ( Category category : model.getCategories() ) {
-      validateCategory( category, categoiesMapping );
-    }
-  }
-
-  private void validateTable( LogicalTable table, Map<String, LogicalTable> mapping ) {
-    validateConceptId( table, mapping, "XmiParser.ERROR_0012_INVALID_TABLE_ID" );
-
-    Map<String, LogicalColumn> columnsMapping = createIdToConceptMapping( table.getLogicalColumns() );
-    for ( LogicalColumn column : table.getLogicalColumns() ) {
-      validateColumn( column, columnsMapping );
-    }
-  }
-
-  private void validateColumn( LogicalColumn column, Map<String, LogicalColumn> mapping ) {
-    validateConceptId( column, mapping, "XmiParser.ERROR_0012_INVALID_COLUMN_ID" );
-  }
-
-  private void validateCategory( Category category, Map<String, Category> mapping ) {
-    validateConceptId( category, mapping, "XmiParser.ERROR_0012_INVALID_CATEGORY_ID" );
-  }
-
-  private static <T extends Concept> Map<String, T> createIdToConceptMapping( List<T> concepts ) {
-    Map<String, T> map = new HashMap<String, T>( concepts.size() );
-    for ( T concept : concepts ) {
-      map.put( concept.getId(), concept );
-    }
-    return map;
-  }
-
-  private static <T extends Concept> void validateConceptId( T concept, Map<String, T> siblings, String i18nKey ) {
-    String id = concept.getId();
-    if ( !Util.validateId( id ) ) {
-      String newId = Util.toId( id );
-
-      int n = 1;
-      String tmp = newId;
-      while ( siblings.containsKey( tmp ) ) {
-        tmp = newId + n;
-        n++;
-      }
-      newId = tmp;
-
-      siblings.remove( id );
-      siblings.put( newId, concept );
-
-      concept.setId( newId );
-      logger.info( Messages.getString( i18nKey, id, newId ) );
-    }
   }
 
   private static Map<String, String> getKeyValuePairs( Element parent, String childName, String keyAttrib,
