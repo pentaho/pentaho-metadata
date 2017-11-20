@@ -102,7 +102,7 @@ public class PhysicalTableImporterTest {
 
     IPhysicalColumn column = physicalColumns.get( 0 );
     DataType dt = ( DataType ) column.getProperty( "datatype" );
-    assertEquals( "Timestamp", dt.getName() );
+    assertEquals( "Date", dt.getName() );
   }
 
   @Test

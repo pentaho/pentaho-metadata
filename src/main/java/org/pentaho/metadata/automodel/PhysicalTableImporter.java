@@ -158,9 +158,8 @@ public class PhysicalTableImporter {
         return DataType.BINARY;
       case ValueMetaInterface.TYPE_BOOLEAN:
         return DataType.BOOLEAN;
-      case ValueMetaInterface.TYPE_TIMESTAMP:
-        return DataType.TIMESTAMP;
       case ValueMetaInterface.TYPE_DATE:
+      case ValueMetaInterface.TYPE_TIMESTAMP:
         return DataType.DATE;
       case ValueMetaInterface.TYPE_STRING:
         return DataType.STRING;
