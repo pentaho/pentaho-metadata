@@ -35,6 +35,7 @@ import org.pentaho.di.core.NotePadMeta;
 import org.pentaho.di.core.ProgressMonitorListener;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.exception.KettleDatabaseException;
+import org.pentaho.metadata.util.Util;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.cwm.pentaho.meta.behavioral.CwmEvent;
@@ -924,7 +925,11 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
   public BusinessTable getBusinessTable( CWM cwm, CwmDimension cwmDimension, SchemaMeta schemaMeta,
                                          BusinessModel businessModel ) {
     String proposedTableId = cwmDimension.getName();
-    BusinessTable businessTable = new BusinessTable( cwmDimension.getName() );
+    if ( !Util.validateId( proposedTableId ) ) {
+      proposedTableId = Util.toId( proposedTableId );
+    }
+
+    BusinessTable businessTable = new BusinessTable( proposedTableId );
     businessTable
       .addIDChangedListener( ConceptUtilityBase.createIDChangedListener( businessModel.getBusinessTables() ) );
 
@@ -1038,7 +1043,11 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
   public BusinessColumn getBusinessColumn( CWM cwm, CwmDimensionedObject cwmDimensionedObject,
                                            PhysicalTable physicalTable, BusinessTable businessTable,
                                            SchemaMeta schemaMeta ) {
-    BusinessColumn businessColumn = new BusinessColumn( cwmDimensionedObject.getName() );
+    String proposedTableId = cwmDimensionedObject.getName();
+    if ( !Util.validateId( proposedTableId ) ) {
+      proposedTableId = Util.toId( proposedTableId );
+    }
+    BusinessColumn businessColumn = new BusinessColumn( proposedTableId );
     businessColumn.addIDChangedListener( ConceptUtilityBase
       .createIDChangedListener( businessTable.getBusinessColumns() ) );
 
@@ -1335,7 +1344,12 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
    */
   public BusinessCategory getBusinessCategory( CWM cwm, CwmExtent cwmExtent, BusinessModel businessModel,
                                                SchemaMeta schemaMeta ) {
-    BusinessCategory businessCategory = new BusinessCategory( cwmExtent.getName() );
+    String proposedCategoryId = cwmExtent.getName();
+    if ( !Util.validateId( proposedCategoryId ) ) {
+      proposedCategoryId = Util.toId( proposedCategoryId );
+    }
+
+    BusinessCategory businessCategory = new BusinessCategory( proposedCategoryId );
     businessCategory.addIDChangedListener( ConceptUtilityBase.createIDChangedListener( businessModel.getRootCategory()
       .getBusinessCategories() ) );
 
