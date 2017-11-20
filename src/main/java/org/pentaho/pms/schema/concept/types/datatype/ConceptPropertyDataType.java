@@ -36,7 +36,6 @@ public class ConceptPropertyDataType extends ConceptPropertyBase implements Clon
       new ConceptPropertyDataType( "datatype", DataTypeSettings.BINARY ); //$NON-NLS-1$
   public static final ConceptPropertyDataType IMAGE = new ConceptPropertyDataType( "datatype", DataTypeSettings.IMAGE ); //$NON-NLS-1$
   public static final ConceptPropertyDataType URL = new ConceptPropertyDataType( "datatype", DataTypeSettings.URL ); //$NON-NLS-1$
-  public static final ConceptPropertyDataType TIMESTAMP = new ConceptPropertyDataType( "datatype", DataTypeSettings.TIMESTAMP ); //$NON-NLS-1$
 
   private DataTypeSettings value;
 

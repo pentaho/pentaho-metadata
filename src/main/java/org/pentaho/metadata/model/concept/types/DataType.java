@@ -27,8 +27,7 @@ package org.pentaho.metadata.model.concept.types;
  * <li> {@link #BINARY}
  * <li> {@link #IMAGE}
  * <li> {@link #URL}
- * <li> {@link #TIMESTAMP}
- *
+ * 
  * @author Will Gorman (wgorman@pentaho.com)
  * 
  */
@@ -40,8 +39,7 @@ public enum DataType {
   NUMERIC( 4, "Numeric", "DataType.USER_NUMERIC_DESC" ), //$NON-NLS-1$  //$NON-NLS-2$
   BINARY( 5, "Binary", "DataType.USER_BINARY_DESC" ), //$NON-NLS-1$  //$NON-NLS-2$
   IMAGE( 6, "Image", "DataType.USER_IMAGE_DESC" ), //$NON-NLS-1$  //$NON-NLS-2$
-  URL( 7, "URL", "DataType.USER_URL_DESC" ), //$NON-NLS-1$  //$NON-NLS-2$
-  TIMESTAMP( 8, "Timestamp", "DataType.USER_TIMESTAMP_DESC" ); //$NON-NLS-1$  //$NON-NLS-2$
+  URL( 7, "URL", "DataType.USER_URL_DESC" ); //$NON-NLS-1$  //$NON-NLS-2$
 
   private int type;
   private String name, description;
