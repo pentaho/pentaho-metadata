@@ -16,14 +16,13 @@
  */
 package org.pentaho.metadata.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.junit.Assert.*;
+import static org.pentaho.metadata.util.validation.ValidationStatus.StatusEnum.VALID;
 
 public class UtilTest {
 
@@ -76,5 +75,36 @@ public class UtilTest {
   @Test
   public void validateId_Empty() {
     assertFalse( Util.validateId( "" ) );
+  }
+
+  @Test
+  public void validateEntityId_Acceptable() {
+    assertTrue( Util.validateEntityId( "qwerty" ).statusEnum.equals( VALID ) );
+    assertTrue( Util.validateEntityId( "qwerty1" ).statusEnum.equals( VALID ) );
+    assertTrue( Util.validateEntityId( "0qwerty" ).statusEnum.equals( VALID ) );
+    assertTrue( Util.validateEntityId( "qwerty_1" ).statusEnum.equals( VALID ) );
+    assertTrue( Util.validateEntityId( "qwerty_$1" ).statusEnum.equals( VALID ) );
+    assertTrue( Util.validateEntityId( "qWerTy_$1" ).statusEnum.equals( VALID ) );
+    assertTrue( Util.validateEntityId( "Кириллические_символы" ).statusEnum.equals( VALID ) );
+    assertTrue( Util.validateEntityId( "日本の手紙" ).statusEnum.equals( VALID ) );
+    assertTrue( Util.validateEntityId( "caractères_français" ).statusEnum.equals( VALID ) );
+  }
+
+  @Test
+  public void validateEntityId_ValidateTestToIdSamples() {
+    for ( Map.Entry<String, String> entry : prepareCorrectionMapping().entrySet() ) {
+      assertFalse( entry.getKey(), Util.validateEntityId( entry.getKey() ).statusEnum.equals( VALID ) );
+      assertTrue( entry.getValue(), Util.validateEntityId( entry.getValue() ).statusEnum.equals( VALID ) );
+    }
+  }
+
+  @Test
+  public void validateEntityId_Null() {
+    assertFalse( Util.validateEntityId( null ).statusEnum.equals( VALID ) );
+  }
+
+  @Test
+  public void validateEntityId_Empty() {
+    assertFalse( Util.validateEntityId( "" ).statusEnum.equals( VALID ) );
   }
 }

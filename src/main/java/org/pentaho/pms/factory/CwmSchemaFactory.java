@@ -17,25 +17,12 @@
  */
 package org.pentaho.pms.factory;
 
-import java.math.BigDecimal;
-import java.net.URL;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.NotePadMeta;
 import org.pentaho.di.core.ProgressMonitorListener;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.exception.KettleDatabaseException;
-import org.pentaho.metadata.util.Util;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.cwm.pentaho.meta.behavioral.CwmEvent;
@@ -116,6 +103,18 @@ import org.pentaho.pms.schema.security.SecurityReference;
 import org.pentaho.pms.schema.security.SecurityService;
 import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.ObjectAlreadyExistsException;
+
+import java.math.BigDecimal;
+import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * This class is responsible for converting between the Schema metadata and the CWM
@@ -489,7 +488,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
    *
    * @param cwm
    * @param cwmTable
-   * @param databases
+   * @param schemaMeta
    * @return a new PhysicalTable object
    */
   public PhysicalTable getPhysicalTable( CWM cwm, CwmTable cwmTable, SchemaMeta schemaMeta ) {
@@ -649,7 +648,6 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
    * @param cwm
    * @param catalog
    * @return a new DatabaseMeta instance, read from the specified CWM model.
-   * @throws KettleXMLException
    */
   public DatabaseMeta getDatabaseMeta( CWM cwm, CwmCatalog catalog ) {
     DatabaseMeta databaseMeta = new DatabaseMeta();
@@ -925,11 +923,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
   public BusinessTable getBusinessTable( CWM cwm, CwmDimension cwmDimension, SchemaMeta schemaMeta,
                                          BusinessModel businessModel ) {
     String proposedTableId = cwmDimension.getName();
-    if ( !Util.validateId( proposedTableId ) ) {
-      proposedTableId = Util.toId( proposedTableId );
-    }
-
-    BusinessTable businessTable = new BusinessTable( proposedTableId );
+    BusinessTable businessTable = new BusinessTable( cwmDimension.getName() );
     businessTable
       .addIDChangedListener( ConceptUtilityBase.createIDChangedListener( businessModel.getBusinessTables() ) );
 
@@ -1043,11 +1037,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
   public BusinessColumn getBusinessColumn( CWM cwm, CwmDimensionedObject cwmDimensionedObject,
                                            PhysicalTable physicalTable, BusinessTable businessTable,
                                            SchemaMeta schemaMeta ) {
-    String proposedTableId = cwmDimensionedObject.getName();
-    if ( !Util.validateId( proposedTableId ) ) {
-      proposedTableId = Util.toId( proposedTableId );
-    }
-    BusinessColumn businessColumn = new BusinessColumn( proposedTableId );
+    BusinessColumn businessColumn = new BusinessColumn( cwmDimensionedObject.getName() );
     businessColumn.addIDChangedListener( ConceptUtilityBase
       .createIDChangedListener( businessTable.getBusinessColumns() ) );
 
@@ -1277,7 +1267,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
    *
    * @param cwm              the model to store in
    * @param businessCategory the businessCategory to store
-   * @param level            root = 0
+   * @param parent           root = 0
    * @param cwmSchema        the cwmSchema to reference.
    */
   public CwmExtent storeBusinessCategory( CWM cwm, BusinessCategory businessCategory, CwmExtent parent,
@@ -1344,12 +1334,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
    */
   public BusinessCategory getBusinessCategory( CWM cwm, CwmExtent cwmExtent, BusinessModel businessModel,
                                                SchemaMeta schemaMeta ) {
-    String proposedCategoryId = cwmExtent.getName();
-    if ( !Util.validateId( proposedCategoryId ) ) {
-      proposedCategoryId = Util.toId( proposedCategoryId );
-    }
-
-    BusinessCategory businessCategory = new BusinessCategory( proposedCategoryId );
+    BusinessCategory businessCategory = new BusinessCategory( cwmExtent.getName() );
     businessCategory.addIDChangedListener( ConceptUtilityBase.createIDChangedListener( businessModel.getRootCategory()
       .getBusinessCategories() ) );
 
@@ -1509,7 +1494,7 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
    *
    * @param cwm                     the model to store the concept properties in
    * @param modelElement            The model element to attach it to.
-   * @param conceptUtilityInterface The concept utility interface to use. (the properties)
+   * @param concept                 The concept utility interface to use. (the properties)
    */
   public void storeConceptProperties( CWM cwm, CwmModelElement modelElement, ConceptInterface concept ) {
     if ( !hasAccess( CwmSchemaFactoryInterface.ACCESS_TYPE_SCHEMA_ADMIN, null ) ) {
