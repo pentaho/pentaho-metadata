@@ -19,11 +19,11 @@
     <url>scm:git:git@github.com:pentaho/${project.artifactId}.git</url>
   </scm>
   <properties>
-    <libformula.version>8.1-SNAPSHOT</libformula.version>
+    <pentaho-reporting.version>8.1-SNAPSHOT</pentaho-reporting.version>
     <pentaho-registry.version>8.1-SNAPSHOT</pentaho-registry.version>
-    <pentaho-kettle.version>8.1-SNAPSHOT</pentaho-kettle.version>
+    <pdi.version>8.1-SNAPSHOT</pdi.version>
     <pentaho-connections.version>8.1-SNAPSHOT</pentaho-connections.version>
-    <libbase.version>8.1-SNAPSHOT</libbase.version>
+    <pentaho-reporting.version>8.1-SNAPSHOT</pentaho-reporting.version>
     <xstream.version>1.4.10</xstream.version>
   </properties>
   <dependencies>
@@ -303,7 +303,7 @@
     <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-engine</artifactId>
-      <version>${pentaho-kettle.version}</version>
+      <version>${pdi.version}</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -314,7 +314,7 @@
     <dependency>
       <groupId>pentaho-kettle</groupId>
       <artifactId>kettle-core</artifactId>
-      <version>${pentaho-kettle.version}</version>
+      <version>${pdi.version}</version>
     </dependency>
     <dependency>
       <groupId>pentaho</groupId>
@@ -324,12 +324,12 @@
     <dependency>
       <groupId>org.pentaho.reporting.library</groupId>
       <artifactId>libformula</artifactId>
-      <version>${libformula.version}</version>
+      <version>${pentaho-reporting.version}</version>
     </dependency>
     <dependency>
       <groupId>org.pentaho.reporting.library</groupId>
       <artifactId>libbase</artifactId>
-      <version>${libbase.version}</version>
+      <version>${pentaho-reporting.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
