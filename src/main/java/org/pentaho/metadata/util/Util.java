@@ -16,8 +16,6 @@
  */
 package org.pentaho.metadata.util;
 
-import java.util.List;
-
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalTable;
@@ -25,7 +23,11 @@ import org.pentaho.metadata.model.SqlPhysicalColumn;
 import org.pentaho.metadata.model.SqlPhysicalTable;
 import org.pentaho.metadata.model.concept.Concept;
 import org.pentaho.metadata.model.concept.IConcept;
+import org.pentaho.metadata.util.validation.ValidationStatus;
+import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.util.Settings;
+
+import java.util.List;
 
 public class Util {
 
@@ -81,7 +83,9 @@ public class Util {
    *
    * @param id proposed id for column or table
    * @return <tt>true</tt> if the proposed id is acceptable and <tt>false</tt> otherwise
+   * @deprecated Use {@link org.pentaho.metadata.util.Util#validateEntityId(CharSequence)} instead of
    */
+  @Deprecated
   public static boolean validateId( CharSequence id ) {
     if ( id == null || id.length() == 0 ) {
       return false;
@@ -98,6 +102,26 @@ public class Util {
   }
 
   /**
+   * @param id proposed id for column or table
+   * @return IdValidationStatus
+   */
+  public static ValidationStatus validateEntityId( CharSequence id ) {
+    if ( id == null || id.length() == 0 ) {
+      return ValidationStatus.invalid( Messages.getString( "Util.ERROR_0001_ID_EMPTY_OR_NULL" ) );
+    }
+
+    for ( int i = 0, len = id.length(); i < len; i++ ) {
+      char ch = id.charAt( i );
+      if ( isUnacceptableCharacter( ch ) ) {
+        return ValidationStatus.invalid( Messages.getString(
+          "Util.ERROR_0002_ID_CONTAINS_RESERVED_SYMBOLS", id.toString(), "" ) );
+      }
+    }
+
+    return ValidationStatus.valid();
+  }
+
+  /**
    * Check if character is unacceptable for MQL and need to be converted.
    *
    * @param ch character to check
@@ -107,6 +131,11 @@ public class Util {
     return MQL_RESERVED_CHARS.indexOf( ch ) != -1;
   }
 
+  /**
+   *
+   * @param id
+   * @return
+   */
   public static IllegalArgumentException idValidationFailed( String id ) {
     return new IllegalArgumentException(
       "Cannot set id '" + id + "'. Please use Util.toId() to create a well-formed identifier" );

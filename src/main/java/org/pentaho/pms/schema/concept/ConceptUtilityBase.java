@@ -16,14 +16,11 @@
  */
 package org.pentaho.pms.schema.concept;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.pentaho.di.core.changed.ChangedFlag;
 import org.pentaho.metadata.util.Util;
+import org.pentaho.metadata.util.validation.ValidationStatus;
 import org.pentaho.pms.core.event.AllowsIDChangeListenersInterface;
 import org.pentaho.pms.core.event.IDChangedEvent;
 import org.pentaho.pms.core.event.IDChangedListener;
@@ -49,6 +46,10 @@ import org.pentaho.pms.schema.security.Security;
 import org.pentaho.pms.util.Const;
 import org.pentaho.pms.util.ObjectAlreadyExistsException;
 import org.pentaho.pms.util.UniqueList;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @deprecated as of metadata 3.0.
@@ -382,7 +383,7 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
   }
 
   /**
-   * @param columnType the column type to set
+   * @param fieldType the column type to set
    */
   public void setFieldType( FieldTypeSettings fieldType ) {
     ConceptPropertyInterface property = concept.getChildProperty( DefaultPropertyID.FIELD_TYPE.getId() );
@@ -561,12 +562,14 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
           return;
         }
 
-        if ( event.newID.equals( event.oldID ) ) {
-          return; // no problem
+        ValidationStatus validationStatus = Util.validateEntityId( event.newID );
+        if ( validationStatus.statusEnum == ValidationStatus.StatusEnum.INVALID ) {
+          throw new IllegalArgumentException( validationStatus.getLocalizedMessage() );
         }
 
-        if ( !Util.validateId( event.newID ) ) {
-          throw Util.idValidationFailed( event.newID );
+        if ( event.newID.equals( event.oldID ) ) {
+          // Id is valid and has not changed
+          return;
         }
 
         // The ID has changed
