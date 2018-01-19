@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2016-2017 Hitachi Vantara.  All rights reserved.
+ * Copyright (c) 2016-2018 Hitachi Vantara.  All rights reserved.
  */
 package org.pentaho.metadata;
 
@@ -32,6 +32,7 @@ import java.util.TreeSet;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openide.util.io.ReaderInputStream;
 import org.pentaho.di.core.database.DatabaseMeta;
@@ -434,6 +435,7 @@ public class XmiParserIT {
   }
 
   @Test
+  @Ignore // ids aren't changed on the fly see http://jira.pentaho.com/browse/BISERVER-13338
   public void incorrectIdsAreReplacedOnTheFly() throws Exception {
     final String modelName = "BV_HUMAN_RESOURCES";
     final String tableName = "BT_EMPLOYEES_EMPLOYEES";

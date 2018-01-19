@@ -13,7 +13,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2017 Hitachi Vantara..  All rights reserved.
+ * Copyright (c) 2006 - 2018 Hitachi Vantara..  All rights reserved.
  */
 package org.pentaho.pms.factory;
 
@@ -922,7 +922,6 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
    */
   public BusinessTable getBusinessTable( CWM cwm, CwmDimension cwmDimension, SchemaMeta schemaMeta,
                                          BusinessModel businessModel ) {
-    String proposedTableId = cwmDimension.getName();
     BusinessTable businessTable = new BusinessTable( cwmDimension.getName() );
     businessTable
       .addIDChangedListener( ConceptUtilityBase.createIDChangedListener( businessModel.getBusinessTables() ) );

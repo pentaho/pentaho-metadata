@@ -1,3 +1,15 @@
-target/
+.project
+.classpath
+.settings
+build
+target
+release.properties
+pom.xml.releaseBackup
 *.iml
 .idea
+bin
+*.class
+*.jar
+*.war
+*.ear
+.DS_Store
