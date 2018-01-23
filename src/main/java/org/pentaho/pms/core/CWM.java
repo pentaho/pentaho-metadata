@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2017 Hitachi Vantara....  All rights reserved.
+ * Copyright (c) 2006 - 2018 Hitachi Vantara....  All rights reserved.
  */
 package org.pentaho.pms.core;
 
@@ -356,7 +356,8 @@ public class CWM {
   private boolean reversingOrder;
 
   /**
-   * @param args
+   * @param domainName
+   * @param autoCreate
    */
   private CWM( String domainName, boolean autoCreate ) {
     this.domainName = domainName;
@@ -553,9 +554,6 @@ public class CWM {
 
   /**
    * Remove the domain by removing the extent.
-   * 
-   * @param name
-   *          the domain to remove.
    */
   public synchronized void removeDomain() throws CWMException {
     repository.beginTrans( true );
@@ -727,7 +725,7 @@ public class CWM {
   /**
    * For lack of a better place to store it, we're saving database information in the CwmCatalog.
    * 
-   * @param databaseMeta
+   * @param name
    *          The Kettle DatabaseMeta to convert to.
    * @return
    */

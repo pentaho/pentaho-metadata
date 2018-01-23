@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2017 Hitachi Vantara..  All rights reserved.
+ * Copyright (c) 2006 - 2018 Hitachi Vantara..  All rights reserved.
  */
 package org.pentaho.pms.factory;
 
@@ -64,7 +64,7 @@ public class CwmSchemaFactoryIT {
   }
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     factory = new CwmSchemaFactory();
 
     cwm = CWM.getInstance( TEST_DOMAIN );
@@ -89,12 +89,10 @@ public class CwmSchemaFactoryIT {
   }
 
 
-  @Test
+  @Test( expected = IllegalArgumentException.class )
   public void getBusinessColumn_InvalidColumnId() throws Exception {
     String invalidId = "Territory (Cat Id)";
-    assertFalse( Util.validateId( invalidId ) );
-
-    assertGetBusinessColumn( invalidId, Util.toId( invalidId ) );
+    assertGetBusinessColumn( invalidId );
   }
 
   @Test
@@ -102,10 +100,10 @@ public class CwmSchemaFactoryIT {
     String validId = "Territory";
     assertTrue( Util.validateId( validId ) );
 
-    assertGetBusinessColumn( validId, validId );
+    assertGetBusinessColumn( validId );
   }
 
-  private void assertGetBusinessColumn( String rawId, String expectedId ) throws Exception {
+  private void assertGetBusinessColumn( String rawId ) throws Exception {
     CwmDimensionedObject object = mock( CwmDimensionedObject.class );
     when( object.getName() ).thenReturn( rawId );
 
@@ -114,27 +112,24 @@ public class CwmSchemaFactoryIT {
 
     BusinessColumn column =
       factory.getBusinessColumn( cwm, object, physicalTable, new BusinessTable( BUSINESS_TBL ), new SchemaMeta() );
-    assertEquals( expectedId, column.getId() );
+
+    column.setId( object.getName() );
   }
 
 
-  @Test
+  @Test( expected = IllegalArgumentException.class )
   public void getBusinessTable_InvalidTableId() throws Exception {
     String invalidId = "Table (tbl)";
-    assertFalse( Util.validateId( invalidId ) );
-
-    assertGetBusinessTable( invalidId, Util.toId( invalidId ) );
+    assertGetBusinessTable( invalidId );
   }
 
   @Test
   public void getBusinessTable_ValidTableId() throws Exception {
     String validId = "Table";
-    assertTrue( Util.validateId( validId ) );
-
-    assertGetBusinessTable( validId, validId );
+    assertGetBusinessTable( validId );
   }
 
-  private void assertGetBusinessTable( String rawId, String expectedId ) throws Exception {
+  private void assertGetBusinessTable( String rawId ) throws Exception {
     CwmDimension dimension = mock( CwmDimension.class );
     when( dimension.getName() ).thenReturn( rawId );
 
@@ -143,27 +138,23 @@ public class CwmSchemaFactoryIT {
 
     BusinessTable column =
       factory.getBusinessTable( cwm, dimension, meta, new BusinessModel( "businessModel" ) );
-    assertEquals( expectedId, column.getId() );
+    column.setId( rawId );
   }
 
 
-  @Test
+  @Test( expected = IllegalArgumentException.class )
   public void getBusinessCategory_InvalidCategoryId() throws Exception {
     String invalidId = "Category (cat)";
-    assertFalse( Util.validateId( invalidId ) );
-
-    assertGetBusinessCategory( invalidId, Util.toId( invalidId ) );
+    assertGetBusinessCategory( invalidId );
   }
 
   @Test
   public void getBusinessCategory_ValidCategoryId() throws Exception {
     String validId = "Category";
-    assertTrue( Util.validateId( validId ) );
-
-    assertGetBusinessCategory( validId, validId );
+    assertGetBusinessCategory( validId );
   }
 
-  private void assertGetBusinessCategory( String rawId, String expectedId ) throws Exception {
+  private void assertGetBusinessCategory( String rawId) throws Exception {
     CwmExtent extent = mock( CwmExtent.class );
     when( extent.getName() ).thenReturn( rawId );
 
@@ -172,6 +163,7 @@ public class CwmSchemaFactoryIT {
 
     BusinessCategory category =
       factory.getBusinessCategory( cwm, extent, new BusinessModel( "businessModel" ), meta );
-    assertEquals( expectedId, category.getId() );
+
+    category.setId( extent.getName() );
   }
 }

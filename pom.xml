@@ -7,25 +7,38 @@
     <artifactId>pentaho-ce-jar-parent-pom</artifactId>
     <version>8.1.0.0-SNAPSHOT</version>
   </parent>
-  <groupId>pentaho</groupId>
+
   <artifactId>pentaho-metadata</artifactId>
   <version>8.1.0.0-SNAPSHOT</version>
-  <name>Pentaho Community Edition Project: ${project.artifactId}</name>
+
+  <name>Pentaho Metadata</name>
   <description>Pentaho Metadata Core</description>
   <url>http://www.pentaho.com</url>
+
+  <licenses>
+    <license>
+      <name>GNU Lesser General Public License, Version 2.1</name>
+      <url>https://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
   <scm>
-    <connection>scm:git:git@github.com:pentaho/${project.artifactId}.git</connection>
-    <developerConnection>scm:git:git@github.com:pentaho/${project.artifactId}.git</developerConnection>
-    <url>scm:git:git@github.com:pentaho/${project.artifactId}.git</url>
+    <developerConnection>scm:git:git@github.com:pentaho/pentaho-metadata.git</developerConnection>
+    <tag>HEAD</tag>
   </scm>
+
   <properties>
-    <pentaho-reporting.version>8.1.0.0-SNAPSHOT</pentaho-reporting.version>
-    <pentaho-registry.version>8.1.0.0-SNAPSHOT</pentaho-registry.version>
+    <license.licenseName>lgpl_v2_1</license.licenseName>
     <pdi.version>8.1.0.0-SNAPSHOT</pdi.version>
     <pentaho-connections.version>8.1.0.0-SNAPSHOT</pentaho-connections.version>
     <pentaho-reporting.version>8.1.0.0-SNAPSHOT</pentaho-reporting.version>
     <xstream.version>1.4.10</xstream.version>
+    <pentaho-cwm.version>1.5.4</pentaho-cwm.version>
+    <netbeans.version>200507110943</netbeans.version>
+    <netbeans-custom.version>200507110943-custom</netbeans-custom.version>
   </properties>
+
   <dependencies>
     <dependency>
       <groupId>joda-time</groupId>
@@ -37,11 +50,6 @@
           <groupId>*</groupId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>commons-collections</groupId>
-      <artifactId>commons-collections</artifactId>
-      <version>3.2.2</version>
     </dependency>
     <dependency>
       <groupId>commons-lang</groupId>
@@ -65,20 +73,15 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>commons-pool</groupId>
-      <artifactId>commons-pool</artifactId>
-      <version>1.5.7</version>
+      <groupId>commons-math</groupId>
+      <artifactId>commons-math</artifactId>
+      <version>1.1</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
           <groupId>*</groupId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>commons-codec</groupId>
-      <artifactId>commons-codec</artifactId>
-      <version>1.5</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
@@ -92,47 +95,9 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>commons-math</groupId>
-      <artifactId>commons-math</artifactId>
-      <version>1.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>commons-dbcp</groupId>
-      <artifactId>commons-dbcp</artifactId>
-      <version>1.2.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>commons-net</groupId>
-      <artifactId>commons-net</artifactId>
-      <version>1.4.1</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-digester</groupId>
-      <artifactId>commons-digester</artifactId>
-      <version>1.8</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>commons-beanutils</groupId>
-      <artifactId>commons-beanutils</artifactId>
-      <version>1.9.3</version>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcore</artifactId>
+      <version>4.4.6</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -152,55 +117,6 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>ognl</groupId>
-      <artifactId>ognl</artifactId>
-      <version>2.6.9</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>dom4j</groupId>
-      <artifactId>dom4j</artifactId>
-      <version>1.6.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>xml-apis</artifactId>
-          <groupId>xml-apis</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>pentaho</groupId>
-      <artifactId>simple-jndi</artifactId>
-      <version>1.0.0</version>
-    </dependency>
-    <dependency>
-      <groupId>xmlpull</groupId>
-      <artifactId>xmlpull</artifactId>
-      <version>1.1.3.1</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>xpp3</groupId>
-      <artifactId>xpp3_min</artifactId>
-      <version>1.1.4c</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>com.thoughtworks.xstream</groupId>
       <artifactId>xstream</artifactId>
       <version>${xstream.version}</version>
@@ -212,93 +128,29 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.axis2</groupId>
-      <artifactId>axis2-adb</artifactId>
-      <version>1.5</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.axis2</groupId>
-      <artifactId>axis2-kernel</artifactId>
-      <version>1.5</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.javassist</groupId>
-      <artifactId>javassist</artifactId>
-      <version>3.20.0-GA</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.scannotation</groupId>
-      <artifactId>scannotation</artifactId>
-      <version>1.0.2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>javassist</artifactId>
-          <groupId>javassist</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>jug-lgpl</groupId>
-      <artifactId>jug-lgpl</artifactId>
-      <version>2.0.0</version>
-    </dependency>
-    <dependency>
       <groupId>org.netbeans</groupId>
       <artifactId>jmi</artifactId>
-      <version>200507110943</version>
-    </dependency>
-    <dependency>
-      <groupId>org.netbeans</groupId>
-      <artifactId>jmiutils</artifactId>
-      <version>200507110943</version>
+      <version>${netbeans.version}</version>
     </dependency>
     <dependency>
       <groupId>org.netbeans</groupId>
       <artifactId>mdrapi</artifactId>
-      <version>200507110943</version>
+      <version>${netbeans.version}</version>
     </dependency>
     <dependency>
       <groupId>org.netbeans</groupId>
       <artifactId>mof</artifactId>
-      <version>200507110943</version>
-    </dependency>
-    <dependency>
-      <groupId>org.netbeans</groupId>
-      <artifactId>openide-util</artifactId>
-      <version>200507110943</version>
+      <version>${netbeans.version}</version>
     </dependency>
     <dependency>
       <groupId>org.netbeans</groupId>
       <artifactId>nbmdr</artifactId>
-      <version>200507110943-custom</version>
+      <version>${netbeans-custom.version}</version>
     </dependency>
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-connections</artifactId>
       <version>${pentaho-connections.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>pentaho</groupId>
-      <artifactId>pentaho-registry</artifactId>
-      <version>${pentaho-registry.version}</version>
     </dependency>
     <dependency>
       <groupId>pentaho-kettle</groupId>
@@ -319,7 +171,7 @@
     <dependency>
       <groupId>pentaho</groupId>
       <artifactId>pentaho-cwm</artifactId>
-      <version>1.5.4</version>
+      <version>${pentaho-cwm.version}</version>
     </dependency>
     <dependency>
       <groupId>org.pentaho.reporting.library</groupId>
@@ -331,124 +183,7 @@
       <artifactId>libbase</artifactId>
       <version>${pentaho-reporting.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-vfs2</artifactId>
-      <version>2.1</version>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.ws.commons.axiom</groupId>
-      <artifactId>axiom-api</artifactId>
-      <version>1.2.7</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.ws.commons.axiom</groupId>
-      <artifactId>axiom-dom</artifactId>
-      <version>1.2.7</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.ws.commons.axiom</groupId>
-      <artifactId>axiom-impl</artifactId>
-      <version>1.2.7</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.ws.commons.schema</groupId>
-      <artifactId>XmlSchema</artifactId>
-      <version>1.4.2</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.geronimo.specs</groupId>
-      <artifactId>geronimo-stax-api_1.0_spec</artifactId>
-      <version>1.0</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>wsdl4j</groupId>
-      <artifactId>wsdl4j</artifactId>
-      <version>1.6.2</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>backport-util-concurrent</groupId>
-      <artifactId>backport-util-concurrent</artifactId>
-      <version>3.1</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.neethi</groupId>
-      <artifactId>neethi</artifactId>
-      <version>2.0.1</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>woodstox</groupId>
-      <artifactId>wstx-asl</artifactId>
-      <version>3.2.4</version>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
+
     <dependency>
       <groupId>org.hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
@@ -468,46 +203,6 @@
       </exclusions>
     </dependency>
   </dependencies>
-  <profiles>
-    <profile>
-      <id>integration-tests</id>
-      <activation>
-        <property>
-          <name>runITs</name>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <artifactId>maven-failsafe-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>integration-test</id>
-                <goals>
-                  <goal>integration-test</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>verify</id>
-                <goals>
-                  <goal>verify</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <forkCount>1</forkCount>
-              <reuseForks>false</reuseForks>
-              <argLine>-Xmx512m -Djava.awt.headless=true</argLine>
-              <testFailureIgnore>true</testFailureIgnore>
-              <testClassesDirectory>${project.build.directory}/it-classes</testClassesDirectory>
-              <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
-
 
   <repositories>
     <repository>
