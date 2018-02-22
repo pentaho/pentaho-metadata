@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2017 Hitachi Vantara..  All rights reserved.
+ * Copyright (c) 2006 - 2018 Hitachi Vantara. All rights reserved.
  */
 package org.pentaho.pms.schema.concept;
 
@@ -44,6 +44,7 @@ import org.pentaho.pms.schema.concept.types.security.ConceptPropertySecurity;
 import org.pentaho.pms.schema.concept.types.string.ConceptPropertyString;
 import org.pentaho.pms.schema.concept.types.tabletype.ConceptPropertyTableType;
 import org.pentaho.pms.schema.concept.types.tabletype.TableTypeSettings;
+import org.pentaho.pms.schema.concept.types.timestamp.ConceptPropertyTimestamp;
 import org.pentaho.pms.schema.concept.types.url.ConceptPropertyURL;
 import org.pentaho.pms.schema.security.RowLevelSecurity;
 import org.pentaho.pms.schema.security.Security;
@@ -244,6 +245,9 @@ public class DefaultPropertyID {
         break;
       case ConceptPropertyType.PROPERTY_TYPE_DATE:
         property = new ConceptPropertyDate( name, null );
+        break;
+      case ConceptPropertyType.PROPERTY_TYPE_TIMESTAMP:
+        property = new ConceptPropertyTimestamp( name, null );
         break;
       case ConceptPropertyType.PROPERTY_TYPE_NUMBER:
         property = new ConceptPropertyNumber( name, null );

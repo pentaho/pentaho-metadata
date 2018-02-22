@@ -101,17 +101,17 @@ public class PhysicalTableImporterTest {
     assertEquals( 1, physicalColumns.size() );
 
     IPhysicalColumn column = physicalColumns.get( 0 );
-    DataType dt = ( DataType ) column.getProperty( "datatype" );
-    assertEquals( "Date", dt.getName() );
+    DataType dt = (DataType) column.getProperty( "datatype" );
+    assertEquals( "Timestamp", dt.getName() );
   }
 
   @Test
-  public void testBeautifyName(){
-    assertEquals( "TestName", PhysicalTableImporter.beautifyName("\"TestName\"") );
-    assertEquals( "TestName", PhysicalTableImporter.beautifyName("'TestName'") );
-    assertEquals( "Test Name", PhysicalTableImporter.beautifyName("Test_Name") );
-    assertEquals( "TestName", PhysicalTableImporter.beautifyName("TestName\\") );
-    assertEquals( "TestName", PhysicalTableImporter.beautifyName("`TestName`") );
+  public void testBeautifyName() {
+    assertEquals( "TestName", PhysicalTableImporter.beautifyName( "\"TestName\"" ) );
+    assertEquals( "TestName", PhysicalTableImporter.beautifyName( "'TestName'" ) );
+    assertEquals( "Test Name", PhysicalTableImporter.beautifyName( "Test_Name" ) );
+    assertEquals( "TestName", PhysicalTableImporter.beautifyName( "TestName\\" ) );
+    assertEquals( "TestName", PhysicalTableImporter.beautifyName( "`TestName`" ) );
   }
 
   private IPhysicalColumn assertContainsColumn( final String columnName, final List<IPhysicalColumn> physicalColumns ) {
@@ -133,7 +133,7 @@ public class PhysicalTableImporterTest {
   }
 
   private void assertNotNullPropertyValue( String key, Map properties ) {
-    if( properties.containsKey( key ) ) {
+    if ( properties.containsKey( key ) ) {
       assertNotNull( properties.get( key ) );
     }
   }

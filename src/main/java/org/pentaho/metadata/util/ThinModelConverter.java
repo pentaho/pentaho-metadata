@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2016 - 2017 Hitachi Vantara..  All rights reserved.
+ * Copyright (c) 2016 - 2018 Hitachi Vantara. All rights reserved.
  */
 package org.pentaho.metadata.util;
 
@@ -100,6 +100,7 @@ import org.pentaho.pms.schema.concept.types.security.ConceptPropertySecurity;
 import org.pentaho.pms.schema.concept.types.string.ConceptPropertyString;
 import org.pentaho.pms.schema.concept.types.tabletype.ConceptPropertyTableType;
 import org.pentaho.pms.schema.concept.types.tabletype.TableTypeSettings;
+import org.pentaho.pms.schema.concept.types.timestamp.ConceptPropertyTimestamp;
 import org.pentaho.pms.schema.concept.types.url.ConceptPropertyURL;
 import org.pentaho.pms.util.ObjectAlreadyExistsException;
 
@@ -520,7 +521,9 @@ public class ThinModelConverter {
           (org.pentaho.pms.schema.concept.types.columnwidth.ColumnWidth) property.getValue();
       return new org.pentaho.metadata.model.concept.types.ColumnWidth( WidthType.values()[colWidth.getType()], colWidth
           .getWidth().doubleValue() );
-    } else if ( property instanceof ConceptPropertyDate ) {
+    } else if ( ( property instanceof ConceptPropertyDate )
+      || ( property instanceof ConceptPropertyTimestamp ) )
+    {
       return property.getValue();
     } else if ( property instanceof ConceptPropertyURL ) {
       return property.getValue();

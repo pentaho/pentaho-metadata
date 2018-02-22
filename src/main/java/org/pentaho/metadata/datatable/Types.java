@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 - 2017 Hitachi Vantara.  All rights reserved.
+ * Copyright (c) 2009 - 2018 Hitachi Vantara. All rights reserved.
  * 
  * Created Jun, 2012
  * @author jdixon
@@ -31,5 +31,6 @@ public class Types {
   public static final String TYPE_NUMERIC = "number";
   public static final String TYPE_DATE = "date";
   public static final String TYPE_BOOLEAN = "boolean";
+  public static final String TYPE_TIMESTAMP = "timestamp";
 
 }

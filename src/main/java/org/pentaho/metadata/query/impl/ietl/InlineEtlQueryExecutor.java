@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009-2017 Hitachi Vantara..  All rights reserved.
+ * Copyright (c) 2009-2018 Hitachi Vantara. All rights reserved.
  */
 
 package org.pentaho.metadata.query.impl.ietl;
@@ -691,6 +691,7 @@ public class InlineEtlQueryExecutor extends BaseMetadataQueryExec {
               pentahoRow[columnNo] = rowMeta.getBoolean( row, columnNo );
               break;
             case ValueMetaInterface.TYPE_DATE:
+            case ValueMetaInterface.TYPE_TIMESTAMP:
               pentahoRow[columnNo] = rowMeta.getDate( row, columnNo );
               break;
             case ValueMetaInterface.TYPE_INTEGER:
@@ -729,6 +730,8 @@ public class InlineEtlQueryExecutor extends BaseMetadataQueryExec {
     switch ( type ) {
       case DATE:
         return ValueMetaInterface.TYPE_DATE;
+      case TIMESTAMP:
+        return ValueMetaInterface.TYPE_TIMESTAMP;
       case BOOLEAN:
         return ValueMetaInterface.TYPE_BOOLEAN;
       case NUMERIC:

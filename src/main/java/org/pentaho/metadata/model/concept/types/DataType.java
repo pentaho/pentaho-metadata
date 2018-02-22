@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 - 2017 Hitachi Vantara..  All rights reserved.
+ * Copyright (c) 2009 - 2018 Hitachi Vantara. All rights reserved.
  */
 package org.pentaho.metadata.model.concept.types;
 
@@ -39,7 +39,8 @@ public enum DataType {
   NUMERIC( 4, "Numeric", "DataType.USER_NUMERIC_DESC" ), //$NON-NLS-1$  //$NON-NLS-2$
   BINARY( 5, "Binary", "DataType.USER_BINARY_DESC" ), //$NON-NLS-1$  //$NON-NLS-2$
   IMAGE( 6, "Image", "DataType.USER_IMAGE_DESC" ), //$NON-NLS-1$  //$NON-NLS-2$
-  URL( 7, "URL", "DataType.USER_URL_DESC" ); //$NON-NLS-1$  //$NON-NLS-2$
+  URL( 7, "URL", "DataType.USER_URL_DESC" ),
+  TIMESTAMP( 8, "Timestamp", "DataType.USER_TIMESTAMP_DESC" ); //$NON-NLS-1$  //$NON-NLS-2$
 
   private int type;
   private String name, description;

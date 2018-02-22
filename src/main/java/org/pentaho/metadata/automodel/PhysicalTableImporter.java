@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2017 Hitachi Vantara.  All rights reserved.
+ * Copyright (c) 2017-2018 Hitachi Vantara. All rights reserved.
  */
 package org.pentaho.metadata.automodel;
 
@@ -159,8 +159,9 @@ public class PhysicalTableImporter {
       case ValueMetaInterface.TYPE_BOOLEAN:
         return DataType.BOOLEAN;
       case ValueMetaInterface.TYPE_DATE:
-      case ValueMetaInterface.TYPE_TIMESTAMP:
         return DataType.DATE;
+      case ValueMetaInterface.TYPE_TIMESTAMP:
+        return DataType.TIMESTAMP;
       case ValueMetaInterface.TYPE_STRING:
         return DataType.STRING;
       case ValueMetaInterface.TYPE_NONE:

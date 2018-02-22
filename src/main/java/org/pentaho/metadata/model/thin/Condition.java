@@ -97,7 +97,8 @@ public class Condition {
     String columnName =
         "[" + parentId + "." + elementId + ( StringUtils.isEmpty( selectedAggregation ) ? "" : "." + selectedAggregation ) + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$;
     // Date is a special case where we craft a formula function.
-    if ( type.equals( DataType.DATE.getName() ) ) {
+    if ( type.equalsIgnoreCase( DataType.DATE.getName() )
+        || type.equalsIgnoreCase( DataType.TIMESTAMP.getName() ) ) {
       if ( enforceParameters ) {
         // Due to the fact that the value of a Date is a forumula function, the tokenizing of
         // the value needs to happen here instead of letting the Operator class handle it.

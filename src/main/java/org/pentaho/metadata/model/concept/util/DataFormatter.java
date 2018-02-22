@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2016 - 2017 Hitachi Vantara..  All rights reserved.
+ * Copyright (c) 2016 - 2018 Hitachi Vantara. All rights reserved.
  */
 package org.pentaho.metadata.model.concept.util;
 
@@ -55,6 +55,7 @@ public class DataFormatter {
           decimalFormat.setParseBigDecimal( true );
           return decimalFormat.format( data  );
         case DATE:
+        case TIMESTAMP:
           SimpleDateFormat simpleDateFormat = new SimpleDateFormat( mask );
           if ( data instanceof Date ) {
             return simpleDateFormat.format( data );

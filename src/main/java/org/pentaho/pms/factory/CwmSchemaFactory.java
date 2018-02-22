@@ -90,6 +90,7 @@ import org.pentaho.pms.schema.concept.types.security.ConceptPropertySecurity;
 import org.pentaho.pms.schema.concept.types.string.ConceptPropertyString;
 import org.pentaho.pms.schema.concept.types.tabletype.ConceptPropertyTableType;
 import org.pentaho.pms.schema.concept.types.tabletype.TableTypeSettings;
+import org.pentaho.pms.schema.concept.types.timestamp.ConceptPropertyTimestamp;
 import org.pentaho.pms.schema.concept.types.url.ConceptPropertyURL;
 import org.pentaho.pms.schema.olap.OlapCube;
 import org.pentaho.pms.schema.olap.OlapDimension;
@@ -1546,8 +1547,10 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
           description.setName( property.getId() );
           description.setType( property.getType().getCode() );
           cwm.setDescription( modelElement, description );
-        } else if ( property.getType().equals( ConceptPropertyType.DATE ) ) {
-          // Save the date properties
+        } else if ( ( property.getType().equals( ConceptPropertyType.DATE ) )
+          || ( property.getType().equals( ConceptPropertyType.TIMESTAMP ) ) )
+        {
+          // Save the date/timestamp properties
           //
           Date value = (Date) property.getValue();
           DateFormat df = new SimpleDateFormat( "yyyy/MM/dd'T'HH:mm:ss" ); //$NON-NLS-1$
@@ -1796,6 +1799,19 @@ public class CwmSchemaFactory implements CwmSchemaFactoryInterface {
           try {
             ConceptPropertyDate conceptPropertyDate = new ConceptPropertyDate( name, df.parse( value ) );
             concept.addProperty( conceptPropertyDate );
+          } catch ( ParseException e ) {
+            // TODO: ignoring the error for the time being
+            logger.error( Messages.getString( "CwmSchemaFactory.ERROR_FAILED_TO_PARSE_DATE", value ), e );
+          }
+        }
+      } else if ( type.equals( ConceptPropertyType.TIMESTAMP.getCode() ) ) {
+        // Load the timestamps
+        //
+        if ( !Const.isEmpty( name ) && !Const.isEmpty( value ) ) {
+          DateFormat df = new SimpleDateFormat( ConceptPropertyType.ISO_DATE_FORMAT );
+          try {
+            ConceptPropertyTimestamp ts = new ConceptPropertyTimestamp( name, df.parse( value ) );
+            concept.addProperty( ts );
           } catch ( ParseException e ) {
             // TODO: ignoring the error for the time being
             logger.error( Messages.getString( "CwmSchemaFactory.ERROR_FAILED_TO_PARSE_DATE", value ), e );

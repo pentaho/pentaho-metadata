@@ -143,6 +143,9 @@ public class MondrianModelExporter {
               case DataTypeSettings.DATA_TYPE_DATE:
                 typeDesc = "Date"; //$NON-NLS-1$
                 break;
+              case DataTypeSettings.DATA_TYPE_TIMESTAMP:
+                typeDesc = "Timestamp"; //$NON-NLS-1$
+                break;
             }
 
             if ( typeDesc != null ) {

@@ -216,6 +216,9 @@ public class MondrianModelExporter {
               case DATE:
                 typeDescLevel = "Date"; //$NON-NLS-1$
                 break;
+              case TIMESTAMP:
+                typeDescLevel = "Timestamp"; //$NON-NLS-1$
+                break;
             }
 
             if ( typeDescLevel != null ) {
@@ -283,6 +286,9 @@ public class MondrianModelExporter {
                   break;
                 case DATE:
                   typeDesc = "Date"; //$NON-NLS-1$
+                  break;
+                case TIMESTAMP:
+                  typeDesc = "Timestamp"; //$NON-NLS-1$
                   break;
               }
 
