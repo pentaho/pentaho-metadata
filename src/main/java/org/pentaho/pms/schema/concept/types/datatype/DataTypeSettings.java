@@ -32,6 +32,7 @@ public class DataTypeSettings {
   public static final int DATA_TYPE_BINARY = 5;
   public static final int DATA_TYPE_IMAGE = 6;
   public static final int DATA_TYPE_URL = 7;
+  public static final int DATA_TYPE_TIMESTAMP = 8;
 
   public static final DataTypeSettings UNKNOWN = new DataTypeSettings( DATA_TYPE_UNKNOWN );
   public static final DataTypeSettings STRING = new DataTypeSettings( DATA_TYPE_STRING );
@@ -41,19 +42,38 @@ public class DataTypeSettings {
   public static final DataTypeSettings BINARY = new DataTypeSettings( DATA_TYPE_BINARY );
   public static final DataTypeSettings IMAGE = new DataTypeSettings( DATA_TYPE_IMAGE );
   public static final DataTypeSettings URL = new DataTypeSettings( DATA_TYPE_URL );
+  public static final DataTypeSettings TIMESTAMP = new DataTypeSettings( DATA_TYPE_TIMESTAMP );
 
   private static final String[] typeCodes = {
-    "Unknown", "String", "Date", "Boolean", "Numeric", "Binary", "Image", "URL", }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
-  private static final String[] typeDescriptions = { Messages.getString( "DataTypeSettings.USER_UNKNOWN_DESC" ), //$NON-NLS-1$
+    "Unknown",
+    "String",
+    "Date",
+    "Boolean",
+    "Numeric",
+    "Binary",
+    "Image",
+    "URL",
+    "Timestamp" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+  private static final String[] typeDescriptions = {
+    Messages.getString( "DataTypeSettings.USER_UNKNOWN_DESC" ), //$NON-NLS-1$
     Messages.getString( "DataTypeSettings.USER_STRING_DESC" ), //$NON-NLS-1$
     Messages.getString( "DataTypeSettings.USER_DATE_DESC" ), //$NON-NLS-1$
     Messages.getString( "DataTypeSettings.USER_BOOLEAN_DESC" ), //$NON-NLS-1$
     Messages.getString( "DataTypeSettings.USER_NUMERIC_DESC" ), //$NON-NLS-1$
     Messages.getString( "DataTypeSettings.USER_BINARY_DESC" ), //$NON-NLS-1$
     Messages.getString( "DataTypeSettings.USER_IMAGE_DESC" ), //$NON-NLS-1$
-    Messages.getString( "DataTypeSettings.USER_URL_DESC" ), }; //$NON-NLS-1$
-  public static final DataTypeSettings[] types = new DataTypeSettings[] { UNKNOWN, STRING, DATE, BOOLEAN, NUMERIC,
-    BINARY, IMAGE, URL, };
+    Messages.getString( "DataTypeSettings.USER_URL_DESC" ), //$NON-NLS-1$
+    Messages.getString( "DataTypeSettings.USER_TIMESTAMP_DESC" ), }; //$NON-NLS-1$
+  public static final DataTypeSettings[] types = new DataTypeSettings[] {
+    UNKNOWN,
+    STRING,
+    DATE,
+    BOOLEAN,
+    NUMERIC,
+    BINARY,
+    IMAGE,
+    URL,
+    TIMESTAMP };
 
   private static final String SEPARATOR = ","; //$NON-NLS-1$
 

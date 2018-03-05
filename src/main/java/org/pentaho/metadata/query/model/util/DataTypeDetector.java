@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 - 2017 Hitachi Vantara.  All rights reserved.
+ * Copyright (c) 2009 - 2018 Hitachi Vantara. All rights reserved.
  */
 package org.pentaho.metadata.query.model.util;
 
@@ -20,7 +20,7 @@ import java.util.Date;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.joda.time.LocalTime;
+import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.pentaho.metadata.messages.Messages;
@@ -31,6 +31,10 @@ public class DataTypeDetector {
   public static final String[] COMMON_DATE_FORMATS = new String[] { "MM-dd-yyyy", "MM/dd/yyyy HH:mm:ss", "MM/dd/yyyy",
     "dd-MM-yyyy", "dd/MM/yyyy", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd", "yyyy/MM/dd", "MM-dd-yy", "MM/dd/yy", "dd-MM-yy",
     "dd/MM/yy" };
+
+  public static final String[] COMMON_TIME_FORMATS =
+    new String[] { "MM/dd/yyyy HH:mm:ss", "yyyy-MM-dd HH:mm:ss",
+      "yyyy-MM-dd HH:mm:ss.SSS", "MM/dd/yyyy HH:mm:ss.SSS" };
 
   /**
    * Class used to detect and modify the column type based on incoming string values. The DataTypeDetector is currently
@@ -95,10 +99,16 @@ public class DataTypeDetector {
         }
       }
       if ( _timePossible ) {
-        try {
-          new LocalTime( valueAsString );
-        } catch ( IllegalArgumentException e ) {
-          _timePossible = false;
+        DateTimeFormatter fmt = null;
+        for ( String mask : COMMON_TIME_FORMATS ) {
+          try {
+            fmt = DateTimeFormat.forPattern( mask );
+            fmt.parseDateTime( valueAsString );
+            _timePossible = true;
+            break;
+          } catch ( IllegalArgumentException e ) {
+            _timePossible = false;
+          }
         }
       }
     }
@@ -112,11 +122,10 @@ public class DataTypeDetector {
       // NUMERIC
       // returnType = DataType.DOUBLE;
       returnType = DataType.NUMERIC;
-    } else if ( _datePossible ) {
-      returnType = DataType.DATE;
     } else if ( _timePossible ) {
-      // TODO We need to find a way of passing TIME in the model as a data type. For now all TIME will be set to DATE
-      // returnType = DataType.TIME;
+      // Time is more specific than date.
+      returnType = DataType.TIMESTAMP;
+    } else if ( _datePossible ) {
       returnType = DataType.DATE;
     } else {
       returnType = DataType.STRING;
@@ -145,6 +154,12 @@ public class DataTypeDetector {
            * localTime .getHourOfDay(), localTime.getMinuteOfHour(), localTime .getSecondOfMinute(),
            * localTime.getMillisOfSecond()) .getMillis());
            */
+        case TIMESTAMP:
+          LocalDateTime localTime = new LocalDateTime( valueAsString );
+          return new Date( new DateTime(
+            localTime.getYear(), localTime.getMonthOfYear(), localTime.getDayOfMonth(),
+            localTime.getHourOfDay(), localTime.getMinuteOfHour(), localTime.getSecondOfMinute(),
+            localTime.getMillisOfSecond() ).getMillis() );
         default:
           throw new IllegalStateException( Messages.getErrorString(
               "DataTypeDetector.ERROR_0001_UNSUPPORTED_COLUMN_TYPE", type ) ); //$NON-NLS-1$

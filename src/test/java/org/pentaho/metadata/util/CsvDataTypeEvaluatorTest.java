@@ -71,7 +71,7 @@ public class CsvDataTypeEvaluatorTest {
     columnValues.add( "23:40" );
     CsvDataTypeEvaluator type = new CsvDataTypeEvaluator( columnValues );
     DataType guessType = type.evaluateDataType( columnValues );
-    Assert.assertEquals( DataType.DATE, guessType );
+    Assert.assertEquals( DataType.STRING, guessType );
   }
 
   @Test

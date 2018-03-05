@@ -264,7 +264,7 @@ public class SQLModelGenerator {
         return DataType.DATE;
 
       case Types.TIMESTAMP:
-        return DataType.DATE;
+        return DataType.TIMESTAMP;
 
       case Types.LONGVARCHAR:
       case Types.VARCHAR:

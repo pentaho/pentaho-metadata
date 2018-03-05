@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2017 Hitachi Vantara.  All rights reserved.
+ * Copyright (c) 2017 - 2018 Hitachi Vantara. All rights reserved.
  */
 package org.pentaho.pms.automodel;
 
@@ -150,6 +150,10 @@ public class PhysicalTableImporter {
 
       case ValueMetaInterface.TYPE_DATE:
         dataTypeSettings.setType( DataTypeSettings.DATA_TYPE_DATE );
+        break;
+
+      case ValueMetaInterface.TYPE_TIMESTAMP:
+        dataTypeSettings.setType( DataTypeSettings.DATA_TYPE_TIMESTAMP );
         break;
 
       case ValueMetaInterface.TYPE_STRING:

@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2017 Hitachi Vantara..  All rights reserved.
+ * Copyright (c) 2006 - 2018 Hitachi Vantara. All rights reserved.
  */
 package org.pentaho.pms.schema.concept.types;
 
@@ -43,6 +43,7 @@ public class ConceptPropertyType {
   public static final int PROPERTY_TYPE_COLUMN_WIDTH = 14;
   public static final int PROPERTY_TYPE_ROW_LEVEL_SECURITY = 15;
   public static final int PROPERTY_TYPE_AGGREGATION_LIST = 16;
+  public static final int PROPERTY_TYPE_TIMESTAMP = 17;
 
   /**
    * These are the core property types to bootstrap the property system.
@@ -86,6 +87,10 @@ public class ConceptPropertyType {
     new ConceptPropertyType( PROPERTY_TYPE_AGGREGATION_LIST,
         "AggregationList", Messages.getString( "ConceptPropertyType.USER_AGGREGATION_LIST_DESC" ) ),
       //$NON-NLS-1$ //$NON-NLS-2$
+    new ConceptPropertyType(
+      PROPERTY_TYPE_TIMESTAMP,
+      "Timestamp",
+      Messages.getString( "ConceptPropertyType.USER_TIMESTAMP_DESC" ) ),
     };
 
   public static final ConceptPropertyType STRING = propertyTypes[ PROPERTY_TYPE_STRING ];
@@ -105,6 +110,7 @@ public class ConceptPropertyType {
   public static final ConceptPropertyType COLUMN_WIDTH = propertyTypes[ PROPERTY_TYPE_COLUMN_WIDTH ];
   public static final ConceptPropertyType ROW_LEVEL_SECURITY = propertyTypes[ PROPERTY_TYPE_ROW_LEVEL_SECURITY ];
   public static final ConceptPropertyType AGGREGATION_LIST = propertyTypes[ PROPERTY_TYPE_AGGREGATION_LIST ];
+  public static final ConceptPropertyType TIMESTAMP = propertyTypes[ PROPERTY_TYPE_TIMESTAMP ];
 
   public static final String ISO_DATE_FORMAT = "yyyy/MM/dd'T'HH:mm:ss"; //$NON-NLS-1$
 
