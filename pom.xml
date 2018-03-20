@@ -5,12 +5,11 @@
   <parent>
     <groupId>org.pentaho</groupId>
     <artifactId>pentaho-ce-jar-parent-pom</artifactId>
-    <version>7.1-SNAPSHOT</version>
+    <version>7.1.0.10-106</version>
   </parent>
   <groupId>pentaho</groupId>
   <artifactId>pentaho-metadata</artifactId>
-  <version>7.1-SNAPSHOT</version>
-  <packaging>jar</packaging>
+  <version>7.1.0.10-106</version>
   <name>Pentaho Community Edition Project: ${project.artifactId}</name>
   <description>Pentaho Metadata Core</description>
   <url>http://www.pentaho.com</url>
@@ -20,12 +19,12 @@
     <url>scm:git:git@github.com:pentaho/${project.artifactId}.git</url>
   </scm>
   <properties>
-    <pentaho-connections.version>7.1-SNAPSHOT</pentaho-connections.version>
-    <pentaho-registry.version>7.1-SNAPSHOT</pentaho-registry.version>
-    <pentaho-kettle.version>7.1-SNAPSHOT</pentaho-kettle.version>
-    <libformula.version>7.1-SNAPSHOT</libformula.version>
-    <libbase.version>7.1-SNAPSHOT</libbase.version>
+    <libformula.version>7.1.0.10-106</libformula.version>
+    <pentaho-registry.version>7.1.0.10-106</pentaho-registry.version>
+    <pentaho-kettle.version>7.1.0.10-106</pentaho-kettle.version>
+    <pentaho-connections.version>7.1.0.10-106</pentaho-connections.version>
     <xstream.version>1.4.10</xstream.version>
+    <libbase.version>7.1.0.10-106</libbase.version>
   </properties>
   <dependencies>
     <dependency>
@@ -34,8 +33,8 @@
       <version>1.6</version>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
           <artifactId>*</artifactId>
+          <groupId>*</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -60,8 +59,8 @@
       <version>1.1.1</version>
       <exclusions>
         <exclusion>
-          <groupId>javax.servlet</groupId>
           <artifactId>*</artifactId>
+          <groupId>javax.servlet</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -71,8 +70,8 @@
       <version>1.5.7</version>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
           <artifactId>*</artifactId>
+          <groupId>*</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -87,8 +86,8 @@
       <version>3.1</version>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
           <artifactId>*</artifactId>
+          <groupId>*</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -98,8 +97,8 @@
       <version>1.1</version>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
           <artifactId>*</artifactId>
+          <groupId>*</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -109,8 +108,8 @@
       <version>1.2.1</version>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
           <artifactId>*</artifactId>
+          <groupId>*</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -125,8 +124,8 @@
       <version>1.8</version>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
           <artifactId>*</artifactId>
+          <groupId>*</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -136,8 +135,8 @@
       <version>1.9.3</version>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
           <artifactId>*</artifactId>
+          <groupId>*</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -147,8 +146,8 @@
       <version>1.2.16</version>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
           <artifactId>*</artifactId>
+          <groupId>*</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -158,8 +157,8 @@
       <version>2.6.9</version>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
           <artifactId>*</artifactId>
+          <groupId>*</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -169,8 +168,8 @@
       <version>1.6.1</version>
       <exclusions>
         <exclusion>
-          <groupId>xml-apis</groupId>
           <artifactId>xml-apis</artifactId>
+          <groupId>xml-apis</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -185,8 +184,8 @@
       <version>1.1.3.1</version>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
           <artifactId>*</artifactId>
+          <groupId>*</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -196,8 +195,8 @@
       <version>1.1.4c</version>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
           <artifactId>*</artifactId>
+          <groupId>*</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -207,8 +206,8 @@
       <version>${xstream.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
           <artifactId>*</artifactId>
+          <groupId>*</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -218,8 +217,8 @@
       <version>1.5</version>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
           <artifactId>*</artifactId>
+          <groupId>*</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -229,8 +228,8 @@
       <version>1.5</version>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
           <artifactId>*</artifactId>
+          <groupId>*</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -240,8 +239,8 @@
       <version>3.20.0-GA</version>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
           <artifactId>*</artifactId>
+          <groupId>*</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -251,8 +250,8 @@
       <version>1.0.2</version>
       <exclusions>
         <exclusion>
-          <groupId>javassist</groupId>
           <artifactId>javassist</artifactId>
+          <groupId>javassist</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -307,8 +306,8 @@
       <version>${pentaho-kettle.version}</version>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
           <artifactId>*</artifactId>
+          <groupId>*</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -337,7 +336,6 @@
       <artifactId>commons-vfs2</artifactId>
       <version>2.1</version>
     </dependency>
-    <!--test dependencies-->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -351,8 +349,8 @@
       <scope>test</scope>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
           <artifactId>*</artifactId>
+          <groupId>*</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -363,8 +361,8 @@
       <scope>test</scope>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
           <artifactId>*</artifactId>
+          <groupId>*</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -375,8 +373,8 @@
       <scope>test</scope>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
           <artifactId>*</artifactId>
+          <groupId>*</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -387,8 +385,8 @@
       <scope>test</scope>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
           <artifactId>*</artifactId>
+          <groupId>*</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -399,8 +397,8 @@
       <scope>test</scope>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
           <artifactId>*</artifactId>
+          <groupId>*</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -410,8 +408,8 @@
       <version>1.6.2</version>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
           <artifactId>*</artifactId>
+          <groupId>*</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -422,8 +420,8 @@
       <scope>test</scope>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
           <artifactId>*</artifactId>
+          <groupId>*</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -434,8 +432,8 @@
       <scope>test</scope>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
           <artifactId>*</artifactId>
+          <groupId>*</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -446,8 +444,8 @@
       <scope>test</scope>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
           <artifactId>*</artifactId>
+          <groupId>*</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -464,8 +462,8 @@
       <scope>test</scope>
       <exclusions>
         <exclusion>
-          <groupId>*</groupId>
           <artifactId>*</artifactId>
+          <groupId>*</groupId>
         </exclusion>
       </exclusions>
     </dependency>
