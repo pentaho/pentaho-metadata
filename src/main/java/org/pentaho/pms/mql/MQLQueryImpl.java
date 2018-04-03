@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2016 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2018 Hitachi Vantara..  All rights reserved.
  */
 package org.pentaho.pms.mql;
 
@@ -28,6 +28,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,6 +36,7 @@ import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.xml.XMLHandler;
 import org.pentaho.metadata.util.XmiParser;
 import org.pentaho.pms.core.CWM;
+import org.pentaho.pms.core.exception.CWMException;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
 import org.pentaho.pms.messages.Messages;
@@ -46,6 +48,7 @@ import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 import org.pentaho.pms.util.Settings;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -88,15 +91,11 @@ public class MQLQueryImpl implements MQLQuery {
 
   /**
    * This constructor is used when constructing an MQL Query from scratch
-   * 
-   * @param schemaMeta
-   *          schema metadata
-   * @param model
-   *          business model
-   * @param databaseMeta
-   *          database metadata
-   * @param locale
-   *          locale string
+   *
+   * @param schemaMeta   schema metadata
+   * @param model        business model
+   * @param databaseMeta database metadata
+   * @param locale       locale string
    */
   public MQLQueryImpl( SchemaMeta schemaMeta, BusinessModel model, DatabaseMeta databaseMeta, String locale ) {
     this.databaseMeta = databaseMeta;
@@ -107,15 +106,11 @@ public class MQLQueryImpl implements MQLQuery {
 
   /**
    * This constructor is used when constructing an MQL Query from XML
-   * 
-   * @param XML
-   *          xml to parse
-   * @param databaseMeta
-   *          database metadata
-   * @param locale
-   *          locale string
-   * @param factory
-   *          cwm schema factory.
+   *
+   * @param XML          xml to parse
+   * @param databaseMeta database metadata
+   * @param locale       locale string
+   * @param factory      cwm schema factory.
    * @throws PentahoMetadataException
    */
   public MQLQueryImpl( String XML, DatabaseMeta databaseMeta, String locale, CwmSchemaFactoryInterface factory )
@@ -154,7 +149,7 @@ public class MQLQueryImpl implements MQLQuery {
     BusinessCategory businessCategory = rootCat.findBusinessCategory( categoryId );
     if ( businessCategory == null ) {
       throw new PentahoMetadataException( Messages.getErrorString(
-          "MQLQuery.ERROR_0014_BUSINESS_CATEGORY_NOT_FOUND", categoryId ) ); //$NON-NLS-1$ 
+        "MQLQuery.ERROR_0014_BUSINESS_CATEGORY_NOT_FOUND", categoryId ) ); //$NON-NLS-1$
     }
     addOrderBy( businessCategory, columnId, aggregation, ascending );
   }
@@ -163,13 +158,14 @@ public class MQLQueryImpl implements MQLQuery {
     throws PentahoMetadataException {
 
     if ( businessCategory == null ) {
-      throw new PentahoMetadataException( Messages.getErrorString( "MQLQuery.ERROR_0015_BUSINESS_CATEGORY_NULL" ) ); //$NON-NLS-1$ 
+      throw new PentahoMetadataException(
+        Messages.getErrorString( "MQLQuery.ERROR_0015_BUSINESS_CATEGORY_NULL" ) ); //$NON-NLS-1$
     }
 
     BusinessColumn businessColumn = businessCategory.findBusinessColumn( columnId );
     if ( businessColumn == null ) {
       throw new PentahoMetadataException( Messages.getErrorString(
-          "MQLQuery.ERROR_0016_BUSINESS_COLUMN_NOT_FOUND", businessCategory.getId(), columnId ) ); //$NON-NLS-1$ 
+        "MQLQuery.ERROR_0016_BUSINESS_COLUMN_NOT_FOUND", businessCategory.getId(), columnId ) ); //$NON-NLS-1$
     }
 
     // this code verifies the aggregation setting provided is a
@@ -178,7 +174,7 @@ public class MQLQueryImpl implements MQLQuery {
     if ( aggregation != null ) {
       AggregationSettings setting = AggregationSettings.getType( aggregation );
       if ( ( businessColumn.getAggregationType() == setting ) || businessColumn.getAggregationList() != null
-          && businessColumn.getAggregationList().contains( setting ) ) {
+        && businessColumn.getAggregationList().contains( setting ) ) {
         aggsetting = setting;
       }
     }
@@ -202,7 +198,7 @@ public class MQLQueryImpl implements MQLQuery {
     }
 
     return sqlGenerator.getSQL( model, selections, constraints, order, getDatabaseMeta(), locale, this.disableDistinct,
-        this.limit, securityConstraint );
+      this.limit, securityConstraint );
   }
 
   public String getXML() {
@@ -260,7 +256,8 @@ public class MQLQueryImpl implements MQLQuery {
 
       // insert the domain information
       Element typeElement = doc.createElement( "domain_type" ); //$NON-NLS-1$
-      typeElement.appendChild( doc.createTextNode( ( domainType == DOMAIN_TYPE_RELATIONAL ) ? "relational" : "olap" ) ); //$NON-NLS-1$ //$NON-NLS-2$
+      typeElement.appendChild( doc.createTextNode(
+        ( domainType == DOMAIN_TYPE_RELATIONAL ) ? "relational" : "olap" ) ); //$NON-NLS-1$ //$NON-NLS-2$
       mqlElement.appendChild( typeElement );
 
       // insert the domain information
@@ -373,7 +370,8 @@ public class MQLQueryImpl implements MQLQuery {
 
   protected void addConstraintToDocument( Document doc, WhereCondition condition, Element constraintElement ) {
     Element element = doc.createElement( "operator" ); //$NON-NLS-1$
-    element.appendChild( doc.createTextNode( condition.getOperator() == null ? "" : condition.getOperator() ) ); //$NON-NLS-1$
+    element.appendChild(
+      doc.createTextNode( condition.getOperator() == null ? "" : condition.getOperator() ) ); //$NON-NLS-1$
     constraintElement.appendChild( element );
 
     element = doc.createElement( "condition" ); //$NON-NLS-1$
@@ -383,13 +381,13 @@ public class MQLQueryImpl implements MQLQuery {
     // Save the localized names...
     /*
      * TODO String[] locales = condition.getConcept().getUsedLocale();
-     * 
+     *
      * element = doc.createElement( "name" ); for (int i=0;i<locales.length;i++) { String name =
      * condition.getName(locales[i]); if (!Const.isEmpty( name) ) { Element locElement = doc.createElement("locale");
      * locElement.appendChild( doc.createTextNode(locales[i]) ); element.appendChild(locElement); Element valElement =
      * doc.createElement("value"); locElement.appendChild( doc.createTextNode(name) ); element.appendChild(valElement);
      * } } constraintElement.appendChild( element );
-     * 
+     *
      * element = doc.createElement( "description" ); for (int i=0;i<locales.length;i++) { String description =
      * condition.getDescription(locales[i]); if (!Const.isEmpty( description) ) { Element locElement =
      * doc.createElement("locale"); locElement.appendChild( doc.createTextNode(locales[i]) );
@@ -407,7 +405,7 @@ public class MQLQueryImpl implements MQLQuery {
     element = doc.createElement( "view_id" ); //$NON-NLS-1$
     BusinessCategory rootCat = model.getRootCategory();
     BusinessCategory businessView =
-        rootCat.findBusinessCategoryForBusinessColumn( orderBy.getSelection().getBusinessColumn() );
+      rootCat.findBusinessCategoryForBusinessColumn( orderBy.getSelection().getBusinessColumn() );
     element.appendChild( doc.createTextNode( businessView.getId() ) );
 
     orderElement.appendChild( element );
@@ -476,16 +474,19 @@ public class MQLQueryImpl implements MQLQuery {
     } else {
       // need to throw an error
       throw new PentahoMetadataException( Messages.getErrorString(
-          "MQLQuery.ERROR_0007_INVALID_DOMAIN_TYPE", domainTypeStr ) ); //$NON-NLS-1$
+        "MQLQuery.ERROR_0007_INVALID_DOMAIN_TYPE", domainTypeStr ) ); //$NON-NLS-1$
     }
 
     // get the domain id
     String domainId = getElementText( doc, "domain_id" ); //$NON-NLS-1$
+
+    checkDomainExists( domainId );
+
     CWM cwm = CWM.getInstance( domainId );
     if ( cwm == null ) {
       // need to throw an error
       throw new PentahoMetadataException( Messages.getErrorString(
-          "MQLQuery.ERROR_0008_CWM_DOMAIN_INSTANCE_NULL", domainId ) ); //$NON-NLS-1$
+        "MQLQuery.ERROR_0008_CWM_DOMAIN_INSTANCE_NULL", domainId ) ); //$NON-NLS-1$
     }
 
     if ( cwmSchemaFactory == null ) {
@@ -504,7 +505,8 @@ public class MQLQueryImpl implements MQLQuery {
     model = localSchemaMeta.findModel( modelId ); // This is the business model that was selected.
 
     if ( model == null ) {
-      throw new PentahoMetadataException( Messages.getErrorString( "MQLQuery.ERROR_0009_MODEL_NOT_FOUND", modelId ) ); //$NON-NLS-1$
+      throw new PentahoMetadataException(
+        Messages.getErrorString( "MQLQuery.ERROR_0009_MODEL_NOT_FOUND", modelId ) ); //$NON-NLS-1$
     }
 
     // get the options node if it exists...
@@ -558,7 +560,7 @@ public class MQLQueryImpl implements MQLQuery {
           } else {
             // verify that the setting is one of the options for this business column
             if ( ( businessColumn.getAggregationType() == setting ) || businessColumn.getAggregationList() != null
-                && businessColumn.getAggregationList().contains( setting ) ) {
+              && businessColumn.getAggregationList().contains( setting ) ) {
               aggsetting = setting;
             } else {
               Messages.getErrorString( "MQLQuery.ERROR_0019_INVALID_AGG_FOR_BUSINESS_COL", columnId, aggvalue );
@@ -588,7 +590,8 @@ public class MQLQueryImpl implements MQLQuery {
         try {
           this.limit = Integer.parseInt( limitStr );
         } catch ( NumberFormatException e ) {
-          throw new PentahoMetadataException( Messages.getErrorString( "MQLQuery.ERROR_0021_CANNOT_PARSE_LIMIT" ) ); //$NON-NLS-1$
+          throw new PentahoMetadataException(
+            Messages.getErrorString( "MQLQuery.ERROR_0021_CANNOT_PARSE_LIMIT" ) ); //$NON-NLS-1$
         }
       }
     }
@@ -650,7 +653,8 @@ public class MQLQueryImpl implements MQLQuery {
     }
 
     if ( cond == null ) {
-      throw new PentahoMetadataException( Messages.getErrorString( "MQLQuery.ERROR_0001_NULL_CONDITION" ) ); //$NON-NLS-1$
+      throw new PentahoMetadataException(
+        Messages.getErrorString( "MQLQuery.ERROR_0001_NULL_CONDITION" ) ); //$NON-NLS-1$
     }
 
     if ( view_id == null || column_id == null ) {
@@ -658,7 +662,8 @@ public class MQLQueryImpl implements MQLQuery {
       addConstraint( operator, cond );
     } else {
       // backwards compatibility
-      addConstraint( operator, "[" + view_id + "." + column_id + "] " + cond ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+      addConstraint( operator,
+        "[" + view_id + "." + column_id + "] " + cond ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
   }
@@ -671,8 +676,7 @@ public class MQLQueryImpl implements MQLQuery {
   }
 
   /**
-   * @param constraints
-   *          the constraints to set
+   * @param constraints the constraints to set
    */
   public void setConstraints( List<WhereCondition> constraints ) {
     this.constraints = constraints;
@@ -686,8 +690,7 @@ public class MQLQueryImpl implements MQLQuery {
   }
 
   /**
-   * @param locale
-   *          the locale to set
+   * @param locale the locale to set
    */
   public void setLocale( String locale ) {
     this.locale = locale;
@@ -701,8 +704,7 @@ public class MQLQueryImpl implements MQLQuery {
   }
 
   /**
-   * @param order
-   *          the order to set
+   * @param order the order to set
    */
   public void setOrder( List<OrderBy> order ) {
     this.order = order;
@@ -716,8 +718,7 @@ public class MQLQueryImpl implements MQLQuery {
   }
 
   /**
-   * @param schemaMeta
-   *          the schemaMeta to set
+   * @param schemaMeta the schemaMeta to set
    */
   public void setSchemaMeta( SchemaMeta schemaMeta ) {
     this.schemaMeta = schemaMeta;
@@ -731,16 +732,14 @@ public class MQLQueryImpl implements MQLQuery {
   }
 
   /**
-   * @param model
-   *          the model to set
+   * @param model the model to set
    */
   public void setModel( BusinessModel model ) {
     this.model = model;
   }
 
   /**
-   * @param selections
-   *          the selections to set
+   * @param selections the selections to set
    */
   public void setSelections( List<Selection> selections ) {
     this.selections = selections;
@@ -766,7 +765,15 @@ public class MQLQueryImpl implements MQLQuery {
 
   protected String getElementText( Document doc, String name ) {
     try {
-      return doc.getElementsByTagName( name ).item( 0 ).getFirstChild().getNodeValue();
+      Node item = doc.getElementsByTagName( name ).item( 0 );
+      if ( item == null ) {
+        return null;
+      }
+      Node firstChild = item.getFirstChild();
+      if ( firstChild == null ) {
+        return "";
+      }
+      return firstChild.getNodeValue();
     } catch ( Exception e ) {
       return null;
     }
@@ -780,4 +787,16 @@ public class MQLQueryImpl implements MQLQuery {
     }
   }
 
+  @VisibleForTesting
+  protected void checkDomainExists( String domainId ) throws PentahoMetadataException {
+    try {
+      if ( !CWM.exists( domainId ) ) {
+        throw new PentahoMetadataException( Messages.getErrorString(
+                "MQLQuery.ERROR_0010_CWM_DOMAIN_NOT_FOUND", domainId ) );
+      }
+    } catch ( CWMException e ) {
+      throw new PentahoMetadataException( Messages.getErrorString(
+              "MQLQuery.ERROR_0010_CWM_DOMAIN_NOT_FOUND", domainId ) );
+    }
+  }
 }
