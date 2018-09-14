@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2017 Hitachi Vantara..  All rights reserved.
+ * Copyright (c) 2006 - 2018 Hitachi Vantara.  All rights reserved.
  */
 package org.pentaho.pms.mql.dialect;
 
@@ -345,6 +345,10 @@ public class DefaultSQLDialect implements SQLDialectInterface {
               dateValue = ( (StaticValue) f.getChildValues()[0] ).getValue();
             } else if ( f.getChildValues()[0] instanceof ContextLookup ) {
               dateValue = formula.getParameterValue( (ContextLookup) f.getChildValues()[0] );
+              if ( dateValue == null ) {
+                sb.append( "null" );
+                return;
+              }
             }
             if ( dateValue instanceof Object[] ) {
                 formula.generateSQL( f, f.getChildValues()[0], sb, locale );
