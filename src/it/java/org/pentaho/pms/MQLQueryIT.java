@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2006 - 2017 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2006 - 2018 Hitachi Vantara..  All rights reserved.
  */
 package org.pentaho.pms;
 
@@ -31,6 +31,7 @@ import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.factory.CwmSchemaFactory;
+import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
 import org.pentaho.pms.mql.MQLQuery;
 import org.pentaho.pms.mql.MQLQueryFactory;
 import org.pentaho.pms.mql.MQLQueryImpl;
@@ -892,6 +893,52 @@ public class MQLQueryIT extends TestCase {
       fail();
     } catch ( PentahoMetadataException e ) {
       assertEquals( "MQLQuery.ERROR_0001 - Condition not specified in MQL constraint", e.getMessage() ); //$NON-NLS-1$
+    }
+  }
+
+  public void testFromXMLDomainNotExisting() {
+    try {
+      String mqlfile1 = "/mqlquery01.xmql";
+      String mqldata = loadXmlFile( mqlfile1 );
+
+      // should work
+      MQLQueryFactory.getMQLQuery( "org.pentaho.pms.MQLQueryIT$MQLQueryImplDomainExisting",
+        mqldata, null, "en_US", cwmSchemaFactory );
+
+      //should fail
+      MQLQueryFactory.getMQLQuery( "org.pentaho.pms.MQLQueryIT$MQLQueryImplDomainNotExisting",
+        mqldata, null, "en_US", cwmSchemaFactory );
+
+      fail();
+    } catch ( PentahoMetadataException e ) {
+      assertEquals( "not exists", e.getMessage() );
+    }
+  }
+
+  public static class MQLQueryImplDomainExisting extends MQLQueryImpl {
+
+    public MQLQueryImplDomainExisting(String XML, DatabaseMeta databaseMeta, String locale,
+        CwmSchemaFactoryInterface factory)
+        throws PentahoMetadataException {
+      super(XML, databaseMeta, locale, factory);
+    }
+
+    @Override
+    protected void checkDomainExists(String domainId) {
+    }
+  }
+
+  public static class MQLQueryImplDomainNotExisting extends MQLQueryImpl {
+
+    public MQLQueryImplDomainNotExisting(String XML, DatabaseMeta databaseMeta, String locale,
+        CwmSchemaFactoryInterface factory)
+      throws PentahoMetadataException {
+      super(XML, databaseMeta, locale, factory);
+    }
+
+    @Override
+    protected void checkDomainExists(String domainId) throws PentahoMetadataException {
+      throw new PentahoMetadataException( "not exists" );
     }
   }
 }
