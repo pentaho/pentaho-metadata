@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 Pentaho Corporation.  All rights reserved.
+ * Copyright (c) 2009 - 2019 Hitachi Vantara.  All rights reserved.
  */
 package org.pentaho.metadata.automodel;
 
@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.pentaho.di.core.DBCache;
+import org.pentaho.di.core.Props;
 import org.pentaho.di.core.database.Database;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.metadata.automodel.PhysicalTableImporter.ImportStrategy;
@@ -72,6 +73,10 @@ public class AutoModeler {
     this.modelName = modelName;
     this.databaseMeta = databaseMeta;
     this.tableNames = tableNames;
+
+    if ( !Props.isInitialized() ) {
+      Props.init( Props.TYPE_PROPERTIES_EMPTY );
+    }
   }
 
   public Domain generateDomain() throws PentahoMetadataException {
