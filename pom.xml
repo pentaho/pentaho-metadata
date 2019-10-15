@@ -33,7 +33,6 @@
     <pdi.version>9.0.0.0-SNAPSHOT</pdi.version>
     <pentaho-connections.version>9.0.0.0-SNAPSHOT</pentaho-connections.version>
     <pentaho-reporting.version>9.0.0.0-SNAPSHOT</pentaho-reporting.version>
-    <xstream.version>1.4.10</xstream.version>
     <pentaho-cwm.version>1.5.4</pentaho-cwm.version>
     <netbeans.version>200507110943</netbeans.version>
     <netbeans-custom.version>200507110943-custom</netbeans-custom.version>
@@ -112,13 +111,6 @@
     <dependency>
       <groupId>com.thoughtworks.xstream</groupId>
       <artifactId>xstream</artifactId>
-      <version>${xstream.version}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>*</artifactId>
-          <groupId>*</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.netbeans</groupId>
