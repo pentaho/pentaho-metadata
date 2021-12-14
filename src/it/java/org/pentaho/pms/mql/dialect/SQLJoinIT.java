@@ -16,12 +16,14 @@
  */
 package org.pentaho.pms.mql.dialect;
 
-import java.io.ByteArrayOutputStream;
-
-import org.apache.log4j.Appender;
-import org.apache.log4j.Logger;
-import org.apache.log4j.SimpleLayout;
-import org.apache.log4j.WriterAppender;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.appender.WriterAppender;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -41,6 +43,14 @@ import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.pms.MetadataTestBase;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 public class SQLJoinIT {
 
@@ -99,10 +109,28 @@ public class SQLJoinIT {
    */
   @Test
   public void testLegacyJoinOrderLogic() throws PentahoMetadataException {
-    Logger logger = Logger.getLogger( SQLJoin.class.getName() );
+    Logger logger = LogManager.getLogger( SQLJoin.class.getName() );
     ByteArrayOutputStream out = new ByteArrayOutputStream();
-    Appender appender = new WriterAppender( new SimpleLayout(), out );
-    logger.addAppender( appender );
+    AbstractAppender appender = WriterAppender.createAppender( null, null, new Writer() {
+      @Override public void write( char[] cbuf, int off, int len ) throws IOException {
+        final ByteBuffer byteBuffer = StandardCharsets.UTF_8.encode( CharBuffer.wrap(cbuf));
+        byte[] bytes = Arrays.copyOf(byteBuffer.array(), byteBuffer.limit());
+        out.write( bytes, off, len );
+      }
+
+      @Override public void flush() throws IOException {
+        out.flush();
+      }
+
+      @Override public void close() throws IOException {
+        out.close();
+      }
+    }, "testAppender", false, false );
+    LoggerContext ctx = (LoggerContext) LogManager.getContext( false );
+    Configuration config = ctx.getConfiguration();
+    LoggerConfig loggerConfig = config.getLoggerConfig( logger.getName() );
+    loggerConfig.addAppender( appender, Level.ALL, null );
+    ctx.updateLoggers();
 
     try {
       RelationshipType[] typesToTest = new RelationshipType[] { RelationshipType._0_N, RelationshipType._1_1 };
@@ -137,7 +165,8 @@ public class SQLJoinIT {
         }
       }
     } finally {
-      logger.removeAppender( appender );
+      loggerConfig.removeAppender( appender.getName() );
+      ctx.updateLoggers();
     }
 
   }

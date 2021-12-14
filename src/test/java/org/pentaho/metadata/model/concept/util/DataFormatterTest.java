@@ -16,17 +16,19 @@
  */
 package org.pentaho.metadata.model.concept.util;
 
-import static org.junit.Assert.assertEquals;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.junit.Before;
+import org.junit.Test;
+import org.pentaho.di.core.logging.LogLevel;
+import org.pentaho.metadata.model.concept.types.DataType;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.spi.RootLogger;
-import org.junit.Before;
-import org.junit.Test;
-import org.pentaho.metadata.model.concept.types.DataType;
+import static org.junit.Assert.assertEquals;
 
 public class DataFormatterTest {
 
@@ -65,7 +67,10 @@ public class DataFormatterTest {
 
   @Before
   public void setUp() {
-    RootLogger.getRootLogger().setLevel( Level.OFF );
+    LoggerContext context = (LoggerContext) LogManager.getContext( false );
+    context.getConfiguration().getLoggerConfig( LogManager.getRootLogger().getName() ).setLevel( Level.OFF );
+    context.updateLoggers();
+
     SimpleDateFormat format = new SimpleDateFormat( SAMPLE_DATE_MASK );
     //add custom seconds
     int seconds = 123456;

@@ -16,22 +16,17 @@
  */
 package org.pentaho.pms.mql.dialect;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.log4j.spi.LoggingEvent;
-import org.apache.log4j.varia.NullAppender;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.helpers.SQLDialectHelper;
 import org.pentaho.pms.MetadataTestBase;
 import org.pentaho.pms.mql.dialect.SQLQueryModel.OrderType;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Tests the Hive Dialect to ensure joins are handled appropriately.
@@ -515,32 +510,6 @@ public class HiveDialectIT {
     HiveDialect dialect = new HiveDialect();
     String result = dialect.generateStringConcat( vals );
     assertEquals( expected, result );
-  }
-
-  /**
-   * Simple appender that collects all {@link LoggingEvent}s that are sent to it so they can be inspected later.
-   */
-  private class MockAppender extends NullAppender {
-    private List<LoggingEvent> events = new ArrayList<LoggingEvent>();
-
-    public void clearLoggingEvents() {
-      events.clear();
-    }
-
-    @Override
-    public void doAppend( LoggingEvent event ) {
-      events.add( event );
-    }
-
-    public List<LoggingEvent> getLoggingEventsThatContain( String msg ) {
-      List<LoggingEvent> matchingEvents = new ArrayList<LoggingEvent>();
-      for ( LoggingEvent e : events ) {
-        if ( ( (String) e.getMessage() ).contains( msg ) ) {
-          matchingEvents.add( e );
-        }
-      }
-      return matchingEvents;
-    }
   }
 
   @Test
