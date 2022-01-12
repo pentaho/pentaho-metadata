@@ -1,15 +1,14 @@
-<?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.pentaho</groupId>
     <artifactId>pentaho-ce-jar-parent-pom</artifactId>
-    <version>9.3.0.0-SNAPSHOT</version>
+    <version>9.3.0.0-20</version>
   </parent>
 
   <artifactId>pentaho-metadata</artifactId>
-  <version>9.3.0.0-SNAPSHOT</version>
+  <version>9.3.0.0-20</version>
 
   <name>Pentaho Metadata</name>
   <description>Pentaho Metadata Core</description>
@@ -30,9 +29,9 @@
 
   <properties>
     <license.licenseName>lgpl_v2_1</license.licenseName>
-    <pdi.version>9.3.0.0-SNAPSHOT</pdi.version>
-    <pentaho-connections.version>9.3.0.0-SNAPSHOT</pentaho-connections.version>
-    <pentaho-reporting.version>9.3.0.0-SNAPSHOT</pentaho-reporting.version>
+    <pdi.version>9.3.0.0-20</pdi.version>
+    <pentaho-connections.version>9.3.0.0-20</pentaho-connections.version>
+    <pentaho-reporting.version>9.3.0.0-20</pentaho-reporting.version>
     <pentaho-cwm.version>1.5.4</pentaho-cwm.version>
     <netbeans.version>200507110943</netbeans.version>
     <netbeans-custom.version>200507110943-custom</netbeans-custom.version>
