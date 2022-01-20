@@ -17,11 +17,18 @@
 package org.pentaho.pms.mql.dialect;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
-import org.apache.log4j.Appender;
-import org.apache.log4j.Logger;
-import org.apache.log4j.SimpleLayout;
-import org.apache.log4j.WriterAppender;
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.appender.OutputStreamAppender;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.apache.logging.log4j.core.layout.PatternLayout;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.Filter;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -96,13 +103,12 @@ public class SQLJoinIT {
    * boolean set to true in the model. To do this, the test verifies that logging output is as expected.
    *
    * @throws PentahoMetadataException
+ * @throws IOException 
    */
   @Test
-  public void testLegacyJoinOrderLogic() throws PentahoMetadataException {
-    Logger logger = Logger.getLogger( SQLJoin.class.getName() );
+  public void testLegacyJoinOrderLogic() throws PentahoMetadataException, IOException {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
-    Appender appender = new WriterAppender( new SimpleLayout(), out );
-    logger.addAppender( appender );
+    addAppender(out, "testLegacyJoinOrderLogic");
 
     try {
       RelationshipType[] typesToTest = new RelationshipType[] { RelationshipType._0_N, RelationshipType._1_1 };
@@ -137,9 +143,35 @@ public class SQLJoinIT {
         }
       }
     } finally {
-      logger.removeAppender( appender );
+      removeAppender("testLegacyJoinOrderLogic");
     }
+  }
 
+  private void addAppender( final OutputStream outputStream, final String outputStreamName ) {
+    final LoggerContext context = LoggerContext.getContext(false);
+    final Configuration config = context.getConfiguration();
+    final Appender appender =
+      OutputStreamAppender.newBuilder()
+        .setLayout( PatternLayout.createDefaultLayout() )
+        .setTarget( outputStream )
+        .setName( outputStreamName )
+        .build();
+    appender.start();
+    config.addAppender( appender );
+    for ( final LoggerConfig loggerConfig : config.getLoggers().values() ) {
+        loggerConfig.addAppender( appender, Level.ALL, (Filter) null );
+    }
+    config.getRootLogger().addAppender( appender, Level.ALL, (Filter) null );
+  }
+
+  private void removeAppender( final String outputStreamName ) {
+    final LoggerContext context = LoggerContext.getContext(false);
+    final Configuration config = context.getConfiguration();
+    config.getAppender(outputStreamName);
+    for ( final LoggerConfig loggerConfig : config.getLoggers().values() ) {
+        loggerConfig.removeAppender(outputStreamName);
+    }
+    config.getRootLogger().removeAppender(outputStreamName);
   }
 
   private LogicalTable[] getTablesWithRelationships( RelationshipType relationship1, RelationshipType relationship2,

@@ -20,13 +20,15 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import org.pentaho.di.core.util.DateDetector;
 import org.pentaho.metadata.model.concept.types.DataType;
 
 public class DataFormatter {
 
-  static final Logger log = Logger.getLogger( DataFormatter.class );
+  static final Logger log = LogManager.getLogger( DataFormatter.class );
 
   /**
    * 
