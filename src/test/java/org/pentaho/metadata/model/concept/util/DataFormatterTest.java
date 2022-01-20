@@ -22,16 +22,11 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.spi.RootLogger;
 import org.junit.Before;
 import org.junit.Test;
 import org.pentaho.metadata.model.concept.types.DataType;
 
 public class DataFormatterTest {
-
-  //save logger level before test
-  private Level logLevel;
 
   private static final String SAMPLE_STRING = "sampleString";
 
@@ -65,7 +60,6 @@ public class DataFormatterTest {
 
   @Before
   public void setUp() {
-    RootLogger.getRootLogger().setLevel( Level.OFF );
     SimpleDateFormat format = new SimpleDateFormat( SAMPLE_DATE_MASK );
     //add custom seconds
     int seconds = 123456;
