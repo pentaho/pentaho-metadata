@@ -1601,7 +1601,7 @@
         <CWM:TaggedValue xmi.id = 'a371' tag = 'SECURITY_PROXY_HOST' value = ''/>
         <CWM:TaggedValue xmi.id = 'a372' tag = 'SECURITY_PROXY_PORT' value = ''/>
         <CWM:TaggedValue xmi.id = 'a373' tag = 'SECURITY_NON_PROXY_HOSTS' value = ''/>
-        <CWM:TaggedValue xmi.id = 'a374' tag = 'SECURITY_URL' value = 'bla?userid=noob&amp;password=l33t&amp;action=foo&amp;bar=all'/>
+        <CWM:TaggedValue xmi.id = 'a374' tag = 'SECURITY_URL' value = 'bla?action=foo&amp;bar=all'/>
       </CWM:ModelElement.taggedValue>
     </CWM:Event>
     <CWM:Parameter xmi.id = 'a375' name = 'en_US'>
