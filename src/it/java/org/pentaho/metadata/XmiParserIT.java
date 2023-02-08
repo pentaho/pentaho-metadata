@@ -170,6 +170,7 @@ public class XmiParserIT {
 
   public String serializeWithOrderedHashmaps( Domain domain ) {
     XStream xstream = new XStream( new DomDriver() );
+    xstream.allowedTypes(new Class[]{Domain.class});
     xstream.registerConverter( new Converter() {
 
       public void marshal( Object source, HierarchicalStreamWriter writer, MarshallingContext context ) {
