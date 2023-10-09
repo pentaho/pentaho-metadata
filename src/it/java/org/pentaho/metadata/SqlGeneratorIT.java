@@ -16,12 +16,6 @@
  */
 package org.pentaho.metadata;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -55,6 +49,15 @@ import org.pentaho.metadata.query.model.util.QueryModelMetaData;
 import org.pentaho.pms.MetadataTestBase;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.mql.dialect.SQLQueryModel;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 @SuppressWarnings( "nls" )
 public class SqlGeneratorIT {
@@ -96,15 +99,15 @@ public class SqlGeneratorIT {
     tbls.add( bt2 );
     Path path = sqlGenerator.getShortestPathBetween( model, tbls );
 
-    Assert.assertEquals( path.size(), 1 );
-    Assert.assertEquals( path.getRelationship( 0 ), rl1 );
+    assertEquals( path.size(), 1 );
+    assertEquals( path.getRelationship( 0 ), rl1 );
     List<LogicalTable> tbls2 = new ArrayList<LogicalTable>();
     tbls2.add( bt1 );
     tbls2.add( bt3 );
     path = sqlGenerator.getShortestPathBetween( model, tbls2 );
-    Assert.assertEquals( path.size(), 2 );
-    Assert.assertEquals( path.getRelationship( 0 ), rl1 );
-    Assert.assertEquals( path.getRelationship( 1 ), rl2 );
+    assertEquals( path.size(), 2 );
+    assertEquals( path.getRelationship( 0 ), rl1 );
+    assertEquals( path.getRelationship( 1 ), rl2 );
   }
 
   public static class TestSqlGenerator extends SqlGenerator {
@@ -183,7 +186,7 @@ public class SqlGeneratorIT {
     // this should return a path, but it is returning null instead
 
     // MB - Fixed - should be expects, is not is, expects
-    Assert.assertEquals( 4, path.size() );
+    assertEquals( 4, path.size() );
 
     // Note - path is unordered - this test was invalid. Joins will
     // be ordered by join-order keys. This should simply be relationships
@@ -198,7 +201,7 @@ public class SqlGeneratorIT {
       LogicalRelationship rel = path.getRelationship( i );
       int idx = rtns.indexOf( rel );
       if ( idx < 0 ) {
-        Assert.fail( "Relationship returned twice - " + rel );
+        fail( "Relationship returned twice - " + rel );
       } else {
         rtns.remove( idx );
       }
@@ -276,7 +279,7 @@ public class SqlGeneratorIT {
     // is a cycle, a bug is evident - there is no consideration
     // for the path 1->2, 2->3, 3->5, 5->6
 
-    Assert.assertEquals( 4, path.size() );
+    assertEquals( 4, path.size() );
 
     // Note - path is unordered - the old test was invalid. Joins will
     // be ordered by join-order keys. This should simply be relationships
@@ -291,7 +294,7 @@ public class SqlGeneratorIT {
       LogicalRelationship rel = path.getRelationship( i );
       int idx = rtns.indexOf( rel );
       if ( idx < 0 ) {
-        Assert.fail( "Relationship returned twice - " + rel );
+        fail( "Relationship returned twice - " + rel );
       } else {
         rtns.remove( idx );
       }
@@ -350,15 +353,15 @@ public class SqlGeneratorIT {
     tbls.add( bt2 );
     Path path = sqlGenerator.getShortestPathBetween( model, tbls );
 
-    Assert.assertEquals( path.size(), 1 );
-    Assert.assertEquals( path.getRelationship( 0 ), rl1 );
+    assertEquals( path.size(), 1 );
+    assertEquals( path.getRelationship( 0 ), rl1 );
     List<LogicalTable> tbls2 = new ArrayList<LogicalTable>();
     tbls2.add( bt1 );
     tbls2.add( bt3 );
     path = sqlGenerator.getShortestPathBetween( model, tbls2 );
-    Assert.assertEquals( path.size(), 2 );
-    Assert.assertEquals( path.getRelationship( 0 ), rl1 );
-    Assert.assertEquals( path.getRelationship( 1 ), rl2 );
+    assertEquals( path.size(), 2 );
+    assertEquals( path.getRelationship( 0 ), rl1 );
+    assertEquals( path.getRelationship( 1 ), rl2 );
   }
 
   @Test
@@ -404,14 +407,14 @@ public class SqlGeneratorIT {
     tbls.add( bt2 );
     Path path = sqlGenerator.getShortestPathBetween( model, tbls );
 
-    Assert.assertEquals( path.size(), 1 );
-    Assert.assertEquals( path.getRelationship( 0 ), rl1 );
+    assertEquals( path.size(), 1 );
+    assertEquals( path.getRelationship( 0 ), rl1 );
     List<LogicalTable> tbls2 = new ArrayList<LogicalTable>();
     tbls2.add( bt1 );
     tbls2.add( bt3 );
     path = sqlGenerator.getShortestPathBetween( model, tbls2 );
-    Assert.assertEquals( path.size(), 1 );
-    Assert.assertEquals( path.getRelationship( 0 ), rl3 );
+    assertEquals( path.size(), 1 );
+    assertEquals( path.getRelationship( 0 ), rl3 );
   }
 
   @Test
@@ -516,10 +519,10 @@ public class SqlGeneratorIT {
           mquery.getQuery() );
       Map map = mquery.getMap();
       Assert.assertNotNull( map );
-      Assert.assertEquals( map.size(), 3 );
-      Assert.assertEquals( map.get( "COL0" ), "bc1" ); //$NON-NLS-1$ //$NON-NLS-2$
-      Assert.assertEquals( map.get( "COL1" ), "bc2" ); //$NON-NLS-1$ //$NON-NLS-2$
-      Assert.assertEquals( map.get( "COL2" ), "bce2" ); //$NON-NLS-1$ //$NON-NLS-2$
+      assertEquals( map.size(), 3 );
+      assertEquals( map.get( "COL0" ), "bc1" ); //$NON-NLS-1$ //$NON-NLS-2$
+      assertEquals( map.get( "COL1" ), "bc2" ); //$NON-NLS-1$ //$NON-NLS-2$
+      assertEquals( map.get( "COL2" ), "bce2" ); //$NON-NLS-1$ //$NON-NLS-2$
 
       TestHelper.assertEqualsIgnoreWhitespaces( "SELECT \n" //$NON-NLS-1$
           + "          SUM(bt1.pc1) AS bc1\n" //$NON-NLS-1$
@@ -546,11 +549,10 @@ public class SqlGeneratorIT {
 
       QueryModelMetaData emd = (QueryModelMetaData) mquery.generateMetadata( mmd );
 
-      Assert.assertEquals( "pc1", emd.getAttribute( 0, 0, SqlPhysicalColumn.TARGET_COLUMN ).toString() ); //$NON-NLS-1$  //$NON-NLS-2$
+      assertEquals( "pc1", emd.getAttribute( 0, 0, SqlPhysicalColumn.TARGET_COLUMN ).toString() ); //$NON-NLS-1$  //$NON-NLS-2$
 
     } catch ( Exception e ) {
-      e.printStackTrace();
-      Assert.fail();
+      fail();
     }
   }
 
@@ -589,8 +591,7 @@ public class SqlGeneratorIT {
           mquery.getQuery() );
 
     } catch ( Exception e ) {
-      e.printStackTrace();
-      Assert.fail();
+      fail();
     }
   }
 
@@ -622,8 +623,7 @@ public class SqlGeneratorIT {
           .getQuery() );
 
     } catch ( Exception e ) {
-      e.printStackTrace();
-      Assert.fail();
+      fail();
     }
   }
 
@@ -675,8 +675,7 @@ public class SqlGeneratorIT {
           .getQuery() );
 
     } catch ( Exception e ) {
-      e.printStackTrace();
-      Assert.fail();
+      fail();
     }
   }
 
@@ -736,14 +735,13 @@ public class SqlGeneratorIT {
           + "          )\n" + "      AND (\n" + "              bt1.pc1  > ?\n" + "          )\n" + "      AND (\n"
           + "             ? =  bt2.pc2 \n" + "          )\n" + "        )\n", mquery.getQuery() );
       Assert.assertNotNull( mquery.getParamList() );
-      Assert.assertEquals( 3, mquery.getParamList().size() );
-      Assert.assertEquals( "test1", mquery.getParamList().get( 0 ) );
-      Assert.assertEquals( "test2", mquery.getParamList().get( 1 ) );
-      Assert.assertEquals( "test3", mquery.getParamList().get( 2 ) );
+      assertEquals( 3, mquery.getParamList().size() );
+      assertEquals( "test1", mquery.getParamList().get( 0 ) );
+      assertEquals( "test2", mquery.getParamList().get( 1 ) );
+      assertEquals( "test3", mquery.getParamList().get( 2 ) );
 
     } catch ( Exception e ) {
-      e.printStackTrace();
-      Assert.fail();
+      fail();
     }
   }
 
@@ -796,9 +794,9 @@ public class SqlGeneratorIT {
           + "              bt1.pc1  = ?\n" + "          )\n" + "      AND (\n" + "              bt2.pc2  = ?\n"
           + "          )\n" + "        )\n", mquery.getQuery() );
       Assert.assertNotNull( mquery.getParamList() );
-      Assert.assertEquals( 2, mquery.getParamList().size() );
-      Assert.assertEquals( "test1", mquery.getParamList().get( 0 ) );
-      Assert.assertEquals( "test2", mquery.getParamList().get( 1 ) );
+      assertEquals( 2, mquery.getParamList().size() );
+      assertEquals( "test1", mquery.getParamList().get( 0 ) );
+      assertEquals( "test2", mquery.getParamList().get( 1 ) );
 
       parameters = new HashMap<String, Object>();
       parameters.put( "test1", new String[] { "value1", "value2" } );
@@ -811,9 +809,9 @@ public class SqlGeneratorIT {
           + "              bt1.pc1  IN ( ?, ? ) \n" + "          )\n" + "      AND (\n"
           + "              bt2.pc2  IN ( ?, ?, ? ) \n" + "          )\n" + "        )\n", mquery.getQuery() );
       Assert.assertNotNull( mquery.getParamList() );
-      Assert.assertEquals( 2, mquery.getParamList().size() );
-      Assert.assertEquals( "test1", mquery.getParamList().get( 0 ) );
-      Assert.assertEquals( "test2", mquery.getParamList().get( 1 ) );
+      assertEquals( 2, mquery.getParamList().size() );
+      assertEquals( "test1", mquery.getParamList().get( 0 ) );
+      assertEquals( "test2", mquery.getParamList().get( 1 ) );
 
       // test that a single-value array translates into an '=' operation, not an IN
       parameters = new HashMap<String, Object>();
@@ -827,9 +825,9 @@ public class SqlGeneratorIT {
           + "              bt1.pc1 = ? \n" + "          )\n" + "      AND (\n"
           + "              bt2.pc2 IN ( ?, ?, ? ) \n" + "          )\n" + "        )\n", mquery.getQuery() );
       Assert.assertNotNull( mquery.getParamList() );
-      Assert.assertEquals( 2, mquery.getParamList().size() );
-      Assert.assertEquals( "test1", mquery.getParamList().get( 0 ) );
-      Assert.assertEquals( "test2", mquery.getParamList().get( 1 ) );
+      assertEquals( 2, mquery.getParamList().size() );
+      assertEquals( "test1", mquery.getParamList().get( 0 ) );
+      assertEquals( "test2", mquery.getParamList().get( 1 ) );
 
       // Test multiple params in a single constraint
       query.getConstraints()
@@ -848,15 +846,14 @@ public class SqlGeneratorIT {
           .getQuery() );
 
       Assert.assertNotNull( mquery.getParamList() );
-      Assert.assertEquals( 4, mquery.getParamList().size() );
-      Assert.assertEquals( "test1", mquery.getParamList().get( 0 ) );
-      Assert.assertEquals( "test2", mquery.getParamList().get( 1 ) );
-      Assert.assertEquals( "test1", mquery.getParamList().get( 2 ) );
-      Assert.assertEquals( "test2", mquery.getParamList().get( 3 ) );
+      assertEquals( 4, mquery.getParamList().size() );
+      assertEquals( "test1", mquery.getParamList().get( 0 ) );
+      assertEquals( "test2", mquery.getParamList().get( 1 ) );
+      assertEquals( "test1", mquery.getParamList().get( 2 ) );
+      assertEquals( "test2", mquery.getParamList().get( 3 ) );
 
     } catch ( Exception e ) {
-      e.printStackTrace();
-      Assert.fail();
+      fail();
     }
   }
 
@@ -942,10 +939,10 @@ public class SqlGeneratorIT {
           query.getQuery() );
       Map map = query.getMap();
       Assert.assertNotNull( map );
-      Assert.assertEquals( map.size(), 3 );
-      Assert.assertEquals( map.get( "COL0" ), "bc1" ); //$NON-NLS-1$ //$NON-NLS-2$
-      Assert.assertEquals( map.get( "COL1" ), "bc2" ); //$NON-NLS-1$ //$NON-NLS-2$
-      Assert.assertEquals( map.get( "COL2" ), "bce2" ); //$NON-NLS-1$ //$NON-NLS-2$
+      assertEquals( map.size(), 3 );
+      assertEquals( map.get( "COL0" ), "bc1" ); //$NON-NLS-1$ //$NON-NLS-2$
+      assertEquals( map.get( "COL1" ), "bc2" ); //$NON-NLS-1$ //$NON-NLS-2$
+      assertEquals( map.get( "COL2" ), "bce2" ); //$NON-NLS-1$ //$NON-NLS-2$
 
       TestHelper.assertEqualsIgnoreWhitespaces( "SELECT \n" //$NON-NLS-1$
           + "          SUM(bt1.pc1) AS bc1\n" //$NON-NLS-1$
@@ -972,7 +969,7 @@ public class SqlGeneratorIT {
 
       QueryModelMetaData emd = (QueryModelMetaData) query.generateMetadata( mmd );
 
-      Assert.assertEquals( "pc1", emd.getAttribute( 0, 0, SqlPhysicalColumn.TARGET_COLUMN ).toString() ); //$NON-NLS-1$  //$NON-NLS-2$
+      assertEquals( "pc1", emd.getAttribute( 0, 0, SqlPhysicalColumn.TARGET_COLUMN ).toString() ); //$NON-NLS-1$  //$NON-NLS-2$
 
       // select none aggregate
 
@@ -1030,8 +1027,7 @@ public class SqlGeneratorIT {
           query3.getQuery() );
 
     } catch ( Exception e ) {
-      e.printStackTrace();
-      Assert.fail();
+      fail();
     }
   }
 
@@ -1997,41 +1993,41 @@ public class SqlGeneratorIT {
 
     List subsets = myTest.getSubsetsOfSize( 0, testList );
     Assert.assertNotNull( subsets );
-    Assert.assertEquals( 0, subsets.size() );
+    assertEquals( 0, subsets.size() );
 
     subsets = myTest.getSubsetsOfSize( 1, testList );
     Assert.assertNotNull( subsets );
-    Assert.assertEquals( 5, subsets.size() );
+    assertEquals( 5, subsets.size() );
     String subsetStr = subsetsToString( subsets );
-    Assert.assertEquals( "[A],[B],[C],[D],[E]", subsetStr ); //$NON-NLS-1$
+    assertEquals( "[A],[B],[C],[D],[E]", subsetStr ); //$NON-NLS-1$
 
     subsets = myTest.getSubsetsOfSize( 2, testList );
     Assert.assertNotNull( subsets );
-    Assert.assertEquals( 10, subsets.size() );
+    assertEquals( 10, subsets.size() );
     subsetStr = subsetsToString( subsets );
-    Assert.assertEquals( "[A,B],[A,C],[A,D],[A,E],[B,C],[B,D],[B,E],[C,D],[C,E],[D,E]", subsetStr ); //$NON-NLS-1$
+    assertEquals( "[A,B],[A,C],[A,D],[A,E],[B,C],[B,D],[B,E],[C,D],[C,E],[D,E]", subsetStr ); //$NON-NLS-1$
 
     subsets = myTest.getSubsetsOfSize( 3, testList );
     Assert.assertNotNull( subsets );
-    Assert.assertEquals( 10, subsets.size() );
+    assertEquals( 10, subsets.size() );
     subsetStr = subsetsToString( subsets );
-    Assert.assertEquals( "[A,B,C],[A,B,D],[A,B,E],[A,C,D],[A,C,E],[A,D,E],[B,C,D],[B,C,E],[B,D,E],[C,D,E]", subsetStr ); //$NON-NLS-1$
+    assertEquals( "[A,B,C],[A,B,D],[A,B,E],[A,C,D],[A,C,E],[A,D,E],[B,C,D],[B,C,E],[B,D,E],[C,D,E]", subsetStr ); //$NON-NLS-1$
 
     subsets = myTest.getSubsetsOfSize( 4, testList );
     Assert.assertNotNull( subsets );
-    Assert.assertEquals( 5, subsets.size() );
+    assertEquals( 5, subsets.size() );
     subsetStr = subsetsToString( subsets );
-    Assert.assertEquals( "[A,B,C,D],[A,B,C,E],[A,B,D,E],[A,C,D,E],[B,C,D,E]", subsetStr ); //$NON-NLS-1$
+    assertEquals( "[A,B,C,D],[A,B,C,E],[A,B,D,E],[A,C,D,E],[B,C,D,E]", subsetStr ); //$NON-NLS-1$
 
     subsets = myTest.getSubsetsOfSize( 5, testList );
     Assert.assertNotNull( subsets );
-    Assert.assertEquals( 1, subsets.size() );
+    assertEquals( 1, subsets.size() );
     subsetStr = subsetsToString( subsets );
-    Assert.assertEquals( "[A,B,C,D,E]", subsetStr ); //$NON-NLS-1$
+    assertEquals( "[A,B,C,D,E]", subsetStr ); //$NON-NLS-1$
 
     subsets = myTest.getSubsetsOfSize( 6, testList );
     Assert.assertNotNull( subsets );
-    Assert.assertEquals( 0, subsets.size() );
+    assertEquals( 0, subsets.size() );
   }
 
   @Test
@@ -3022,14 +3018,14 @@ public class SqlGeneratorIT {
     List<String> existingAliases = new ArrayList<String>();
     existingAliases.add( "test" );
     TestSqlGenerator generator = new TestSqlGenerator();
-    Assert.assertEquals( "tes01", generator.generateUniqueAlias( "test", 5, existingAliases ) );
-    Assert.assertEquals( "tes01", generator.generateUniqueAlias( "testing", 5, existingAliases ) );
-    Assert.assertEquals( "test1", generator.generateUniqueAlias( "test1", 5, existingAliases ) );
+    assertEquals( "tes01", generator.generateUniqueAlias( "test", 5, existingAliases ) );
+    assertEquals( "tes01", generator.generateUniqueAlias( "testing", 5, existingAliases ) );
+    assertEquals( "test1", generator.generateUniqueAlias( "test1", 5, existingAliases ) );
 
     existingAliases.add( "tes01" );
-    Assert.assertEquals( "tes02", generator.generateUniqueAlias( "test", 5, existingAliases ) );
-    Assert.assertEquals( "tes02", generator.generateUniqueAlias( "testing", 5, existingAliases ) );
-    Assert.assertEquals( "test1", generator.generateUniqueAlias( "test1", 5, existingAliases ) );
+    assertEquals( "tes02", generator.generateUniqueAlias( "test", 5, existingAliases ) );
+    assertEquals( "tes02", generator.generateUniqueAlias( "testing", 5, existingAliases ) );
+    assertEquals( "test1", generator.generateUniqueAlias( "test1", 5, existingAliases ) );
 
   }
 
@@ -4117,17 +4113,15 @@ public class SqlGeneratorIT {
           + "              bt2.pc2  LIKE '%' || ?\n" + "          )\n" + "        )\n", mquery.getQuery() );
 
       Assert.assertNotNull( mquery.getParamList() );
-      Assert.assertEquals( 4, mquery.getParamList().size() );
-      Assert.assertEquals( "test3", mquery.getParamList().get( 0 ) );
-      Assert.assertEquals( "test3", mquery.getParamList().get( 0 ) );
-      Assert.assertEquals( "test3", mquery.getParamList().get( 0 ) );
-      Assert.assertEquals( "test3", mquery.getParamList().get( 0 ) );
+      assertEquals( 4, mquery.getParamList().size() );
+      assertEquals( "test3", mquery.getParamList().get( 0 ) );
+      assertEquals( "test3", mquery.getParamList().get( 0 ) );
+      assertEquals( "test3", mquery.getParamList().get( 0 ) );
+      assertEquals( "test3", mquery.getParamList().get( 0 ) );
 
     } catch ( Exception e ) {
-      e.printStackTrace();
-      Assert.fail();
+      fail();
     }
-
   }
 
   @Test
@@ -4235,7 +4229,7 @@ public class SqlGeneratorIT {
     SqlGenerator generator = new SqlGenerator();
     try {
       MappedQuery query = generator.generateSql( myTest, "en_US", null, databaseMeta );
-      Assert.fail();
+      fail();
     } catch ( PentahoMetadataException e ) {
       Assert.assertTrue( e.getMessage().indexOf( "ERROR_0003" ) >= 0 );
     }
@@ -4271,8 +4265,7 @@ public class SqlGeneratorIT {
           .getQuery() );
 
     } catch ( Exception e ) {
-      e.printStackTrace();
-      Assert.fail();
+      fail();
     }
   }
 
@@ -4296,13 +4289,12 @@ public class SqlGeneratorIT {
 
       MappedQuery mquery = generator.generateSql( query, "en_US", null, databaseMeta );
 
-      Assert.assertEquals( "Totally bogus", mquery.getQuery() );
+      assertEquals( "Totally bogus", mquery.getQuery() );
 
       // TestHelper.printOutJava(mquery.getQuery());
 
     } catch ( Exception e ) {
-      e.printStackTrace();
-      Assert.fail();
+      fail();
     }
   }
 

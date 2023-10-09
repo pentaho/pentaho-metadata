@@ -16,20 +16,14 @@
  */
 package org.pentaho.pms.mql.dialect;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.OutputStreamAppender;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.log4j.core.layout.PatternLayout;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.core.Filter;
-
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.pentaho.di.core.database.DatabaseMeta;
@@ -48,6 +42,14 @@ import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.query.model.Selection;
 import org.pentaho.pms.MetadataTestBase;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class SQLJoinIT {
 
@@ -84,7 +86,7 @@ public class SQLJoinIT {
       SQLJoin thisObject = makeSQLJoin( scenario.joinTypeThis, scenario.joinOrderThis );
       SQLJoin otherObject = makeSQLJoin( scenario.joinTypeOther, scenario.joinOrderOther );
 
-      Assert.assertEquals( "\nTesting SQLJoin.compareTo() with scenario: \n" + scenario.toString(), scenario.expected,
+      assertEquals( "\nTesting SQLJoin.compareTo() with scenario: \n" + scenario.toString(), scenario.expected,
         thisObject.compareTo( otherObject ) );
     }
   }
@@ -131,13 +133,13 @@ public class SQLJoinIT {
 
           // first verify the legacy logic is not used if the property is not set
           generator.generateSql( myTest, "en_US", null, databaseMeta );
-          Assert.assertTrue( "Did not expect to use the legacy SQLJoin.compareTo() logic.", !out.toString().contains(
+          assertFalse( "Did not expect to use the legacy SQLJoin.compareTo() logic.", out.toString().contains(
             "Using legacy SQLJoin compare." ) );
 
           // set the property and make sure the legacy logic is used
           model.setProperty( "legacy_join_order", true );
           generator.generateSql( myTest, "en_US", null, databaseMeta );
-          Assert.assertTrue( "Should have used legacy SQLJoin.compareTo() logic.", out.toString().contains(
+          assertTrue( "Should have used legacy SQLJoin.compareTo() logic.", out.toString().contains(
             "Using legacy SQLJoin compare." ) );
           out.reset(); // clear out accumulated logs for next run
         }

@@ -16,15 +16,7 @@
  */
 package org.pentaho.metadata;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.pentaho.di.core.database.DatabaseMeta;
@@ -46,6 +38,17 @@ import org.pentaho.pms.MetadataTestBase;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.factory.CwmSchemaFactory;
 import org.pentaho.pms.schema.SchemaMeta;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 /**
  * This test exercises the sql open formula code. right now it converts from the old XMI standard before executing in
@@ -75,11 +78,10 @@ public class SqlOpenFormulaIT {
         CWM cwm = null;
         try {
           cwm = CWM.getInstance( "Orders", true ); //$NON-NLS-1$
-          Assert.assertNotNull( "CWM singleton instance is null", cwm );
+          assertNotNull( "CWM singleton instance is null", cwm );
           cwm.importFromXMI( getClass().getResourceAsStream( "/samples/orders.xmi" ) ); //$NON-NLS-1$
         } catch ( Exception e ) {
-          e.printStackTrace();
-          Assert.fail();
+          fail();
         }
         CwmSchemaFactory cwmSchemaFactory = new CwmSchemaFactory();
 
@@ -88,7 +90,7 @@ public class SqlOpenFormulaIT {
         try {
           Domain domain = ThinModelConverter.convertFromLegacy( schemaMeta );
           ordersModel = domain.findLogicalModel( "Orders" ); //$NON-NLS-1$
-          Assert.assertNotNull( ordersModel );
+          assertNotNull( ordersModel );
         } catch ( Exception e ) {
           e.printStackTrace();
         }
@@ -127,12 +129,10 @@ public class SqlOpenFormulaIT {
       SqlOpenFormula formula = new SqlOpenFormula( model, databaseMeta, mqlFormula, null, parameters, false );
       formula.parseAndValidate();
       String sql = formula.generateSQL( "en_US" ); //$NON-NLS-1$
-      Assert.assertNotNull( sql );
-      sql = sql.trim();
-      Assert.assertEquals( expectedSql, sql );
+      assertNotNull( sql );
+      assertEquals( expectedSql, sql.trim() );
     } catch ( Exception e ) {
-      e.printStackTrace();
-      Assert.fail();
+      fail();
     }
   }
 
@@ -148,11 +148,10 @@ public class SqlOpenFormulaIT {
       SqlOpenFormula formula = new SqlOpenFormula( model, databaseMeta, mqlFormula, null, params, false );
       formula.parseAndValidate();
       formula.generateSQL( "en_US" ); //$NON-NLS-1$
-      Assert.fail();
+      fail();
     } catch ( Exception e ) {
-      Assert.assertEquals( e.getMessage(), expectedException );
+      assertEquals( e.getMessage(), expectedException );
     }
-
   }
 
   public void handleFormulaFailure( LogicalModel model, String databaseToTest, String mqlFormula,
@@ -168,12 +167,11 @@ public class SqlOpenFormulaIT {
       SqlOpenFormula formula = new SqlOpenFormula( model, table, databaseMeta, mqlFormula, null, null, false );
       formula.parseAndValidate();
       String sql = formula.generateSQL( "en_US" ); //$NON-NLS-1$
-      Assert.assertNotNull( sql );
+      assertNotNull( sql );
       sql = sql.trim();
-      Assert.assertEquals( expectedSql, sql );
+      assertEquals( expectedSql, sql );
     } catch ( Exception e ) {
-      e.printStackTrace();
-      Assert.fail();
+      fail();
     }
   }
 
@@ -699,9 +697,9 @@ public class SqlOpenFormulaIT {
   @Test
   public void testMultiTableColumnFormulasAggregate() throws Exception {
     LogicalColumn quantityOrdered = getOrdersModel().findLogicalColumn( "BC_ORDER_DETAILS_QUANTITYORDERED" );
-    Assert.assertNotNull( "Expected to find the business column 'quantity ordered'", quantityOrdered );
+    assertNotNull( "Expected to find the business column 'quantity ordered'", quantityOrdered );
     LogicalColumn buyPrice = getOrdersModel().findLogicalColumn( "BC_PRODUCTS_BUYPRICE" );
-    Assert.assertNotNull( "Expected to find the business column 'buy price'", buyPrice );
+    assertNotNull( "Expected to find the business column 'buy price'", buyPrice );
 
     // let's remove the aggregations of the quantity ordered...
     //
@@ -730,9 +728,9 @@ public class SqlOpenFormulaIT {
   @Test
   public void testMultiTableColumnFormulasAggregate2() throws Exception {
     LogicalColumn quantityOrdered = getOrdersModel().findLogicalColumn( "BC_ORDER_DETAILS_QUANTITYORDERED" );
-    Assert.assertNotNull( "Expected to find the business column 'quantity ordered'", quantityOrdered );
+    assertNotNull( "Expected to find the business column 'quantity ordered'", quantityOrdered );
     LogicalColumn buyPrice = getOrdersModel().findLogicalColumn( "BC_PRODUCTS_BUYPRICE" );
-    Assert.assertNotNull( "Expected to find the business column 'buy price'", buyPrice );
+    assertNotNull( "Expected to find the business column 'buy price'", buyPrice );
 
     // let's enable the aggregations of the quantity ordered...
     //

@@ -28,6 +28,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Locale;
 
+import com.thoughtworks.xstream.XStream;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.pentaho.di.core.Props;
@@ -36,6 +37,7 @@ import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
+import org.pentaho.metadata.model.concept.types.LocaleType;
 import org.pentaho.metadata.query.model.CombinationType;
 import org.pentaho.metadata.query.model.Constraint;
 import org.pentaho.metadata.query.model.Order;
@@ -77,22 +79,13 @@ public class SQLModelGeneratorIT {
       stmt.setMaxRows( 5 );
       rs = stmt.executeQuery( query );
       ResultSetMetaData metadata = rs.getMetaData();
-      String[] columnHeaders = new String[metadata.getColumnCount()];
-      int[] columnTypes = new int[metadata.getColumnCount()];
-      columnHeaders = getColumnNames( metadata );
-      columnTypes = getColumnTypes( metadata );
+      String[] columnHeaders = getColumnNames( metadata );
+      int[] columnTypes = getColumnTypes( metadata );
       SQLModelGenerator generator =
           new SQLModelGenerator( "newdatasource", "SampleData", "Hypersonic", columnTypes, columnHeaders, query,
               true, asList( "suzy" ), asList( "Authenticated" ), 31, "joe" );
       domain = generator.generate();
-    } catch ( KettleException e ) {
-      e.printStackTrace();
-      fail();
-    } catch ( SQLException e ) {
-      e.printStackTrace();
-      fail();
-    } catch ( SQLModelGeneratorException e ) {
-      e.printStackTrace();
+    } catch ( KettleException | SQLException | SQLModelGeneratorException e ) {
       fail();
     } finally {
       try {
@@ -106,7 +99,6 @@ public class SQLModelGeneratorIT {
           connection.close();
         }
       } catch ( SQLException e ) {
-        e.printStackTrace();
         fail( "Could not close resource" );
       }
     }
@@ -114,10 +106,14 @@ public class SQLModelGeneratorIT {
 
   @Test
   public void testSQLModelGenerator() {
-    SerializationService service = new SerializationService();
-    String xml = service.serializeDomain( domain );
-    Domain domain2 = service.deserializeDomain( xml );
-    assertEquals( 1, domain2.getPhysicalModels().size() );
+    try {
+      SerializationService service = new SerializationService();
+      String xml = service.serializeDomain( domain );
+      Domain domain2 = service.deserializeDomain( xml );
+      assertEquals( 1, domain2.getPhysicalModels().size() );
+    } catch ( Exception e ) {
+      fail();
+    }
   }
 
   @Test
@@ -130,7 +126,6 @@ public class SQLModelGeneratorIT {
     // verify conversion worked.
     BusinessModel model = meta.findModel( "MODEL_1" );
     assertNotNull( model );
-    String local = model.getName( locale );
     assertEquals( "newdatasource", model.getName( locale ) );
     BusinessCategory cat =  model.getRootCategory().findBusinessCategory( Settings.getBusinessCategoryIDPrefix() + "newdatasource" );
     assertNotNull( cat );
@@ -141,11 +136,11 @@ public class SQLModelGeneratorIT {
     assertEquals( "CUSTOMERNAME", col.getName( locale ) );
     assertNotNull( col.getBusinessTable() );
     assertEquals( "LOGICAL_TABLE_1", col.getBusinessTable().getId() );
-    assertEquals( col.getDataType(), DataTypeSettings.STRING );
+    assertEquals( DataTypeSettings.STRING, col.getDataType() );
     assertEquals( "select customername from customers where customernumber < 171", col.getBusinessTable().getTargetTable() );
     assertEquals( "select customername from customers where customernumber < 171", col.getPhysicalColumn().getTable().getTargetTable() );
     assertEquals( "CUSTOMERNAME", col.getPhysicalColumn().getFormula() );
-    assertEquals( false, col.getPhysicalColumn().isExact() );
+    assertFalse( col.getPhysicalColumn().isExact() );
   }
 
   @Test
@@ -164,11 +159,9 @@ public class SQLModelGeneratorIT {
     try {
       repo.storeDomain( domain, true );
     } catch ( Exception e ) {
-      e.printStackTrace();
       fail();
     }
-    Query newQuery = null;
-    newQuery = helper.fromXML( repo, xml );
+    Query newQuery = helper.fromXML( repo, xml );
     // verify that when we serialize and deserialize, the xml stays the same.
     assertEquals( xml, helper.toXML( newQuery ) );
   }
@@ -187,7 +180,6 @@ public class SQLModelGeneratorIT {
     try {
       impl = ThinModelConverter.convertToLegacy( query, null );
     } catch ( Exception e ) {
-      e.printStackTrace();
       fail();
     }
     assertNotNull( impl );
