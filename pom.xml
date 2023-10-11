@@ -36,7 +36,7 @@
     <pentaho-cwm.version>1.5.4</pentaho-cwm.version>
     <netbeans.version>200507110943</netbeans.version>
     <netbeans-custom.version>200507110943-custom</netbeans-custom.version>
-    <joda-time.version>2.10.2</joda-time.version>
+    <joda-time.version>2.10.10</joda-time.version>
   </properties>
 
   <dependencies>
