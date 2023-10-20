@@ -36,6 +36,9 @@ import org.pentaho.metadata.util.ThinModelConverter;
 import org.pentaho.pms.MetadataTestBase;
 import org.pentaho.pms.mql.MQLQueryImpl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 @SuppressWarnings( "deprecation" )
 public class ThinQueryIT {
 
@@ -68,18 +71,16 @@ public class ThinQueryIT {
     try {
       repo.storeDomain( domain, true );
     } catch ( Exception e ) {
-      e.printStackTrace();
-      Assert.fail();
+      fail();
     }
     Query newQuery = null;
     try {
       newQuery = helper.fromXML( repo, xml );
     } catch ( Exception e ) {
-      e.printStackTrace();
-      Assert.fail();
+      fail();
     }
     // verify that when we serialize and deserialize, the xml stays the same.
-    Assert.assertEquals( xml, helper.toXML( newQuery ) );
+    assertEquals( xml, helper.toXML( newQuery ) );
   }
 
   @Test
@@ -100,8 +101,7 @@ public class ThinQueryIT {
     try {
       impl = ThinModelConverter.convertToLegacy( query, null );
     } catch ( Exception e ) {
-      e.printStackTrace();
-      Assert.fail();
+      fail();
     }
     Assert.assertNotNull( impl );
     TestHelper.assertEqualsIgnoreWhitespaces( "SELECT DISTINCT \n" + "          LT.customername AS COL0\n" + "FROM \n"
@@ -111,7 +111,7 @@ public class ThinQueryIT {
 
     query.setLimit( 10 );
     impl = ThinModelConverter.convertToLegacy( query, null );
-    Assert.assertEquals( 10, impl.getLimit() );
+    assertEquals( 10, impl.getLimit() );
   }
 
   public static void printOutJava( String sql ) {

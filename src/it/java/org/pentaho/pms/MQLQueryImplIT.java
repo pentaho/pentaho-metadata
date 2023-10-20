@@ -482,7 +482,6 @@ public class MQLQueryImplIT extends MetadataTestBase {
       assertEquals( "pc1", emd.getAttribute( 0, 0, "formula" ).toString() ); //$NON-NLS-1$  //$NON-NLS-2$
 
     } catch ( Exception e ) {
-      e.printStackTrace();
       fail();
     }
   }
@@ -621,7 +620,6 @@ public class MQLQueryImplIT extends MetadataTestBase {
         query3.getQuery() );
 
     } catch ( Exception e ) {
-      e.printStackTrace();
       fail();
     }
   }

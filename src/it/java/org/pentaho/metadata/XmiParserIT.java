@@ -16,27 +16,18 @@
  */
 package org.pentaho.metadata;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.pentaho.metadata.util.Util.validateId;
-
-import java.io.ByteArrayInputStream;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.Converter;
+import com.thoughtworks.xstream.converters.MarshallingContext;
+import com.thoughtworks.xstream.converters.UnmarshallingContext;
+import com.thoughtworks.xstream.io.HierarchicalStreamReader;
+import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openide.util.io.ReaderInputStream;
 import org.pentaho.di.core.database.DatabaseMeta;
-import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
 import org.pentaho.metadata.model.LogicalColumn;
 import org.pentaho.metadata.model.LogicalModel;
@@ -63,13 +54,21 @@ import org.pentaho.metadata.util.ThinModelConverter;
 import org.pentaho.metadata.util.XmiParser;
 import org.pentaho.pms.MetadataTestBase;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.Converter;
-import com.thoughtworks.xstream.converters.MarshallingContext;
-import com.thoughtworks.xstream.converters.UnmarshallingContext;
-import com.thoughtworks.xstream.io.HierarchicalStreamReader;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import com.thoughtworks.xstream.io.xml.DomDriver;
+import java.io.ByteArrayInputStream;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.pentaho.metadata.util.Util.validateId;
 
 @SuppressWarnings( "nls" )
 public class XmiParserIT {
@@ -121,13 +120,12 @@ public class XmiParserIT {
             "BC_ORDERS_ORDERNUMBER" ).getProperty( "aggregation_list" );
     assertNotNull( aggTypes );
     assertEquals( 2, aggTypes.size() );
-    assertEquals( aggTypes.get( 0 ), AggregationType.COUNT );
-    assertEquals( aggTypes.get( 1 ), AggregationType.COUNT_DISTINCT );
+    assertEquals( AggregationType.COUNT, aggTypes.get( 0 ) );
+    assertEquals( AggregationType.COUNT_DISTINCT, aggTypes.get( 1 ) );
 
     // verify that inheritance is working
     assertEquals( "$#,##0.00;($#,##0.00)", domain.findLogicalModel( "BV_ORDERS" ).findCategory( "CAT_ORDERS" )
         .findLogicalColumn( "BC_ORDERDETAILS_TOTAL" ).getProperty( "mask" ) );
-
   }
 
   @Test
@@ -138,7 +136,7 @@ public class XmiParserIT {
 
     String xmi = parser.generateXmi( domain );
 
-    ByteArrayInputStream is = new ByteArrayInputStream( xmi.getBytes( "UTF-8" ) );
+    ByteArrayInputStream is = new ByteArrayInputStream( xmi.getBytes( StandardCharsets.UTF_8 ) );
     Domain domain2 = parser.parseXmi( is );
 
     String xml1 = serializeWithOrderedHashmaps( domain );
@@ -169,19 +167,18 @@ public class XmiParserIT {
   }
 
   public String serializeWithOrderedHashmaps( Domain domain ) {
-    XStream xstream = new XStream( new DomDriver() );
-    xstream.allowedTypes(new Class[]{Domain.class});
+    XStream xstream = SerializationService.createXStreamWithAllowedTypes( new DomDriver(), Domain.class );
     xstream.registerConverter( new Converter() {
 
       public void marshal( Object source, HierarchicalStreamWriter writer, MarshallingContext context ) {
         // TODO Auto-generated method stub
         writer.startNode( "hashmap" );
         HashMap unknownMap = (HashMap) source;
-        if ( unknownMap.size() > 0 ) {
+        if ( !unknownMap.isEmpty() ) {
           if ( unknownMap.keySet().iterator().next() instanceof String ) {
             @SuppressWarnings( "unchecked" )
             HashMap<String, Object> map = (HashMap<String, Object>) source;
-            Set<String> ordered = new TreeSet<String>( map.keySet() );
+            Set<String> ordered = new TreeSet<>( map.keySet() );
             for ( String key : ordered ) {
               writer.startNode( "entry" );
               writer.addAttribute( "key", key );
@@ -206,10 +203,9 @@ public class XmiParserIT {
       public boolean canConvert( Class type ) {
         return type.getName().equals( "java.util.HashMap" );
       }
-
     } );
-    return xstream.toXML( domain );
 
+    return xstream.toXML( domain );
   }
 
   @Test
@@ -338,7 +334,6 @@ public class XmiParserIT {
         + "          ORDERFACT BT_ORDERFACT_ORDERFACT\n" + "         ,ORDERS BT_ORDERS_ORDERS\n" + "WHERE \n"
             + "          (  BT_ORDERS_ORDERS.ORDERNUMBER  =  BT_ORDERFACT_ORDERFACT.ORDERNUMBER  )\n", queryObj
             .getQuery() );
-
   }
 
   @Test
@@ -400,7 +395,7 @@ public class XmiParserIT {
     OlapHierarchyLevel level3 = hier2.getHierarchyLevels().get( 1 );
 
     assertEquals( 4, level3.getLogicalColumns().size() );
-    assertEquals( false, level3.isHavingUniqueMembers() );
+    assertFalse( level3.isHavingUniqueMembers() );
 
     OlapHierarchy hier3 = dim2.getHierarchies().get( 1 );
 
@@ -436,43 +431,6 @@ public class XmiParserIT {
   }
 
   @Test
-  @Ignore // ids aren't changed on the fly see http://jira.pentaho.com/browse/BISERVER-13338
-  public void incorrectIdsAreReplacedOnTheFly() throws Exception {
-    final String modelName = "BV_HUMAN_RESOURCES";
-    final String tableName = "BT_EMPLOYEES_EMPLOYEES";
-    final String columnName = "BC_EMPLOYEES_EMPLOYEENUMBER";
-    final String categoryName = "BC_OFFICES_";
-
-    Domain domain = parser.parseXmi( getClass().getResourceAsStream( "/samples/steelwheels.xmi" ) );
-
-    LogicalModel model = domain.findLogicalModel( modelName );
-    assertNotNull( model );
-    Category category = model.findCategory( categoryName );
-    assertNotNull( category );
-    LogicalTable table = model.findLogicalTable( tableName );
-    assertValidId( table );
-    LogicalColumn column = table.findLogicalColumn( columnName );
-    assertValidId( column );
-
-    setInvalidId( " (Cat_Id)", category, table, column );
-
-    String spoiltXmi = parser.generateXmi( domain );
-    domain = parser.parseXmi( new ByteArrayInputStream( spoiltXmi.getBytes() ) );
-
-    model = domain.findLogicalModel( modelName );
-    assertNotNull( model );
-
-    category = findConceptStartingWith( categoryName, model.getCategories() );
-    assertValidId( category );
-
-    table = findConceptStartingWith( tableName, model.getLogicalTables() );
-    assertValidId( table );
-
-    column = findConceptStartingWith( columnName, table.getLogicalColumns() );
-    assertValidId( column );
-  }
-
-  @Test
   public void collisionAfterCorrectionAreResolved() throws Exception {
     Domain domain = parser.parseXmi( getClass().getResourceAsStream( "/samples/steelwheels.xmi" ) );
     LogicalTable table = domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 );
@@ -484,7 +442,7 @@ public class XmiParserIT {
     LogicalColumn col2 = table.getLogicalColumns().get( 1 );
     col2.setId( "column{x}" );
 
-    assertFalse( "Columns have different raw ids", col1.getId().equals( col2.getId() ) );
+    assertNotEquals( "Columns have different raw ids", col1.getId(), col2.getId() );
     assertEquals( "Columns have equal validated ids", validateId( col1.getId() ), validateId( col2.getId() ) );
 
     String xmi = parser.generateXmi( domain );
@@ -497,7 +455,7 @@ public class XmiParserIT {
     col2 = columns.get( 1 );
     assertTrue( col1.getId(), col1.getId().startsWith( "column" ) );
     assertTrue( col2.getId(), col2.getId().startsWith( "column" ) );
-    assertFalse( "Columns have different corrected ids", col1.getId().equals( col2.getId() ) );
+    assertNotEquals( "Columns have different corrected ids", col1.getId(), col2.getId() );
   }
 
   private static void setInvalidId( String invalidPart, Concept... concepts ) {
@@ -526,7 +484,7 @@ public class XmiParserIT {
     XmiParser parser = new XmiParser();
     Domain domain = parser.parseXmi( getClass().getResourceAsStream( "/example_olap.xmi" ) );
 
-    List<OlapRole> roles = new ArrayList<OlapRole>();
+    List<OlapRole> roles = new ArrayList<>();
     roles.add( new OlapRole( "California Manager", "<SchemaGrant/>" ) );
     roles.add( new OlapRole( "Maryland Manager", "<SchemaGrant/>" ) );
 
@@ -538,13 +496,10 @@ public class XmiParserIT {
     ByteArrayInputStream is = new ByteArrayInputStream( xmi.getBytes() );
     Domain domain2 = parser.parseXmi( is );
 
-    SerializationService serializer = new SerializationService();
-
     String xml1 = serializeWithOrderedHashmaps( domain );
     String xml2 = serializeWithOrderedHashmaps( domain2 );
 
     assertEquals( xml1, xml2 );
-
   }
 
   @Test
@@ -552,7 +507,7 @@ public class XmiParserIT {
     XmiParser parser = new XmiParser();
     Domain domain = parser.parseXmi( getClass().getResourceAsStream( "/example_olap.xmi" ) );
 
-    List<OlapCalculatedMember> members = new ArrayList<OlapCalculatedMember>();
+    List<OlapCalculatedMember> members = new ArrayList<>();
     members.add( new OlapCalculatedMember( "Constant One", "Measures", "1", "Currency", false ) );
     members.add( new OlapCalculatedMember( "Constant Two", "Measures", "2", "Currency", true ) );
 
@@ -565,13 +520,10 @@ public class XmiParserIT {
     ByteArrayInputStream is = new ByteArrayInputStream( xmi.getBytes() );
     Domain domain2 = parser.parseXmi( is );
 
-    SerializationService serializer = new SerializationService();
-
     String xml1 = serializeWithOrderedHashmaps( domain );
     String xml2 = serializeWithOrderedHashmaps( domain2 );
 
     assertEquals( xml1, xml2 );
-
   }
 
   @Test

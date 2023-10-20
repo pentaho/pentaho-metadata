@@ -16,7 +16,7 @@
  */
 package org.pentaho.metadata;
 
-import org.junit.Assert;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.pentaho.di.core.database.DatabaseMeta;
@@ -42,6 +42,9 @@ import org.pentaho.metadata.query.model.Order.Type;
 import org.pentaho.metadata.query.model.Query;
 import org.pentaho.metadata.repository.InMemoryMetadataDomainRepository;
 import org.pentaho.pms.MetadataTestBase;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class AdvancedQueryIT {
 
@@ -72,18 +75,16 @@ public class AdvancedQueryIT {
     try {
       repo.storeDomain( domain, true );
     } catch ( Exception e ) {
-      e.printStackTrace();
-      Assert.fail();
+      fail();
     }
     Query newQuery = null;
     try {
       newQuery = helper.fromXML( repo, xml );
     } catch ( Exception e ) {
-      e.printStackTrace();
-      Assert.fail();
+      fail();
     }
     // verify that when we serialize and deserialize, the xml stays the same.
-    Assert.assertEquals( xml, helper.toXML( newQuery ) );
+    assertEquals( xml, helper.toXML( newQuery ) );
   }
 
   public LogicalModel getDefaultModel() throws Exception {
@@ -333,7 +334,7 @@ public class AdvancedQueryIT {
     repo.storeDomain( domain, false );
     Query myReadTest = xmlhelper.fromXML( repo, xml );
 
-    Assert.assertEquals( new AdvancedSqlGenerator().generateSql( myTest, "en_US", null, databaseMeta ).getQuery(),
+    assertEquals( new AdvancedSqlGenerator().generateSql( myTest, "en_US", null, databaseMeta ).getQuery(),
         new AdvancedSqlGenerator().generateSql( myReadTest, "en_US", null, databaseMeta ).getQuery() );
 
     xml =

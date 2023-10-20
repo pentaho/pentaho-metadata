@@ -79,7 +79,6 @@ public class MQLQueryIT extends TestCase {
     try {
       return IOUtils.toString( getClass().getResourceAsStream( filename ) );
     } catch ( Throwable t ) {
-      t.printStackTrace();
       fail();
     }
     return null;
@@ -92,7 +91,6 @@ public class MQLQueryIT extends TestCase {
       assertNotNull( "CWM singleton instance is null", cwm );
       cwm.importFromXMI( getClass().getResourceAsStream( "/samples/orders.xmi" ) ); //$NON-NLS-1$
     } catch ( Exception e ) {
-      e.printStackTrace();
       fail();
     }
     cwmSchemaFactory = new CwmSchemaFactory();
@@ -112,7 +110,6 @@ public class MQLQueryIT extends TestCase {
       sql = sql.trim();
       assertEquals( expectedSql, sql );
     } catch ( Exception e ) {
-      e.printStackTrace();
       fail();
     }
   }
@@ -143,7 +140,6 @@ public class MQLQueryIT extends TestCase {
       sql = sql.trim();
       assertEquals( expectedSql, sql );
     } catch ( Exception e ) {
-      e.printStackTrace();
       fail();
     }
   }
@@ -161,7 +157,6 @@ public class MQLQueryIT extends TestCase {
        */
       assertEquals( expectedSql, sql );
     } catch ( Exception e ) {
-      e.printStackTrace();
       fail();
     }
   }
@@ -247,7 +242,6 @@ public class MQLQueryIT extends TestCase {
       sql = sql.trim();
       assertEquals( expectedSql, sql );
     } catch ( Exception e ) {
-      e.printStackTrace();
       fail();
     }
   }
@@ -270,7 +264,6 @@ public class MQLQueryIT extends TestCase {
       sql = sql.trim();
       assertEquals( expectedSql, sql );
     } catch ( Exception e ) {
-      e.printStackTrace();
       fail();
     }
   }
@@ -687,7 +680,6 @@ public class MQLQueryIT extends TestCase {
       sqlQuery = query.getQuery();
       assertTrue( sqlQuery.indexOf( ">= TO_DATE('1-01-2007','YYYY-MM-DD')" ) >= 0 ); //$NON-NLS-1$
     } catch ( Exception e ) {
-      e.printStackTrace();
       fail();
     }
   }
@@ -807,7 +799,6 @@ public class MQLQueryIT extends TestCase {
       assertEquals( data, xml );
 
     } catch ( IOException e ) {
-      e.printStackTrace();
       fail();
     }
 
@@ -825,7 +816,6 @@ public class MQLQueryIT extends TestCase {
       assertEquals( data, xml );
 
     } catch ( IOException e ) {
-      e.printStackTrace();
       fail();
     }
 
@@ -840,7 +830,6 @@ public class MQLQueryIT extends TestCase {
       xml = xml.replaceAll( "[\r\n\t]", "" ); //$NON-NLS-1$ //$NON-NLS-2$
       assertEquals( data, xml );
     } catch ( IOException e ) {
-      e.printStackTrace();
       fail();
     }
 
@@ -862,7 +851,6 @@ public class MQLQueryIT extends TestCase {
       // System.out.println("SQL3: " + SQL3);
 
     } catch ( PentahoMetadataException e ) {
-      e.printStackTrace();
       fail();
     }
 

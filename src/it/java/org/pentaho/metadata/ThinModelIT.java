@@ -16,12 +16,6 @@
  */
 package org.pentaho.metadata;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -58,6 +52,17 @@ import org.pentaho.pms.schema.BusinessModel;
 import org.pentaho.pms.schema.SchemaMeta;
 import org.pentaho.pms.schema.concept.types.datatype.DataTypeSettings;
 
+import java.io.File;
+import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.fail;
+
 @SuppressWarnings( "deprecation" )
 public class ThinModelIT {
 
@@ -83,11 +88,11 @@ public class ThinModelIT {
 
     // basic tests
 
-    Assert.assertEquals( "SampleData", model.getDatasource().getDatabaseName() );
-    Assert.assertEquals( 1, model.getPhysicalTables().size() );
-    Assert.assertEquals( TargetTableType.INLINE_SQL, model.getPhysicalTables().get( 0 ).getTargetTableType() );
-    Assert.assertEquals( "select * from customers", model.getPhysicalTables().get( 0 ).getTargetTable() );
-    Assert.assertEquals( 1, model.getPhysicalTables().size() );
+    assertEquals( "SampleData", model.getDatasource().getDatabaseName() );
+    assertEquals( 1, model.getPhysicalTables().size() );
+    assertEquals( TargetTableType.INLINE_SQL, model.getPhysicalTables().get( 0 ).getTargetTableType() );
+    assertEquals( "select * from customers", model.getPhysicalTables().get( 0 ).getTargetTable() );
+    assertEquals( 1, model.getPhysicalTables().size() );
   }
 
   @Test
@@ -130,11 +135,11 @@ public class ThinModelIT {
     logicalColumn.setPhysicalColumn( column );
 
     // test name inheritance
-    Assert.assertEquals( column.getName().getString( Locale.getDefault().toString() ), logicalColumn.getName()
+    assertEquals( column.getName().getString( Locale.getDefault().toString() ), logicalColumn.getName()
         .getString( Locale.getDefault().toString() ) );
 
     // test datatype inheritance
-    Assert.assertEquals( column.getDataType(), logicalColumn.getDataType() );
+    assertEquals( column.getDataType(), logicalColumn.getDataType() );
 
     Category mainCategory = new Category();
     mainCategory.setId( "CATEGORY" );
@@ -198,25 +203,23 @@ public class ThinModelIT {
 
     String xml = service.serializeDomain( domain );
 
-    // System.out.println(xml);
-
     Domain domain2 = service.deserializeDomain( xml );
 
-    Assert.assertEquals( 1, domain2.getPhysicalModels().size() );
+    assertEquals( 1, domain2.getPhysicalModels().size() );
     SqlPhysicalModel model2 = (SqlPhysicalModel) domain2.getPhysicalModels().get( 0 );
-    Assert.assertEquals( "SampleData", model2.getDatasource().getDatabaseName() );
-    Assert.assertEquals( 1, model.getPhysicalTables().size() );
-    Assert.assertEquals( TargetTableType.INLINE_SQL, model.getPhysicalTables().get( 0 ).getTargetTableType() );
+    assertEquals( "SampleData", model2.getDatasource().getDatabaseName() );
+    assertEquals( 1, model2.getPhysicalTables().size() );
+    assertEquals( TargetTableType.INLINE_SQL, model2.getPhysicalTables().get( 0 ).getTargetTableType() );
 
-    Assert.assertEquals( 1, domain.getLogicalModels().size() );
-    Assert.assertEquals( 1, domain.getLogicalModels().get( 0 ).getCategories().size() );
-    Assert.assertEquals( 1, domain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns().size() );
-    Assert.assertEquals( domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 ).getLogicalColumns().get( 0 ),
-        domain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns().get( 0 ) );
-    Assert.assertEquals( "Customer Name", domain.getLogicalModels().get( 0 ).getCategories().get( 0 )
-        .getLogicalColumns().get( 0 ).getName().getString( "en_US" ) );
-    Assert.assertEquals( "Customer Name Desc", domain.getLogicalModels().get( 0 ).getCategories().get( 0 )
-        .getLogicalColumns().get( 0 ).getDescription().getString( "en_US" ) );
+    assertEquals( 1, domain2.getLogicalModels().size() );
+    assertEquals( 1, domain2.getLogicalModels().get( 0 ).getCategories().size() );
+    assertEquals( 1, domain2.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns().size() );
+    assertEquals( domain2.getLogicalModels().get( 0 ).getLogicalTables().get( 0 ).getLogicalColumns().get( 0 ),
+        domain2.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns().get( 0 ) );
+    assertEquals( "Customer Name", domain2.getLogicalModels().get( 0 ).getCategories().get( 0 )
+        .getLogicalColumns().get( 0 ).getName().getString( locale ) );
+    assertEquals( "Customer Name Desc", domain2.getLogicalModels().get( 0 ).getCategories().get( 0 )
+        .getLogicalColumns().get( 0 ).getDescription().getString( locale ) );
 
   }
 
@@ -237,11 +240,10 @@ public class ThinModelIT {
     CWM cwm = null;
     try {
       cwm = CWM.getInstance( "SteelWheels", true ); //$NON-NLS-1$
-      Assert.assertNotNull( "CWM singleton instance is null", cwm );
+      assertNotNull( "CWM singleton instance is null", cwm );
       cwm.importFromXMI( getClass().getResourceAsStream( "/samples/steelwheels.xmi" ) ); //$NON-NLS-1$
     } catch ( Exception e ) {
-      e.printStackTrace();
-      Assert.fail();
+      fail();
     }
     CwmSchemaFactory factory = new CwmSchemaFactory();
 
@@ -252,8 +254,7 @@ public class ThinModelIT {
     try {
       domain = ThinModelConverter.convertFromLegacy( schemaMeta );
     } catch ( Exception e ) {
-      e.printStackTrace();
-      Assert.fail();
+      fail();
     }
 
     LocalizationUtil util = new LocalizationUtil();
@@ -265,11 +266,7 @@ public class ThinModelIT {
 
     List<String> list = util.analyzeImport( domain2, props, "en_US" );
 
-    // for (String str : list) {
-    // System.out.println(str);
-    // }
-
-    Assert.assertEquals( 0, list.size() );
+    assertEquals( 0, list.size() );
   }
 
   @Test
@@ -282,23 +279,19 @@ public class ThinModelIT {
     CWM cwm = null;
     try {
       cwm = CWM.getInstance( "Orders", true ); //$NON-NLS-1$
-      Assert.assertNotNull( "CWM singleton instance is null", cwm );
+      assertNotNull( "CWM singleton instance is null", cwm );
       cwm.importFromXMI( getClass().getResourceAsStream( "/samples/steelwheels.xmi" ) ); //$NON-NLS-1$
     } catch ( Exception e ) {
-      e.printStackTrace();
-      Assert.fail();
+      fail();
     }
     CwmSchemaFactory factory = new CwmSchemaFactory();
 
     SchemaMeta schemaMeta = factory.getSchemaMeta( cwm );
 
-    Domain domain = null;
-
     try {
-      domain = ThinModelConverter.convertFromLegacy( schemaMeta );
+      ThinModelConverter.convertFromLegacy( schemaMeta );
     } catch ( Exception e ) {
-      e.printStackTrace();
-      Assert.fail();
+      fail();
     }
   }
 
@@ -311,9 +304,9 @@ public class ThinModelIT {
     String result = ls.getString( "nl_BE.UTF-8" );
     Assert.assertNull( result );
     result = ls.getLocalizedString( "nl_BE.UTF-8" );
-    Assert.assertEquals( "Test 1", result );
+    assertEquals( "Test 1", result );
     result = ls.getLocalizedString( "en_US" );
-    Assert.assertEquals( "Test 1", result );
+    assertEquals( "Test 1", result );
 
     ls = new LocalizedString();
     ls.setString( "es", "Test 2" );
@@ -328,78 +321,76 @@ public class ThinModelIT {
     try {
       meta = ThinModelConverter.convertToLegacy( domain );
     } catch ( Exception e ) {
-      e.printStackTrace();
-      Assert.fail();
+      fail();
     }
 
     String locale = Locale.getDefault().toString();
 
-    Assert.assertEquals( 1, meta.getLocales().nrLocales() );
-    Assert.assertEquals( "en_US", meta.getLocales().getLocale( 0 ).getCode() );
+    assertEquals( 1, meta.getLocales().nrLocales() );
+    assertEquals( "en_US", meta.getLocales().getLocale( 0 ).getCode() );
 
     // verify conversion worked.
     BusinessModel model = meta.findModel( "MODEL" );
-    Assert.assertNotNull( model );
-    Assert.assertEquals( "My Model", model.getName( locale ) );
-    Assert.assertEquals( "A Description of the Model", model.getDescription( locale ) );
+    assertNotNull( model );
+    assertEquals( "My Model", model.getName( locale ) );
+    assertEquals( "A Description of the Model", model.getDescription( locale ) );
 
     BusinessCategory cat = model.getRootCategory().findBusinessCategory( "CATEGORY" );
-    Assert.assertNotNull( cat );
-    Assert.assertEquals( "Category", cat.getName( locale ) );
+    assertNotNull( cat );
+    assertEquals( "Category", cat.getName( locale ) );
 
-    Assert.assertEquals( 1, cat.getBusinessColumns().size() );
+    assertEquals( 1, cat.getBusinessColumns().size() );
 
     // this tests the inheritance of physical cols made it through
     BusinessColumn col = cat.getBusinessColumn( 0 );
-    Assert.assertEquals( "Customer Name", col.getName( locale ) );
-    Assert.assertEquals( "Customer Name Desc", col.getDescription( locale ) );
-    Assert.assertNotNull( col.getBusinessTable() );
-    Assert.assertEquals( "LT", col.getBusinessTable().getId() );
+    assertEquals( "Customer Name", col.getName( locale ) );
+    assertEquals( "Customer Name Desc", col.getDescription( locale ) );
+    assertNotNull( col.getBusinessTable() );
+    assertEquals( "LT", col.getBusinessTable().getId() );
 
-    Assert.assertEquals( col.getDataType(), DataTypeSettings.STRING );
-    Assert.assertEquals( "select * from customers", col.getBusinessTable().getTargetTable() );
-    Assert.assertEquals( "select * from customers", col.getPhysicalColumn().getTable().getTargetTable() );
-    Assert.assertEquals( "customername", col.getPhysicalColumn().getFormula() );
-    Assert.assertEquals( false, col.getPhysicalColumn().isExact() );
+    assertEquals( col.getDataType(), DataTypeSettings.STRING );
+    assertEquals( "select * from customers", col.getBusinessTable().getTargetTable() );
+    assertEquals( "select * from customers", col.getPhysicalColumn().getTable().getTargetTable() );
+    assertEquals( "customername", col.getPhysicalColumn().getFormula() );
+    assertFalse( col.getPhysicalColumn().isExact() );
 
     Domain domain2 = null;
 
     try {
       domain2 = ThinModelConverter.convertFromLegacy( meta );
     } catch ( Exception e ) {
-      e.printStackTrace();
-      Assert.fail();
+      fail();
     }
 
-    Assert.assertEquals( 1, domain2.getLocales().size() );
-    Assert.assertEquals( "en_US", domain2.getLocales().get( 0 ).getCode() );
+    assertEquals( 1, domain2.getLocales().size() );
+    assertEquals( "en_US", domain2.getLocales().get( 0 ).getCode() );
 
     // verify conversion worked.
     LogicalModel logicalModel = domain2.findLogicalModel( "MODEL" );
-    Assert.assertNotNull( logicalModel );
-    Assert.assertEquals( "My Model", logicalModel.getName().getString( locale ) );
-    Assert.assertEquals( "A Description of the Model", logicalModel.getDescription().getString( locale ) );
+    assertNotNull( logicalModel );
+    assertEquals( "My Model", logicalModel.getName().getString( locale ) );
+    assertEquals( "A Description of the Model", logicalModel.getDescription().getString( locale ) );
 
     Category category = logicalModel.findCategory( "CATEGORY" );
-    Assert.assertNotNull( category );
-    Assert.assertEquals( "Category", category.getName().getString( locale ) );
+    assertNotNull( category );
+    assertEquals( "Category", category.getName().getString( locale ) );
 
-    Assert.assertEquals( 1, category.getLogicalColumns().size() );
+    assertEquals( 1, category.getLogicalColumns().size() );
 
     // this tests the inheritance of physical cols made it through
     LogicalColumn column = category.getLogicalColumns().get( 0 );
-    Assert.assertEquals( "Customer Name", column.getName().getString( locale ) );
-    Assert.assertEquals( "Customer Name Desc", column.getDescription().getString( locale ) );
-    Assert.assertNotNull( column.getLogicalTable() );
-    Assert.assertEquals( "LT", column.getLogicalTable().getId() );
+    assertEquals( "Customer Name", column.getName().getString( locale ) );
+    assertEquals( "Customer Name Desc", column.getDescription().getString( locale ) );
+    assertNotNull( column.getLogicalTable() );
+    assertEquals( "LT", column.getLogicalTable().getId() );
 
-    Assert.assertEquals( column.getDataType(), DataType.STRING );
-    Assert.assertEquals( "select * from customers", column.getLogicalTable()
+    assertEquals( DataType.STRING, column.getDataType() );
+    assertEquals( "select * from customers", column.getLogicalTable()
         .getProperty( SqlPhysicalTable.TARGET_TABLE ) );
-    Assert.assertEquals( "select * from customers", column.getPhysicalColumn().getPhysicalTable().getProperty(
+    assertEquals( "select * from customers", column.getPhysicalColumn().getPhysicalTable().getProperty(
         SqlPhysicalTable.TARGET_TABLE ) );
-    Assert.assertEquals( "customername", column.getPhysicalColumn().getProperty( SqlPhysicalColumn.TARGET_COLUMN ) );
-    Assert.assertEquals( TargetColumnType.COLUMN_NAME, column.getPhysicalColumn().getProperty(
+    assertEquals( "customername", column.getPhysicalColumn().getProperty( SqlPhysicalColumn.TARGET_COLUMN ) );
+    assertEquals( TargetColumnType.COLUMN_NAME, column.getPhysicalColumn().getProperty(
         SqlPhysicalColumn.TARGET_COLUMN_TYPE ) );
   }
 
@@ -409,17 +400,17 @@ public class ThinModelIT {
     Domain domain = TestHelper.getBasicDomain();
     Domain domain2 = (Domain) domain.clone();
 
-    Assert.assertEquals( domain.getLogicalModels().get( 0 ).getId(), domain2.getLogicalModels().get( 0 ).getId() );
+    assertEquals( domain.getLogicalModels().get( 0 ).getId(), domain2.getLogicalModels().get( 0 ).getId() );
 
     domain2.getLogicalModels().get( 0 ).setName( new LocalizedString( "en_US", "TEST" ) );
 
     // equals uses the id for comparison, so these objects are still identical
-    Assert.assertEquals( domain.getLogicalModels().get( 0 ).getId(), domain2.getLogicalModels().get( 0 ).getId() );
+    assertEquals( domain.getLogicalModels().get( 0 ).getId(), domain2.getLogicalModels().get( 0 ).getId() );
 
     domain2.getLogicalModels().get( 0 ).setId( "BLAH" );
 
     // once the id has changed, they appear as different elements.
-    Assert.assertNotSame( domain.getLogicalModels().get( 0 ).getId(), domain2.getLogicalModels().get( 0 ).getId() );
+    assertNotSame( domain.getLogicalModels().get( 0 ).getId(), domain2.getLogicalModels().get( 0 ).getId() );
   }
 
   static class SecureRepo extends InMemoryMetadataDomainRepository {
@@ -434,11 +425,10 @@ public class ThinModelIT {
       if ( currentOwner == null ) {
         return false;
       }
+
       Integer val = (Integer) s.getOwnerAclMap().get( currentOwner );
-      if ( val != null ) {
-        return true;
-      }
-      return false;
+
+      return val != null;
     }
   }
 
@@ -471,23 +461,22 @@ public class ThinModelIT {
 
     Domain joesDomain = repo.getDomain( domain.getId() );
 
-    Assert.assertEquals( "{class=SecurityOwner, ownerType=USER, ownerName=joe}", joe.toString() );
+    assertEquals( "{class=SecurityOwner, ownerType=USER, ownerName=joe}", joe.toString() );
 
-    Assert.assertEquals( 1, joesDomain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 ).getLogicalColumns()
+    assertEquals( 1, joesDomain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 ).getLogicalColumns()
         .size() );
-    Assert.assertEquals( 1, joesDomain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns().size() );
+    assertEquals( 1, joesDomain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns().size() );
 
-    Assert.assertEquals( 1, domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 ).getLogicalColumns().size() );
-    Assert.assertEquals( 1, domain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns().size() );
+    assertEquals( 1, domain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 ).getLogicalColumns().size() );
+    assertEquals( 1, domain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns().size() );
 
     repo.currentOwner = suzy;
 
     Domain suzysDomain = repo.getDomain( domain.getId() );
 
-    Assert.assertEquals( 0, suzysDomain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 ).getLogicalColumns()
+    assertEquals( 0, suzysDomain.getLogicalModels().get( 0 ).getLogicalTables().get( 0 ).getLogicalColumns()
         .size() );
-    Assert
-        .assertEquals( 0, suzysDomain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns().size() );
+    assertEquals( 0, suzysDomain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns().size() );
 
     column.removeChildProperty( Concept.SECURITY_PROPERTY );
 
@@ -499,17 +488,16 @@ public class ThinModelIT {
 
     joesDomain = repo.getDomain( domain.getId() );
 
-    Assert.assertEquals( 1, joesDomain.getLogicalModels().get( 0 ).getLogicalTables().size() );
-    Assert.assertEquals( 1, joesDomain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns().size() );
+    assertEquals( 1, joesDomain.getLogicalModels().get( 0 ).getLogicalTables().size() );
+    assertEquals( 1, joesDomain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns().size() );
 
     repo.currentOwner = suzy;
 
     suzysDomain = repo.getDomain( domain.getId() );
 
-    Assert.assertEquals( 0, suzysDomain.getLogicalModels().get( 0 ).getLogicalTables().size() );
+    assertEquals( 0, suzysDomain.getLogicalModels().get( 0 ).getLogicalTables().size() );
     // the individual columns shouldn't appear either in the category
-    Assert
-        .assertEquals( 0, suzysDomain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns().size() );
+    assertEquals( 0, suzysDomain.getLogicalModels().get( 0 ).getCategories().get( 0 ).getLogicalColumns().size() );
 
     table.removeChildProperty( Concept.SECURITY_PROPERTY );
 
@@ -520,13 +508,13 @@ public class ThinModelIT {
 
     joesDomain = repo.getDomain( domain.getId() );
 
-    Assert.assertEquals( 1, joesDomain.getLogicalModels().get( 0 ).getCategories().size() );
+    assertEquals( 1, joesDomain.getLogicalModels().get( 0 ).getCategories().size() );
 
     repo.currentOwner = suzy;
 
     suzysDomain = repo.getDomain( domain.getId() );
 
-    Assert.assertEquals( 0, suzysDomain.getLogicalModels().get( 0 ).getCategories().size() );
+    assertEquals( 0, suzysDomain.getLogicalModels().get( 0 ).getCategories().size() );
 
     category.removeChildProperty( Concept.SECURITY_PROPERTY );
 
@@ -538,13 +526,13 @@ public class ThinModelIT {
 
     joesDomain = repo.getDomain( domain.getId() );
 
-    Assert.assertEquals( 1, joesDomain.getLogicalModels().size() );
+    assertEquals( 1, joesDomain.getLogicalModels().size() );
 
     repo.currentOwner = suzy;
 
     suzysDomain = repo.getDomain( domain.getId() );
 
-    Assert.assertEquals( 0, suzysDomain.getLogicalModels().size() );
+    assertEquals( 0, suzysDomain.getLogicalModels().size() );
   }
 
 }
