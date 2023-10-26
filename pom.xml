@@ -36,14 +36,13 @@
     <pentaho-cwm.version>1.5.4</pentaho-cwm.version>
     <netbeans.version>200507110943</netbeans.version>
     <netbeans-custom.version>200507110943-custom</netbeans-custom.version>
-    <joda-time.version>2.10.2</joda-time.version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
-      <version>${joda-time.version}</version>
+      <version>${joda.version}</version>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
