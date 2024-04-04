@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright 2017 Hitachi Vantara.  All rights reserved.
+ * Copyright 2017 - 2024 Hitachi Vantara.  All rights reserved.
  */
 package org.pentaho.metadata.query.impl.sql;
 import java.util.*;
@@ -69,7 +69,7 @@ public class SqlGeneratorTest {
     boolean genAsPreparedStatement = false;
     DatabaseMeta databaseMeta = Mockito.mock(DatabaseMeta.class);
     String schemaName = null;
-    Mockito.doReturn( TABLE_NAME ).when(databaseMeta).getQuotedSchemaTableCombination( Mockito.anyObject(), Mockito.anyString() );
+    Mockito.doReturn( TABLE_NAME ).when(databaseMeta).getQuotedSchemaTableCombination( Mockito.any(), Mockito.anyString() );
     String locale  = "en_US";
     sqlg.generateFromAndWhere( query, userBusinessTales, model, path, conditions,  tableAliases,
        constraintFormulaMap, parameters, genAsPreparedStatement,  databaseMeta,  locale );

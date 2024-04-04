@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2016 - 2017 Hitachi Vantara.  All rights reserved.
+ * Copyright (c) 2016 - 2024 Hitachi Vantara.  All rights reserved.
  */
 package org.pentaho.pms.mql;
 
@@ -21,8 +21,8 @@ import org.junit.Test;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.schema.SchemaMeta;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
 
