@@ -12,10 +12,13 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2009 - 2017 Hitachi Vantara.  All rights reserved.
+ * Copyright (c) 2009 - 2024 Hitachi Vantara.  All rights reserved.
  */
 package org.pentaho.metadata.model.thin;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,6 +31,8 @@ public class Query {
 
   private static final long serialVersionUID = 8616769258583080677L;
 
+  public static final List< Class > CLASS_LIST = new ArrayList< Class >( Arrays.asList( Query.class, Element.class, Condition.class,
+          Order.class, Parameter.class ));
   private Element[] elements = new Element[0];
 
   private Condition[] conditions = new Condition[0];
