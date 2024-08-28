@@ -31,6 +31,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.xml.XMLHandler;
+import org.pentaho.di.core.xml.XMLParserFactoryProducer;
 import org.pentaho.metadata.messages.Messages;
 import org.pentaho.metadata.model.Category;
 import org.pentaho.metadata.model.Domain;
@@ -100,7 +101,7 @@ public class QueryXmlHelper {
     Document doc;
     try {
       // create an XML document
-      DocumentBuilderFactory dbf = XmiParser.createSecureDocBuilderFactory();
+      DocumentBuilderFactory dbf = XMLParserFactoryProducer.createSecureDocBuilderFactory();
       DocumentBuilder db = dbf.newDocumentBuilder();
       doc = db.newDocument();
       Element mqlElement = doc.createElement( "mql" ); //$NON-NLS-1$
@@ -322,7 +323,7 @@ public class QueryXmlHelper {
 
     // Check and open XML document
     try {
-      DocumentBuilderFactory dbf = XmiParser.createSecureDocBuilderFactory();
+      DocumentBuilderFactory dbf = XMLParserFactoryProducer.createSecureDocBuilderFactory();
       DocumentBuilder db = dbf.newDocumentBuilder();
       doc = db.parse( new InputSource( new java.io.StringReader( XML ) ) );
     } catch ( ParserConfigurationException pcx ) {
