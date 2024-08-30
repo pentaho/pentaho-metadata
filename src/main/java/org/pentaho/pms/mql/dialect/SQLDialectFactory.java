@@ -65,7 +65,6 @@ public class SQLDialectFactory {
     addDialect( new MariaDBDialect() );
     addDialect( new MySQLDialect() );
     addDialect( new GoogleBigQueryDialect() );
-    addDialect( new MSAccessDialect() );
     addDialect( new NetezzaDialect() );
     addDialect( new H2Dialect() );
     addDialect( new HypersonicDialect() );

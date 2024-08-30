@@ -440,14 +440,6 @@ public class SqlOpenFormulaIT {
         "OR(TRUE();FALSE())", //$NON-NLS-1$
         "(1=1) OR (0=1)" //$NON-NLS-1$
     );
-    handleFormula( getOrdersModel(), "MSAccess", //$NON-NLS-1$ 
-        "TRUE()", //$NON-NLS-1$
-        "TRUE" //$NON-NLS-1$
-    );
-    handleFormula( getOrdersModel(), "MSAccess", //$NON-NLS-1$ 
-        "FALSE()", //$NON-NLS-1$
-        "FALSE" //$NON-NLS-1$
-    );
 
     handleFormula( getOrdersModel(), "PostgreSQL", //$NON-NLS-1$ 
         "TRUE()", //$NON-NLS-1$
@@ -486,11 +478,6 @@ public class SqlOpenFormulaIT {
         "GETDATE()" //$NON-NLS-1$
     );
 
-    handleFormula( getOrdersModel(), "MSAccess", //$NON-NLS-1$ 
-        "NOW()", //$NON-NLS-1$
-        "NOW()" //$NON-NLS-1$
-    );
-
     handleFormula( getOrdersModel(), "PostgreSQL", //$NON-NLS-1$ 
         "NOW()", //$NON-NLS-1$
         "now" //$NON-NLS-1$
@@ -524,11 +511,6 @@ public class SqlOpenFormulaIT {
         "'20070523'" //$NON-NLS-1$
     );
 
-    handleFormula( getOrdersModel(), "MSAccess", //$NON-NLS-1$ 
-        "DATE(2007;5;23)", //$NON-NLS-1$
-        "#05/23/2007#" //$NON-NLS-1$
-    );
-
     handleFormula( getOrdersModel(), "PostgreSQL", //$NON-NLS-1$ 
         "DATE(2007;5;23)", //$NON-NLS-1$
         "date '2007-05-23'" //$NON-NLS-1$
@@ -559,11 +541,6 @@ public class SqlOpenFormulaIT {
     handleFormula( getOrdersModel(), "MSSQL", //$NON-NLS-1$ 
         "DATEVALUE(\"2007-05-23\")", //$NON-NLS-1$
         "'20070523'" //$NON-NLS-1$
-    );
-
-    handleFormula( getOrdersModel(), "MSAccess", //$NON-NLS-1$ 
-        "DATEVALUE(\"2007-05-23\")", //$NON-NLS-1$
-        "#05/23/2007#" //$NON-NLS-1$
     );
 
     handleFormula( getOrdersModel(), "PostgreSQL", //$NON-NLS-1$ 
@@ -778,11 +755,6 @@ public class SqlOpenFormulaIT {
         "BT_CUSTOMERS.COUNTRY  LIKE '%' + 'AMERICA' + '%'" //$NON-NLS-1$
     );
 
-    handleFormula( getOrdersModel(), "MSAccess", //$NON-NLS-1$ 
-        "CONTAINS([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")", //$NON-NLS-1$
-        "BT_CUSTOMERS.COUNTRY  LIKE '%' + 'AMERICA' + '%'" //$NON-NLS-1$
-    );
-
     handleFormula( getOrdersModel(), "PostgreSQL", //$NON-NLS-1$ 
         "CONTAINS([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")", //$NON-NLS-1$
         "BT_CUSTOMERS.COUNTRY  LIKE '%' || 'AMERICA' || '%'" //$NON-NLS-1$
@@ -816,11 +788,6 @@ public class SqlOpenFormulaIT {
         "BT_CUSTOMERS.COUNTRY  LIKE 'AMERICA' + '%'" //$NON-NLS-1$
     );
 
-    handleFormula( getOrdersModel(), "MSAccess", //$NON-NLS-1$ 
-        "BEGINSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")",  //$NON-NLS-1$
-        "BT_CUSTOMERS.COUNTRY  LIKE 'AMERICA' + '%'" //$NON-NLS-1$
-    );
-
     handleFormula( getOrdersModel(), "PostgreSQL", //$NON-NLS-1$ 
         "BEGINSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")",  //$NON-NLS-1$
         "BT_CUSTOMERS.COUNTRY  LIKE 'AMERICA' || '%'" //$NON-NLS-1$
@@ -850,11 +817,6 @@ public class SqlOpenFormulaIT {
     );
 
     handleFormula( getOrdersModel(), "MSSQL", //$NON-NLS-1$ 
-        "ENDSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")",  //$NON-NLS-1$
-        "BT_CUSTOMERS.COUNTRY  LIKE '%' + 'AMERICA'" //$NON-NLS-1$
-    );
-
-    handleFormula( getOrdersModel(), "MSAccess", //$NON-NLS-1$ 
         "ENDSWITH([BT_CUSTOMERS.BC_CUSTOMERS_COUNTRY];\"AMERICA\")",  //$NON-NLS-1$
         "BT_CUSTOMERS.COUNTRY  LIKE '%' + 'AMERICA'" //$NON-NLS-1$
     );
