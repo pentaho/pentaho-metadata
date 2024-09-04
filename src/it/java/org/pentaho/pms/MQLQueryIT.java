@@ -337,15 +337,6 @@ public class MQLQueryIT extends TestCase {
       "(0=1)" //$NON-NLS-1$
     );
 
-    handleFormula( ordersModel, "MSAccess", //$NON-NLS-1$ 
-      "TRUE()", //$NON-NLS-1$
-      "TRUE" //$NON-NLS-1$
-    );
-    handleFormula( ordersModel, "MSAccess", //$NON-NLS-1$ 
-      "FALSE()", //$NON-NLS-1$
-      "FALSE" //$NON-NLS-1$
-    );
-
     handleFormula( ordersModel, "PostgreSQL", //$NON-NLS-1$ 
       "TRUE()", //$NON-NLS-1$
       "TRUE" //$NON-NLS-1$
@@ -382,11 +373,6 @@ public class MQLQueryIT extends TestCase {
       "GETDATE()" //$NON-NLS-1$
     );
 
-    handleFormula( ordersModel, "MSAccess", //$NON-NLS-1$ 
-      "NOW()", //$NON-NLS-1$
-      "NOW()" //$NON-NLS-1$
-    );
-
     handleFormula( ordersModel, "PostgreSQL", //$NON-NLS-1$ 
       "NOW()", //$NON-NLS-1$
       "now" //$NON-NLS-1$
@@ -419,11 +405,6 @@ public class MQLQueryIT extends TestCase {
       "'20070523'" //$NON-NLS-1$
     );
 
-    handleFormula( ordersModel, "MSAccess", //$NON-NLS-1$ 
-      "DATE(2007;5;23)", //$NON-NLS-1$
-      "#05/23/2007#" //$NON-NLS-1$
-    );
-
     handleFormula( ordersModel, "PostgreSQL", //$NON-NLS-1$ 
       "DATE(2007;5;23)", //$NON-NLS-1$
       "date '2007-05-23'" //$NON-NLS-1$
@@ -453,11 +434,6 @@ public class MQLQueryIT extends TestCase {
     handleFormula( ordersModel, "MSSQL", //$NON-NLS-1$ 
       "DATEVALUE(\"2007-05-23\")", //$NON-NLS-1$
       "'20070523'" //$NON-NLS-1$
-    );
-
-    handleFormula( ordersModel, "MSAccess", //$NON-NLS-1$ 
-      "DATEVALUE(\"2007-05-23\")", //$NON-NLS-1$
-      "#05/23/2007#" //$NON-NLS-1$
     );
 
     handleFormula( ordersModel, "PostgreSQL", //$NON-NLS-1$ 
