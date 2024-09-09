@@ -18,7 +18,6 @@ package org.pentaho.metadata.util;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.pentaho.di.core.xml.XMLParserFactoryProducer;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 
 import javax.xml.XMLConstants;
@@ -48,7 +47,7 @@ public class XmiParserTest {
 
   @Test
   public void secureFeatureEnabled_AfterDocBuilderFactoryCreation() throws Exception {
-    DocumentBuilderFactory documentBuilderFactory = XMLParserFactoryProducer.createSecureDocBuilderFactory();
+    DocumentBuilderFactory documentBuilderFactory = XmiParser.createSecureDocBuilderFactory();
     boolean secureFeatureEnabled = documentBuilderFactory.getFeature( XMLConstants.FEATURE_SECURE_PROCESSING );
 
     Assert.assertEquals( true, secureFeatureEnabled );

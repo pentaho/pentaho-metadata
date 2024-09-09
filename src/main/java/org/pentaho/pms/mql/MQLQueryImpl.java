@@ -34,7 +34,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.xml.XMLHandler;
-import org.pentaho.di.core.xml.XMLParserFactoryProducer;
+import org.pentaho.metadata.util.XmiParser;
 import org.pentaho.pms.core.CWM;
 import org.pentaho.pms.core.exception.CWMException;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
@@ -223,7 +223,7 @@ public class MQLQueryImpl implements MQLQuery {
 
     try {
       // create an XML document
-      DocumentBuilderFactory dbf = XMLParserFactoryProducer.createSecureDocBuilderFactory();
+      DocumentBuilderFactory dbf = XmiParser.createSecureDocBuilderFactory();
       DocumentBuilder db = dbf.newDocumentBuilder();
       doc = db.newDocument();
       Element mqlElement = doc.createElement( "mql" ); //$NON-NLS-1$
@@ -430,7 +430,7 @@ public class MQLQueryImpl implements MQLQuery {
     Document doc;
     // Check and open XML document
     try {
-      DocumentBuilderFactory dbf = XMLParserFactoryProducer.createSecureDocBuilderFactory();
+      DocumentBuilderFactory dbf = XmiParser.createSecureDocBuilderFactory();
       DocumentBuilder docBuilder = dbf.newDocumentBuilder();
       doc = docBuilder.parse( new InputSource( new java.io.StringReader( XML ) ) );
     } catch ( ParserConfigurationException pcx ) {
@@ -451,7 +451,7 @@ public class MQLQueryImpl implements MQLQuery {
     Document doc;
     // Check and open XML document
     try {
-      DocumentBuilderFactory dbf = XMLParserFactoryProducer.createSecureDocBuilderFactory();
+      DocumentBuilderFactory dbf = XmiParser.createSecureDocBuilderFactory();
       DocumentBuilder db = dbf.newDocumentBuilder();
       doc = db.parse( new InputSource( new java.io.StringReader( XML ) ) );
     } catch ( ParserConfigurationException pcx ) {
