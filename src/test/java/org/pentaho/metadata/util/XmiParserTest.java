@@ -23,6 +23,7 @@ import org.pentaho.pms.core.exception.PentahoMetadataException;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
+import org.pentaho.di.core.xml.XMLParserFactoryProducer;
 
 public class XmiParserTest {
   /**
@@ -47,7 +48,7 @@ public class XmiParserTest {
 
   @Test
   public void secureFeatureEnabled_AfterDocBuilderFactoryCreation() throws Exception {
-    DocumentBuilderFactory documentBuilderFactory = XmiParser.createSecureDocBuilderFactory();
+    DocumentBuilderFactory documentBuilderFactory = XMLParserFactoryProducer.createSecureDocBuilderFactory();
     boolean secureFeatureEnabled = documentBuilderFactory.getFeature( XMLConstants.FEATURE_SECURE_PROCESSING );
 
     Assert.assertEquals( true, secureFeatureEnabled );

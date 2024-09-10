@@ -53,6 +53,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.pentaho.di.core.xml.XMLParserFactoryProducer;
 
 /**
  * This helper class serializes/deserializes the Query object to an MQL XML schema.
@@ -100,7 +101,7 @@ public class QueryXmlHelper {
     Document doc;
     try {
       // create an XML document
-      DocumentBuilderFactory dbf = XmiParser.createSecureDocBuilderFactory();
+      DocumentBuilderFactory dbf = XMLParserFactoryProducer.createSecureDocBuilderFactory();
       DocumentBuilder db = dbf.newDocumentBuilder();
       doc = db.newDocument();
       Element mqlElement = doc.createElement( "mql" ); //$NON-NLS-1$
@@ -322,7 +323,7 @@ public class QueryXmlHelper {
 
     // Check and open XML document
     try {
-      DocumentBuilderFactory dbf = XmiParser.createSecureDocBuilderFactory();
+      DocumentBuilderFactory dbf = XMLParserFactoryProducer.createSecureDocBuilderFactory();
       DocumentBuilder db = dbf.newDocumentBuilder();
       doc = db.parse( new InputSource( new java.io.StringReader( XML ) ) );
     } catch ( ParserConfigurationException pcx ) {

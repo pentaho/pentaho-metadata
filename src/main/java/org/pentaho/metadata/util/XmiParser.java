@@ -2090,15 +2090,4 @@ public class XmiParser {
     return null;
   }
 
-  /**
-   * Delegates creating of DocumentBuilderFactory to {@link XMLParserFactoryProducer#createSecureDocBuilderFactory}.
-   *
-   * @throws ParserConfigurationException if feature can't be enabled
-   *
-   */
-  public static DocumentBuilderFactory createSecureDocBuilderFactory() throws ParserConfigurationException {
-    DocumentBuilderFactory documentBuilderFactory = XMLParserFactoryProducer.createSecureDocBuilderFactory();
-
-    return documentBuilderFactory;
-  }
 }
