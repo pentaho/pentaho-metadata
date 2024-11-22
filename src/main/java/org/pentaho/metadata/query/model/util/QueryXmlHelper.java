@@ -556,6 +556,10 @@ public class QueryXmlHelper {
     }
 
     if ( ( view_id != null ) && ( column_id != null ) ) {
+      Category category = query.getLogicalModel().findCategory( view_id );
+      if ( category.findLogicalColumn( column_id ) == null ) {
+        return;
+      }
       addOrderBy( query, view_id, column_id, aggregation, orderType );
     }
   }
