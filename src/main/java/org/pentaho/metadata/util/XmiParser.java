@@ -88,6 +88,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -133,6 +134,9 @@ public class XmiParser {
       StreamResult result = new StreamResult();
       result.setWriter( stringWriter );
       TransformerFactory factory = TransformerFactory.newInstance();
+      factory.setFeature( XMLConstants.FEATURE_SECURE_PROCESSING, true);
+      factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+      factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
       Document doc = toXmiDocument( domain );
       if ( doc != null ) {
         factory.newTransformer().transform( new DOMSource( doc ), result );
