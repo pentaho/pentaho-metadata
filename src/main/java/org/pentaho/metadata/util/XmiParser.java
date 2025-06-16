@@ -134,9 +134,9 @@ public class XmiParser {
       StreamResult result = new StreamResult();
       result.setWriter( stringWriter );
       TransformerFactory factory = TransformerFactory.newInstance();
-      factory.setFeature( XMLConstants.FEATURE_SECURE_PROCESSING, true);
-      factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-      factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+      factory.setFeature( XMLConstants.FEATURE_SECURE_PROCESSING, true );
+      factory.setAttribute( XMLConstants.ACCESS_EXTERNAL_DTD, "" );
+      factory.setAttribute( XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "" );
       Document doc = toXmiDocument( domain );
       if ( doc != null ) {
         factory.newTransformer().transform( new DOMSource( doc ), result );
