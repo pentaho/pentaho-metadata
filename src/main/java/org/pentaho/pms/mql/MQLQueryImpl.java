@@ -17,7 +17,6 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -204,9 +203,6 @@ public class MQLQueryImpl implements MQLQuery {
       StreamResult result = new StreamResult();
       result.setWriter( stringWriter );
       TransformerFactory factory = TransformerFactory.newInstance();
-      factory.setFeature( XMLConstants.FEATURE_SECURE_PROCESSING, true );
-      factory.setAttribute( XMLConstants.ACCESS_EXTERNAL_DTD, "" );
-      factory.setAttribute( XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "" );
       Document doc = getDocument();
       if ( doc != null ) {
         factory.newTransformer().transform( new DOMSource( doc ), result );
