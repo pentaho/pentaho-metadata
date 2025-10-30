@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>pentaho-metadata</artifactId>
-  <version>11.0.0.0-latest</version>
+  <version>11.0.0.0-SNAPSHOT</version>
 
   <name>Pentaho Metadata</name>
   <description>Pentaho Metadata Core</description>
