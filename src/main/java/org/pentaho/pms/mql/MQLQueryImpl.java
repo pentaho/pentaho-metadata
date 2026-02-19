@@ -761,6 +761,12 @@ public class MQLQueryImpl implements MQLQuery {
     this.limit = limit;
   }
 
+  // Method added to ensure compatibility with MqlQuery.
+  // No specific implementation since this class is deprecated and the field is only applicable in the mql-editor context
+  public String getComplexConditions() {
+    return "";
+  }
+
   // dom utility methods
 
   protected String getElementText( Document doc, String name ) {
@@ -792,11 +798,11 @@ public class MQLQueryImpl implements MQLQuery {
     try {
       if ( !CWM.exists( domainId ) ) {
         throw new PentahoMetadataException( Messages.getErrorString(
-                "MQLQuery.ERROR_0010_CWM_DOMAIN_NOT_FOUND", domainId ) );
+          "MQLQuery.ERROR_0010_CWM_DOMAIN_NOT_FOUND", domainId ) );
       }
     } catch ( CWMException e ) {
       throw new PentahoMetadataException( Messages.getErrorString(
-              "MQLQuery.ERROR_0010_CWM_DOMAIN_NOT_FOUND", domainId ) );
+        "MQLQuery.ERROR_0010_CWM_DOMAIN_NOT_FOUND", domainId ) );
     }
   }
 }
