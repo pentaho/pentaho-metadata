@@ -14,8 +14,8 @@ package org.pentaho.pms.schema;
 
 import java.util.ArrayList;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.ConceptInterface;
