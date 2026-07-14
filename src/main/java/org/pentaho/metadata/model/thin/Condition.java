@@ -12,7 +12,7 @@
 
 package org.pentaho.metadata.model.thin;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.pentaho.metadata.model.concept.types.DataType;
 import org.pentaho.metadata.query.model.CombinationType;
 

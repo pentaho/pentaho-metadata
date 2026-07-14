@@ -12,10 +12,10 @@
 
 package org.pentaho.pms.schema.concept.types.tabletype;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.pentaho.pms.schema.concept.ConceptPropertyInterface;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyType;
