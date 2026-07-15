@@ -14,7 +14,7 @@ package org.pentaho.metadata.util;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.pentaho.di.core.xml.XMLHandler;
 import org.pentaho.metadata.messages.Messages;
 import org.pentaho.metadata.model.LogicalColumn;

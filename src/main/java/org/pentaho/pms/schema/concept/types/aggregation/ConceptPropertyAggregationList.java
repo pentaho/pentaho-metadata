@@ -15,8 +15,8 @@ package org.pentaho.pms.schema.concept.types.aggregation;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.pentaho.di.core.xml.XMLHandler;
 import org.pentaho.pms.messages.Messages;
 import org.pentaho.pms.schema.concept.types.ConceptPropertyBase;

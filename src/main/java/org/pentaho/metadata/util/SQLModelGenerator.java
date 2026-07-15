@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.pentaho.di.core.Props;
 import org.pentaho.metadata.messages.Messages;
 import org.pentaho.metadata.model.Category;
