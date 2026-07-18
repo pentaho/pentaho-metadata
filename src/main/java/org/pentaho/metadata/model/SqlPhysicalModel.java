@@ -2,13 +2,14 @@
  *
  * Pentaho
  *
- * Copyright (C) 2024 by Hitachi Vantara, LLC : http://www.pentaho.com
+ * Copyright (C) 2024 - 2026 by Pentaho Canada Inc. : http://www.pentaho.com
  *
  * Use of this software is governed by the Business Source License included
  * in the LICENSE.TXT file.
  *
- * Change Date: 2029-07-20
+ * Change Date: 2030-06-15
  ******************************************************************************/
+
 
 package org.pentaho.metadata.model;
 
@@ -20,7 +21,7 @@ import org.pentaho.metadata.model.concept.IConcept;
 
 /**
  * This is the SQL implementation of the physical model. For now it contains a string reference to it's data source
- * (JNDI or Hitachi Vantara).
+ * (JNDI or Pentaho).
  *
  * @author Will Gorman (wgorman@pentaho.com)
  */
