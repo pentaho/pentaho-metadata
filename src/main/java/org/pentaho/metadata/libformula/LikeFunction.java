@@ -2,13 +2,14 @@
  *
  * Pentaho
  *
- * Copyright (C) 2024 by Hitachi Vantara, LLC : http://www.pentaho.com
+ * Copyright (C) 2024 - 2026 by Pentaho Canada Inc. : http://www.pentaho.com
  *
  * Use of this software is governed by the Business Source License included
  * in the LICENSE.TXT file.
  *
- * Change Date: 2029-07-20
+ * Change Date: 2030-06-15
  ******************************************************************************/
+
 
 package org.pentaho.metadata.libformula;
 
@@ -26,7 +27,7 @@ import org.pentaho.reporting.libraries.formula.typing.TypeRegistry;
 import org.pentaho.reporting.libraries.formula.typing.coretypes.LogicalType;
 
 /**
- * This function is similar to the LIKE function in SQL, and is needed for the inline ETL implementation of Hitachi Vantara
+ * This function is similar to the LIKE function in SQL, and is needed for the inline ETL implementation of Pentaho
  * Metadata.
  * 
  * @author Will Gorman (wgorman@pentaho.com)
