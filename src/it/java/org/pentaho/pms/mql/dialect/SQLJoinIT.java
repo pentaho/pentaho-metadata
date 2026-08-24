@@ -167,8 +167,15 @@ public class SQLJoinIT {
     final LoggerContext context = LoggerContext.getContext(false);
     final Configuration config = context.getConfiguration();
     final LoggerConfig sqlJoinLogger = config.getLoggers().get( SQLJoin.class.getName() );
-    sqlJoinLogger.removeAppender( outputStreamName );
+    final Appender appender = config.getAppender( outputStreamName );
+    if ( sqlJoinLogger != null ) {
+      sqlJoinLogger.removeAppender( outputStreamName );
+    }
     config.removeLogger( SQLJoin.class.getName() );
+    if ( appender != null ) {
+      config.getAppenders().remove( outputStreamName );
+      appender.stop();
+    }
     context.updateLoggers();
   }
 
