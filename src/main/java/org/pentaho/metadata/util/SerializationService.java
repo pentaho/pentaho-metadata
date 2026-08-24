@@ -65,9 +65,10 @@ public class SerializationService {
 
   public static XStream createXStreamWithAllowedTypes( AbstractXmlDriver driver, Class ... classes ) {
     XStream xstream = driver == null ? new XStream() : new XStream( driver );
-      if( classes != null ) {
-        xstream.allowTypes( classes );
-      }
+    xstream.allowTypesByWildcard( new String[] { "org.pentaho.metadata.model.**" } );
+    if( classes != null ) {
+      xstream.allowTypes( classes );
+    }
       return xstream;
   }
 
