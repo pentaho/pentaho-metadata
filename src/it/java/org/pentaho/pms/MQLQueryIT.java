@@ -26,6 +26,7 @@ import org.mockito.Mockito;
 import org.pentaho.di.core.database.DatabaseInterface;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.pms.core.CWM;
+import org.pentaho.pms.core.exception.CWMException;
 import org.pentaho.pms.core.exception.PentahoMetadataException;
 import org.pentaho.pms.factory.CwmSchemaFactory;
 import org.pentaho.pms.factory.CwmSchemaFactoryInterface;
@@ -47,22 +48,29 @@ import org.pentaho.pms.schema.concept.types.aggregation.AggregationSettings;
 @SuppressWarnings( { "deprecation", "nls" } )
 public class MQLQueryIT extends TestCase {
 
+  private static final String TEST_DOMAIN = "Orders";
+
   BusinessModel ordersModel = null;
 
   CwmSchemaFactory cwmSchemaFactory = null;
 
+  CWM cwm = null;
+
   public void setUp() throws Exception {
     MetadataTestBase.initKettleEnvironment();
-    if ( ordersModel == null || cwmSchemaFactory == null ) {
-      loadOrdersModel();
-    }
+    removeTestDomain();
+    loadOrdersModel();
   }
 
   @Override
   protected void tearDown() throws Exception {
-    deleteFile( "mdr.btb" );
-    deleteFile( "mdr.btd" );
-    deleteFile( "mdr.btx" );
+    try {
+      removeTestDomain();
+    } finally {
+      deleteFile( "mdr.btb" );
+      deleteFile( "mdr.btd" );
+      deleteFile( "mdr.btx" );
+    }
   }
 
   private void deleteFile( String filename ) {
@@ -70,6 +78,13 @@ public class MQLQueryIT extends TestCase {
     if ( f.exists() ) {
       f.delete();
     }
+  }
+
+  private void removeTestDomain() throws CWMException {
+    if ( CWM.exists( TEST_DOMAIN ) ) {
+      CWM.getInstance( TEST_DOMAIN, false ).removeDomain();
+    }
+    cwm = null;
   }
 
   public String loadXmlFile( String filename ) {
@@ -82,9 +97,8 @@ public class MQLQueryIT extends TestCase {
   }
 
   public void loadOrdersModel() {
-    CWM cwm = null;
     try {
-      cwm = CWM.getInstance( "Orders", true ); //$NON-NLS-1$
+      cwm = CWM.getInstance( TEST_DOMAIN, true );
       assertNotNull( "CWM singleton instance is null", cwm );
       cwm.importFromXMI( getClass().getResourceAsStream( "/samples/orders.xmi" ) ); //$NON-NLS-1$
     } catch ( Exception e ) {
@@ -569,16 +583,18 @@ public class MQLQueryIT extends TestCase {
     quantityOrdered.setAggregationType( AggregationSettings.NONE );
     buyPrice.setAggregationType( AggregationSettings.NONE );
 
-    // This changes the expected result...
-    //
-    String formula = "SUM( [BT_ORDER_DETAILS.BC_ORDER_DETAILS_QUANTITYORDERED] * [BT_PRODUCTS.BC_PRODUCTS_BUYPRICE] )";
-    String sql = "SUM( BT_ORDER_DETAILS.QUANTITYORDERED  *  BT_PRODUCTS.BUYPRICE )";
+    try {
+      // This changes the expected result...
+      //
+      String formula = "SUM( [BT_ORDER_DETAILS.BC_ORDER_DETAILS_QUANTITYORDERED] * [BT_PRODUCTS.BC_PRODUCTS_BUYPRICE] )";
+      String sql = "SUM( BT_ORDER_DETAILS.QUANTITYORDERED  *  BT_PRODUCTS.BUYPRICE )";
 
-    handleFormula( ordersModel, "Hypersonic", formula, sql );
-
-    // Set it back to the way it was for further testing.
-    quantityOrdered.setAggregationType( qaBackup );
-    buyPrice.setAggregationType( paBackup );
+      handleFormula( ordersModel, "Hypersonic", formula, sql );
+    } finally {
+      // Set it back to the way it was for further testing.
+      quantityOrdered.setAggregationType( qaBackup );
+      buyPrice.setAggregationType( paBackup );
+    }
   }
 
   /**
@@ -598,16 +614,18 @@ public class MQLQueryIT extends TestCase {
     quantityOrdered.setAggregationType( AggregationSettings.SUM );
     buyPrice.setAggregationType( AggregationSettings.SUM );
 
-    // This changes the expected result...
-    //
-    String formula = "[BT_ORDER_DETAILS.BC_ORDER_DETAILS_QUANTITYORDERED] * [BT_PRODUCTS.BC_PRODUCTS_BUYPRICE]";
-    String sql = "SUM(BT_ORDER_DETAILS.QUANTITYORDERED)  *  SUM(BT_PRODUCTS.BUYPRICE)";
+    try {
+      // This changes the expected result...
+      //
+      String formula = "[BT_ORDER_DETAILS.BC_ORDER_DETAILS_QUANTITYORDERED] * [BT_PRODUCTS.BC_PRODUCTS_BUYPRICE]";
+      String sql = "SUM(BT_ORDER_DETAILS.QUANTITYORDERED)  *  SUM(BT_PRODUCTS.BUYPRICE)";
 
-    handleFormula( ordersModel, "Hypersonic", formula, sql );
-
-    // Set it back to the way it was for further testing.
-    quantityOrdered.setAggregationType( qaBackup );
-    buyPrice.setAggregationType( paBackup );
+      handleFormula( ordersModel, "Hypersonic", formula, sql );
+    } finally {
+      // Set it back to the way it was for further testing.
+      quantityOrdered.setAggregationType( qaBackup );
+      buyPrice.setAggregationType( paBackup );
+    }
   }
 
   public void testMQLQueryFactoryPentahoMetadataException() {
