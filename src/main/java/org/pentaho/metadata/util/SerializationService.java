@@ -16,7 +16,7 @@ package org.pentaho.metadata.util;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.thoughtworks.xstream.io.xml.AbstractXmlDriver;
+import com.thoughtworks.xstream.io.HierarchicalStreamDriver;
 import org.pentaho.metadata.model.Domain;
 
 import com.thoughtworks.xstream.XStream;
@@ -63,13 +63,13 @@ public class SerializationService {
     }
   }
 
-  private static XStream createXStreamForDomain( AbstractXmlDriver driver ) {
+  private static XStream createXStreamForDomain( HierarchicalStreamDriver driver ) {
     XStream xstream = createXStreamWithAllowedTypes( driver, Domain.class );
     xstream.allowTypesByWildcard( new String[] { "org.pentaho.metadata.model.**" } );
     return xstream;
   }
 
-  public static XStream createXStreamWithAllowedTypes( AbstractXmlDriver driver, Class ... classes ) {
+  public static XStream createXStreamWithAllowedTypes( HierarchicalStreamDriver driver, Class ... classes ) {
     XStream xstream = driver == null ? new XStream() : new XStream( driver );
     if( classes != null ) {
       xstream.allowTypes( classes );
