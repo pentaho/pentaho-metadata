@@ -106,9 +106,9 @@ public class SqlOpenFormulaIT {
 
   @AfterClass
   public static void deleteFiles() throws Exception {
-        if ( CWM.exists( "Orders" ) ) { //$NON-NLS-1$
-            CWM.getInstance( "Orders", false ).removeDomain(); //$NON-NLS-1$
-        }
+    if ( CWM.exists( "Orders" ) ) { //$NON-NLS-1$
+      CWM.getInstance( "Orders", false ).removeDomain(); //$NON-NLS-1$
+    }
     deleteFile( "mdr.btb" );
     deleteFile( "mdr.btd" );
     deleteFile( "mdr.btx" );
