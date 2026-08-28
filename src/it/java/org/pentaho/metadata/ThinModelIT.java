@@ -14,6 +14,7 @@
 package org.pentaho.metadata;
 
 import org.junit.Assert;
+import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.pentaho.metadata.model.Category;
@@ -63,9 +64,24 @@ import static org.junit.Assert.fail;
 @SuppressWarnings( "deprecation" )
 public class ThinModelIT {
 
+  private static final String ORDERS_DOMAIN = "Orders";
+  private static final String STEEL_WHEELS_DOMAIN = "SteelWheels";
+
   @BeforeClass
   public static void initKettle() throws Exception {
     MetadataTestBase.initKettleEnvironment();
+  }
+
+  @After
+  public void removeLegacyDomains() throws Exception {
+    removeDomain( ORDERS_DOMAIN );
+    removeDomain( STEEL_WHEELS_DOMAIN );
+  }
+
+  private void removeDomain( String domainName ) throws Exception {
+    if ( CWM.exists( domainName ) ) {
+      CWM.getInstance( domainName, false ).removeDomain();
+    }
   }
 
   @Test
