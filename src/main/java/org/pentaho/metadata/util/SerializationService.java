@@ -20,6 +20,7 @@ import org.pentaho.metadata.model.Domain;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.StreamException;
+import com.thoughtworks.xstream.io.xml.AbstractXmlDriver;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 public class SerializationService {
@@ -73,7 +74,15 @@ public class SerializationService {
     if( classes != null ) {
       xstream.allowTypes( classes );
     }
-      return xstream;
+    return xstream;
+  }
+
+  /**
+   * @deprecated Use {@link #createXStreamWithAllowedTypes(HierarchicalStreamDriver, Class[])}.
+   */
+  @Deprecated
+  public static XStream createXStreamWithAllowedTypes( AbstractXmlDriver driver, Class ... classes ) {
+    return createXStreamWithAllowedTypes( (HierarchicalStreamDriver) driver, classes );
   }
 
 
