@@ -148,6 +148,7 @@ public class SQLJoinIT {
   private void addAppender( final OutputStream outputStream, final String outputStreamName ) {
     final LoggerContext context = LoggerContext.getContext(false);
     final Configuration config = context.getConfiguration();
+    final LoggerConfig sqlJoinLogger = new LoggerConfig( SQLJoin.class.getName(), Level.DEBUG, false );
     final Appender appender =
       OutputStreamAppender.newBuilder()
         .setLayout( PatternLayout.createDefaultLayout() )
@@ -156,20 +157,25 @@ public class SQLJoinIT {
         .build();
     appender.start();
     config.addAppender( appender );
-    for ( final LoggerConfig loggerConfig : config.getLoggers().values() ) {
-        loggerConfig.addAppender( appender, Level.ALL, (Filter) null );
-    }
-    config.getRootLogger().addAppender( appender, Level.ALL, (Filter) null );
+    sqlJoinLogger.addAppender( appender, Level.ALL, (Filter) null );
+    config.addLogger( SQLJoin.class.getName(), sqlJoinLogger );
+    context.updateLoggers();
   }
 
   private void removeAppender( final String outputStreamName ) {
     final LoggerContext context = LoggerContext.getContext(false);
     final Configuration config = context.getConfiguration();
-    config.getAppender(outputStreamName);
-    for ( final LoggerConfig loggerConfig : config.getLoggers().values() ) {
-        loggerConfig.removeAppender(outputStreamName);
+    final LoggerConfig sqlJoinLogger = config.getLoggers().get( SQLJoin.class.getName() );
+    final Appender appender = config.getAppender( outputStreamName );
+    if ( sqlJoinLogger != null ) {
+      sqlJoinLogger.removeAppender( outputStreamName );
     }
-    config.getRootLogger().removeAppender(outputStreamName);
+    config.removeLogger( SQLJoin.class.getName() );
+    if ( appender != null ) {
+      config.getAppenders().remove( outputStreamName );
+      appender.stop();
+    }
+    context.updateLoggers();
   }
 
   private LogicalTable[] getTablesWithRelationships( RelationshipType relationship1, RelationshipType relationship2,
