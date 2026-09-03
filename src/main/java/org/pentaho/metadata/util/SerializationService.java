@@ -15,11 +15,12 @@ package org.pentaho.metadata.util;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.thoughtworks.xstream.io.xml.AbstractXmlDriver;
+import com.thoughtworks.xstream.io.HierarchicalStreamDriver;
 import org.pentaho.metadata.model.Domain;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.StreamException;
+import com.thoughtworks.xstream.io.xml.AbstractXmlDriver;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 public class SerializationService {
@@ -39,12 +40,12 @@ public class SerializationService {
   public Domain deserializeDomain( String xml ) {
 
     try {
-      XStream xstream = createXStreamWithAllowedTypes(new DomDriver(), Domain.class );
+      XStream xstream = createXStreamForDomain( new DomDriver() );
       return (Domain) xstream.fromXML( xml );
     } catch ( StreamException e ) {
       // try to load ASCII. This addresses sample domains being mixed with customer created ones in
       // a different encoding.
-      XStream xstream = createXStreamWithAllowedTypes( new DomDriver("ISO-8859-1" ), Domain.class );
+      XStream xstream = createXStreamForDomain( new DomDriver( "ISO-8859-1" ) );
       return (Domain) xstream.fromXML( xml );
     }
   }
@@ -52,22 +53,36 @@ public class SerializationService {
   public Domain deserializeDomain( InputStream stream ) {
 
     try {
-      XStream xstream = createXStreamWithAllowedTypes( new DomDriver(), Domain.class );
+      XStream xstream = createXStreamForDomain( new DomDriver() );
       return (Domain) xstream.fromXML( stream );
     } catch ( StreamException e ) {
       // try to load ASCII. This addresses sample domains being mixed with customer created ones in
       // a different encoding.
-      XStream xstream = createXStreamWithAllowedTypes( new DomDriver("ISO-8859-1" ), Domain.class );
+      XStream xstream = createXStreamForDomain( new DomDriver( "ISO-8859-1" ) );
       return (Domain) xstream.fromXML( stream );
     }
   }
 
-  public static XStream createXStreamWithAllowedTypes( AbstractXmlDriver driver, Class ... classes ) {
+  private static XStream createXStreamForDomain( HierarchicalStreamDriver driver ) {
+    XStream xstream = createXStreamWithAllowedTypes( driver, Domain.class );
+    xstream.allowTypesByWildcard( new String[] { "org.pentaho.metadata.model.**" } );
+    return xstream;
+  }
+
+  public static XStream createXStreamWithAllowedTypes( HierarchicalStreamDriver driver, Class ... classes ) {
     XStream xstream = driver == null ? new XStream() : new XStream( driver );
-      if( classes != null ) {
-        xstream.allowTypes( classes );
-      }
-      return xstream;
+    if( classes != null ) {
+      xstream.allowTypes( classes );
+    }
+    return xstream;
+  }
+
+  /**
+   * @deprecated Use {@link #createXStreamWithAllowedTypes(HierarchicalStreamDriver, Class[])}.
+   */
+  @Deprecated
+  public static XStream createXStreamWithAllowedTypes( AbstractXmlDriver driver, Class ... classes ) {
+    return createXStreamWithAllowedTypes( (HierarchicalStreamDriver) driver, classes );
   }
 
 
