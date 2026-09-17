@@ -124,6 +124,7 @@ public class SQLModelGeneratorIT {
     BusinessModel model = meta.findModel( "MODEL_1" );
     assertNotNull( model );
     assertEquals( "newdatasource", model.getName( locale ) );
+    assertEquals( "newdatasource", model.getName( Locale.ENGLISH.toString() ) );
     BusinessCategory cat =  model.getRootCategory().findBusinessCategory( Settings.getBusinessCategoryIDPrefix() + "newdatasource" );
     assertNotNull( cat );
     assertEquals( "newdatasource", cat.getName( locale ) );

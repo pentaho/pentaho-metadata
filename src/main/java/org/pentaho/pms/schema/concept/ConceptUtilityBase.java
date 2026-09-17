@@ -195,9 +195,8 @@ public class ConceptUtilityBase extends ChangedFlag implements AllowsIDChangeLis
    */
   public String getName( String locale ) {
     String name = internalGetName( locale );
-    // If the name is empty and the default locale isn't virtually the same
-    // as the locale...
-    if ( Const.isEmpty( name ) && !DEFAULT_LOCALE.startsWith( locale ) ) {
+    // If the name is empty and the requested locale is not the default locale...
+    if ( Const.isEmpty( name ) && !DEFAULT_LOCALE.equals( locale ) ) {
       name = internalGetName( DEFAULT_LOCALE );
     }
     return ( Const.isEmpty( name ) ? id : name );
